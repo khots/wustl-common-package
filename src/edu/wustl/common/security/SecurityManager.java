@@ -2398,7 +2398,7 @@ public class SecurityManager implements Permissions {
 
 		return hasPrivilegeOnIdentifiedData;
 	}
-
+	
 	/**
 	 * Checks whether an object type has any identified data associated with
 	 * it or not
@@ -2412,18 +2412,13 @@ public class SecurityManager implements Permissions {
 		Logger.out.debug(this);
 		Logger.out.debug(aliasName);
 		
-		////Gautam_COMMON_TEMP_FIX
-//		identifiedData = (Vector) Client.identifiedDataMap.get(aliasName);
+		identifiedData = (Vector) AbstractClient.identifiedDataMap.get(aliasName);
 		Logger.out.debug("Table:" + aliasName + " Identified Data:"
 				+ identifiedData);
 		if (identifiedData != null) {
 			Logger.out.debug(" identifiedData not null..." + identifiedData);
 			hasIdentifiedData = true;
-
 		}
 		return hasIdentifiedData;
 	}
 }
-
-
-

@@ -27,5 +27,5 @@ public class Variables {
 	public static String dateFormatFunction = new String();
 	public static String strTodateFunction = new String();
 	public static String dateTostrFunction = new String();
-	
+	public static String catissueURL=new String();
 }

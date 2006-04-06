@@ -14,14 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//Gautam_COMMON_TEMP_FIX
-/*import edu.wustl.catissuecore.bizlogic.CDEBizLogic;
-import edu.wustl.catissuecore.exception.BizLogicException;
-import edu.wustl.catissuecore.util.EmailHandler;
-*/
+import edu.wustl.common.bizlogic.CDEBizLogic;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.cde.xml.XMLPermissibleValueType;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.EmailHandler;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -81,9 +79,7 @@ public class CDECacheManager
         // Send the errors logs while downloading the CDEs to the administrator.
         sendCDEDownloadStatusEmail(errorLogs);
         
-        
-        //Gautam_COMMON_TEMP_FIX
-/*        //Inserting the downloaded CDEs into database.
+        //Inserting the downloaded CDEs into database.
         CDEBizLogic cdeBizLogic = new CDEBizLogic();
         Iterator iterator = downloadedCDEList.iterator();
         while (iterator.hasNext())
@@ -102,8 +98,7 @@ public class CDECacheManager
                 errorLogs.add(bizLogicExp.getMessage());
             }
         }
-*/    
-}
+    }
     
     /**
      * Sends an email containing the error logs occured while downloading the CDEs to the administrator.
@@ -111,13 +106,12 @@ public class CDECacheManager
      */
     private void sendCDEDownloadStatusEmail(List errorLogs)
     {
-        ////Gautam_COMMON_TEMP_FIX
-/*        if (!errorLogs.isEmpty())
+        if (!errorLogs.isEmpty())
         {
             EmailHandler emailHandler = new EmailHandler();
             emailHandler.sendCDEDownloadStatusEmail(errorLogs);
         }
-*/    }
+    }
     
     /**
      * Sets the parent permissible values for each of the permissible value of the CDE 

@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-//Gautam_COMMON_TEMP_FIX
-//import edu.wustl.catissuecore.query.Table;
+import edu.wustl.common.query.Table;
 
 
 import edu.wustl.common.util.global.Constants;
@@ -26,7 +25,7 @@ public class MapDataParser
 	private String packageName = "";
 	private Map bigMap = new HashMap();
 	private Collection dataList = new HashSet();	
-
+	
 	public MapDataParser(String packageName)
 	{
 		this.packageName = packageName;
@@ -35,7 +34,7 @@ public class MapDataParser
 	private Map createMap()
 	{
 		Map map = new TreeMap();
-
+		
 		map.put("DistributedItem:1_Specimen_systemIdentifier","1");
 		map.put("DistributedItem:1_quantity","100");
 //		map.put("DistributedItem:1_unitSpan","mg");
@@ -48,7 +47,6 @@ public class MapDataParser
 //		map.put("DistributedItem:2_unit","ml");
 		map.put("DistributedItem:2_Specimen_className","Molecular");
 		
-		
 //		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_pathologyStatus","Primary Tumor");
 //		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_specimenType","Blood");
 //		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_tissueSite","Adrenal-Cortex");
@@ -60,30 +58,30 @@ public class MapDataParser
 //		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_specimenType", "Blood");     
 //		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_specimenClass", "Tissue");
 //		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_quantityIn", "6");
-//		                                                                                      
+		
 //		map.put("CollectionProtocolEvent:2_studyCalendarEventPoint", "10.0");                 
 //		map.put("CollectionProtocolEvent:2_clinicalStatus", "Pre-Opt");                       
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_specimenType", "Blood");     
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_tissueSite", "Kidney");      
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_specimenClass", "Fluid");    
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_quantityIn", "7");
-//		
+		
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_tissueSite", "Brain");       
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_specimenType", "Gel");       
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_specimenClass", "Cell");     
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_quantityIn", "8");
-//		
+		
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_tissueSite", "Lever");       
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_specimenType", "Cell");      
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_specimenClass", "Molecular");
 //		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_quantityIn", "9");
 		
 		return map; 
-	} // createmap
+	}
 	
 	private Object toObject(String str,Class type) throws Exception
 	{
-		if(type.equals(String.class))
+	    if(type.equals(String.class))
 			return str;
 		else
 		{
@@ -102,9 +100,8 @@ public class MapDataParser
 				return new Integer(str);
 			else if(type.equals(Short.class))
 				return new Integer(str);
-			//Gautam_COMMON_TEMP_FIX
-//			else if(type.equals(Table.class))
-//				return new Table(str,str);
+			else if(type.equals(Table.class))
+				return new Table(str,str);
 		}
 		return str;
 	}
@@ -141,7 +138,7 @@ public class MapDataParser
 				
 				Logger.out.debug("methodName " +methodName);
 				Logger.out.debug("objClass " +objClass);
-
+				
 				Method method = findMethod(objClass,methodName);
 				
 				Logger.out.debug("method parameter type " +method.getParameterTypes()[0]);
@@ -156,10 +153,7 @@ public class MapDataParser
 				parstData(obj,className,value,mapKey);
 			}
 		}
-		
 	}
-	
-	
 	
 	private Object parseClassAndGetInstance(Object parentObj,String str,String mapKey) throws Exception
 	{
@@ -247,7 +241,7 @@ public class MapDataParser
 	    }
 	    return generateData(map);
 	}
-
+	
 	public Collection generateData(Map map)  throws Exception
 	{
 		Iterator it = map.keySet().iterator();
@@ -259,6 +253,7 @@ public class MapDataParser
 		}
 		return dataList;
 	}
+	
 	public int parseKeyAndGetRowNo(String key)
 	{
 		int start = key.indexOf(":");
@@ -278,14 +273,11 @@ public class MapDataParser
 		System.out.println("Data: "+dataCollection);
 	}
 	
-	
-	
-	
-	////////////////
 	public static void deleteRow(List list,Map map, String status)
 	{
 		deleteRow(list,map,status,null);
 	}
+	
 	/**
 	 * Returns boolean used for diabling/enabling checkbox in jsp Page and
 	 * rearranging rows
@@ -315,7 +307,6 @@ public class MapDataParser
     			condition = true;
     			third = second.substring(0,second.indexOf(":"));
     			fourth = second.substring(second.lastIndexOf("_"));
-    			
     		}
     		
     		if(status.equals(Constants.TRUE)){
@@ -366,5 +357,4 @@ public class MapDataParser
     		}
     	}
 	}
-
 }
