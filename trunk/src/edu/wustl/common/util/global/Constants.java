@@ -36,9 +36,9 @@ public class Constants
 	
 	// Mandar: Used for Date Validations in Validator Class
 	public static final String DATE_SEPARATOR = "-";
+	public static final String DATE_SEPARATOR_SLASH = "/";
 	public static final String MIN_YEAR = "1900";
 	public static final String MAX_YEAR = "9999";
-
 	
 	//Activity Status values
 	public static final String ACTIVITY_STATUS_ACTIVE = "Active";
@@ -119,7 +119,6 @@ public class Constants
 	public static final String FAILURE = "failure";
 	
 	public static final String SYSTEM_IDENTIFIER = "systemIdentifier";
-	public static final String DATE_SEPARATOR_SLASH = "/";
 	
 	// User Roles
 	public static final String ADMINISTRATOR = "Administrator";
@@ -133,4 +132,29 @@ public class Constants
 	
 	public static final String  ORACLE_DATABASE = "ORACLE";
 	public static final String  MYSQL_DATABASE = "MYSQL";
+	
+	// The unique key voilation message is "Duplicate entry %s for key %d"
+	// This string is used for searching " for key " string in the above error message
+	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
+	
+	public static final String GENERIC_DATABASE_ERROR = "An error occured during a database operation. Please report this problem to the adminstrator";
+	public static final String CONSTRAINT_VOILATION_ERROR = "Submission failed since a {0} with the same {1} already exists";
+	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
+	
+	public static final String ACTIVITY_STATUS_DISABLED = "Disabled";
+	public static final String ACTIVITY_STATUS_CLOSED = "Closed";
+	
+	public static final String AND_JOIN_CONDITION = "AND";
+	public static final String ACTIVITY_STATUS = "activityStatus";
+	
+	public static final boolean switchSecurity = true;
+	
+	public static final String EDIT = "edit";
+	
+	public static final String DATE_PATTERN_MM_DD_YYYY = "MM-dd-yyyy";
+	
+	//Constants for audit of disabled objects.
+	public static final String UPDATE_OPERATION = "UPDATE";
+	public static final String ACTIVITY_STATUS_COLUMN = "ACTIVITY_STATUS";
+
 }

@@ -15,14 +15,15 @@ import java.io.Serializable;
 
 import org.apache.struts.action.ActionForm;
 
-//Gautam_COMMON_TEMP_FIX
-//import edu.wustl.catissuecore.actionForm.ActionFormFactory;
-//import edu.wustl.catissuecore.actionForm.LoginForm;
-//import edu.wustl.catissuecore.domain.User;
-
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.factory.AbstractActionFormFactory;
+import edu.wustl.common.factory.MasterFactory;
 
+/**
+ * This class provides a wrapper object which constitutes
+ * an object of AbstractDomainObject & operation that is to be performed.
+ * @author Aniruddha Phadnis
+ */
 public class HTTPWrapperObject implements Serializable
 {
     private static final long serialVersionUID = -4958330782397508598L;
@@ -33,30 +34,13 @@ public class HTTPWrapperObject implements Serializable
 	
 	public HTTPWrapperObject(Object domainObject,String operation) throws Exception
 	{
-	    //creating instance of LoginForm for LOGIN operation
-	    //Gautam_COMMON_TEMP_FIX
-/*	    if(operation.equals(Constants.LOGIN))
-		{
-			User user = (User)domainObject;
-			LoginForm loginForm = new LoginForm();
-			loginForm.setLoginName(user.getLoginName());
-			loginForm.setPassword(user.getPassword());
-			formBean = loginForm;
-		}
-	    //assigning formBean value as null for LOGOUT operation
-	    else if(operation.equals(Constants.LOGOUT))
-	    {
-	        formBean= null;
-	    }
-	    //creating instance of Form-Bean according to type of the domainObject using ActionFormFactory
-		else
-		{
-		    AbstractActionForm abstractForm = ActionFormFactory.getFormBean(domainObject,operation);
-		    abstractForm.setOperation(operation);				
-			abstractForm.setAllVal(domainObject);
-			formBean = abstractForm;
-		}
-*/		
+	    //Gautam: Changes done for common package.
+	    AbstractActionFormFactory actionFormFactory = (AbstractActionFormFactory)
+	    												MasterFactory.getFactory(
+	    												  "edu.wustl.catissuecore.actionForm.ActionFormFactory");
+		AbstractActionForm abstractForm = actionFormFactory.getFormBean(domainObject,operation);
+		formBean = abstractForm;
+		
 		this.operation = operation;
 	}
 	
@@ -65,7 +49,7 @@ public class HTTPWrapperObject implements Serializable
 	 */
 	public ActionForm getForm()
 	{
-	    return formBean; 
+	    return formBean;
 	}
 	
 	/**
