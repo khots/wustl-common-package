@@ -12,15 +12,9 @@ import edu.wustl.catissuecore.domainobject.CollectionProtocol;
 import edu.wustl.catissuecore.domainobject.DistributionProtocol;
 
 /**
- * @author ajay_sharma
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-
-/**
  * This classes is specific to common files. And contains all variables used by classes from 
- * common package.  
+ * common package.
+ * @author gautam_shetty  
  * */
 public class Constants 
 {
@@ -156,5 +150,12 @@ public class Constants
 	//Constants for audit of disabled objects.
 	public static final String UPDATE_OPERATION = "UPDATE";
 	public static final String ACTIVITY_STATUS_COLUMN = "ACTIVITY_STATUS";
-
+	
+	//Tree View constants.
+	public static final String TISSUE_SITE = "Tissue Site";
+	public static final int TISSUE_SITE_TREE_ID = 1;
+	public static final int STORAGE_CONTAINER_TREE_ID = 2;
+	public static final int QUERY_RESULTS_TREE_ID = 3;
+	public static final String ROOT = "Root";
+	public static final String CATISSUE_CORE = "caTISSUE Core";
 }
