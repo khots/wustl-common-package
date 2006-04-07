@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-//Gautam_COMMON_TEMP_FIX
-//import edu.wustl.catissuecore.tissuesite.TissueSiteTreeNode;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.cde.CDE;
 import edu.wustl.common.cde.CDEImpl;
@@ -29,6 +27,7 @@ import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.tree.TissueSiteTreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.util.dbManager.DAOException;
 
@@ -36,8 +35,6 @@ import edu.wustl.common.util.dbManager.DAOException;
  * This is biz Logic class for the CDEs.
  * @author gautam_shetty
  */
-
-//Gautam_COMMON_TEMP_FIX
 public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 {
 
@@ -110,9 +107,8 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
         {
             PermissibleValueImpl permissibleValueImpl = (PermissibleValueImpl) iterator.next();
             
-            // Gautam_COMMON_TEMP_FIX
-//            TissueSiteTreeNode treeNode = getTissueSiteTreeNode(permissibleValueImpl);
-//            vector.add(treeNode);
+            TissueSiteTreeNode treeNode = getTissueSiteTreeNode(permissibleValueImpl);
+            vector.add(treeNode);
             List subPVList = getSubPermissibleValues(permissibleValueImpl);
 			vector.addAll(subPVList);
         }
@@ -127,36 +123,34 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 		while(iterator.hasNext())
 		{
 			PermissibleValueImpl subPermissibleValueImpl = (PermissibleValueImpl)iterator.next();
-			// Gautam_COMMON_TEMP_FIX
-//			TissueSiteTreeNode tissueSiteTreeNode = getTissueSiteTreeNode(subPermissibleValueImpl);
-//			pvList.add(tissueSiteTreeNode);
+			TissueSiteTreeNode tissueSiteTreeNode = getTissueSiteTreeNode(subPermissibleValueImpl);
+			pvList.add(tissueSiteTreeNode);
 			List subPVList = getSubPermissibleValues(subPermissibleValueImpl);
 			pvList.addAll(subPVList);
 		}
 		return pvList;
 	}
 	
-// Gautam_COMMON_TEMP_FIX
-//	private TissueSiteTreeNode getTissueSiteTreeNode(PermissibleValueImpl permissibleValueImpl)
-//	{
-//	    Long id = permissibleValueImpl.getIdentifier();
-//	    String val = permissibleValueImpl.getValue();
-//	    Long parentId = null;
-//	    
-//	    if (permissibleValueImpl.getParentPermissibleValue() != null)
-//        {
-//            PermissibleValueImpl parentPermissibleValue = (PermissibleValueImpl) permissibleValueImpl
-//                    .getParentPermissibleValue();
-//            parentId = parentPermissibleValue.getIdentifier();
-//        }
-//	    
-//	    String parentIdStr = null;
-//	    if(parentId!=null)
-//	    	parentIdStr = parentId.toString();
-//	    
-//	    TissueSiteTreeNode treeNode = new TissueSiteTreeNode(id.toString(),val,parentIdStr);
-//        return treeNode; 
-//	}
+	private TissueSiteTreeNode getTissueSiteTreeNode(PermissibleValueImpl permissibleValueImpl)
+	{
+	    Long id = permissibleValueImpl.getIdentifier();
+	    String val = permissibleValueImpl.getValue();
+	    Long parentId = null;
+	    
+	    if (permissibleValueImpl.getParentPermissibleValue() != null)
+        {
+            PermissibleValueImpl parentPermissibleValue = (PermissibleValueImpl) permissibleValueImpl
+                    .getParentPermissibleValue();
+            parentId = parentPermissibleValue.getIdentifier();
+        }
+	    
+	    String parentIdStr = null;
+	    if(parentId!=null)
+	    	parentIdStr = parentId.toString();
+	    
+	    TissueSiteTreeNode treeNode = new TissueSiteTreeNode(id.toString(),val,parentIdStr);
+        return treeNode; 
+	}
 	
 	/* (non-Javadoc)
 	 * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface#getTreeViewData(edu.wustl.common.beans.SessionDataBean, java.util.Map)
