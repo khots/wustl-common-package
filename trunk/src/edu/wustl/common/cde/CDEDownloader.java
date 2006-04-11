@@ -19,6 +19,7 @@ import java.util.Set;
 
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
@@ -34,10 +35,10 @@ public class CDEDownloader
 	public static int MAX_CDE_DOWNLOAD_ATTEMPTS = Integer.parseInt(ApplicationProperties.getValue("max.cde.download.attempts"));
 	private ApplicationService appService;
 	
-	public CDEDownloader() throws Exception
+	//Mandar : 05-Apr-06 : Bugid:1622 : Removed throws Exception
+	public CDEDownloader() 
 	{
-		init();
-	}
+	} // CDEDownloader constructor
 	
 	private void init() throws Exception
 	{
@@ -48,8 +49,8 @@ public class CDEDownloader
 		{
 			setCDEConConfig();
 			createPasswordAuthentication(CDEConConfig.proxyhostip, CDEConConfig.proxyport, CDEConConfig.username, CDEConConfig.password);
-		}
-	}
+		} // use.proxy.server = true
+	} // init
 	
 	/**
 	 * @param proxyhost is used to specify the host to connect 
@@ -63,6 +64,9 @@ public class CDEDownloader
 	 */
 	public void connect() throws Exception
 	{
+		//Mandar : 05-Apr-06 Bugid: 1622 : Added call to init() after removing it from constructor
+		init();
+		
 		int connectAttempts = 0;
 		while(connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS)
 		{
@@ -72,15 +76,15 @@ public class CDEDownloader
 				
 				if(appService!=null)
 					return;
-			}
+			} //try
 			catch (Exception conexp)
 			{
 				Logger.out.error("Connection Error: "+conexp.getMessage(), conexp);
-			}
+			} // catch
 			connectAttempts++;
-		}
+		} // while connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS
 		throw new Exception("Connection Error: Unable to connect to "+CDEConConfig.dbserver);
-	}
+	} // connect
 	
 	/**
 	 * @param cdeCon It is the Configuration object. Contains all required
@@ -93,7 +97,7 @@ public class CDEDownloader
 	 */
 	public CDE downloadCDE(XMLCDE xmlCDE) throws Exception
 	{
-	    Logger.out.debug("Downloading CDE "+xmlCDE.getName());
+	    Logger.out.info("Downloading CDE "+xmlCDE.getName());
 	    
 	    int downloadAttempts = 0;
 		while(downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS)
@@ -110,9 +114,9 @@ public class CDEDownloader
 				Logger.out.error("CDE Download Error: "+conexp.getMessage(), conexp);
 			}
 			downloadAttempts++;
-		}
+		} // while downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS
 		throw new Exception("CDE Download Error: Unable to download CDE "+xmlCDE.getName());
-	}
+	} // downloadCDE
 
 	/**
 	 * @param CDEPublicID PublicID of the CDE to download
@@ -124,14 +128,19 @@ public class CDEDownloader
 		//Create the dataelement and set the dataEelement properties
 		DataElement dataElementQuery = new DataElementImpl();
 		
+		// flag for whether to load the cde using PublicID or not.
 		boolean loadByPublicID = Boolean.getBoolean(ApplicationProperties.getValue("cde.load.by.publicid"));
 		
 		if(loadByPublicID)
+		{
 			dataElementQuery.setPublicID(new Long(xmlCDE.getPublicId()));
+		} // loadByPublicID = true
 		else
+		{
 			dataElementQuery.setPreferredName(xmlCDE.getName());
+		} // else loadByPublicID = false
 		
-		dataElementQuery.setLatestVersionIndicator("Yes");
+		dataElementQuery.setLatestVersionIndicator(Constants.BOOLEAN_YES );
 		
 		List resultList = appService.search(DataElement.class, dataElementQuery);
 		
@@ -141,15 +150,11 @@ public class CDEDownloader
 			//retreive the Data Element for the given search condition
 			DataElement dataElement = (DataElement) resultList.get(0);
 			
+			//Mandar : bug1622: Use of parameterised constructor 
 			// create the cde object and set the values.
-			CDEImpl cdeobj = new CDEImpl();
-			
-			cdeobj.setPublicId(dataElement.getPublicID().toString());
-			cdeobj.setDefination(dataElement.getPreferredDefinition());
-			cdeobj.setLongName(dataElement.getLongName());
-			cdeobj.setVersion(dataElement.getVersion().toString());
-			cdeobj.setPreferredName(dataElement.getPreferredName());
-			cdeobj.setDateLastModified(dataElement.getDateModified());
+			CDEImpl cdeobj = new CDEImpl(dataElement.getPublicID().toString(),dataElement.getPreferredName(),
+					dataElement.getLongName(),dataElement.getPreferredDefinition(),
+					dataElement.getVersion().toString(),dataElement.getDateModified());
 			
 			Logger.out.debug("CDE Public Id : "+cdeobj.getPublicId());
 			Logger.out.debug("CDE Def : "+cdeobj.getDefination());
@@ -169,15 +174,15 @@ public class CDEDownloader
 			    Collection permissibleValueCollection = enumValueDomain.getValueDomainPermissibleValueCollection();
 				Set permissibleValues = getPermissibleValues(permissibleValueCollection);
 				cdeobj.setPermissibleValues(permissibleValues);
-			}
+			} // valueDomain instanceof EnumeratedValueDomain
 			
 			return cdeobj;
-		}
+		} // resultList!=null && !resultList.isEmpty()
 		else //no Data Element retreived
 		{
 			return null;
 		}
-	} // retrieveDataElements
+	} // retrieveDataElement
 	
 	/**
 	 * Returns the Set of Permissible values from the collection of value domains. 
@@ -208,9 +213,9 @@ public class CDEDownloader
 	        Logger.out.debug("Concept ID : "+cachedPermissibleValue.getConceptid());
 	        Logger.out.debug("Value : "+cachedPermissibleValue.getValue());
 	        permissibleValuesSet.add(cachedPermissibleValue);
-	    }
+	    } // while iterator
 	    return permissibleValuesSet;
-	}
+	} // getPermissibleValues
 	
 	/**
 	 * @param proxyhost  url of the database to connect
@@ -260,7 +265,7 @@ public class CDEDownloader
 		{
 			//Logger.out.info("Invalid Proxy Port: " + proxyport);
 			throw new Exception("Invalid ProxyPort");
-		}
+		} // validnum == false
 		
 		// setting the system settings
 		System.setProperty("proxyHost", proxyhost);
@@ -273,7 +278,7 @@ public class CDEDownloader
 		CDEConConfig.proxyport = ApplicationProperties.getValue("proxy.port");
 		CDEConConfig.password = ApplicationProperties.getValue("proxy.username");
 		CDEConConfig.username = ApplicationProperties.getValue("proxy.password");
-	}
+	} // setCDEConConfig
 	
 //	public static void main(String []args) throws Exception
 //	{

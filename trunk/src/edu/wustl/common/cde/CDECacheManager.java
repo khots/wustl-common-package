@@ -31,6 +31,12 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CDECacheManager
 {
+    /**
+     * @param cdeXMLMAP Map of xmlCDEs configured by the user in the CDEConfig.xml.
+     * The refresh() method accepts the XMLCDEs map and iterates through the map. A CDE is downloaded from the server and 
+     * depending on the XMLCDEs object configuration, it is stored in the database. An email is sent to the administrator regarding the download status
+     * of the CDEs. The errors if generated are reported to the administrator by email.
+     */
     public void refresh(Map cdeXMLMAP)
     {
     	Logger.out.info("Initializing CDE Cache Manager");
@@ -42,19 +48,21 @@ public class CDECacheManager
         {
             cdeDownloader = new CDEDownloader();
             cdeDownloader.connect();
+            Logger.out.info("Connected to the server successfully..." );
         }
         catch (Exception exp)
         {
             //Logging the error message.
             errorLogs.add(exp.getMessage());
             
+            Logger.out.error(exp.getMessage(),exp);
             //Send the error logs to administrator.
             sendCDEDownloadStatusEmail(errorLogs);
             return;
         }
         
-        Set ketSet = cdeXMLMAP.keySet();
-        Iterator it = ketSet.iterator();
+        Set xmlCDEMapKeySet = cdeXMLMAP.keySet();
+        Iterator it = xmlCDEMapKeySet.iterator();
         while (it.hasNext())
         {
             Object key = it.next();
@@ -64,6 +72,7 @@ public class CDECacheManager
                 try
                 {
                     CDE cde = cdeDownloader.downloadCDE(xmlCDE);
+                    Logger.out.info(cde.getLongName() + " : CDE download successful ... ");
                     
                     //Sets the parent permissible values and the CDEs for all the permissible values.
                     configurePermissibleValues(cde, xmlCDE);
@@ -72,6 +81,7 @@ public class CDECacheManager
                 catch(Exception exp)
                 {
                     errorLogs.add(exp.getMessage());
+                    Logger.out.error(exp.getMessage(),exp);
                 }
             }
         }
@@ -88,14 +98,17 @@ public class CDECacheManager
             try
             {
                 cdeBizLogic.insert(cde, null, Constants.HIBERNATE_DAO);
+                Logger.out.debug(cde.getLongName() + " : CDE inserted in database ... ");
             }
             catch (UserNotAuthorizedException userNotAuthExp)
             {
                 errorLogs.add(userNotAuthExp.getMessage());
+                Logger.out.error(userNotAuthExp.getMessage(),userNotAuthExp);
             }
             catch (BizLogicException bizLogicExp)
             {
                 errorLogs.add(bizLogicExp.getMessage());
+                Logger.out.error(bizLogicExp.getMessage(),bizLogicExp);
             }
         }
     }
@@ -112,7 +125,7 @@ public class CDECacheManager
             emailHandler.sendCDEDownloadStatusEmail(errorLogs);
         }
     }
-    
+
     /**
      * Sets the parent permissible values for each of the permissible value of the CDE 
      * depending on the parent-child relationships present in the XMlCDE provided. 

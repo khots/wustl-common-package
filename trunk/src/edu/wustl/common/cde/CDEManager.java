@@ -57,17 +57,16 @@ public class CDEManager
 		cdeXMLMAP = new HashMap();
 		try
 		{
-            // create a JAXBContext capable of handling classes generated into
-            // the pspl.cde package
-            JAXBContext jc = JAXBContext.newInstance("edu.wustl.common.cde.xml");
+            // create a JAXBContext capable of handling classes generated into the edu.wustl.common.cde.xml package
+            JAXBContext jaxbContextObject = JAXBContext.newInstance(Constants.CDE_XML_PACKAGE_PATH);
             
-            // create an Unmarshaller
-            Unmarshaller u = jc.createUnmarshaller();
+            // create an Unmarshaller which provides the ability to convert XML data into a tree of Java content objects.
+            Unmarshaller unmarshallerObject = jaxbContextObject.createUnmarshaller();
             
             // unmarshal a root instance document into a tree of Java content
             // objects composed of classes from the pspl.cde package.
             XMLCDECACHE root = 
-                (XMLCDECACHE)u.unmarshal(new FileInputStream(Variables.catissueHome+
+                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(Variables.catissueHome+
                 		System.getProperty("file.separator")+ Constants.CDE_CONF_FILE));
             
             // display the cde details
@@ -124,7 +123,12 @@ public class CDEManager
 		return cdeHandler.retrieve(CDEName);
 	}
 	
-	public List getList(String cdeName, NameValueBean otherValue)
+	/**
+	 * @param cdeName Name of the CDE
+	 * @param otherValue NameValueBean object.
+	 * @return List of PermissibleValues of a CDE. 
+	 */
+	public List getPermissibleValueList(String cdeName, NameValueBean otherValue)
 	{
 		List list = new ArrayList();
 		

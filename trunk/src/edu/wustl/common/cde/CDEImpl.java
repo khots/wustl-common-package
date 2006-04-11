@@ -218,4 +218,31 @@ public class CDEImpl implements CDE
     {
         this.dateLastModified = dateLastModified;
     }
+    
+    //Mandar 05-apr-06 : bugid: 1622 : Parameterised constructor
+    /**
+     * @param publicId PublicID of the CDE.
+     * @param preferredName PreferredName of the CDE.
+     * @param longName Longname of the CDE. 
+     * @param defination Defination of the CDE.
+     * @param version Version of the CDE.
+     * @param dateLastModified Last modified date of the CDE.
+     */
+    public CDEImpl(String publicId, String preferredName, String longName, String defination, String version, Date dateLastModified)
+    {
+    	this.publicId = publicId;
+    	this.preferredName = preferredName;
+    	this.longName = longName;
+    	this.defination = defination;
+    	this.version = version;
+    	this.dateLastModified = dateLastModified;
+    } // empty constructor
+    
+    
+    /**
+     * Default constructor
+     */
+    public CDEImpl()
+    {
+    } // empty constructor
 }
