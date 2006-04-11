@@ -158,4 +158,10 @@ public class Constants
 	public static final int QUERY_RESULTS_TREE_ID = 3;
 	public static final String ROOT = "Root";
 	public static final String CATISSUE_CORE = "caTISSUE Core";
+	
+	//Mandar : CDE xml package path.
+	public static final String CDE_XML_PACKAGE_PATH = "edu.wustl.common.cde.xml";
+	public static final String BOOLEAN_YES = "Yes";
+	public static final String BOOLEAN_NO = "No";
+
 }
