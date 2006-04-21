@@ -10,17 +10,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.AuditException;
-import edu.wustl.common.audit.Auditable;
-import edu.wustl.common.dao.DAO;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.dbManager.ClassRelationshipData;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.logger.Logger;
+
 
 /**
  * AuditManager is an algorithm to figure out the changes with respect to database due to 
@@ -48,7 +50,7 @@ public class AuditManager
 	 * */
 	public void setUserId(Long userId)
 	{
-	    auditEvent.setUserId(userId);
+		auditEvent.setUserId(userId);
 	}
 	
 	/**
@@ -69,6 +71,20 @@ public class AuditManager
 				obj instanceof Date)
 			return true;
 		return false;
+	}
+
+	/** This function checks weather given object is instance of
+	 * Collection or not
+	 * @param obj
+	 * @return boolean 
+	 */
+ 
+	private boolean isCollection(Object obj)
+	{
+		if(obj instanceof Collection)
+			return true;
+		return false;
+		
 	}
 	
 	/**
@@ -114,12 +130,21 @@ public class AuditManager
 				{
 					//filter only getter methods.
 					if(methods[i].getName().startsWith("get") && methods[i].getParameterTypes().length==0)
-					{
-						//For each attribute check the changes.
-						AuditEventDetails auditEventDetails = processField(methods[i], currentObj, previousObj);
-						
-						if(auditEventDetails!=null)
-							auditEventDetailsCollection.add(auditEventDetails);
+					{				
+						if(isManyToMany(currentObj, methods[i]))
+						{
+							Collection auditEventLogs = processManyToManyRelation(currentObj, previousObj,
+														methods[i], eventType);
+							auditEvent.getAuditEventLogCollection().addAll(auditEventLogs);
+						}
+	 					else
+						{
+							AuditEventDetails auditEventDetails = processField(methods[i], currentObj, previousObj);
+							
+							if(auditEventDetails!=null)
+								auditEventDetailsCollection.add(auditEventDetails);
+					
+						}
 					}
 				}
 			}
@@ -129,14 +154,243 @@ public class AuditManager
 				auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
 				auditEvent.getAuditEventLogCollection().add(auditEventLog);
 			}
+			
+	
 		}
 		catch(Exception ex)
 		{
 			Logger.out.debug(ex.getMessage(),ex);
 			throw new AuditException();
 		}
+			
 	}
 	
+	/** This function checks weather object has Many-Many relationship with object returned by Method
+	 *	@param obj Object for which Many-To-Many relation is to be checked
+	 *	@param method Method which returns the RoleClass
+	 *	@return boolean if true then object has Many-To-Many relation othersise not
+	 */
+	private boolean isManyToMany(Auditable obj, Method method) throws Exception
+	{
+		boolean isManyToMany = false;
+		Class roleClass = getRoleClass(obj, method);
+		
+		String attName = Utility.parseAttributeName(method.getName());
+		
+		//Checking roleClass for null because there might be case when there is no roleClass for 
+		// given object and for given method. In that case getRoleClass returns null.	
+		if(roleClass != null)
+		{
+			String roleAttributeName=HibernateMetaData.getFullyQualifiedRoleAttName(obj.getClass(),roleClass,attName);
+			isManyToMany = HibernateMetaData.isRelationManyToMany(obj.getClass(), roleClass,roleAttributeName);
+		
+		}
+		return isManyToMany;
+	}
+	
+
+	/** This function gets the Role Class of a given object for given method
+	 * 	@param obj
+	 * 	@param method
+	 * 	@return Role Class
+	 */
+	private Class getRoleClass(Auditable obj, Method method) throws Exception
+	{
+		Class roleClass=null;
+		
+		Object obj1 =  getValue(obj,method);
+		
+		if(obj1!=null && obj1 instanceof Collection )
+		{
+			String attName = Utility.parseAttributeName(method.getName());
+			roleClass = HibernateMetaData.getRoleClass(attName);
+		}
+		return roleClass;
+	}
+	
+	/**
+	 * This Function checks for Many-To-Many Relations and adds the entry in audit table.. 
+	 * @param currentObj Current state of object.
+	 * @param previousObj  Previous state of object.
+	 * @param eventType Event for which the comparator will be called. e.g. Insert, update, delete etc.
+	 * */
+	
+	private Collection processManyToManyRelation(Auditable currentObj, Auditable previousObj, 
+									Method method, String eventType) throws Exception
+	{
+		Collection auditEventLogCollection = new HashSet();
+		
+		Class roleClass = getRoleClass(currentObj, method);
+		String attName = Utility.parseAttributeName(method.getName());
+		String roleAttributeName = HibernateMetaData.getFullyQualifiedRoleAttName(currentObj.getClass(),roleClass,attName);
+		
+		ClassRelationshipData crd=HibernateMetaData.getClassRelationshipData(currentObj.getClass(),roleClass,roleAttributeName);
+		
+		String roleId=crd.getRoleId();
+		String keyId=crd.getKeyId();
+		
+		//Getting the tableName
+		String tableName=crd.getRelationTable();
+		
+		//getting the collection values and copying it in another collection.
+		// This is done because original values should not get affected
+		Collection values=(Collection)getValue(currentObj,method);
+		Collection currCollection=duplicateCollection(values);
+		
+		values=(Collection)getValue(previousObj,method);
+		Collection prevCollection=duplicateCollection(values);
+		
+		//removing the common values from current collection and prev collection as for common values
+		//there is no audit required
+		removeCommonEntry(currCollection,prevCollection);
+		
+		Iterator currColIterator = currCollection.iterator();
+		Iterator prevColIterator = prevCollection.iterator();
+		
+		
+		// Iterating through both the collection i'e currCollection and prevCollection until
+		// one of the collection ends.
+		// By doing this we are directly auditing the values as setting the prev value to the previous collection value
+		// and current values to the current collection value
+		while(currColIterator.hasNext() && prevColIterator.hasNext())
+		{
+			Set auditEventDetailsCollection = new HashSet();
+			Auditable curr = (Auditable)currColIterator.next();
+			Auditable prev = (Auditable)prevColIterator.next();
+		
+			AuditEventDetails auditEventDetails = setAuditEventDetails(null,roleId,
+					Utility.toString(prev.getSystemIdentifier()),
+					Utility.toString(curr.getSystemIdentifier()));			
+			auditEventDetailsCollection.add(auditEventDetails);
+				
+			AuditEventLog auditEventLog=setAuditEventLog(auditEventDetailsCollection,tableName,eventType);
+			auditEventLogCollection.add(auditEventLog);
+			
+		}
+		//After iterating if currCollection has not finished then this means user has entered more values than previous collection
+		// then audit the values as setting the prev value to null
+		// and current values to the current collection value
+		while(currColIterator.hasNext())
+		{
+			Set auditEventDetailsCollection = new HashSet();
+			Auditable curr=(Auditable)currColIterator.next();
+			AuditEventDetails auditEventDetails1 = setAuditEventDetails(null,keyId,null,
+						Utility.toString(currentObj.getSystemIdentifier()));
+			auditEventDetailsCollection.add(auditEventDetails1);
+			
+			AuditEventDetails auditEventDetails2=setAuditEventDetails(null,roleId,null,
+						curr.getSystemIdentifier().toString());
+			auditEventDetailsCollection.add(auditEventDetails2);
+			
+			AuditEventLog auditEventLog=setAuditEventLog(auditEventDetailsCollection,tableName,eventType);
+			auditEventLogCollection.add(auditEventLog);
+
+		}
+		//After iterating if prevCollection has not finished then this means user has deleted some values from previous collection
+		// then audit the values as setting the prev value to the previous collection value
+		// and current values to null
+
+		while(prevColIterator.hasNext())
+		{
+			Set auditEventDetailsCollection = new HashSet();
+			AbstractDomainObject prev=(AbstractDomainObject)prevColIterator.next();
+			
+			AuditEventDetails auditEventDetails1=setAuditEventDetails(null,keyId,
+					Utility.toString(currentObj.getSystemIdentifier()),null);
+			auditEventDetailsCollection.add(auditEventDetails1);
+		
+			AuditEventDetails auditEventDetails2=setAuditEventDetails(null,roleId,
+					Utility.toString(prev.getSystemIdentifier()),null);
+			auditEventDetailsCollection.add(auditEventDetails2);
+			
+			AuditEventLog auditEventLog=setAuditEventLog(auditEventDetailsCollection,tableName,eventType);
+			auditEventLogCollection.add(auditEventLog);
+
+		}
+		return auditEventLogCollection; 
+	}
+	
+	/**
+	 * This function copies the values of one collection into another collection
+	 * @param values
+	 * @return duplicate collection
+	 */
+	private Collection duplicateCollection(Collection values)
+	{
+		Collection duplicateCol=new HashSet();
+		if(values!=null)
+		{
+			duplicateCol.addAll(values);
+		}
+		return duplicateCol;
+	
+	}
+	
+	/**
+	 * This function sets the AuditEventDetails object's values 
+	 * @param systemIdentifier
+	 * @param elementName
+	 * @param previousValue
+	 * @param currentValue
+	 * @return AuditEvenDetails
+	 */
+	private AuditEventDetails setAuditEventDetails(Long systemIdentifier,String elementName,String previousValue,String currentValue)
+	{
+		AuditEventDetails auditEventDetails=new AuditEventDetails();
+		auditEventDetails.setSystemIdentifier(systemIdentifier);
+		auditEventDetails.setElementName(elementName);
+		auditEventDetails.setPreviousValue(previousValue);
+		auditEventDetails.setCurrentValue(currentValue);
+		return auditEventDetails;
+	}
+
+	/**
+	 * This function sets the AuditEventLog object's values 
+	 * @param auditEventDetailsCollection
+	 * @param objectName
+	 * @param eventType
+	 * @return AuditEvenLog
+	 */
+	private AuditEventLog setAuditEventLog(Collection auditEventDetailsCollection,String objectName,String eventType)
+	{
+		AuditEventLog auditEventLog=new AuditEventLog();
+		auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
+		auditEventLog.setObjectName(objectName);
+		auditEventLog.setEventType(eventType);
+		return auditEventLog;
+
+	}
+	
+
+	/**
+	 * This function removes the common entries of currCollection and prevcollection
+	 * @param currCollection 
+	 * @param prevCollection
+	 */
+	private void removeCommonEntry(Collection currCollection,Collection prevCollection)
+	{
+		Iterator prevColIterator = prevCollection.iterator();
+	    while(prevColIterator.hasNext())
+		{
+	    	Auditable prev = (Auditable)prevColIterator.next();
+	    	Iterator currColIterator=currCollection.iterator();
+			
+			while(currColIterator.hasNext())
+			{
+				Auditable curr= (Auditable) currColIterator.next();
+				
+				if(prev!=null && curr!=null && 
+						prev.getSystemIdentifier().equals(curr.getSystemIdentifier()))
+				{
+					prevColIterator.remove();
+					currColIterator.remove();
+					break;
+				}
+			}
+		}
+	}
+	
+
 	/**
 	 * Process each field to find the change from previous value to current value.
 	 * @param method referance of getter method object access the current and previous value of the object.
@@ -147,10 +401,10 @@ public class AuditManager
 	private AuditEventDetails processField(Method method, Object currentObj, Object previousObj) throws Exception
 	{
 		//Get the old value of the attribute from previousObject
-		Object prevVal = getValue(method, previousObj);
+		Object prevVal = getValue(previousObj, method);
 		
 		//Get the current value of the attribute from currentObject
-		Object currVal = getValue(method, currentObj);
+		Object currVal = getValue(currentObj, method);
 		
 		//Compare the old and current value
 		AuditEventDetails auditEventDetails = compareValue(prevVal, currVal);
@@ -158,7 +412,7 @@ public class AuditManager
 		if(auditEventDetails!=null)
 		{
 			//Parse the attribute name from getter method.
-			String attributeName = processAttributeName(method.getName());
+			String attributeName = Utility.parseAttributeName(method.getName());
 			
 			//Find the currosponding column in the database
 			String columnName = HibernateMetaData.getColumnName(currentObj.getClass(),attributeName);
@@ -172,25 +426,12 @@ public class AuditManager
 		return auditEventDetails;
 	}
 	
-	private String processAttributeName(String methodName) throws Exception
-	{
-		String attributeName = "";
-		int index = methodName.indexOf("get");
-		if(index!=-1)
-		{
-			attributeName = methodName.substring(index+"get".length());
-		}
-		
-		String firstChar = (attributeName.charAt(0)+"").toLowerCase();
-		attributeName = firstChar + attributeName.substring(1);
-		
-		Logger.out.debug("attributeName <"+attributeName+">");
-		
-		return attributeName;
-	}
-	
-	
-	private Object getValue(Method method, Object obj) throws Exception
+	/** This function gets the value returned by the method invoked my given object
+	 * @param obj Object for which method should be invoked
+	 * @param method This is the method for which we have to find out the return value
+	 * @return Object return value
+	 */
+	private Object getValue(Object obj,Method method) throws Exception
 	{
 		if(obj!=null)
 		{
@@ -203,10 +444,24 @@ public class AuditManager
 			}
 			if(isVariable(val))
 				return val; 
+			
+			 
+			if(isCollection(val))
+			{
+				return val;
+			}
+		
 		}
 		return null;
 	}
 	
+	
+	/** This function compares the prevVal object and currval object
+	 * and if there is any change in value then create the AuditEvenDetails object
+	 * @param preVal previous value
+	 * @param currVal current value
+	 * @return AuditEventDetails  
+	 */
 	private AuditEventDetails compareValue(Object prevVal, Object currVal) 
 	{
 		Logger.out.debug("prevVal <"+prevVal+">");
@@ -244,7 +499,6 @@ public class AuditManager
 		return null;
 	}
 	
-	
 	public void insert(DAO dao) throws DAOException 
 	{
 		if(auditEvent.getAuditEventLogCollection().isEmpty())
@@ -274,52 +528,59 @@ public class AuditManager
 		{
 		    Logger.out.debug("Exception:"+sme.getMessage(),sme);
 		}
+		
+		
 	}
-	
-	
-//	public static void main(String[] args)  throws IllegalAccessException, Exception
-//	{
-//		Variables.catissueHome = System.getProperty("user.dir");
-//		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
-//		Logger.out = org.apache.log4j.Logger.getLogger("A");
-//		
-//		Logger.out.info("here");
-//		
-//		AuditManager aAuditManager = new AuditManager();
-//
-//		
-////		HibernateDAO dao = new HibernateDAO();
-////		dao.openSession(null);
-////		Department deptCurr = (Department)dao.retrieve(Department.class.getName(),new Long(2));
-////		dao.closeSession();
-////
-////		dao.openSession(null);
-////		Department deptOld = (Department)dao.retrieve(Department.class.getName(),new Long(2));
-////		dao.closeSession();
-//		
-//		AbstractBizLogic bizLogic = BizLogicFactory.getDefaultBizLogic();
-//		StorageContainer storageContainerCurr = (StorageContainer)(bizLogic.retrieve(StorageContainer.class.getName(),Constants.SYSTEM_IDENTIFIER,new Long(1))).get(0);
-//		StorageContainer storageContainerOld = (StorageContainer)(bizLogic.retrieve(StorageContainer.class.getName(),Constants.SYSTEM_IDENTIFIER,new Long(1))).get(0);
-//		
-//		
-//		//storageContainerCurr.setTempratureInCentigrade(new Double(80));
-//		
-//
-//		
-//		aAuditManager.compare(storageContainerCurr,storageContainerOld,"UPDATE");
-//		Logger.out.debug(aAuditManager.auditEvent.getAuditEventLogCollection());
-//		
-//		
-//		Institution a = new Institution();
-//		a.setName("AA");
-//		aAuditManager.compare(a,null, "INSERT");
-//		
-//		Logger.out.debug(aAuditManager.auditEvent.getAuditEventLogCollection());
-//	}
-	
 	public void addAuditEventLogs(Collection auditEventLogsCollection)
 	{
 	    auditEvent.getAuditEventLogCollection().addAll(auditEventLogsCollection);
 	}
+	
+	public static void main(String[] args)  throws IllegalAccessException, Exception
+	{
+//		Variables.catissueHome = System.getProperty("user.dir");
+//		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
+//		Logger.out = org.apache.log4j.Logger.getLogger("A");
+//		DBUtil.currentSession();
+//		Logger.out.info("here");
+//		
+//		AuditManager aAuditManager = new AuditManager();
+
+		
+//		HibernateDAO dao = new HibernateDAO();
+//		dao.openSession(null);
+//		Department deptCurr = (Department)dao.retrieve(Department.class.getName(),new Long(2));
+//		dao.closeSession();
+//
+//		dao.openSession(null);
+//		dao.closeSession();
+		
+		/*AbstractBizLogic bizLogic = BizLogicFactory.getDefaultBizLogic();
+		StorageContainer storageContainerCurr = (StorageContainer)(bizLogic.retrieve(StorageContainer.class.getName(),Constants.SYSTEM_IDENTIFIER,new Long(1))).get(0);
+		StorageContainer storageContainerOld = (StorageContainer)(bizLogic.retrieve(StorageContainer.class.getName(),Constants.SYSTEM_IDENTIFIER,new Long(1))).get(0);*/
+		
+		
+		//storageContainerCurr.setTempratureInCentigrade(new Double(80));
+		
+
+		
+		/*aAuditManager.compare(storageContainerCurr,storageContainerOld,"UPDATE");
+		Logger.out.debug(aAuditManager.auditEvent.getAuditEventLogCollection());*/
+		
+		
+		/*Institution a = new Institution();
+		a.setName("AA");
+		aAuditManager.compare(a,null, "INSERT");*/
+		/*Biohazard b=new Biohazard();
+		b.setName("sdfdf");
+		b.setType("asdfas");
+		b.setComments("sdfsdf");
+		aAuditManager.compare(b,null, "INSERT");
+		//Specimen s=new Specimen();
+		
+		
+		Logger.out.debug(aAuditManager.auditEvent.getAuditEventLogCollection());*/
+	}
+	
 	
 }
