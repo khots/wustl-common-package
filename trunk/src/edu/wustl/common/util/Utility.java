@@ -232,6 +232,23 @@ public class Utility
 		newObjectArr[newObjectArr.length-1] = obj;
 		return newObjectArr;
 	}
+    public static String parseAttributeName(String methodName) throws Exception
+	{
+		String attributeName = "";
+		int index = methodName.indexOf("get");
+		if(index!=-1)
+		{
+			attributeName = methodName.substring(index+"get".length());
+		}
+		
+		String firstChar = (attributeName.charAt(0)+"").toLowerCase();
+		attributeName = firstChar + attributeName.substring(1);
+		
+		Logger.out.debug("attributeName <"+attributeName+">");
+		
+		return attributeName;
+	}
+	
     
     /**
 	 * @param list
@@ -247,5 +264,13 @@ public class Utility
 			}
 		}
 		return nullFreeList;
+	}
+	
+	public static String toString(Object obj)
+	{
+		if(obj == null)
+			return "";
+		
+		return obj.toString();
 	}
 }
