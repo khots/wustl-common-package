@@ -7,16 +7,23 @@
 package edu.wustl.common.util.dbManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sf.hibernate.cfg.Configuration;
+import net.sf.hibernate.mapping.Collection;
 import net.sf.hibernate.mapping.Column;
 import net.sf.hibernate.mapping.PersistentClass;
 import net.sf.hibernate.mapping.Property;
 import net.sf.hibernate.mapping.Subclass;
 import net.sf.hibernate.mapping.Table;
+
+import org.apache.log4j.PropertyConfigurator;
+
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -29,9 +36,12 @@ import edu.wustl.common.util.logger.Logger;
 public class HibernateMetaData
 {
 	private static Configuration cfg; 
+	private static HashSet mappings=new HashSet();
 	public static void initHibernateMetaData(Configuration configuration)
 	{
 		cfg = configuration;
+//		This function finds all the relations and keeps in mappings set.
+		findRelations();		
 	}
 	
 	/**
@@ -84,9 +94,8 @@ public class HibernateMetaData
 		Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
 		
 		PersistentClass persistentClass = cfg.getClassMapping(objClass);
-		PersistentClass superClass;
 		if (persistentClass != null && persistentClass.getSuperclass()!=null) {
-			superClass = persistentClass;
+	
 			Logger.out.debug(objPackage.getName()+" "+persistentClass.getName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 					);
 			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
@@ -123,7 +132,6 @@ public class HibernateMetaData
 	{
 		Iterator it = cfg.getClassMappings();
 		PersistentClass persistentClass;
-		String className;
 		while(it.hasNext())
 		{
 			persistentClass = (PersistentClass) it.next();
@@ -209,20 +217,208 @@ public class HibernateMetaData
 		}
 	}
 	
-//	public static void main(String[] args) throws Exception
-//	{
-//		Variables.catissueHome = System.getProperty("user.dir");
-//		Logger.out = org.apache.log4j.Logger.getLogger("");
-//		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
-//		
-//		AbstractBizLogic bizLogic = BizLogicFactory.getBizLogic(Constants.COLLECTION_PROTOCOL_FORM_ID);
-//		bizLogic.retrieve(CollectionProtocol.class.getName(),Constants.SYSTEM_IDENTIFIER,new Long(1));
-//		
-//		//HibernateMetaData.getDATA(CollectionProtocol.class);
-//		HibernateMetaData.getSubClassList(Specimen.class.getName());
-//		//System.out.println(str);
-//		
-//		System.out.println(HibernateMetaData.getClassName("CATISSUE_MOLECULAR_SPECIMEN"));
-//		
-//	}
+	/**
+	 * This Function finds all the relations in i.e Many-To-Many and One-To-Many
+	 * All the relations are kept in HashMap where key is formed as table1@table2@table_name@attributeName
+	 * and value is Many-To-Many or One-To-Many
+	 * 
+	 * @return Map
+	 */
+	private static void findRelations()
+	{
+		try 
+		{
+			Iterator itr1=cfg.getCollectionMappings();
+			
+			while(itr1.hasNext())
+			{
+				Collection col=(Collection)itr1.next();
+				
+				if(col.getElement().getClass().getName().equals("net.sf.hibernate.mapping.ManyToOne"))
+				{
+					saveRelations(col,"ManyToMany");
+				}
+				else
+				{
+					saveRelations(col,"OneToMany");
+				}
+			}
+		} 
+		catch (Exception e) 
+		{
+			Logger.out.info("Error occured in fildAllRelations Function:"+e);
+		}
+		
+	}
+	
+	/**This function saves the relation data in HashSet.
+	 * @param col this is the collection which contains all data
+	 * @param rel_type this is Many-To-Many ot Many-To-One
+	 * @throws Exception
+	 */
+	private static void saveRelations(Collection col,String rel_type) throws Exception
+	{
+		String className=col.getOwnerClass().getName();
+		String relatedClassName=col.getElement().getType().getName();
+		String roleAttribute=col.getRole();
+		String relationType=rel_type;
+		String relationTable=col.getElement().getTable().getName();
+		String keyId=getKeyId(roleAttribute);
+		String roleId=getRoleKeyId(roleAttribute);
+		
+		ClassRelationshipData hmc=new ClassRelationshipData(className,relatedClassName,roleAttribute,relationType,
+											relationTable,keyId,roleId);
+		mappings.add(hmc);
+		
+		List list1=HibernateMetaData.getSubClassList(col.getOwnerClass().getName());
+		for(int i=0;i<list1.size();i++)
+		{
+			hmc=new ClassRelationshipData(list1.get(i).toString(),relatedClassName,roleAttribute,relationType,
+					relationTable,keyId,roleId);
+			mappings.add(hmc);
+		}
+		
+		List list2=HibernateMetaData.getSubClassList(col.getElement().getType().getName());
+		for(int i=0;i<list2.size();i++)
+		{
+			hmc=new ClassRelationshipData(className,list2.get(i).toString(),roleAttribute,relationType,
+					relationTable,keyId,roleId);
+			mappings.add(hmc);
+		}
+	}
+	
+	
+	/** This function checks weather relation is Many-Many 
+	 * 
+	 * @param classObj1
+	 * @param classObj2
+	 * @return true is relation is Many-Many otherwise false
+	 */
+	public static boolean isRelationManyToMany(Class classObj1,Class classObj2,String roleAttributeName)
+	{
+		ClassRelationshipData crd=new ClassRelationshipData(classObj1.getName(),classObj2.getName(),roleAttributeName);
+		Iterator itr=mappings.iterator();
+		
+		while(itr.hasNext())
+		{
+			ClassRelationshipData crd1=(ClassRelationshipData)itr.next();
+			if(crd1.equals(crd)&& crd1.getRelationType().equals("ManyToMany"))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static ClassRelationshipData getClassRelationshipData(Class classObj1,Class classObj2, String roleAttributeName)
+	{
+		ClassRelationshipData crd=new ClassRelationshipData(classObj1.getName(),classObj2.getName(),roleAttributeName);
+		
+		Iterator itr=mappings.iterator();
+		
+		while(itr.hasNext())
+		{
+			ClassRelationshipData crd1=(ClassRelationshipData)itr.next();
+			if(crd1.equals(crd))
+			{
+				return crd1;
+				
+			}
+		}
+		return null;
+		
+	}
+	/**This function returns the RoleClass for given attName
+	 * @param attName
+	 * @return RoleClass
+	 */
+	public static Class getRoleClass(String attName)
+	{
+		Iterator itr=mappings.iterator();
+		
+		while(itr.hasNext())
+		{
+			ClassRelationshipData crd=(ClassRelationshipData)itr.next();
+			if(crd.getRoleAttribute().indexOf(attName)!=-1)
+			{
+				return Utility.getClassObject(crd.getRelatedClassName());
+				
+			}
+		}
+		return null;
+	}
+	
+	/** This function returns the attributeName related to classObj1 and classObj2
+	 * 
+	 * @param classObj1
+	 * @param classObj2
+	 * @return attName
+
+		getFullyQulifiedRoleAttrName
+	 */
+	public static String getFullyQualifiedRoleAttName(Class classObj1,Class classObj2,String attName)
+	{
+		Iterator itr=mappings.iterator();
+		while(itr.hasNext())
+		{
+			ClassRelationshipData crd=(ClassRelationshipData)itr.next();
+			if(classObj1.getName().equals(crd.getClassName())&&classObj2.getName().equals(crd.getRelatedClassName())&& crd.getRoleAttribute().indexOf(attName)!=-1)
+			{
+				return crd.getRoleAttribute();
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * This function gets the key Id 
+	 * from hibernate mappings and returns the value
+	 * @param attributeName
+	 * @return key Id
+	 * 
+	 */
+	public static String getKeyId(String attributeName)
+	{
+		net.sf.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
+		Iterator keyIt = col1.getKey().getColumnIterator();
+		while (keyIt.hasNext()) 
+		{
+			Column col = (Column) keyIt.next();
+			return(col.getName());
+		}
+	
+		return "";
+	}
+	/** This function returns the role Id
+	 * from hibernate mapping and returns the value
+	 * @param attributeName 
+	 * @return roleKeyId
+	 * 
+	 */
+	public static String getRoleKeyId(String attributeName)
+	{
+		net.sf.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
+		Iterator colIt = col1.getElement().getColumnIterator();
+		while (colIt.hasNext()) 
+		{
+			Column col = (Column) colIt.next();
+			return(col.getName());
+		}
+		return "";
+	}
+	
+	
+	public static void main(String[] args) throws Exception
+	{
+		Variables.catissueHome = System.getProperty("user.dir");
+		Logger.out = org.apache.log4j.Logger.getLogger("");
+		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
+		
+		Logger.out.debug("here");
+		
+		DBUtil.currentSession();
+		System.out.println(mappings.size());
+		
+	}
 }
