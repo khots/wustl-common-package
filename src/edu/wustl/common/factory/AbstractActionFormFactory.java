@@ -1,5 +1,5 @@
 /**
- * <p>Title: MasterFactory Class>
+ * <p>Title: AbstractActionFormFactory Class>
  * <p>Description:	This is an abstract class for the ActionFormFactory class.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -27,5 +27,5 @@ public abstract class AbstractActionFormFactory
      * @return the formbean corressponding to the domain object passed
      * and the operation to be performed.
      */
-    public abstract AbstractActionForm getFormBean(Object domainObject,String operation);
+    public abstract AbstractActionForm getFormBean(Object domainObject,String operation) throws Exception;
 }
