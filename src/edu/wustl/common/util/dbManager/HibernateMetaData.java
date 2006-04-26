@@ -407,6 +407,37 @@ public class HibernateMetaData
 		}
 		return "";
 	}
+
+	//Mandar:26-apr-06 start
+//	Mandar : 26-Apr-06 : 872 : Column width
+	/**
+	 * @param classObj Name of the class. 
+	 * @param attributeName Name of the attribute.
+	 * @return The width of the column. Returns width of the column or zero.
+	 */
+	public static int getColumnWidth(Class classObj, String attributeName)
+	{
+		Iterator it = cfg.getClassMapping(classObj).getPropertyClosureIterator();
+		while(it.hasNext())
+		{
+			Property property = (Property)it.next();
+			
+			if(property!=null && property.getName().equals(attributeName))
+			{
+				Iterator colIt = property.getColumnIterator();
+				while(colIt.hasNext())
+				{
+					Column col = (Column)colIt.next();
+					return col.getLength();
+				}
+			}
+		}
+		// if attribute is not found than the default width will be 50.
+		return 50;
+	} // getColumnWidth
+
+
+	//	Mandar:26-apr-06 end
 	
 	
 	public static void main(String[] args) throws Exception
