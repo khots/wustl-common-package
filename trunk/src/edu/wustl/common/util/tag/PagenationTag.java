@@ -111,13 +111,28 @@ public class PagenationTag extends TagSupport
             }
 //            System.out.println("resultLowRange = "+resultLowRange+" resultHighRange "+resultHighRange+" pageNum = "+pageNum);
             out.println("<tr> <td class = \"formtextbg\" align=\"CENTER\">"+name+"</td>");
+            
+            //Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. Checking for zero records.
+            if(totalResults > 0)
+            {
             out.println("<td  align = \"CENTER\" class = \"formtextbg\">Showing Results "
                             + resultLowRange
                             + " - "
                             + resultHighRange
                             + " of "
                             + totalResults + "</td>");
-            
+            }
+            else
+            {
+                out.println("<td  align = \"CENTER\" class = \"formtextbg\">Showing Results "
+                        + "0"
+                        + " - "
+                        + "0"
+                        + " of "
+                        + "0" + "</td>");
+            }
+            //Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. end
+
             if ((m_pageLinkEnd) > numLinks)
             {
                 out.print("<td align=\"CENTER\"><a href=\"javascript:send("+(m_pageLinkStart -1)+","+totalResults+",'"+prevPage+"','"+pageName+"')"
