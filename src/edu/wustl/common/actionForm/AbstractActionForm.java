@@ -289,4 +289,28 @@ public abstract class AbstractActionForm extends ActionForm
 	public void setForwardTo(String forwardTo) {
 		this.forwardTo = forwardTo;
 	}
+	
+//	----------------- submittedFor -------------
+	protected String submittedFor = null;
+	
+	/**
+	 * @return Returns submittedFor value
+	 */
+	public String getSubmittedFor() {
+		return submittedFor;
+	}
+	
+	/**
+	 * @param submittedFor - submittedFor value
+	 */
+	public void setSubmittedFor(String submittedFor) {
+		this.submittedFor = submittedFor;
+	}
+	
+	/**
+	 * This method set Identifier of newly added object by AddNew operation into FormBean which initiliazed AddNew operation
+	 * @param formBeanId - ID of FormBean added by AddNew operation
+	 * @param addObjectIdentifier - Identifier of newly added object by AddNew operation
+	 */
+	public void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier){}
 }
