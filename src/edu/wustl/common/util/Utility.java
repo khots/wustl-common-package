@@ -273,4 +273,28 @@ public class Utility
 		
 		return obj.toString();
 	}
+	
+	/**
+     * Returns name of FormBean specified in struts-config.xml for passed Object of FormBean
+     * @param obj - FormBean object 
+     * @return String - name of FormBean object
+     */
+    public static String getFormBeanName(Object obj)
+    {
+        String objClassName=obj.getClass().toString();
+        
+        objClassName=objClassName.substring((objClassName.lastIndexOf(".")+1),(objClassName.length()));
+    
+        Logger.out.debug("ClassName in getFormBean()---------->"+objClassName);
+        
+        String classNameFirstCharacter=objClassName.substring(0,1);
+        
+        Logger.out.debug("FirstCharacter of ClassName-------------->"+classNameFirstCharacter);
+        
+        String formBeanName=classNameFirstCharacter.toLowerCase()+objClassName.substring(1,(objClassName.length()));
+        
+        Logger.out.debug("FormBeanName in getFormBean()--------------->"+formBeanName);
+        
+        return formBeanName;
+    }
 }
