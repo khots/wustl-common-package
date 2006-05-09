@@ -13,7 +13,6 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 
-
 /**
  * @author kapil_kaveeshwar
  *
@@ -75,7 +74,7 @@ public interface DAO
 	 */
 	public abstract List retrieve (String sourceObjectName, String whereColumnName, 
 			   Object whereColumnValue) throws DAOException;
-
+	
 	/**
 	 * Returns the list of all source objects available in database.
 	 * @param sourceObjectName Source object's name to be retrived from database.
@@ -94,7 +93,5 @@ public interface DAO
 	
 	public Object retrieve (String sourceObjectName, Serializable systemIdentifier) throws DAOException;
 	
-	public abstract void disableRelatedObjects(String TABLE_NAME, String WHERE_COLUMN_NAME, Long whereColValue[]) throws DAOException;
-	
-	public abstract String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException;
+	public abstract void disableRelatedObjects(String tableName, String whereColumnName, Long whereColumnValues[]) throws DAOException;
 }
