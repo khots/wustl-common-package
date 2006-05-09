@@ -76,7 +76,7 @@ public class AuditEventLog implements java.io.Serializable
 	}
 
 	/**
-     * @hibernate.many-to-one column="AUDIT_EVENT_ID"  class="edu.wustl.catissuecore.domain.AuditEvent" constrained="true"
+     * @hibernate.many-to-one column="AUDIT_EVENT_ID"  class="edu.wustl.common.domain.AuditEvent" constrained="true"
 	 * @see #setParticipant(Site)
      */
 	public AuditEvent getAuditEvent()
@@ -92,7 +92,7 @@ public class AuditEventLog implements java.io.Serializable
 	/**
 	 * @hibernate.set name="auditEventDetailsCollcetion" table="CATISSUE_AUDIT_EVENT_DETAILS"
 	 * @hibernate.collection-key column="AUDIT_EVENT_LOG_ID"
-	 * @hibernate.collection-one-to-many class="edu.wustl.catissuecore.domain.AuditEventDetails"
+	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventDetails"
 	 */
 	public Collection getAuditEventDetailsCollcetion()
 	{
