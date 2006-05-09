@@ -74,7 +74,7 @@ public class AuditEventDetails implements java.io.Serializable
 	}
 	
 	/**
-     * @hibernate.many-to-one column="AUDIT_EVENT_LOG_ID"  class="edu.wustl.catissuecore.domain.AuditEventLog" constrained="true"
+     * @hibernate.many-to-one column="AUDIT_EVENT_LOG_ID"  class="edu.wustl.common.domain.AuditEventLog" constrained="true"
 	 * @see #setParticipant(Site)
      */
 	public AuditEventLog getAuditEventLog() 

@@ -142,7 +142,7 @@ public class AuditEvent implements java.io.Serializable
 	/**
 	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
-	 * @hibernate.collection-one-to-many class="edu.wustl.catissuecore.domain.AuditEventLog"
+	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
 	 */
 	public Collection getAuditEventLogCollection()
 	{
