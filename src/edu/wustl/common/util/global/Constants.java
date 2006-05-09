@@ -157,11 +157,173 @@ public class Constants
 	public static final int STORAGE_CONTAINER_TREE_ID = 2;
 	public static final int QUERY_RESULTS_TREE_ID = 3;
 	public static final String ROOT = "Root";
-	public static final String CATISSUE_CORE = "caTISSUE Core";
+	public static final String CATISSUE_CORE = "caTissue Core";
 	
 	//Mandar : CDE xml package path.
 	public static final String CDE_XML_PACKAGE_PATH = "edu.wustl.common.cde.xml";
 	public static final String BOOLEAN_YES = "Yes";
 	public static final String BOOLEAN_NO = "No";
+	
+	public static final String SESSION_DATA = "sessionData";
+	public static final String PASSWORD_CHANGE_IN_SESSION = "changepassword";
+	
+	public static final String USER_CLASS_NAME = "edu.wustl.catissuecore.domain.User";
+	
+	public static final String IDENTIFIER = "IDENTIFIER";
+	
+	public static final String FIELD_TYPE_BIGINT = "bigint";
+	public static final String FIELD_TYPE_VARCHAR = "varchar";
+	public static final String FIELD_TYPE_TEXT = "text";
+	public static final String FIELD_TYPE_TINY_INT = "tinyint";
+	public static final String FIELD_TYPE_DATE = "date";
+	public static final String FIELD_TYPE_TIMESTAMP_DATE = "timestampdate";
+	
+	public static final String TABLE_ALIAS_NAME_COLUMN = "ALIAS_NAME";
+	public static final String TABLE_DATA_TABLE_NAME = "CATISSUE_QUERY_TABLE_DATA";
+	public static final String TABLE_DISPLAY_NAME_COLUMN = "DISPLAY_NAME";
+	
+	public static final String TABLE_FOR_SQI_COLUMN = "FOR_SQI";
+	
+	public static final String TABLE_ID_COLUMN = "TABLE_ID";
+	
+	public static final String NULL = "NULL";
+	
+	public static final String CONDITION_VALUE_YES = "yes";
+	
+	public static final String TINY_INT_VALUE_ONE = "1";
+	public static final String TINY_INT_VALUE_ZERO = "0";
+	
+	public static final String FIELD_TYPE_TIMESTAMP_TIME = "timestamptime";
+	
+	public static final String CDE_NAME_TISSUE_SITE = "Tissue Site";
+	
+	public static final String UPPER = "UPPER";
+	
+	public static final String PARENT_SPECIMEN_ID_COLUMN = "PARENT_SPECIMEN_ID";
+	
+	// Query results view temporary table name.
+	public static final String QUERY_RESULTS_TABLE = "CATISSUE_QUERY_RESULTS";
+	
+	public static final String TIME_PATTERN_HH_MM_SS = "HH:mm:ss";
+	
+	public static final int SIMPLE_QUERY_INTERFACE_ID = 40;
+	
+	// -- menu selection related
+	public static final String MENU_SELECTED = "menuSelected";
+	
+	public static final String SIMPLE_QUERY_MAP = "simpleQueryMap";
+	
+	public static final String IDENTIFIER_FIELD_INDEX = "identifierFieldIndex";
+	public static final String PAGEOF_SIMPLE_QUERY_INTERFACE = "pageOfSimpleQueryInterface";
+	public static final String SIMPLE_QUERY_ALIAS_NAME = "simpleQueryAliasName";
+	
+	public static final String SIMPLE_QUERY_INTERFACE_ACTION = "/SimpleQueryInterface.do";
+	
+	public static final String PAGEOF = "pageOf";
+	public static final String TABLE_ALIAS_NAME = "aliasName";
+	public static final String SIMPLE_QUERY_NO_RESULTS = "noResults";
+	public static final String SEARCH_OBJECT_ACTION = "/SearchObject.do";
+	
+	public static final String SEARCH = "search";
+	
+	// SimpleSearchAction
+	public static final String SIMPLE_QUERY_SINGLE_RESULT = "singleResult";
+	
+	public static final String SPREADSHEET_DATA_LIST = "spreadsheetDataList";
+	public static final String SPREADSHEET_COLUMN_LIST = "spreadsheetColumnList";
+	
+	public static final String ACCESS_DENIED = "access_denied";
+	
+	public static final String ADVANCED_CONDITION_NODES_MAP = "advancedConditionNodesMap";
+	public static final String ADVANCED_CONDITIONS_ROOT = "advancedCondtionsRoot";
+	
+	public static final String TREE_VECTOR = "treeVector";
+	public static final String SELECT_COLUMN_LIST = "selectColumnList";
+	public static final String SELECTED_NODE = "selectedNode";
+	
+	//Individual view Constants in DataViewAction.
+	public static final String CONFIGURED_COLUMN_DISPLAY_NAMES = "configuredColumnDisplayNames";
+	public static final String CONFIGURED_COLUMN_NAMES = "configuredColumnNames";
+	public static final String CONFIGURED_SELECT_COLUMN_LIST = "configuredSelectColumnList";
+	
+	public static final String COLUMN_DISPLAY_NAMES = "columnDisplayNames";
+	
+	public static final String COLUMN_ID_MAP = "columnIdsMap";
+	public static final String PAGEOF_ADVANCE_QUERY_INTERFACE = "pageOfAdvanceQueryInterface";
+	public static final String PAGEOF_QUERY_RESULTS = "pageOfQueryResults";
+	
+	public static final String COLUMN = "Column";
+	
+	public static final String ATTRIBUTE_NAME_LIST = "attributeNameList";
+	public static final String ATTRIBUTE_CONDITION_LIST = "attributeConditionList";
+	
+	public static final String[] ATTRIBUTE_NAME_ARRAY = {
+	        SELECT_OPTION
+	};
+	
+	public static final String[] ATTRIBUTE_CONDITION_ARRAY = {
+	        "=","<",">"
+	};
+	
+	//For Simple Query Interface
+	public static final int SIMPLE_QUERY_TABLES = 1;
+	public static final String OBJECT_NAME_LIST = "objectNameList";
+	
+	public static final String ACCESS_DENIED_ADMIN = "access_denied_admin";
+	public static final String ACCESS_DENIED_BIOSPECIMEN = "access_denied_biospecimen";
+	
+	public static final int COLLECTION_PROTOCOL_REGISTRATION_FORM_ID = 19;
+	public static final int PARTICIPANT_FORM_ID = 2;
+	public static final int SPECIMEN_COLLECTION_GROUP_FORM_ID = 20;
+	public static final int NEW_SPECIMEN_FORM_ID = 22;
 
+	// Constants for type of query results view.
+	public static final String SPREADSHEET_VIEW = "Spreadsheet View";
+	public static final String OBJECT_VIEW = "Edit View";
+	
+	public static final String COLLECTION_PROTOCOL ="CollectionProtocol";
+	
+	// Frame names in Query Results page.
+	public static final String DATA_VIEW_FRAME = "myframe1";
+	public static final String APPLET_VIEW_FRAME = "appletViewFrame";
+	
+	// NodeSelectionlistener - Query Results Tree node selection (For spreadsheet or individual view).
+	public static final String DATA_VIEW_ACTION = "DataView.do?nodeName=";
+	public static final String VIEW_TYPE = "viewType";
+	
+	// TissueSite Tree View Constants.
+	public static final String PROPERTY_NAME = "propertyName";
+	
+	// For Tree Applet
+	public static final String PAGEOF_STORAGE_LOCATION = "pageOfStorageLocation";
+	public static final String PAGEOF_SPECIMEN = "pageOfSpecimen";
+	public static final String PAGEOF_TISSUE_SITE = "pageOfTissueSite";
+	
+	// Constants for Storage Container.
+	public static final String STORAGE_CONTAINER_TYPE = "storageType";
+	public static final String STORAGE_CONTAINER_TO_BE_SELECTED = "storageToBeSelected";
+	public static final String STORAGE_CONTAINER_POSITION = "position";
+	
+	public static final String CDE_NAME = "cdeName";
+	
+	// Tree Data Action
+	public static final String TREE_DATA_ACTION = "Data.do";
+	public static final String SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION = "ShowStorageGridView.do";
+	
+	public static final String TREE_APPLET_NAME = "treeApplet";
+	
+	//	 for Add New
+	public static final String ADD_NEW_STORAGE_TYPE_ID ="addNewStorageTypeId";
+	public static final String ADD_NEW_COLLECTION_PROTOCOL_ID ="addNewCollectionProtocolId";
+	public static final String ADD_NEW_SITE_ID ="addNewSiteId";
+	public static final String ADD_NEW_USER_ID ="addNewUserId";
+	public static final String ADD_NEW_USER_TO ="addNewUserTo";
+	public static final String SUBMITTED_FOR = "submittedFor";
+	public static final String SUBMITTED_FOR_ADD_NEW = "AddNew";
+	public static final String SUBMITTED_FOR_FORWARD_TO = "ForwardTo";
+	public static final String SUBMITTED_FOR_DEFAULT = "Default";
+	public static final String FORM_BEAN_STACK= "formBeanStack";
+	public static final String ADD_NEW_FORWARD_TO ="addNewForwardTo";
+	public static final String FORWARD_TO = "forwardTo";
+	public static final String ADD_NEW_FOR = "addNewFor";
 }
