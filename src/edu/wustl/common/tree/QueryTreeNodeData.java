@@ -1,6 +1,6 @@
 /**
- * <p>Title: TreeNodeData Class>
- * <p>Description: TreeNodeData represents the node in the query result view tree.</p>
+ * <p>Title: QueryTreeNodeData Class>
+ * <p>Description: QueryTreeNodeData represents the node in the query result view tree.</p>
  * Copyright: Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
  * @author Poornima Govindrao
@@ -13,31 +13,31 @@ import java.io.Serializable;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.tree.TreeNode;
+import edu.wustl.common.tree.QueryTreeNode;
 
 
 /**
- * TreeNodeData represents the node in the query result view tree.
+ * QueryTreeNodeData represents the node in the query result view tree.
  * @author poornima_govindrao
  */
-public class TreeNodeData implements TreeNode, Serializable
+public class QueryTreeNodeData implements QueryTreeNode, Serializable
 {
 	private String identifier;
 	
     private String objectName;
     
     private String parentObjectIdentifier;
-
+    
     private String parentObjectName;
     
     private String combinedParentIdentifier;
-
+    
     private String combinedParentObjectName;
-
+    
     /**
      * Initializes an empty node.
      */
-    public TreeNodeData()
+    public QueryTreeNodeData()
     {
         identifier = null;
         objectName = null;
@@ -108,18 +108,18 @@ public class TreeNodeData implements TreeNode, Serializable
 		this.setObjectName(Constants.ROOT);
 		
 	}
-	public TreeNode getParentTreeNode()
+	public QueryTreeNode getParentTreeNode()
 	{
-		TreeNodeData node = new TreeNodeData();
+		QueryTreeNodeData node = new QueryTreeNodeData();
 		node.setIdentifier(this.combinedParentIdentifier);
 		node.setObjectName(this.getCombinedParentObjectName());
 		
 		return node;
 	}
 
-	public boolean isChildOf(TreeNode treeNode) 
+	public boolean isChildOf(QueryTreeNode treeNode) 
 	{
-		TreeNodeData node = (TreeNodeData)treeNode;
+		QueryTreeNodeData node = (QueryTreeNodeData)treeNode;
 		if ((this.getCombinedParentIdentifier() != null) && (this.getParentIdentifier() != null))
 		{
 		    return ((this.parentObjectIdentifier.equals(node.getIdentifier()) && this.parentObjectName.equals(node.getObjectName()))
@@ -128,9 +128,9 @@ public class TreeNodeData implements TreeNode, Serializable
 		
 		return (this.parentObjectIdentifier.equals(node.getIdentifier()) && this.parentObjectName.equals(node.getObjectName()));
 	}
-	public boolean hasEqualParents(TreeNode treeNode) 
+	public boolean hasEqualParents(QueryTreeNode treeNode) 
 	{
-		TreeNodeData node = (TreeNodeData) treeNode;
+		QueryTreeNodeData node = (QueryTreeNodeData) treeNode;
 		return this.getIdentifier().equals(node.getCombinedParentIdentifier());
 	}
 
@@ -165,14 +165,14 @@ public class TreeNodeData implements TreeNode, Serializable
 	}
 	
 	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.vo.TreeNode#isPresentIn(javax.swing.tree.DefaultMutableTreeNode)
+	 * @see edu.wustl.common.vo.QueryTreeNode#isPresentIn(javax.swing.tree.DefaultMutableTreeNode)
 	 */
 	public boolean isPresentIn(DefaultMutableTreeNode parentNode) 
 	{
 		for (int i = 0; i < parentNode.getChildCount(); i++)
         {
 			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
-			TreeNodeData node = (TreeNodeData)childNode.getUserObject();
+			QueryTreeNodeData node = (QueryTreeNodeData)childNode.getUserObject();
 			
 			if (this.identifier.equals(node.getIdentifier()) )
 			{

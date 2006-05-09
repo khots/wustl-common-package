@@ -1,12 +1,10 @@
 /*
- * Created on Aug 8, 2005
+ * Created on May 4, 2006
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package edu.wustl.common.tree;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 
 
 /**
@@ -17,21 +15,5 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public interface TreeNode
 {
-    
-    public void initialiseRoot();
-    
-    public void initialiseRoot(String rootName);
-    
-    public TreeNode getParentTreeNode();
-    
-    public boolean isChildOf(TreeNode treeNode);
-    
-    public boolean hasEqualParents(TreeNode treeNode);
-    
-    public Object getParentIdentifier();
-    
-    public Object getIdentifier();
-    
-    public boolean isPresentIn(DefaultMutableTreeNode parentNode);
-    
+
 }
