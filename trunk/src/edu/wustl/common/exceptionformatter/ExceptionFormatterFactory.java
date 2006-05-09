@@ -5,16 +5,14 @@ package edu.wustl.common.exceptionformatter;
  * Description: The Factory class to instatiate ExceptionFormatter object of given Exception    
  */
 
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Properties;
+import java.util.ResourceBundle;
 
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 public class ExceptionFormatterFactory {
-	static Properties prop = new Properties();
+	static ResourceBundle prop;
 	static
 	{
 		try
@@ -22,11 +20,9 @@ public class ExceptionFormatterFactory {
 			/* Load ExceptionFormatter.properties file
 			 * property file format is as follows:
 			 * Exception_Class_Name = Exception_Formatter_Class_Name
-			*/
-			
-			//prop.load(new FileInputStream("D:\\Example\\catissuecore\\WEB-INF\\classes\\ExceptionFormatter.properties"));
-			prop.load(new FileInputStream(Variables.catissueHome+System.getProperty("file.separator")+"WEB-INF"+System.getProperty("file.separator")+"classes"+System.getProperty("file.separator")+"ExceptionFormatter.properties"));
-			
+			 */
+		    prop = ResourceBundle.getBundle("ExceptionFormatter");
+		    
 			Logger.out.debug("File Loaded");
 		}
 		catch(Exception e)
@@ -46,7 +42,7 @@ public class ExceptionFormatterFactory {
 			String excpClassName = excp.getClass().getName(); 
 			
 			//Get Exception Formatter Class name from Properties file
-			String formatterClassName = prop.getProperty(excpClassName);
+			String formatterClassName = prop.getString(excpClassName);
 			if(formatterClassName==null)
 			{
 				Logger.out.error("ExceptionFormatter Class not found for " + excpClassName);
