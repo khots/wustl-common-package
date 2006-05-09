@@ -6,10 +6,6 @@
  */
 package edu.wustl.common.tree;
 
-import edu.wustl.common.tree.TreeNodeData;
-import edu.wustl.common.tree.StorageContainerTreeNode;
-import edu.wustl.common.tree.TissueSiteTreeNode;
-import edu.wustl.common.tree.TreeNode;
 import edu.wustl.common.util.global.Constants;
 
 
@@ -21,19 +17,20 @@ import edu.wustl.common.util.global.Constants;
  */
 public class TreeNodeFactory
 {
-    public static TreeNode getTreeNode(int treeType)
+    public static TreeNode getTreeNode(int treeType,TreeNode root)
     {
         TreeNode treeNode = null;
         switch(treeType)
         {
             case Constants.TISSUE_SITE_TREE_ID:
-                treeNode = new TissueSiteTreeNode();
+                CDETreeNode rootNode = (CDETreeNode) root;
+                treeNode = new CDETreeNode(null, rootNode.getCdeName());
             	break;
             case Constants.STORAGE_CONTAINER_TREE_ID:
-                treeNode = new StorageContainerTreeNode();
+                treeNode = new StorageContainerTreeNode(new Long(0),null,Constants.CATISSUE_CORE);
             	break;
             case Constants.QUERY_RESULTS_TREE_ID:
-            	treeNode = new TreeNodeData();
+            	treeNode = new TreeNodeImpl(new Long(0),Constants.ROOT);
                 break;
         }
         
