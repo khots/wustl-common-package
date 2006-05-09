@@ -73,9 +73,9 @@ public class JDBCDAO extends AbstractDAO
     	    //throw new DAOException(sqlExp.getMessage(),sqlExp);
         	Logger.out.error(sqlExp.getMessage(),sqlExp);
         	throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
-    	    
     	}
     }
+    
     /**
      * This method will be used to close the session with the database.
      * Declared in AbstractDAO class.
@@ -98,6 +98,7 @@ public class JDBCDAO extends AbstractDAO
         	
         }
     }
+    
     /**
      * Commit the database level changes.
      * Declared in AbstractDAO class.
@@ -120,6 +121,7 @@ public class JDBCDAO extends AbstractDAO
         	throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
         }
     }
+    
     /**
      * Rollback all the changes after last commit. 
      * Declared in AbstractDAO class. 
@@ -138,6 +140,17 @@ public class JDBCDAO extends AbstractDAO
         	//new DAOException("Error in rollback", dbex);
         	throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
         }
+    }
+    
+    /**
+     * Creates a table with the query specified.
+     * @param query Query create table.
+     * @throws DAOException
+     */
+    public void createTable(String query) throws DAOException
+    {
+        Logger.out.debug("Create Table Query "+query.toString());
+        executeUpdate(query.toString());
     }
     
     /**
@@ -266,8 +279,6 @@ public class JDBCDAO extends AbstractDAO
         return list;
     }
     
-    
-    
     /**
      * Executes the query.
      * @param query
@@ -293,14 +304,6 @@ public class JDBCDAO extends AbstractDAO
         return list;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
 	/**
 	 * This method exeuted query, parses the result and returns List of rows after doing security checks
 	 * for user's right to view a record/field
@@ -318,6 +321,7 @@ public class JDBCDAO extends AbstractDAO
 		PreparedStatement stmt = null;
 		ResultSet resultSet = null;
 		List list;
+		
 		try
         {
         	stmt = connection.prepareStatement(query);
@@ -415,7 +419,9 @@ public class JDBCDAO extends AbstractDAO
 		}
 		return list;
 	}
-	/* (non-Javadoc)
+	
+	/**
+	 * (non-Javadoc)
      * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
      */
     public List retrieve(String sourceObjectName, String whereColumnName,
@@ -429,53 +435,30 @@ public class JDBCDAO extends AbstractDAO
                 whereColumnConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
     }
     
-    //    public static void main(String[] args)
-    //    {
-    //        JDBCDAO dao = new JDBCDAO();
-    //        String sourceObjectName = "CATISSUE_QUERY_RESULTS";
-    //        String[] selectColumnName = {"PARTICIPANT_ID","ACCESSION_ID","SPECIMEN_ID","SEGMENT_ID","SAMPLE_ID"};
-    //        String[] whereColumnName = null;
-    //        String[] whereColumnCondition = null;
-    //        Object[] whereColumnValue = null;
-    //        String joinCondition = null;
-    //        try{
-    ////            System.out.println(dao.retrieve(sourceObjectName));
-    ////   		  System.out.println(dao.retrieve(sourceObjectName,selectColumnName,whereColumnName,whereColumnCondition,whereColumnValue,joinCondition));
-    //            ResultSet rs = dao.retrieve(sourceObjectName, selectColumnName);
-    //            System.out.println("Got o/p");
-    //            rs.next();
-    //            System.out.println("PID............"+rs.getString(Constants.QUERY_RESULTS_PARTICIPANT_ID));
-    //            rs.close();
-    //        }
-    //        catch(Exception e){
-    //        e.printStackTrace();    
-    //        }
-    //
-    //    }
-private Timestamp isColumnValueDate(Object value)
-{
-	 Logger.out.debug("Column value: "+value);
-	try
+	private Timestamp isColumnValueDate(Object value)
 	{
-		DateFormat formatter=new SimpleDateFormat("mm-dd-yyyy");
-		formatter.setLenient(false);
-        java.util.Date date = formatter.parse((String)value);
-        Timestamp t = new Timestamp(date.getTime()); 
-        // Date sqlDate = new Date(date.getTime());
-        
-        Logger.out.debug("Column date value: "+date);
-		if(value.toString().equals("")==false) 
+		 Logger.out.debug("Column value: "+value);
+		try
 		{
-			Logger.out.debug("Return true: "+ value);
-			return t;
+			DateFormat formatter=new SimpleDateFormat("mm-dd-yyyy");
+			formatter.setLenient(false);
+	        java.util.Date date = formatter.parse((String)value);
+	        Timestamp t = new Timestamp(date.getTime()); 
+	        // Date sqlDate = new Date(date.getTime());
+	        
+	        Logger.out.debug("Column date value: "+date);
+			if(value.toString().equals("")==false) 
+			{
+				Logger.out.debug("Return true: "+ value);
+				return t;
+			}
 		}
+		catch(Exception e)
+		{
+			
+		}
+		return null;
 	}
-	catch(Exception e)
-	{
-		
-	}
-	return null;
-}
     
     /**
      * (non-Javadoc)
@@ -602,7 +585,6 @@ private Timestamp isColumnValueDate(Object value)
         executeUpdate(query.toString());
     }
     
-    
     /**
      * Deletes the specified table
      * @param tableName
@@ -644,7 +626,8 @@ private Timestamp isColumnValueDate(Object value)
         
     }
     
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
      * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.Long)
      */
     public Object retrieve (String sourceObjectName, Serializable systemIdentifier) throws DAOException
@@ -660,8 +643,8 @@ private Timestamp isColumnValueDate(Object value)
 	    }
 	}
     
-    
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
      * @see edu.wustl.common.dao.DAO#insert(java.lang.Object, boolean)
      */
     public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
@@ -700,10 +683,10 @@ private Timestamp isColumnValueDate(Object value)
 		}
     }
     
-    
-    public void disableRelatedObjects(String TABLE_NAME, String WHERE_COLUMN_NAME, Long whereColValue[]) throws DAOException
+    public void disableRelatedObjects(String tableName, String whereColumnName, Long whereColumnValues[]) throws DAOException
 	{
 	}
+    
     public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
 	{
     	return null; 
@@ -711,17 +694,5 @@ private Timestamp isColumnValueDate(Object value)
     
     public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
     {
-        
     }
-    /**
-     * Creates a table with the query specified.
-     * @param query Query create table.
-     * @throws DAOException
-     */
-    public void createTable(String query) throws DAOException
-    {
-        Logger.out.debug("Create Table Query "+query.toString());
-        executeUpdate(query.toString());
-    }
-
 }
