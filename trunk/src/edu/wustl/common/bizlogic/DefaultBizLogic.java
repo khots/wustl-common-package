@@ -32,6 +32,7 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -51,7 +52,6 @@ public class  DefaultBizLogic extends AbstractBizLogic
     {
         dao.insert(obj,sessionDataBean, true, true);
     }
-    
     
     /**
      * Deletes an object from the database.
@@ -193,7 +193,6 @@ public class  DefaultBizLogic extends AbstractBizLogic
         return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
     }
     
-    
     public List getList(String sourceObjectName, String[] displayNameFields, String valueField,boolean isToExcludeDisabled) throws DAOException
     {
         String[] whereColumnName = null;
@@ -214,18 +213,18 @@ public class  DefaultBizLogic extends AbstractBizLogic
     }
     
    /**
-    * Returns collection of name value pairs.
- * @param sourceObjectName
- * @param displayNameFields
- * @param valueField
- * @param whereColumnName
- * @param whereColumnCondition
- * @param whereColumnValue
- * @param joinCondition
- * @param separatorBetweenFields
- * @return
-    * @throws DAOException
-    */
+     * Returns collection of name value pairs.
+	 * @param sourceObjectName
+	 * @param displayNameFields
+	 * @param valueField
+	 * @param whereColumnName
+	 * @param whereColumnCondition
+	 * @param whereColumnValue
+	 * @param joinCondition
+	 * @param separatorBetweenFields
+	 * @return
+     * @throws DAOException
+     */
     public List getList(String sourceObjectName, String[] displayNameFields, String valueField, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled) throws DAOException
@@ -424,4 +423,48 @@ public class  DefaultBizLogic extends AbstractBizLogic
     		message = message +" : "+e.getCause().getMessage();
     	return new DAOException(message,e);
 	}
+	
+	/**
+	 *  Method to check the ActivityStatus of the given identifier
+	 * @param dao
+	 * @param identifier of the Element
+	 * @param className of the Element
+	 * @param errorName Dispaly Name of the Element
+	 * @throws DAOException
+	 */
+	protected void checkStatus(DAO dao, AbstractDomainObject ado , String errorName) throws DAOException 
+    {
+		if(ado !=null)
+		{
+			Long identifier = ado.getSystemIdentifier();
+			if(identifier != null)
+			{
+				String className = ado.getClass().getName();
+				String activityStatus = getActivityStatus(dao, className,identifier);
+				if(activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
+				{
+					throw new DAOException(errorName + " " + ApplicationProperties.getValue("error.object.closed"));
+				}
+			}
+		}
+    }
+	
+	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier) throws DAOException
+	{
+		String whereColumnNames[] = {Constants.SYSTEM_IDENTIFIER};
+        String colConditions[] = {"="};
+        Object whereColumnValues[] = {indetifier};
+        String[] selectColumnName = {Constants.ACTIVITY_STATUS};
+        List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnNames,
+                colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
+        
+        if(!list.isEmpty())
+        {
+        	Object obj = list.get(0);
+        	Logger.out.debug("obj Class "+obj.getClass());
+        	//Object[] objArr = (String)obj
+        	return (String)obj;
+        }
+        return "";
+    }
 }

@@ -15,7 +15,6 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
@@ -25,7 +24,6 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -74,7 +72,7 @@ public abstract class AbstractBizLogic
     public abstract List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition) throws DAOException;
-            
+    
     /**
      * Retrieves the records for class name in sourceObjectName according to field values passed.
      * @param whereColumnName An array of field names.
@@ -85,6 +83,7 @@ public abstract class AbstractBizLogic
     public abstract List retrieve(String sourceObjectName, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition) throws DAOException;    
+    
     /**
      * Retrieves the records for class name in sourceObjectName according to field values passed.
      * @param colName Contains the field name.
@@ -92,6 +91,7 @@ public abstract class AbstractBizLogic
      */
     public abstract List retrieve(String className, String colName, Object colValue)
             throws DAOException;    
+    
     /**
      * Retrieves all the records for class name in sourceObjectName.
      * @param sourceObjectName Contains the classname whose records are to be retrieved.
@@ -286,30 +286,6 @@ public abstract class AbstractBizLogic
 		}
     }
     
-	/**
-	 *  Method to check the ActivityStatus of the given identifier
-	 * @param dao
-	 * @param identifier of the Element
-	 * @param className of the Element
-	 * @param errorName Dispaly Name of the Element
-	 * @throws DAOException
-	 */
-	protected void checkStatus(DAO dao, AbstractDomainObject ado , String errorName) throws DAOException 
-    {
-		if(ado !=null)
-		{
-			Long identifier = ado.getSystemIdentifier() ;
-			if(identifier != null)
-			{
-				String className = ado.getClass().getName();  
-				String activityStatus = dao.getActivityStatus(className,identifier);
-				if(activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
-				{
-					throw new DAOException(errorName + " " + ApplicationProperties.getValue("error.object.closed"));
-				}
-			}
-		}
-    }
 	private String formatException(Exception ex,Object obj,String operation)
 	{
 		String errMsg="";
