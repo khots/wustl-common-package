@@ -12,7 +12,6 @@ package edu.wustl.common.bizlogic;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +22,12 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.cde.CDE;
 import edu.wustl.common.cde.CDEImpl;
 import edu.wustl.common.cde.CDEManager;
-import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.tree.TissueSiteTreeNode;
+import edu.wustl.common.tree.CDETreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
+import edu.wustl.common.tree.TreeNode;
 import edu.wustl.common.util.dbManager.DAOException;
 
 /**
@@ -37,7 +36,7 @@ import edu.wustl.common.util.dbManager.DAOException;
  */
 public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 {
-
+    
     /**
      * Saves the storageType object in the database.
      * @param obj The storageType object to be saved.
@@ -90,68 +89,54 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
     
     public Vector getTreeViewData(String cdeName) throws DAOException
     {
-
         try
         {
             cdeName = URLDecoder.decode(cdeName, "UTF-8");
-        }catch(UnsupportedEncodingException encExp)
+        }
+        catch(UnsupportedEncodingException encExp)
         {
             throw new DAOException("Could not generate tree : CDE name not proper.");
         }
         
         CDE cde = CDEManager.getCDEManager().getCDE(cdeName);
-        Set set = cde.getPermissibleValues();
-        Vector vector = new Vector();
-        Iterator iterator = set.iterator();
-        while (iterator.hasNext())
-        {
-            PermissibleValueImpl permissibleValueImpl = (PermissibleValueImpl) iterator.next();
-            
-            TissueSiteTreeNode treeNode = getTissueSiteTreeNode(permissibleValueImpl);
-            vector.add(treeNode);
-            List subPVList = getSubPermissibleValues(permissibleValueImpl);
-			vector.addAll(subPVList);
-        }
+        CDETreeNode root  = new CDETreeNode();
+        root.setCdeName(cdeName);
+        Vector vector = getTreeNodeList(root, cde.getPermissibleValues());
+        
         return vector;
     }
     
-	private List getSubPermissibleValues(PermissibleValue permissibleValue)
-	{
-		List pvList = new ArrayList();
-		
-		Iterator iterator = permissibleValue.getSubPermissibleValues().iterator();
-		while(iterator.hasNext())
-		{
-			PermissibleValueImpl subPermissibleValueImpl = (PermissibleValueImpl)iterator.next();
-			TissueSiteTreeNode tissueSiteTreeNode = getTissueSiteTreeNode(subPermissibleValueImpl);
-			pvList.add(tissueSiteTreeNode);
-			List subPVList = getSubPermissibleValues(subPermissibleValueImpl);
-			pvList.addAll(subPVList);
-		}
-		return pvList;
-	}
-	
-	private TissueSiteTreeNode getTissueSiteTreeNode(PermissibleValueImpl permissibleValueImpl)
-	{
-	    Long id = permissibleValueImpl.getIdentifier();
-	    String val = permissibleValueImpl.getValue();
-	    Long parentId = null;
-	    
-	    if (permissibleValueImpl.getParentPermissibleValue() != null)
+	/**
+     * @param cde
+     * @return
+     */
+    private Vector getTreeNodeList(TreeNode parentTreeNode, Set permissibleValueSet)
+    {
+        Vector treeNodeVector = new Vector();
+        if (permissibleValueSet == null)
+            return null;
+        
+        Iterator iterator = permissibleValueSet.iterator();
+        while (iterator.hasNext())
         {
-            PermissibleValueImpl parentPermissibleValue = (PermissibleValueImpl) permissibleValueImpl
-                    .getParentPermissibleValue();
-            parentId = parentPermissibleValue.getIdentifier();
+            PermissibleValueImpl permissibleValueImpl = (PermissibleValueImpl) iterator.next();
+            CDETreeNode treeNode = new CDETreeNode(permissibleValueImpl.getIdentifier(),
+                    											 permissibleValueImpl.getValue());
+            treeNode.setParentNode(parentTreeNode);
+            treeNode.setCdeName(((CDETreeNode) parentTreeNode).getCdeName());
+            Vector subPermissibleValues = getTreeNodeList(treeNode,
+                    								permissibleValueImpl.getSubPermissibleValues());
+            if (subPermissibleValues != null)
+            {
+                treeNode.setChildNodes(subPermissibleValues);
+            }
+            
+            treeNodeVector.add(treeNode);
         }
-	    
-	    String parentIdStr = null;
-	    if(parentId!=null)
-	    	parentIdStr = parentId.toString();
-	    
-	    TissueSiteTreeNode treeNode = new TissueSiteTreeNode(id.toString(),val,parentIdStr);
-        return treeNode; 
-	}
-	
+        
+        return treeNodeVector;
+    }
+    
 	/* (non-Javadoc)
 	 * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface#getTreeViewData(edu.wustl.common.beans.SessionDataBean, java.util.Map)
 	 */
