@@ -26,9 +26,9 @@ public class MasterFactory
      * @param className The class name whose object is to be instantiated.
      * @return the object of factory class whose class name is passed.
      */
-   public static Object getFactory(String className)
+   public static Object getFactory(String factoryName)
    {
-       Object factoryObject = Utility.getObject(className);
+       Object factoryObject = Utility.getObject(factoryName);
        return factoryObject;
    }
 }
