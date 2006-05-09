@@ -31,6 +31,7 @@ import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Permissions;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.logger.Logger;
@@ -56,7 +57,7 @@ public class HibernateDAO extends AbstractDAO
         try
         {
             session = DBUtil.currentSession();
-       
+            
             transaction = session.beginTransaction();
             
             auditManager = new AuditManager();
@@ -98,7 +99,7 @@ public class HibernateDAO extends AbstractDAO
         transaction = null;
         auditManager = null;
     }
-
+    
     /**
      * Commit the database level changes.
      * Declared in AbstractDAO class.
@@ -109,7 +110,7 @@ public class HibernateDAO extends AbstractDAO
         try
         {
             auditManager.insert(this);
-
+            
             if (transaction != null)
                 transaction.commit();
         }
@@ -119,7 +120,7 @@ public class HibernateDAO extends AbstractDAO
             throw handleError("Error in commit: ", dbex);
         }
     }
-
+    
     /**
      * Rollback all the changes after last commit. 
      * Declared in AbstractDAO class. 
@@ -138,21 +139,22 @@ public class HibernateDAO extends AbstractDAO
             throw handleError("Error in rollback: ", dbex);
         }
     }
-
-    public void disableRelatedObjects(String TABLE_NAME, String WHERE_COLUMN_NAME, Long whereColValue[]) throws DAOException
+    
+    public void disableRelatedObjects(String tableName, String whereColumnName, Long whereColumnValues[]) throws DAOException
 	{
     	try
         {
     		Statement st = session.connection().createStatement();
     		
     		StringBuffer buff = new StringBuffer();
-    		for (int i = 0; i < whereColValue.length; i++)
+    		for (int i = 0; i < whereColumnValues.length; i++)
 			{
-    			buff.append(whereColValue[i].longValue());
-    			if((i+1)<whereColValue.length)
+    			buff.append(whereColumnValues[i].longValue());
+    			if((i+1)<whereColumnValues.length)
     				buff.append(",");
 			}
-    		String sql = "UPDATE "+TABLE_NAME+" SET ACTIVITY_STATUS = '"+Constants.ACTIVITY_STATUS_DISABLED+ "' WHERE "+WHERE_COLUMN_NAME+" IN ( "+buff.toString()+")";
+    		
+    		String sql = "UPDATE "+tableName+" SET ACTIVITY_STATUS = '"+Constants.ACTIVITY_STATUS_DISABLED+ "' WHERE "+whereColumnName+" IN ( "+buff.toString()+")";
     		Logger.out.debug("sql "+sql);
     		int count = st.executeUpdate(sql);
     		st.close();
@@ -229,16 +231,15 @@ public class HibernateDAO extends AbstractDAO
         {
             throw handleError("", smex);
         }
-        
     }
-
+    
     private DAOException handleError(String message, Exception hibExp)
     {
         Logger.out.error(hibExp.getMessage(), hibExp);
         String msg = generateErrorMessage(message, hibExp);
         return new DAOException(msg, hibExp);
     }
-
+    
     private String generateErrorMessage(String messageToAdd, Exception ex)
     {
         if (ex instanceof HibernateException)
@@ -265,7 +266,7 @@ public class HibernateDAO extends AbstractDAO
             return ex.getMessage();
         }
     }
-
+    
     /**
      * Updates the persistent object in the database.
      * @param obj The object to be updated.
@@ -304,10 +305,7 @@ public class HibernateDAO extends AbstractDAO
                     isAuthorized = false;
                     Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getSystemIdentifier()+" "+isAuthorized);
                 }
-                
-                
             }
-            
             
             if(isAuthorized)
             {
@@ -401,7 +399,8 @@ public class HibernateDAO extends AbstractDAO
                 colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
     }
     
-    /* (non-Javadoc)
+    /**
+     * (non-Javadoc)
      * @see edu.wustl.common.dao.AbstractDAO#retrieve(java.lang.String, java.lang.String[])
      */
     public List retrieve(String sourceObjectName, String[] selectColumnName)
@@ -432,8 +431,8 @@ public class HibernateDAO extends AbstractDAO
         try
         {
             StringBuffer sqlBuff = new StringBuffer();
-
-            String className = parseClassName(sourceObjectName);
+            
+            String className = Utility.parseClassName(sourceObjectName);
             
             Logger.out.debug("***********className:"+className);
             if (selectColumnName != null && selectColumnName.length > 0)
@@ -471,9 +470,9 @@ public class HibernateDAO extends AbstractDAO
             {
                 if (joinCondition == null)
                     joinCondition = Constants.AND_JOIN_CONDITION;
-
+                
                 sqlBuff.append(" where ");
-
+                
                 //Adds the column name and search condition in where clause. 
                 for (int i = 0; i < whereColumnName.length; i++)
                 {
@@ -503,11 +502,11 @@ public class HibernateDAO extends AbstractDAO
                     if (i < (whereColumnName.length - 1))
                         sqlBuff.append(" " + joinCondition + " ");
                 }
-
+                
                 Logger.out.debug(sqlBuff.toString());
-
+                
                 query = session.createQuery(sqlBuff.toString());
-
+                
                 int index = 0;
                 //Adds the column values in where clause
                 for (int i = 0; i < whereColumnValue.length; i++)
@@ -539,7 +538,7 @@ public class HibernateDAO extends AbstractDAO
             
 //          Added by Aarti 
             //--------------------------------
-           
+            
 //            if(sourceObjectName.equals(Site.class.getName()))
 //            {
 //                boolean isAuthorized;
@@ -608,10 +607,9 @@ public class HibernateDAO extends AbstractDAO
 //                }
 //            }
             //---------------------------------
-
+            
             Logger.out.debug(" String : " + sqlBuff.toString());
         }
-
         catch (HibernateException hibExp)
         {
             Logger.out.error(hibExp.getMessage(), hibExp);
@@ -625,24 +623,6 @@ public class HibernateDAO extends AbstractDAO
                     + exp.getMessage(), exp);
         }
         return list;
-    }
-
-    /**
-     * Parses the fully qualified classname and returns only the classname.
-     * @param fullyQualifiedName The fully qualified classname. 
-     * @return The classname.
-     */
-    private String parseClassName(String fullyQualifiedName)
-    {
-        try
-        {
-            return fullyQualifiedName.substring(fullyQualifiedName
-                    .lastIndexOf(".") + 1);
-        }
-        catch (Exception e)
-        {
-            return fullyQualifiedName;
-        }
     }
     
     public Object retrieve(String sourceObjectName, Serializable systemIdentifier)
@@ -667,29 +647,10 @@ public class HibernateDAO extends AbstractDAO
         }
     }
     
-	public Object loadCleanObj( String sourceObjectName, Long systemIdentifier ) throws Exception
+	public Object loadCleanObj(String sourceObjectName, Long systemIdentifier) throws Exception
 	{
 		Object obj = retrieve(sourceObjectName, systemIdentifier);
 		session.evict(obj);
 		return obj;
 	}
-	
-	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
-	{
-		String whereColumnNames[] = {Constants.SYSTEM_IDENTIFIER};
-        String colConditions[] = {"="};
-        Object whereColumnValues[] = {indetifier};
-        String[] selectColumnName = {Constants.ACTIVITY_STATUS};
-        List list = retrieve(sourceObjectName, selectColumnName, whereColumnNames,
-                colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
-        
-        if(!list.isEmpty())
-        {
-        	Object obj = list.get(0);
-        	Logger.out.debug("obj Class "+obj.getClass());
-        	//Object[] objArr = (String)obj
-        	return (String)obj;
-        }
-        return "";
-    }
 }
