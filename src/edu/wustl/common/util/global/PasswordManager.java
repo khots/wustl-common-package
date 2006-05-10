@@ -8,6 +8,8 @@
  */ 
 package edu.wustl.common.util.global;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.Random;
 
@@ -351,5 +353,38 @@ public class PasswordManager
     	System.out.println("encodedPWD "+encodedPWD);
     	
         System.out.println(decode("65416a575265696c7063656f"));
+        
+        //Mandar 08-May-06
+        if(args.length > 1 )
+    	{
+    		String filename = args[0];
+    		String password = args[1];
+    		encodedPWD = encode(password);
+    		System.out.println("Filename : "+filename + " : password : "+password+" : encoded"+encodedPWD ); 
+    		writeToFile(filename,encodedPWD  );
+    	}
     }
+    
+    /**
+     * This method writes the encoded password to the file.
+     * @param filename File to be written. 
+     * @param encodedPassword Encoded password.
+     */
+	private static void writeToFile(String filename,String encodedPassword)
+    {
+		//Mandar: 781 10-May-06: 
+    	try
+		{
+    		File fileObject = new File(filename );
+    		FileWriter writeObject = new FileWriter(fileObject );
+    		
+    		writeObject.write("first.admin.encodedPassword="+encodedPassword+"\n" ) ;
+			writeObject.close();
+
+		}
+    	catch(Exception ioe)
+		{
+    		System.out.println("Error : " + ioe);
+		}
+    } // writeToFile
 }
