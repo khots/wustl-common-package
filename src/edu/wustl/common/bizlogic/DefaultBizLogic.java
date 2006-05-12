@@ -239,7 +239,8 @@ public class  DefaultBizLogic extends AbstractBizLogic
     	return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
                 	  whereColumnCondition, whereColumnValue, joinCondition, separatorBetweenFields);
 	}
-    
+
+    //Mandar : 12-May-06 : bug id 863 : Sorting of ID columns
     private List getList(String sourceObjectName, String[] displayNameFields, String valueField, String[] whereColumnName,
                     String[] whereColumnCondition, Object[] whereColumnValue,
                     String joinCondition, String separatorBetweenFields) throws DAOException
@@ -259,45 +260,64 @@ public class  DefaultBizLogic extends AbstractBizLogic
         List results = retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
               
         NameValueBean nameValueBean; 
-        Object[] objects = null;
-        StringBuffer nameBuff=new StringBuffer();
+        Object[] columnArray = null;
+        
+		/**
+		 * For each row in the result a vector will be created.Vector will contain all the columns
+		 * other than the value column(last column). 
+		 * If there is only one column in the result it will be set as the Name for the NameValueBean.
+		 * When more than one columns are present, a string representation will be set. 
+		 */                
         if(results != null)
         {
             for(int i=0; i<results.size();i++)
             {
-                nameBuff=new StringBuffer();
-                objects = (Object[]) results.get(i);
-                                
-                if(objects != null)
+                columnArray = (Object[]) results.get(i);
+                Object tmpObj = null;
+                Vector tmpBuffer = new Vector(); 
+                StringBuffer nameBuff=new StringBuffer();
+                if(columnArray != null)
                 {
-                    for(int j=0 ; j<objects.length -1 ; j++)
+                    for(int j=0 ; j<columnArray.length -1 ; j++)
                     {
-                        if(objects[j] !=null && (!objects[j].toString().equals("")))
+                        if(columnArray[j] !=null && (!columnArray[j].toString().equals("")))
                         {
-                            nameBuff.append(objects[j].toString());
-                            if(j<objects.length-2)
-                            {
-                                nameBuff.append(separatorBetweenFields);
-                            }
-                        }
-                        else
-                        {
-                            if(j<objects.length-2)
-                            {
-                                nameBuff.append(separatorBetweenFields);
-                            }
+                        	tmpBuffer.add(columnArray[j] );
                         }
                     }
-                    
                     nameValueBean = new NameValueBean();
-	                nameValueBean.setName(nameBuff.toString());
-	                int valueID = objects.length-1;
-	                nameValueBean.setValue(objects[valueID].toString());
-	                nameValuePairs.add(nameValueBean);
+
+                    //create name data
+                    if(tmpBuffer.size() == 1  )//	only one column
+                    {
+                    	tmpObj = tmpBuffer.get(0);
+                        
+                    	Logger.out.debug("nameValueBean Name : : "+tmpObj );
+                        Logger.out.debug("NameClass : : "+tmpObj.getClass().getName() );
+                        nameValueBean.setName(tmpObj);
+                    }
+                    else	// multiple columns
+                    {
+                    	for(int j=0;j<tmpBuffer.size();j++  )
+                    	{
+                          nameBuff.append(tmpBuffer.get(j).toString());
+                          if(j<tmpBuffer.size()-1)
+                          {
+                              nameBuff.append(separatorBetweenFields);
+                          }
+                    	}
+
+                    	Logger.out.debug("nameValueBean Name : : "+nameBuff.toString() );
+                    	nameValueBean.setName(nameBuff.toString());
+                    }
+
+	                int valueID = columnArray.length-1;
+	                nameValueBean.setValue(columnArray[valueID].toString());
+
+                    nameValuePairs.add(nameValueBean);
                 }
             }
         }
-        
         Collections.sort(nameValuePairs);
         return nameValuePairs;
     }
