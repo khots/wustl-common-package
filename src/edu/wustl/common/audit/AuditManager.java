@@ -131,13 +131,13 @@ public class AuditManager
 					//filter only getter methods.
 					if(methods[i].getName().startsWith("get") && methods[i].getParameterTypes().length==0)
 					{				
-						if(isManyToMany(currentObj, methods[i]))
-						{
-							Collection auditEventLogs = processManyToManyRelation(currentObj, previousObj,
-														methods[i], eventType);
-							auditEvent.getAuditEventLogCollection().addAll(auditEventLogs);
-						}
-	 					else
+//						if(isManyToMany(currentObj, methods[i]))
+//						{
+//							Collection auditEventLogs = processManyToManyRelation(currentObj, previousObj,
+//														methods[i], eventType);
+//							auditEvent.getAuditEventLogCollection().addAll(auditEventLogs);
+//						}
+//	 					else
 						{
 							AuditEventDetails auditEventDetails = processField(methods[i], currentObj, previousObj);
 							
@@ -159,7 +159,7 @@ public class AuditManager
 		}
 		catch(Exception ex)
 		{
-			Logger.out.debug(ex.getMessage(),ex);
+			Logger.out.error(ex.getMessage(),ex);
 			throw new AuditException();
 		}
 			
@@ -446,10 +446,10 @@ public class AuditManager
 				return val; 
 			
 			 
-			if(isCollection(val))
-			{
-				return val;
-			}
+//			if(isCollection(val))
+//			{
+//				return val;
+//			}
 		
 		}
 		return null;
