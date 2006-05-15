@@ -8,9 +8,6 @@ package edu.wustl.common.util.global;
 
 import java.util.HashMap;
 
-import edu.wustl.catissuecore.domainobject.CollectionProtocol;
-import edu.wustl.catissuecore.domainobject.DistributionProtocol;
-
 /**
  * This classes is specific to common files. And contains all variables used by classes from 
  * common package.
@@ -36,7 +33,7 @@ public class Constants
 	
 	//Activity Status values
 	public static final String ACTIVITY_STATUS_ACTIVE = "Active";
-
+	
 	public static final String ADD = "add";
 	
 	public static final String getCollectionProtocolPGName(Long identifier)
@@ -89,9 +86,8 @@ public class Constants
 	    return "USER_";
 	}
 	
-	public static final String COLLECTION_PROTOCOL_CLASS_NAME = CollectionProtocol.class.getName();
-	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = DistributionProtocol.class.getName();
-	
+	public static final String COLLECTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
+	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
 	// Aarti: Constants for security parameter required 
 	// while retrieving data from DAOs
 	public static final int INSECURE_RETRIEVE = 0;
@@ -272,11 +268,6 @@ public class Constants
 	public static final String ACCESS_DENIED_ADMIN = "access_denied_admin";
 	public static final String ACCESS_DENIED_BIOSPECIMEN = "access_denied_biospecimen";
 	
-	public static final int COLLECTION_PROTOCOL_REGISTRATION_FORM_ID = 19;
-	public static final int PARTICIPANT_FORM_ID = 2;
-	public static final int SPECIMEN_COLLECTION_GROUP_FORM_ID = 20;
-	public static final int NEW_SPECIMEN_FORM_ID = 22;
-
 	// Constants for type of query results view.
 	public static final String SPREADSHEET_VIEW = "Spreadsheet View";
 	public static final String OBJECT_VIEW = "Edit View";
@@ -326,4 +317,6 @@ public class Constants
 	public static final String ADD_NEW_FORWARD_TO ="addNewForwardTo";
 	public static final String FORWARD_TO = "forwardTo";
 	public static final String ADD_NEW_FOR = "addNewFor";
+	
+	public static final String ERROR_DETAIL = "Error Detail";
 }
