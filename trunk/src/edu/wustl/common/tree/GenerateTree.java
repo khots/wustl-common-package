@@ -29,7 +29,12 @@ public class GenerateTree
      */
     public JTree createTree(Vector dataVector, int treeType)
     {
-        TreeNode rootName = (TreeNode)dataVector.get(0);
+        TreeNode rootName = null;
+        if (dataVector != null && (dataVector.isEmpty()==false))
+        {
+            rootName = (TreeNode)dataVector.get(0);
+        }
+        
         //Get the root node.
         TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
         TreeNodeImpl rootNode = (TreeNodeImpl) root1;
