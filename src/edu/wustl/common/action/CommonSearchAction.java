@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.AbstractBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.MasterFactory;
@@ -65,9 +66,9 @@ public class CommonSearchAction extends Action
         try
         {
             //Retrieves the information to be edited.
-            AbstractBizLogicFactory abstractBizLogicFactory = (AbstractBizLogicFactory)
-            							MasterFactory.getFactory("edu.wustl.catissuecore.bizlogic.BizLogicFactory");
-            AbstractBizLogic bizLogic = abstractBizLogicFactory.getBizLogic(abstractForm.getFormId());
+            AbstractBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(
+                    						"edu.wustl.catissuecore.bizlogic.BizLogicFactory",
+                    							"getBizLogic", abstractForm.getFormId());
             AbstractDomainObject abstractDomain = null;
             List list = null;
             
@@ -106,6 +107,11 @@ public class CommonSearchAction extends Action
                 saveErrors(request,errors);
                 target = new String(Constants.FAILURE);
             }
+        }
+        catch (BizLogicException excp)
+        {
+            target = Constants.FAILURE;
+            Logger.out.error(excp.getMessage(), excp);
         }
         catch (DAOException excp)
         {
