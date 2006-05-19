@@ -24,7 +24,13 @@ public class TreeNodeFactory
         {
             case Constants.TISSUE_SITE_TREE_ID:
                 CDETreeNode rootNode = (CDETreeNode) root;
-                treeNode = new CDETreeNode(null, rootNode.getCdeName());
+            	String cdeName = null;
+            	if (rootNode != null)
+            	{
+            	    cdeName = rootNode.getCdeName();
+            	}
+            	
+                treeNode = new CDETreeNode(null, cdeName);
             	break;
             case Constants.STORAGE_CONTAINER_TREE_ID:
                 treeNode = new StorageContainerTreeNode(new Long(0),null,Constants.CATISSUE_CORE);
@@ -36,5 +42,4 @@ public class TreeNodeFactory
         
         return treeNode;
     }
-
 }
