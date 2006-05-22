@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.wustl.common.cde.xml.XMLCDE;
+import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -44,8 +45,8 @@ public class CDEDownloader
 	{
 		// creates the passwordauthenticaton object to be used for establishing 
 		// the connection with the databse server.
-		CDEConConfig.dbserver = ApplicationProperties.getValue("casdr.server");
-		if(ApplicationProperties.getValue("use.proxy.server").equals("true"))
+		CDEConConfig.dbserver = XMLPropertyHandler.getValue("casdr.server");
+		if(XMLPropertyHandler.getValue("use.proxy.server").equals("true"))
 		{
 			setCDEConConfig();
 			createPasswordAuthentication(CDEConConfig.proxyhostip, CDEConConfig.proxyport, CDEConConfig.username, CDEConConfig.password);
@@ -274,10 +275,10 @@ public class CDEDownloader
 	
 	private void setCDEConConfig()
 	{
-		CDEConConfig.proxyhostip =ApplicationProperties.getValue("proxy.host");
-		CDEConConfig.proxyport = ApplicationProperties.getValue("proxy.port");
-		CDEConConfig.password = ApplicationProperties.getValue("proxy.username");
-		CDEConConfig.username = ApplicationProperties.getValue("proxy.password");
+		CDEConConfig.proxyhostip =XMLPropertyHandler.getValue("proxy.host");
+		CDEConConfig.proxyport = XMLPropertyHandler.getValue("proxy.port");
+		CDEConConfig.password = XMLPropertyHandler.getValue("proxy.username");
+		CDEConConfig.username = XMLPropertyHandler.getValue("proxy.password");
 	} // setCDEConConfig
 	
 //	public static void main(String []args) throws Exception
