@@ -15,13 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.Utility;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -272,24 +270,24 @@ public class Validator
     	return result;
     }
     
-    public boolean containsSpecialCharacters( String mainString, String delimiter)
-    {
-    	try
-		{
-    		StringTokenizer st = new StringTokenizer(mainString, delimiter);
-    		int count = st.countTokens();
-    		if(count>1)
-    			return true;
-    		else
-    			return false;
-		}
-    	catch(Exception exp)
-		{
-			//System.out.println("error : " + exp);
-    		return true;
-		}
-
-    }
+//    public boolean containsSpecialCharacters( String mainString, String delimiter)
+//    {
+//    	try
+//		{
+//    		StringTokenizer st = new StringTokenizer(mainString, delimiter);
+//    		int count = st.countTokens();
+//    		if(count>1)
+//    			return true;
+//    		else
+//    			return false;
+//		}
+//    	catch(Exception exp)
+//		{
+//			//System.out.println("error : " + exp);
+//    		return true;
+//		}
+//
+//    }
     
     public String delimiterExcludingGiven(String ignoreList)
     {
@@ -949,4 +947,39 @@ public class Validator
 		
 		return isValid;
     }
+    
+    // Mandar : 22-May-06 : bug 1775 : validation of special characters updated.
+    
+    public boolean containsSpecialCharacters(String mainString, String delimiter)
+    {
+    	try
+		{
+			//System.out.println("mainString : "+ mainString + " delimiter: "+ delimiter);
+    		Logger.out.debug("mainString : "+ mainString + " delimiter: "+ delimiter);
+			char[] specialChars = delimiter.toCharArray() ;
+			
+			for(int spCharCount=0;spCharCount<specialChars.length;spCharCount++  )
+			{
+				char searchChar = specialChars[spCharCount ];
+				//System.out.print("searchChar : "+searchChar + " : ");
+				int pos = mainString.indexOf(searchChar );
+				//System.out.println("pos : "+pos );
+				Logger.out.debug("searchChar : "+searchChar + " | pos : "+pos);
+				if(pos != -1)
+				{
+					return true;
+				}
+			}
+		}
+    	catch(Exception exp)
+		{
+			//System.out.println("error : " + exp);
+    		Logger.out.error(exp.getMessage(),exp );
+    		return true;
+		}
+    	
+    	return false;
+    }
+
+
 }
