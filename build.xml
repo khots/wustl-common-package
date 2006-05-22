@@ -134,6 +134,12 @@
         </delete>
     </target>
 	
+	<target name="BuildCodeZip" depends="Compile" >
+		<zip destfile="${build.dir}/commonpackage-src.zip">
+	    	<fileset dir="${src.dir}" includes="**/*"/>
+	    </zip>
+	</target>
+	
 	<target name="Buildjar" depends="Compile" >
         <delete>
             <fileset dir="${build.dir}" includes="**/*"/>
@@ -143,6 +149,8 @@
             <fileset dir="${target.dir}" includes="**/*"/>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties"/>	
         </jar>
+		
+		<antcall target="BuildCodeZip"/>
     </target>
 	
 	<target name="Generate-Schema" depends="Buildjar">
