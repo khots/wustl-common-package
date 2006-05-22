@@ -16,12 +16,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -34,20 +36,20 @@ public class XMLPropertyHandler
 
 	private static Document document = null;
 
-//	public static void main(String[] args) 
-//	{
-//		XMLPropertyHandler ph = new XMLPropertyHandler();
-//
-//		String propertyValue1 = ph.getValue("server.port");
-//		System.out.println(""+propertyValue1);
-//		String propertyValue2 = ph.getValue("casdr.server");
-//		System.out.println(""+propertyValue2);
-//
-//	}
-
-	public static void init() throws Exception
+	public static void main(String[] args) throws Exception
 	{
-		String path = System.getProperty("app.propertiesFile");
+		Variables.catissueHome = System.getProperty("user.dir");
+		Logger.out = org.apache.log4j.Logger.getLogger("");
+		PropertyConfigurator.configure("Logger.properties");
+
+		XMLPropertyHandler.init("caTissueCore_Properties.xml");
+
+		String propertyValue1 = XMLPropertyHandler.getValue("server.port");
+		Logger.out.debug(""+propertyValue1);
+	}
+
+	public static void init(String path) throws Exception
+	{
 		Logger.out.debug("path.........................."+path);
 		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 		try
@@ -100,24 +102,29 @@ public class XMLPropertyHandler
 				// it gives the subchild nodes in the xml file(name & value)
 				NodeList subChildNodes = child.getChildNodes();
 
-				//System.out.println("subchildNodes : "+subChildNodes.getLength()); 
+				boolean isNameFound = false;
+				//Logger.out.debug("subchildNodes : "+subChildNodes.getLength()); 
 				for (int j = 0; j < subChildNodes.getLength(); j++)
 				{
 					Node subchildNode = subChildNodes.item(j);
 					String subNodeName = subchildNode.getNodeName();
-					//System.out.println("subnodeName : "+subnodeName);
+					//Logger.out.debug("subnodeName : "+subNodeName);
 					if (subNodeName.equals("name"))
 					{
 						String pName = (String) subchildNode.getFirstChild().getNodeValue();
+						Logger.out.debug("pName : "+pName);
 						if (propertyName.equals(pName))
 						{
-							if (subNodeName.equals("value"))
-							{
-								String pValue = (String) subchildNode.getFirstChild()
-										.getNodeValue();
-								return pValue;
-							}
+							Logger.out.debug("pName : "+pName);
+							isNameFound = true;
 						}
+					}
+					
+					if(isNameFound && subNodeName.equals("value"))
+					{
+						String pValue = (String) subchildNode.getFirstChild()
+								.getNodeValue();
+						return pValue;
 					}
 
 				}
