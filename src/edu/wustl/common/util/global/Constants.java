@@ -319,4 +319,14 @@ public class Constants
 	public static final String ADD_NEW_FOR = "addNewFor";
 	
 	public static final String ERROR_DETAIL = "Error Detail";
+	
+	//Identifiers for various Form beans
+	public static final int QUERY_INTERFACE_ID = 43;
+	
+	//Status message key Constants
+	public static final String STATUS_MESSAGE_KEY = "statusMessageKey";
+	
+	//Query Interface Results View Constants
+	public static final String QUERY = "query";
+	
 }
