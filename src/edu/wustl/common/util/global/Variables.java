@@ -21,6 +21,8 @@ public class Variables {
 	/* To hold path of Catissue home directory */
 	public static String catissueHome=new String();
 	public static String databaseName=new String();
+	public static String propertiesDirPath = new String();
+	
 	public static String datePattern = new String();
 	public static String timePattern = new String();
 	public static String timeFormatFunction = new String();
