@@ -33,6 +33,7 @@ import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -67,14 +68,14 @@ public class CommonSearchAction extends Action
         {
             //Retrieves the information to be edited.
             AbstractBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(
-                    						"edu.wustl.catissuecore.bizlogic.BizLogicFactory",
+                    						ApplicationProperties.getValue("app.bizLogicFactory"),
                     							"getBizLogic", abstractForm.getFormId());
             AbstractDomainObject abstractDomain = null;
             List list = null;
             
             AbstractDomainObjectFactory abstractDomainObjectFactory = 
                 	(AbstractDomainObjectFactory) MasterFactory
-                				.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
+                				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
             String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
             list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
             
