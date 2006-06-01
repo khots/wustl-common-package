@@ -84,7 +84,7 @@ public class SecurityManager implements Permissions {
 
 	private Class requestingClass = null;
 
-	private static final String CATISSUE_CORE_CONTEXT_NAME = "catissuecore";
+	public static String CATISSUE_CORE_CONTEXT_NAME = "catissuecore";
 
 	private static final String ADMINISTRATOR_ROLE = "1";
 
@@ -2421,4 +2421,5 @@ public class SecurityManager implements Permissions {
 		}
 		return hasIdentifiedData;
 	}
+
 }
