@@ -109,6 +109,15 @@ public class SecurityManager implements Permissions {
 	private static final String TECHNICIAN_GROUP_ID = "3";
 
 	private static final String PUBLIC_GROUP_ID = "4";
+	
+	public static final String CLASS_NAME = "CLASS_NAME";
+	
+	public static final String TABLE_NAME = "TABLE_NAME";
+	
+	public static final String TABLE_ALIAS_NAME = "TABLE_ALIAS_NAME";
+	
+	private static String securityDataPrefix = CLASS_NAME;
+	
 
 	/**
 	 * @param class1
@@ -2302,23 +2311,42 @@ public class SecurityManager implements Permissions {
 		Logger.out.debug(" AliasName:" + tableAlias + " tableName:" + tableName
 				+ " Identifier:" + identifier + " Permission:" + permission + " userName" + userName);
 		
-		String className = HibernateMetaData.getClassName(tableName);
-		if(tableName.equals(Constants.CATISSUE_SPECIMEN))
-		{
-		    try
-		    {
-		        Class classObject = Class.forName(className);
-				className = classObject.getSuperclass().getName();
-		    }
-		    catch (ClassNotFoundException classNotExp)
-		    {
-		        Logger.out.debug("Class "+className+" not present.");
-		    }
-		}
+		String securityDataPrefixForTable;
 		
-		//Get classname mapping to tableAlias
-		if (className == null) {
-			return isAuthorized;
+		//Aarti: Security Data in database might be on the basis of classname/table name/table alias name
+		//Depending on the option that an application chooses corresponding prefix is used to check permissions
+		if(securityDataPrefix.equals(CLASS_NAME))
+		{
+			securityDataPrefixForTable = HibernateMetaData.getClassName(tableName);
+			if(tableName.equals(Constants.CATISSUE_SPECIMEN))
+			{
+			    try
+			    {
+			        Class classObject = Class.forName(securityDataPrefixForTable);
+			        securityDataPrefixForTable = classObject.getSuperclass().getName();
+			    }
+			    catch (ClassNotFoundException classNotExp)
+			    {
+			        Logger.out.debug("Class "+securityDataPrefixForTable+" not present.");
+			    }
+			}
+			
+			//Get classname mapping to tableAlias
+			if (securityDataPrefixForTable == null) {
+				return isAuthorized;
+			}
+		}
+		else if(securityDataPrefix.equals(TABLE_ALIAS_NAME))
+		{
+			securityDataPrefixForTable = tableAlias;
+		}
+		else if(securityDataPrefix.equals(TABLE_NAME))
+		{
+			securityDataPrefixForTable = tableName;
+		}
+		else
+		{
+			securityDataPrefixForTable = "";
 		}
 		
 		//checking privilege type on class.
@@ -2331,13 +2359,13 @@ public class SecurityManager implements Permissions {
 			// class
 			if (privilegeType == Constants.CLASS_LEVEL_SECURE_RETRIEVE) {
 				isAuthorized = SecurityManager.getInstance(this.getClass())
-						.isAuthorized(userName, className, permission);
+						.isAuthorized(userName, securityDataPrefixForTable, permission);
 			}
 			//else if it is object level check user's privilege on object
 			// identifier
 			else if (privilegeType == Constants.OBJECT_LEVEL_SECURE_RETRIEVE) {
 				isAuthorized = SecurityManager.getInstance(this.getClass())
-						.checkPermission(userName, className,
+						.checkPermission(userName, securityDataPrefixForTable,
 								String.valueOf(identifier), permission);
 			}
 			//else no privilege needs to be checked
@@ -2422,4 +2450,10 @@ public class SecurityManager implements Permissions {
 		return hasIdentifiedData;
 	}
 
+	public static String getSecurityDataPrefix() {
+		return securityDataPrefix;
+	}
+	public static void setSecurityDataPrefix(String securityDataPrefix) {
+		SecurityManager.securityDataPrefix = securityDataPrefix;
+	}
 }
