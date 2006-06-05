@@ -142,6 +142,13 @@ public class Condition {
 	        	{
 	        		newValue = checkQuotes(newValue );
 	        		newValue = "'" + newValue + "'";
+    	        	//To make queries case insensitive, value is converted to
+    	        	//UPPER(<<value>>)
+	        		if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_VARCHAR) 
+	    		        	|| dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_TEXT))
+	    	        {
+	    	        	newValue = Constants.UPPER +"("+newValue+")";
+	    	        }
 	        	}
 	        		
 			}
@@ -177,7 +184,6 @@ public class Condition {
 	    if(!newValue.equalsIgnoreCase(Constants.NULL)  && (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_VARCHAR) 
 		        	|| dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_TEXT)))
 	    {
-	    	newValue = Constants.UPPER +"("+newValue+")";
 	    	dataElementString = dataElement.toUpperSQLString(tableSufix);
 	    }
 	    else
