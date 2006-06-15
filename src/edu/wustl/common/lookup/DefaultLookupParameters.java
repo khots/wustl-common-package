@@ -10,6 +10,9 @@ package edu.wustl.common.lookup;
 
 public class DefaultLookupParameters implements LookupParameters
 {
+	/**
+	 * 
+	 */
 	Object object;
 	Double cutoff;
 	
