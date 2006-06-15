@@ -7,7 +7,7 @@
  */
 package edu.wustl.common.lookup;
 
-public class LookupResult
+public class DefaultLookupResult
 {
 	Object object;
 	Double probablity;
