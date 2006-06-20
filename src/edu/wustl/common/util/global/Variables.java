@@ -17,9 +17,14 @@ package edu.wustl.common.util.global;
  * This class is specific to common files. It is used by common package.
  * */
 
-public class Variables {
-	/* To hold path of Catissue home directory */
-	public static String catissueHome=new String();
+public class Variables 
+{
+	public static String applicationName = new String();
+	public static String applicationVersion = new String();
+	
+	/* To hold path of applicatio installation directory */
+	public static String applicationHome = new String();
+	
 	public static String databaseName=new String();
 	public static String propertiesDirPath = new String();
 	

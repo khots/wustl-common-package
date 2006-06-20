@@ -66,7 +66,7 @@ public class CDEManager
             // unmarshal a root instance document into a tree of Java content
             // objects composed of classes from the pspl.cde package.
             XMLCDECACHE root = 
-                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(Variables.catissueHome+
+                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(Variables.applicationHome+
                 		System.getProperty("file.separator")+ Constants.CDE_CONF_FILE));
             
             // display the cde details
@@ -265,7 +265,7 @@ public class CDEManager
 	
 	public static void main(String[] args)
 	{
-		Variables.catissueHome = System.getProperty("user.dir");
+		Variables.applicationHome = System.getProperty("user.dir");
 		Logger.configure("Application.properties");
 //		Logger.out = org.apache.log4j.Logger.getLogger("");
 //		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
