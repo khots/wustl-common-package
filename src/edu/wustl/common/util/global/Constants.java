@@ -328,5 +328,9 @@ public class Constants
 	
 	//Query Interface Results View Constants
 	public static final String QUERY = "query";
-	
+	//Constant for redefine operation for Advance and Simple Query
+	public static final String REDEFINE = "redefine";	
+	public static final String ORIGINAL_SIMPLE_QUERY_OBJECT = "originalSimpleQueryObject";
+	public static final String ORIGINAL_SIMPLE_QUERY_COUNTER = "counter";
+	public static final String SIMPLE_QUERY_COUNTER = "counter";
 }
