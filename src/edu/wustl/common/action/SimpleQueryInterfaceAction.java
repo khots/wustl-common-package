@@ -23,9 +23,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
+import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.global.Validator;
 
 /**
@@ -42,9 +42,21 @@ public class SimpleQueryInterfaceAction extends SecureAction
             HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         SimpleQueryInterfaceForm simpleQueryInterfaceForm = (SimpleQueryInterfaceForm) form;
-        int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
+
         QueryBizLogic queryBizLogic = new QueryBizLogic();//(QueryBizLogic) BizLogicFactory.getBizLogic(simpleQueryInterfaceForm.getFormId());  
-        
+        HttpSession session = request.getSession();
+        String operation = (String)request.getParameter(Constants.OPERATION);
+        //Bug 1096:Setting the query map with the session object if the operation is redefining the query.
+        if(operation!=null && operation.equals(Constants.REDEFINE))
+    	{
+        	Map simpleQueryMap = (Map)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT);
+        	String originalCounter = (String)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
+    		simpleQueryInterfaceForm.setValues(simpleQueryMap);
+    		simpleQueryInterfaceForm.setCounter(originalCounter);
+    		//Set the session objects to null after it is set in the form.
+    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
+    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
+    	}
         //Patch for Bug : 806
         String objectChanged = request.getParameter("objectChanged");
         
@@ -61,7 +73,7 @@ public class SimpleQueryInterfaceAction extends SecureAction
         		map.put(fieldKey,newFieldValue);
         	}
         }
-        
+        int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
         for (int i=1;i<=counter;i++)
         {
             // Key of present object.
@@ -153,10 +165,8 @@ public class SimpleQueryInterfaceAction extends SecureAction
         request.setAttribute(Constants.ATTRIBUTE_CONDITION_LIST, Constants.ATTRIBUTE_CONDITION_ARRAY);
         
         //Initialize the session attributes to null
-        HttpSession session = request.getSession();
         session.setAttribute(Constants.SIMPLE_QUERY_MAP,null);
         session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST,null);
-        
         String pageOf = request.getParameter(Constants.PAGEOF);
         request.setAttribute(Constants.PAGEOF, pageOf);
         

@@ -57,12 +57,32 @@ public class SimpleSearchAction extends BaseAction {
 		HttpSession session = request.getSession();
 		
 		String target = Constants.SUCCESS;
-		
 		Map map = simpleQueryInterfaceForm.getValuesMap();
-		
-		//If map from session is null get the map values from form.
+		String counter = simpleQueryInterfaceForm.getCounter();
+		//Bug 1096:Creating a copy of the orginal query object for redefining the query object
+		Map originalQueryObject = (Map) session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT);
+		String originalCounter = (String)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
+		//If map from form is null get the map values from session.
 		if (map.size() == 0) 
+		{
 			map = (Map) session.getAttribute(Constants.SIMPLE_QUERY_MAP);
+			//Get the counter from the simple query map if set during configure action in the session object
+			counter = (String)map.get("counter");
+			//After retrieving the value of counter, remove from the map
+			map.remove("counter");
+		}
+		//Bug 1096:Set the simple query map attributes in a temp session object for redefining the query
+		//Set the counter(number of rows in the UI of simple query formed) also in session, 
+		//used for redefining the query
+		if (originalQueryObject ==null && originalCounter ==null) 
+		{
+			if(map!=null && counter!=null)
+			{
+				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,new HashMap(map));
+				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,new String(counter));
+			}
+		}
+		
 		
 		session.setAttribute(Constants.SIMPLE_QUERY_MAP, map);
 		Logger.out.debug("map after setting in session"+map);
@@ -170,7 +190,10 @@ public class SimpleSearchAction extends BaseAction {
 			if (alias == null)
 				alias = simpleQueryInterfaceForm.getAliasName();
 			simpleQueryInterfaceForm.setValues(map);
-			
+			//remove the original session attributes for the query if the list is empty
+    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
+    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
+
 			String path = Constants.SIMPLE_QUERY_INTERFACE_ACTION + "?"
 					+ Constants.PAGEOF + "="
 					+ simpleQueryInterfaceForm.getPageOf() + "&"
