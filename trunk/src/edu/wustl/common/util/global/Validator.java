@@ -137,7 +137,7 @@ public class Validator
             return false;
         }
     }
-
+    
     /**
      * 
      * Checks that the input String contains only numeric digits.
@@ -149,31 +149,72 @@ public class Validator
      */
     public boolean isNumeric(String numString, int positiveCheck)
     {
-        try
-        {
-            long longValue = Long.parseLong(numString);
+    	//Bug# 1698 : Proper error message should be shown for negative integers
+        return isPositiveNumeric(numString,positiveCheck);
+    }
+
+    /**
+     * 
+     * Checks that the input String contains only positive numeric digits.
+     * @param numString The string whose characters are to be checked.
+     * @param positiveCheck Positive integer to check for positive number
+     * @return Returns false if the String contains any alphabet or negative integer else returns true.
+     * @author aarti_sharma
+     * Depending on the value of the positiveCheck will check for positive values
+     *   
+     */
+    public boolean isPositiveNumeric(String numString, int positiveCheck)
+    {
+       Logger.out.debug(" numString:"+numString);
+       Long longValue = convertToLong(numString);
+       Logger.out.debug(" longValue:"+longValue);
+       if(!longValue.equals(null))
+       {
            if(positiveCheck >0 )
            {
-	            if (longValue <= 0)
+	            if (longValue.longValue() <= 0)
 	            {
 	                return false;
 	            }
            }
            else if(positiveCheck == 0 )
            {
-	            if (longValue < 0)
+	            if (longValue.longValue() < 0)
 	            {
 	                return false;
 	            }
            }
-     
-           return true;
+       }
+       else
+       {
+       		return false;
+       }
+       return true;
+        
+    }
+    
+    /**
+     * 
+     * Return Long representation of numString if its convertible else returns null
+     * @param numString The string whose characters are to be checked.
+     * @author aarti_sharma
+     *   
+     */
+    public Long convertToLong(String numString)
+    {
+    	Long longValue = null;
+        try
+        {
+            longValue = new Long(numString);
+            return longValue;
         }
         catch(NumberFormatException exp)
         {
-            return false;
+        	Logger.out.debug("NumberFormatException:" + exp.getMessage());
+            return longValue;
         }
     }
+    
 
     
     /**
@@ -230,7 +271,7 @@ public class Validator
         }
         catch(NumberFormatException exp)
         {
-        	//System.out.println("Error : "+exp);
+        	Logger.out.debug("NumberFormatException:" + exp.getMessage());
             return false;
         }
     	
