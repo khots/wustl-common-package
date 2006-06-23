@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.query.Operator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * SimpleQueryInterfaceForm Class is used to encapsulate all the request parameters passed 
@@ -249,12 +250,27 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		        	    		}
 //		        	            int lastInd = selectedField.lastIndexOf(".");
 //		        	            String dataType = selectedField.substring(lastInd+1);
-		
-		        	            if((dataType.trim().equals("bigint" ) || dataType.trim().equals("integer" )) && !validator.isNumeric(enteredValue,0))
+		        	    		
+		        	    		//Bug# 1698 : Proper error message should be shown for negative integers
+		        	            if((dataType.trim().equals("bigint" ) || dataType.trim().equals("integer" )) )
 		        	            {
-		        	            	 errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.required"));
-		        	            	 conditionError = true;
+		        	            	Logger.out.debug(" Check for integer");
+		        	            	if(validator.convertToLong(enteredValue) == null)
+		        	            	{
+		        	            		errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.required"));
+		        	            		conditionError = true;
+		        	            		Logger.out.debug(enteredValue+" is not a valid integer");
+		        	            	}
+		        	            	else if(!validator.isPositiveNumeric(enteredValue,0))
+		        	            	{
+		        	            		errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.poisitive.required"));
+		        	            		conditionError = true;
+		        	            		Logger.out.debug(enteredValue+" is not a positive integer");
+		        	            	}
+		        	            		
 		        	            }// integer or long
+		        	            //END || Bug# 1698 changes
+		        	            
 		        	            else if((dataType.trim().equals("double" )) && !validator.isDouble(enteredValue,false))
 		        	            {
 		        	            	 errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.decvalue.required"));
