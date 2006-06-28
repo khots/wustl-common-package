@@ -67,12 +67,9 @@ public class EmailHandler
      */
     private boolean sendEmailToAdministrator(String subject, String body)
     {
-        String adminEmailAddress = ApplicationProperties
-        		.getValue("email.administrative.emailAddress");
-        String sendFromEmailAddress = ApplicationProperties
-        		.getValue("email.sendEmailFrom.emailAddress");
-        String mailServer = ApplicationProperties
-                .getValue("email.mailServer");
+        String adminEmailAddress = XMLPropertyHandler.getValue("email.administrative.emailAddress");
+        String sendFromEmailAddress = XMLPropertyHandler.getValue("email.sendEmailFrom.emailAddress");
+        String mailServer = XMLPropertyHandler.getValue("email.mailServer");
         
         body = body + "\n\n" + ApplicationProperties.getValue("loginDetails.catissue.url.message") + Variables.catissueURL;
         
