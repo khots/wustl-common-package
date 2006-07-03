@@ -14,6 +14,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
@@ -47,13 +48,17 @@ public class ResultData
         List dataList = null;
         try
         {
-            AbstractDAO dao = DAOFactory.getDAO(Constants.JDBC_DAO);
+            //Bug#2003: For having unique records in result view
+            JDBCDAO dao = (JDBCDAO) DAOFactory.getDAO(Constants.JDBC_DAO);
             dao.openSession(sessionDataBean);
+            boolean onlyDistinctRows= true;
+            Logger.out.debug("Get only distinct rows:"+onlyDistinctRows);
             dataList = dao.retrieve(tmpResultsTableName,columnList,
                     				 whereColumnName,whereColumnCondition,
-                    				 whereColumnValue,null);
+                    				 whereColumnValue,null,onlyDistinctRows);
             Logger.out.debug("List of spreadsheet data for advance search:"+dataList);
              dao.closeSession();
+             //End of Bug#2003: For having unique records in result view
         }
         catch (DAOException sqlExp)
         {
