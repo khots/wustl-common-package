@@ -9,8 +9,6 @@
  */
 package edu.wustl.common.bizlogic;
 
-import java.util.List;
-
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
@@ -31,7 +29,7 @@ import edu.wustl.common.util.logger.Logger;
  * AbstractBizLogic is the base class of all the Biz Logic classes.
  * @author gautam_shetty
  */
-public abstract class AbstractBizLogic
+public abstract class AbstractBizLogic implements IBizLogic
 {
     /**
      * Inserts an object into the database.
@@ -69,41 +67,7 @@ public abstract class AbstractBizLogic
      */
     protected abstract boolean validate(Object obj, DAO dao, String operation) throws DAOException;
     
-    public abstract List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
-            String[] whereColumnCondition, Object[] whereColumnValue,
-            String joinCondition) throws DAOException;
-    
-    /**
-     * Retrieves the records for class name in sourceObjectName according to field values passed.
-     * @param whereColumnName An array of field names.
-     * @param whereColumnCondition The comparision condition for the field values. 
-     * @param whereColumnValue An array of field values.
-     * @param joinCondition The join condition.
-     */
-    public abstract List retrieve(String sourceObjectName, String[] whereColumnName,
-            String[] whereColumnCondition, Object[] whereColumnValue,
-            String joinCondition) throws DAOException;    
-    
-    /**
-     * Retrieves the records for class name in sourceObjectName according to field values passed.
-     * @param colName Contains the field name.
-     * @param colValue Contains the field value.
-     */
-    public abstract List retrieve(String className, String colName, Object colValue)
-            throws DAOException;    
-    
-    /**
-     * Retrieves all the records for class name in sourceObjectName.
-     * @param sourceObjectName Contains the classname whose records are to be retrieved.
-     */
-    public abstract List retrieve(String sourceObjectName) throws DAOException;
-    
-    public abstract List getList(String sourceObjectName, String[] displayNameFields, String valueField, String[] whereColumnName,
-            String[] whereColumnCondition, Object[] whereColumnValue,
-            String joinCondition, String separatorBetweenFields,  boolean isToExcludeDisabled) throws DAOException;
-    
-    public abstract List getList(String sourceObjectName, String[] displayNameFields, String valueField, boolean isToExcludeDisabled) 
-    			throws DAOException;
+    protected abstract void setPrivilege(DAO dao,String privilegeName, Class objectType, Long[] objectIds, Long userId, String roleId, boolean assignToUser, boolean assignOperation) throws SMException,DAOException;
     
     /**
      * Deletes an object from the database.
@@ -243,10 +207,6 @@ public abstract class AbstractBizLogic
 		}
 	}
     
-    public abstract List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,Long objIDArr[])throws DAOException;
-    
-    protected abstract void setPrivilege(DAO dao,String privilegeName, Class objectType, Long[] objectIds, Long userId, String roleId, boolean assignToUser, boolean assignOperation) throws SMException,DAOException;
-    
     public final void setPrivilege(int daoType,String privilegeName, Class objectType, Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException
     {
         AbstractDAO dao = DAOFactory.getDAO(daoType);
@@ -286,7 +246,7 @@ public abstract class AbstractBizLogic
 		}
     }
     
-	private String formatException(Exception ex,Object obj,String operation)
+	private String formatException(Exception ex, Object obj, String operation)
 	{
 		String errMsg="";
 		if(ex==null)

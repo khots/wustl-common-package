@@ -15,10 +15,9 @@ import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
-import edu.wustl.common.bizlogic.AbstractBizLogic;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -180,7 +179,7 @@ public class PasswordManager
     	try
     	{
     		// retrieve User DomainObject by user name
-    	    AbstractBizLogic bizLogic = new DefaultBizLogic();
+    	    IBizLogic bizLogic = new DefaultBizLogic();
     	    String [] selectColumnNames = {"password"};
     	    String [] whereColumnNames = {"loginName"};
     	    String [] whereColumnCondition = {"="};
