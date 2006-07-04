@@ -112,10 +112,10 @@ public class XMLPropertyHandler
 					if (subNodeName.equals("name"))
 					{
 						String pName = (String) subchildNode.getFirstChild().getNodeValue();
-						Logger.out.debug("pName : "+pName);
+						//Logger.out.debug("pName : "+pName);
 						if (propertyName.equals(pName))
 						{
-							Logger.out.debug("pName : "+pName);
+							//Logger.out.debug("pName : "+pName);
 							isNameFound = true;
 						}
 					}
@@ -126,7 +126,6 @@ public class XMLPropertyHandler
 								.getNodeValue();
 						return pValue;
 					}
-
 				}
 			}
 		}
