@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionMessages;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.AddNewSessionDataBean;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.bizlogic.AbstractBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
@@ -71,7 +71,7 @@ public class CommonAddEditAction extends Action
         try
         {
             AbstractActionForm abstractForm = (AbstractActionForm) form;
-            AbstractBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(
+            IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(
                     							ApplicationProperties.getValue("app.bizLogicFactory"),
                   								"getBizLogic", abstractForm.getFormId());
             

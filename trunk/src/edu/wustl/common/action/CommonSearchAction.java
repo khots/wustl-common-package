@@ -26,7 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.bizlogic.AbstractBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
@@ -67,7 +67,7 @@ public class CommonSearchAction extends Action
         try
         {
             //Retrieves the information to be edited.
-            AbstractBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(
+        	IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(
                     						ApplicationProperties.getValue("app.bizLogicFactory"),
                     							"getBizLogic", abstractForm.getFormId());
             AbstractDomainObject abstractDomain = null;

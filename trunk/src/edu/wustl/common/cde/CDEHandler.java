@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.bizlogic.AbstractBizLogic;
 import edu.wustl.common.bizlogic.CDEBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.logger.Logger;
@@ -74,7 +74,7 @@ public class CDEHandler
 					//Else load the CDE from database cache
 					try
 					{
-						AbstractBizLogic bizLogic = new CDEBizLogic();//BizLogicFactory.getBizLogic(-1);
+						IBizLogic bizLogic = new CDEBizLogic();//BizLogicFactory.getBizLogic(-1);
 						List list = bizLogic.retrieve(CDEImpl.class.getName(),"publicId",publicID);
 						if(!list.isEmpty())
 						{

@@ -11,8 +11,8 @@ package edu.wustl.common.factory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import edu.wustl.common.bizlogic.AbstractBizLogic;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.logger.Logger;
 
@@ -29,17 +29,23 @@ public class AbstractBizLogicFactory
      * @param FORM_TYPE The form bean type.
      * @return An AbstractDAO object.
      */
-    public static final AbstractBizLogic getBizLogic(String bizLogicFactoryName, String methodName, int formId) throws BizLogicException
+    public static final IBizLogic getBizLogic(String bizLogicFactoryName, String methodName, int formId) throws BizLogicException
     {
-        AbstractBizLogic bizLogic = new DefaultBizLogic();
+    	IBizLogic bizLogic = new DefaultBizLogic();
         
         try
         {
-            Class bizLogicClass = Class.forName(bizLogicFactoryName);
+        	//Invokes the singleton method.
+            Class bizLogicFactoryClass = Class.forName(bizLogicFactoryName);
+            Method getInstanceMethod = bizLogicFactoryClass.getMethod("getInstance", null);
+            Object bizLogicFactory = getInstanceMethod.invoke(null,null);
+            
+            //Invokes getBizLogic method using reflection API.
             Class[] parameterTypes = new Class[]{int.class};
-            Method getBizLogicMethod = bizLogicClass.getMethod(methodName, parameterTypes);
             Object[] parameterValues = new Object[]{new Integer(formId)};
-            bizLogic = (AbstractBizLogic)getBizLogicMethod.invoke(null,parameterValues);
+            
+            Method getBizLogicMethod = bizLogicFactoryClass.getMethod(methodName, parameterTypes);
+            bizLogic = (IBizLogic)getBizLogicMethod.invoke(bizLogicFactory,parameterValues);
         }
         catch (ClassNotFoundException classNotFndExp)
         {
@@ -65,7 +71,6 @@ public class AbstractBizLogicFactory
             Logger.out.debug(illAccEcp.getMessage(), illAccEcp);
             throw new BizLogicException("Server Error #4: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
         }
-        
         return bizLogic;
     }
 }

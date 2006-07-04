@@ -464,8 +464,8 @@ public class AuditManager
 	 */
 	private AuditEventDetails compareValue(Object prevVal, Object currVal) 
 	{
-		Logger.out.debug("prevVal <"+prevVal+">");
-		Logger.out.debug("currVal <"+currVal+">");
+		//Logger.out.debug("prevVal <"+prevVal+">");
+		//Logger.out.debug("currVal <"+currVal+">");
 		
 		if(prevVal==null && currVal==null)
 		{
