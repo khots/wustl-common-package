@@ -23,26 +23,53 @@ import edu.wustl.common.util.global.Constants;
  */
 public class DAOFactory
 {
+//	Singleton instace
+	private static DAOFactory factory = null;
+	
+	
+	static
+	{
+		factory = new DAOFactory();
+	}
+	
+	protected DAOFactory()
+	{
+	}
+	
+	/**
+	 * Setter method in singleton class is to setup mock unit testing.
+	 * */
+	public static void setDAOFactory(DAOFactory externalFactory)
+	{
+		factory = externalFactory;
+	}
+	
+	public static DAOFactory getInstance()
+	{
+		return factory;
+	}
     /**
      * Returns DAO instance according to the type.
      * @param type The DAO type.
      * @return An AbstractDAO object.
      */
-    public static AbstractDAO getDAO(int daoType)
+    public AbstractDAO getDAO(int daoType)
     {
         AbstractDAO dao = null;
         switch (daoType)
         {
             case Constants.HIBERNATE_DAO :
-                dao = new HibernateDAO();
+                dao = new HibernateDAOImpl();
                 break;
 
             case Constants.JDBC_DAO :
-                dao = new JDBCDAO();
+                dao = new JDBCDAOImpl();
             default :
                 break;
         }
         return dao;
     }
+    
+    
 
 }

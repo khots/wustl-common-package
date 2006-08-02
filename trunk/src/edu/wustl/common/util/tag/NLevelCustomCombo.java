@@ -27,6 +27,9 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 
+import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.util.logger.Logger;
+
 public class NLevelCustomCombo extends TagSupport
 {
 	/**
@@ -379,7 +382,10 @@ public class NLevelCustomCombo extends TagSupport
 	  {
 		if(dMap instanceof Map)
 		{
+			Logger.out.info("1");
 			Set keySet = ((Map)dMap).keySet();
+			Logger.out.info("size:"+keySet.size());
+			Logger.out.info("formLabelStyle:"+formLabelStyle);
 			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+tdStyleClass+"\" nowrap> "
 												+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 												+"\" style =\""+styleClass
@@ -402,15 +408,16 @@ public class NLevelCustomCombo extends TagSupport
 			{
 				while(keyIter.hasNext())
 				{
-					String key = String.valueOf(keyIter.next());
+					// original String key = String.valueOf(keyIter.next());
+					NameValueBean nvb=(NameValueBean)keyIter.next();
 					String optionSelection = "";
 					
-					if(initialValForThisCombo.equals(key))
+					if(initialValForThisCombo.equals(nvb.getValue()))
 					{
 						optionSelection = " selected =\"true\" ";
 					}
-					combosHTMLStr = combosHTMLStr + "<option "+optionSelection+" value=\""+key+"\">";
-					combosHTMLStr = combosHTMLStr + key;
+					combosHTMLStr = combosHTMLStr + "<option "+optionSelection+" value=\""+nvb.getValue()+"\">";
+					combosHTMLStr = combosHTMLStr + nvb.getName();
 					combosHTMLStr = combosHTMLStr + "</option>";
 				}
 			}
@@ -423,7 +430,8 @@ public class NLevelCustomCombo extends TagSupport
 			int indexForNextCombo = 0;
 			for(int i = 0; i < keySetArray.length; i++)
 			{
-				String key = String.valueOf(keySetArray[i]);
+				//String key = String.valueOf(keySetArray[i]);
+				String key=((NameValueBean)keySetArray[i]).getValue();
 				if(initValue.equals(key))
 				{
 					indexForNextCombo = i;
@@ -431,6 +439,7 @@ public class NLevelCustomCombo extends TagSupport
 			}
 			
 			comboCounter++;
+			
 			getCombos(((Map)dMap).get(keySetArray[indexForNextCombo]));			
 			
 		}else if(dMap instanceof List)      // Termination condition for recursion
@@ -455,16 +464,17 @@ public class NLevelCustomCombo extends TagSupport
 				for(int i = 0; i < dList.size(); i++ )
 				{
 					String optionSelection = "";
+					NameValueBean nvb=(NameValueBean)dList.get(i);
 					if(initialValues.length == numberOfCombosNeeded && initialValues[comboCounter] != null && !(initialValues[comboCounter].equals("")) )
 					{					//if(initialValues.length == numberOfCombosNeeded && initialValues[i] != null && !(initialValues[i].equals("")) )
 						String initialValForThisCombo = (String)initialValues[comboCounter];
-						if(initialValForThisCombo.equals( dList.get(i).toString() ))
+						if(initialValForThisCombo.equals( nvb.getValue()))
 						{
 							optionSelection = " selected =\"true\" ";
 						}
 					}
-					combosHTMLStr = combosHTMLStr + "<option "+optionSelection+"value=\""+dList.get(i)+"\">";
-					combosHTMLStr = combosHTMLStr + dList.get(i);
+					combosHTMLStr = combosHTMLStr + "<option "+optionSelection+"value=\""+nvb.getValue()+"\">";
+					combosHTMLStr = combosHTMLStr + nvb.getName();
 					combosHTMLStr = combosHTMLStr + "</option>";
 				}
 			}
@@ -478,7 +488,7 @@ public class NLevelCustomCombo extends TagSupport
 	  	
 		for(int i = 0; i < Integer.parseInt(noOfEmptyCombos); i++ )
 		{
-			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+tdStyleClass+"\" nowrap> "+labelNames[comboCounter]
+			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\" nowrap> "+labelNames[comboCounter]
 									+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 									+"\" style =\""+styleClass
 									+"\" class=\""+tdStyleClass

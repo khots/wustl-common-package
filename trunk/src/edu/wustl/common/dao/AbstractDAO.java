@@ -19,7 +19,7 @@ import edu.wustl.common.util.dbManager.DAOException;
  * data to/from database.
  * @author kapil_kaveeshwar  
  */
-public abstract class AbstractDAO implements DAO
+public interface AbstractDAO extends DAO
 {
     /**
      * This method will be used to establish the session with the database.

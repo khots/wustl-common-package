@@ -95,7 +95,7 @@ public class  DefaultBizLogic extends AbstractBizLogic
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition) throws DAOException
     {
-        AbstractDAO dao = DAOFactory.getDAO(Constants.HIBERNATE_DAO);
+        AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
         
         List list = null;
         
@@ -134,7 +134,7 @@ public class  DefaultBizLogic extends AbstractBizLogic
             String joinCondition) throws DAOException
     {
         
-        AbstractDAO dao = DAOFactory.getDAO(Constants.HIBERNATE_DAO);
+        AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
         
         List list = null;
         

@@ -103,7 +103,8 @@ public class NameValueBean implements Comparable
 	{
 		NameValueBean obj = (NameValueBean)tmpobj;
 		Logger.out.debug(name.getClass()+" : " +  obj.name.getClass() );
-		if(name.getClass() == obj.getName().getClass() )
+		 
+		if(name.getClass() == obj.name.getClass() )
 		{
 			 
 			if(name.getClass().getName().equalsIgnoreCase("java.lang.Long" ))

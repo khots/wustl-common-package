@@ -3,7 +3,13 @@
  */
 package edu.wustl.common.util.tag;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import edu.wustl.common.beans.NameValueBean;
 
 /**
  * @author chetan_bh
@@ -106,7 +112,9 @@ public class ScriptGenerator {
 			for(int i = 0; i < keySetObj.length; i++)
 			{
 				Object valObj = dMap.get(keySetObj[i]);
-				String kValForNext = keySetObj[i].toString();
+				//String kValForNext = keySetObj[i].toString();
+				NameValueBean nvb=(NameValueBean)keySetObj[i];
+				String kValForNext = nvb.getValue();
 				returner += getVarInStringForm(valObj,depth,kValForNext,rowNumber);
         
 			}
@@ -118,10 +126,12 @@ public class ScriptGenerator {
 		}else if(obj instanceof List)
 		{
 			List dList = (List) obj;
+			
 			returner += varName+depth+" = new Array(); \n";
 			for(int i = 0; i < dList.size(); i++)
 			{
-				returner += varName+depth+"["+i+"] = "+dList.get(i)+"; \n";
+				NameValueBean nvb=(NameValueBean)dList.get(i);
+				returner += varName+depth+"["+i+"] = "+nvb.getValue()+"; \n";
 			}
 			returner += varName+(depth-1)+".put(\""+keyValue+"\","+varName+depth+"); \n";
 		}
@@ -129,7 +139,7 @@ public class ScriptGenerator {
 		return returner;
 	}
 	
-	public static void main(String args[])
+	public static void main12(String args[])
 	{
 		Map containerMap = new Hashtable();
 		
@@ -159,5 +169,36 @@ public class ScriptGenerator {
 		String result = getJSEquivalentFor(fourthMap,"1");
 		System.out.println("\n\nresult \n"+result);
 		System.out.println("\n\ncontainerMap "+fourthMap);		
-	}	
+	}
+	public static void main(String args[])
+	{
+		Map containerMap = new Hashtable();
+		
+		Map xMap1 = new Hashtable();
+		Map xMap2 = new Hashtable();
+
+		List list1 = new ArrayList();
+		list1.add(new NameValueBean("A","A"));
+		List list2 = new ArrayList();
+		list2.add(new NameValueBean("B","B"));
+		List list3 = new ArrayList();
+		list3.add(new NameValueBean("C","C"));
+		list3.add(new NameValueBean("D","D"));
+		
+		xMap1.put(new NameValueBean("1","1"),list1);
+		xMap1.put(new NameValueBean("2","2"),list2);
+
+		xMap2.put(new NameValueBean("22","22"),list3);
+
+		containerMap.put(new NameValueBean("111","111"),xMap1);
+		containerMap.put(new NameValueBean("222","222"),xMap2);
+		
+		Map fourthMap = new Hashtable();
+		fourthMap.put(new NameValueBean("@","@"),containerMap);
+    
+		//int maxDepth = depthOfMap(containerMap);
+		String result = getJSEquivalentFor(fourthMap,"1");
+		System.out.println("\n\nresult \n"+result);
+		System.out.println("\n\ncontainerMap "+fourthMap);		
+	}
 }

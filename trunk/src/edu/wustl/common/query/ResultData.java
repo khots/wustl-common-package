@@ -48,7 +48,7 @@ public class ResultData
         try
         {
             //Bug#2003: For having unique records in result view
-            JDBCDAO dao = (JDBCDAO) DAOFactory.getDAO(Constants.JDBC_DAO);
+            JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
             dao.openSession(sessionDataBean);
             boolean onlyDistinctRows= true;
             Logger.out.debug("Get only distinct rows:"+onlyDistinctRows);
