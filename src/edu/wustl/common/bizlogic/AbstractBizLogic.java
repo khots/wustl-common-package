@@ -78,7 +78,7 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     public void delete(Object obj, int daoType) throws UserNotAuthorizedException, BizLogicException
     {
-        AbstractDAO dao = DAOFactory.getDAO(daoType);
+        AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
 	        dao.openSession(null);
@@ -120,7 +120,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     
     public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
 	{
-		AbstractDAO dao = DAOFactory.getDAO(daoType);
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
 	        dao.openSession(sessionDataBean);
@@ -163,7 +163,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     
     public final void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
 	{
-		AbstractDAO dao = DAOFactory.getDAO(daoType);
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
 	        dao.openSession(sessionDataBean);
@@ -209,7 +209,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     
     public final void setPrivilege(int daoType,String privilegeName, Class objectType, Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException
     {
-        AbstractDAO dao = DAOFactory.getDAO(daoType);
+        AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
 		    Logger.out.debug(" privilegeName:"+privilegeName+" objectType:"+objectType+" objectIds:"+edu.wustl.common.util.Utility.getArrayString(objectIds)+" userId:"+userId+" roleId:"+roleId+" assignToUser:"+assignToUser);

@@ -340,7 +340,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		    Vector vector = new Vector();
 		    try
 		    {
-			    JDBCDAO jdbcDao = new JDBCDAO();
+			    JDBCDAO jdbcDao = (JDBCDAO)DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		        jdbcDao.openSession(null);
 		        
 		        Iterator aliasNameIterator = aliasNameSet.iterator();
@@ -564,7 +564,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		public String getTableName(String aliasName) throws DAOException,ClassNotFoundException
 		{
 			String tableName = new String();
-	        JDBCDAO jdbcDAO = (JDBCDAO)DAOFactory.getDAO(Constants.JDBC_DAO);
+	        JDBCDAO jdbcDAO = (JDBCDAO)DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 	        jdbcDAO.openSession(null);
 	        String sql = "select TABLE_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"+aliasName+"'";
 	        List list = jdbcDAO.executeQuery(sql,null,false, null);
@@ -580,7 +580,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		public String getAliasName(String tableName) throws DAOException,ClassNotFoundException
 		{
 			String aliasName = new String();
-	        JDBCDAO jdbcDAO = (JDBCDAO)DAOFactory.getDAO(Constants.JDBC_DAO);
+	        JDBCDAO jdbcDAO = (JDBCDAO)DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 	        jdbcDAO.openSession(null);
 	        String sql = "select ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"+tableName+"'";
 	        List list = jdbcDAO.executeQuery(sql,null,false, null);

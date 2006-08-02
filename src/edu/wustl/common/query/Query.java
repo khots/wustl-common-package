@@ -195,7 +195,7 @@ public abstract class Query {
 			boolean isSecureExecute, Map queryResultObjectDataMap, boolean hasConditionOnIdentifiedField)
 			throws DAOException {
 		try {
-			JDBCDAO dao = (JDBCDAO) DAOFactory.getDAO(Constants.JDBC_DAO);
+			JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			dao.openSession(null);
 			String sql =  getString();
 			Logger.out.debug("SQL************" + sql);
@@ -669,7 +669,7 @@ public abstract class Query {
 		List list = null;
 		Set relatedTableNames = new HashSet();
 		try {
-			JDBCDAO dao = new JDBCDAO();
+			JDBCDAO dao = (JDBCDAO)DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			dao.openSession(null);
 			String sqlString = "SELECT tableData2.ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA tableData2 "
 					+ "join (SELECT CHILD_TABLE_ID FROM CATISSUE_TABLE_RELATION relationData,"

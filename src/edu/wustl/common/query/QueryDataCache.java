@@ -34,7 +34,7 @@ public class QueryDataCache
      */
 	public static Map getQueryData() throws DAOException
 	{
-		HibernateDAO dao = (HibernateDAO)DAOFactory.getDAO(Constants.HIBERNATE_DAO);
+		HibernateDAO dao = (HibernateDAO)DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
 		
 		dao.openSession(null);
 		List list = dao.retrieve(QueryTableData.class.getName());
