@@ -167,7 +167,7 @@ public class NLevelCustomCombo extends TagSupport
 		{
 			errors = new ActionErrors();
 		}
-		System.out.println("numberOfCombosNeeded "+numberOfCombosNeeded);
+		//System.out.println("numberOfCombosNeeded "+numberOfCombosNeeded);
 		if(attributeNames == null || attributeNames.length != numberOfCombosNeeded )
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("Attributes list is either null or size doesn't match"));
@@ -199,19 +199,19 @@ public class NLevelCustomCombo extends TagSupport
 		dataMap = value;
 	}
 	
-	private Map getNLevelEmptyMaps(int n)
-	{
-		Map returner = new TreeMap();
-		Map currentMap = returner;
-		for(int i =0 ; i< n-1; i++)
-		{
-			Map map = new TreeMap();
-			currentMap.put("0",map);
-			currentMap = map;
-		}
-		currentMap.put("0",new Vector());
-		return returner;
-	}
+//	private Map getNLevelEmptyMaps(int n)
+//	{
+//		Map returner = new TreeMap();
+//		Map currentMap = returner;
+//		for(int i =0 ; i< n-1; i++)
+//		{
+//			Map map = new TreeMap();
+//			currentMap.put("0",map);
+//			currentMap = map;
+//		}
+//		currentMap.put("0",new Vector());
+//		return returner;
+//	}
 	
 	/**
 	 * A call back function which sets onChange.
@@ -311,19 +311,21 @@ public class NLevelCustomCombo extends TagSupport
 				labelNames[i] = "";
 			}
 		}
-		if(initialValues == null || labelNames.length == 0)
+		if(initialValues == null || initialValues.length == 0)
 		{
 			initialValues = new String[numberOfCombosNeeded];
 			for(int i = 0; i <= numberOfCombosNeeded; i++)
 			{
 				initialValues[i] = "-1";
 			}
-		}
-		for(int i = 0; i < initialValues.length;i++)
+		}else
 		{
-			if(initialValues[i] == null || initialValues[i].equals("") || initialValues[i].equals("0"))
+			for(int i = 0; i < initialValues.length;i++)
 			{
-				initialValues[i] = "-1";
+				if(initialValues[i] == null || initialValues[i].equals("") || initialValues[i].equals("0"))
+				{
+					initialValues[i] = "-1";
+				}
 			}
 		}
 		//System.out.println("--initvalue--");
@@ -404,6 +406,7 @@ public class NLevelCustomCombo extends TagSupport
 			// iterate through keys to get options for the current combo.
 			Iterator keyIter = keySet.iterator();
 			//System.out.println("comboCounter "+comboCounter);
+			
 			if((comboCounter == 0) || (comboCounter > 0 && !(( (String)initialValues[comboCounter-1]).equals("-1")) ))
 			{
 				while(keyIter.hasNext())
