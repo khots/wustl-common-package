@@ -28,7 +28,6 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.beans.NameValueBean;
-import edu.wustl.common.util.logger.Logger;
 
 public class NLevelCustomCombo extends TagSupport
 {
@@ -384,10 +383,7 @@ public class NLevelCustomCombo extends TagSupport
 	  {
 		if(dMap instanceof Map)
 		{
-			Logger.out.info("1");
 			Set keySet = ((Map)dMap).keySet();
-			Logger.out.info("size:"+keySet.size());
-			Logger.out.info("formLabelStyle:"+formLabelStyle);
 			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+tdStyleClass+"\" nowrap> "
 												+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 												+"\" style =\""+styleClass
