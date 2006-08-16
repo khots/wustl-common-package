@@ -78,10 +78,10 @@ public class NameValueBean implements Comparable
 
 	public int compareTo(Object obj)
 	{
-		Logger.out.debug("In CompareTo" );
-		Logger.out.debug("ObjClass : " + obj.getClass().getName());
-		Logger.out.debug("NameClass : " +((NameValueBean)obj).getName().getClass().getName());
-		Logger.out.debug("ValueClass : " +((NameValueBean)obj).getValue().getClass().getName());
+//		Logger.out.debug("In CompareTo" );
+//		Logger.out.debug("ObjClass : " + obj.getClass().getName());
+//		Logger.out.debug("NameClass : " +((NameValueBean)obj).getName().getClass().getName());
+//		Logger.out.debug("ValueClass : " +((NameValueBean)obj).getValue().getClass().getName());
 
 		if(obj instanceof NameValueBean)
 		{
@@ -132,7 +132,7 @@ public class NameValueBean implements Comparable
 				return numOne.compareTo(numTwo );
 			}
 		}
-		Logger.out.debug("Number type didnot match");
+//		Logger.out.debug("Number type didnot match");
 		return 0;
 	}
 
