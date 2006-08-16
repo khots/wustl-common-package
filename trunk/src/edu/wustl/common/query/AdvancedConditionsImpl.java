@@ -138,7 +138,9 @@ public class AdvancedConditionsImpl extends ConditionsImpl {
 	                    Query query = QueryFactory.getInstance().newQuery(Query.ADVANCED_QUERY,((AdvancedConditionsNode)child.getUserObject()).getObjectName());
 		                query.setTableSufix(tableSufix+1);
 		                query.setLevelOfParent(this.level);
-		                
+		        		//START: Fix for Bug#1992
+		                query.setParentsOperationWithChildren(currentNodeData.getOperationWithChildCondition());
+		        		//END: Fix for Bug#1992
 		                
 		                //set isParentDerivedSpecimen attribute of child query to true 
 		                //if current node is a derived specimen

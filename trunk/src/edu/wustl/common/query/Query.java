@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAOFactory;
@@ -78,35 +79,17 @@ public abstract class Query {
 	 */
 	protected int tableSufix = 1;
 	
-	/**
-	 * @return Returns the isParentDerivedSpecimen.
-	 */
-	public boolean isParentDerivedSpecimen() {
-		return isParentDerivedSpecimen;
-	}
-	/**
-	 * @param isParentDerivedSpecimen The isParentDerivedSpecimen to set.
-	 */
-	public void setParentDerivedSpecimen(boolean isParentDerivedSpecimen) {
-		this.isParentDerivedSpecimen = isParentDerivedSpecimen;
-	}
-	/**
-	 * @return Returns the levelOfParent.
-	 */
-	public int getLevelOfParent() {
-		return levelOfParent;
-	}
-	/**
-	 * @param levelOfParent The levelOfParent to set.
-	 */
-	public void setLevelOfParent(int levelOfParent) {
-		this.levelOfParent = levelOfParent;
-	}
+
 	protected int levelOfParent = 0;
 	
 	protected boolean isParentDerivedSpecimen = false;
 	
 	private String activityStatusConditions = new String();
+	
+	/**
+	 * Operation between all children under the parent of this query
+	 */
+	private Operator parentsOperationWithChildren ;
 
 	/**
 	 * Participant object constant
@@ -299,6 +282,11 @@ public abstract class Query {
 		//	    }
 
 		set.addAll(getLinkingTables(set));
+		
+		//START: Fix for Bug#1992
+		set.addAll(getChildrenTables(set));
+		//END: Fix for Bug#1992		
+		
 		Logger.out.debug("Set : " + set.toString());
 		query.append("\nFROM ");
 		
@@ -355,6 +343,33 @@ public abstract class Query {
 		Logger.out.debug("linking tables:"+linkingTables);
 		return linkingTables;
 	}
+	
+	/**
+	 * This method returns set of all the tables that are children
+	 * of the queryStartObject whenever the query is a subquery
+	 * @param set
+	 * @return
+	 */
+	private Set getChildrenTables(HashSet set) {
+		Set childrenTables = new HashSet();
+		/*
+		 * If query is a subquery then depending on the queryStartObject add the
+		 * corresponding children to the childrenTables set
+		 */
+		if (tableSufix > 1) {
+			if (this.queryStartObject.equals(Query.SPECIMEN_COLLECTION_GROUP)) {
+				childrenTables.add(new Table(Query.SPECIMEN));
+			} else if (this.queryStartObject.equals(Query.COLLECTION_PROTOCOL)) {
+				childrenTables.add(new Table(
+						Query.COLLECTION_PROTOCOL_REGISTRATION));
+				childrenTables.add(new Table(Query.COLLECTION_PROTOCOL_EVENT));
+			}
+		}
+
+		Logger.out.debug("children tables:" + childrenTables);
+		return childrenTables;
+	}
+	
 	/**
 	 * This method returns set of all objects related to queryStartObject
 	 * transitively
@@ -406,24 +421,38 @@ public abstract class Query {
 //		}
 		
 		Object[] tablesArray = set.toArray();
+		
+		Logger.out.debug(" tablesArray:"+Utility.getArrayString(tablesArray));
+		
 		RelationCondition relationCondition = null;
 
 		//If subquery then join with the superquery
 		if (tableSufix > 1) {
 			
+			Logger.out.debug("Parent:"+getParentOfQueryStartObject()+" parentsOperationWithChildren:"+parentsOperationWithChildren);
 			//this maps the specimen to the one in the upper query
-			//this is to support event queries with 'OR' condition
-			if(this.getParentOfQueryStartObject().equals(Query.SPECIMEN_COLLECTION_GROUP))
+			//this is to support queries with 'OR' condition
+			//START: Fix for Bug#1992
+			if(this.getParentOfQueryStartObject().equals(Query.SPECIMEN_COLLECTION_GROUP) && 
+					!this.parentsOperationWithChildren.getOperatorParams()[0].equals(Operator.AND))
 			{
-				relationCondition = new RelationCondition(new DataElement(Query.SPECIMEN,Constants.IDENTIFIER),
-						new Operator(Operator.EQUAL),new DataElement(Query.SPECIMEN,Constants.IDENTIFIER));
+					relationCondition = new RelationCondition(new DataElement(Query.SPECIMEN,Constants.IDENTIFIER),
+							new Operator(Operator.EQUAL),new DataElement(Query.SPECIMEN,Constants.IDENTIFIER));
+				
 			}
+			//END: Fix for Bug#1992
 			else
 			{
 				relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
 					.get(getJoinRelationWithParent());
+				Logger.out.debug("*********relationCondition:"+relationCondition+"  "+getJoinRelationWithParent());
+				//START: Fix for Bug#1992
+				set.add(new Table(relationCondition.getRightDataElement().getTableAliasName()));
+				//END: Fix for Bug#1992
 			}
-
+			
+			
+			
 			if (relationCondition != null) {
 				DataElement rightDataElement = new DataElement(relationCondition.getRightDataElement());
 				DataElement leftDataElement = new DataElement(relationCondition.getLeftDataElement());
@@ -550,6 +579,8 @@ public abstract class Query {
 				relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
 						.get(new Relation((String) table1.getTableName(),
 								(String) table2.getTableName()));
+				
+				
 				if (relationCondition != null) {
 					Logger.out.debug(table1.getTableName() + " " + table2.getTableName()
 							+ " " + relationCondition.toSQLString(tableSufix));
@@ -576,6 +607,7 @@ public abstract class Query {
 
 					}
 				}
+				
 			}
 		}
 		return joinConditionString.toString();
@@ -588,7 +620,9 @@ public abstract class Query {
 		Map JOIN_RELATION_MAP = new HashMap();
 		JOIN_RELATION_MAP.put(new Relation(Query.PARTICIPANT,Query.COLLECTION_PROTOCOL),new Relation(Query.PARTICIPANT,Query.COLLECTION_PROTOCOL_REGISTRATION));
 		JOIN_RELATION_MAP.put(new Relation(Query.COLLECTION_PROTOCOL,Query.SPECIMEN_COLLECTION_GROUP),new Relation(Query.COLLECTION_PROTOCOL_EVENT,Query.SPECIMEN_COLLECTION_GROUP));
-		JOIN_RELATION_MAP.put(new Relation(Query.SPECIMEN_COLLECTION_GROUP,Query.SPECIMEN),new Relation(Query.SPECIMEN,Query.SPECIMEN));
+		//START: Fix for Bug#1992
+		JOIN_RELATION_MAP.put(new Relation(Query.SPECIMEN_COLLECTION_GROUP,Query.SPECIMEN),new Relation(Query.SPECIMEN_COLLECTION_GROUP,Query.SPECIMEN));
+		//END: Fix for Bug#1992
 		JOIN_RELATION_MAP.put(new Relation(Query.SPECIMEN,Query.SPECIMEN),new Relation(Query.SPECIMEN,Query.SPECIMEN));
 		Logger.out.debug(this.getParentOfQueryStartObject()+" "+this.queryStartObject);
 		return (Relation) JOIN_RELATION_MAP.get(new Relation(this.getParentOfQueryStartObject(),this.queryStartObject));
@@ -603,15 +637,6 @@ public abstract class Query {
 	 * @return A comma separated list of the tables in the set
 	 */
 	private String formFromString(final HashSet set) {
-		
-		if (tableSufix > 1) {
-			RelationCondition relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-					.get(getJoinRelationWithParent());
-			Logger.out.debug("*********relationCondition:"+relationCondition+"  "+getJoinRelationWithParent());
-			
-			set.add(new Table(relationCondition.getRightDataElement().getTableAliasName()));
-		}
-		
 		StringBuffer fromString = new StringBuffer();
 		Iterator it = set.iterator();
 		
@@ -1009,5 +1034,37 @@ public abstract class Query {
 	public boolean hasConditionOnIdentifiedField()
 	{
 		return whereConditions.hasConditionOnIdentifiedField();
+	}
+	
+	/**
+	 * @return Returns the isParentDerivedSpecimen.
+	 */
+	public boolean isParentDerivedSpecimen() {
+		return isParentDerivedSpecimen;
+	}
+	/**
+	 * @param isParentDerivedSpecimen The isParentDerivedSpecimen to set.
+	 */
+	public void setParentDerivedSpecimen(boolean isParentDerivedSpecimen) {
+		this.isParentDerivedSpecimen = isParentDerivedSpecimen;
+	}
+	/**
+	 * @return Returns the levelOfParent.
+	 */
+	public int getLevelOfParent() {
+		return levelOfParent;
+	}
+	/**
+	 * @param levelOfParent The levelOfParent to set.
+	 */
+	public void setLevelOfParent(int levelOfParent) {
+		this.levelOfParent = levelOfParent;
+	}
+	public Operator getParentsOperationWithChildren() {
+		return parentsOperationWithChildren;
+	}
+	public void setParentsOperationWithChildren(
+			Operator parentsOperationWithChildren) {
+		this.parentsOperationWithChildren = parentsOperationWithChildren;
 	}
 }

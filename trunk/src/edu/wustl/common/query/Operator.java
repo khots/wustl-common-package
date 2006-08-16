@@ -126,6 +126,12 @@ public class Operator
         {
         	operatorParams = new String[] {Operator.AND};
         }
+		//START: Fix for Bug#1992
+        else
+        {
+        	operatorParams = new String[] {Operator.OR};
+        }
+		//END: Fix for Bug#1992
     }
     
     /**
@@ -154,6 +160,18 @@ public class Operator
            return false;
     }
     
+    
+	public String toString() {
+		
+		if(operatorParams!=null && operatorParams.length>0)
+		{
+			return this.operator+" Params"+this.operatorParams[0];
+		}
+		else
+		{
+			return this.operator+" Params:null";
+		}
+	}
     public int hashCode()
     {
        return 1;
@@ -168,6 +186,8 @@ public class Operator
     {
         this.operator = operator;
     }
+    
+    
     
     // Mandar : operators for null
 	public static final String IS_NULL = "is Null";
