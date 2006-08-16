@@ -102,7 +102,7 @@ public class NameValueBean implements Comparable
 	private int compareObject(Object tmpobj)
 	{
 		NameValueBean obj = (NameValueBean)tmpobj;
-		Logger.out.debug(name.getClass()+" : " +  obj.name.getClass() );
+		//Logger.out.debug(name.getClass()+" : " +  obj.name.getClass() );
 		 
 		if(name.getClass() == obj.name.getClass() )
 		{
