@@ -9,7 +9,6 @@
  */ 
 package edu.wustl.common.beans;
 
-import edu.wustl.common.util.logger.Logger;
 
 
 
