@@ -24,20 +24,25 @@ public class ExportReport
 	{
 		//Writes the list of data into file 
 		String newLine = System.getProperty(("line.separator"));
-		Iterator itr = values.iterator();
-		while(itr.hasNext())
+		if (values != null) 
 		{
-			List rowValues = (List)itr.next();
-			Iterator rowItr = rowValues.iterator();
-			while(rowItr.hasNext())
+			Iterator itr = values.iterator();
+			while (itr.hasNext()) 
 			{
-				String tempStr = (String)rowItr.next();
-				if(tempStr.indexOf(',') > 0)
-					tempStr = "\"" +tempStr + "\"";
-				String data = tempStr+ delimiter;
-				temp.write(data);
+				List rowValues = (List) itr.next();
+				Iterator rowItr = rowValues.iterator();
+				while (rowItr.hasNext()) 
+				{
+					String tempStr = (String) rowItr.next();
+					if (tempStr == null)
+						tempStr = "";
+					if (tempStr.indexOf(',') > 0)
+						tempStr = "\"" + tempStr + "\"";
+					String data = tempStr + delimiter;
+					temp.write(data);
+				}
+				temp.write(newLine);
 			}
-			temp.write(newLine);
 		}
 	}
 	public void closeFile() throws IOException
