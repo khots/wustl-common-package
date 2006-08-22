@@ -16,12 +16,18 @@ import java.util.HashMap;
 public class Constants 
 {
 	public static final String SELECT_OPTION = "-- Select --";
+	public static final int SELECT_OPTION_VALUE = -1;
 	public static final String CDE_CONF_FILE = "CDEConfig.xml";
 	public static final String ANY = "Any";
 	public static final String DELIMETER = ",";
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	public static final String TAB_DELIMETER = "\t";
+			
+	//	Misc
+	public static final String SEPARATOR = " : ";
+	
+	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
 	
 	public static final  HashMap STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES = new HashMap();
 	
@@ -135,6 +141,7 @@ public class Constants
 	public static final String ACTIVITY_STATUS_CLOSED = "Closed";
 	
 	public static final String AND_JOIN_CONDITION = "AND";
+	public static final String OR_JOIN_CONDITION = "OR";
 	public static final String ACTIVITY_STATUS = "activityStatus";
 	
 	public static final boolean switchSecurity = true;
@@ -163,7 +170,7 @@ public class Constants
 	public static final String SESSION_DATA = "sessionData";
 	public static final String PASSWORD_CHANGE_IN_SESSION = "changepassword";
 	
-	public static final String USER_CLASS_NAME = "edu.wustl.catissuecore.domain.User";
+	public static final String USER_CLASS_NAME = "edu.wustl.common.domain.User";
 	
 	public static final String IDENTIFIER = "IDENTIFIER";
 	
@@ -175,7 +182,7 @@ public class Constants
 	public static final String FIELD_TYPE_TIMESTAMP_DATE = "timestampdate";
 	
 	public static final String TABLE_ALIAS_NAME_COLUMN = "ALIAS_NAME";
-	public static final String TABLE_DATA_TABLE_NAME = "CATISSUE_QUERY_TABLE_DATA";
+	public static final String TABLE_DATA_TABLE_NAME = "QUERY_TABLE_DATA";
 	public static final String TABLE_DISPLAY_NAME_COLUMN = "DISPLAY_NAME";
 	
 	public static final String TABLE_FOR_SQI_COLUMN = "FOR_SQI";
@@ -317,7 +324,7 @@ public class Constants
 	public static final String ADD_NEW_FORWARD_TO ="addNewForwardTo";
 	public static final String FORWARD_TO = "forwardTo";
 	public static final String ADD_NEW_FOR = "addNewFor";
-	
+
 	public static final String ERROR_DETAIL = "Error Detail";
 	
 	//Identifiers for various Form beans
@@ -325,12 +332,113 @@ public class Constants
 	
 	//Status message key Constants
 	public static final String STATUS_MESSAGE_KEY = "statusMessageKey";
-	
-	//Query Interface Results View Constants
-	public static final String QUERY = "query";
+		
 	//Constant for redefine operation for Advance and Simple Query
 	public static final String REDEFINE = "redefine";	
 	public static final String ORIGINAL_SIMPLE_QUERY_OBJECT = "originalSimpleQueryObject";
 	public static final String ORIGINAL_SIMPLE_QUERY_COUNTER = "counter";
 	public static final String SIMPLE_QUERY_COUNTER = "counter";
+/***  Added New Constansts  ***/
+	
+//	Activity Status values
+	public static final String ACTIVITY_STATUS_APPROVE = "Approve";
+	public static final String ACTIVITY_STATUS_REJECT = "Reject";
+	public static final String ACTIVITY_STATUS_NEW = "New";
+	public static final String ACTIVITY_STATUS_PENDING = "Pending";
+	
+	//Approve User status values.
+	public static final String APPROVE_USER_APPROVE_STATUS = "Approve";
+	public static final String APPROVE_USER_REJECT_STATUS = "Reject";
+	public static final String APPROVE_USER_PENDING_STATUS = "Pending";
+
+//	Identifiers for various Form beans
+	public static final int USER_FORM_ID = 1;
+	public static final int ACCESSION_FORM_ID = 3;
+	public static final int REPORTED_PROBLEM_FORM_ID = 4;
+	public static final int INSTITUTION_FORM_ID = 5;
+	public static final int APPROVE_USER_FORM_ID = 6;
+	public static final int ACTIVITY_STATUS_FORM_ID = 7;
+	public static final int DEPARTMENT_FORM_ID = 8;
+	public static final int CANCER_RESEARCH_GROUP_FORM_ID = 14;
+	public static final int FORGOT_PASSWORD_FORM_ID = 35;
+	public static final int SIGNUP_FORM_ID = 36;
+	public static final int DISTRIBUTION_FORM_ID = 37;
+	
+//	Query Interface Results View Constants
+	public static final String QUERY = "query";
+	public static final String PAGEOF_APPROVE_USER = "pageOfApproveUser";
+	public static final String PAGEOF_SIGNUP = "pageOfSignUp";
+	public static final String PAGEOF_USERADD = "pageOfUserAdd";
+	public static final String PAGEOF_USER_ADMIN = "pageOfUserAdmin";
+	public static final String PAGEOF_USER_PROFILE = "pageOfUserProfile";
+	public static final String PAGEOF_CHANGE_PASSWORD = "pageOfChangePassword";
+	
+//	Approve User Constants
+	public static final int ZERO = 0;
+	public static final int START_PAGE = 1;
+	public static final int NUMBER_RESULTS_PER_PAGE = 5;
+	public static final String PAGE_NUMBER = "pageNum";
+	public static final String RESULTS_PER_PAGE = "numResultsPerPage"; 
+	public static final String TOTAL_RESULTS = "totalResults";
+	public static final String PREVIOUS_PAGE = "prevpage";
+	public static final String NEXT_PAGE = "nextPage";
+	public static final String ORIGINAL_DOMAIN_OBJECT_LIST = "originalDomainObjectList";
+	public static final String SHOW_DOMAIN_OBJECT_LIST = "showDomainObjectList";
+	public static final String USER_DETAILS = "details";
+	public static final String CURRENT_RECORD = "currentRecord";
+	public static final String APPROVE_USER_EMAIL_SUBJECT = "Your membership status in caTISSUE Core.";
+	
+	// Constants required in UserBizLogic
+	public static final int DEFAULT_BIZ_LOGIC = 0;
+	
+	public static final String [] USER_ACTIVITY_STATUS_VALUES = {
+        SELECT_OPTION,
+        "Active",
+        "Closed"
+	};
+	
+	public static final String CDE_NAME_COUNTRY_LIST = "Countries";
+	public static final String CDE_NAME_STATE_LIST = "States";
+
+    /**
+     * @param systemIdentifier
+     * @return
+     */
+    public static String getUserPGName(Long identifier)
+    {
+        if(identifier == null)
+	    {
+	        return "USER_";
+	    }
+	    return "USER_"+identifier;
+    }
+
+    /**
+     * @param systemIdentifier
+     * @return
+     */
+    public static String getUserGroupName(Long identifier)
+    {
+        if(identifier == null)
+	    {
+	        return "USER_";
+	    }
+	    return "USER_"+identifier;
+    }
+	
+//  Constants required for Forgot Password
+	public static final String FORGOT_PASSWORD = "forgotpassword";
+	
+	public static final String LOGINNAME = "loginName";
+	public static final String LASTNAME = "lastName";
+	public static final String FIRSTNAME = "firstName";
+	public static final String INSTITUTION = "institution";
+	public static final String EMAIL = "email";
+	public static final String DEPARTMENT = "department";
+	public static final String ADDRESS = "address";
+	public static final String CITY = "city";
+	public static final String STATE = "state";
+	public static final String COUNTRY = "country";
+	public static final String NEXT_CONTAINER_NO = "startNumber";
+	public static final String CSM_USER_ID = "csmUserId";
 }
