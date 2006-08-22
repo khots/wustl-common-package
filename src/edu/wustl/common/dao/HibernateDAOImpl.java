@@ -493,6 +493,10 @@ public class HibernateDAOImpl implements HibernateDAO
                     {
                     	sqlBuff.append(whereColumnCondition[i]);
                     }
+                    else if(whereColumnCondition[i].indexOf("is null")!=-1)
+                    {
+                        sqlBuff.append(whereColumnCondition[i]);
+                    }
                     else
                     {
                     	sqlBuff.append(whereColumnCondition[i] + " ? ");
@@ -511,20 +515,26 @@ public class HibernateDAOImpl implements HibernateDAO
                 for (int i = 0; i < whereColumnValue.length; i++)
                 {
                     //Logger.out.debug("whereColumnValue[i]. " + whereColumnValue[i]);
-                    Object obj = whereColumnValue[i];
-                    if(obj instanceof Object[])
-                    {
-                    	Object[] valArr = (Object[])obj;
-                    	for (int j = 0; j < valArr.length; j++)
-						{
-                    		query.setParameter(index, valArr[j]);
-                    		index++;
-						}
-                    }
+                    if(whereColumnCondition[i].equals("is null") || whereColumnCondition[i].equals("is not null") )
+                    {}
                     else
                     {
-                    	query.setParameter(index, obj);
-                    	index++;
+                    
+                        Object obj = whereColumnValue[i];
+                        if(obj instanceof Object[])
+                        {
+                        	Object[] valArr = (Object[])obj;
+                        	for (int j = 0; j < valArr.length; j++)
+    						{
+                        		query.setParameter(index, valArr[j]);
+                        		index++;
+    						}
+                        }
+                        else
+                        {
+                        	query.setParameter(index, obj);
+                        	index++;
+                        }
                     }
                 }
             }
