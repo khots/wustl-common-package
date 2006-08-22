@@ -200,10 +200,11 @@ public class CDEImpl implements CDE
         this.preferredName = preferredname;
     }
     
+    //Aniruddha : Attribute type modified to "date" instead of "timestamp"
     /**
      * Returns the date when the CDE was last updated.
      * @return the date when the CDE was last updated.
-     * @hibernate.property name="dateLastModified" type="timestamp" column="LAST_UPDATED"
+     * @hibernate.property name="dateLastModified" type="date" column="LAST_UPDATED"
      */
     public Date getDateLastModified()
     {

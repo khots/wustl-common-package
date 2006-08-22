@@ -87,13 +87,14 @@ public class PermissibleValueImpl implements PermissibleValue
         this.identifier = identifier;
     }
     
+    //Aniruddha : Attribute length is set to 40 instead of 20
     /**
      * getConceptid method returns the concept id associated with the
      * PermissibleValue
      * 
      * @return Returns the conceptid.
      * 
-     * @hibernate.property name="conceptid" type="string" column="CONCEPT_CODE" length="20"
+     * @hibernate.property name="conceptid" type="string" column="CONCEPT_CODE" length="40"
      */
     public String getConceptid()
     {
