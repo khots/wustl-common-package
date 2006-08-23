@@ -41,40 +41,51 @@ public class CDETreeListener implements MouseInputListener
         this.appletContext = appletContext;
     }
     
-    public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-    	if(e.getClickCount()==2)
+    public void mouseClicked(MouseEvent e) 
+    {
+        try
         {
-    		Object object = e.getSource();
-    		JTree tree = null;
-
-    		if (object instanceof JTree)
-    		{
-    			tree = (JTree) object;
-    			
-    			DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-                     .getLastSelectedPathComponent();
-
-    			CDETreeNode  treeNode = (CDETreeNode) node
-                     .getUserObject();
-             
-    			//Set the values in the parent window.
-    			Applet applet = this.appletContext.getApplet(Constants.TREE_APPLET_NAME);
-    			JSObject window = JSObject.getWindow(applet);
-    			//commented as this will set in MouseClick
-    			String propertyName = applet.getParameter(Constants.PROPERTY_NAME);
-    			
-    			// if 'Tissue Site' Root node selected then do nothing
-    			if(treeNode.toString().equals(Constants.TISSUE_SITE))
-    			{
-    				return;
-    			}
-    			String setValue = "setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
-             
-    			//commented as this will set in MouseClick
-    			window.eval(setValue);
-    			window.eval("closeWindow()");
-    		}
+			// TODO Auto-generated method stub
+	    	if(e.getClickCount()==2)
+	        {
+	    		Object object = e.getSource();
+	    		JTree tree = null;
+	
+	    		if (object instanceof JTree)
+	    		{
+	    			tree = (JTree) object;
+	    			
+	    			DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+	                     .getLastSelectedPathComponent();
+	
+	    			CDETreeNode  treeNode = (CDETreeNode) node
+	                     .getUserObject();
+	             
+	    			//Set the values in the parent window.
+	    			Applet applet = this.appletContext.getApplet(Constants.TREE_APPLET_NAME);
+	    			System.out.println("applet name "+applet);
+	    			//Kapil: MAC ISSUE JDK 1.3.1	    			
+	    			JSObject window = JSObject.getWindow(applet);
+	    			//commented as this will set in MouseClick
+	    			String propertyName = applet.getParameter(Constants.PROPERTY_NAME);
+	    			
+	    			// if 'Tissue Site' Root node selected then do nothing
+	    			if(treeNode.toString().equals(Constants.TISSUE_SITE))
+	    			{
+	    				return;
+	    			}
+	    			String setValue = "setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
+	             
+	    			//Kapil: MAC ISSUE JDK 1.3.1
+	    			//commented as this will set in MouseClick
+	    			window.eval(setValue);
+	    			window.eval("closeWindow()");
+	    		}
+	        }
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
         }
 		
 	}
