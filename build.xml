@@ -40,6 +40,7 @@
     	<!-- Create the build directory structure used by compile -->
 	    <mkdir dir="${target.dir}"/>
 	    <mkdir dir="${build.dir}"/>
+		<mkdir dir="${applet.dir}"/>
   	</target>
 	
 	<!-- Compile all files, generated and hand-written -->
@@ -63,7 +64,7 @@
     </target>
 	
 	<!-- Create the Applet JAR Begins-->
-    <target name="AppletJAR" depends="compile" >
+    <!--target name="AppletJAR" depends="compile" >
     	<delete>
             <fileset dir="${applet.dir}">
 	            <exclude name="**/CVS*"/>
@@ -90,8 +91,44 @@
         </jar>
 		
 		<delete dir="${applet.dir}/edu"/>
+    </target-->
+	<!-- Create the Applet JAR Ends-->
+	
+	
+	
+	<!-- Compile all files, generated and hand-written -->
+    <target name="applet_compile" depends="init" >
+        <javac destdir="${applet.dir}" includeAntRuntime="false" fork="yes" executable="C:/jdk1.3.1_18/bin/javac" compiler="javac1.3">
+            <src path="${src.dir}"/>
+			
+			<include name="**/edu/wustl/common/tree/*.java"/>	
+        	<include name="**/edu/wustl/common/treeApplet/*.java"/>	
+            <classpath>
+              <fileset dir="${lib.dir}">
+                  <include name="*.jar"/>
+              </fileset>
+            </classpath>       
+        </javac>
+    </target>
+
+	<!-- Create the Applet JAR Begins-->
+    <target name="AppletJAR" depends="applet_compile" >
+            
+		<delete>
+            <fileset dir="${applet.dir}">
+	            <include name="**/*.jar"/>
+            </fileset>
+        </delete>
+
+        <jar taskname="buildJar" jarfile="${applet.dir}/TreeApplet.jar">
+            <fileset dir="${applet.dir}">
+	            <exclude name="**/CVS*"/>
+	            <exclude name="**/java.policy.applet*"/>
+            </fileset>
+        </jar>
     </target>
 	<!-- Create the Applet JAR Ends-->
+	
 	
 	<!-- Generate the hbm files from the XDoclet -->
     <target name="GenerateHBM" description="Generates Hibernate class descriptor files.">
