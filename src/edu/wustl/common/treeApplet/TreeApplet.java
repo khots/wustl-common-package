@@ -29,8 +29,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.tree.GenerateTree;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * TreeApplet builds the applet for the tree representation
@@ -75,6 +75,9 @@ public class TreeApplet extends JApplet
                 cdeName = this.getParameter(Constants.CDE_NAME);
             }
             
+            String session_id = this.getParameter("session_id");
+            System.out.println("session_id "+session_id);
+            
             // If storage container tree, take care of positions and parent container
             // ID edit boxes.
             if(treeType == Constants.STORAGE_CONTAINER_TREE_ID)
@@ -106,10 +109,12 @@ public class TreeApplet extends JApplet
 				applicationPath=newApplicationPath;
             }
             
-            String urlSuffix = applicationPath+Constants.TREE_DATA_ACTION+"?"+Constants.PAGEOF+"="+URLEncoder.encode(pageOf, "UTF-8");
-            if (pageOf.equals(Constants.PAGEOF_TISSUE_SITE) == true)
+            //Kapil: MAC ISSUE JDK 1.3.1
+            String urlSuffix = applicationPath+Constants.TREE_DATA_ACTION+";jsessionid="+session_id+"?"+Constants.PAGEOF+"="+URLEncoder.encode(pageOf);
+            if (pageOf.equals(Constants.PAGEOF_TISSUE_SITE) == true) 
             {
-                urlSuffix = urlSuffix + "&"+Constants.PROPERTY_NAME+"="+URLEncoder.encode(propertyName, "UTF-8")+"&"+Constants.CDE_NAME+"="+URLEncoder.encode(cdeName, "UTF-8");
+                //Kapil: MAC ISSUE JDK 1.3.1
+                urlSuffix = urlSuffix + "&"+Constants.PROPERTY_NAME+"="+URLEncoder.encode(propertyName)+"&"+Constants.CDE_NAME+"="+URLEncoder.encode(cdeName);
             }
             System.out.println("URL......................................"+urlSuffix);
             URL dataURL = new URL(protocol, host, port, urlSuffix);
@@ -167,7 +172,8 @@ public class TreeApplet extends JApplet
                 //Radio buttons finish.
                 
                 //Put the radioButton panel on the Applet.
-                contentPane.add(radioButtonPanel,BorderLayout.PAGE_START);
+                //Kapil: MAC ISSUE JDK 1.3.1
+                contentPane.add(radioButtonPanel,BorderLayout.NORTH);
                 
             	// Add listeners for the tree.
                 QueryResultsTreeListener nodeSelectionListener = new QueryResultsTreeListener(
@@ -203,13 +209,14 @@ public class TreeApplet extends JApplet
             } 
             
             //Put the tree panel on the Applet.
-            contentPane.add(treePanel, BorderLayout.CENTER);
+            //Kapil: MAC ISSUE JDK 1.3.1
+            contentPane.add(treePanel, BorderLayout.WEST);
             
             //Sri: Pass the position of the container to the next level
             // This is used to auto select the node
             if(false == selectedNode.equals(new Long(0)))
             {
-                urlSuffix = applicationPath+Constants.SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION
+                urlSuffix = applicationPath+Constants.SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION+";jsessionid="+session_id
 	            + "?" + Constants.SYSTEM_IDENTIFIER + "=" + selectedNode.toString()
 	            + "&" + Constants.STORAGE_CONTAINER_TYPE + "=" + storageContainerType
 	            + "&" + Constants.STORAGE_CONTAINER_POSITION + "=" + position
