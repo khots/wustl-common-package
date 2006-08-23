@@ -89,14 +89,15 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
     
     public Vector getTreeViewData(String cdeName) throws DAOException
     {
-        try
-        {
-            cdeName = URLDecoder.decode(cdeName, "UTF-8");
-        }
-        catch(UnsupportedEncodingException encExp)
-        {
-            throw new DAOException("Could not generate tree : CDE name not proper.");
-        }
+        cdeName = URLDecoder.decode(cdeName);
+//        try
+//        {
+//            cdeName = URLDecoder.decode(cdeName, "UTF-8");
+//        }
+//        catch(UnsupportedEncodingException encExp)
+//        {
+//            throw new DAOException("Could not generate tree : CDE name not proper.");
+//        }
         
         CDE cde = CDEManager.getCDEManager().getCDE(cdeName);
         CDETreeNode root  = new CDETreeNode();
