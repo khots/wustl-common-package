@@ -1021,6 +1021,18 @@ public class Validator
     	
     	return false;
     }
-
+    
+    //Method to return difference between to dates in days.
+    public long getDateDiff(Date startDate, Date endDate)
+    {
+    	long time1 = startDate.getTime();
+		long time2 = endDate.getTime();
+		long diff = time2 - time1;
+		
+		long days=diff/(1000*60*60*24);
+		Logger.out.debug("Difference in dates = "+ days);
+				
+		return days;
+    }
 
 }
