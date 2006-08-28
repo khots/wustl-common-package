@@ -12,13 +12,12 @@ package edu.wustl.common.util;
 import java.util.Iterator;
 import java.util.List;
 
-//import edu.wustl.catissuecore.domain.ReportedProblem;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.domain.User;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.common.util.global.SendEmail;
 import edu.wustl.common.util.global.Variables;

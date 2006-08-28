@@ -61,7 +61,7 @@ public class ShoppingCart
 	{
 		if(obj != null)
 		{
-			String key = String.valueOf(obj.getSystemIdentifier());
+			String key = String.valueOf(obj.getId());
 			//Mandar 27-Apr-06 bug 1129 : Duplicate message 																																													M a n d a r
 			Object returnObject = cart.put(key,obj);
 			if(returnObject != null)

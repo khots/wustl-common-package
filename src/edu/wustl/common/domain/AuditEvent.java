@@ -15,9 +15,9 @@ public class AuditEvent implements java.io.Serializable
     private static final long serialVersionUID = 1234567890L;
     
 	/**
-     * System generated unique systemIdentifier.
+     * System generated unique id.
      */
-	protected Long systemIdentifier;
+	protected Long id;
 	
 	/**
      * Date and time of the event.
@@ -42,26 +42,26 @@ public class AuditEvent implements java.io.Serializable
 	protected Collection auditEventLogCollection = new HashSet();
 	
 	/**
-     * Returns System generated unique systemIdentifier.
-     * @return System generated unique systemIdentifier.
-     * @see #setSystemIdentifier(Integer)
-     * @hibernate.id name="systemIdentifier" column="IDENTIFIER" type="long" length="30"
+     * Returns System generated unique id.
+     * @return System generated unique id.
+     * @see #setId(Integer)
+     * @hibernate.id name="id" column="IDENTIFIER" type="long" length="30"
      * unsaved-value="null" generator-class="native"
      * @hibernate.generator-param name="sequence" value="CATISSUE_AUDIT_EVENT_PARAM_SEQ" 
      */
-	public Long getSystemIdentifier()
+	public Long getId()
 	{
-		return systemIdentifier;
+		return id;
 	}
 	
 	/**
-     * Sets unique systemIdentifier.
-     * @param systemIdentifier Identifier to be set.
-     * @see #getSystemIdentifier()
+     * Sets unique id.
+     * @param id Identifier to be set.
+     * @see #getId()
      */
-	public void setSystemIdentifier(Long systemIdentifier)
+	public void setId(Long id)
 	{
-		this.systemIdentifier = systemIdentifier;
+		this.id = id;
 	}
 	
 	/**

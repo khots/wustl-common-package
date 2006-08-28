@@ -15,5 +15,5 @@ package edu.wustl.common.audit;
  */
 public interface Auditable
 {
-	public abstract Long getSystemIdentifier();
+	public abstract Long getId();
 }

@@ -13,7 +13,6 @@ import java.io.Serializable;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.tree.QueryTreeNode;
 
 
 /**
@@ -49,8 +48,8 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
 
    
     /**
-     * Sets the systemIdentifier of the data this node represents.
-     * @param identifier the systemIdentifier.
+     * Sets the id of the data this node represents.
+     * @param identifier the id.
      * @see #getId()
      */
     public void setIdentifier(String identifier)
@@ -64,8 +63,8 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
     }
     
     /**
-     * Returns the systemIdentifier of the data this node represents.
-     * @return the systemIdentifier of the data this node represents.
+     * Returns the id of the data this node represents.
+     * @return the id of the data this node represents.
      * @see #setId(long)
      */
     public Object getIdentifier()

@@ -11,9 +11,8 @@ package edu.wustl.common.domain;
 
 import java.io.Serializable;
 
-import edu.wustl.common.actionForm.CancerResearchGroupForm;
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.actionForm.CancerResearchGroupForm;
 
 /**
  * A collection of scientist and/or clinician users with a common research objective related to biospecimen collection and utilization.
@@ -24,9 +23,9 @@ public class CancerResearchGroup extends AbstractDomainObject implements Seriali
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
-	 * System generated unique systemIdentifier.
+	 * System generated unique id.
 	 */
-	protected Long systemIdentifier;
+	protected Long id;
 	
 	/**
 	 * Name of the cancer research group.
@@ -47,25 +46,25 @@ public class CancerResearchGroup extends AbstractDomainObject implements Seriali
 	}
 	
 	/**
-	 * Returns the unique systemIdentifier of the cancer research group.
-	 * @hibernate.id name="systemIdentifier" column="IDENTIFIER" type="long"
+	 * Returns the unique id of the cancer research group.
+	 * @hibernate.id name="id" column="IDENTIFIER" type="long"
 	 * length="30" unsaved-value="null" generator-class="native"
 	 * @hibernate.generator-param name="sequence" value="CATISSUE_CANCER_RES_GRP_SEQ"
-	 * @return a unique systemIdentifier assigned to the cancer research group.
+	 * @return a unique id assigned to the cancer research group.
 	 */
-	public Long getSystemIdentifier()
+	public Long getId()
 	{
-		return systemIdentifier;
+		return id;
 	}
 
 	/**
-	 * Sets an systemIdentifier for the cancer research group.
+	 * Sets an id for the cancer research group.
 	 * 
-	 * @param systemIdentifier Unique systemIdentifier to be assigned to the cancer research group.
+	 * @param id Unique id to be assigned to the cancer research group.
 	 */
-	public void setSystemIdentifier(Long systemIdentifier)
+	public void setId(Long id)
 	{
-		this.systemIdentifier = systemIdentifier;
+		this.id = id;
 	}
 
 	/**

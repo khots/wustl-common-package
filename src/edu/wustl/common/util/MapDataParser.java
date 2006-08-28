@@ -15,8 +15,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import edu.wustl.common.query.Table;
-
-
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -35,13 +33,13 @@ public class MapDataParser
 	{
 		Map map = new TreeMap();
 		
-		map.put("DistributedItem:1_Specimen_systemIdentifier","1");
+		map.put("DistributedItem:1_Specimen_id","1");
 		map.put("DistributedItem:1_quantity","100");
 //		map.put("DistributedItem:1_unitSpan","mg");
 //		map.put("DistributedItem:1_unit","mg");
 		map.put("DistributedItem:1_Specimen_className","Tissue");
 		
-		map.put("DistributedItem:2_Specimen_systemIdentifier","2");
+		map.put("DistributedItem:2_Specimen_id","2");
 		map.put("DistributedItem:2_quantity","200");
 //		map.put("DistributedItem:2_unitSpan","ml");
 //		map.put("DistributedItem:2_unit","ml");

@@ -19,26 +19,25 @@ import java.util.Set;
 import java.util.Vector;
 
 import edu.wustl.common.action.DomainObjectListAction;
+import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.beans.SecurityDataBean;
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.cde.CDEManager;
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.CancerResearchGroup;
 import edu.wustl.common.domain.Department;
 import edu.wustl.common.domain.Institution;
 import edu.wustl.common.domain.User;
-import edu.wustl.common.util.EmailHandler;
-import edu.wustl.common.util.global.PasswordManager;
-import edu.wustl.common.util.Roles;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.beans.NameValueBean;
-import edu.wustl.common.beans.SecurityDataBean;
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
-import edu.wustl.common.cde.CDEManager;
-import edu.wustl.common.dao.DAO;
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.EmailHandler;
+import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.authorization.domainobjects.Role;
@@ -65,21 +64,21 @@ public class UserBizLogic extends DefaultBizLogic
         
         try
         {
-            List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getSystemIdentifier());
+            List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getId());
             Department department = null;
             if (list.size() != 0)
             {
                 department = (Department) list.get(0);
             }
             
-            list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getSystemIdentifier());
+            list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getId());
             Institution institution = null;
             if (list.size() != 0)
             {
                 institution = (Institution) list.get(0);
             }
             
-            list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getSystemIdentifier());
+            list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getId());
             CancerResearchGroup cancerResearchGroup = null;
             if (list.size() != 0)
             {
@@ -192,11 +191,11 @@ public class UserBizLogic extends DefaultBizLogic
         group.add(user);
         
         // Protection group of User
-        String protectionGroupName = Constants.getUserPGName(aUser.getSystemIdentifier());
+        String protectionGroupName = Constants.getUserPGName(aUser.getId());
         SecurityDataBean userGroupRoleProtectionGroupBean = new SecurityDataBean();
         userGroupRoleProtectionGroupBean.setUser(userId);
         userGroupRoleProtectionGroupBean.setRoleName(Roles.UPDATE_ONLY);
-        userGroupRoleProtectionGroupBean.setGroupName(Constants.getUserGroupName(aUser.getSystemIdentifier()));
+        userGroupRoleProtectionGroupBean.setGroupName(Constants.getUserGroupName(aUser.getId()));
         userGroupRoleProtectionGroupBean.setProtectionGroupName(protectionGroupName);
         userGroupRoleProtectionGroupBean.setGroup(group);
         authorizationData.add(userGroupRoleProtectionGroupBean);
@@ -355,7 +354,7 @@ public class UserBizLogic extends DefaultBizLogic
                 nameValueBean.setName(user.getLastName() + ", "
                         + user.getFirstName());
                 nameValueBean.setValue(String.valueOf(user
-                        .getSystemIdentifier()));
+                        .getId()));
                 Logger.out.debug(nameValueBean.toString() + " : " + user.getActivityStatus() );
                 nameValuePairs.add(nameValueBean);
             }

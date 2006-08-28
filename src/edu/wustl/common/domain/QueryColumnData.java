@@ -10,18 +10,14 @@ package edu.wustl.common.domain;
 import java.io.Serializable;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 
 /**
  * @author gautam_shetty
  * @hibernate.class table="CATISSUE_INTERFACE_COLUMN_DATA"
  */
-public class QueryColumnData extends AbstractDomainObject
-        implements
-            Serializable
+public class QueryColumnData extends AbstractDomainObject implements Serializable
 {
-
     private long identifier;
 
     private QueryTableData tableData = new QueryTableData();
@@ -33,7 +29,7 @@ public class QueryColumnData extends AbstractDomainObject
     private String columnType;
 
     /**
-     * Returns the systemIdentifier.
+     * Returns the id.
      * @hibernate.id name="identifier" column="IDENTIFIER" type="long" length="30"
      * unsaved-value="null" generator-class="native"
      * @hibernate.generator-param name="sequence" value="CATISSUE_INTF_COLUMN_DATA_SEQ"
@@ -127,23 +123,21 @@ public class QueryColumnData extends AbstractDomainObject
             throws AssignDataException
     {
         // TODO Auto-generated method stub
-
     }
 
     /* (non-Javadoc)
-     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#getSystemIdentifier()
+     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#getId()
      */
-    public Long getSystemIdentifier()
+    public Long getId()
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     /* (non-Javadoc)
-     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setSystemIdentifier(java.lang.Long)
+     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setId(java.lang.Long)
      */
-    public void setSystemIdentifier(Long systemIdentifier)
+    public void setId(Long id)
     {
-
     }
 }

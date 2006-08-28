@@ -102,21 +102,21 @@ public class CommonAddEditAction extends Action
                 try
                 {
                 	messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
-                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getSystemIdentifier()));
+                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getId()));
                 }
                 catch(Exception excp)
                 {
                     messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
-                            AbstractDomainObject.parseClassName(objectName), abstractDomain.getSystemIdentifier()));
+                            AbstractDomainObject.parseClassName(objectName), abstractDomain.getId()));
                     Logger.out.error(excp.getMessage(), excp);
                 }
                 
                 //Setting the system identifier after inserting the object in the DB.
-                if (abstractDomain.getSystemIdentifier() != null)
+                if (abstractDomain.getId() != null)
                 {
-                    abstractForm.setSystemIdentifier(abstractDomain.getSystemIdentifier().longValue());
-                    request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getSystemIdentifier());
-                    Logger.out.debug("New SystemIdentifier in CommonAddEditAction===>"+abstractDomain.getSystemIdentifier());
+                    abstractForm.setId(abstractDomain.getId().longValue());
+                    request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
+                    Logger.out.debug("New id in CommonAddEditAction===>"+abstractDomain.getId());
                     abstractForm.setMutable(false);
                 }
                 
@@ -149,7 +149,7 @@ public class CommonAddEditAction extends Action
 	        	            Logger.out.debug("forwardTo in CommonAddEditAction--------->"+forwardTo);
 	        	            
 	        	            //Setting Identifier of new object into the FormBean to populate it on the JSP page 
-	        	            sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getSystemIdentifier());
+	        	            sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getId());
 	        	            
 	        	            sessionFormBean.setMutable(false);
 	        	            
@@ -188,7 +188,7 @@ public class CommonAddEditAction extends Action
 	        	            //Changing operation attribute in parth specified in ForwardTo mapping, If AddNew activity started from Edit page
 	        	            if( (sessionFormBean.getOperation().equals("edit") ) )
 	        	            {
-	        	                Logger.out.debug("Edit object Identifier while AddNew is from Edit operation==>"+sessionFormBean.getSystemIdentifier());
+	        	                Logger.out.debug("Edit object Identifier while AddNew is from Edit operation==>"+sessionFormBean.getId());
 	        	                ActionForward editForward = new ActionForward();
 	        	                
 	        	                String addPath = (mapping.findForward(forwardTo)).getPath();
@@ -247,11 +247,11 @@ public class CommonAddEditAction extends Action
             	//If operation is edit, update the data in the database.
                 
                 List list = bizLogic.retrieve(objectName, Constants.SYSTEM_IDENTIFIER,
-										  new Long(abstractForm.getSystemIdentifier()));
+										  new Long(abstractForm.getId()));
                 if (!list.isEmpty())
                 {
                     List listOld = bizLogic.retrieve(objectName, Constants.SYSTEM_IDENTIFIER,
-							  new Long(abstractForm.getSystemIdentifier()));
+							  new Long(abstractForm.getId()));
 
                     AbstractDomainObject abstractDomainOld = (AbstractDomainObject) listOld.get(0);
                     
@@ -335,12 +335,12 @@ public class CommonAddEditAction extends Action
                    try
                    {
                 	   messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success",
-                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getSystemIdentifier()));
+                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getId()));
                    }
                    catch(Exception excp)
                    {
                        messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success", 
-                               AbstractDomainObject.parseClassName(objectName), abstractDomain.getSystemIdentifier()));
+                               AbstractDomainObject.parseClassName(objectName), abstractDomain.getId()));
                        
                        Logger.out.error(excp.getMessage(), excp);
                    }

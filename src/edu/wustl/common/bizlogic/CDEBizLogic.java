@@ -10,7 +10,6 @@
 
 package edu.wustl.common.bizlogic;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.List;

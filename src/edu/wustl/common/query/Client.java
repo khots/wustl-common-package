@@ -18,7 +18,6 @@ import org.apache.log4j.PropertyConfigurator;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
-import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.util.logger.Logger;
 
 public class Client extends AbstractClient

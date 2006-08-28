@@ -17,14 +17,13 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.User;
 import edu.wustl.catissuecore.domainobject.Address;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.Utility;
-import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.User;
 import edu.wustl.common.security.SecurityManager;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
@@ -598,13 +597,13 @@ public class UserForm extends AbstractActionForm
         {
             User user = (User) abstractDomain;
             
-            this.systemIdentifier = user.getSystemIdentifier().longValue();
+            this.id = user.getId().longValue();
             this.lastName = user.getLastName();
             this.firstName = user.getFirstName();
 
             // Check for null entries (for admin)
             if(!edu.wustl.common.util.Utility.isNull(user.getInstitution()) )
-            	this.institutionId = user.getInstitution().getSystemIdentifier().longValue();
+            	this.institutionId = user.getInstitution().getId().longValue();
             
             this.emailAddress = user.getEmailAddress();
             
@@ -612,10 +611,10 @@ public class UserForm extends AbstractActionForm
             confirmEmailAddress = this.emailAddress ;
             
             if(!edu.wustl.common.util.Utility.isNull(user.getDepartment()) )
-            	this.departmentId = user.getDepartment().getSystemIdentifier().longValue();
+            	this.departmentId = user.getDepartment().getId().longValue();
             
             if(!edu.wustl.common.util.Utility.isNull(user.getCancerResearchGroup()) )
-            	this.cancerResearchGroupId = user.getCancerResearchGroup().getSystemIdentifier().longValue();
+            	this.cancerResearchGroupId = user.getCancerResearchGroup().getId().longValue();
 
             if(!edu.wustl.common.util.Utility.isNull(user.getAddress()) )
             {
@@ -681,7 +680,7 @@ public class UserForm extends AbstractActionForm
         {
             edu.wustl.catissuecore.domainobject.User user = (edu.wustl.catissuecore.domainobject.User) obj;
             
-            this.systemIdentifier = user.getId().longValue();
+            this.id = user.getId().longValue();
             this.lastName = user.getLastName();
             this.firstName = user.getFirstName();
             this.emailAddress = user.getEmailAddress();

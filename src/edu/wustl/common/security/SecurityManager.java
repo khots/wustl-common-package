@@ -1123,11 +1123,11 @@ public class SecurityManager implements Permissions {
 //		{
 //			Logger.out.debug(protectionObject.getClass().getName()+" is an instance of Specimen class");
 //			return Specimen.class.getName()
-//			+ "_" + protectionObject.getSystemIdentifier();
+//			+ "_" + protectionObject.getId();
 //		}
 //		return protectionObject.getClass()
 //				.getName()
-//				+ "_" + protectionObject.getSystemIdentifier();
+//				+ "_" + protectionObject.getId();
 //	}
 
 	/**
@@ -1531,7 +1531,7 @@ public class SecurityManager implements Permissions {
 	//        if (user != null && userName != null)
 	//        {
 	//            String protectionElementObjectId = user.getClass().getName() + "_"
-	//                    + user.getSystemIdentifier();
+	//                    + user.getId();
 	//            Logger.out.debug(" Protection Element Object Id:"
 	//                    + protectionElementObjectId);
 	//            Logger.out.debug(" userName:" + userName);

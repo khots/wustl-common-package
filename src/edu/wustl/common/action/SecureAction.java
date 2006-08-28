@@ -10,8 +10,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.security.SecurityManager;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**

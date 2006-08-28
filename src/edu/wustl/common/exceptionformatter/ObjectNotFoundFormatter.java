@@ -3,8 +3,8 @@ package edu.wustl.common.exceptionformatter;
 import java.sql.Connection;
 import java.text.MessageFormat;
 
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 public class ObjectNotFoundFormatter implements ExceptionFormatter {

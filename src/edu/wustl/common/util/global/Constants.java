@@ -114,7 +114,7 @@ public class Constants
     public static final String SUCCESS = "success";
 	public static final String FAILURE = "failure";
 	
-	public static final String SYSTEM_IDENTIFIER = "systemIdentifier";
+	public static final String SYSTEM_IDENTIFIER = "id";
 	
 	// User Roles
 	public static final String ADMINISTRATOR = "Administrator";
@@ -401,7 +401,7 @@ public class Constants
 	public static final String CDE_NAME_STATE_LIST = "States";
 
     /**
-     * @param systemIdentifier
+     * @param id
      * @return
      */
     public static String getUserPGName(Long identifier)
@@ -414,7 +414,7 @@ public class Constants
     }
 
     /**
-     * @param systemIdentifier
+     * @param id
      * @return
      */
     public static String getUserGroupName(Long identifier)

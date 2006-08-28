@@ -173,7 +173,7 @@ public class HibernateMetaData
 		//Logger.out.debug("property.getName() "+property.getName());
 		if(property.getName().equals(attributeName))
 		{
-			Iterator colIt = property.getColumnIterator();//y("systemIdentifier").getColumnIterator();
+			Iterator colIt = property.getColumnIterator();//y("id").getColumnIterator();
 			while(colIt.hasNext())
 			{
 				Column col = (Column)colIt.next();

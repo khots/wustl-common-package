@@ -33,8 +33,8 @@ import edu.wustl.common.bizlogic.SimpleQueryBizLogic;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.QueryFactory;
 import edu.wustl.common.query.SimpleQuery;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.MapDataParser;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -578,7 +578,7 @@ public class SimpleSearchAction extends BaseAction {
 	//					List rowList = (List) list.get(0);
 	//					String action = "SearchObject.do?pageOf="
 	//							+ simpleQueryInterfaceForm.getPageOf()
-	//							+ "&operation=search&systemIdentifier="
+	//							+ "&operation=search&id="
 	//							+ rowList.get(0);
 	//
 	//					RequestDispatcher requestDispatcher = request

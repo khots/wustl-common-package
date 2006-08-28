@@ -22,8 +22,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.tree.TreeNodeImpl;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * QueryResultsTreeListener handles the node selction event of the tree in the applet.

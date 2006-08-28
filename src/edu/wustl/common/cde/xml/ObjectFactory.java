@@ -8,6 +8,9 @@
 
 package edu.wustl.common.cde.xml;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.PropertyException;
+
 
 /**
  * This object contains factory methods for each 

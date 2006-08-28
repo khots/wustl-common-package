@@ -30,14 +30,14 @@ public abstract class AbstractActionForm extends ActionForm
 {
     
     /**
-     * Specifies whether the system identifier is mutable or not.
+     * Specifies whether the id is mutable or not.
      */
     private boolean mutable = true;
     
     /**
      * System generated unique identifier.
      * */
-    protected long systemIdentifier;
+    protected long id;
     
     /**
      * Specifies the page associated with this form bean.
@@ -73,22 +73,22 @@ public abstract class AbstractActionForm extends ActionForm
     /**
      * Returns system generated unique identifier.
      * @return system generated unique identifier.
-     * @see #setSystemIdentifier(long)
+     * @see #setId(long)
      * */
-	public long getSystemIdentifier()
+	public long getId()
 	{
-		return systemIdentifier;
+		return id;
 	}
 
 	/**
      * Sets system generated unique identifier.
      * @param identifier system generated unique identifier.
-     * @see #getSystemIdentifier()
+     * @see #getId()
      * */
-	public void setSystemIdentifier(long identifier)
+	public void setId(long identifier)
 	{
 	    if (isMutable())
-	        this.systemIdentifier = identifier;
+	        this.id = identifier;
 	}
 	
     /**
@@ -223,9 +223,6 @@ public abstract class AbstractActionForm extends ActionForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request)
     {
-//        systemIdentifier = -1;
-//        operation = null;
-//        activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
         reset();
     }
     

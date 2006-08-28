@@ -91,7 +91,7 @@ public interface DAO
 	 */
 	public abstract List retrieve (String sourceObjectName, String[] selectColumnName) throws DAOException;
 	
-	public Object retrieve (String sourceObjectName, Serializable systemIdentifier) throws DAOException;
+	public Object retrieve (String sourceObjectName, Serializable id) throws DAOException;
 	
 	public abstract void disableRelatedObjects(String tableName, String whereColumnName, Long whereColumnValues[]) throws DAOException;
 }

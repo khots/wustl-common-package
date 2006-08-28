@@ -104,7 +104,7 @@ public class AuditManager
 			AuditEventLog auditEventLog = new AuditEventLog();
 			
 			//Set System identifier if the current object.
-			auditEventLog.setObjectIdentifier(currentObj.getSystemIdentifier());
+			auditEventLog.setObjectIdentifier(currentObj.getId());
 			
 			//Set the table name of the current class
 			auditEventLog.setObjectName(HibernateMetaData.getTableName(currentObj.getClass()));
@@ -259,8 +259,8 @@ public class AuditManager
 			Auditable prev = (Auditable)prevColIterator.next();
 		
 			AuditEventDetails auditEventDetails = setAuditEventDetails(null,roleId,
-					Utility.toString(prev.getSystemIdentifier()),
-					Utility.toString(curr.getSystemIdentifier()));			
+					Utility.toString(prev.getId()),
+					Utility.toString(curr.getId()));			
 			auditEventDetailsCollection.add(auditEventDetails);
 				
 			AuditEventLog auditEventLog=setAuditEventLog(auditEventDetailsCollection,tableName,eventType);
@@ -275,11 +275,11 @@ public class AuditManager
 			Set auditEventDetailsCollection = new HashSet();
 			Auditable curr=(Auditable)currColIterator.next();
 			AuditEventDetails auditEventDetails1 = setAuditEventDetails(null,keyId,null,
-						Utility.toString(currentObj.getSystemIdentifier()));
+						Utility.toString(currentObj.getId()));
 			auditEventDetailsCollection.add(auditEventDetails1);
 			
 			AuditEventDetails auditEventDetails2=setAuditEventDetails(null,roleId,null,
-						curr.getSystemIdentifier().toString());
+						curr.getId().toString());
 			auditEventDetailsCollection.add(auditEventDetails2);
 			
 			AuditEventLog auditEventLog=setAuditEventLog(auditEventDetailsCollection,tableName,eventType);
@@ -296,11 +296,11 @@ public class AuditManager
 			AbstractDomainObject prev=(AbstractDomainObject)prevColIterator.next();
 			
 			AuditEventDetails auditEventDetails1=setAuditEventDetails(null,keyId,
-					Utility.toString(currentObj.getSystemIdentifier()),null);
+					Utility.toString(currentObj.getId()),null);
 			auditEventDetailsCollection.add(auditEventDetails1);
 		
 			AuditEventDetails auditEventDetails2=setAuditEventDetails(null,roleId,
-					Utility.toString(prev.getSystemIdentifier()),null);
+					Utility.toString(prev.getId()),null);
 			auditEventDetailsCollection.add(auditEventDetails2);
 			
 			AuditEventLog auditEventLog=setAuditEventLog(auditEventDetailsCollection,tableName,eventType);
@@ -328,16 +328,16 @@ public class AuditManager
 	
 	/**
 	 * This function sets the AuditEventDetails object's values 
-	 * @param systemIdentifier
+	 * @param id
 	 * @param elementName
 	 * @param previousValue
 	 * @param currentValue
 	 * @return AuditEvenDetails
 	 */
-	private AuditEventDetails setAuditEventDetails(Long systemIdentifier,String elementName,String previousValue,String currentValue)
+	private AuditEventDetails setAuditEventDetails(Long id,String elementName,String previousValue,String currentValue)
 	{
 		AuditEventDetails auditEventDetails=new AuditEventDetails();
-		auditEventDetails.setSystemIdentifier(systemIdentifier);
+		auditEventDetails.setId(id);
 		auditEventDetails.setElementName(elementName);
 		auditEventDetails.setPreviousValue(previousValue);
 		auditEventDetails.setCurrentValue(currentValue);
@@ -380,7 +380,7 @@ public class AuditManager
 				Auditable curr= (Auditable) currColIterator.next();
 				
 				if(prev!=null && curr!=null && 
-						prev.getSystemIdentifier().equals(curr.getSystemIdentifier()))
+						prev.getId().equals(curr.getId()))
 				{
 					prevColIterator.remove();
 					currColIterator.remove();
@@ -440,7 +440,7 @@ public class AuditManager
 			if(val instanceof Auditable)
 			{
 				Auditable auditable = (Auditable)val;
-				return auditable.getSystemIdentifier();
+				return auditable.getId();
 			}
 			if(isVariable(val))
 				return val; 

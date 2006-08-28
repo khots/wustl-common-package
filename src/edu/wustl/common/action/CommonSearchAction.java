@@ -59,7 +59,7 @@ public class CommonSearchAction extends Action
         String target = null;
         
         AbstractActionForm abstractForm = (AbstractActionForm) form;
-        /* Get the systemIdentifier whose information is to be searched */
+        /* Get the id whose information is to be searched */
         Long identifier = 	Long.valueOf(request.getParameter(Constants.SYSTEM_IDENTIFIER)); 
         if(identifier == null || identifier.longValue() == 0  )
         	identifier = ((Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER)); 
