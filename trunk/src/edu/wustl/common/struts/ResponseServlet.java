@@ -108,7 +108,7 @@ public class ResponseServlet extends HttpServlet
 		
 		if(!operation.equals(Constants.LOGIN) && !operation.equals(Constants.LOGOUT))
 		{
-		    Logger.out.debug("SystemIdentifier in ResponseServlet-->"+req.getAttribute(Constants.SYSTEM_IDENTIFIER));
+		    Logger.out.debug("id in ResponseServlet-->"+req.getAttribute(Constants.SYSTEM_IDENTIFIER));
 		
 		    if(req.getAttribute(Constants.SYSTEM_IDENTIFIER) != null)
 		    {

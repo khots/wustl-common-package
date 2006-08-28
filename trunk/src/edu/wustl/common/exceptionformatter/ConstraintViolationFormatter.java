@@ -13,9 +13,9 @@ import java.util.HashMap;
 
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.exception.ConstraintViolationException;
+import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
-import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.logger.Logger;
 
 public class ConstraintViolationFormatter implements ExceptionFormatter 

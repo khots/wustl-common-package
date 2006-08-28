@@ -17,11 +17,10 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.Institution;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.Institution;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
@@ -52,14 +51,14 @@ public class InstitutionForm extends AbstractActionForm
     public void setAllValues(AbstractDomainObject abstractDomain)
     {
         Institution institute = (Institution) abstractDomain;
-        this.systemIdentifier = institute.getId().longValue();
+        this.id = institute.getId().longValue();
         this.name = institute.getName();
     }
 
     public void setAllVal(Object obj)
     {
         edu.wustl.catissuecore.domainobject.Institution institute=(edu.wustl.catissuecore.domainobject.Institution) obj;
-        this.systemIdentifier = institute.getId().longValue();
+        this.id = institute.getId().longValue();
         this.name = institute.getName();
     }
     

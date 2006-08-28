@@ -420,13 +420,13 @@ public class  DefaultBizLogic extends AbstractBizLogic
         }
     }
     
-    protected Object getCorrespondingOldObject(Collection objectCollection, Long systemIdentifier)
+    protected Object getCorrespondingOldObject(Collection objectCollection, Long id)
     {
         Iterator iterator = objectCollection.iterator();
         while (iterator.hasNext())
         {
             AbstractDomainObject abstractDomainObject = (AbstractDomainObject) iterator.next();
-            if (abstractDomainObject.getSystemIdentifier().equals(systemIdentifier))
+            if (abstractDomainObject.getId().equals(id))
             {
                 return abstractDomainObject;
             }
@@ -456,7 +456,7 @@ public class  DefaultBizLogic extends AbstractBizLogic
     {
 		if(ado !=null)
 		{
-			Long identifier = ado.getSystemIdentifier();
+			Long identifier = ado.getId();
 			if(identifier != null)
 			{
 				String className = ado.getClass().getName();

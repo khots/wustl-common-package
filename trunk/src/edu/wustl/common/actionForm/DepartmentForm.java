@@ -17,11 +17,10 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.Department;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.Department;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
@@ -52,7 +51,7 @@ public class DepartmentForm extends AbstractActionForm
     public void setAllValues(AbstractDomainObject abstractDomain)
     {
         Department department = (Department)abstractDomain;
-        this.systemIdentifier = department.getId().longValue();
+        this.id = department.getId().longValue();
         this.name = department.getName();
     }
     
@@ -60,7 +59,7 @@ public class DepartmentForm extends AbstractActionForm
     public void setAllVal(Object obj)
     {
         edu.wustl.catissuecore.domainobject.Department department = (edu.wustl.catissuecore.domainobject.Department)obj;
-        this.systemIdentifier = department.getId().longValue();
+        this.id = department.getId().longValue();
         this.name = department.getName();
     }
 

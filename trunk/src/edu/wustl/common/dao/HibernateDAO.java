@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface HibernateDAO extends AbstractDAO
 {
-	public Object loadCleanObj(String sourceObjectName, Long systemIdentifier) throws Exception;
+	public Object loadCleanObj(String sourceObjectName, Long id) throws Exception;
 	
 	public void addAuditEventLogs(Collection auditEventDetailsCollection);
 

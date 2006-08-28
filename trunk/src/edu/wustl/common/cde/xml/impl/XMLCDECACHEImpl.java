@@ -8,6 +8,8 @@
 
 package edu.wustl.common.cde.xml.impl;
 
+import edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl.Unmarshaller;
+
 public class XMLCDECACHEImpl
     extends edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl
     implements edu.wustl.common.cde.xml.XMLCDECACHE, com.sun.xml.bind.RIElement, com.sun.xml.bind.JAXBObject, edu.wustl.common.cde.xml.impl.runtime.UnmarshallableObject, edu.wustl.common.cde.xml.impl.runtime.XMLSerializable, edu.wustl.common.cde.xml.impl.runtime.ValidatableObject

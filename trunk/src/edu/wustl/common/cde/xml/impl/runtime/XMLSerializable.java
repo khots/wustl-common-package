@@ -8,6 +8,7 @@
 package edu.wustl.common.cde.xml.impl.runtime;
 
 import org.xml.sax.SAXException;
+
 import com.sun.xml.bind.JAXBObject;
 
 /**

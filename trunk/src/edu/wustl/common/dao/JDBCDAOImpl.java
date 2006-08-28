@@ -674,7 +674,7 @@ public class JDBCDAOImpl implements JDBCDAO
      * (non-Javadoc)
      * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.Long)
      */
-    public Object retrieve (String sourceObjectName, Serializable systemIdentifier) throws DAOException
+    public Object retrieve (String sourceObjectName, Serializable id) throws DAOException
 	{
 		try
 		{

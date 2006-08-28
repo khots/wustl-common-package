@@ -129,6 +129,15 @@ public class HibernateDAOImpl implements HibernateDAO
     {
         try
         {
+            Logger.out.debug("SESSION COMMIT: "+session.connection().getAutoCommit());
+        }
+        catch (Exception dbex)
+        {
+            dbex.printStackTrace();
+        }
+
+        try
+        {
             if (transaction != null)
                 transaction.rollback();
         }
@@ -294,7 +303,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     {
                         isAuthorized = SecurityManager.getInstance(this.getClass())
                         .isAuthorized(sessionDataBean.getUserName(),
-                                obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getSystemIdentifier(),
+                                obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
                                 Permissions.UPDATE);
                         Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
                     }
@@ -302,7 +311,7 @@ public class HibernateDAOImpl implements HibernateDAO
                 else
                 {
                     isAuthorized = false;
-                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getSystemIdentifier()+" "+isAuthorized);
+                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId()+" "+isAuthorized);
                 }
             }
             
@@ -310,7 +319,7 @@ public class HibernateDAOImpl implements HibernateDAO
             {
                 session.update(obj);
                 
-//                Object oldObj = retrieve(obj.getClass().getName(), ((Auditable)obj).getSystemIdentifier());
+//                Object oldObj = retrieve(obj.getClass().getName(), ((Auditable)obj).getId());
 //                if (obj instanceof Auditable && isAuditable)
 //                    auditManager.compare((Auditable) obj, (Auditable)oldObj, "UPDATE");
             }
@@ -553,7 +562,7 @@ public class HibernateDAOImpl implements HibernateDAO
 //                boolean isAuthorized;
 //                Object[] objects = null;
 //                Object[] newObjects = null;
-//                Long systemIdentifier;
+//                Long id;
 //                Site site;
 //                
 //                if (selectColumnName != null && selectColumnName.length > 0)
@@ -567,12 +576,12 @@ public class HibernateDAOImpl implements HibernateDAO
 //                            if(objects != null)
 //                            {
 //                                newObjects = new Object[objects.length-1];
-//                                systemIdentifier = (Long) objects[0];
+//                                id = (Long) objects[0];
 //                                isAuthorized = SecurityManager.getInstance(this.getClass())
 //                                .isAuthorized("sharma.aarti@gmail.com",
-//                                        sourceObjectName+"_"+systemIdentifier,
+//                                        sourceObjectName+"_"+id,
 //                                        Permissions.USE);
-//                                Logger.out.debug(" User's Authorization to update "+sourceObjectName+"_"+systemIdentifier+" "+isAuthorized);
+//                                Logger.out.debug(" User's Authorization to update "+sourceObjectName+"_"+id+" "+isAuthorized);
 //                                list.remove(i);
 //                                if(isAuthorized)
 //                                {
@@ -598,9 +607,9 @@ public class HibernateDAOImpl implements HibernateDAO
 //                            {
 //                                isAuthorized = SecurityManager.getInstance(this.getClass())
 //                                .isAuthorized("sharma.aarti@gmail.com",
-//                                        sourceObjectName+"_"+site.getSystemIdentifier(),
+//                                        sourceObjectName+"_"+site.getId(),
 //                                        Permissions.USE);
-//                                Logger.out.debug(" User's Authorization to update "+sourceObjectName+"_"+site.getSystemIdentifier()+" "+isAuthorized);
+//                                Logger.out.debug(" User's Authorization to update "+sourceObjectName+"_"+site.getId()+" "+isAuthorized);
 //                                
 //                                if(isAuthorized)
 //                                {
@@ -634,13 +643,12 @@ public class HibernateDAOImpl implements HibernateDAO
         return list;
     }
     
-    public Object retrieve(String sourceObjectName, Serializable systemIdentifier)
+    public Object retrieve(String sourceObjectName, Serializable id)
             throws DAOException
     {
         try
         {
-            return session.load(Class.forName(sourceObjectName), 
-                    systemIdentifier);
+            return session.load(Class.forName(sourceObjectName), id);
         }
         catch (ClassNotFoundException cnFoundExp)
         {
@@ -656,9 +664,9 @@ public class HibernateDAOImpl implements HibernateDAO
         }
     }
     
-	public Object loadCleanObj(String sourceObjectName, Long systemIdentifier) throws Exception
+	public Object loadCleanObj(String sourceObjectName, Long id) throws Exception
 	{
-		Object obj = retrieve(sourceObjectName, systemIdentifier);
+		Object obj = retrieve(sourceObjectName, id);
 		session.evict(obj);
 		return obj;
 	}

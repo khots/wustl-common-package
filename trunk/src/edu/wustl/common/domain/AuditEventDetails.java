@@ -1,6 +1,8 @@
 
 package edu.wustl.common.domain;
 
+import edu.wustl.catissuecore.domainobject.Site;
+
 /**
  * @hibernate.class table="CATISSUE_AUDIT_EVENT_DETAILS"
  **/
@@ -8,7 +10,7 @@ public class AuditEventDetails implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 
-	protected Long systemIdentifier;
+	protected Long id;
 	protected String elementName;
 	protected String previousValue;
 	protected String currentValue;
@@ -16,19 +18,19 @@ public class AuditEventDetails implements java.io.Serializable
 	protected AuditEventLog auditEventLog;
 	/**
      * @return Long System generated unique identifier.
-     * @see #setSystemIdentifier(Long)
-     * @hibernate.id name="systemIdentifier" column="IDENTIFIER" type="long" length="30"
+     * @see #setId(Long)
+     * @hibernate.id name="id" column="IDENTIFIER" type="long" length="30"
      * unsaved-value="null" generator-class="native" 
      * @hibernate.generator-param name="sequence" value="CATISSUE_AUDIT_EVENT_DET_SEQ"
      */
-	public Long getSystemIdentifier()
+	public Long getId()
 	{
-		return systemIdentifier;
+		return id;
 	}
 
-	public void setSystemIdentifier(Long systemIdentifier)
+	public void setId(Long id)
 	{
-		this.systemIdentifier = systemIdentifier;
+		this.id = id;
 	}
 
 	/**
@@ -93,8 +95,8 @@ public class AuditEventDetails implements java.io.Serializable
 	{
 		int hashCode = 0;
 	
-		if(systemIdentifier!=null)
-			hashCode += systemIdentifier.intValue(); 
+		if(id!=null)
+			hashCode += id.intValue(); 
 		if(elementName!=null)	
 			hashCode += elementName.hashCode(); 
 		if(previousValue!=null)		
@@ -108,7 +110,7 @@ public class AuditEventDetails implements java.io.Serializable
 	public String toString()
 	{
 		return 
-			"SystemIdentifier "+systemIdentifier+" "+
+			"Id "+id+" "+
 			"ElementName "+elementName +" "+
 			"PreviousValue "+previousValue+" "+
 			"CurrentValue "+currentValue+"\n";
@@ -119,7 +121,7 @@ public class AuditEventDetails implements java.io.Serializable
 //		if(obj instanceof AuditEventDetails)
 //		{
 //			AuditEventDetails auditEventDetails = (AuditEventDetails)obj;
-//			if(this.systemIdentifier.equals(auditEventDetails.systemIdentifier) && 
+//			if(this.id.equals(auditEventDetails.id) && 
 //					this.elementName.equals(auditEventDetails.elementName) &&
 //					this.previousValue.equals(auditEventDetails.previousValue) &&
 //					this.currentValue.equals(auditEventDetails.currentValue))

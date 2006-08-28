@@ -4,6 +4,8 @@ package edu.wustl.common.domain;
 import java.util.Collection;
 import java.util.HashSet;
 
+import edu.wustl.catissuecore.domainobject.Site;
+
 /**
  * @hibernate.class table="CATISSUE_AUDIT_EVENT_LOG"
  **/
@@ -11,7 +13,7 @@ public class AuditEventLog implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 
-	protected Long systemIdentifier;
+	protected Long id;
 	protected Long objectIdentifier;
 	protected String ObjectName;
 	protected String eventType;
@@ -19,18 +21,18 @@ public class AuditEventLog implements java.io.Serializable
 	protected Collection auditEventDetailsCollcetion = new HashSet();
 
 	/**
-     * @hibernate.id name="systemIdentifier" column="IDENTIFIER" type="long" length="30"
+     * @hibernate.id name="id" column="IDENTIFIER" type="long" length="30"
      * unsaved-value="null" generator-class="native" 
      * @hibernate.generator-param name="sequence" value="CATISSUE_AUDIT_EVENT_LOG_SEQ"
      */
-	public Long getSystemIdentifier()
+	public Long getId()
 	{
-		return systemIdentifier;
+		return id;
 	}
 
-	public void setSystemIdentifier(Long systemIdentifier)
+	public void setId(Long id)
 	{
-		this.systemIdentifier = systemIdentifier;
+		this.id = id;
 	}
 
 	/**
@@ -106,6 +108,6 @@ public class AuditEventLog implements java.io.Serializable
 	
 	public String toString()
 	{
-		return systemIdentifier+" "+ objectIdentifier+" "+ObjectName+" "+eventType+" \n "+auditEventDetailsCollcetion;
+		return id+" "+ objectIdentifier+" "+ObjectName+" "+eventType+" \n "+auditEventDetailsCollcetion;
 	}
 }

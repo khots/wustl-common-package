@@ -17,17 +17,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.LoginForm;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.IBizLogic;
-import edu.wustl.common.bizlogic.UserBizLogic;
 import edu.wustl.common.domain.User;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
-import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.global.PasswordManager;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -78,7 +77,7 @@ public class LoginAction extends Action
 	                Logger.out.info(">>>>>>>>>>>>> SUCESSFUL LOGIN A <<<<<<<<< ");
 	                HttpSession session = request.getSession(true);
 	                
-	                Long userId = validUser.getSystemIdentifier();
+	                Long userId = validUser.getId();
 	                String ipAddress = request.getRemoteAddr();
 	                
 	                SessionDataBean sessionData = new SessionDataBean();

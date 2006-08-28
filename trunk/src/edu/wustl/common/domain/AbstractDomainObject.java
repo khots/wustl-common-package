@@ -23,7 +23,7 @@ public abstract class AbstractDomainObject implements Auditable
 {
 	public String getObjectId() 
 	{
-		return this.getClass().getName()+ "_" + this.getSystemIdentifier();
+		return this.getClass().getName()+ "_" + this.getId();
 	}
     /**
      * Parses the fully qualified classname and returns only the classname.
@@ -50,36 +50,16 @@ public abstract class AbstractDomainObject implements Auditable
     public abstract void setAllValues(AbstractActionForm abstractForm) throws AssignDataException;
     
     /**
-	 * Returns the unique systemIdentifier assigned to the domain object.
-     * @return returns a unique systemIdentifier assigned to the domain object.
-     * @see #setIdentifier(Long)
+	 * Returns the unique system identifier assigned to the domain object.
+     * @return returns a unique system identifier assigned to the domain object.
+     * @see #setId(Long)
 	 * */
-    public abstract Long getSystemIdentifier();
+    public abstract Long getId();
 
     /**
-	 * Sets an systemIdentifier for the domain object.
-	 * @param systemIdentifier systemIdentifier for the domain object.
-	 * @see #getIdentifier()
+	 * Sets an system Identifier for the domain object.
+	 * @param system Identifier system Identifier for the domain object.
+	 * @see #getId()
 	 * */
-    public abstract void setSystemIdentifier(Long systemIdentifier);
-    
-    /**
-	 * Returns the unique systemIdentifier assigned to the domain object.
-     * @return returns a unique systemIdentifier assigned to the domain object.
-     * @see #setIdentifier(Long)
-	 * */
-    public Long getId()
-    {
-    	return getSystemIdentifier();
-    }
-
-    /**
-	 * Sets an systemIdentifier for the domain object.
-	 * @param systemIdentifier systemIdentifier for the domain object.
-	 * @see #getIdentifier()
-	 * */
-    public void setId(Long id)
-    {
-    	setSystemIdentifier(id);
-    }
+    public abstract void setId(Long id);    
 }
