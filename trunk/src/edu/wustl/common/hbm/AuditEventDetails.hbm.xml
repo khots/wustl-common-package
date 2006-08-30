@@ -48,7 +48,7 @@
             update="true"
             insert="true"
             column="CURRENT_VALUE"
-            length="150"
+            length="500"
         />
 
         <many-to-one
