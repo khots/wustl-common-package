@@ -127,6 +127,7 @@ public class TreeApplet extends JApplet
             System.out.println("After Connection......................................");
             JTree tree = new JTree();
             List disableSpecimenIdsList = null;
+            System.out.println("PageOf : "+pageOf);  
             Vector treeDataVector = null;
             if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) || pageOf.equals(Constants.PAGEOF_SPECIMEN)
                     || pageOf.equals(Constants.PAGEOF_TISSUE_SITE))
@@ -173,7 +174,7 @@ public class TreeApplet extends JApplet
                 
                 //Put the radioButton panel on the Applet.
                 //Kapil: MAC ISSUE JDK 1.3.1
-                contentPane.add(radioButtonPanel,BorderLayout.NORTH);
+                contentPane.add(radioButtonPanel,BorderLayout.PAGE_START);
                 
             	// Add listeners for the tree.
                 QueryResultsTreeListener nodeSelectionListener = new QueryResultsTreeListener(
@@ -185,7 +186,7 @@ public class TreeApplet extends JApplet
 	            spreadsheetViewRadioButton.addActionListener(nodeSelectionListener);
                 individualViewRadioButton.addActionListener(nodeSelectionListener);
             }
-            
+			
             JPanel treePanel = new JPanel(new GridLayout(1, 0));
             JScrollPane scroll = new JScrollPane(tree);
             treePanel.add(scroll);
@@ -210,7 +211,8 @@ public class TreeApplet extends JApplet
             
             //Put the tree panel on the Applet.
             //Kapil: MAC ISSUE JDK 1.3.1
-            contentPane.add(treePanel, BorderLayout.WEST);
+            contentPane.add(treePanel, BorderLayout.CENTER);
+            System.out.println("25Aug06 : Tree set");
             
             //Sri: Pass the position of the container to the next level
             // This is used to auto select the node
