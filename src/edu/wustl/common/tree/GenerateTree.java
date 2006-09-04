@@ -9,11 +9,14 @@
  */
 package edu.wustl.common.tree;
 
+import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JTree;
+import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 /**
  * GenerateTree generates tree for the storage structure.
@@ -44,7 +47,22 @@ public class GenerateTree
         //Create the hierarchy under the root node.
         createHierarchy(root, dataVector);
         
-        JTree tree = new JTree(root);
+        JTree tree = new JTree(root){
+			public String getToolTipText(MouseEvent e) {
+				Object tip = null;
+				TreePath path = getPathForLocation(e.getX(), e.getY());
+				if (path != null) 
+				{
+					tip = path.getLastPathComponent();
+//					String tooltip = ((StorageContainerTreeNode)(TreeNode)tip).getToolTip();
+//					if(tooltip.trim().length() > 0 )
+//						return tooltip;
+				}
+				return tip == null ? null : tip.toString();
+				//return tip == null ? null : tip.toString();
+			}
+		};
+		ToolTipManager.sharedInstance().registerComponent(tree);
         return tree;
     }
     
