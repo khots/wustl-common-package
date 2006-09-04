@@ -24,6 +24,7 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
      */
     private String type;
     
+    private String toolTip="";
     /**
      * Default constructor. 
      */
@@ -39,7 +40,27 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
         super(identifier, value);
         this.type = type;
     }
+
+    //constructor with tooltip 
+    public StorageContainerTreeNode(Long identifier, String value, String type, String toolTip)
+    {
+        super(identifier, value);
+        this.type = type;
+        this.toolTip = toolTip; 
+    }
     
+	/**
+	 * @return Returns the toolTip.
+	 */
+	public String getToolTip() {
+		return toolTip;
+	}
+	/**
+	 * @param toolTip The toolTip to set.
+	 */
+	public void setToolTip(String toolTip) {
+		this.toolTip = toolTip;
+	}
     /**
      * @return Returns the type.
      */
