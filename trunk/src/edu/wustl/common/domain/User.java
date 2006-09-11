@@ -595,4 +595,13 @@ public class User extends AbstractDomainObject implements Serializable
             Logger.out.error(excp.getMessage());
         }
     }
+    
+    
+	/* (non-Javadoc)
+	 * @see edu.wustl.common.domain.AbstractDomainObject#getMessageLabel()
+	 */
+	public String getMessageLabel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
