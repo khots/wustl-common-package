@@ -96,12 +96,4 @@ public class Department extends AbstractDomainObject implements java.io.Serializ
 		
 		this.name = departmentForm.getName().trim();
 	}
-	
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.domain.AbstractDomainObject#getMessageLabel()
-	 */
-	public String getMessageLabel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

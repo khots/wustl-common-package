@@ -122,15 +122,5 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
      */
     public void setId(Long id)
     {
-    }
-    
-    
-    
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.domain.AbstractDomainObject#getMessageLabel()
-	 */
-	public String getMessageLabel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    }    
 }

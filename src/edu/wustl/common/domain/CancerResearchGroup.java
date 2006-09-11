@@ -98,13 +98,5 @@ public class CancerResearchGroup extends AbstractDomainObject implements Seriali
 		
 		this.name = cancerResearchGroupForm.getName().trim();
     }
-    
-    
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.domain.AbstractDomainObject#getMessageLabel()
-	 */
-	public String getMessageLabel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 }
