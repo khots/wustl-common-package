@@ -62,4 +62,10 @@ public abstract class AbstractDomainObject implements Auditable
 	 * @see #getId()
 	 * */
     public abstract void setId(Long id);    
+    
+    /**
+     * Returns message label to display on success add or edit
+     * @return String
+     */
+    public abstract String getMessageLabel();
 }
