@@ -67,5 +67,7 @@ public abstract class AbstractDomainObject implements Auditable
      * Returns message label to display on success add or edit
      * @return String
      */
-    public abstract String getMessageLabel();
+    public String getMessageLabel() {
+    	return getId().toString();
+    }
 }
