@@ -222,13 +222,4 @@ public class Address extends AbstractDomainObject implements java.io.Serializabl
     {
 
     }
-    
-    
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.domain.AbstractDomainObject#getMessageLabel()
-	 */
-	public String getMessageLabel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
