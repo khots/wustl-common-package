@@ -101,13 +101,29 @@ public class CommonAddEditAction extends Action
                 messages = new ActionMessages();
                 try
                 {
-                	messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
-                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getId()));
+                	if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
+                	{
+	                	messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
+	                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getMessageLabel()));
+                	}
+                	else
+                	{
+                		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.successOnly",
+	                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass()))));
+                	}
                 }
                 catch(Exception excp)
                 {
-                    messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
-                            AbstractDomainObject.parseClassName(objectName), abstractDomain.getId()));
+                	if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
+                	{
+	                    messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
+	                            AbstractDomainObject.parseClassName(objectName), abstractDomain.getMessageLabel()));
+                	}
+                	else
+                	{
+                		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.successOnly",
+	                            AbstractDomainObject.parseClassName(objectName)));
+                	}
                     Logger.out.error(excp.getMessage(), excp);
                 }
                 
@@ -334,15 +350,30 @@ public class CommonAddEditAction extends Action
                    messages = new ActionMessages();
                    try
                    {
-                	   messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success",
-                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getId()));
+	                   	if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
+	                	{
+	                	   messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success",
+	                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getMessageLabel()));
+	                	}
+	                   	else
+	                   	{
+	                   		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.successOnly",
+		                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getMessageLabel()));
+	                   	}
                    }
                    catch(Exception excp)
-                   {
-                       messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success", 
-                               AbstractDomainObject.parseClassName(objectName), abstractDomain.getId()));
-                       
-                       Logger.out.error(excp.getMessage(), excp);
+                   {                       
+                       if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
+	                	{
+	                	   messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success",
+	                	   		AbstractDomainObject.parseClassName(objectName), abstractDomain.getMessageLabel()));
+	                	}
+	                   	else
+	                   	{
+	                   		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.successOnly",
+	                   				AbstractDomainObject.parseClassName(objectName), abstractDomain.getMessageLabel()));
+	                   	}                       
+                       	Logger.out.error(excp.getMessage(), excp);
                    }
                 }
                 else
