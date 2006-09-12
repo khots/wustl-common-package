@@ -130,26 +130,23 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
         // Required for checking the activityStatus.
         Set fromTablesWithPackageNames = new HashSet();
         Iterator fromTableSetIterator = fromTables.iterator();
-        while (fromTableSetIterator.hasNext())
-        {
-            String tableName = getClassName((String)fromTableSetIterator.next());
-            fromTablesWithPackageNames.add(tableName);
-        }
         // Check and get the activity status conditions for all the objects in the conditions.
         List activityStatusConditionList = new ArrayList();
-        Iterator aliasNameIterator = fromTablesWithPackageNames.iterator();
-        while (aliasNameIterator.hasNext())
+
+        while (fromTableSetIterator.hasNext())
         {
-            String fullyQualifiedClassName = (String) aliasNameIterator.next();
-            if (fullyQualifiedClassName.equals("edu.wustl.catissuecore.domain.ReportedProblem"))
-                continue;
-            SimpleConditionsNode activityStatusCondition = getActivityStatusCondition(fullyQualifiedClassName);
+            String alias = (String) fromTableSetIterator.next();
+            SimpleConditionsNode activityStatusCondition = getActivityStatusCondition(alias);
             
             if (activityStatusCondition != null)
             {
                 activityStatusCondition.getOperator().setOperator(Constants.AND_JOIN_CONDITION);
                 activityStatusConditionList.add(activityStatusCondition);
             }
+        }
+        Iterator aliasNameIterator = fromTablesWithPackageNames.iterator();
+        while (aliasNameIterator.hasNext())
+        {
         }
         
         if (activityStatusConditionList.isEmpty() == false)
@@ -176,10 +173,14 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return SimpleConditionsNode if the object named aliasName contains the activityStatus 
 	 * data member, else returns null.
 	 */
-	private SimpleConditionsNode getActivityStatusCondition(String fullyQualifiedClassName) throws DAOException,ClassNotFoundException
+	private SimpleConditionsNode getActivityStatusCondition(String alias) throws DAOException,ClassNotFoundException
 	{
 		SimpleConditionsNode activityStatusCondition = null;
 		
+		String fullyQualifiedClassName = getClassName(alias);
+		if (fullyQualifiedClassName.equals("edu.wustl.catissuecore.domain.ReportedProblem")) {
+			return null;
+		}
 		//Returns the Class object if it is a valid class else returns null.
 		Class className = edu.wustl.common.util.Utility.getClassObject(fullyQualifiedClassName);
 		if (className != null)
@@ -191,8 +192,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				if (objectFields[i].getName().equals(Constants.ACTIVITY_STATUS))
 				{
 					activityStatusCondition = new SimpleConditionsNode();
-					activityStatusCondition.getCondition().getDataElement().setTableName(
-							getAliasName(HibernateMetaData.getTableName(className)));
+					activityStatusCondition.getCondition().getDataElement().setTableName(alias);
 					activityStatusCondition.getCondition().getDataElement().setField(
 							Constants.ACTIVITY_STATUS_COLUMN);
 					activityStatusCondition.getCondition().getOperator().setOperator("!=");
