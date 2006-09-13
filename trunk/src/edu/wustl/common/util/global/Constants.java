@@ -116,10 +116,6 @@ public class Constants
 	
 	public static final String SYSTEM_IDENTIFIER = "id";
 	
-	public static final String SYSTEM_LABEL = "label";
-	
-	public static final String SYSTEM_BARCODE = "barcode";
-	
 	// User Roles
 	public static final String ADMINISTRATOR = "Administrator";
 	
