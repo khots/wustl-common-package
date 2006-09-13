@@ -6,13 +6,16 @@
  */
 package edu.wustl.common.query;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+
 /**
  * @author aarti_sharma
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class Table {
+public class Table  implements Serializable{
 	private String tableName;
 	private String tableAliasAppend;
 	private Table linkingTable;
@@ -123,17 +126,26 @@ public class Table {
 	}
 	/**
 	 * @return
+	 * @throws SQLException
 	 */
-	public String toSQLString() {
-		if(tableAliasAppend != null)
+	public String toSQLString() throws SQLException {
+		if(tableName == null)
 		{
-			if(tableAliasAppend.equals(tableName))
-				return tableName;
-			else
-				return tableAliasAppend;
+			throw new SQLException("table name is null");
+		}	
+		else if(Client.objectTableNames.get(tableName) == null)
+		{
+			throw new SQLException("Unknown table name:"+tableName);
+		}
+		else if(tableAliasAppend != null )
+		{
+			return tableAliasAppend;
 		}
 		else
+		{
 			return tableName;
+		}
+			
 	}
 	
 	/**

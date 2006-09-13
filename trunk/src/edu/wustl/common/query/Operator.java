@@ -8,9 +8,11 @@
  */ 
 package edu.wustl.common.query;
 
+import java.io.Serializable;
 
 
-public class Operator
+
+public class Operator implements Serializable
 {
     /**
      * OR constant

@@ -8,6 +8,8 @@
  */ 
 package edu.wustl.common.query;
 
+import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import edu.wustl.common.util.global.Constants;
@@ -22,7 +24,7 @@ import edu.wustl.common.util.logger.Logger;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
-public class DataElement
+public class DataElement implements Serializable
 {
     /**
      * Table/object name
@@ -91,9 +93,14 @@ public class DataElement
      * SQL string representation
      * @param tableSufix sufix for table name
      * @return SQL string representation
+	 * @throws SQLException
      */
-    public String toSQLString(int tableSufix)
+    public String toSQLString(int tableSufix) throws SQLException
     {
+    	if(table.toSQLString() == null || field == null )
+    	{
+    		return null;
+    	}
        String fieldName = table.toSQLString() + tableSufix + "." + field+" ";
        if ((fieldType != null) && (Constants.FIELD_TYPE_TIMESTAMP_TIME.equalsIgnoreCase(fieldType)))
        {
@@ -116,8 +123,9 @@ public class DataElement
      * @author aarti_sharma
      * @param tableSufix sufix for table name
      * @return SQL string representation
+     * @throws SQLException
      */
-    public String toUpperSQLString(int tableSufix)
+    public String toUpperSQLString(int tableSufix) throws SQLException
     {
        String fieldName = toSQLString(tableSufix);
        
@@ -134,6 +142,10 @@ public class DataElement
     
     public String getColumnNameString(int tableSufix)
     {
+    	if(table.getTableName()==null || field == null)
+    	{
+    		return null;
+    	}
         return table.getTableName() + tableSufix + "_" + field;
     }
     

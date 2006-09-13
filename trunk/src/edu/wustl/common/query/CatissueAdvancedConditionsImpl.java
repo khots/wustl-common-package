@@ -112,6 +112,8 @@ public class CatissueAdvancedConditionsImpl extends AdvancedConditionsImpl {
 			
 			Table table2 = data.getTable();
 			
+			//This if condition will never get satisfied since we have changed all 'OR' operators to 'EXIST'
+			//in case of specimen
 			if (temp.equals(Operator.OR)) {
 				
 				if(table2.getTableName().equals(Query.SPECIMEN))

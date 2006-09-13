@@ -1,6 +1,7 @@
 
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
@@ -60,6 +61,7 @@ public class AdvancedConditionsImpl extends ConditionsImpl {
      */
 	public boolean addCondition(AdvancedConditionsNode parent , AdvancedConditionsNode child)
 	{
+	    
 	    int index=-1;
 		if ((index=  whereCondition.getIndex(new DefaultMutableTreeNode(parent))) != -1)
 		{
@@ -93,9 +95,9 @@ public class AdvancedConditionsImpl extends ConditionsImpl {
     /* (non-Javadoc)
      * @see edu.wustl.caTISSUECore.query.ConditionsImpl#getString()
      */
-    public String getString(int tableSufix)
+    public String getString(int tableSufix) throws SQLException
     {
-    	
+    	Logger.out.info("in getString");
         StringBuffer whereConditionsString = new StringBuffer();
        
             int childCount =whereCondition.getChildCount();
@@ -121,14 +123,17 @@ public class AdvancedConditionsImpl extends ConditionsImpl {
 	            if(currentNodeData.getObjectConditions().size()>0 && childCount>0 && childHasConditions())
 	                whereConditionsString.append(" "+Operator.AND+" (");
             }
+            Logger.out.debug("hasConditions():"+hasConditions());
 	        if(childCount > 0 && hasConditions())
 	        {
 //	        	whereConditionsString.append(" "+Operator.AND+" ");
+	            
 	            /**
 	             * In case operation with children is EXIST a subquery is formed
 	             */
 	            if(currentNodeData != null && currentNodeData.getOperationWithChildCondition().getOperator().equals(Operator.EXIST) )
 	            {
+	                Logger.out.debug("currentNodeData:"+currentNodeData+" operation:"+currentNodeData.getOperationWithChildCondition());
 	                DefaultMutableTreeNode child;
 	                
 	                for(int i = 0; i< childCount;i++)
@@ -141,26 +146,40 @@ public class AdvancedConditionsImpl extends ConditionsImpl {
 		                query.setParentsOperationWithChildren(currentNodeData.getOperationWithChildCondition());
 		        		//END: Fix for Bug#1992
 		                
-		                //set isParentDerivedSpecimen attribute of child query to true 
-		                //if current node is a derived specimen
-		                if(currentNodeData.getObjectName().equals(Query.SPECIMEN) && parentObject.equals(Query.SPECIMEN) 
-		                		&& parentNode != null)
+		          		//START: Fix for Bug#2076
+		                //Setting whether child query is on child or parent of current node
+		                if(currentNodeData.isRuleForChild())
 		                {
-		                	
-		                		if(parentNode.getOperationWithChildCondition().getOperator().equals(Operator.EXIST))
-		                		{
-		                			query.setParentDerivedSpecimen(false);
-		                		}
-		                		else
-		                		{
-		                			query.setParentDerivedSpecimen(true);
-		                		}
-		                	
+		                	query.setQueryOnChild(true);
 		                }
 		                else
 		                {
-		                	query.setParentDerivedSpecimen(false);
+		                	query.setQueryOnChild(false);
 		                }
+		          		//END: Fix for Bug#2076
+		                
+		                Logger.out.debug("current object:"+currentNodeData.getObjectName()+" Parent object:"+parentObject);
+						//Aarti: Commented the following code since its never being called
+		                //set isParentDerivedSpecimen attribute of child query to true 
+		                //if current node is a derived specimen
+//		                if(currentNodeData.getObjectName().equals(Query.SPECIMEN) && parentObject.equals(Query.SPECIMEN) 
+//		                		&& parentNode != null)
+//		                {
+//		                	
+//		                		if(parentNode.getOperationWithChildCondition().getOperator().equals(Operator.EXIST))
+//		                		{
+//		                			query.setParentDerivedSpecimen(false);
+//		                		}
+//		                		else
+//		                		{
+//		                			query.setParentDerivedSpecimen(true);
+//		                		}
+//		                	
+//		                }
+//		                else
+//		                {
+//		                	query.setParentDerivedSpecimen(false);
+//		                }
 		                if(currentNodeData != null)
 		                {
 		                	query.setParentOfQueryStartObject(currentNodeData.getObjectName());
@@ -379,8 +398,10 @@ public class AdvancedConditionsImpl extends ConditionsImpl {
             advancedConditionsNode=(AdvancedConditionsNode) treeNode.getUserObject();
             parentNode = (DefaultMutableTreeNode) treeNode.getParent();
             
+            
             if(advancedConditionsNode != null)
             {
+                set.add(new Table(advancedConditionsNode.getObjectName()));
             	if(parentNode != null)
                 {
 	                parentConditionsNode = (AdvancedConditionsNode) (parentNode).getUserObject();

@@ -1,5 +1,6 @@
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,9 +49,14 @@ public class Condition {
 	 * @param dataElement Data element of the condition
 	 * @param op Operator between data element and value
 	 * @param value Value
+	 * @throws SQLException
 	 */
-	public Condition(DataElement dataElement, Operator op, String value)
+	public Condition(DataElement dataElement, Operator op, String value) 
 	{
+	    if(dataElement == null || op == null || value == null)
+	    {
+	       throw new NullPointerException("dataelement operator or value null");
+	    }
 	    this.dataElement = dataElement;
 	    this.operator = op;
 	    this.value = value;
@@ -60,9 +66,14 @@ public class Condition {
 	 * Forms String of this condition object
 	 * @param tableSufix sufix that needs to be appended to table names
 	 * @return
+	 * @throws SQLException
 	 */
-	public String toSQLString(int tableSufix)
+	public String toSQLString(int tableSufix) throws SQLException
 	{
+	    if(this.operator == null || this.operator.getOperator() == null)
+	    {
+	        throw new SQLException("Null operator in condition");
+	    }
 	    String newOperator = new String(operator.getOperator());
 	    String newValue;
 		if(newOperator.equals(Operator.IS_NULL   ) )
@@ -242,7 +253,14 @@ public class Condition {
     }
     public String toString()
     {
-    	return toSQLString(1);
+    	try {
+			String sqlString = toSQLString(1);
+			return sqlString;
+		} catch (SQLException e) {
+			Logger.out.debug(e.getMessage());
+		}
+    	
+    	return super.toString();
     }
     
 	private String checkQuotes(String strToCheck)

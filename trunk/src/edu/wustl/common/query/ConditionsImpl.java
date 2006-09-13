@@ -1,5 +1,6 @@
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 
 
@@ -29,8 +30,9 @@ public abstract class ConditionsImpl {
 	 * Returns String representation of itself 
 	 * @param tableSufix sufix for tables
 	 * @return string representation
+	 * @throws SQLException
 	 */
-	public abstract String getString(int tableSufix);
+	public abstract String getString(int tableSufix) throws SQLException;
 	
 //	//method that returns object names of conditions
 //	//to form "FROM" part of query

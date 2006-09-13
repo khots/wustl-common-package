@@ -1,5 +1,6 @@
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -82,14 +83,21 @@ public abstract class Query {
 
 	protected int levelOfParent = 0;
 	
-	protected boolean isParentDerivedSpecimen = false;
+	//Aarti: Commented the following code since its never being called
+//	protected boolean isParentDerivedSpecimen = false;
 	
 	private String activityStatusConditions = new String();
 	
 	/**
 	 * Operation between all children under the parent of this query
 	 */
-	private Operator parentsOperationWithChildren ;
+	private Operator parentsOperationWithChildren = new Operator(Operator.OR);
+	
+	/**
+	 * Where query is on child or parent
+	 * True when on child
+	 */
+	private boolean isQueryOnChild = true;
 
 	/**
 	 * Participant object constant
@@ -173,10 +181,11 @@ public abstract class Query {
 	 * @param columnIdsMap
 	 * 
 	 * @return Returns true in case everything is successful else false
+	 * @throws SQLException
 	 */
 	public List execute(SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap, boolean hasConditionOnIdentifiedField)
-			throws DAOException {
+			throws DAOException, SQLException {
 		try {
 			JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			dao.openSession(null);
@@ -200,7 +209,11 @@ public abstract class Query {
 	 *            Data Element to be added.
 	 * @return - true (as per the general contract of Collection.add).
 	 */
-	public boolean addElementToView(DataElement dataElement) {
+	public boolean addElementToView(DataElement dataElement) throws SQLException{
+		if(dataElement == null)
+		{
+			throw new NullPointerException("Data element added to view cannot be null");
+		}
 		return resultView.add(dataElement);
 	}
 
@@ -219,8 +232,9 @@ public abstract class Query {
 	 * Returns the SQL representation of this query object
 	 * 
 	 * @return
+	 * @throws SQLException
 	 */
-	public String getString() {
+	public String getString() throws SQLException {
 		
 		//Formatting is required only the first time
 		if(this.queryStartObject.equals(Query.PARTICIPANT))
@@ -233,99 +247,107 @@ public abstract class Query {
 		/**
 		 * Forming SELECT part of the query.
 		 */
-		query.append("Select ");
+		query.append(this.getQuerySelectString());
+
+		/**
+		 * Forming FROM part of query
+		 */
+		set = (HashSet) getTableSet();
+		set.addAll(getLinkingTables(set));
+		//START: Fix for Bug#1992
+		set.addAll(getChildrenTables(set));
+		//END: Fix for Bug#1992		
+		Logger.out.debug("Set : " + set.toString());
+//		query.append("\nFROM ");
+		String joinConditionString = this.getJoinConditionString(set);
+		Logger.out.debug("Set After forming join string: " + set.toString());
+		query.append(this.formFromString(set));
+
+		/**
+		 * Forming WHERE part of the query
+		 */
+		query.append(this.getWhereQueryString(joinConditionString));
+		return query.toString();
+	}
+
+	/**
+	 * @param query
+	 * @param joinConditionString
+	 * @throws SQLException
+	 */
+	protected String getWhereQueryString(String joinConditionString) throws SQLException {
+		StringBuffer whereQueryString = new StringBuffer();
+		whereQueryString.append("\nWHERE ");
+		
+		if (whereConditions.hasConditions()) {
+			if (joinConditionString != null
+					&& joinConditionString.length() != 0) {
+			    whereQueryString.append(joinConditionString);
+			}
+		}
+		
+		activityStatusConditions = this.getActivityStatusConditions();
+		if (activityStatusConditions != null)
+		{
+			whereQueryString.append(" " + activityStatusConditions);
+		}
+		
+		if (whereConditions.hasConditions()) {
+			if (joinConditionString != null
+					&& joinConditionString.length() != 0) {
+				whereQueryString.append(" " + Operator.AND + " (");
+			}
+			whereQueryString.append(whereConditions.getString(tableSufix));
+			if (joinConditionString != null
+					&& joinConditionString.length() != 0) {
+				whereQueryString.append(" )");
+			}
+		}
+		return whereQueryString.toString();
+	}
+
+	/**
+	 * @param query
+	 * @throws SQLException
+	 */
+	protected String getQuerySelectString() throws SQLException {
+		StringBuffer selectStringBuffer = new StringBuffer();
+		selectStringBuffer.append("Select ");
 		if (resultView.size() == 0) {
-			query.append(" * ");
+			selectStringBuffer.append(" * ");
 		} else {
 			DataElement dataElement;
 			String dataElementString;
 			for (int i = 0; i < resultView.size(); i++) {
 				dataElement = (DataElement) resultView.get(i);
+				
 				dataElementString = dataElement.toSQLString(tableSufix) + " "
 						+ dataElement.getColumnNameString(tableSufix) + i;
 				if (dataElementString.length() >= 20) {
 					dataElementString = dataElement.toSQLString(tableSufix)
 							+ " Column" + i;
 				}
+			
 				//                set.add(dataElement.getTable());
 				if (i != resultView.size() - 1) {
 
-					query.append(dataElementString + " , ");
+				    selectStringBuffer.append(dataElementString + " , ");
 				} else {
-					query.append(dataElementString + " ");
+				    selectStringBuffer.append(dataElementString + " ");
 				}
+			
+				
 			}
+			
 		}
-
-		/**
-		 * Forming FROM part of query
-		 */
-		set = (HashSet) getTableSet();
-		//        HashSet relatedTables = new HashSet();
-		//        Iterator it = set.iterator();
-		//        while(it.hasNext())
-		//        {
-		//            relatedTables.addAll(getRelatedTables((String) it.next()));
-		//        }
-		//        set.addAll(relatedTables);
-		//        it=set.iterator();
-		//        Logger.out.debug("Tables in set are:");
-		//        while(it.hasNext())
-		//        {
-		//            Logger.out.debug(it.next());
-		//        }
-
-		//	    HashSet set = this.getQueryObjects(this.queryStartObject);
-		//	    for(int i = 0 ; i < resultView.size(); i++)
-		//	    {
-		//	        set.add(((DataElement)resultView.get(i)).getTable());
-		//	    }
-
-		set.addAll(getLinkingTables(set));
-		
-		//START: Fix for Bug#1992
-		set.addAll(getChildrenTables(set));
-		//END: Fix for Bug#1992		
-		
-		Logger.out.debug("Set : " + set.toString());
-		query.append("\nFROM ");
-		
-		String joinConditionString = this.getJoinConditionString(set);
-		
-		query.append(this.formFromString(set));
-
-		/**
-		 * Forming WHERE part of the query
-		 */
-		query.append("\nWHERE ");
-		
-		query.append(joinConditionString);
-		activityStatusConditions = this.getActivityStatusConditions();
-		if (activityStatusConditions != null)
-		{
-			query.append(" " + activityStatusConditions);
-		}
-		
-		//        String whereConditionsString = whereConditions.getString(tableSufix);
-		if (whereConditions.hasConditions()) {
-			if (joinConditionString != null
-					&& joinConditionString.length() != 0) {
-				query.append(" " + Operator.AND + " (");
-			}
-			query.append(whereConditions.getString(tableSufix));
-			if (joinConditionString != null
-					&& joinConditionString.length() != 0) {
-				query.append(" )");
-			}
-		}
-		return query.toString();
+		return selectStringBuffer.toString();
 	}
 
 	/**
 	 * @param set
 	 * @return
 	 */
-	private Set getLinkingTables(HashSet set) {
+	protected Set getLinkingTables(HashSet set) {
 		Set linkingTables = new HashSet();
 		Iterator it = set.iterator();
 		Table table;
@@ -350,7 +372,7 @@ public abstract class Query {
 	 * @param set
 	 * @return
 	 */
-	private Set getChildrenTables(HashSet set) {
+	protected Set getChildrenTables(HashSet set) {
 		Set childrenTables = new HashSet();
 		/*
 		 * If query is a subquery then depending on the queryStartObject add the
@@ -378,7 +400,7 @@ public abstract class Query {
 	 *            Starting object to which all related objects should be found
 	 * @return set of all objects related to queryStartObject transitively
 	 */
-	private HashSet getQueryObjects(String queryStartObject) {
+	protected HashSet getQueryObjects(String queryStartObject) {
 		HashSet set = new HashSet();
 		set.add(queryStartObject);
 		Vector relatedObjectsCollection = (Vector) Client.relations
@@ -410,23 +432,133 @@ public abstract class Query {
 	 * @param set -
 	 *            objects in the query
 	 * @return - string containing all join conditions
+	 * @throws SQLException
 	 */
-	private String getJoinConditionString(final HashSet set) {
+	protected String getJoinConditionString(final HashSet set) throws SQLException {
 		StringBuffer joinConditionString = new StringBuffer();
-//		Object[] tablesArray = new String[set.size()];
-//		Iterator it = set.iterator();
-//		for(int i=0; it.hasNext(); i++)
-//		{
-//			tablesArray[i] = ((Table)it.next()).getTableName();
-//		}
-		
 		Object[] tablesArray = set.toArray();
-		
 		Logger.out.debug(" tablesArray:"+Utility.getArrayString(tablesArray));
-		
 		RelationCondition relationCondition = null;
+		
+		joinConditionString.append(getJoinConditionWithParent(set));
+		
+//		if (joinConditionString.length() != 0) {
+//    		joinConditionString.append(Operator.AND + " ");
+//    	}
 
-		//If subquery then join with the superquery
+		//For all permutations of tables find the joining conditions
+		Table table1;
+		Table table2;
+		String relationString;
+		for (int i = 0; i < tablesArray.length; i++) 
+		{
+			table1 = (Table) tablesArray[i];
+			if(table1.hasDifferentAlias())
+			{
+			    relationString = getRelationStringWithLinkingTable(set, table1, table1.getLinkingTable());
+			    if (joinConditionString.length() != 0 && relationString!=null && relationString.length()!=0) {
+		    		joinConditionString.append(Operator.AND + " ");
+		    	}
+			    joinConditionString.append(relationString);
+				continue;
+			}
+			for (int j = i + 1; j < tablesArray.length; j++) {
+				
+				table2 = (Table) tablesArray[j];
+				
+				if(table2.hasDifferentAlias())
+				{
+					continue;
+				}
+				
+				relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
+						.get(new Relation((String) table1.getTableName(),
+								(String) table2.getTableName()));
+				
+				
+				if (relationCondition == null) 
+				{
+				    relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
+					.get(new Relation((String) table2.getTableName(),
+							(String) table1.getTableName()));
+				}
+				if(relationCondition != null)
+				{
+					Logger.out.debug(table1.getTableName() + " " + table2.getTableName()
+							+ " " + relationCondition.toSQLString(tableSufix));
+					if (joinConditionString.length() != 0) {
+						joinConditionString.append(Operator.AND + " ");
+					}
+					joinConditionString.append(relationCondition
+							.toSQLString(tableSufix));
+				}
+				
+				
+			}
+		}
+		return joinConditionString.toString();
+	}
+
+	/**
+	 * This method returns the relation string of a table with different Alias
+	 * with its linking table
+     * @param set
+     * @param joinConditionString
+     * @param tableWithDiffAlias
+     * @throws SQLException
+     */
+    private String getRelationStringWithLinkingTable(final HashSet set, Table tableWithDiffAlias, Table linkingTable) throws SQLException {
+        StringBuffer relationString = new StringBuffer();
+        RelationCondition relationCondition;
+        relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
+        .get(new Relation((String) linkingTable.getTableName(),
+        		(String) tableWithDiffAlias.getTableName()));
+        Logger.out.debug("***************relationCondition:"+relationCondition);
+        if (relationCondition != null) {
+        	relationCondition = new RelationCondition(relationCondition);
+        	relationCondition.getLeftDataElement().setTable(linkingTable);
+        	relationCondition.getRightDataElement().setTable(tableWithDiffAlias);
+        	Logger.out.debug(tableWithDiffAlias.getTableName() + " " +linkingTable.getTableName()
+        			+ " " + relationCondition.toSQLString(tableSufix));
+        	if (relationString.length() != 0) {
+        	    relationString.append(Operator.AND + " ");
+        	}
+        	relationString.append(relationCondition
+        			.toSQLString(tableSufix));
+        	set.add(linkingTable);
+        }
+        else
+        {
+        	relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
+        	.get(new Relation((String) tableWithDiffAlias.getTableName(),
+        			(String) linkingTable.getTableName()));
+        	Logger.out.debug("***************relationCondition:"+relationCondition);
+        	if (relationCondition != null) {
+        		relationCondition = new RelationCondition(relationCondition);
+        		relationCondition.getLeftDataElement().setTable(tableWithDiffAlias);
+        		relationCondition.getRightDataElement().setTable(linkingTable);
+        		Logger.out.debug(tableWithDiffAlias.getTableName() + " " +linkingTable.getTableName()
+        				+ " " + relationCondition.toSQLString(tableSufix));
+        		if (relationString.length() != 0) {
+        		    relationString.append(Operator.AND + " ");
+        		}
+        		relationString.append(relationCondition
+        				.toSQLString(tableSufix));
+        		set.add(linkingTable);
+        	}
+        }
+        return relationString.toString();
+    }
+
+    /**
+     * @param set
+     * @param joinConditionString
+     * @throws SQLException
+     */
+    protected String getJoinConditionWithParent(final HashSet set) throws SQLException {
+        StringBuffer joinConditionString = new StringBuffer();
+        RelationCondition relationCondition;
+        //If subquery then join with the superquery
 		if (tableSufix > 1) {
 			
 			Logger.out.debug("Parent:"+getParentOfQueryStartObject()+" parentsOperationWithChildren:"+parentsOperationWithChildren);
@@ -443,180 +575,87 @@ public abstract class Query {
 			//END: Fix for Bug#1992
 			else
 			{
+			    Relation joinRelation = getJoinRelationWithParent();
+			    //If there is no joinin relationship between this query and parent query
+			    //return empty string
+			    if(joinRelation == null)
+			    {
+			        return joinConditionString.toString();
+			    }
 				relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-					.get(getJoinRelationWithParent());
-				Logger.out.debug("*********relationCondition:"+relationCondition+"  "+getJoinRelationWithParent());
+					.get(joinRelation);
+				
+				//If exists a join relation with parent but
+				//there is no relation condition in relationship table throw exception
+				if(relationCondition == null)
+				{
+				    throw new SQLException("Relation condition with parent is essential " +
+				    		"when Join relation with parent exists");
+				}
+				Logger.out.debug("*********relationCondition:"+relationCondition+"  "+joinRelation);
 				//START: Fix for Bug#1992
-				set.add(new Table(relationCondition.getRightDataElement().getTableAliasName()));
+				//Add the 
+//				set.add(new Table(relationCondition.getRightDataElement().getTableAliasName()));
 				//END: Fix for Bug#1992
 			}
 			
 			
 			
 			if (relationCondition != null) {
-				DataElement rightDataElement = new DataElement(relationCondition.getRightDataElement());
-				DataElement leftDataElement = new DataElement(relationCondition.getLeftDataElement());
+				DataElement rightDataElement;
+				DataElement leftDataElement;
 				
-				//If its a relation between two specimen
-				if(rightDataElement.getTable().getTableName().equals(Query.SPECIMEN)
-						&& leftDataElement.getTable().getTableName().equals(Query.SPECIMEN))
+				//Start: Fix for Bug#2076
+				Logger.out.debug("isQueryOnChild:"+isQueryOnChild);
+				if(this.isQueryOnChild)
 				{
-					if(isParentDerivedSpecimen)
-					{
-						Logger.out.debug("Parent is derived specimen");
-						leftDataElement.setTable(new Table(Query.SPECIMEN,Query.SPECIMEN+levelOfParent+"L"));
-						leftDataElement.setTable(new Table(Query.SPECIMEN,Query.SPECIMEN+levelOfParent+"L"));
-						
-					}
-					else
-					{
-						Logger.out.debug("Parent is not derived specimen");
-					}
+					 rightDataElement = new DataElement(relationCondition.getRightDataElement());
+					 leftDataElement = new DataElement(relationCondition.getLeftDataElement());
+				}//END: Fix for Bug#2076
+				else
+				{
+					leftDataElement = new DataElement(relationCondition.getRightDataElement());
+					rightDataElement = new DataElement(relationCondition.getLeftDataElement());
 				}
+				
+				
+				//Aarti: Commented the following code since its never being called
+				//If its a relation between two specimen
+//				if(rightDataElement.getTable().getTableName().equals(Query.SPECIMEN)
+//						&& leftDataElement.getTable().getTableName().equals(Query.SPECIMEN))
+//				{
+//					if(isParentDerivedSpecimen)
+//					{
+//						Logger.out.debug("Parent is derived specimen");
+//						leftDataElement.setTable(new Table(Query.SPECIMEN,Query.SPECIMEN+levelOfParent+"L"));
+//						leftDataElement.setTable(new Table(Query.SPECIMEN,Query.SPECIMEN+levelOfParent+"L"));
+//						
+//					}
+//					else
+//					{
+//						Logger.out.debug("Parent is not derived specimen");
+//					}
+//				}
 				
 				tableSet.add(rightDataElement.getTableAliasName());
 				joinConditionString.append(" "
 						+ rightDataElement.toSQLString(
 								tableSufix));
 				joinConditionString.append(Operator.EQUAL);
-				joinConditionString.append(leftDataElement.toSQLString(tableSufix - 1)
+				joinConditionString.append(" "+leftDataElement.toSQLString(tableSufix - 1)
 						+ " ");
 				Logger.out.debug(rightDataElement.toSQLString(tableSufix)+Operator.EQUAL+leftDataElement.toSQLString(tableSufix - 1));
 				
 			}
-		}
-
-		//For all permutations of tables find the joining conditions
-		Table table1;
-		Table table2;
-		for (int i = 0; i < tablesArray.length; i++) {
-			table1 = (Table) tablesArray[i];
-			if(table1.hasDifferentAlias())
-			{
-				relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-				.get(new Relation((String) table1.getLinkingTable().getTableName(),
-						(String) table1.getTableName()));
-				Logger.out.debug("***************relationCondition:"+relationCondition);
-				if (relationCondition != null) {
-					relationCondition = new RelationCondition(relationCondition);
-					relationCondition.getLeftDataElement().setTable(table1.getLinkingTable());
-					relationCondition.getRightDataElement().setTable(table1);
-					Logger.out.debug(table1.getTableName() + " " +table1.getLinkingTable().getTableName()
-							+ " " + relationCondition.toSQLString(tableSufix));
-					if (joinConditionString.length() != 0) {
-						joinConditionString.append(Operator.AND + " ");
-					}
-					joinConditionString.append(relationCondition
-							.toSQLString(tableSufix));
-					set.add(table1.getLinkingTable());
-				}
-				else
-				{
-					relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-					.get(new Relation((String) table1.getTableName(),
-							(String) table1.getLinkingTable().getTableName()));
-					Logger.out.debug("***************relationCondition:"+relationCondition);
-					if (relationCondition != null) {
-						relationCondition = new RelationCondition(relationCondition);
-						relationCondition.getLeftDataElement().setTable(table1);
-						relationCondition.getRightDataElement().setTable(table1.getLinkingTable());
-						Logger.out.debug(table1.getTableName() + " " +table1.getLinkingTable().getTableName()
-								+ " " + relationCondition.toSQLString(tableSufix));
-						if (joinConditionString.length() != 0) {
-							joinConditionString.append(Operator.AND + " ");
-						}
-						joinConditionString.append(relationCondition
-								.toSQLString(tableSufix));
-						set.add(table1.getLinkingTable());
-					}
-				}
-				continue;
-			}
-			for (int j = i + 1; j < tablesArray.length; j++) {
-				
-				table2 = (Table) tablesArray[j];
-				
-				if(table2.hasDifferentAlias())
-				{
-					relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-					.get(new Relation((String) table2.getLinkingTable().getTableName(),
-							(String) table2.getTableName()));
-					Logger.out.debug("***************relationCondition:"+relationCondition);
-					if (relationCondition != null) {
-						relationCondition = new RelationCondition(relationCondition);
-						relationCondition.getLeftDataElement().setTable(table2.getLinkingTable());
-						relationCondition.getRightDataElement().setTable(table2);
-						Logger.out.debug(table2.getTableName() + " " +table2.getLinkingTable().getTableName()
-								+ " " + relationCondition.toSQLString(tableSufix));
-						if (joinConditionString.length() != 0) {
-							joinConditionString.append(Operator.AND + " ");
-						}
-						joinConditionString.append(relationCondition
-								.toSQLString(tableSufix));
-					}
-					else
-					{
-						relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-						.get(new Relation((String) table2.getLinkingTable().getTableName(),
-								(String) table2.getTableName()));
-						Logger.out.debug("***************relationCondition:"+relationCondition);
-						if (relationCondition != null) {
-							relationCondition = new RelationCondition(relationCondition);
-							relationCondition.getLeftDataElement().setTable(table2.getLinkingTable());
-							relationCondition.getRightDataElement().setTable(table2);
-							Logger.out.debug(table2.getTableName() + " " +table2.getLinkingTable().getTableName()
-									+ " " + relationCondition.toSQLString(tableSufix));
-							if (joinConditionString.length() != 0) {
-								joinConditionString.append(Operator.AND + " ");
-							}
-							joinConditionString.append(relationCondition
-									.toSQLString(tableSufix));
-						}
-					}
-					continue;
-				}
-				
-				relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-						.get(new Relation((String) table1.getTableName(),
-								(String) table2.getTableName()));
-				
-				
-				if (relationCondition != null) {
-					Logger.out.debug(table1.getTableName() + " " + table2.getTableName()
-							+ " " + relationCondition.toSQLString(tableSufix));
-					if (joinConditionString.length() != 0) {
-						joinConditionString.append(Operator.AND + " ");
-					}
-					joinConditionString.append(relationCondition
-							.toSQLString(tableSufix));
-
-				} else {
-					relationCondition = (RelationCondition) Client.relationConditionsForRelatedTables
-							.get(new Relation((String) table2.getTableName(),
-									(String) table1.getTableName()));
-
-					if (relationCondition != null) {
-						Logger.out.debug(table2.getTableName() + " "
-								+table1.getTableName() + " "
-								+ relationCondition.toSQLString(tableSufix));
-						if (joinConditionString.length() != 0) {
-							joinConditionString.append(Operator.AND + " ");
-						}
-						joinConditionString.append(relationCondition
-								.toSQLString(tableSufix));
-
-					}
-				}
-				
-			}
+			
 		}
 		return joinConditionString.toString();
-	}
+    }
 
-	/**
+    /**
 	 * @return
 	 */
-	private Relation getJoinRelationWithParent() {
+	protected Relation getJoinRelationWithParent() {
 		Map JOIN_RELATION_MAP = new HashMap();
 		JOIN_RELATION_MAP.put(new Relation(Query.PARTICIPANT,Query.COLLECTION_PROTOCOL),new Relation(Query.PARTICIPANT,Query.COLLECTION_PROTOCOL_REGISTRATION));
 		JOIN_RELATION_MAP.put(new Relation(Query.COLLECTION_PROTOCOL,Query.SPECIMEN_COLLECTION_GROUP),new Relation(Query.COLLECTION_PROTOCOL_EVENT,Query.SPECIMEN_COLLECTION_GROUP));
@@ -635,19 +674,32 @@ public abstract class Query {
 	 * @param set -
 	 *            set of tables
 	 * @return A comma separated list of the tables in the set
+	 * @throws SQLException
 	 */
-	private String formFromString(final HashSet set) {
+	protected String formFromString(final HashSet set) throws SQLException {
+	    if(set == null)
+	    {
+	        throw new SQLException("Table set is null");
+	    }
 		StringBuffer fromString = new StringBuffer();
+		
+		fromString.append("\nFROM ");
 		Iterator it = set.iterator();
 		
 		Object tableAlias;
 		Table table;
+		String tableName;
 		while (it.hasNext()) {
 			fromString.append(" ");
 			table = (Table) it.next();
+			tableName = (String) Client.objectTableNames.get(table.getTableName());
 			Logger.out.debug(" Table name:"+table.getTableName());
+			if(tableName == null)
+			{
+			    throw new SQLException("Unknown Object:"+table.getTableName());
+			}
 			fromString
-					.append(((String) Client.objectTableNames.get(table.getTableName()))
+					.append((tableName)
 							.toUpperCase()
 							+ " " + table.toSQLString() + tableSufix + " ");
 			if (it.hasNext()) {
@@ -667,6 +719,7 @@ public abstract class Query {
 	}
 
 	public String getParentOfQueryStartObject() {
+	    Logger.out.info("parent of query start object:"+parentOfQueryStartObject);
 		return parentOfQueryStartObject;
 	}
 
@@ -690,7 +743,7 @@ public abstract class Query {
 		return this.resultView;
 	}
 
-	public Set getRelatedTables(String aliasName) {
+	public Set getRelatedTables(String aliasName) throws SQLException {
 		List list = null;
 		Set relatedTableNames = new HashSet();
 		try {
@@ -1036,18 +1089,18 @@ public abstract class Query {
 		return whereConditions.hasConditionOnIdentifiedField();
 	}
 	
-	/**
-	 * @return Returns the isParentDerivedSpecimen.
-	 */
-	public boolean isParentDerivedSpecimen() {
-		return isParentDerivedSpecimen;
-	}
-	/**
-	 * @param isParentDerivedSpecimen The isParentDerivedSpecimen to set.
-	 */
-	public void setParentDerivedSpecimen(boolean isParentDerivedSpecimen) {
-		this.isParentDerivedSpecimen = isParentDerivedSpecimen;
-	}
+//	/**
+//	 * @return Returns the isParentDerivedSpecimen.
+//	 */
+//	public boolean isParentDerivedSpecimen() {
+//		return isParentDerivedSpecimen;
+//	}
+//	/**
+//	 * @param isParentDerivedSpecimen The isParentDerivedSpecimen to set.
+//	 */
+//	public void setParentDerivedSpecimen(boolean isParentDerivedSpecimen) {
+//		this.isParentDerivedSpecimen = isParentDerivedSpecimen;
+//	}
 	/**
 	 * @return Returns the levelOfParent.
 	 */
@@ -1066,5 +1119,11 @@ public abstract class Query {
 	public void setParentsOperationWithChildren(
 			Operator parentsOperationWithChildren) {
 		this.parentsOperationWithChildren = parentsOperationWithChildren;
+	}
+	public boolean isQueryOnChild() {
+		return isQueryOnChild;
+	}
+	public void setQueryOnChild(boolean isQueryOnChild) {
+		this.isQueryOnChild = isQueryOnChild;
 	}
 }

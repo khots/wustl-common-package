@@ -8,9 +8,11 @@
  */ 
 package edu.wustl.common.query;
 
+import java.io.Serializable;
 
 
-public class Relation
+
+public class Relation implements Serializable
 {
     /**
      * source table of the relation
@@ -73,5 +75,10 @@ public class Relation
     public int hashCode()
     {
         return 1;
+    }
+    
+    public String toString()
+    {
+    	return "Source Table: "+this.sourceTable+" ; Target Table: "+this.targetTable;
     }
 }

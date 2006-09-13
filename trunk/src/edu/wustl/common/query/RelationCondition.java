@@ -8,6 +8,12 @@
  */ 
 package edu.wustl.common.query;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+
+
+import edu.wustl.common.util.logger.Logger;
+
 
 /**
  *<p>Title: </p>
@@ -18,7 +24,7 @@ package edu.wustl.common.query;
  *@version 1.0
  */
 
-public class RelationCondition
+public class RelationCondition implements Serializable
 {
     /**
      * Data Element that forms the left part
@@ -68,8 +74,9 @@ public class RelationCondition
      * SQL string representation of this relation condition
      * @param tableSufix
      * @return
+	 * @throws SQLException
      */
-    public String toSQLString(int tableSufix)
+    public String toSQLString(int tableSufix) throws SQLException
     {
         return leftDataElement.toSQLString(tableSufix) +" "+ operator.toSQLString() + " " + rightDataElement.toSQLString(tableSufix)+" ";
     }
@@ -100,7 +107,13 @@ public class RelationCondition
     
     public String toString()
     {
-        return leftDataElement.toSQLString(0) +" "+ operator.toSQLString() + " " + rightDataElement.toSQLString(0)+" ";
+    	try {
+			String sqlString = leftDataElement.toSQLString(0) +" "+ operator.toSQLString() + " " + rightDataElement.toSQLString(0)+" ";
+			return sqlString;
+		} catch (SQLException e) {
+			Logger.out.debug(e.getMessage());
+		}
+        return super.toString();
     }
     
     
