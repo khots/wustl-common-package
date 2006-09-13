@@ -9,6 +9,7 @@
 
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.util.Vector;
 
 
@@ -34,6 +35,12 @@ public class AdvancedConditionsNode {
     private Operator operationBtwChildNodes = new Operator(Operator.OR);
     
     private boolean defaultAndOr = false;
+    
+    /**
+     * Whether the conditions are on child or parent.
+     * True when they are on child.
+     */
+    private boolean isRuleForChild = true;
 	
 	/**
 	 * Constructor
@@ -70,8 +77,9 @@ public class AdvancedConditionsNode {
      * Forms SQL String for this node
      * @param tableSufix sufix to be appended to table names in the SQL string formation
      * @return SQL string
+     * @throws SQLException
      */
-    public String toSQLString(int tableSufix)
+    public String toSQLString(int tableSufix) throws SQLException
     {
         StringBuffer conditionsString = new StringBuffer();
         for(int i=0;i<objectConditions.size();i++)
@@ -127,5 +135,11 @@ public class AdvancedConditionsNode {
 
 	public void setDefaultAndOr(boolean defaultAndOr) {
 		this.defaultAndOr = defaultAndOr;
+	}
+	public boolean isRuleForChild() {
+		return isRuleForChild;
+	}
+	public void setRuleForChild(boolean isRuleForChild) {
+		this.isRuleForChild = isRuleForChild;
 	}
 }

@@ -1,5 +1,6 @@
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -53,7 +54,7 @@ public class SimpleConditionsImpl extends ConditionsImpl {
     /* (non-Javadoc)
      * @see edu.wustl.caTISSUECore.query.ConditionsImpl#getString()
      */
-    public String getString(int tableSufix)
+    public String getString(int tableSufix) throws SQLException
     {
         StringBuffer whereConditionsString = new StringBuffer();
         SimpleConditionsNode simpleConditionsNode;
@@ -67,14 +68,15 @@ public class SimpleConditionsImpl extends ConditionsImpl {
         		whereConditionsString.append(" ( ");
         	
         	// Separating the activity status fields from rest of the fields so that 
-        	//they are not included in brackets
-        	if(simpleConditionsNode.getCondition().getDataElement().getField().equals(Constants.ACTIVITY_STATUS_COLUMN))
+        	//they are not included in brackets. 
+        	//Assumption is that activity status conditions are always at the end
+        	String field = simpleConditionsNode.getCondition().getDataElement().getField();
+        	if(field != null && field.equalsIgnoreCase(Constants.ACTIVITY_STATUS_COLUMN))
         	{
         		for(int j=i; j<whereConditions.size(); j++)
         		{
         			activityStatusConditions.add(whereConditions.get(j));
         		}
-        		
         		break;
         	}
             if(i != whereConditions.size()-1 && !((SimpleConditionsNode)whereConditions.get(i+1)).getCondition().getDataElement().getField().equals(Constants.ACTIVITY_STATUS_COLUMN))
@@ -130,7 +132,7 @@ public class SimpleConditionsImpl extends ConditionsImpl {
     {
         try
         {
-         whereConditions.add(position,condition);
+         whereConditions.insertElementAt(condition,position);
          return true;
         }
         catch(ArrayIndexOutOfBoundsException ex)
@@ -152,7 +154,7 @@ public HashSet getQueryObjects()
         condition = (SimpleConditionsNode) whereConditions.get(i);
         if(condition !=null)
         {
-            queryObjects.add(new Table(condition.getConditionObject(),condition.getConditionObject()));
+            queryObjects.add(condition.getConditionTable());
         }
     }
     return queryObjects;
@@ -165,7 +167,20 @@ public boolean hasConditions() {
 	boolean hasConditions = false;
 	if(whereConditions.size()>0)
 	{
-		hasConditions = true;
+	    SimpleConditionsNode simpleConditionsNode;
+		for(int i=0; i< whereConditions.size(); i++)
+		{
+			simpleConditionsNode = (SimpleConditionsNode) whereConditions.get(i);
+			if(simpleConditionsNode!= null )
+					{
+			    		String field = simpleConditionsNode.getCondition().getDataElement().getField();
+			    		if(field != null )
+			    		{
+			    		    hasConditions = true;
+							break;
+			    		}
+					}
+		}
 	}
 	return hasConditions;
 }
@@ -180,10 +195,15 @@ public boolean hasConditionsExceptActivityStatus() {
 	for(int i=0; i< whereConditions.size(); i++)
 	{
 		simpleConditionsNode = (SimpleConditionsNode) whereConditions.get(i);
-		if(!simpleConditionsNode.getCondition().getDataElement().getField().equals(Constants.ACTIVITY_STATUS_COLUMN))
+		if(simpleConditionsNode!= null )
 				{
-					hasConditions = true;
-					break;
+		    
+		    		String field = simpleConditionsNode.getCondition().getDataElement().getField();
+		    		if(field != null && !field.equals(Constants.ACTIVITY_STATUS_COLUMN))
+		    		{
+		    		    hasConditions = true;
+						break;
+		    		}
 				}
 	}
 	return hasConditions;

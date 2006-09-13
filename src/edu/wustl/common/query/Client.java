@@ -9,6 +9,7 @@
 
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -16,6 +17,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.wustl.common.bizlogic.QueryBizLogic;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -27,6 +29,13 @@ public class Client extends AbstractClient
     	QueryBizLogic.initializeQueryData();
 //        objectTableNames = QueryBizLogic.getQueryObjectNameTableNameMap();
 //        relationConditionsForRelatedTables = QueryBizLogic.getRelationData();
+    }
+    
+    public static void initializeDummy()
+    {
+        setObjectTableNames();
+        setRelationConditionsForRelatedTables();
+        setRelations();
     }
 
     public static void setRelationConditionsForRelatedTables()
@@ -233,7 +242,39 @@ public class Client extends AbstractClient
                         new Operator(Operator.EQUAL), new DataElement(
                                 Query.SPECIMEN,
                                 "COLLECTION_PROTOCOL_ID")));
-        
+        relationConditionsForRelatedTables.put(new Relation(
+                Query.COLLECTION_PROTOCOL,
+                Query.SPECIMEN),
+                new RelationCondition(new DataElement(
+                        Query.COLLECTION_PROTOCOL, "Identifier"),
+                        new Operator(Operator.EQUAL), new DataElement(
+                                Query.SPECIMEN,
+                                "COLLECTION_PROTOCOL_ID")));
+        relationConditionsForRelatedTables.put(new Relation(
+                Query.SPECIMEN,
+                Query.SPECIMEN),
+                new RelationCondition(new DataElement(
+                        Query.SPECIMEN, "Identifier"),
+                        new Operator(Operator.EQUAL), new DataElement(
+                                Query.SPECIMEN,
+                                "PARENT_SPECIMEN_ID")));
+        relationConditionsForRelatedTables.put(new Relation(
+                Query.SPECIMEN,
+                Query.SPECIMEN_EVENT_PARAMETERS),
+                new RelationCondition(new DataElement(
+                        Query.SPECIMEN, "Identifier"),
+                        new Operator(Operator.EQUAL), new DataElement(
+                                Query.SPECIMEN_EVENT_PARAMETERS,
+                                "SPECIMEN_ID")));
+        relationConditionsForRelatedTables.put(new Relation(
+                Query.CHECKIN_CHECKOUT_EVENT_PARAMETER,
+                Query.SPECIMEN_EVENT_PARAMETERS),
+                new RelationCondition(new DataElement(
+                        Query.SPECIMEN, "Identifier"),
+                        new Operator(Operator.EQUAL), new DataElement(
+                                Query.SPECIMEN_EVENT_PARAMETERS,
+                                "Identifier")));
+
 
     }
 
@@ -307,6 +348,10 @@ public class Client extends AbstractClient
         "catissue_fluid_specimen_requirement");
         objectTableNames.put(Query.STORAGE_CONTAINER,
         "catissue_storage_container");
+        objectTableNames.put(Query.SPECIMEN_EVENT_PARAMETERS,
+        "catissue_specimen_event_param");
+        objectTableNames.put(Query.CHECKIN_CHECKOUT_EVENT_PARAMETER,
+        "catissue_in_out_event_param");
     }
 
     public static void main(String[] args)
@@ -518,11 +563,14 @@ public class Client extends AbstractClient
 //                 ((SimpleQuery)query).addCondition(simpleConditionsNode);
 
                 query = QueryFactory.getInstance().newQuery(Query.ADVANCED_QUERY,Query.PARTICIPANT);
-                query.addElementToView(new DataElement(Query.PARTICIPANT,"IDENTIFIER"));
-                query.addElementToView(new DataElement(Query.COLLECTION_PROTOCOL,"IDENTIFIER"));
-                query.addElementToView(new DataElement(Query.SPECIMEN_COLLECTION_GROUP,"IDENTIFIER"));
-                query.addElementToView(new DataElement(Query.SPECIMEN,"PARENT_SPECIMEN_ID"));
-                query.addElementToView(new DataElement(Query.SPECIMEN,"IDENTIFIER"));
+                try {
+					query.addElementToView(new DataElement(Query.PARTICIPANT,"IDENTIFIER"));
+					query.addElementToView(new DataElement(Query.COLLECTION_PROTOCOL,"IDENTIFIER"));
+	                query.addElementToView(new DataElement(Query.SPECIMEN_COLLECTION_GROUP,"IDENTIFIER"));
+	                query.addElementToView(new DataElement(Query.SPECIMEN,"PARENT_SPECIMEN_ID"));
+	                query.addElementToView(new DataElement(Query.SPECIMEN,"IDENTIFIER"));
+	                
+				
                 
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode();
                 DefaultMutableTreeNode child1 ;
@@ -597,7 +645,12 @@ public class Client extends AbstractClient
         //        child6.add(child3);
                 
                 ((AdvancedConditionsImpl)((AdvancedQuery)query).whereConditions).setWhereCondition(root);
-                Logger.out.debug("\n\n"+query.getString()+"\n\n");
+               
+					Logger.out.debug("\n\n"+query.getString()+"\n\n");
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
     }
    
 }

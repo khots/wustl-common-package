@@ -1,5 +1,7 @@
 package edu.wustl.common.query;
 
+import java.sql.SQLException;
+
 
 
 
@@ -21,7 +23,7 @@ public class SimpleConditionsNode {
 	/**
 	 * Operation with next consition i.e. AND/OR
 	 */
-	private Operator operator = new Operator();
+	private Operator operator = new Operator(Operator.AND);
 
 	public SimpleConditionsNode()
 	{
@@ -43,8 +45,9 @@ public class SimpleConditionsNode {
 	 * 
 	 * @param tableSufix
 	 * @return String representation for this node condition
+	 * @throws SQLException
 	 */
-	public String toSQLString(int tableSufix)
+	public String toSQLString(int tableSufix) throws SQLException
 	{
         return condition.toSQLString(tableSufix) + " " + operator.toSQLString();
 	}
@@ -67,8 +70,13 @@ public class SimpleConditionsNode {
         this.operator = operator;
     }
     
-    public String getConditionObject()
+//    public String getConditionObject()
+//    {
+//        return condition.getDataElement().getTableAliasName();
+//    }
+    
+    public Table getConditionTable()
     {
-        return condition.getDataElement().getTableAliasName();
+        return condition.getDataElement().getTable();
     }
 }
