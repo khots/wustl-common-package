@@ -35,6 +35,50 @@ public class ExportReport
 				{
 					String tempStr = (String) rowItr.next();
 					if (tempStr == null)
+						tempStr = "*";
+					if (tempStr.indexOf(',') > 0)
+						tempStr = "\"" + tempStr + "\"";
+					String data = tempStr + delimiter;
+					temp.write(data);
+				}
+				temp.write(newLine);
+			}
+		}
+	}
+
+	/**
+	 * @param values 
+	 * @param delimiter
+	 * @param noblankLines No of blank lines added before values
+	 * @param columnIndent No columns that will be left blank for values
+	 * @throws IOException
+	 */
+	public void writeData(List values,String delimiter,int noblankLines,int columnIndent) throws IOException
+	{
+		//Writes the list of data into file 
+		String newLine = System.getProperty(("line.separator"));
+
+		for(int i=0; i < noblankLines;i++) {
+			temp.write(newLine); 
+		}
+		
+		if (values != null) 
+		{
+			Iterator itr = values.iterator();
+			while (itr.hasNext()) 
+			{
+				List rowValues = (List) itr.next();
+				Iterator rowItr = rowValues.iterator();
+				
+				for(int i=0; i < columnIndent;i++) {
+					temp.write("" + delimiter); 
+				}
+				
+				
+				while (rowItr.hasNext()) 
+				{
+					String tempStr = (String) rowItr.next();
+					if (tempStr == null)
 						tempStr = "";
 					if (tempStr.indexOf(',') > 0)
 						tempStr = "\"" + tempStr + "\"";
@@ -45,6 +89,7 @@ public class ExportReport
 			}
 		}
 	}
+
 	public void closeFile() throws IOException
 	{
 		temp.close();
