@@ -441,4 +441,6 @@ public class Constants
 	public static final String COUNTRY = "country";
 	public static final String NEXT_CONTAINER_NO = "startNumber";
 	public static final String CSM_USER_ID = "csmUserId";
+	
+	public static final String REPORTED_PROBLEM_CLASS_NAME = "edu.wustl.catissuecore.domain.ReportedProblem";
 }
