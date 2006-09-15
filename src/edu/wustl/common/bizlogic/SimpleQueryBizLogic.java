@@ -128,7 +128,6 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
     {
         // Creating aliasName set with full package names.
         // Required for checking the activityStatus.
-        Set fromTablesWithPackageNames = new HashSet();
         Iterator fromTableSetIterator = fromTables.iterator();
         // Check and get the activity status conditions for all the objects in the conditions.
         List activityStatusConditionList = new ArrayList();
@@ -143,10 +142,6 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
                 activityStatusCondition.getOperator().setOperator(Constants.AND_JOIN_CONDITION);
                 activityStatusConditionList.add(activityStatusCondition);
             }
-        }
-        Iterator aliasNameIterator = fromTablesWithPackageNames.iterator();
-        while (aliasNameIterator.hasNext())
-        {
         }
         
         if (activityStatusConditionList.isEmpty() == false)
@@ -178,7 +173,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		SimpleConditionsNode activityStatusCondition = null;
 		
 		String fullyQualifiedClassName = getClassName(alias);
-		if (fullyQualifiedClassName.equals("edu.wustl.catissuecore.domain.ReportedProblem")) {
+		if (fullyQualifiedClassName.equals(Constants.REPORTED_PROBLEM_CLASS_NAME)) {
 			return null;
 		}
 		//Returns the Class object if it is a valid class else returns null.
