@@ -7,6 +7,7 @@
  * @author Gautam Shetty
  * @version 1.00
  */
+
 package edu.wustl.common.action;
 
 import java.util.ArrayList;
@@ -42,202 +43,204 @@ import edu.wustl.common.util.logger.Logger;
  * executes the query and shows the result in a spreadsheet view.      
  * @author gautam_shetty
  */
-public class SimpleSearchAction extends BaseAction {
+public class SimpleSearchAction extends BaseAction
+{
 
 	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+			HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
 		SimpleQueryInterfaceForm simpleQueryInterfaceForm = (SimpleQueryInterfaceForm) form;
 		// -------- set the selected menu ------- start
 		String strMenu = simpleQueryInterfaceForm.getMenuSelected();
 		request.setAttribute(Constants.MENU_SELECTED, strMenu);
-		Logger.out.debug(Constants.MENU_SELECTED
-				+ " set in SimpleSearch Action : -- " + strMenu);
+		Logger.out.debug(Constants.MENU_SELECTED + " set in SimpleSearch Action : -- " + strMenu);
 		// -------- set the selected menu ------- end
 		HttpSession session = request.getSession();
-		
+
 		String target = Constants.SUCCESS;
 		Map map = simpleQueryInterfaceForm.getValuesMap();
 		String counter = simpleQueryInterfaceForm.getCounter();
 		//Bug 1096:Creating a copy of the orginal query object for redefining the query object
-		Map originalQueryObject = (Map) session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT);
-		String originalCounter = (String)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
+		Map originalQueryObject = (Map) session
+				.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT);
+		String originalCounter = (String) session
+				.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
 		//If map from form is null get the map values from session.
-		if (map.size() == 0) 
+		if (map.size() == 0)
 		{
 			map = (Map) session.getAttribute(Constants.SIMPLE_QUERY_MAP);
 			//Get the counter from the simple query map if set during configure action in the session object
-			counter = (String)map.get("counter");
+			counter = (String) map.get("counter");
 			//After retrieving the value of counter, remove from the map
 			map.remove("counter");
 		}
 		//Bug 1096:Set the simple query map attributes in a temp session object for redefining the query
 		//Set the counter(number of rows in the UI of simple query formed) also in session, 
 		//used for redefining the query
-		if (originalQueryObject ==null && originalCounter ==null) 
+		if (originalQueryObject == null && originalCounter == null)
 		{
-			if(map!=null && counter!=null)
+			if (map != null && counter != null)
 			{
-				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,new HashMap(map));
-				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,new String(counter));
+				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT, new HashMap(map));
+				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER, new String(counter));
 			}
 		}
-		
-		
+
 		session.setAttribute(Constants.SIMPLE_QUERY_MAP, map);
-		Logger.out.debug("map after setting in session"+map);
-		
-		
+		Logger.out.debug("map after setting in session" + map);
+
 		MapDataParser parser = new MapDataParser("edu.wustl.common.query");
-		Collection simpleConditionNodeCollection = parser.generateData(map,true);
-		
+		Collection simpleConditionNodeCollection = parser.generateData(map, true);
+
 		Map queryResultObjectDataMap = new HashMap();
-		
+
 		SimpleQueryBizLogic simpleQueryBizLogic = new SimpleQueryBizLogic();
-		
+
 		// Get the alias name of the first object in the condition.
 		String viewAliasName = (String) map
 				.get("SimpleConditionsNode:1_Condition_DataElement_table");
-		
+
 		// Instantiating the query object.
 		Query query = QueryFactory.getInstance().newQuery(Query.SIMPLE_QUERY, viewAliasName);
-		
+		List aliasList = new ArrayList(); // List containing the Alias name of the Table name of the first condition element.
+		aliasList.add(viewAliasName);
+
 		// Puts the single quotes for attributes of type string and date and
 		// returns the Set of objects to which the attributes belong.
 		List fromTablesList = new ArrayList();
-		simpleQueryBizLogic.handleStringAndDateConditions(
-				simpleConditionNodeCollection, fromTablesList);
-		
-		
+		simpleQueryBizLogic.handleStringAndDateConditions(simpleConditionNodeCollection,
+				fromTablesList);
+
 		// Get the configured result view columns else is null.
-		String[] selectedColumns = simpleQueryInterfaceForm
-				.getSelectedColumnNames();
-		if(selectedColumns!=null)
-			session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST,selectedColumns);
-		
+		String[] selectedColumns = simpleQueryInterfaceForm.getSelectedColumnNames();
+		if (selectedColumns != null)
+			session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST, selectedColumns);
+
 		// Set the result view for the query.
 		List columnNames = new ArrayList();
-		Vector selectDataElements = simpleQueryBizLogic.getSelectDataElements(
-				selectedColumns, fromTablesList, columnNames);
+		Vector selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,
+				aliasList, columnNames, true);
 		query.setResultView(selectDataElements);
-		
+
 		Set fromTables = new HashSet();
 		fromTables.addAll(fromTablesList);
-		
+
 		// Set the from tables in the query.
 		query.setTableSet(fromTables);
-		
+
 		// Checks and gets the activity status conditions for all the objects in
 		// the from clause
 		// and adds it in the simple conditions node collection.
-		simpleQueryBizLogic.addActivityStatusConditions(
-				simpleConditionNodeCollection, fromTables);
-		
+		simpleQueryBizLogic.addActivityStatusConditions(simpleConditionNodeCollection, fromTables);
+
 		// Sets the condition objects from user in the query object.
 		((SimpleQuery) query).addConditions(simpleConditionNodeCollection);
-		
+
 		// List of results the query will return on execution.
 		List list = null;
-		int identifierIndex=0;
-		if (simpleQueryInterfaceForm.getPageOf().equals(
-				Constants.PAGEOF_SIMPLE_QUERY_INTERFACE)
-				&& Constants.switchSecurity) {
-	
-				simpleQueryBizLogic.createQueryResultObjectData(fromTables,
-						queryResultObjectDataMap,query);
-			
+		int identifierIndex = 0;
+		if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE)
+				&& Constants.switchSecurity)
+		{
+
+			simpleQueryBizLogic.createQueryResultObjectData(fromTables, queryResultObjectDataMap,
+					query);
+
 			List identifierColumnNames = new ArrayList();
-			identifierColumnNames = simpleQueryBizLogic
-					.addObjectIdentifierColumnsToQuery(
-							queryResultObjectDataMap, query);
-			simpleQueryBizLogic.setDependentIdentifiedColumnIds(
+			identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(
 					queryResultObjectDataMap, query);
-			
+			simpleQueryBizLogic.setDependentIdentifiedColumnIds(queryResultObjectDataMap, query);
+
 			//Aarti: adding other columns to the result view
-//			for (int i = 0; i < columnNames.size(); i++) {
-//				identifierColumnNames.add((String) columnNames.get(i));
-//			}
-			
-			for (int i = 0; i < identifierColumnNames.size(); i++) {
+			//			for (int i = 0; i < columnNames.size(); i++) {
+			//				identifierColumnNames.add((String) columnNames.get(i));
+			//			}
+
+			for (int i = 0; i < identifierColumnNames.size(); i++)
+			{
 				columnNames.add((String) identifierColumnNames.get(i));
 			}
-			
-			list = query.execute(getSessionData(request), true,
-					queryResultObjectDataMap, query.hasConditionOnIdentifiedField());
-		} else {
-		    // Get the index of Identifier field of main object.
+
+			list = query.execute(getSessionData(request), true, queryResultObjectDataMap, query
+					.hasConditionOnIdentifiedField());
+		}
+		else
+		{
+			// Get the index of Identifier field of main object.
 			Vector tableAliasNames = new Vector();
 			tableAliasNames.add(viewAliasName);
 			Map tableMap = query.getIdentifierColumnIds(tableAliasNames);
 			if (tableMap != null)
 			{
-			    identifierIndex = Integer.parseInt(tableMap.get(viewAliasName).toString())-1;
-			    request.setAttribute(Constants.IDENTIFIER_FIELD_INDEX, new Integer(identifierIndex));
+				identifierIndex = Integer.parseInt(tableMap.get(viewAliasName).toString()) - 1;
+				request
+						.setAttribute(Constants.IDENTIFIER_FIELD_INDEX,
+								new Integer(identifierIndex));
 			}
-			
+
 			list = query.execute(getSessionData(request), false, null, false);
 		}
-		
+
 		// If the result contains no data, show error message.
-		if (list.isEmpty()) {
+		if (list.isEmpty())
+		{
 			ActionErrors errors = new ActionErrors();
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-					"simpleQuery.noRecordsFound"));
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.noRecordsFound"));
 			saveErrors(request, errors);
-			
-			String alias = (String) session
-					.getAttribute(Constants.SIMPLE_QUERY_ALIAS_NAME);
+
+			String alias = (String) session.getAttribute(Constants.SIMPLE_QUERY_ALIAS_NAME);
 			if (alias == null)
 				alias = simpleQueryInterfaceForm.getAliasName();
 			simpleQueryInterfaceForm.setValues(map);
 			//remove the original session attributes for the query if the list is empty
-    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
-    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
+			session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT, null);
+			session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER, null);
 
-			String path = Constants.SIMPLE_QUERY_INTERFACE_ACTION + "?"
-					+ Constants.PAGEOF + "="
-					+ simpleQueryInterfaceForm.getPageOf() + "&"
-					+ Constants.TABLE_ALIAS_NAME + "=" + alias;
-			
+			String path = Constants.SIMPLE_QUERY_INTERFACE_ACTION + "?" + Constants.PAGEOF + "="
+					+ simpleQueryInterfaceForm.getPageOf() + "&" + Constants.TABLE_ALIAS_NAME + "="
+					+ alias;
+
 			return getActionForward(Constants.SIMPLE_QUERY_NO_RESULTS, path);
-		} else {
+		}
+		else
+		{
 			// If the result contains only one row and the page is of edit
 			// then show the result in the edit page.
 			if ((list.size() == 1)
-					&& (Constants.PAGEOF_SIMPLE_QUERY_INTERFACE
-							.equals(simpleQueryInterfaceForm.getPageOf()) == false)) {
+					&& (Constants.PAGEOF_SIMPLE_QUERY_INTERFACE.equals(simpleQueryInterfaceForm
+							.getPageOf()) == false))
+			{
 				List rowList = (List) list.get(0);
 
-				String path = Constants.SEARCH_OBJECT_ACTION + "?"
-						+ Constants.PAGEOF + "="
-						+ simpleQueryInterfaceForm.getPageOf() + "&"
-						+ Constants.OPERATION + "=" + Constants.SEARCH + "&"
-						+ Constants.SYSTEM_IDENTIFIER + "=" + rowList.get(identifierIndex);
+				String path = Constants.SEARCH_OBJECT_ACTION + "?" + Constants.PAGEOF + "="
+						+ simpleQueryInterfaceForm.getPageOf() + "&" + Constants.OPERATION + "="
+						+ Constants.SEARCH + "&" + Constants.SYSTEM_IDENTIFIER + "="
+						+ rowList.get(identifierIndex);
 
-				return getActionForward(Constants.SIMPLE_QUERY_SINGLE_RESULT,
-						path);
-			} else {
+				return getActionForward(Constants.SIMPLE_QUERY_SINGLE_RESULT, path);
+			}
+			else
+			{
 				// If results contain more than one result, show the spreadsheet
 				// view.
-				request.setAttribute(Constants.PAGEOF, simpleQueryInterfaceForm
-						.getPageOf());
+				request.setAttribute(Constants.PAGEOF, simpleQueryInterfaceForm.getPageOf());
 				request.setAttribute(Constants.SPREADSHEET_DATA_LIST, list);
-				request.setAttribute(Constants.SPREADSHEET_COLUMN_LIST,
-						columnNames);
+				request.setAttribute(Constants.SPREADSHEET_COLUMN_LIST, columnNames);
 			}
 		}
 
 		return mapping.findForward(target);
 	}
-	
-	private ActionForward getActionForward(String name, String path) {
+
+	private ActionForward getActionForward(String name, String path)
+	{
 		ActionForward actionForward = new ActionForward();
 		actionForward.setName(name);
 		actionForward.setPath(path);
 
 		return actionForward;
 	}
-	
+
 	//	public ActionForward executeAction(ActionMapping mapping, ActionForm
 	// form,
 	//			HttpServletRequest request, HttpServletResponse response)
