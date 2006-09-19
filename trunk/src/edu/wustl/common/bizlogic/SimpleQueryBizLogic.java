@@ -209,8 +209,8 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 					&& (className.getSuperclass().getName().equals(
 							"edu.wustl.common.domain.AbstractDomainObject") == false))
 			{
-				activityStatusCondition = getActivityStatusCondition(className.getSuperclass()
-						.getName());
+				String superClassAliasName = getAliasName(className.getSuperclass());
+				activityStatusCondition = getActivityStatusCondition(superClassAliasName);
 			}
 		}
 
@@ -629,6 +629,13 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		return className;
 	}
 
+	/**
+	 * To get the tableName corresponding to the aliasName.
+	 * @param aliasName The aliasName of the table.
+	 * @return The tableName corresponding to the aliasName.
+	 * @throws DAOException
+	 * @throws ClassNotFoundException
+	 */
 	public String getTableName(String aliasName) throws DAOException, ClassNotFoundException
 	{
 		String tableName = new String();
@@ -647,6 +654,13 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		return tableName;
 	}
 
+	/**
+	 * To get the aliasName corresponding to the tableName.
+	 * @param tableName The name of the table.
+	 * @return The aliasName corresponding to the tableName.
+	 * @throws DAOException
+	 * @throws ClassNotFoundException
+	 */
 	public String getAliasName(String tableName) throws DAOException, ClassNotFoundException
 	{
 		String aliasName = new String();
@@ -662,6 +676,20 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 			List rowList = (List) list.get(0);
 			aliasName = (String) rowList.get(0);
 		}
+		return aliasName;
+	}
+	
+	/**
+	 * To get the AliasName for the Given Class.
+	 * @param theClass The Class of the Domain Object.
+	 * @return The AliasName corresponding to the Class.
+	 * @throws ClassNotFoundException
+	 * @throws DAOException
+	 */
+	public String getAliasName(Class theClass) throws DAOException, ClassNotFoundException
+	{
+		String tableName = HibernateMetaData.getTableName(theClass);
+		String aliasName = getAliasName(tableName);
 		return aliasName;
 	}
 }
