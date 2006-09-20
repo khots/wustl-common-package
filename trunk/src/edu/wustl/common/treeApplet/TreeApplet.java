@@ -174,7 +174,7 @@ public class TreeApplet extends JApplet
                 
                 //Put the radioButton panel on the Applet.
                 //Kapil: MAC ISSUE JDK 1.3.1
-                contentPane.add(radioButtonPanel,BorderLayout.PAGE_START);
+                contentPane.add(radioButtonPanel,BorderLayout.NORTH);
                 
             	// Add listeners for the tree.
                 QueryResultsTreeListener nodeSelectionListener = new QueryResultsTreeListener(
@@ -211,7 +211,7 @@ public class TreeApplet extends JApplet
             
             //Put the tree panel on the Applet.
             //Kapil: MAC ISSUE JDK 1.3.1
-            contentPane.add(treePanel, BorderLayout.CENTER);
+            contentPane.add(treePanel, BorderLayout.WEST);
             System.out.println("25Aug06 : Tree set");
             
             //Sri: Pass the position of the container to the next level
