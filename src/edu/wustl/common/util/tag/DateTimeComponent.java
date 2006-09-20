@@ -346,8 +346,14 @@ public class DateTimeComponent extends TagSupport
 			output =output + ">";
 		
 		String onClickFunction ="";
+		
+		/**
+		 * Changes done by Jitendra to fix the bug if two DateTimeComponent included in the same jsp.
+		 * So to fix this bug, now we are passing id attribute to showCalendar, printCalendar and 
+		 * printTimeCalendar js function.
+		 */
 		if(onClickImage == null )
-			onClickFunction = "showCalendar("+year+","+month+","+day+",'"+pattern+"','"+formName+"','"+name+"',event,"+startYear+","+endYear+");";
+			onClickFunction = "showCalendar('"+id+"',"+year+","+month+","+day+",'"+pattern+"','"+formName+"','"+name+"',event,"+startYear+","+endYear+");";
 		else
 			onClickFunction = onClickImage;
 		
@@ -355,16 +361,16 @@ public class DateTimeComponent extends TagSupport
 		output = output + "<IMG alt=\"" + iconComment +"\" src=\"images/calendar.gif\" border=0>";
 		output = output + "</A>";
 		
-		output = output + "<DIV id=slcalcod style=\"Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
+		output = output + "<DIV id=slcalcod"+id+" style=\"Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
 		output = output + "<SCRIPT>";
 
 		if(displayTime.booleanValue())
 		{
-			output = output + "printTimeCalendar("+day+","+month+","+year+","+hour+","+minutes+");";
+			output = output + "printTimeCalendar('"+id+"',"+day+","+month+","+year+","+hour+","+minutes+");";
 		}
 		else
 		{
-			output = output + "printCalendar("+day+","+month+","+year+");";
+			output = output + "printCalendar('"+id+"',"+day+","+month+","+year+");";
 		}
 		output = output + "</SCRIPT>";
 		output = output + "</DIV>";
