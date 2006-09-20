@@ -48,6 +48,7 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -88,7 +89,8 @@ public class CommonAddEditAction extends Action
             //The object name which is to be added.
             String objectName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
             
-            ActionMessages messages = null;
+            ActionMessages messages = null;                    
+            
             if (abstractForm.isAddOperation())
             {
                 //If operation is add, add the data in the database.
@@ -98,34 +100,8 @@ public class CommonAddEditAction extends Action
                 target = new String(Constants.SUCCESS);
                 
                 // The successful add messages. Changes done according to bug# 945, 947
-                messages = new ActionMessages();
-                try
-                {
-                	if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
-                	{
-	                	messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
-	                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getMessageLabel()));
-                	}
-                	else
-                	{
-                		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.successOnly",
-	                			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass()))));
-                	}
-                }
-                catch(Exception excp)
-                {
-                	if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
-                	{
-	                    messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.success",
-	                            AbstractDomainObject.parseClassName(objectName), abstractDomain.getMessageLabel()));
-                	}
-                	else
-                	{
-                		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.add.successOnly",
-	                            AbstractDomainObject.parseClassName(objectName)));
-                	}
-                    Logger.out.error(excp.getMessage(), excp);
-                }
+                messages = new ActionMessages();                
+                addMessage(messages, abstractDomain, "add", queryBizLogic, objectName);
                 
                 //Setting the system identifier after inserting the object in the DB.
                 if (abstractDomain.getId() != null)
@@ -348,33 +324,7 @@ public class CommonAddEditAction extends Action
                    
                    // The successful edit message. Changes done according to bug# 945, 947
                    messages = new ActionMessages();
-                   try
-                   {
-	                   	if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
-	                	{
-	                	   messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success",
-	                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getMessageLabel()));
-	                	}
-	                   	else
-	                   	{
-	                   		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.successOnly",
-		                   			queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass())), abstractDomain.getMessageLabel()));
-	                   	}
-                   }
-                   catch(Exception excp)
-                   {                       
-                       if (abstractDomain.getMessageLabel() != null && !abstractDomain.getMessageLabel().equals(""))
-	                	{
-	                	   messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.success",
-	                	   		AbstractDomainObject.parseClassName(objectName), abstractDomain.getMessageLabel()));
-	                	}
-	                   	else
-	                   	{
-	                   		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object.edit.successOnly",
-	                   				AbstractDomainObject.parseClassName(objectName), abstractDomain.getMessageLabel()));
-	                   	}                       
-                       	Logger.out.error(excp.getMessage(), excp);
-                   }
+                   addMessage(messages, abstractDomain, "edit", queryBizLogic, objectName);
                 }
                 else
                 {
@@ -479,6 +429,38 @@ public class CommonAddEditAction extends Action
         forwardToHashMap = (HashMap)forwardToProcessor.populateForwardToData(abstractForm,abstractDomain);
 
         return forwardToHashMap;
+    }
+    
+    /**
+     * This method will add the success message into ActionMessages object
+     * @param messages ActionMessages
+     * @param abstractDomain AbstractDomainObject
+     * @param addoredit String
+     * @param queryBizLogic QueryBizLogic
+     * @param objectName String
+     */
+    private void addMessage(ActionMessages messages, AbstractDomainObject abstractDomain, String addoredit, QueryBizLogic queryBizLogic, String objectName) {
+    	String message = abstractDomain.getMessageLabel();
+    	Validator validator = new Validator();
+    	boolean isEmpty = validator.isEmpty(message);
+    	String displayName = null;
+    	try
+		{
+    		displayName = queryBizLogic.getDisplayNamebyTableName(HibernateMetaData.getTableName(abstractDomain.getClass()));
+		} 
+    	catch(Exception excp)
+		{
+    		displayName = AbstractDomainObject.parseClassName(objectName);
+    		Logger.out.error(excp.getMessage(), excp);
+		}
+    	
+    	if (!isEmpty)    	{
+        	messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object." + addoredit + ".success", displayName, message));
+    	}
+    	else
+    	{
+    		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object." + addoredit + ".successOnly", displayName));
+    	} 
     }
     
 }
