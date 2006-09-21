@@ -140,7 +140,8 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		while (fromTableSetIterator.hasNext())
 		{
 			String alias = (String) fromTableSetIterator.next();
-			SimpleConditionsNode activityStatusCondition = getActivityStatusCondition(alias);
+			String className = getClassName(alias);
+			SimpleConditionsNode activityStatusCondition = getActivityStatusCondition(alias,className);
 
 			if (activityStatusCondition != null)
 			{
@@ -168,33 +169,33 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	/**
 	 * Returns SimpleConditionsNode if the object named aliasName contains the activityStatus 
 	 * data member, else returns null.
-	 * @param fullyQualifiedClassName The fully qualified name of the class in which 
+	 * @param aliasName The alias name of the object.
+	 * @param className The fully qualified name of the class in which 
 	 * activity status field is to be searched.
 	 * @return SimpleConditionsNode if the object named aliasName contains the activityStatus 
 	 * data member, else returns null.
 	 */
-	private SimpleConditionsNode getActivityStatusCondition(String alias) throws DAOException,
+	private SimpleConditionsNode getActivityStatusCondition(String aliasName, String className) throws DAOException,
 			ClassNotFoundException
 	{
 		SimpleConditionsNode activityStatusCondition = null;
 
-		String fullyQualifiedClassName = getClassName(alias);
-		if (fullyQualifiedClassName.equals(Constants.REPORTED_PROBLEM_CLASS_NAME))
+		if (className.equals(Constants.REPORTED_PROBLEM_CLASS_NAME))
 		{
 			return null;
 		}
 		//Returns the Class object if it is a valid class else returns null.
-		Class className = edu.wustl.common.util.Utility.getClassObject(fullyQualifiedClassName);
-		if (className != null)
+		Class classObject = edu.wustl.common.util.Utility.getClassObject(className);
+		if (classObject != null)
 		{
-			Field[] objectFields = className.getDeclaredFields();
+			Field[] objectFields = classObject.getDeclaredFields();
 
 			for (int i = 0; i < objectFields.length; i++)
 			{
 				if (objectFields[i].getName().equals(Constants.ACTIVITY_STATUS))
 				{
 					activityStatusCondition = new SimpleConditionsNode();
-					activityStatusCondition.getCondition().getDataElement().setTableName(alias);
+					activityStatusCondition.getCondition().getDataElement().setTableName(aliasName);
 					activityStatusCondition.getCondition().getDataElement().setField(
 							Constants.ACTIVITY_STATUS_COLUMN);
 					activityStatusCondition.getCondition().getOperator().setOperator("!=");
@@ -202,15 +203,17 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 							Constants.ACTIVITY_STATUS_DISABLED);
 					activityStatusCondition.getCondition().getDataElement().setFieldType(
 							Constants.FIELD_TYPE_VARCHAR);
+					return activityStatusCondition;
 				}
 			}
 
+			Class superClass = classObject.getSuperclass();
 			if ((activityStatusCondition == null)
-					&& (className.getSuperclass().getName().equals(
+					&& (superClass.getName().equals(
 							"edu.wustl.common.domain.AbstractDomainObject") == false))
 			{
-				String superClassAliasName = getAliasName(className.getSuperclass());
-				activityStatusCondition = getActivityStatusCondition(superClassAliasName);
+				String superClassAliasName = getAliasName(superClass);
+				activityStatusCondition = getActivityStatusCondition(superClassAliasName,superClass.getName());
 			}
 		}
 
