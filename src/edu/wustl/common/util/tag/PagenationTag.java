@@ -25,9 +25,9 @@ public class PagenationTag extends TagSupport
     protected String prevPage = null;
     protected int totalResults = 1000;
     protected int numResultsPerPage = 5;
-    protected int m_pageLinkStart = 1;
+    protected int m_pageLinkStart = 1; 
     protected int m_pageLinkEnd = 10;
-    protected boolean m_showNext = true;
+    protected boolean m_showNext;
     protected String searchTerm = null;
     protected String searchTermValues = null;
     protected String [] selectedOrgs = null;
@@ -41,6 +41,7 @@ public class PagenationTag extends TagSupport
     {
         try
         {
+        	m_showNext = true;
             JspWriter out = pageContext.getOut();
             out.println("<table class=\"dataTableWhiteLabel\" border=0 bordercolor=#666699 width=100%>");
 
@@ -94,7 +95,12 @@ public class PagenationTag extends TagSupport
 //                    + " numResultsPerPage = " + numResultsPerPage
 //                    + " numLinks = " + numLinks+" m_pageLinkEnd = "+m_pageLinkEnd);
             // If we have exhausted our resultset, then set m_showNext as false. which means NEXT link must not be shown
-            if ((totalResults - ((m_pageLinkStart - 1) * numResultsPerPage)) <= (numResultsPerPage * numLinks))
+            
+            /*
+             * Changed by Jitendra on 20/09/06.
+             * Previously for some conditions it was failing because of which Next>> link was not showing for some conditions.
+             */
+            if ((m_pageLinkEnd*numResultsPerPage >= totalResults))
             {
                 m_showNext = false;
             }
