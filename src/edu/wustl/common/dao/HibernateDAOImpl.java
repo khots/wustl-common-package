@@ -44,6 +44,7 @@ public class HibernateDAOImpl implements HibernateDAO
     protected Session session = null;
     protected Transaction transaction = null;
     protected AuditManager auditManager;
+    private boolean isUpdated = false;
     
     /**
      * This method will be used to establish the session with the database.
@@ -136,6 +137,7 @@ public class HibernateDAOImpl implements HibernateDAO
             dbex.printStackTrace();
         }
 
+        if(isUpdated==true) {
         try
         {
             if (transaction != null)
@@ -145,6 +147,7 @@ public class HibernateDAOImpl implements HibernateDAO
         {
             Logger.out.error(dbex.getMessage(), dbex);
             throw handleError("Error in rollback: ", dbex);
+        }
         }
     }
     
@@ -239,6 +242,7 @@ public class HibernateDAOImpl implements HibernateDAO
         {
             throw handleError("", smex);
         }
+        isUpdated = true;
     }
     
     private DAOException handleError(String message, Exception hibExp)
@@ -284,7 +288,8 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
     {
-        boolean isAuthorized = true;
+       
+    	boolean isAuthorized = true;
         try
         {
             if (isSecureUpdate)
@@ -344,6 +349,7 @@ public class HibernateDAOImpl implements HibernateDAO
             //throw new DAOException("Error in update", smex);
         	throw handleError("", smex);
         }
+        isUpdated = true;
     }
     
     public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
