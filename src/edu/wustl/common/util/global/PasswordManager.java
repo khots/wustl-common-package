@@ -15,9 +15,11 @@ import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
+import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -33,7 +35,8 @@ import edu.wustl.common.util.logger.Logger;
 
 public class PasswordManager
 {
-	public static final int PASSWORD_MIN_LENGTH=6;
+    public static final int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
+  
 	public static final int SUCCESS=0;
 	public static final int FAIL_LENGTH=1;
 	public static final int FAIL_SAME_AS_OLD=2;
@@ -148,6 +151,92 @@ public class PasswordManager
         }
         return null;
     }
+    
+
+    /**
+     * This method returns the validation results on Form Bean. This method should be called 
+     * from validate method of form bean
+     * @param newPassword New Password value
+     * @param oldPassword Old Password value
+     * @param httpSession HttpSession object
+     * @param abstractForm UserForm object  
+     * @return SUCCESS if all condition passed 
+     *   else return respective error code (constant int) value  
+     */
+    public static int validatePasswordOnFormBean(String newPassword,String oldPassword,HttpSession httpSession) {
+
+       
+    	// to check whether password change in same session
+       	// get attribute (Boolean) from session object stored when password is changed successfully 
+    	Boolean passwordChangedInsameSession = (Boolean)httpSession.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
+    	if(passwordChangedInsameSession!=null && passwordChangedInsameSession.booleanValue()==true)
+    	{
+    		// return error code if attribute (Boolean) is in session   
+    		Logger.out.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
+    		return FAIL_SAME_SESSION; 
+    	}
+    	// to Check length of password,if not valid return FAIL_LENGTH 
+    	if(newPassword.length()<minimumPasswordLength)
+		{
+    		Logger.out.debug("Password is not valid returning FAIL_LENGHT");
+    		return FAIL_LENGTH; 
+		}
+
+    	// to Check new password is different as old password ,if bot are same return FAIL_SAME_AS_OLD    	
+		if(newPassword.equals(oldPassword))
+		{
+			Logger.out.debug("Password is not valid returning FAIL_SAME_AS_OLD");
+			return FAIL_SAME_AS_OLD; 
+		}
+				
+		/**
+		 * following code checks pattern i.e password must include atleast one UCase,LCASE and Number
+		 * and must not contain space charecter.
+		 */
+		char dest[]=new char[newPassword.length()]; 
+		// get char array where values get stores in dest[]
+		newPassword.getChars(0,newPassword.length(),dest,0);
+		boolean foundUCase=false; // boolean to check UCase character found in string
+		boolean foundLCase=false; // boolean to check LCase character found in string
+		boolean foundNumber=false; // boolean to check Digit/Number character found in string
+		boolean foundSpace=false; // boolean to check space in String
+		 
+		for(int i=0;i<dest.length;i++)
+		{
+			// to check if character is a Space. if true break from loop
+			if(Character.isSpaceChar(dest[i]))
+			{
+				foundSpace=true;
+				break;
+			}
+			// to check whether char is Upper Case. 
+			if(foundUCase==false&&Character.isUpperCase(dest[i])==true)
+			{
+				foundUCase=true;
+			}
+			
+			// to check whether char is Lower Case 
+			if(foundLCase==false&&Character.isLowerCase(dest[i])==true)
+			{
+				foundLCase=true;
+			}
+			
+			// to check whether char is Number/Digit
+			if(foundNumber==false&&Character.isDigit(dest[i])==true)
+			{
+				foundNumber=true;
+			}	
+		}
+		// condition to check whether all above condotion is satisfied
+		if(foundUCase==false||foundLCase==false||foundNumber==false||foundSpace==true)
+		{
+			Logger.out.debug("Password is not valid returning FAIL_IN_PATTERN");
+			return FAIL_IN_PATTERN;
+		}
+		Logger.out.debug("Password is Valid returning SUCCESS");
+		return SUCCESS;
+}
+    
     /**
      * 
      * @param newPassword New Password value
@@ -157,6 +246,11 @@ public class PasswordManager
      * @return SUCCESS (constant int 0) if all condition passed 
      *   else return respective error code (constant int) value  
      */
+    
+   /**
+    * TODO Remove this method. This method combines UI validation and business rules validation which is incorrect.
+    * Call validatePasswordOnFormBean for Form bean validations. Write your own methods for business validations.
+    */
     public static int validate(String newPassword,String oldPassword,HttpSession httpSession)
 	{
     	// get SessionDataBean objet from session 
@@ -219,7 +313,7 @@ public class PasswordManager
     		return FAIL_SAME_SESSION; // return int value 5
     	}
     	// to Check length of password,if not valid return FAIL_LENGTH = 2
-    	if(newPassword.length()<PASSWORD_MIN_LENGTH)
+    	if(newPassword.length()<minimumPasswordLength)
 		{
     		Logger.out.debug("Password is not valid returning FAIL_LENGHT");
     		return FAIL_LENGTH; // return int value 1
@@ -299,7 +393,7 @@ public class PasswordManager
 		// condition to check whether all above condotion is satisfied
 		if(foundUCase==false||foundLCase==false||foundNumber==false||foundSpace==true)
 		{
-			Logger.out.debug("Password is is valid returning FAIL_IN_PATTERN");
+			Logger.out.debug("Password is not valid returning FAIL_IN_PATTERN");
 			return FAIL_IN_PATTERN; // return int value 4
 		}
 		Logger.out.debug("Password is Valid returning SUCCESS");
@@ -338,7 +432,7 @@ public class PasswordManager
     		case FAIL_INVALID_SESSION:
     			errMsg=ApplicationProperties.getValue("errors.newPassword.genericmessage");
 				break;
-    		default:
+    	    default:
     			errMsg=ApplicationProperties.getValue("errors.newPassword.genericmessage");
 				break;
     	}	
