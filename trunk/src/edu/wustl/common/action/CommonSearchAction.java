@@ -79,7 +79,7 @@ public class CommonSearchAction extends Action
             String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
             list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
             
-            if (list.size() != 0)
+            if (list!=null && list.size() != 0)
             {
                 /* 
                   If the record searched is present in the database,
