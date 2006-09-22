@@ -15,6 +15,12 @@ import java.util.HashMap;
  * */
 public class Constants 
 {
+	
+	
+	// constants for passwordManager
+	
+	public static final String MINIMUM_PASSWORD_LENGTH = "minimumPasswordLength";
+		
 	public static final String SELECT_OPTION = "-- Select --";
 	public static final int SELECT_OPTION_VALUE = -1;
 	public static final String CDE_CONF_FILE = "CDEConfig.xml";
