@@ -35,8 +35,7 @@ import edu.wustl.common.util.logger.Logger;
 
 public class PasswordManager
 {
-    public static final int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
-  
+	
 	public static final int SUCCESS=0;
 	public static final int FAIL_LENGTH=1;
 	public static final int FAIL_SAME_AS_OLD=2;
@@ -175,6 +174,7 @@ public class PasswordManager
     		Logger.out.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
     		return FAIL_SAME_SESSION; 
     	}
+    	int minimumPasswordLength=Integer.parseInt(XMLPropertyHandler.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
     	// to Check length of password,if not valid return FAIL_LENGTH 
     	if(newPassword.length()<minimumPasswordLength)
 		{
@@ -312,6 +312,7 @@ public class PasswordManager
     		Logger.out.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
     		return FAIL_SAME_SESSION; // return int value 5
     	}
+    	int minimumPasswordLength=Integer.parseInt(XMLPropertyHandler.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
     	// to Check length of password,if not valid return FAIL_LENGTH = 2
     	if(newPassword.length()<minimumPasswordLength)
 		{
