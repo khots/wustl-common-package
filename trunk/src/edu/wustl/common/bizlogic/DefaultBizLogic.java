@@ -205,7 +205,7 @@ public class  DefaultBizLogic extends AbstractBizLogic
         {
         	whereColumnName = new String[]{"activityStatus"};
         	whereColumnCondition = new String[]{"!="};
-        	whereColumnValue = new String[]{Constants.ACTIVITY_STATUS_DISABLED};
+        	whereColumnValue = new String[]{Constants.ACTIVITY_STATUS_CLOSED};
         }
         
         return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
