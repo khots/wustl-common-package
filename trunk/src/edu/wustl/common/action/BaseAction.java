@@ -43,13 +43,25 @@ public abstract class BaseAction extends Action
 	public final ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception 
 	{
-	    /* The case of session time out */
+	   /**
+	    *  This flag based checking is specific to Password Security feature.
+	    */
+		boolean flag = true;
+		if(request.getSession().getAttribute(Constants.TEMP_SESSION_DATA) != null && request.getParameter(Constants.ACCESS)!=null)
+		{	
+			flag = false;
+		}
+		
+		if(flag) 
+		{
+		/* The case of session time out */
 		if (getSessionData(request) == null) 
 		{
 			//Forward to the Login
 			throw new UserNotAuthenticatedException();
 		}
 		
+		}
 		setRequestData(request);
 		setSelectedMenu(request);
 		//Mandar 17-Apr-06 : 1667:- Application URL

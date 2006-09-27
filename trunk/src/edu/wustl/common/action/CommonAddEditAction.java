@@ -253,18 +253,7 @@ public class CommonAddEditAction extends Action
                     
                     
                     bizLogic.update(abstractDomain, abstractDomainOld, Constants.HIBERNATE_DAO, getSessionData(request));
-                    
-                    // if password change add Boolean(true) object in attribute list of session object
-                    // so the PasswordManager.validate() can check whether password is changed in session   
-//                    if(abstractForm instanceof UserForm)
-//                	{
-//                		if(abstractForm.getPageOf().equals(Constants.PAGEOF_CHANGE_PASSWORD))
-//                		{
-//                			Logger.out.debug("Added password attr in session");
-//                			request.getSession().setAttribute(Constants.PASSWORD_CHANGE_IN_SESSION,new Boolean(true));
-//                		}
-//                	}
-                    
+                                     
                     // -- Direct to Main Menu if record is disabled
                     if((abstractForm.getActivityStatus() != null) &&
                             (Constants.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus())))
@@ -400,11 +389,18 @@ public class CommonAddEditAction extends Action
     
     protected SessionDataBean getSessionData(HttpServletRequest request) {
 		Object obj = request.getSession().getAttribute(Constants.SESSION_DATA);
+		 /**
+		  *  This if loop is specific to Password Security feature.
+		  */
+		if(obj == null)
+		{
+			obj = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
+		}
 		if(obj!=null)
 		{
 			SessionDataBean sessionData = (SessionDataBean) obj;
 			return  sessionData;
-		}
+		} 
 		return null;
 		//return (String) request.getSession().getAttribute(Constants.SESSION_DATA);
 	}
