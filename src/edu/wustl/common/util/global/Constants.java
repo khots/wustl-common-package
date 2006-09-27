@@ -174,6 +174,8 @@ public class Constants
 	public static final String BOOLEAN_NO = "No";
 	
 	public static final String SESSION_DATA = "sessionData";
+	public static final String TEMP_SESSION_DATA = "tempSessionData";
+	public static final String ACCESS = "access";
 	public static final String PASSWORD_CHANGE_IN_SESSION = "changepassword";
 	
 	public static final String USER_CLASS_NAME = "edu.wustl.common.domain.User";
