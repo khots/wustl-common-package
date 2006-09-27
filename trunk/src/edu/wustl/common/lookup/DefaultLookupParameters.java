@@ -3,37 +3,51 @@
  * <p>Description:	This is the implementation class of LookupParameters which stores the object which is to be matched and the cutoff value </p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
- * @author vaishali_khandelwal
+ * @author santosh_chandak
  */
 package edu.wustl.common.lookup;
+
+import java.util.List;
 
 
 public class DefaultLookupParameters implements LookupParameters
 {
+	
 	/**
-	 * 
+	 * Object
 	 */
 	Object object;
-	Double cutoff;
+	/**
+	 * List of participants
+	 */
+	List listOfParticipants;
 	
-	public Double getCutoff()
+	/**
+	 * @return Returns the listOfParticipants.
+	 */
+	public List getListOfParticipants()
 	{
-		return cutoff;
+		return listOfParticipants;
 	}
-	
-	public void setCutoff(Double cutoff)
+	/**
+	 * @param listOfParticipants The listOfParticipants to set.
+	 */
+	public void setListOfParticipants(List listOfParticipants)
 	{
-		this.cutoff = cutoff;
+		this.listOfParticipants = listOfParticipants;
 	}
-	
+	/**
+	 * @return Returns the object.
+	 */
 	public Object getObject()
 	{
 		return object;
 	}
-	
+	/**
+	 * @param object The object to set.
+	 */
 	public void setObject(Object object)
 	{
 		this.object = object;
 	}
-
 }
