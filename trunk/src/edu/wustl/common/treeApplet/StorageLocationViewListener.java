@@ -13,6 +13,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import edu.wustl.common.tree.StorageContainerTreeNode;
 import edu.wustl.common.util.global.Constants;
@@ -109,7 +110,7 @@ public class StorageLocationViewListener implements TreeSelectionListener
                 try
                 {
                     if ((!Constants.CATISSUE_CORE.equals(treeNode.getValue()))
-                            	&& (treeNode.getType() != null))
+                            	&& (treeNode.getType() != null) && (treeNode.getIdentifier()!=null && treeNode.getIdentifier().longValue()!=0)&& !isSiteSelected(tree))
                     {
                         String protocol = codeBase.getProtocol();
                         String host = codeBase.getHost();
@@ -144,4 +145,17 @@ public class StorageLocationViewListener implements TreeSelectionListener
             }
         }
     }
+
+	/**
+	 * To check wither the site node is selected. Assumption is that, the 2nd level in the tree heirarchy is Site node. 
+	 * @param tree the jtree Oject reference
+	 * @return true if the Site Node is selected.
+	 */
+	private boolean isSiteSelected(JTree tree)
+	{
+		TreePath treePath[] = tree.getSelectionPaths();
+		Object objArray[] = treePath[treePath.length-1].getPath();
+		boolean isSiteSelected = (objArray.length==2);
+		return isSiteSelected;
+	}
 }
