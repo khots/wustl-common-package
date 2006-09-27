@@ -302,6 +302,8 @@ public class Constants
 	public static final String PAGEOF_STORAGE_LOCATION = "pageOfStorageLocation";
 	public static final String PAGEOF_SPECIMEN = "pageOfSpecimen";
 	public static final String PAGEOF_TISSUE_SITE = "pageOfTissueSite";
+	public static final String PAGEOF_MULTIPLE_SPECIMEN = "pageOfMultipleSpecimen";
+
 	
 	// Constants for Storage Container.
 	public static final String STORAGE_CONTAINER_TYPE = "storageType";
