@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import edu.wustl.catissuecore.domainobject.CollectionProtocol;
-import edu.wustl.catissuecore.domainobject.DistributionProtocol;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.QueryResultObjectData;
 import edu.wustl.common.beans.SecurityDataBean;
@@ -1828,11 +1826,15 @@ public class SecurityManager implements Permissions {
 		//				protectionGroupName = "PG_GROUP_" + groupId + "_ROLE_"
 		//						+ role.getId();
 						Logger.out.debug("objectType............................"+objectType);
-					    if (objectType.getName().equals(CollectionProtocol.class.getName()))
+						
+						// Commented by Ashwin --- remove dependency on domainobject package
+						
+					    if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
 					        protectionGroupName = Constants.getCollectionProtocolPGName(objectIds[i]);
-					    else if (objectType.getName().equals(DistributionProtocol.class.getName()))
+					    else if (objectType.getName().equals(Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
 					        protectionGroupName = Constants.getDistributionProtocolPGName(objectIds[i]);
 					    
+						
 						protectionGroup = getProtectionGroup(protectionGroupName);
 						
 		//				Logger.out.debug("Assign Protection elements");
