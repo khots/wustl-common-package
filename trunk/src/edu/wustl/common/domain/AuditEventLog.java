@@ -4,7 +4,6 @@ package edu.wustl.common.domain;
 import java.util.Collection;
 import java.util.HashSet;
 
-import edu.wustl.catissuecore.domainobject.Site;
 
 /**
  * @hibernate.class table="CATISSUE_AUDIT_EVENT_LOG"

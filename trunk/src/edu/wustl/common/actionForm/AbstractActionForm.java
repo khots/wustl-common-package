@@ -172,8 +172,8 @@ public abstract class AbstractActionForm extends ActionForm
     /**
      * Copies all the values from the Object object.
      * @param obj The Object object.
+     	public void setAllVal(Object object){};
      */
-    public void setAllVal(Object object){};
     
     /**
      * Checks the validity of string value of the component and adds an ActionError object in the ActionErrors object.
