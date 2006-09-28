@@ -5,6 +5,7 @@
 
 package edu.wustl.common.util.global;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -28,7 +29,7 @@ public class ApplicationProperties
 	}
 
 /**
- * This method should be used when you want to customize error message with replacement parameters
+ * This method should be used when you want to customize error message with multiple replacement parameters
  * 
  * @param theKey - error key
  * @param placeHolders - replacement Strings
@@ -45,5 +46,20 @@ public class ApplicationProperties
 		}
 		return message.toString();
 	}
+	
+	/**
+	 * This method should be used when you want to customize error message with single replacement parameter
+	 * 
+	 * @param theKey - error key
+	 * @param placeHolders - replacement Strings
+	 * @return - complete error message
+	 */	
+		public static String getValue(String theKey, String placeHolder)
+		{
+			List temp = new ArrayList();
+			temp.add(placeHolder);
+			return getValue(theKey,temp);
+		}
+
 
 }
