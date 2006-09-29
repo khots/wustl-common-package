@@ -168,7 +168,7 @@ public class Validator
        Logger.out.debug(" numString:"+numString);
        Long longValue = convertToLong(numString);
        Logger.out.debug(" longValue:"+longValue);
-       if(!longValue.equals(null))
+       if(longValue!=null)
        {
            if(positiveCheck >0 )
            {
