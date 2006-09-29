@@ -222,6 +222,7 @@ public class HibernateDAOImpl implements HibernateDAO
             if(isAuthorized)
             {
                 session.save(obj);
+                isUpdated = true;
                 if (obj instanceof Auditable && isAuditable)
                     auditManager.compare((Auditable) obj, null, "INSERT");
             }
@@ -242,7 +243,7 @@ public class HibernateDAOImpl implements HibernateDAO
         {
             throw handleError("", smex);
         }
-        isUpdated = true;
+        
     }
     
     private DAOException handleError(String message, Exception hibExp)
