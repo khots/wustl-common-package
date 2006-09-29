@@ -324,6 +324,7 @@ public class HibernateDAOImpl implements HibernateDAO
             if(isAuthorized)
             {
                 session.update(obj);
+                isUpdated = true;
                 
 //                Object oldObj = retrieve(obj.getClass().getName(), ((Auditable)obj).getId());
 //                if (obj instanceof Auditable && isAuditable)
@@ -350,7 +351,7 @@ public class HibernateDAOImpl implements HibernateDAO
             //throw new DAOException("Error in update", smex);
         	throw handleError("", smex);
         }
-        isUpdated = true;
+       
     }
     
     public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
