@@ -222,9 +222,9 @@ public class HibernateDAOImpl implements HibernateDAO
             if(isAuthorized)
             {
                 session.save(obj);
-                isUpdated = true;
                 if (obj instanceof Auditable && isAuditable)
                     auditManager.compare((Auditable) obj, null, "INSERT");
+                isUpdated = true;
             }
             else
             {
@@ -324,11 +324,11 @@ public class HibernateDAOImpl implements HibernateDAO
             if(isAuthorized)
             {
                 session.update(obj);
+    //                Object oldObj = retrieve(obj.getClass().getName(), ((Auditable)obj).getId());
+    //                if (obj instanceof Auditable && isAuditable)
+    //                auditManager.compare((Auditable) obj, (Auditable)oldObj, "UPDATE");
                 isUpdated = true;
                 
-//                Object oldObj = retrieve(obj.getClass().getName(), ((Auditable)obj).getId());
-//                if (obj instanceof Auditable && isAuditable)
-//                    auditManager.compare((Auditable) obj, (Auditable)oldObj, "UPDATE");
             }
             else
             {
