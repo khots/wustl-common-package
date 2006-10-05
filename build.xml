@@ -98,6 +98,13 @@
 	
 	<!-- Compile all files, generated and hand-written -->
     <target name="applet_compile" depends="init" >
+    	<delete>
+            <fileset dir="${applet.dir}">
+	            <exclude name="**/CVS*"/>
+	            <exclude name="**/java.policy.applet*"/>
+            </fileset>
+    	 </delete>
+    	
         <javac destdir="${applet.dir}" includeAntRuntime="false" fork="yes" executable="C:/jdk1.3.1_18/bin/javac" compiler="javac1.3">
             <src path="${src.dir}"/>
 			
@@ -119,6 +126,12 @@
 	            <include name="**/*.jar"/>
             </fileset>
         </delete>
+    	
+    	<copy todir="${applet.dir}/images">	
+    		<fileset dir="${base.dir}/images">
+	    	    <include name="**/*"/>
+    		</fileset>
+    	 </copy>
 
         <jar taskname="buildJar" jarfile="${applet.dir}/TreeApplet.jar">
             <fileset dir="${applet.dir}">
