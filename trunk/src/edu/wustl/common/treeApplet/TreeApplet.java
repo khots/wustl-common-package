@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
 import edu.wustl.common.tree.GenerateTree;
+import edu.wustl.common.tree.StorageContainerRenderer;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -207,6 +208,7 @@ public class TreeApplet extends JApplet
 		        viewListener.setStorageContainerType(storageContainerType);
 		        viewListener.setPageOf(pageOf);
 		        tree.addTreeSelectionListener(viewListener);
+		        tree.setCellRenderer(new StorageContainerRenderer());
             } 
             
             //Put the tree panel on the Applet.

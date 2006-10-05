@@ -9,6 +9,8 @@ package edu.wustl.common.tree;
 
 import java.io.Serializable;
 
+import edu.wustl.common.util.global.Constants;
+
 /**
  * @author gautam_shetty
  *
@@ -25,6 +27,9 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
     private String type;
     
     private String toolTip="";
+
+    private String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
+    
     /**
      * Default constructor. 
      */
@@ -42,11 +47,12 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
     }
 
     //constructor with tooltip 
-    public StorageContainerTreeNode(Long identifier, String value, String type, String toolTip)
+    public StorageContainerTreeNode(Long identifier, String value, String type, String toolTip, String activityStatus)
     {
         super(identifier, value);
         this.type = type;
         this.toolTip = toolTip; 
+        this.activityStatus = activityStatus;
     }
     
 	/**
@@ -77,6 +83,21 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
         this.type = type;
     }
     
+    
+	/**
+	 * @return Returns the activityStatus.
+	 */
+	public String getActivityStatus()
+	{
+		return activityStatus;
+	}
+	/**
+	 * @param activityStatus The activityStatus to set.
+	 */
+	public void setActivityStatus(String activityStatus)
+	{
+		this.activityStatus = activityStatus;
+	}
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

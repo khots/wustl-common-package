@@ -134,7 +134,10 @@ public class StorageLocationViewListener implements TreeSelectionListener
 		                    + "?" + Constants.SYSTEM_IDENTIFIER + "=" + treeNode.getIdentifier()
 		                    + "&" + Constants.PAGEOF + "=" + this.pageOf;
 		                }
-		                
+
+		                // attaching activity status of container.
+		                urlSuffix = urlSuffix 
+								+ "&" + Constants.ACTIVITY_STATUS + "=" + treeNode.getActivityStatus();
 		                URL dataURL = new URL(protocol, host, port, urlSuffix);
 		                appletContext.showDocument(dataURL,Constants.DATA_VIEW_FRAME);
                     }
