@@ -13,6 +13,15 @@ public class DAOException extends Exception
 {
 	private Exception wrapException; 
 	
+	/**
+	 *  message initialised with super.getMessage()
+	 */
+	private String message = super.getMessage();
+	
+	/**
+	 *  message initialised with super.getMessage()
+	 */
+	private String supportingMessage; 
 	public DAOException(String message)
 	{
 		this(message,null);
@@ -68,5 +77,33 @@ public class DAOException extends Exception
 		super.printStackTrace(thePrintStream);
 		if(wrapException!=null)
 			wrapException.printStackTrace(thePrintStream);
+	}
+	/**
+	 * @return Returns the message.
+	 */
+	public String getMessage()
+	{
+		return message;
+	}
+	/**
+	 * @param message The message to set.
+	 */
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+	/**
+	 * @return Returns the supportingMessage.
+	 */
+	public String getSupportingMessage()
+	{
+		return supportingMessage;
+	}
+	/**
+	 * @param supportingMessage The supportingMessage to set.
+	 */
+	public void setSupportingMessage(String supportingMessage)
+	{
+		this.supportingMessage = supportingMessage;
 	}
 }
