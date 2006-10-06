@@ -152,7 +152,7 @@ public class TreeNodeImpl implements Serializable, TreeNode
     {
         if (this.identifier.longValue() != 0)
         {
-            return this.value;
+            return this.value + " : " + this.identifier;
         }
         
         return this.value;
