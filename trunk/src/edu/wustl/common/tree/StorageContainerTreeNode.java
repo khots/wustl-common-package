@@ -17,7 +17,7 @@ import edu.wustl.common.util.global.Constants;
  * TODO To change the template for this generated storageContainerType comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class StorageContainerTreeNode extends TreeNodeImpl implements Serializable
+public class StorageContainerTreeNode extends TreeNodeImpl implements Serializable, Comparable
 {
     private static final long serialVersionUID = 1234567890L;
     
@@ -103,7 +103,13 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
      */
     public String toString()
     {
-        String nodeName = type + " : " + identifier;
+        String nodeName = value;
         return nodeName;
     }
+    
+    public int compareTo(Object tmpobj)
+	{
+    	StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
+    	return value.compareTo(treeNode.getValue());
+	}
  }
