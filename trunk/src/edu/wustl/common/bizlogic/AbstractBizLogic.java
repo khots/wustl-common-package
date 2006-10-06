@@ -87,8 +87,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch(DAOException ex)
 		{
-			
-			String errMsg=formatException(ex.getWrapException(),obj,"Deleting");
+			String errMsg = getErrorMessage(ex,obj,"Deleting");
 			if(errMsg==null)
 			{
 				errMsg=ex.getMessage();
@@ -118,6 +117,19 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
     }
     
+  
+    /**
+     * This method gives the error message.
+     * This method should be overrided for customizing error message
+     * @param ex - Exception
+     * @param obj - Object
+     * @return - error message string
+     */
+    public String getErrorMessage(DAOException ex, Object obj, String operation)
+    {
+    	return formatException(ex.getWrapException(),obj,operation);
+    }
+    
     public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
 	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
@@ -130,8 +142,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch(DAOException ex)
 		{
-			
-			String errMsg=formatException(ex.getWrapException(),obj,"Inserting");
+			String errMsg = getErrorMessage(ex,obj,"Inserting");
 			if(errMsg==null)
 			{
 				errMsg=ex.getMessage();
@@ -174,8 +185,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch(DAOException ex)
 		{
 			//added to format constrainviolation message
-			
-			String errMsg=formatException(ex.getWrapException(),currentObj,"Updating");
+			String errMsg = getErrorMessage(ex,currentObj,"Updating");
 			if(errMsg==null)
 			{
 				errMsg=ex.getMessage();
@@ -246,7 +256,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
     }
     
-	private String formatException(Exception ex, Object obj, String operation)
+	public String formatException(Exception ex, Object obj, String operation)
 	{
 		String errMsg="";
 		if(ex==null)
