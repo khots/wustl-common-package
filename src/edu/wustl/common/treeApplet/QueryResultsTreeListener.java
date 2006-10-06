@@ -105,14 +105,16 @@ public class QueryResultsTreeListener implements TreeSelectionListener, ActionLi
             TreeNodeImpl treeNodeData = (TreeNodeImpl) node.getUserObject();
             this.isDisabled=isdisabledSpecimenId(this.disableSpecimenIds,treeNodeData);
             
-            this.nodeName = treeNodeData.toString();
+            this.nodeName = treeNodeData.getValue();
+            if (!Constants.ROOT.equals(this.nodeName))
+            	this.nodeName += ":"+ treeNodeData.getIdentifier();
             /* if node selected is collection protocol, send the parentId and objectName as Collection Protocol & Participant have 
              * many to many relation
              */
            	if(treeNodeData.getValue().equals(Constants.COLLECTION_PROTOCOL))
            	{
            	    TreeNodeImpl parentNode = (TreeNodeImpl)treeNodeData.getParentNode();
-           		this.nodeName = treeNodeData.toString()+":"+parentNode.getValue()+":"+parentNode.getIdentifier();
+           		this.nodeName = treeNodeData.getValue()+":"+ treeNodeData.getIdentifier()+":"+parentNode.getValue()+":"+parentNode.getIdentifier();
            	}
             
             try
