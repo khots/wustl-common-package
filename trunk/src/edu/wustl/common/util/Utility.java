@@ -132,6 +132,46 @@ public class Utility
 		return method.invoke(obj,new Object[0]);
 	}
 	
+	/**
+	 * Start: Change for API Search   --- Jitendra 06/10/2006
+	 * In Case of Api Search, previoulsy it was failing since there was default class level initialization 
+	 * on domain object. For example in ParticipantMedicalIdentifier object, it was initialized as 
+	 * protected Site site= new Site(); So we removed default class level initialization on domain object.
+	 * Hence getValueFor() method was returning null. So write new method getValueForInnerObject which will 
+	 * instantiate new Object and set it in parent object.
+	 * @param obj
+	 * @param attrName
+	 * @return
+	 * @throws Exception
+	 */
+	public static Object getValueForInnerObject(Object obj, String attrName) throws Exception
+	{
+		Object retObject = getValueFor(obj,attrName);		
+		if(retObject == null)
+		{			
+			String methodName =  Utility.createAccessorMethodName(attrName,true);			
+			Class objClass = obj.getClass();			
+			Method method = findMethod(objClass,methodName);
+			retObject = method.getParameterTypes()[0].newInstance();	
+			Object objArr[] = {retObject};
+			method.invoke(obj,objArr);			
+			return retObject;
+		}
+		return retObject;
+	}	
+	
+	private static Method findMethod(Class objClass, String methodName) throws Exception
+	{
+		Method method[] = objClass.getMethods();
+		for (int i = 0; i < method.length; i++) 
+		{
+			if(method[i].getName().equals(methodName))
+				return method[i]; 
+		}
+		return null;
+	}	
+	
+	
 	public static Object getValueFor(Object obj, Method method) throws Exception
 	{
 		return method.invoke(obj,new Object[0]);
