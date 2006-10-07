@@ -54,10 +54,12 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void openSession(SessionDataBean sessionDataBean) throws DAOException
     {
+    	//Logger.out.info("Session opened:------------------------");
         try
         {
             session = DBUtil.currentSession();
             
+           // Logger.out.info("Transaction begin:---------------------");
             transaction = session.beginTransaction();
             
             auditManager = new AuditManager();
@@ -86,9 +88,11 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void closeSession() throws DAOException
     {
+    	
         try
         {
             DBUtil.closeSession();
+         //   Logger.out.info("-------------close session------------");
         }
         catch (HibernateException dx)
         {
@@ -128,6 +132,7 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void rollback() throws DAOException
     {
+    //	Logger.out.info("rollback call:------------------------");
         try
         {
             Logger.out.debug("SESSION COMMIT: "+session.connection().getAutoCommit());
@@ -193,6 +198,7 @@ public class HibernateDAOImpl implements HibernateDAO
     public void insert(Object obj, SessionDataBean sessionDataBean,
             boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
     {
+    	//Logger.out.info("inser call---------------------");
         boolean isAuthorized = true;
         try
         {
@@ -535,7 +541,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     if(whereColumnCondition[i].equals("is null") || whereColumnCondition[i].equals("is not null") )
                     {}
                     else
-                    {
+                    { 
                     
                         Object obj = whereColumnValue[i];
                         if(obj instanceof Object[])

@@ -90,6 +90,8 @@ public interface JDBCDAO extends AbstractDAO
 	  
 	  
 	  public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException;
+	  
+	  public void executeUpdate(String sql) throws DAOException;
 		
 	    
 }
