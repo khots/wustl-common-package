@@ -203,7 +203,8 @@ public class MapDataParser
 				className = st.nextToken();
 			}
 			
-			return Utility.getValueFor(parentObj,className);
+			//Change for API Search   --- Jitendra 06/10/2006
+			return Utility.getValueForInnerObject(parentObj,className);
 		}
 	}
 	
