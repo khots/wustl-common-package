@@ -6,6 +6,8 @@
  */
 package edu.wustl.common.audit;
 
+import java.io.Serializable;
+
 
 /**
  * @author kapil_kaveeshwar
@@ -13,7 +15,7 @@ package edu.wustl.common.audit;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public interface Auditable
+public interface Auditable extends Serializable
 {
 	public abstract Long getId();
 }
