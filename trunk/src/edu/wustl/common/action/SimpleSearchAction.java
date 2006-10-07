@@ -30,11 +30,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
+import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.bizlogic.SimpleQueryBizLogic;
+import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.QueryFactory;
 import edu.wustl.common.query.SimpleQuery;
 import edu.wustl.common.util.MapDataParser;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -136,6 +139,10 @@ public class SimpleSearchAction extends BaseAction
 		// Sets the condition objects from user in the query object.
 		((SimpleQuery) query).addConditions(simpleConditionNodeCollection);
 
+		QueryBizLogic queryBizLogic = (QueryBizLogic)AbstractBizLogicFactory.getBizLogic(
+            	ApplicationProperties.getValue("app.bizLogicFactory"),
+				"getBizLogic", Constants.QUERY_INTERFACE_ID);
+    
 		// List of results the query will return on execution.
 		List list = null;
 		int identifierIndex = 0;
@@ -160,7 +167,8 @@ public class SimpleSearchAction extends BaseAction
 			{
 				columnNames.add((String) identifierColumnNames.get(i));
 			}
-
+			
+			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
 			list = query.execute(getSessionData(request), true, queryResultObjectDataMap, query
 					.hasConditionOnIdentifiedField());
 		}
@@ -177,7 +185,7 @@ public class SimpleSearchAction extends BaseAction
 						.setAttribute(Constants.IDENTIFIER_FIELD_INDEX,
 								new Integer(identifierIndex));
 			}
-
+			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
 			list = query.execute(getSessionData(request), false, null, false);
 		}
 
