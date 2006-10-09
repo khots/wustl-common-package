@@ -40,6 +40,8 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     protected abstract void insert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
     
+    protected abstract void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException;
+    
     /**
      * Deletes an object from the database.
      * @param obj The object to be deleted.
@@ -56,6 +58,8 @@ public abstract class AbstractBizLogic implements IBizLogic
      * @throws UserNotAuthorizedException TODO
      */
     protected abstract void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
+    
+    protected abstract void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException;
     
     /**
      * Validates the domain object for enumerated values.
@@ -172,6 +176,52 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 	}
     
+    public final void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException
+    {
+    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
+				
+		try
+		{
+	        dao.openSession(null);
+	        validate(obj, dao, Constants.ADD);
+	        insert(obj, dao);
+	        dao.commit();
+		}
+		catch(DAOException ex)
+		{
+			
+			String errMsg=formatException(ex.getWrapException(),obj,"Inserting");
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
+			try
+			{
+				dao.rollback();
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+			}
+			Logger.out.debug("Error in insert");
+			throw new BizLogicException(errMsg, ex);
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException();
+			}
+		}
+    }
+    
+    /**
+     * 
+     */
     public final void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
 	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
@@ -212,6 +262,54 @@ public abstract class AbstractBizLogic implements IBizLogic
 			catch(DAOException daoEx)
 			{
 				//TODO ERROR Handling
+				throw new BizLogicException();
+			}
+		}
+	}
+    
+    /**
+     * 
+     */
+    public final void update(Object currentObj, int daoType) throws BizLogicException, UserNotAuthorizedException
+	{
+    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
+		try
+		{
+	        dao.openSession(null);
+	        validate(currentObj, dao, Constants.EDIT);
+	        update(dao, currentObj);
+	        dao.commit();
+		}
+		catch(DAOException ex)
+		{
+			//added to format constrainviolation message
+			
+			String errMsg = getErrorMessage(ex,currentObj,"Updating");
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
+			try
+			{
+				dao.rollback();
+			}
+			catch(DAOException daoEx)
+			{
+				//TODO ERROR Handling
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				//throw new BizLogicException(ex.getMessage(), ex);
+			}
+			//TODO ERROR Handling
+			throw new BizLogicException(errMsg, ex);
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch(DAOException daoEx)
+			{
 				throw new BizLogicException();
 			}
 		}
