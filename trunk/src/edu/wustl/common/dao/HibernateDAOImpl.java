@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Query;
@@ -200,6 +201,7 @@ public class HibernateDAOImpl implements HibernateDAO
     {
     	//Logger.out.info("inser call---------------------");
         boolean isAuthorized = true;
+        
         try
         {
             if (isSecureInsert)
@@ -224,7 +226,8 @@ public class HibernateDAOImpl implements HibernateDAO
                     isAuthorized = false;
                 }
             }
-            Logger.out.debug(" User's Authorization to insert "+obj.getClass().getName()+" "+isAuthorized);
+            //Logger.out.debug(" User's Authorization to insert "+obj.getClass()+" , "+isAuthorized);
+            
             if(isAuthorized)
             {
                 session.save(obj);
@@ -456,7 +459,7 @@ public class HibernateDAOImpl implements HibernateDAO
             
             String className = Utility.parseClassName(sourceObjectName);
             
-            Logger.out.debug("***********className:"+className);
+            //Logger.out.debug("***********className:"+className);
             if (selectColumnName != null && selectColumnName.length > 0)
             {
                 sqlBuff.append("Select ");
@@ -505,7 +508,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     	Object valArr[] = (Object [])whereColumnValue[i];
                     	for (int j = 0; j < valArr.length; j++)
 						{
-                    		Logger.out.debug(sqlBuff);
+                    		//Logger.out.debug(sqlBuff);
                     		sqlBuff.append("? ");
                     		if((j+1)<valArr.length)
                     			sqlBuff.append(", ");
@@ -529,7 +532,7 @@ public class HibernateDAOImpl implements HibernateDAO
                         sqlBuff.append(" " + joinCondition + " ");
                 }
                 
-                Logger.out.debug(sqlBuff.toString());
+                //Logger.out.debug(sqlBuff.toString());
                 
                 query = session.createQuery(sqlBuff.toString());
                 
@@ -640,7 +643,7 @@ public class HibernateDAOImpl implements HibernateDAO
 //            }
             //---------------------------------
             
-            Logger.out.debug(" String : " + sqlBuff.toString());
+            //Logger.out.debug(" String : " + sqlBuff.toString());
         }
         catch (HibernateException hibExp)
         {
@@ -650,7 +653,7 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (Exception exp)
         {
-            Logger.out.error(exp.getMessage(), exp);
+            //Logger.out.error(exp.getMessage(), exp);
             throw new DAOException("Logical Erroe in retrieve method "
                     + exp.getMessage(), exp);
         }
@@ -684,4 +687,69 @@ public class HibernateDAOImpl implements HibernateDAO
 		session.evict(obj);
 		return obj;
 	}
+	
+	
+	/**
+     * Executes the HQL query.
+     * @param query HQL query to execute.
+     * @param sessionDataBean TODO
+     * @param isSecureExecute TODO
+     * @param columnIdsMap
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
+    {
+    	List returner = null;
+    	
+    	try
+		{
+			Query hibernateQuery = session.createQuery(query);
+			returner = hibernateQuery.list();
+			
+		}
+		catch (HibernateException e)
+		{
+			throw (new DAOException(e));
+		}
+    	
+		return returner;
+    }
+    
+    /**
+     * Executes the HQL query.
+     * @param query
+     * @param sessionDataBean TODO
+     * @param isSecureExecute TODO
+     * @param columnIdsMap
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
+    {
+    	
+		return null;
+    }
+    
+    /**
+     * Persist the object in the database.
+     * @param obj The object to be saved.
+     */
+	public void insert(Object obj) throws DAOException, UserNotAuthorizedException
+	{
+		insert(obj, null, false, false);
+	}
+
+	/**
+	 * Updates the persisted object.
+	 * @param obj persistent object to update.
+	 */
+	public void update(Object obj) throws DAOException, UserNotAuthorizedException
+	{
+		update(obj, null, false, false, false);
+	}
+    
+	
 }

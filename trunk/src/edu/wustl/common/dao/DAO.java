@@ -8,6 +8,7 @@ package edu.wustl.common.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -30,6 +31,14 @@ public interface DAO
 	public abstract void insert (Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException;
 	
 	/**
+	 * Insert the Object in the database.
+	 * @param obj Object to be inserted in database
+	 * @throws DAOException
+	 * @throws UserNotAuthorizedException
+	 */
+	public abstract void insert(Object obj) throws DAOException, UserNotAuthorizedException;
+	
+	/**
 	 * updates the persisted object in the database.
 	 * @param obj Object to be updated in database
 	 * @param sessionDataBean TODO
@@ -39,6 +48,14 @@ public interface DAO
 	 * @throws UserNotAuthorizedException TODO
 	 */
 	public abstract void update (Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException;
+	
+	/**
+	 * Updates the persisted object in the database.
+	 * @param obj Object to be updated in database
+	 * @throws DAOException
+	 * @throws UserNotAuthorizedException
+	 */
+	public abstract void update (Object obj) throws DAOException, UserNotAuthorizedException;
 	
 	/**
      * Deletes the persistent object from the database.
@@ -94,4 +111,9 @@ public interface DAO
 	public Object retrieve (String sourceObjectName, Serializable id) throws DAOException;
 	
 	public abstract void disableRelatedObjects(String tableName, String whereColumnName, Long whereColumnValues[]) throws DAOException;
+	
+	public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
+	
+	public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
+	
 }
