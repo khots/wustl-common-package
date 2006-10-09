@@ -149,7 +149,7 @@ public class  DefaultBizLogic extends AbstractBizLogic
         catch(DAOException daoExp)
         {
             daoExp.printStackTrace();
-            Logger.out.error(daoExp.getMessage(),daoExp);
+            //Logger.out.error(daoExp.getMessage(),daoExp);
         }
         finally
         {
@@ -487,4 +487,16 @@ public class  DefaultBizLogic extends AbstractBizLogic
         }
         return "";
     }
+
+	
+	protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
+	{
+		dao.insert(obj);
+	}
+
+	
+	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
+	{
+		dao.update(obj);
+	}
 }
