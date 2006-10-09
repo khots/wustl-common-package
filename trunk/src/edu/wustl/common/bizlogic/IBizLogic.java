@@ -35,8 +35,12 @@ public interface IBizLogic
 	
     public void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException;
 	
+    public void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException;
+    
     public void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 	
+    public void update(Object currentObj, int daoType) throws BizLogicException, UserNotAuthorizedException;
+    
 	public abstract List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition) throws DAOException;
