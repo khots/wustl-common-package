@@ -25,6 +25,9 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
 	
     private String objectName;
     
+    // This will be Containe the actual name display label of the node
+    private String displayName;
+    
     private String parentObjectIdentifier;
     
     private String parentObjectName;
@@ -77,6 +80,20 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
 	 */
 	public String getObjectName() {
 		return objectName;
+	}
+	/**
+	 * @return Returns the displayName.
+	 */
+	public String getDisplayName()
+	{
+		return displayName;
+	}
+	/**
+	 * @param displayName The displayName to set.
+	 */
+	public void setDisplayName(String displayName)
+	{
+		this.displayName = displayName;
 	}
 	/**
 	 * @param objectName The objectName to set.

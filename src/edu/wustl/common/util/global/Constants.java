@@ -453,4 +453,8 @@ public class Constants
 	public static final String CSM_USER_ID = "csmUserId";
 	
 	public static final String REPORTED_PROBLEM_CLASS_NAME = "edu.wustl.catissuecore.domain.ReportedProblem";
+	public static final String PARTICIPANT = "Participant";
+	public static final String SPECIMEN = "Specimen";
+	public static final String SPECIMEN_COLLECTION_GROUP ="SpecimenCollectionGroup";
+	public static final String ALL = "All";
 }

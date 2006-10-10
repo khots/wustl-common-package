@@ -61,12 +61,7 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	public String getToolTip() {
 		return toolTip;
 	}
-	/**
-	 * @param toolTip The toolTip to set.
-	 */
-	public void setToolTip(String toolTip) {
-		this.toolTip = toolTip;
-	}
+
     /**
      * @return Returns the type.
      */
