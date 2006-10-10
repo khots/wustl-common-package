@@ -29,6 +29,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
+import edu.wustl.common.tree.AdvanceQueryTreeRenderer;
 import edu.wustl.common.tree.GenerateTree;
 import edu.wustl.common.tree.StorageContainerRenderer;
 import edu.wustl.common.util.global.Constants;
@@ -186,6 +187,7 @@ public class TreeApplet extends JApplet
                 //Add listeners for the radio buttons.
 	            spreadsheetViewRadioButton.addActionListener(nodeSelectionListener);
                 individualViewRadioButton.addActionListener(nodeSelectionListener);
+                tree.setCellRenderer(new AdvanceQueryTreeRenderer());
             }
 			
             JPanel treePanel = new JPanel(new GridLayout(1, 0));

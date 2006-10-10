@@ -144,7 +144,14 @@ public class TreeNodeImpl implements Serializable, TreeNode
             i += getIdentifier().hashCode();
         return i;
     }
-    
+    /**
+     * To display Tooltip for the Tree node. By default it will return value, override this method if need different tool tip.
+     * @return The tooltip to display 
+     */
+    String getToolTip()
+    {
+    	return this.value;
+    }
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

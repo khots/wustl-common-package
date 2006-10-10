@@ -49,17 +49,18 @@ public class GenerateTree
         
         JTree tree = new JTree(root){
 			public String getToolTipText(MouseEvent e) {
-				Object tip = null;
+				String tip = "";
 				TreePath path = getPathForLocation(e.getX(), e.getY());
 				if (path != null) 
 				{
-					tip = path.getLastPathComponent();
-//					String tooltip = ((StorageContainerTreeNode)(TreeNode)tip).getToolTip();
-//					if(tooltip.trim().length() > 0 )
-//						return tooltip;
+					Object treeNode = path.getLastPathComponent();
+					if (treeNode instanceof DefaultMutableTreeNode)
+					{
+						TreeNodeImpl userObject = (TreeNodeImpl)((DefaultMutableTreeNode)treeNode).getUserObject();
+						tip = userObject.getToolTip();
+					}
 				}
-				return tip == null ? null : tip.toString();
-				//return tip == null ? null : tip.toString();
+				return tip;
 			}
 		};
 		ToolTipManager.sharedInstance().registerComponent(tree);

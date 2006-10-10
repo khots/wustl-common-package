@@ -36,7 +36,7 @@ public class TreeNodeFactory
                 treeNode = new StorageContainerTreeNode(new Long(0),null,Constants.CATISSUE_CORE);
             	break;
             case Constants.QUERY_RESULTS_TREE_ID:
-            	treeNode = new TreeNodeImpl(new Long(0),Constants.ROOT);
+            	treeNode = new AdvanceQueryTreeNode(new Long(0),Constants.ROOT,Constants.ALL);
                 break;
         }
         
