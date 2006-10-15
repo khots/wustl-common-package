@@ -195,7 +195,7 @@ public class MapDataParser
 		}
 		else //case map.put("CollectionProtocolEvent.studyCalendarEventPoint", new Double(11));
 		{
-			className = str;
+			className = str; 
 			
 			StringTokenizer st = new StringTokenizer(className,"#");
 			if(st.countTokens()>1)
@@ -203,8 +203,14 @@ public class MapDataParser
 				className = st.nextToken();
 			}
 			
+			Object retObj = Utility.getValueFor(parentObj,className);
+			
 			//Change for API Search   --- Jitendra 06/10/2006
-			return Utility.getValueForInnerObject(parentObj,className);
+			if(retObj == null) 
+			{
+				retObj = Utility.SetValueFor(parentObj,className);
+			}			
+			return retObj;
 		}
 	}
 	
