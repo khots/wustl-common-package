@@ -62,7 +62,7 @@ public class AuditEventDetails implements java.io.Serializable
 
 	/**
 	 * @hibernate.property name="currentValue" type="string"
-     * column="CURRENT_VALUE" length="150" 
+     * column="CURRENT_VALUE" length="500" 
 	 **/
 	public String getCurrentValue()
 	{
