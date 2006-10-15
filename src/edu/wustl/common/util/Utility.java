@@ -137,27 +137,26 @@ public class Utility
 	 * In Case of Api Search, previoulsy it was failing since there was default class level initialization 
 	 * on domain object. For example in ParticipantMedicalIdentifier object, it was initialized as 
 	 * protected Site site= new Site(); So we removed default class level initialization on domain object.
-	 * Hence getValueFor() method was returning null. So write new method getValueForInnerObject which will 
+	 * Hence getValueFor() method was returning null. So write new method SetValueFor() which will 
 	 * instantiate new Object and set it in parent object.
 	 * @param obj
 	 * @param attrName
 	 * @return
 	 * @throws Exception
 	 */
-	public static Object getValueForInnerObject(Object obj, String attrName) throws Exception
+	public static Object SetValueFor(Object obj, String attrName) throws Exception
 	{
-		Object retObject = getValueFor(obj,attrName);		
-		if(retObject == null)
-		{			
-			String methodName =  Utility.createAccessorMethodName(attrName,true);			
-			Class objClass = obj.getClass();			
-			Method method = findMethod(objClass,methodName);
-			retObject = method.getParameterTypes()[0].newInstance();	
-			Object objArr[] = {retObject};
-			method.invoke(obj,objArr);			
-			return retObject;
-		}
+		Object retObject = null;
+		//create the setter method for the attribute.
+		String methodName =  Utility.createAccessorMethodName(attrName,true);			
+		Class objClass = obj.getClass();			
+		Method method = findMethod(objClass,methodName);
+		retObject = method.getParameterTypes()[0].newInstance();	
+		Object objArr[] = {retObject};
+		//set the newInstance to the setter nethod of parent obj
+		method.invoke(obj,objArr);			
 		return retObject;
+	
 	}	
 	
 	private static Method findMethod(Class objClass, String methodName) throws Exception
