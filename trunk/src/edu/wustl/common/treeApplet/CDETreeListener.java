@@ -69,12 +69,22 @@ public class CDETreeListener implements MouseInputListener
 	    			//commented as this will set in MouseClick
 	    			String propertyName = applet.getParameter(Constants.PROPERTY_NAME);
 	    			
-	    			// if 'Tissue Site' Root node selected then do nothing
-	    			if(treeNode.toString().equals(Constants.TISSUE_SITE))
+	    			// if Root node selected then do nothing
+	    			if(treeNode.toString().equals(Constants.TISSUE_SITE) || 
+	    					treeNode.toString().equals(Constants.CLINICAL_DIAGNOSIS))
 	    			{
 	    				return;
 	    			}
-	    			String setValue = "setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
+	    			String setValue = new String();
+	    			//Poornima:Make the Category nodes non-clickable if child exists. Refer to Bug 1718
+	    			if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
+	    			{
+	    				setValue="setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
+	    			}
+					else
+					{
+						return;
+					}
 	             
 	    			//Kapil: MAC ISSUE JDK 1.3.1
 	    			//commented as this will set in MouseClick
