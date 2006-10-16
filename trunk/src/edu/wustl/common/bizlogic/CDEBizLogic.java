@@ -17,10 +17,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.cde.CDE;
 import edu.wustl.common.cde.CDEImpl;
 import edu.wustl.common.cde.CDEManager;
+import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -32,6 +34,18 @@ import edu.wustl.common.util.dbManager.DAOException;
 /**
  * This is biz Logic class for the CDEs.
  * @author gautam_shetty
+ */
+/**
+ * @author poornima_govindrao
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+/**
+ * @author poornima_govindrao
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
  */
 public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 {
@@ -135,6 +149,33 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
         }
         
         return treeNodeVector;
+    }
+
+    /**
+     * Returns the CDE values without category names and only sub-categories
+     * Poornima:Refer to bug 1718
+     * @param permissibleValueSet - Set of permissible values  
+     * @param permissibleValueList - Filtered CDEs
+     */
+    public void getFilteredCDE(Set permissibleValueSet,List permissibleValueList)
+    {
+        Iterator iterator = permissibleValueSet.iterator();
+        while (iterator.hasNext())
+        {
+            PermissibleValue permissibleValue= (PermissibleValue) iterator.next();
+            Set subPermissibleValues = permissibleValue.getSubPermissibleValues();
+            //if there are no sub-permissible values, add to the list
+            if (subPermissibleValues == null || 
+            		subPermissibleValues.size()==0)
+            {
+            	permissibleValueList.add(new NameValueBean(permissibleValue.getValue(),permissibleValue.getValue()));
+            }
+            //else call the method for its children
+            else
+            {
+            	getFilteredCDE(subPermissibleValues,permissibleValueList);
+            }
+        }
     }
     
 	/* (non-Javadoc)
