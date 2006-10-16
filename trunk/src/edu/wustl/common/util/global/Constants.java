@@ -162,6 +162,7 @@ public class Constants
 	
 	//Tree View constants.
 	public static final String TISSUE_SITE = "Tissue Site";
+	public static final String CLINICAL_DIAGNOSIS="Clinical Diagnosis";
 	public static final int TISSUE_SITE_TREE_ID = 1;
 	public static final int STORAGE_CONTAINER_TREE_ID = 2;
 	public static final int QUERY_RESULTS_TREE_ID = 3;
