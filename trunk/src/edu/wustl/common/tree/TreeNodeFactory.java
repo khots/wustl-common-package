@@ -38,6 +38,11 @@ public class TreeNodeFactory
             case Constants.QUERY_RESULTS_TREE_ID:
             	treeNode = new AdvanceQueryTreeNode(new Long(0),Constants.ROOT,Constants.ALL);
                 break;
+            //Added By Ramya.
+            //To display specimen tree hierarchy.
+            case Constants.REQUEST_DETAILS_ID:
+            	treeNode = new SpecimenTreeNode(null,Constants.SPECIMEN_TREE_ROOT_NAME);
+            	break;
         }
         
         return treeNode;
