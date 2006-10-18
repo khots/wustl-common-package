@@ -550,11 +550,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
 	{
-		dao.insert(obj);
+		dao.insert(obj,null,false,false);
 	}
 
 	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
 	{
-		dao.update(obj);
+		dao.update(obj,null,false,false,false);
 	}
 }
