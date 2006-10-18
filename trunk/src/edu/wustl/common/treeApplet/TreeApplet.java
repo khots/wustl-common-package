@@ -81,7 +81,7 @@ public class TreeApplet extends JApplet
             {
             	propertyName = this.getParameter(Constants.PROPERTY_NAME);
             	treeType = Constants.REQUEST_DETAILS_ID;    
-            	specimenType = this.getParameter(Constants.SPECIMEN_TYPE);
+            	specimenType = this.getParameter(Constants.SPECIMEN_TYPE);            	
             }
             
             String session_id = this.getParameter("session_id");
@@ -221,7 +221,7 @@ public class TreeApplet extends JApplet
             else if(pageOf.equals(Constants.PAGEOF_REQUEST_DETAILS))
             {            	
             	//Get the node type from request parameter.
-            	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(Constants.SPECIMEN_TYPE);
+            	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(specimenType);
             	specimenTreeListener.setAppletContext(this.getAppletContext());
 	            tree.addMouseListener(specimenTreeListener);
 	            
