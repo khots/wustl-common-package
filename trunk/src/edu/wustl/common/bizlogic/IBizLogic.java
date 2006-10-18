@@ -33,55 +33,13 @@ public interface IBizLogic
      */
 	public abstract void delete(Object obj, int daoType) throws UserNotAuthorizedException, BizLogicException;
 	
-	/**
-     * This method gets called before insert method. Any logic before inserting into database can be included here.
-     * @param obj The object to be inserted.
-     * @param dao the dao object
-     * @param sessionDataBean session specific data
-     * @throws DAOException
-     * @throws UserNotAuthorizedException
-     * */
-	public void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
-    
 	public void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException;
 	
-	/**
-     * This method gets called after insert method. Any logic after insertnig object in database can be included here.
-     * @param obj The inserted object.
-     * @param dao the dao object
-     * @param sessionDataBean session specific data
-     * @throws DAOException
-     * @throws UserNotAuthorizedException 
-     * */
-	public void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
-	
-    public void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException;
-    
-    /**
-     * This method gets called before update method. Any logic before updating into database can be included here.
-     * @param dao the dao object
-     * @param currentObj The object to be updated.
-     * @param oldObj The old object.
-     * @param sessionDataBean session specific data
-     * @throws DAOException
-     * @throws UserNotAuthorizedException
-     * */
-    public void preUpdate(DAO dao,Object currentObj,Object oldObj, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
+	public void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException;
     
     public void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 	
-    /**
-     * This method gets called after update method. Any logic after updating into database can be included here.
-     * @param dao the dao object
-     * @param currentObj The object to be updated.
-     * @param oldObj The old object.
-     * @param sessionDataBean session specific data
-     * @throws DAOException
-     * @throws UserNotAuthorizedException
-     * */
-    public void postUpdate(DAO dao,Object currentObj,Object oldObj,SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
-    
-	public void update(Object currentObj, int daoType) throws BizLogicException, UserNotAuthorizedException;
+    public void update(Object currentObj, int daoType) throws BizLogicException, UserNotAuthorizedException;
     
 	public abstract List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
