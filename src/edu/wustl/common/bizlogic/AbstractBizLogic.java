@@ -196,8 +196,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        validate(obj, dao, Constants.ADD);
 	        preInsert(obj, dao, sessionDataBean);
 	        insert(obj, dao, sessionDataBean);
-	        postInsert(obj, dao, sessionDataBean);
 	        dao.commit();
+	        postInsert(obj, dao, sessionDataBean);
 		}
 		catch(DAOException ex)
 		{
@@ -286,8 +286,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        validate(currentObj, dao, Constants.EDIT);
 	        preUpdate(dao, currentObj, oldObj, sessionDataBean);
 	        update(dao, currentObj, oldObj, sessionDataBean);
-	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 	        dao.commit();
+	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 		}
 		catch(DAOException ex)
 		{
