@@ -30,13 +30,6 @@ public interface DAO
 	 */
 	public abstract void insert (Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException;
 	
-	/**
-	 * Insert the Object in the database.
-	 * @param obj Object to be inserted in database
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
-	 */
-	public abstract void insert(Object obj) throws DAOException, UserNotAuthorizedException;
 	
 	/**
 	 * updates the persisted object in the database.
@@ -49,13 +42,6 @@ public interface DAO
 	 */
 	public abstract void update (Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException;
 	
-	/**
-	 * Updates the persisted object in the database.
-	 * @param obj Object to be updated in database
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
-	 */
-	public abstract void update (Object obj) throws DAOException, UserNotAuthorizedException;
 	
 	/**
      * Deletes the persistent object from the database.
