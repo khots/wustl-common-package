@@ -176,15 +176,21 @@ public abstract class AbstractBizLogic implements IBizLogic
     	return formatException(ex.getWrapException(),obj,operation);
     }
     
-    public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
-	{
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
+    private void insert(Object obj, SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly) throws UserNotAuthorizedException, BizLogicException
+    {
+    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
 	        dao.openSession(sessionDataBean);
-	        validate(obj, dao, Constants.ADD);
+	        validate(obj, dao, Constants.ADD);	        
 	        preInsert(obj, dao, sessionDataBean);
-	        insert(obj, dao, sessionDataBean);
+	        if(isInsertOnly)
+		    {
+	        	insert(obj,dao);	        	
+		    }else
+		    {
+		    	insert(obj, dao, sessionDataBean);
+		    }
 	        dao.commit();
 	        postInsert(obj, dao, sessionDataBean);
 		}
@@ -218,63 +224,32 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException();
 			}
 		}
+    }
+    
+    public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
+	{
+		insert(obj,sessionDataBean,daoType, false);
 	}
     
     public final void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException
     {
-    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
-				
-		try
-		{
-	        dao.openSession(null);
-	        validate(obj, dao, Constants.ADD);
-	        insert(obj, dao);
-	        dao.commit();
-		}
-		catch(DAOException ex)
-		{
-			
-			String errMsg=formatException(ex.getWrapException(),obj,"Inserting");
-			if(errMsg==null)
-			{
-				errMsg=ex.getMessage();
-			}
-			try
-			{
-				dao.rollback();
-			}
-			catch(DAOException daoEx)
-			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-			}
-			Logger.out.debug("Error in insert");
-			throw new BizLogicException(errMsg, ex);
-		}
-		finally
-		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch(DAOException daoEx)
-			{
-				throw new BizLogicException();
-			}
-		}
+    	insert(obj,null,daoType,true);
     }
     
-    /**
-     * 
-     */
-    public final void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
-	{
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
+    private void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException, UserNotAuthorizedException
+    {
+    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
 	        dao.openSession(sessionDataBean);
 	        validate(currentObj, dao, Constants.EDIT);
 	        preUpdate(dao, currentObj, oldObj, sessionDataBean);
-	        update(dao, currentObj, oldObj, sessionDataBean);
+	        if(isUpdateOnly)
+	        {
+	        	update(currentObj,daoType);
+	        }else{
+	        	update(dao, currentObj, oldObj, sessionDataBean);
+	        }
 	        dao.commit();
 	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 		}
@@ -311,6 +286,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException();
 			}
 		}
+    }
+    
+    /**
+     * 
+     */
+    public final void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
+	{
+		update(currentObj, oldObj, daoType, sessionDataBean, false);
 	}
     
     /**
@@ -318,47 +301,7 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     public final void update(Object currentObj, int daoType) throws BizLogicException, UserNotAuthorizedException
 	{
-    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
-		try
-		{
-	        dao.openSession(null);
-	        validate(currentObj, dao, Constants.EDIT);
-	        update(dao, currentObj);
-	        dao.commit();
-		}
-		catch(DAOException ex)
-		{
-			//added to format constrainviolation message
-			
-			String errMsg = getErrorMessage(ex,currentObj,"Updating");
-			if(errMsg==null)
-			{
-				errMsg=ex.getMessage();
-			}
-			try
-			{
-				dao.rollback();
-			}
-			catch(DAOException daoEx)
-			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-				//throw new BizLogicException(ex.getMessage(), ex);
-			}
-			//TODO ERROR Handling
-			throw new BizLogicException(errMsg, ex);
-		}
-		finally
-		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch(DAOException daoEx)
-			{
-				throw new BizLogicException();
-			}
-		}
+    	update(currentObj, null, daoType, null, true);
 	}
     
     public final void setPrivilege(int daoType,String privilegeName, Class objectType, Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException
