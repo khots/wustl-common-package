@@ -39,10 +39,7 @@ public abstract class AbstractBizLogic implements IBizLogic
      * @throws DAOException
      * @throws UserNotAuthorizedException
      * */
-	public void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
-	{
-	
-	}
+	protected abstract void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
 	
     /**
      * Inserts an object into the database.
@@ -63,10 +60,8 @@ public abstract class AbstractBizLogic implements IBizLogic
      * @throws DAOException
      * @throws UserNotAuthorizedException 
      * */
-    public void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
-    {
-    	
-    }
+    protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
+    
     /**
      * Deletes an object from the database.
      * @param obj The object to be deleted.
@@ -84,11 +79,7 @@ public abstract class AbstractBizLogic implements IBizLogic
      * @throws DAOException
      * @throws UserNotAuthorizedException
      * */
-    public void preUpdate(DAO dao,Object currentObj,Object oldObj , SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
-    {
-    	
-    }
-    
+    protected abstract void preUpdate(DAO dao,Object currentObj,Object oldObj , SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
     
     /**
      * Updates an objects into the database.
@@ -108,10 +99,8 @@ public abstract class AbstractBizLogic implements IBizLogic
      * @throws DAOException
      * @throws UserNotAuthorizedException
      * */
-    public void postUpdate(DAO dao,Object currentObj,Object oldObj , SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
-    {
-    	
-    }
+    protected abstract void postUpdate(DAO dao,Object currentObj,Object oldObj , SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
+    
     protected abstract void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException;
     
     /**
