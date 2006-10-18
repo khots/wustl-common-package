@@ -49,14 +49,14 @@ public class TreeApplet extends JApplet
     {
         ObjectInputStream in = null;
         try
-        {
+        {        	
             URL codeBase = getCodeBase();
             String protocol = codeBase.getProtocol();
             String host = codeBase.getHost();
             int port = codeBase.getPort();
             
             String pageOf = this.getParameter(Constants.PAGEOF);
-            String storageContainerType = null,propertyName = null, cdeName = null;
+            String storageContainerType = null,propertyName = null, cdeName = null ,specimenType = null;
             int treeType = Constants.TISSUE_SITE_TREE_ID;
             
             //Sri: Added for selecting node in the storage tree
@@ -75,6 +75,13 @@ public class TreeApplet extends JApplet
             {
                 propertyName = this.getParameter(Constants.PROPERTY_NAME);
                 cdeName = this.getParameter(Constants.CDE_NAME);
+            }
+            //Added by Ramya - To Display specimen hierarchy in ordering system module. 
+            else if(pageOf.equals(Constants.PAGEOF_REQUEST_DETAILS))
+            {
+            	propertyName = this.getParameter(Constants.PROPERTY_NAME);
+            	treeType = Constants.REQUEST_DETAILS_ID;    
+            	specimenType = this.getParameter(Constants.SPECIMEN_TYPE);
             }
             
             String session_id = this.getParameter("session_id");
@@ -118,6 +125,13 @@ public class TreeApplet extends JApplet
                 //Kapil: MAC ISSUE JDK 1.3.1
                 urlSuffix = urlSuffix + "&"+Constants.PROPERTY_NAME+"="+URLEncoder.encode(propertyName)+"&"+Constants.CDE_NAME+"="+URLEncoder.encode(cdeName);
             }
+            	
+            //Added By Ramya.Construct urlSuffix when treeType = Constants.REQUEST_DETAILS_ID.
+            else if(pageOf.equals(Constants.PAGEOF_REQUEST_DETAILS))
+            {
+            	urlSuffix = urlSuffix + "&" + Constants.PROPERTY_NAME + "=" + URLEncoder.encode(propertyName)+ "&" +Constants.SPECIMEN_TYPE+ "=" + URLEncoder.encode(specimenType);
+            }
+            
             System.out.println("URL......................................"+urlSuffix);
             URL dataURL = new URL(protocol, host, port, urlSuffix);
             
@@ -132,11 +146,12 @@ public class TreeApplet extends JApplet
             System.out.println("PageOf : "+pageOf);  
             Vector treeDataVector = null;
             if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) || pageOf.equals(Constants.PAGEOF_SPECIMEN)
-                    || pageOf.equals(Constants.PAGEOF_TISSUE_SITE) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
+                    || pageOf.equals(Constants.PAGEOF_TISSUE_SITE) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN)
+                    || pageOf.equals(Constants.PAGEOF_REQUEST_DETAILS))
             {
-                Vector dataVector = (Vector) in.readObject();
+            	Vector dataVector = (Vector) in.readObject();
                 GenerateTree generateTree = new GenerateTree();
-                tree = generateTree.createTree(dataVector, treeType);
+                tree = generateTree.createTree(dataVector, treeType);                
             }
             else
             {
@@ -202,6 +217,19 @@ public class TreeApplet extends JApplet
             	CDETreeListener tissueSiteListener = new CDETreeListener();
 	            tissueSiteListener.setAppletContext(this.getAppletContext());
 	            tree.addMouseListener(tissueSiteListener);
+            }
+            else if(pageOf.equals(Constants.PAGEOF_REQUEST_DETAILS))
+            {            	
+            	//Get the node type from request parameter.
+            	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(Constants.SPECIMEN_TYPE);
+            	specimenTreeListener.setAppletContext(this.getAppletContext());
+	            tree.addMouseListener(specimenTreeListener);
+	            
+            	//Reuse the CDETreeListener for RequestDetailsPage.
+            	/*CDETreeListener specimenTreeListener = new CDETreeListener();
+            	specimenTreeListener.setAppletContext(this.getAppletContext());
+	            tree.addMouseListener(specimenTreeListener);*/
+
             }
             else if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) ||  (pageOf.equals(Constants.PAGEOF_SPECIMEN)) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
             {
