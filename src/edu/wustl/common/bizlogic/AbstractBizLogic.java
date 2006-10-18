@@ -31,6 +31,19 @@ import edu.wustl.common.util.logger.Logger;
  */
 public abstract class AbstractBizLogic implements IBizLogic
 {
+	/**
+     * This method gets called before insert method. Any logic before inserting into database can be included here.
+     * @param obj The object to be inserted.
+     * @param dao the dao object
+     * @param sessionDataBean session specific data
+     * @throws DAOException
+     * @throws UserNotAuthorizedException
+     * */
+	public void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+	{
+	
+	}
+	
     /**
      * Inserts an object into the database.
      * @param obj The object to be inserted.
@@ -43,13 +56,40 @@ public abstract class AbstractBizLogic implements IBizLogic
     protected abstract void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException;
     
     /**
+     * This method gets called after insert method. Any logic after insertnig object in database can be included here.
+     * @param obj The inserted object.
+     * @param dao the dao object
+     * @param sessionDataBean session specific data
+     * @throws DAOException
+     * @throws UserNotAuthorizedException 
+     * */
+    public void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+    {
+    	
+    }
+    /**
      * Deletes an object from the database.
      * @param obj The object to be deleted.
      * @throws DAOException
      * @throws UserNotAuthorizedException TODO
      */
     protected abstract void delete(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException;
-
+    
+    /**
+     * This method gets called before update method. Any logic before updating into database can be included here.
+     * @param dao the dao object
+     * @param currentObj The object to be updated.
+     * @param oldObj The old object.
+     * @param sessionDataBean session specific data
+     * @throws DAOException
+     * @throws UserNotAuthorizedException
+     * */
+    public void preUpdate(DAO dao,Object currentObj,Object oldObj , SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
+    {
+    	
+    }
+    
+    
     /**
      * Updates an objects into the database.
      * @param obj The object to be updated into the database. 
@@ -59,6 +99,19 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     protected abstract void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
     
+    /**
+     * This method gets called after update method. Any logic after updating into database can be included here.
+     * @param dao the dao object
+     * @param currentObj The object to be updated.
+     * @param oldObj The old object.
+     * @param sessionDataBean session specific data
+     * @throws DAOException
+     * @throws UserNotAuthorizedException
+     * */
+    public void postUpdate(DAO dao,Object currentObj,Object oldObj , SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
+    {
+    	
+    }
     protected abstract void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException;
     
     /**
@@ -141,7 +194,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 	        dao.openSession(sessionDataBean);
 	        validate(obj, dao, Constants.ADD);
+	        preInsert(obj, dao, sessionDataBean);
 	        insert(obj, dao, sessionDataBean);
+	        postInsert(obj, dao, sessionDataBean);
 	        dao.commit();
 		}
 		catch(DAOException ex)
@@ -229,7 +284,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 	        dao.openSession(sessionDataBean);
 	        validate(currentObj, dao, Constants.EDIT);
+	        preUpdate(dao, currentObj, oldObj, sessionDataBean);
 	        update(dao, currentObj, oldObj, sessionDataBean);
+	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 	        dao.commit();
 		}
 		catch(DAOException ex)
