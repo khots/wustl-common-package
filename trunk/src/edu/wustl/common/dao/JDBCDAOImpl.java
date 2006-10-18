@@ -761,13 +761,4 @@ public class JDBCDAOImpl implements JDBCDAO
 	{
 	}
 	
-	public void insert(Object obj) throws DAOException, UserNotAuthorizedException
-	{
-		insert(obj,null, false, false);
-	}
-	
-	public void update(Object obj) throws DAOException, UserNotAuthorizedException
-	{
-		update(obj, null, false, false, false);
-	}
 }
