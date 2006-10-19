@@ -40,7 +40,7 @@ public class TreeNodeFactory
                 break;
             //Added By Ramya.
             //To display specimen tree hierarchy.
-            case Constants.REQUEST_DETAILS_ID:
+            case Constants.SPECIMEN_TREE_ID:
             	treeNode = new SpecimenTreeNode(null,Constants.SPECIMEN_TREE_ROOT_NAME);
             	break;
         }
