@@ -20,9 +20,12 @@ import edu.wustl.common.util.global.Constants;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
-public class SpecimenTreeListener implements MouseInputListener{
+public class SpecimenTreeListener extends AppletTreeListener
+{
 
 	 private String type;
+	 
+	 private String specimenClass;
 	 
 	 /**
 	  * public No-Args Constructor.
@@ -37,9 +40,10 @@ public class SpecimenTreeListener implements MouseInputListener{
 	  * public parametrized Constructor to set the type of specimen node.
 	  *
 	  */
-	 public SpecimenTreeListener(String nodeType)
+	 public SpecimenTreeListener(String nodeType,String nodeClass)
 	 {
 		 type = nodeType;
+		 specimenClass = nodeClass;
 	 }
 	 
 	 /**
@@ -92,7 +96,7 @@ public class SpecimenTreeListener implements MouseInputListener{
 	    			String propertyName = applet.getParameter(Constants.PROPERTY_NAME);
 	    			
 	    			// if Root node selected or node is not of given type, then do nothing.
-	    			if(treeNode.toString().equals(Constants.REQUEST_DETAILS) || !treeNode.getType().equalsIgnoreCase(type))
+	    			if(treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME) || !treeNode.getType().equalsIgnoreCase(type))
 	    			{
 	    				return;
 	    			}
