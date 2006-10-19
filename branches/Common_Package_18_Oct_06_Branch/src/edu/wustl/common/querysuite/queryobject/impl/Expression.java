@@ -10,6 +10,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
@@ -33,12 +34,25 @@ public class Expression implements IExpression
 
 		if (index == -1)
 			return false;
-
-		int connectorIndex = index - 1; //
+//  A and (B or C) remove C => A and B
+//  A and (B or C) remove B => A and C
+//	A and (B or C) remove A => B or C
+		int connectorIndex = index;
 		if (index == expressionOperands.size() - 1)
 		{
 			connectorIndex--;
 		}
+		
+		if (index!=0 && index!=expressionOperands.size()-1)
+		{
+			int preNesting = logicalConnectors.get(index-1).getNestingNumber();
+			int postNesting = logicalConnectors.get(index).getNestingNumber();
+			if (postNesting < preNesting)
+			{
+				connectorIndex--;
+			}
+		}
+		
 		expressionOperands.remove(index);
 		if (connectorIndex >= 0)
 			logicalConnectors.remove(connectorIndex);
@@ -111,7 +125,7 @@ public class Expression implements IExpression
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getLogicalConnector(int, int)
 	 */
 	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex)
-			throws Exception
+			throws IllegalArgumentException
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
@@ -119,7 +133,7 @@ public class Expression implements IExpression
 		}
 		else
 		{
-			throw new Exception("Incorrect indexes selected; please select adjacent indexes");
+			throw new IllegalArgumentException("Incorrect indexes selected; please select adjacent indexes");
 		}
 	}
 
@@ -172,7 +186,7 @@ public class Expression implements IExpression
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setLogicalConnector(int, int, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
 	 */
 	public void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
-			ILogicalConnector logicalConnector) throws Exception
+			ILogicalConnector logicalConnector) throws IllegalArgumentException
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
@@ -180,7 +194,7 @@ public class Expression implements IExpression
 		}
 		else
 		{
-			throw new Exception("Incorrect indexes selected; please select adjacent indexes");
+			throw new IllegalArgumentException("Incorrect indexes selected; please select adjacent indexes");
 		}
 	}
 
