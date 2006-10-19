@@ -18,7 +18,7 @@ import edu.wustl.common.util.global.Constants;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CDETreeListener implements MouseInputListener
+public class CDETreeListener extends AppletTreeListener
 {
     /**
      * Corresponds to an applet environment.
@@ -98,35 +98,5 @@ public class CDETreeListener implements MouseInputListener
             ex.printStackTrace();
         }
 		
-	}
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 }
