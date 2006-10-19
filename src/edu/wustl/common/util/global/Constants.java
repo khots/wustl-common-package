@@ -306,13 +306,14 @@ public class Constants
 	public static final String PAGEOF_SPECIMEN = "pageOfSpecimen";
 	public static final String PAGEOF_TISSUE_SITE = "pageOfTissueSite";
 	public static final String PAGEOF_MULTIPLE_SPECIMEN = "pageOfMultipleSpecimen";
+	//Added By Ramya
+	public static final String PAGEOF_SPECIMEN_TREE = "pageOfSpecimenTree";
 	
 	//Added By Ramya
 	//Constants to display Specimen Tree in RequestDetails.jsp
-	public static final String PAGEOF_REQUEST_DETAILS = "pageOfRequestDetails";
-	public static final int REQUEST_DETAILS_ID = 4;
-	public static final String REQUEST_DETAILS = "Specimen Tree";
-	public static final String SPECIMEN_TYPE = "type";
+	public static final int SPECIMEN_TREE_ID = 4;
+	public static final String SPECIMEN_TYPE = "type";	
+	public static final String SPECIMEN_CLASS= "specimenClass";
 	public static final String SPECIMEN_TREE_ROOT_NAME = "Specimens";
 	
 	// Constants for Storage Container.
