@@ -1,6 +1,8 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
+import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
+
 /**
  * represents a collection of, possibly paranthesized, operands.
  * takes IFunctionalClass in the constructor
@@ -50,7 +52,7 @@ public interface IExpression
 	 * 
 	 */
 	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex)
-			throws Exception;
+			throws IllegalArgumentException;
 
 	/**
 	 * see getLogicalConnector
@@ -60,7 +62,7 @@ public interface IExpression
 	 * 
 	 */
 	public void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
-			ILogicalConnector logicalConnector) throws Exception;
+			ILogicalConnector logicalConnector) throws IllegalArgumentException;
 
 	/**
 	 * increments nesting num of all the logical connectors in the expression between
