@@ -12,11 +12,34 @@ import java.io.Serializable;
 public class SpecimenTreeNode extends TreeNodeImpl implements Serializable{
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * No-Args Constructor.
+	 */
+	public SpecimenTreeNode()
+	{
+		
+	}
+	
+	/**
+	 * Parametrized Construstor.
+	 * @param identifier
+	 * @param value
+	 */
+	public SpecimenTreeNode(Long identifier,String value)
+	{
+	    super(identifier, value);
+	}
 	
 	/**
 	 * String containing the type of the specimen node.
 	 */
 	private String type;
+	
+	/**
+	 * String containing the class of the specimen node.
+	 */
+	private String specimenClass;
 	
 	/**
 	 * @return String containing the type of specimen node.
@@ -31,19 +54,23 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable{
 	public void setType(String type) {
 		this.type = type;
 	}
-
-	/*
-	 * No args Constructor.
+	
+	/**
+	 * Returns String containing the class of specimen.
+	 * @return specimenClass
 	 */
-	public SpecimenTreeNode()
-	{
-		
+	public String getSpecimenClass() {
+		return specimenClass;
+	}
+
+	/**
+	 * Sets the class of specimen.
+	 * @param specimenClass
+	 */
+	public void setSpecimenClass(String specimenClass) {
+		this.specimenClass = specimenClass;
 	}
 	
-	public SpecimenTreeNode(Long identifier,String value)
-	{
-	    super(identifier, value);
-	}
 	    
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.tree.TreeNodeImpl#toString()
@@ -52,5 +79,4 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable{
 	{
 	    return this.value;
 	}
-
 }
