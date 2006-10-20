@@ -1,6 +1,12 @@
 
 package edu.wustl.common.querysuite.queryobject.impl;
 
+/**
+ * @author Mandar Shidhore
+ * @version 1.0
+ * @created 19-Oct-2006 16.12.04 PM
+ */
+
 import junit.framework.TestCase;
 import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -22,7 +28,6 @@ public class ExpressionTestCases extends TestCase
 	IRule c;
 	IRule d;
 	IRule e;
-
 
 	public ExpressionTestCases()
 	{
@@ -351,12 +356,12 @@ public class ExpressionTestCases extends TestCase
 		{
 			assertEquals(orCond, expr.getLogicalConnector(0, 1));
 		}
-		catch(IllegalArgumentException e)
+		catch (IllegalArgumentException e)
 		{
 			assertFalse(true);
 		}
 	}
-	
+
 	/*
 	 * Expression is a or b and c -- we try to get the logical
 	 * connector between 1 and 2 i.e. between a and b
@@ -367,12 +372,12 @@ public class ExpressionTestCases extends TestCase
 		{
 			assertEquals(andCond, expr.getLogicalConnector(1, 2));
 		}
-		catch(IllegalArgumentException e)
+		catch (IllegalArgumentException e)
 		{
 			assertFalse(true);
 		}
 	}
-	
+
 	/*
 	 * Expression is a or b and c -- we try to get the logical
 	 * connector between 0 and 2 which is invalid
@@ -384,10 +389,10 @@ public class ExpressionTestCases extends TestCase
 			expr.getLogicalConnector(0, 2);
 			assertTrue(false);
 		}
-		catch(IllegalArgumentException e)
+		catch (IllegalArgumentException e)
 		{
-			
+
 		}
 	}
-	
+
 }
