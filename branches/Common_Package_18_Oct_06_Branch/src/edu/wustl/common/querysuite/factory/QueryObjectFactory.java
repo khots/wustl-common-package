@@ -9,6 +9,7 @@ import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionList;
@@ -85,60 +86,72 @@ public class QueryObjectFactory
 		return new Condition(null, null, null);
 	}
 
-	public static IExpression createExpression(IFunctionalClass functionalClass,
-			List<IExpressionOperand> expressionOperands, List<ILogicalConnector> logicalConnectors,
-			IExpressionId expressionId)
-	{
-		return new Expression(functionalClass, expressionOperands, logicalConnectors, expressionId);
-	}
-
-	public static IExpression createExpression(IFunctionalClass functionalClass)
-	{
-		return new Expression(functionalClass, null, null, null);
-	}
+	//	public static IExpression createExpression(IFunctionalClass functionalClass,
+	//			List<IExpressionOperand> expressionOperands, List<ILogicalConnector> logicalConnectors,
+	//			IExpressionId expressionId)
+	//	{
+	//		return new Expression(functionalClass, expressionOperands, logicalConnectors, expressionId);
+	//	}
+	//
+	//	public static IExpression createExpression(IFunctionalClass functionalClass)
+	//	{
+	//		return new Expression(functionalClass, null, null, null);
+	//	}
 
 	public static IExpressionId createExpressionId(int id)
 	{
 		return new ExpressionId(id);
 	}
-	
-	public static IExpressionList createExpressionList(List<IExpression> expressions)
+
+	//	public static IExpressionList createExpressionList(List<IExpression> expressions)
+	//	{
+	////		return new ExpressionList(expressions);
+	//        return null;
+	//	}
+
+	public static IConstraints createConstraints()
 	{
-		return new ExpressionList(expressions);
+		// TODO
+		return null;
 	}
 
-	public static IExpressionList createExpressionList()
+	public static IFunctionalClass createFunctionalClass()
 	{
-		return new ExpressionList(null);
+		return new FunctionalClass();
 	}
-	
-	public static IFunctionalClass createFunctionalClass(List<IAttribute> attributes, ICategory category)
+
+	public static IFunctionalClass createFunctionalClass(List<IAttribute> attributes,
+			ICategory category)
 	{
 		return new FunctionalClass(attributes, category);
 	}
-	
+
 	public static IRule createRule(List<ICondition> conditions, IExpression containingExpression)
 	{
-		return new 	Rule(conditions, containingExpression);
+		return new Rule(conditions, containingExpression);
 	}
-	
+
 	public static IRule createRule()
 	{
-		return new 	Rule(null, null);
+		return new Rule(null, null);
 	}
-	
-	public static IJoinGraph createJoinGraph(List<IExpressionId> expressionIds, Map<IExpressionId, List<Edge>> incommingEdgeMap, Map<IExpressionId, List<Edge>> outgoingEdgeMap)
+
+	public static IJoinGraph createJoinGraph(List<IExpressionId> expressionIds,
+			Map<IExpressionId, List<Edge>> incommingEdgeMap,
+			Map<IExpressionId, List<Edge>> outgoingEdgeMap)
 	{
 		return new JoinGraph(expressionIds, incommingEdgeMap, outgoingEdgeMap);
 	}
-	
+
 	public static IJoinGraph createJoinGraph()
 	{
 		return new JoinGraph(null, null, null);
 	}
-	
-	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass, IClass rightClass, String roleName, String revereseRoleName, boolean bidirectional)
+
+	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
+			IClass rightClass, String roleName, String revereseRoleName, boolean bidirectional)
 	{
-		return new IntraModelAssociation(leftClass,rightClass,roleName, revereseRoleName,bidirectional);
+		return new IntraModelAssociation(leftClass, rightClass, roleName, revereseRoleName,
+				bidirectional);
 	}
 }

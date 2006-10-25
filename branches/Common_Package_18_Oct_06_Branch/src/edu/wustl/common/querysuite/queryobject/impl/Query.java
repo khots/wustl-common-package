@@ -7,60 +7,36 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 15.07.04 AM
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.wustl.common.querysuite.queryobject.IExpressionList;
-import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
-import edu.wustl.common.querysuite.queryobject.IJoinGraph;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
+import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
 public class Query implements IQuery
 {
 
-	private IExpressionList constraints;
-	private IJoinGraph joins;
-	private List<IFunctionalClass> outputClasses = new ArrayList<IFunctionalClass>();
+	private IConstraints constraints;
 
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IQuery#addOutputClass(edu.wustl.common.querysuite.queryobject.IFunctionalClass)
-	 */
-	public void addOutputClass(IFunctionalClass Klass)
+	private IOutputTreeNode root;
+
+	public IOutputTreeNode getRootOutputClass()
 	{
-		outputClasses.add(Klass);
+		return root;
 	}
 
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IQuery#getConstraints()
-	 */
-	public IExpressionList getConstraints()
+	public IConstraints getConstraints()
 	{
 		return constraints;
 	}
 
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IQuery#getJoins()
-	 */
-	public IJoinGraph getJoins()
+	public void setConstraints(IConstraints constraints)
 	{
-		return joins;
+		this.constraints = constraints;
+
 	}
 
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IQuery#getOutputClasses()
-	 */
-	public List<IFunctionalClass> getOutputClasses()
+	public void setRootOutputClass(IOutputTreeNode root)
 	{
-		return outputClasses;
-	}
-
-	/**
-	 * @param joinGraph
-	 * @see edu.wustl.common.querysuite.queryobject.IQuery#setJoins(edu.wustl.common.querysuite.queryobject.IJoinGraph)
-	 */
-	public void setJoins(IJoinGraph joinGraph)
-	{
-		joins = joinGraph;
+		this.root = root;
 	}
 
 }

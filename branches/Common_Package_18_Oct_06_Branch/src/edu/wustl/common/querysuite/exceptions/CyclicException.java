@@ -13,7 +13,7 @@ public class CyclicException extends Exception
 	/**
 	 * @param message
 	 */
-	public CyclicException (String message)
+	public CyclicException(String message)
 	{
 		super(message);
 	}

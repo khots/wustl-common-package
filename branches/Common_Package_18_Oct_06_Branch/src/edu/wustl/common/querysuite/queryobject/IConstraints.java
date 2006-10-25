@@ -3,16 +3,22 @@ package edu.wustl.common.querysuite.queryobject;
 
 import java.util.Enumeration;
 
+import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+
 /**
- * A list of {@link edu.wustl.common.querysuite.queryobject.IExpression}s that
- * is indexed by {@link edu.wustl.common.querysuite.queryobject.IExpressionId}.
- * This is global storage location for all expressions in a query; an
+ * Contains information about the constraints of a query. It contains a list of
+ * {@link edu.wustl.common.querysuite.queryobject.IExpression}s that is indexed
+ * by {@link edu.wustl.common.querysuite.queryobject.IExpressionId}. This is
+ * global storage location for all expressions in a query; an
  * {@link edu.wustl.common.querysuite.queryobject.IExpression} can be created
- * only by calling the addExpression method here.
- * @version 1.0
- * @updated 11-Oct-2006 02:56:16 PM
+ * only by calling the addExpression method here.<br>
+ * It also contains a join graph for specifying how the expressions are linked
+ * together.
+ * @author srinath_k
+ * @see edu.wustl.common.querysuite.queryobject.IExpression
+ * @see edu.wustl.common.querysuite.queryobject.IJoinGraph
  */
-public interface IExpressionList
+public interface IConstraints
 {
 
 	/**
@@ -45,4 +51,16 @@ public interface IExpressionList
 	 */
 	public IExpression addExpression(IFunctionalClass functionalClass);
 
+	public IJoinGraph getJoinGraph();
+
+	/**
+	 * @param joinGraph
+	 */
+	public void setJoinGraph(IJoinGraph joinGraph);
+
+	/**
+	 * @return the root expression of the join graph.
+	 * @throws MultipleRootsException
+	 */
+	public IExpressionId getRootExpressionId() throws MultipleRootsException;
 }

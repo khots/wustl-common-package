@@ -2,9 +2,9 @@
 package edu.wustl.common.querysuite.queryobject;
 
 /**
- * contains
- * LogicalOperatorCode
- * Nesting number (for parantheses)
+ * Represents a logical connector (AND / OR). The nesting represents the number
+ * of parentheses (depth of parentheses) around the logic portion (AND or OR) of
+ * the connector.
  * @version 1.0
  * @updated 11-Oct-2006 02:57:02 PM
  */
@@ -15,9 +15,8 @@ public interface ILogicalConnector
 
 	/**
 	 * @param logicOperatorCode
-	 * 
 	 */
-	public void setLogicalOperator(LogicalOperator logicOperatorCode);
+	public void setLogicalOperator(LogicalOperator logicalOperator);
 
 	/**
 	 * denotes no. of parantheses around this operator
@@ -26,8 +25,7 @@ public interface ILogicalConnector
 
 	/**
 	 * @param nestingNumber
-	 * 
 	 */
-	//public void setNestingNumber(int nestingNumber);
-	//public void incrementNestingNumber();
+	// public void setNestingNumber(int nestingNumber);
+	// public void incrementNestingNumber();
 }

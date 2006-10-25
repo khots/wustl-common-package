@@ -1,8 +1,6 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
-import java.util.List;
-
 /**
  * The query object... this is the unit built from UI, persisted, and from which
  * queries will be built.
@@ -12,29 +10,22 @@ import java.util.List;
 public interface IQuery
 {
 
-	public IExpressionList getConstraints();
+	/**
+	 * @return the constraints
+	 * @see IConstraints
+	 */
+	public IConstraints getConstraints();
 
-	public IJoinGraph getJoins();
+	public void setConstraints(IConstraints constraints);
 
 	/**
-	 * @param joinGraph
-	 * 
+	 * All the attributes of all the classes are selected. Note that the "class"
+	 * here is IFunctionalClass, a cab2b specific user-desired subset of
+	 * attributes will be present in the IFunctionalClass. The output classes
+	 * form a tree where the edges are associations.
+	 * @see IOutputTreeNode
 	 */
-	public void setJoins(IJoinGraph joinGraph);
+	public IOutputTreeNode getRootOutputClass();
 
-	/**
-	 * all the attributes of all the classes are selected. Note that the "class" here
-	 * is IFunctionalClass, a cab2b specific user-desired subset of attributes will be
-	 * present in the IFunctionalClass.
-	 * the functional classes here are a subset of the functional classes that be
-	 * found in the IExpressions in IExpressionList
-	 */
-	public List<IFunctionalClass> getOutputClasses();
-
-	/**
-	 * @param class
-	 * 
-	 */
-	public void addOutputClass(IFunctionalClass Klass);
-
+	public void setRootOutputClass(IOutputTreeNode root);
 }

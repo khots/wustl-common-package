@@ -13,36 +13,36 @@ import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
 public class IntraModelAssociation implements IIntraModelAssociation
 {
 
-	private String roleName;
-	private String revereseRoleName;
+	private String sourceRoleName;
+	private String targetRoleName;
 	private boolean bidirectional;
-	private IClass leftClass;
-	private IClass rightClass;
+	private IClass sourceClass;
+	private IClass targetClass;
 
 	public IntraModelAssociation(IClass leftClass, IClass rightClass, String roleName,
 			String revereseRoleName, boolean bidirectional)
 	{
-		this.leftClass = leftClass;
-		this.rightClass = rightClass;
-		this.roleName = roleName;
-		this.revereseRoleName = revereseRoleName;
+		this.sourceClass = leftClass;
+		this.targetClass = rightClass;
+		this.sourceRoleName = roleName;
+		this.targetRoleName = revereseRoleName;
 		this.bidirectional = bidirectional;
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#getLeftClass()
+	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#getSourceClass()
 	 */
-	public IClass getLeftClass()
+	public IClass getSourceClass()
 	{
-		return leftClass;
+		return sourceClass;
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#getRightClass()
+	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#getTargetClass()
 	 */
-	public IClass getRightClass()
+	public IClass getTargetClass()
 	{
-		return rightClass;
+		return targetClass;
 	}
 
 	/**
@@ -72,54 +72,54 @@ public class IntraModelAssociation implements IIntraModelAssociation
 
 	/**
 	 * @param leftClass
-	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#setLeftClass(edu.wustl.common.querysuite.queryobject.IClass)
+	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#setSourceClass(edu.wustl.common.querysuite.queryobject.IClass)
 	 */
-	public void setLeftClass(IClass leftClass)
+	public void setSourceClass(IClass leftClass)
 	{
-		this.leftClass = leftClass;
+		this.sourceClass = leftClass;
 	}
 
 	/**
 	 * @param rightClass
-	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#setRightClass(edu.wustl.common.querysuite.queryobject.IClass)
+	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#setTargetClass(edu.wustl.common.querysuite.queryobject.IClass)
 	 */
-	public void setRightClass(IClass rightClass)
+	public void setTargetClass(IClass rightClass)
 	{
-		this.rightClass = rightClass;
+		this.targetClass = rightClass;
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#getReverseRoleName()
+	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#getSourceRoleName()
 	 */
-	public String getReverseRoleName()
+	public String getSourceRoleName()
 	{
-		return revereseRoleName;
+		return targetRoleName;
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#getRoleName()
+	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#getTargetRoleName()
 	 */
-	public String getRoleName()
+	public String getTargetRoleName()
 	{
-		return roleName;
-	}
-
-	/**
-	 * @param roleName
-	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#setReverseRoleName(java.lang.String)
-	 */
-	public void setReverseRoleName(String roleName)
-	{
-		revereseRoleName = roleName;
+		return sourceRoleName;
 	}
 
 	/**
 	 * @param roleName
-	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#setRoleName(java.lang.String)
+	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#setSourceRoleName(java.lang.String)
 	 */
-	public void setRoleName(String roleName)
+	public void setSourceRoleName(String roleName)
 	{
-		this.roleName = roleName;
+		targetRoleName = roleName;
+	}
+
+	/**
+	 * @param roleName
+	 * @see edu.wustl.common.querysuite.queryobject.IIntraModelAssociation#setTargetRoleName(java.lang.String)
+	 */
+	public void setTargetRoleName(String roleName)
+	{
+		this.sourceRoleName = roleName;
 	}
 
 }

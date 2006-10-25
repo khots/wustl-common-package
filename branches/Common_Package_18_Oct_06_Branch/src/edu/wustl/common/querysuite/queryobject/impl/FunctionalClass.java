@@ -28,6 +28,11 @@ public class FunctionalClass implements IFunctionalClass
 			this.attributes = attributes;
 	}
 
+	public FunctionalClass()
+	{
+
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#addAttribute()
 	 */
