@@ -26,6 +26,26 @@ public class Expression implements IExpression
 	private IFunctionalClass functionalClass;
 
 	/**
+	 * @param functionalClass
+	 */
+	public Expression(IFunctionalClass functionalClass)
+	{
+		this.functionalClass = functionalClass;
+	}
+
+	public Expression(IFunctionalClass functionalClass,
+			List<IExpressionOperand> expressionOperands, List<ILogicalConnector> logicalConnectors,
+			IExpressionId expressionId)
+	{
+		this.functionalClass = functionalClass;
+		if (expressionOperands != null)
+			this.expressionOperands = expressionOperands;
+		if (logicalConnectors != null)
+			this.logicalConnectors = logicalConnectors;
+		this.expressionId = expressionId;
+	}
+
+	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeOperand(edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
 	public boolean removeOperand(IExpressionOperand operand)
@@ -34,38 +54,30 @@ public class Expression implements IExpression
 
 		if (index == -1)
 			return false;
-//  A and (B or C) remove C => A and B
-//  A and (B or C) remove B => A and C
-//	A and (B or C) remove A => B or C
+		//  A and (B or C) remove C => A and B
+		//  A and (B or C) remove B => A and C
+		//	A and (B or C) remove A => B or C
 		int connectorIndex = index;
 		if (index == expressionOperands.size() - 1)
 		{
 			connectorIndex--;
 		}
-		
-		if (index!=0 && index!=expressionOperands.size()-1)
+
+		if (index != 0 && index != expressionOperands.size() - 1)
 		{
-			int preNesting = logicalConnectors.get(index-1).getNestingNumber();
+			int preNesting = logicalConnectors.get(index - 1).getNestingNumber();
 			int postNesting = logicalConnectors.get(index).getNestingNumber();
 			if (postNesting < preNesting)
 			{
 				connectorIndex--;
 			}
 		}
-		
+
 		expressionOperands.remove(index);
 		if (connectorIndex >= 0)
 			logicalConnectors.remove(connectorIndex);
 
 		return true;
-	}
-
-	/**
-	 * @param functionalClass
-	 */
-	public Expression(IFunctionalClass functionalClass)
-	{
-		this.functionalClass = functionalClass;
 	}
 
 	/**
@@ -83,7 +95,7 @@ public class Expression implements IExpression
 	public void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand)
 	{
 		expressionOperands.add(operand);
-		logicalConnectors.add(expressionOperands.size() - 1, logicalConnector);
+		logicalConnectors.add(expressionOperands.size() - 2, logicalConnector);
 	}
 
 	/**
@@ -133,7 +145,8 @@ public class Expression implements IExpression
 		}
 		else
 		{
-			throw new IllegalArgumentException("Incorrect indexes selected; please select adjacent indexes");
+			throw new IllegalArgumentException(
+					"Incorrect indexes selected; please select adjacent indexes");
 		}
 	}
 
@@ -194,7 +207,8 @@ public class Expression implements IExpression
 		}
 		else
 		{
-			throw new IllegalArgumentException("Incorrect indexes selected; please select adjacent indexes");
+			throw new IllegalArgumentException(
+					"Incorrect indexes selected; please select adjacent indexes");
 		}
 	}
 

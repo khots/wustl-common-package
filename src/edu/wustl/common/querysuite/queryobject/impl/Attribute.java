@@ -18,6 +18,13 @@ public class Attribute implements IAttribute
 	private IClass umlCLass;
 	private String attributeName;
 
+	public Attribute(DataType dataType, IClass umlCLass, String attributeName)
+	{
+		this.dataType = dataType;
+		this.umlCLass = umlCLass;
+		this.attributeName = attributeName;
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IAttribute#getAttributeName()
 	 */

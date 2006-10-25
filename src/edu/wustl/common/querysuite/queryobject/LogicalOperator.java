@@ -10,4 +10,17 @@ package edu.wustl.common.querysuite.queryobject;
  */
 public enum LogicalOperator {
 
+	AND(0), OR(1), PAND(2);
+
+	private int arity;
+
+	LogicalOperator(int arity)
+	{
+		this.arity = arity;
+	}
+
+	public int arity()
+	{
+		return arity;
+	}
 }

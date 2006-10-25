@@ -14,6 +14,11 @@ public class ExpressionId implements IExpressionId
 
 	private int id;
 
+	public ExpressionId(int id)
+	{
+		this.id = id;
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpressionId#getInt()
 	 */

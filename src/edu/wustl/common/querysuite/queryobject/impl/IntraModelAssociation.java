@@ -19,6 +19,16 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	private IClass leftClass;
 	private IClass rightClass;
 
+	public IntraModelAssociation(IClass leftClass, IClass rightClass, String roleName,
+			String revereseRoleName, boolean bidirectional)
+	{
+		this.leftClass = leftClass;
+		this.rightClass = rightClass;
+		this.roleName = roleName;
+		this.revereseRoleName = revereseRoleName;
+		this.bidirectional = bidirectional;
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IAssociation#getLeftClass()
 	 */

@@ -16,6 +16,12 @@ public class LogicalConnector implements ILogicalConnector
 	private LogicalOperator logicalOperator;
 	private int nestingNumber;
 
+	public LogicalConnector(LogicalOperator logicalOperator, int nestingNumber)
+	{
+		this.logicalOperator = logicalOperator;
+		this.nestingNumber = nestingNumber;
+	}
+
 	/**
 	 * Constructor to create instance of the LogicalConnector class, with the specified nestingNumber.
 	 * @param nestingNumber

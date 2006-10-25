@@ -10,6 +10,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IRule;
@@ -20,12 +21,19 @@ public class Rule implements IRule
 	private List<ICondition> conditions = new ArrayList<ICondition>();
 	private IExpression containingExpression;
 
+	public Rule(List<ICondition> conditions, IExpression containingExpression)
+	{
+		this.containingExpression = containingExpression;
+		if (conditions != null)
+			this.conditions = conditions;
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IRule#addCondition()
 	 */
 	public ICondition addCondition()
 	{
-		ICondition iCondition = new Condition();
+		ICondition iCondition = QueryObjectFactory.createCondition();
 		conditions.add(iCondition);
 		return iCondition;
 	}

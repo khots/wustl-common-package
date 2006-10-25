@@ -10,4 +10,8 @@ package edu.wustl.common.querysuite.exceptions;
 public class MultipleRootsException extends Exception
 {
 
+	public MultipleRootsException(String message)
+	{
+		super(message);
+	}
 }
