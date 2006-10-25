@@ -1,6 +1,7 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
+import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 
 /**
@@ -54,7 +55,7 @@ public interface IJoinGraph
 	 * 
 	 */
 	public IAssociation putAssociation(IExpressionId parentExpressionIndex,
-			IExpressionId childExpressionIndex, IAssociation association);
+			IExpressionId childExpressionIndex, IAssociation association) throws CyclicException;
 
 	/**
 	 * returns true if the association between the specified expressions existed.

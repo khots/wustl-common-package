@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.category.ICategory;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 
@@ -20,12 +21,19 @@ public class FunctionalClass implements IFunctionalClass
 	private List<IAttribute> attributes = new ArrayList<IAttribute>();
 	private ICategory category;
 
+	public FunctionalClass(List<IAttribute> attributes, ICategory category)
+	{
+		this.category = category;
+		if (attributes != null)
+			this.attributes = attributes;
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#addAttribute()
 	 */
 	public IAttribute addAttribute()
 	{
-		IAttribute iAttribute = new Attribute();
+		IAttribute iAttribute = QueryObjectFactory.createAttribute();
 		attributes.add(iAttribute);
 		return iAttribute;
 	}

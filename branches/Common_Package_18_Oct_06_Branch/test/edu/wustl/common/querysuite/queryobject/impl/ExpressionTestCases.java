@@ -9,16 +9,15 @@ package edu.wustl.common.querysuite.queryobject.impl;
 
 import junit.framework.TestCase;
 import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
-import edu.wustl.common.querysuite.queryobject.impl.Expression;
-import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
-import edu.wustl.common.querysuite.queryobject.impl.Rule;
 
 public class ExpressionTestCases extends TestCase
 {
+
 	IExpression expr;
 	IExpression expr2;
 	ILogicalConnector orCond;
@@ -45,24 +44,24 @@ public class ExpressionTestCases extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		expr = new Expression(null);
-		a = new Rule();
+		expr = QueryObjectFactory.createExpression(null);
+		a = QueryObjectFactory.createRule();
 		expr.addOperand(a);
 
-		b = new Rule();
-		orCond = new LogicalConnector(LogicalOperator.OR, 0);
+		b = QueryObjectFactory.createRule();
+		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.OR, 0);
 		expr.addOperand(orCond, b);
 
-		c = new Rule();
-		andCond = new LogicalConnector(LogicalOperator.AND, 0);
+		c = QueryObjectFactory.createRule();
+		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.AND, 0);
 		expr.addOperand(andCond, c);
 
-		expr2 = new Expression(null);
-		d = new Rule();
+		expr2 = QueryObjectFactory.createExpression(null);
+		d = QueryObjectFactory.createRule();
 		expr2.addOperand(d);
 
-		e = new Rule();
-		orCond = new LogicalConnector(LogicalOperator.OR, 0);
+		e = QueryObjectFactory.createRule();
+		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.OR, 0);
 		expr2.addOperand(orCond, e);
 	}
 

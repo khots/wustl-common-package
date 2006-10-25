@@ -21,6 +21,15 @@ public class Condition implements ICondition
 	private RelationalOperator relationalOperator;
 	private List<String> values = new ArrayList<String>();
 
+	public Condition(IAttribute attribute, RelationalOperator relationalOperator,
+			List<String> values)
+	{
+		this.attribute = attribute;
+		this.relationalOperator = relationalOperator;
+		if (values != null)
+			this.values = values;
+	}
+
 	/**
 	 * @param value
 	 * @see edu.wustl.common.querysuite.queryobject.ICondition#addValue(java.lang.String)

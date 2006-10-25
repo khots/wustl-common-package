@@ -7,9 +7,11 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 11.12.04 AM
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.category.ICategory;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
 
@@ -18,8 +20,18 @@ public class Class implements IClass
 
 	private String fullQualifiedName;
 	private boolean visible;
-	private List<IAttribute> attributes;
+	private List<IAttribute> attributes = new ArrayList<IAttribute>();
 	private ICategory category;
+
+	public Class(String fullQualifiedName, List<IAttribute> attributes, ICategory category,
+			boolean isVisible)
+	{
+		this.fullQualifiedName = fullQualifiedName;
+		this.visible = isVisible;
+		if (attributes != null)
+			this.attributes = attributes;
+		this.category = category;
+	}
 
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IClass#getFullyQualifiedName()
@@ -60,7 +72,7 @@ public class Class implements IClass
 	 */
 	public IAttribute addAttribute()
 	{
-		IAttribute iAttribute = new Attribute();
+		IAttribute iAttribute = QueryObjectFactory.createAttribute();
 		attributes.add(iAttribute);
 		return iAttribute;
 	}

@@ -19,6 +19,12 @@ public class ExpressionList implements IExpressionList
 
 	private List<IExpression> expressions = new ArrayList<IExpression>();
 
+	public ExpressionList(List<IExpression> expressions)
+	{
+		if (expressions != null)
+			this.expressions = expressions;
+	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpressionList#addExpression(edu.wustl.common.querysuite.queryobject.IExpression)
 	 */

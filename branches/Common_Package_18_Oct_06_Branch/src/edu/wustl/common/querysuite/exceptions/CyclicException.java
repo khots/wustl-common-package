@@ -10,4 +10,11 @@ package edu.wustl.common.querysuite.exceptions;
 public class CyclicException extends Exception
 {
 
+	/**
+	 * @param message
+	 */
+	public CyclicException (String message)
+	{
+		super(message);
+	}
 }
