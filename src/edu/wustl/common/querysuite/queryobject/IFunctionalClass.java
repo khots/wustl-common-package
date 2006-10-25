@@ -6,7 +6,8 @@ import edu.wustl.common.querysuite.category.ICategory;
 import java.util.List;
 
 /**
- * a set of attributes that may belong to different classes.
+ * Represents a set of attributes that may belong to different classes.
+ * 
  * @version 1.0
  * @updated 11-Oct-2006 02:56:22 PM
  */

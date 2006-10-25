@@ -9,29 +9,29 @@ public interface IIntraModelAssociation extends IAssociation
 {
 
 	/**
-	 * the role name in the object model of the app needed to traverse from left class
-	 * to right class
+	 * the role name in the object model of the app needed to traverse from source class
+	 * to target class
 	 */
-	public String getRoleName();
+	public String getTargetRoleName();
 
 	/**
 	 * @param roleName
 	 * 
 	 */
-	public void setRoleName(String roleName);
+	public void setTargetRoleName(String roleName);
 
 	/**
-	 * the role name in the object model of the app needed to traverse from right
-	 * class to left class.
+	 * the role name in the object model of the app needed to traverse from target
+	 * class to source class.
 	 * will be an empty string if isBidirectional() is false.
 	 */
-	public String getReverseRoleName();
+	public String getSourceRoleName();
 
 	/**
 	 * see getReverseRoleName()
 	 * @param roleName
 	 * 
 	 */
-	public void setReverseRoleName(String roleName);
+	public void setSourceRoleName(String roleName);
 
 }

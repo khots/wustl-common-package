@@ -21,8 +21,11 @@ public class Expression implements IExpression
 {
 
 	private List<IExpressionOperand> expressionOperands = new ArrayList<IExpressionOperand>();
+
 	private List<ILogicalConnector> logicalConnectors = new ArrayList<ILogicalConnector>();
+
 	private IExpressionId expressionId;
+
 	private IFunctionalClass functionalClass;
 
 	/**
@@ -31,6 +34,11 @@ public class Expression implements IExpression
 	public Expression(IFunctionalClass functionalClass)
 	{
 		this.functionalClass = functionalClass;
+	}
+
+	Expression()
+	{
+
 	}
 
 	public Expression(IFunctionalClass functionalClass,
@@ -51,33 +59,7 @@ public class Expression implements IExpression
 	public boolean removeOperand(IExpressionOperand operand)
 	{
 		int index = expressionOperands.indexOf(operand);
-
-		if (index == -1)
-			return false;
-		//  A and (B or C) remove C => A and B
-		//  A and (B or C) remove B => A and C
-		//	A and (B or C) remove A => B or C
-		int connectorIndex = index;
-		if (index == expressionOperands.size() - 1)
-		{
-			connectorIndex--;
-		}
-
-		if (index != 0 && index != expressionOperands.size() - 1)
-		{
-			int preNesting = logicalConnectors.get(index - 1).getNestingNumber();
-			int postNesting = logicalConnectors.get(index).getNestingNumber();
-			if (postNesting < preNesting)
-			{
-				connectorIndex--;
-			}
-		}
-
-		expressionOperands.remove(index);
-		if (connectorIndex >= 0)
-			logicalConnectors.remove(connectorIndex);
-
-		return true;
+		return removeOperand(index) != null;
 	}
 
 	/**
@@ -90,7 +72,8 @@ public class Expression implements IExpression
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.ILogicalConnector, edu.wustl.common.querysuite.queryobject.IExpressionOperand)
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.ILogicalConnector,
+	 *      edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
 	public void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand)
 	{
@@ -107,7 +90,8 @@ public class Expression implements IExpression
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addParantheses(int, int)
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addParantheses(int,
+	 *      int)
 	 */
 	public void addParantheses(int leftOperandIndex, int rightOperandIndex)
 	{
@@ -134,7 +118,8 @@ public class Expression implements IExpression
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getLogicalConnector(int, int)
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getLogicalConnector(int,
+	 *      int)
 	 */
 	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex)
 			throws IllegalArgumentException
@@ -161,42 +146,30 @@ public class Expression implements IExpression
 	/**
 	 * @see edu.wustl.common.query.queryobject.IExpression#removeOperandAndFollowingConnector(edu.wustl.common.query.queryobject.IExpressionOperand)
 	 */
-	/*public boolean removeOperandAndFollowingConnector(IExpressionOperand operand) throws Exception
-	 {
-	 if (iExpressionOperandList.contains(operand))
-	 {
-	 int i = iExpressionOperandList.indexOf(operand);
-	 iExpressionOperandList.remove(i);
-	 iLogicalConnector.remove(i + 1);
-	 }
-	 else
-	 {
-	 throw new Exception("The operand does not exist");
-	 }
-	 return false;
-	 }*/
+	/*
+	 * public boolean removeOperandAndFollowingConnector(IExpressionOperand
+	 * operand) throws Exception { if (iExpressionOperandList.contains(operand)) {
+	 * int i = iExpressionOperandList.indexOf(operand);
+	 * iExpressionOperandList.remove(i); iLogicalConnector.remove(i + 1); } else {
+	 * throw new Exception("The operand does not exist"); } return false; }
+	 */
 
 	/**
 	 * @see edu.wustl.common.query.queryobject.IExpression#removeOperandAndPrecedingConnector(edu.wustl.common.query.queryobject.IExpressionOperand)
 	 */
-	/*public boolean removeOperandAndPrecedingConnector(IExpressionOperand operand) throws Exception
-	 {
-	 if (iExpressionOperandList.contains(operand))
-	 {
-	 int i = iExpressionOperandList.indexOf(operand);
-	 iExpressionOperandList.remove(i);
-	 iLogicalConnector.remove(i - 1);
-	 }
-	 else
-	 {
-	 throw new Exception("The operand does not exist");
-	 }
-	 return false;
-	 }*/
+	/*
+	 * public boolean removeOperandAndPrecedingConnector(IExpressionOperand
+	 * operand) throws Exception { if (iExpressionOperandList.contains(operand)) {
+	 * int i = iExpressionOperandList.indexOf(operand);
+	 * iExpressionOperandList.remove(i); iLogicalConnector.remove(i - 1); } else {
+	 * throw new Exception("The operand does not exist"); } return false; }
+	 */
 
 	/**
-	 * @param leftOperandIndex, rightOperandIndex, logicalConnector
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setLogicalConnector(int, int, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
+	 * @param leftOperandIndex,
+	 *            rightOperandIndex, logicalConnector
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setLogicalConnector(int,
+	 *      int, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
 	 */
 	public void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
 			ILogicalConnector logicalConnector) throws IllegalArgumentException
@@ -252,6 +225,60 @@ public class Expression implements IExpression
 	public String toString()
 	{
 		return "[" + functionalClass + ":" + expressionId + "]";
+	}
+
+	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeOperand(int)
+	 */
+	public IExpressionOperand removeOperand(int index)
+	{
+
+		if (index == -1)
+			return null;
+		// A and (B or C) remove C => A and B
+		// A and (B or C) remove B => A and C
+		// A and (B or C) remove A => B or C
+		int connectorIndex = index;
+		if (index == expressionOperands.size() - 1)
+		{
+			connectorIndex--;
+		}
+
+		if (index != 0 && index != expressionOperands.size() - 1)
+		{
+			int preNesting = logicalConnectors.get(index - 1).getNestingNumber();
+			int postNesting = logicalConnectors.get(index).getNestingNumber();
+			if (postNesting < preNesting)
+			{
+				connectorIndex--;
+			}
+		}
+
+		IExpressionOperand operand = expressionOperands.get(index);
+
+		expressionOperands.remove(index);
+		if (connectorIndex >= 0)
+			logicalConnectors.remove(connectorIndex);
+
+		return operand;
+	}
+
+	public int indexOfOperand(IExpressionOperand operand)
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

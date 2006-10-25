@@ -44,24 +44,24 @@ public class ExpressionTestCases extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		expr = QueryObjectFactory.createExpression(null);
+		expr = new Expression();
 		a = QueryObjectFactory.createRule();
 		expr.addOperand(a);
 
 		b = QueryObjectFactory.createRule();
-		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.OR, 0);
+		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
 		expr.addOperand(orCond, b);
 
 		c = QueryObjectFactory.createRule();
-		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.AND, 0);
+		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.And, 0);
 		expr.addOperand(andCond, c);
 
-		expr2 = QueryObjectFactory.createExpression(null);
+		expr2 = new Expression();
 		d = QueryObjectFactory.createRule();
 		expr2.addOperand(d);
 
 		e = QueryObjectFactory.createRule();
-		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.OR, 0);
+		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
 		expr2.addOperand(orCond, e);
 	}
 

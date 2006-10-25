@@ -15,16 +15,8 @@ package edu.wustl.common.querysuite.queryobject;
  * @updated 11-Oct-2006 02:57:23 PM
  */
 public enum RelationalOperator {
-	Equals(1),
-	NotEquals(1),
-	Between(2),
-	IsNull(0),
-	IsNotNull(0),
-	LessThan(1),
-	LessThanOrEquals(1),
-	GreaterThan(1),
-	GreaterThanOrEquals(1),
-	In(Integer.MAX_VALUE);
+	Equals(1), NotEquals(1), Between(2), IsNull(0), IsNotNull(0), LessThan(1), LessThanOrEquals(1), GreaterThan(
+			1), GreaterThanOrEquals(1), In(Integer.MAX_VALUE);
 
 	private int arity;
 

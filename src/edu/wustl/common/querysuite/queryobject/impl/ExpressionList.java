@@ -14,7 +14,7 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionList;
 
-public class ExpressionList implements IExpressionList
+public class ExpressionList
 {
 
 	private List<IExpression> expressions = new ArrayList<IExpression>();

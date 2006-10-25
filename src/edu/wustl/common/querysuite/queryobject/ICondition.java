@@ -4,9 +4,7 @@ package edu.wustl.common.querysuite.queryobject;
 import java.util.List;
 
 /**
- * representation of
- * 
- * IAttribute oper IValue
+ * A condition containing an attribute, relational operator and value(s).
  * e.g. participant.sex = 'Male'
  * 
  * @version 1.0
@@ -39,7 +37,7 @@ public interface ICondition
 	public void setRelationalOperator(RelationalOperator relationalOperator);
 
 	/**
-	 * basically calls setValue(0, value)
+	 * Basically calls setValue(0, value). Use this for unary operators.
 	 * @param value
 	 * 
 	 */
