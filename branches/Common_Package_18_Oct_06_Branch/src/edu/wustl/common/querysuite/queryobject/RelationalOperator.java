@@ -18,15 +18,15 @@ public enum RelationalOperator {
 	Equals(1), NotEquals(1), Between(2), IsNull(0), IsNotNull(0), LessThan(1), LessThanOrEquals(1), GreaterThan(
 			1), GreaterThanOrEquals(1), In(Integer.MAX_VALUE);
 
-	private int arity;
+	private int numberOfValuesRequired;
 
-	RelationalOperator(int arity)
+	RelationalOperator(int numberOfValuesRequired)
 	{
-		this.arity = arity;
+		this.numberOfValuesRequired = numberOfValuesRequired;
 	}
 
-	public int arity()
+	public int numberOfValuesRequired()
 	{
-		return arity;
+		return numberOfValuesRequired;
 	}
 }
