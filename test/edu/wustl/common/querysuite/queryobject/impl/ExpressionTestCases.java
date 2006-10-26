@@ -394,4 +394,45 @@ public class ExpressionTestCases extends TestCase
 		}
 	}
 
+	/**
+	 * To test the method addOperand(int, ILogicalConnector, IExpressionOperand)
+	 * It should insert an operand with the connector in front of it.
+	 * for Expression: a or b and c 
+	 * call to addOperation(1, and, d) will change Expression to :  a and d  or b and c
+	 * 
+	 */
+	public void testAddOperand1()
+	{
+		expr.addOperand(1, andCond, d);
+		try
+		{
+			assertEquals("Unable to insert an operand with the connector in front of it!!!",expr.getLogicalConnector(0, 1), andCond);
+			assertEquals("Unable to insert an operand with the connector in front of it!!!",expr.getOperand(1), d);
+		}
+		catch (IllegalArgumentException e)
+		{
+			assertTrue("Unexpected IllegalArgumentException, while adding Operand with the connector in front it!!!",false);
+		}
+	}
+	
+	/**
+	 * To test the method addOperand(int, IExpressionOperand, ILogicalConnector)
+	 * It should insert an operand with the connector behind it.
+	 * for Expression: a or b and c 
+	 * call to addOperation(1, d, and) will change Expression to :  a or d and b and c
+	 * 
+	 */
+	public void testAddOperand2()
+	{
+		expr.addOperand(1, d, andCond);
+		try
+		{
+			assertEquals("Unable to insert an operand with the connector behind it!!!",expr.getLogicalConnector(1, 2), andCond);
+			assertEquals("Unable to insert an operand with the connector behind it!!!",expr.getOperand(1), d);
+		}
+		catch (IllegalArgumentException e)
+		{
+			assertTrue("Unexpected IllegalArgumentException, while adding Operand with the connector behind it!!!",false);
+		}
+	}
 }

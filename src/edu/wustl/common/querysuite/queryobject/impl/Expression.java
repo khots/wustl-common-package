@@ -82,6 +82,23 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(int, edu.wustl.common.querysuite.queryobject.ILogicalConnector, edu.wustl.common.querysuite.queryobject.IExpressionOperand)
+	 */
+	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand)
+	{
+		expressionOperands.add(index,operand);
+		logicalConnectors.add(index-1, logicalConnector);
+	}
+
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(int, edu.wustl.common.querysuite.queryobject.IExpressionOperand, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
+	 */
+	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector)
+	{
+		expressionOperands.add(index,operand);
+		logicalConnectors.add(index, logicalConnector);
+	}
+	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addParantheses()
 	 */
 	public void addParantheses()
@@ -227,18 +244,6 @@ public class Expression implements IExpression
 		return "[" + functionalClass + ":" + expressionId + "]";
 	}
 
-	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeOperand(int)
 	 */
@@ -275,10 +280,12 @@ public class Expression implements IExpression
 		return operand;
 	}
 
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#indexOfOperand(edu.wustl.common.querysuite.queryobject.IExpressionOperand)
+	 */
 	public int indexOfOperand(IExpressionOperand operand)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return expressionOperands.indexOf(operand);
 	}
 
 }
