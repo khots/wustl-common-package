@@ -53,10 +53,11 @@ public class SimpleQueryInterfaceAction extends SecureAction
         	String originalCounter = (String)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
     		simpleQueryInterfaceForm.setValues(simpleQueryMap);
     		simpleQueryInterfaceForm.setCounter(originalCounter);
-    		//Set the session objects to null after it is set in the form.
-    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
-    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
     	}
+		//Set the session objects to null after it is set in the form.
+		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
+		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
+
         //Patch for Bug : 806
         String objectChanged = request.getParameter("objectChanged");
         
