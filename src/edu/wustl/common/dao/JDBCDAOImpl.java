@@ -195,7 +195,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	public List retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
 	{
-		Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
+		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
 				onlyDistinctRows);
 	}
@@ -213,7 +213,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, boolean onlyDistinctRows) throws DAOException
 	{
-		Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
+		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		List list = null;
 
 		try
@@ -231,7 +231,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				//Bug# 2003: Limiting the define view does not remove duplicates
 				if (onlyDistinctRows)
 				{
-					Logger.out.debug(" Adding distinct to query ");
+					//Logger.out.debug(" Adding distinct to query ");
 					query.append(" DISTINCT ");
 				}
 				//END Bug# 2003
@@ -314,7 +314,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		{
 			if (sessionDataBean == null)
 			{
-				Logger.out.debug("Session data is null");
+				//Logger.out.debug("Session data is null");
 				return null;
 			}
 		}
@@ -342,7 +342,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		{
 			if (sessionDataBean == null)
 			{
-				Logger.out.debug("Session data is null");
+				//Logger.out.debug("Session data is null");
 				return null;
 			}
 		}
@@ -386,7 +386,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			{
 				Logger.out.debug("Column " + i + " : " + metaData.getColumnClassName(i) + " "
 						+ metaData.getColumnName(i) + " " + metaData.getTableName(i));
-				;
+				//;
 			}
 
 			while (resultSet.next())
@@ -498,7 +498,7 @@ public class JDBCDAOImpl implements JDBCDAO
 
 	private Timestamp isColumnValueDate(Object value)
 	{
-		Logger.out.debug("Column value: " + value);
+		//Logger.out.debug("Column value: " + value);
 		try
 		{
 			DateFormat formatter = new SimpleDateFormat("mm-dd-yyyy");
@@ -507,10 +507,10 @@ public class JDBCDAOImpl implements JDBCDAO
 			Timestamp t = new Timestamp(date.getTime());
 			// Date sqlDate = new Date(date.getTime());
 
-			Logger.out.debug("Column date value: " + date);
+			//Logger.out.debug("Column date value: " + date);
 			if (value.toString().equals("") == false)
 			{
-				Logger.out.debug("Return true: " + value);
+				//Logger.out.debug("Return true: " + value);
 				return t;
 			}
 		}
@@ -577,7 +577,7 @@ public class JDBCDAOImpl implements JDBCDAO
 					if (date != null)
 					{
 						stmt.setObject(i + 1, date);
-						Logger.out.debug("t.toString(): " + "---" + date);
+						//Logger.out.debug("t.toString(): " + "---" + date);
 					}
 					else
 					{
