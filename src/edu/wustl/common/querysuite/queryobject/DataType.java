@@ -7,7 +7,7 @@ package edu.wustl.common.querysuite.queryobject;
  * @updated 11-Oct-2006 02:55:25 PM
  */
 public enum DataType {
-	String, Date
+	String, Date, Integer, Long, Double;
 
 	// TODO add more
 }

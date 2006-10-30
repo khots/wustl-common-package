@@ -16,6 +16,7 @@ import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -27,6 +28,7 @@ import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
 import edu.wustl.common.querysuite.queryobject.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
 
 /**
@@ -150,4 +152,10 @@ public class QueryObjectFactory
 		return new IntraModelAssociation(leftClass, rightClass, roleName, revereseRoleName,
 				bidirectional);
 	}
+	
+	public static IQuery createQuery()
+	{
+		return new Query();
+	}
+	
 }

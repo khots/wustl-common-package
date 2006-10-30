@@ -1,8 +1,6 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
-import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
-
 /**
  * A list of operands, and the logical connectors (AND, OR), that together form
  * a logical expression<br>
@@ -29,7 +27,7 @@ import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
  * @version 1.0
  * @updated 11-Oct-2006 02:56:12 PM
  */
-public interface IExpression
+public interface IExpression extends IExpressionOperand
 {
 
 	/**
@@ -56,16 +54,17 @@ public interface IExpression
 	 * @throws IllegalArgumentException
 	 *             if rightOperandIndex != leftOperandIndex + 1.
 	 */
-	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex)
-			throws IllegalArgumentException;
+	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex);
 
 	/**
 	 * @param leftOperandIndex
 	 * @param rightOperandIndex
 	 * @param logicalConnector
+	 * @throws IllegalArgumentException
+	 *             if rightOperandIndex != leftOperandIndex + 1.
 	 */
 	public void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
-			ILogicalConnector logicalConnector) throws IllegalArgumentException;
+			ILogicalConnector logicalConnector);
 
 	/**
 	 * Increments nesting num of all the logical connectors in the expression
