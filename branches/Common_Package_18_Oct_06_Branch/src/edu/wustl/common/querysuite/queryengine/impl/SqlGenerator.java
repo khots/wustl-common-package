@@ -243,6 +243,7 @@ public class SqlGenerator implements ISqlGenerator
 		Entity entity = (Entity) entityManager.getEntityByName(attribute.getUMLClass()
 				.getFullyQualifiedName());
 		String tableName = entity.getName();
+		tableName = tableName.substring(tableName.lastIndexOf('.')+1, tableName.length());
 		Attribute entityAttribute = (Attribute) entityManager.getAttribute(entity.getName(),
 				attribute.getAttributeName());
 		return tableName + tableSuffix + "." + entityAttribute.getColumnProperties().getName();
