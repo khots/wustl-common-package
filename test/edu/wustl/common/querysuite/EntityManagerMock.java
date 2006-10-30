@@ -81,7 +81,7 @@ public class EntityManagerMock extends EntityManager
 	public Collection getAssociations(String entityName1, String entityName2) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		if (entityName1.equalsIgnoreCase("Participant") && entityName2.equalsIgnoreCase("ParticipantMedicalIdentifier"))
+		if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.Participant") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
 		{
 			Association currentAssociation = new Association();
 
@@ -112,7 +112,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("Participant") && entityName2.equalsIgnoreCase("CollectionProtocolRegistration"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.Participant") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
 		{
 			Association currentAssociation = new Association();
 
@@ -143,7 +143,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("CollectionProtocolRegistration") && entityName2.equalsIgnoreCase("CollectionProtocol"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolRegistration") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocol"))
 		{
 			Association currentAssociation = new Association();
 
@@ -174,7 +174,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("CollectionProtocolRegistration") && entityName2.equalsIgnoreCase("SpecimenCollectionGroup"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolRegistration") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
 		{
 			Association currentAssociation = new Association();
 
@@ -205,7 +205,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("SpecimenCollectionGroup") && entityName2.equalsIgnoreCase("CollectionProtocolEvent"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenCollectionGroup") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolEvent"))
 		{
 			Association currentAssociation = new Association();
 
@@ -236,7 +236,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("CollectionProtocol") && entityName2.equalsIgnoreCase("CollectionProtocolEvent"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocol") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolEvent"))
 		{
 			Association currentAssociation = new Association();
 
@@ -267,7 +267,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("SpecimenCollectionGroup") && entityName2.equalsIgnoreCase("Specimen"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenCollectionGroup") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.Specimen"))
 		{
 			Association currentAssociation = new Association();
 
@@ -298,7 +298,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
-		else if (entityName1.equalsIgnoreCase("Specimen") && entityName2.equalsIgnoreCase("Specimen"))
+		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.Specimen") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.Specimen"))
 		{
 			Association currentAssociation = new Association();
 
@@ -343,43 +343,43 @@ public class EntityManagerMock extends EntityManager
 	public AttributeInterface getAttribute(String entityName, String attributeName) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		if (entityName.equalsIgnoreCase("Participant"))
+		if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.Participant"))
 		{
 			ArrayList list = getParticipantAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("ParticipantMedicalIdentifier"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
 		{
 			ArrayList list = getParticipantMedicalIdentifierAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("CollectionProtocolRegistration"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
 		{
 			ArrayList list = getCollectionProtocolRegistrationAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("CollectionProtocol"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocol"))
 		{
 			ArrayList list = getCollectionProtocolAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("SpecimenProtocol"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenProtocol"))
 		{
 			ArrayList list = getSpecimenProtocolAttributes();
 			//System.out.println(list.get(3).getClass().getName());
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("CollectionProtocolEvent"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolEvent"))
 		{
 			ArrayList list = getCollectionProtocolEventAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("SpecimenCollectionGroup"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
 		{
 			ArrayList list = getSpecimenCollectionGroupAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
-		else if (entityName.equalsIgnoreCase("Specimen"))
+		else if (entityName.equalsIgnoreCase("edu.wustl.catissuecore.domain.Specimen"))
 		{
 			ArrayList list = getSpecimenAttributes();
 			return getSpecificAttribute(list, attributeName);
@@ -463,35 +463,35 @@ public class EntityManagerMock extends EntityManager
 	@Override
 	public EntityInterface getEntityByName(String name) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		if (name.equalsIgnoreCase("Participant"))
+		if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.Participant"))
 		{
 			return createParticipantEntity(name);
 		}
-		else if (name.equalsIgnoreCase("ParticipantMedicalIdentifier"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
 		{
 			return createParticipantMedicalIdentifierEntity(name);
 		}
-		else if (name.equalsIgnoreCase("CollectionProtocolRegistration"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
 		{
 			return createCollectionProtocolRegistrationEntity(name);
 		}
-		else if (name.equalsIgnoreCase("CollectionProtocol"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocol"))
 		{
 			return createCollectionProtocolEntity(name);
 		}
-		else if (name.equalsIgnoreCase("SpecimenProtocol"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenProtocol"))
 		{
 			return createSpecimenProtocolEntity(name);
 		}
-		else if (name.equalsIgnoreCase("CollectionProtocolEvent"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolEvent"))
 		{
 			return createCollectionProtocolEventEntity(name);
 		}
-		else if (name.equalsIgnoreCase("SpecimenCollectionGroup"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
 		{
 			return createSpecimenCollectionGroupEntity(name);
 		}
-		else if (name.equalsIgnoreCase("Specimen"))
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.Specimen"))
 		{
 			return createSpecimenEntity(name);
 		}
@@ -1199,11 +1199,11 @@ public class EntityManagerMock extends EntityManager
 		EntityManagerMock testMock = new EntityManagerMock();
 		try
 		{
-			System.out.println(testMock.getEntityByName("specimenprotocol").getAbstractAttributeCollection().size());
-			System.out.println(testMock.getEntityByName("participant").getName());
-			System.out.println(testMock.getEntityByName("collectionprotocolregistration").getDescription());
-			System.out.println(testMock.getEntityByName("participantMeDicAlidentifier").getId());
-			System.out.println("getAttribute(String, String) METHOD returns--> " + testMock.getAttribute("specimen", "lineage").getName());
+			System.out.println(testMock.getEntityByName("edu.wustl.catissuecore.domain.specimenprotocol").getAbstractAttributeCollection().size());
+			System.out.println(testMock.getEntityByName("edu.wustl.catissuecore.domain.participant").getName());
+			System.out.println(testMock.getEntityByName("edu.wustl.catissuecore.domain.collectionprotocolregistration").getDescription());
+			System.out.println(testMock.getEntityByName("edu.wustl.catissuecore.domain.participantMeDicAlidentifier").getId());
+			System.out.println("getAttribute(String, String) METHOD returns--> " + testMock.getAttribute("edu.wustl.catissuecore.domain.specimen", "lineage").getName());
 		}
 		catch (Exception e)
 		{
