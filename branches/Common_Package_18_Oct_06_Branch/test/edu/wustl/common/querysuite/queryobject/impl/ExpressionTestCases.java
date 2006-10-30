@@ -8,7 +8,6 @@ package edu.wustl.common.querysuite.queryobject.impl;
  */
 
 import junit.framework.TestCase;
-import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;

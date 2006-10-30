@@ -27,12 +27,13 @@ public class Constraints implements IConstraints
 
 	private IJoinGraph joinGraph;
 
+	private int currentExpressionId = 0;
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#addExpression(edu.wustl.common.querysuite.queryobject.IFunctionalClass)
 	 */
 	public IExpression addExpression(IFunctionalClass functionalClass)
 	{
-		IExpression expression = new Expression(functionalClass);
+		IExpression expression = new Expression(functionalClass, ++currentExpressionId);
 		expressions.put(expression.getExpressionId(), expression);
 		return expression;
 	}

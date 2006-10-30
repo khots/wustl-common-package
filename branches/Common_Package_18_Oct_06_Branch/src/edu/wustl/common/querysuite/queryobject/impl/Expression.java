@@ -10,7 +10,6 @@ package edu.wustl.common.querysuite.queryobject.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wustl.common.querysuite.exceptions.IllegalArgumentException;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
@@ -31,9 +30,10 @@ public class Expression implements IExpression
 	/**
 	 * @param functionalClass
 	 */
-	public Expression(IFunctionalClass functionalClass)
+	public Expression(IFunctionalClass functionalClass, int expressionId)
 	{
 		this.functionalClass = functionalClass;
+		this.expressionId = new ExpressionId(expressionId);
 	}
 
 	Expression()
@@ -139,7 +139,7 @@ public class Expression implements IExpression
 	 *      int)
 	 */
 	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex)
-			throws IllegalArgumentException
+			
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
@@ -189,7 +189,7 @@ public class Expression implements IExpression
 	 *      int, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
 	 */
 	public void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
-			ILogicalConnector logicalConnector) throws IllegalArgumentException
+			ILogicalConnector logicalConnector)
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
@@ -286,6 +286,14 @@ public class Expression implements IExpression
 	public int indexOfOperand(IExpressionOperand operand)
 	{
 		return expressionOperands.indexOf(operand);
+	}
+
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpressionOperand#isSubExpressionOperand()
+	 */
+	public boolean isSubExpressionOperand()
+	{
+		return true;
 	}
 
 }
