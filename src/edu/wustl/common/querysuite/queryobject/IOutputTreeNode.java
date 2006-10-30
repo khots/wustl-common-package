@@ -43,7 +43,7 @@ public interface IOutputTreeNode
 
 	List<IOutputTreeNode> getChildren();
 
-	IAssociation getAssociationWithChild(IFunctionalClass child);
+	List<IAssociation> getAssociationsWithChild(IFunctionalClass child);
 
 	IAssociation getAssociationWithParent();
 
