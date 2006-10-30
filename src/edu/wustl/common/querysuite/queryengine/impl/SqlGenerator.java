@@ -11,13 +11,10 @@ import edu.common.dynamicextensions.domain.Entity;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.wustl.common.querysuite.EntityManagerMock;
-import edu.wustl.common.querysuite.QueryGeneratorMock;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
-import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
@@ -61,7 +58,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	private String getSQL(IExpression expression) throws DynamicExtensionsSystemException,
+	String getSQL(IExpression expression) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		StringBuffer sql = new StringBuffer("");
@@ -123,7 +120,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	private String getSQL(IRule rule) throws DynamicExtensionsSystemException,
+	String getSQL(IRule rule) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		StringBuffer sql = new StringBuffer("");
@@ -149,7 +146,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	private String getSQL(ICondition condition) throws DynamicExtensionsSystemException,
+	String getSQL(ICondition condition) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		StringBuffer sql = new StringBuffer("");
@@ -224,7 +221,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param dataType The DataType of the passed value.
 	 * @return The encoded String.
 	 */
-	private String encodeValueInQuotesIfNeeded(String value, DataType dataType)
+	String encodeValueInQuotesIfNeeded(String value, DataType dataType)
 	{
 
 		if (dataType.equals(DataType.String) || dataType.equals(DataType.Date))
@@ -240,7 +237,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	private String getSQL(IAttribute attribute) throws DynamicExtensionsSystemException,
+	String getSQL(IAttribute attribute) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		Entity entity = (Entity) entityManager.getEntityByName(attribute.getUMLClass()
@@ -251,52 +248,5 @@ public class SqlGenerator implements ISqlGenerator
 		return tableName + tableSuffix + "." + entityAttribute.getColumnProperties().getName();
 	}
 
-	public static void main(String args[]) throws DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
-	{
-		SqlGenerator generator = new SqlGenerator(new EntityManagerMock());
-		ParticpiantConditionTest(generator);
-		ParticpiantRuleTest(generator);
-		ParticpiantExpressionTest(generator);
-	}
 
-	private static void ParticpiantConditionTest(SqlGenerator generator)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		System.out.println("ParticpiantConditionTest-------------------------------------------");
-		IClass class1 = QueryGeneratorMock.createParticantClass();
-		ICondition condition1 = QueryGeneratorMock.createParticipantCondition1(class1);
-		System.out.println(generator.getSQL(condition1));
-
-		condition1 = QueryGeneratorMock.createParticipantCondition2(class1);
-		System.out.println(generator.getSQL(condition1));
-
-		condition1 = QueryGeneratorMock.createParticipantCondition3(class1);
-		System.out.println(generator.getSQL(condition1));
-
-		condition1 = QueryGeneratorMock.createParticipantCondition5(class1);
-		System.out.println(generator.getSQL(condition1));
-
-	}
-
-	private static void ParticpiantRuleTest(SqlGenerator generator)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		System.out.println("ParticpiantRuleTest-------------------------------------------");
-		IClass class1 = QueryGeneratorMock.createParticantClass();
-		IRule rule = QueryGeneratorMock.createParticipantRule1(class1);
-		System.out.println(generator.getSQL(rule));
-	}
-
-	private static void ParticpiantExpressionTest(SqlGenerator generator)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		System.out.println("ParticpiantExpressionTest-------------------------------------------");
-		IClass class1 = QueryGeneratorMock.createParticantClass();
-		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
-		System.out.println(generator.getSQL(expression));
-
-		expression = QueryGeneratorMock.creatParticipantExpression2(class1);
-		System.out.println(generator.getSQL(expression));
-	}
 }
