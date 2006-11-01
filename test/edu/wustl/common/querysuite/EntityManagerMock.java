@@ -22,6 +22,7 @@ import edu.common.dynamicextensions.domain.LongAttribute;
 import edu.common.dynamicextensions.domain.Role;
 import edu.common.dynamicextensions.domain.StringAttribute;
 import edu.common.dynamicextensions.domain.databaseproperties.ColumnProperties;
+import edu.common.dynamicextensions.domain.databaseproperties.ConstraintProperties;
 import edu.common.dynamicextensions.domain.databaseproperties.TableProperties;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -70,8 +71,15 @@ public class EntityManagerMock extends EntityManager
 	public AssociationInterface getAssociation(String arg0, String arg1) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		// TODO Auto-generated method stub
-		return super.getAssociation(arg0, arg1);
+		AssociationInterface association = null;
+		Collection associations =  getAssociations(arg0, arg1);
+		
+		if (!associations.isEmpty())
+		{
+			association = (AssociationInterface)associations.iterator().next();
+		}
+		
+		return association;
 	}
 
 	/**
@@ -110,6 +118,12 @@ public class EntityManagerMock extends EntityManager
 
 			Collection<Association> associationsCollection = new ArrayList<Association>();
 			associationsCollection.add(currentAssociation);
+			
+			ConstraintProperties constraintProperties = new ConstraintProperties();
+			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
+			currentAssociation.setConstraintProperties(constraintProperties);
+			
 			return associationsCollection;
 		}
 		else if (entityName1.equalsIgnoreCase("edu.wustl.catissuecore.domain.Participant") && entityName2.equalsIgnoreCase("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
@@ -836,9 +850,16 @@ public class EntityManagerMock extends EntityManager
 		c2.setName("MEDICAL_RECORD_NUMBER");
 		att2.setColumnProperties(c2);
 
+		LongAttribute att3 = new LongAttribute();
+		att3.setName("id");
+		att3.setMeasurementUnits("Long");
+		ColumnProperties c3 = new ColumnProperties();
+		c3.setName("PARTICIPANT_ID");
+		att3.setColumnProperties(c3);
+		
 		participantMedicalIdentifierAttributes.add(0, att1);
 		participantMedicalIdentifierAttributes.add(1, att2);
-
+		participantMedicalIdentifierAttributes.add(2, att3);
 		return participantMedicalIdentifierAttributes;
 	}
 

@@ -22,6 +22,7 @@ import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Attribute;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
+import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.Edge;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
@@ -109,8 +110,7 @@ public class QueryObjectFactory
 
 	public static IConstraints createConstraints()
 	{
-		// TODO
-		return null;
+		return new Constraints();
 	}
 
 	public static IFunctionalClass createFunctionalClass()
