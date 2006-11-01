@@ -4,25 +4,36 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import edu.common.dynamicextensions.domain.Attribute;
 import edu.common.dynamicextensions.domain.Entity;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.DataType;
+import edu.wustl.common.querysuite.queryobject.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
+import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
+import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
+import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * To generate SQL from the given Query Object.
@@ -36,10 +47,14 @@ public class SqlGenerator implements ISqlGenerator
 
 	private EntityManager entityManager;
 
+	private Map<String, Entity> entityMap = new HashMap<String, Entity>();
+
 	SqlGenerator(EntityManager entityManager)
 	{
 		this.entityManager = entityManager;
 	}
+
+	IQuery query;
 
 	/**
 	 * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#generateSQL(edu.wustl.common.querysuite.queryobject.IQuery)
@@ -48,6 +63,8 @@ public class SqlGenerator implements ISqlGenerator
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		// TODO Auto-generated method stub
+		this.query = query;
+
 		return null;
 	}
 
@@ -57,14 +74,39 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return The SQL representation of the Expression.
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
+	 * @throws NoSuchElementException when The Class in an expression does not have an 'id' attribute.
 	 */
-	String getSQL(IExpression expression) throws DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
+	String getSQL(IExpression expression, IJoinGraph joinGraph, IExpression parentExpression)
+			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer sql = new StringBuffer("");
 		int noOfRules = expression.getSize();
 		int prevNesting = 0;
 		int openingBraces = 0; // holds number of opening Braces added to SQL.
+
+		IClass iClass = getClass(expression);
+		IAttribute attribute = null;
+
+		Entity entity = getEntity(iClass);
+		String tableName = entity.getTableProperties().getName() + " ";
+		String selectAttribute = "";
+
+		if (parentExpression == null)
+		{
+			attribute = getParentKeyAttrinbute(iClass);
+			selectAttribute = getSQL(attribute);
+		}
+		else
+		{
+			IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(),
+					expression.getExpressionId());
+			AssociationInterface eavAssociation = getAssoication((IIntraModelAssociation) association);
+			selectAttribute = getAliasName(entity) + "."
+					+ eavAssociation.getConstraintProperties().getTargetEntityKey();
+		}
+
+		sql.append("Select " + selectAttribute + " From " + tableName + getAliasName(entity)
+				+ " where ");
 
 		for (int i = 0; i < noOfRules; i++)
 		{
@@ -75,10 +117,20 @@ public class SqlGenerator implements ISqlGenerator
 				ruleSQL = getSQL((IRule) operand); // Processing Rule.
 			}
 			else
+			//Processing sub Expression.
 			{
-				ruleSQL = getSQL((IExpression) operand); //Processing sub Expression.
+				IExpression childExpression = (IExpression) operand;
+				IAssociation association = joinGraph.getAssociation(expression.getExpressionId(),
+						childExpression.getExpressionId());
+				AssociationInterface eavAssociation = getAssoication((IIntraModelAssociation) association);
+				String joinAttribute = getAliasName(entity) + "."
+						+ eavAssociation.getConstraintProperties().getSourceEntityKey();
+
+				ruleSQL = getSQL(childExpression, joinGraph, expression);
+
+				ruleSQL = joinAttribute + " = ANY(" + ruleSQL + ")";
 			}
-			if (!ruleSQL.equals(""))
+			if (!ruleSQL.equals("") && noOfRules != 1)
 			{
 				ruleSQL = "(" + ruleSQL + ")"; // putting RuleSQL  in Braces so that it will not get mixed with other Rules.
 			}
@@ -111,6 +163,75 @@ public class SqlGenerator implements ISqlGenerator
 			}
 		}
 		return sql.toString();
+	}
+
+	/**
+	 * To get the Association from Dynamic Extentsion for the given Assoctaion.
+	 * @param association The reference to association
+	 * @return the reference of Association from Dynamic Extentsion 
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
+	private AssociationInterface getAssoication(IIntraModelAssociation association)
+			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+	{
+		Collection associations = entityManager.getAssociations(association.getSourceClass()
+				.getFullyQualifiedName(), association.getTargetClass().getFullyQualifiedName());
+		AssociationInterface theAssociation = null;
+		Iterator itr = associations.iterator();
+		while (itr.hasNext())
+		{
+			theAssociation = (AssociationInterface) itr.next();
+			if (association.getSourceRoleName().equals(theAssociation.getSourceRole().getName())
+					&& (association.getTargetRoleName() == null || association.getTargetRoleName()
+							.equals(theAssociation.getTargetRole().getName())))
+				return theAssociation;
+		}
+		return null;
+	}
+
+	/**
+	 * To get the Primary key attribute of the Class, i.e. attribute having name as "id". 
+	 * @param iClass the iClass reference.
+	 * @return the reference to attribute having name as "id". if not present returns null.
+	 */
+	private IAttribute getParentKeyAttrinbute(IClass iClass)
+	{
+		List<IAttribute> list = iClass.getAttributes();
+		IAttribute attribute = null;
+		for (int i = 0; i < list.size(); i++)
+		{
+			attribute = list.get(i);
+			if (attribute.getAttributeName().equals(Constants.SYSTEM_IDENTIFIER))
+				return attribute;
+		}
+
+		throw new NoSuchElementException(Constants.SYSTEM_IDENTIFIER
+				+ " Attribute not found for class " + iClass.getFullyQualifiedName());
+	}
+
+	/**
+	 * To get the IClass for the given Expression.
+	 * @param expression The IExpression reference.
+	 * @return the IClass reference for the given Expression.
+	 */
+	private IClass getClass(IExpression expression)
+	{
+		int noOfRules = expression.getSize();
+		for (int i = 0; i < noOfRules; i++)
+		{
+			IExpressionOperand operand = expression.getOperand(i);
+			if (!operand.isSubExpressionOperand())
+			{
+				IRule rule = (IRule) operand;
+				for (int j = 0; j < rule.getSize(); j++)
+				{
+					ICondition condition = rule.getCondition(j);
+					return condition.getAttribute().getUMLClass();
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -182,7 +303,6 @@ public class SqlGenerator implements ISqlGenerator
 				else
 					sql.append(value + ",");
 			}
-
 		}
 		else if (operator.equals(RelationalOperator.IsNotNull)
 				|| operator.equals(RelationalOperator.IsNull)) // Processing isNull & isNotNull operator.
@@ -240,14 +360,61 @@ public class SqlGenerator implements ISqlGenerator
 	String getSQL(IAttribute attribute) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		Entity entity = (Entity) entityManager.getEntityByName(attribute.getUMLClass()
-				.getFullyQualifiedName());
-		String tableName = entity.getName();
-		tableName = tableName.substring(tableName.lastIndexOf('.')+1, tableName.length());
-		Attribute entityAttribute = (Attribute) entityManager.getAttribute(entity.getName(),
-				attribute.getAttributeName());
-		return tableName + tableSuffix + "." + entityAttribute.getColumnProperties().getName();
+		Entity entity = getEntity(attribute.getUMLClass());
+		String tableName = getAliasName(entity);
+		Attribute entityAttribute = getAttribute(attribute);
+		return tableName + "." + entityAttribute.getColumnProperties().getName();
 	}
 
+	/**
+	 * To get the Alias Name for the given Entity.
+	 * @param entity the reference to Entity.
+	 * @return The Alias Name for the given Entity.
+	 */
+	private String getAliasName(Entity entity)
+	{
+		String tableName = entity.getName();
+		tableName = tableName.substring(tableName.lastIndexOf('.') + 1, tableName.length())
+				+ tableSuffix;
+		return tableName;
+	}
 
+	/**
+	 * To get the Entity Class from Dynamic Extension for the given class. 
+	 * It caches the Entity in the entityMap. First it checks whether the Entity is cached, if it is cached then it returns it from cache, else get it from Dynamic Extension. 
+	 * @param iClass The IClass reference.
+	 * @return The reference to Entity Class from Dynamic Extension for the given class.
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
+	private Entity getEntity(IClass iClass) throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		String fullyQualifiedName = iClass.getFullyQualifiedName();
+		Entity entity = entityMap.get(fullyQualifiedName);
+		if (entity == null)
+		{
+			entity = (Entity) entityManager.getEntityByName(fullyQualifiedName);
+			entityMap.put(fullyQualifiedName, entity);
+		}
+		return entity;
+	}
+
+	/**
+	 * To get the Attribute from Dynamic Extenstion for the Given Attribute.
+	 * @param attribute The IAttribute reference.
+	 * @return The reference to Attribute from Dynamic Extenstion for the Given Attribute.
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
+	private Attribute getAttribute(IAttribute attribute) throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		Entity entity = getEntity(attribute.getUMLClass());
+
+		Attribute entityAttribute = (Attribute) entityManager.getAttribute(entity.getName(),
+				attribute.getAttributeName());
+
+		return entityAttribute;
+	}
 }
