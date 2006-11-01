@@ -93,7 +93,7 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	 */
 	public String getSourceRoleName()
 	{
-		return targetRoleName;
+		return sourceRoleName;
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	 */
 	public String getTargetRoleName()
 	{
-		return sourceRoleName;
+		return targetRoleName;
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	 */
 	public void setSourceRoleName(String roleName)
 	{
-		targetRoleName = roleName;
+		sourceRoleName = roleName;
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	 */
 	public void setTargetRoleName(String roleName)
 	{
-		this.sourceRoleName = roleName;
+		this.targetRoleName = roleName;
 	}
 
 }
