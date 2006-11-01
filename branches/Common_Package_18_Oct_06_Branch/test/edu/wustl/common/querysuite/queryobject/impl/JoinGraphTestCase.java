@@ -39,9 +39,9 @@ public class JoinGraphTestCase extends TestCase
 	 * @see junit.framework.TestCase#setUp()
 	 * Creating Graph as:
 	 * 
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1 -->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	@Override
 	protected void setUp() throws Exception
@@ -105,11 +105,11 @@ public class JoinGraphTestCase extends TestCase
 	/**
 	 * To check CyclicException condition of putAssociation method. 
 	 * If user tries to add an Assiciation which is causing Cycle, the it should throw Exception.
-	 *     ____________
-	 *    |            |
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 *     <------------
+	 *    |             |
+	 * 	exp1 -->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \--->Exp4	
 	 */
 	public void testputAssociation3()
 	{
@@ -130,9 +130,9 @@ public class JoinGraphTestCase extends TestCase
 	 * To check CyclicException condition of putAssociation method. 
 	 * If user tries to add an Assiciation which is causing Cycle, the it should throw Exception.
 	 * 
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3____|
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3-->|
+	 * 	   \-->Exp4	
 	 */
 	public void testputAssociation4()
 	{
@@ -150,11 +150,37 @@ public class JoinGraphTestCase extends TestCase
 	}
 
 	/**
+	 * To check CyclicException condition of putAssociation method. 
+	 * If user tries to add an Assiciation after doing Add/Remove associations it should not get Exception for following graph.
+	 *  
+	 * 	exp1<--Exp2-->Exp5
+	 * 	  \ \-->Exp3-->|
+	 * 	   \-->Exp4
+	 * 
+	 * Here From the original graph removed Edge from Exp1 to Exp2 & Add Edge from Exp2 to Exp1.	
+	 */
+	public void testputAssociation5()
+	{
+		IAssociation association21 = QueryObjectFactory.createIntraModelAssociation(null, null, "",
+				"", false);
+		assertTrue("Expected true value from removeAssociation method, for existing edge!!!",joinGraph.removeAssociation(expId1,expId2));
+		
+		try
+		{
+			IAssociation newAssociation = joinGraph.putAssociation(expId2, expId1, association21);
+			assertNull("Expected null value of Association!!!", newAssociation);
+		}
+		catch (CyclicException e)
+		{
+			assertTrue("UnExpected CyclicException, while adding Association!!!", false);
+		}
+	}
+	/**
 	 *  To check the getRoot() method with positive test case. for the created graph it will return exp1 node.
 	 *
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	public void testGetRoot1()
 	{
@@ -178,9 +204,9 @@ public class JoinGraphTestCase extends TestCase
 	 *  
 	 *  After removing Edge between exp1 & exp2, the graph will become disjoint graph, hence exp1 & exp2 will have no incomming edges, hence both will considered as root node & method getRoot will throw MultipleRootsException. 
 	 *  
-	 * 	exp1   Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1   Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	public void testGetRoot2()
 	{
@@ -198,9 +224,9 @@ public class JoinGraphTestCase extends TestCase
 	/**
 	 *  To check the positive test case for removeAssociation() method.
 	 *  
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \--->Exp4	
 	 */
 	public void testRemoveAssociation1()
 	{
@@ -213,9 +239,9 @@ public class JoinGraphTestCase extends TestCase
 	/**
 	 *  To check the removeAssociation() method. while removing not existing edge by calling removeAssociation method should return false value.
 	 *  
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	public void testRemoveAssociation2()
 	{
@@ -227,9 +253,9 @@ public class JoinGraphTestCase extends TestCase
 	/**
 	 *  To check the isConnected() method.
 	 *  Following graph is connected graph.
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	public void testIsConnected1()
 	{
@@ -242,9 +268,9 @@ public class JoinGraphTestCase extends TestCase
 	 *  
 	 *  After removing association between exp1 & exp2, Following graph will become disconnected graph.
 	 *  
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	public void testIsConnected2()
 	{
@@ -258,7 +284,7 @@ public class JoinGraphTestCase extends TestCase
 	 *  
 	 *  Following graph is connected graph. This Graph contains only one association.
 	 *  
-	 * 	exp1___Exp2
+	 * 	exp1-->Exp2
 	 * 	
 	 */
 	public void testIsConnected3()
@@ -281,9 +307,9 @@ public class JoinGraphTestCase extends TestCase
 	/**
 	 * To check containsAssociation method.
 	 *
-	 * 	exp1___Exp2__Exp5
-	 * 	  \ \__Exp3
-	 * 	   \___Exp4	
+	 * 	exp1-->Exp2-->Exp5
+	 * 	  \ \-->Exp3
+	 * 	   \-->Exp4	
 	 */
 	public void testContainsAssociation1()
 	{

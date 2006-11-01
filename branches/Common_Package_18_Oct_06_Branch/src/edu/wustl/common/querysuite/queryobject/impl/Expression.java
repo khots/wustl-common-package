@@ -67,6 +67,8 @@ public class Expression implements IExpression
 	 */
 	public IExpressionOperand addOperand(IExpressionOperand operand)
 	{
+		if (expressionOperands.size() != 0)
+			throw new IllegalArgumentException();
 		expressionOperands.add(operand);
 		return operand;
 	}
@@ -86,8 +88,8 @@ public class Expression implements IExpression
 	 */
 	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand)
 	{
-		expressionOperands.add(index,operand);
-		logicalConnectors.add(index-1, logicalConnector);
+		expressionOperands.add(index, operand);
+		logicalConnectors.add(index - 1, logicalConnector);
 	}
 
 	/**
@@ -95,9 +97,10 @@ public class Expression implements IExpression
 	 */
 	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector)
 	{
-		expressionOperands.add(index,operand);
+		expressionOperands.add(index, operand);
 		logicalConnectors.add(index, logicalConnector);
 	}
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addParantheses()
 	 */
@@ -139,7 +142,7 @@ public class Expression implements IExpression
 	 *      int)
 	 */
 	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex)
-			
+
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
@@ -255,13 +258,12 @@ public class Expression implements IExpression
 		// A and (B or C) remove C => A and B
 		// A and (B or C) remove B => A and C
 		// A and (B or C) remove A => B or C
-		int connectorIndex = index;
-		if (index == expressionOperands.size() - 1)
+		int connectorIndex = index; // if removing 1st operand then 1st operator must be removed. 
+		if (index == expressionOperands.size() - 1) // if removing last operand then last operator must be removed.
 		{
-			connectorIndex--;
+			connectorIndex = index - 1;
 		}
-
-		if (index != 0 && index != expressionOperands.size() - 1)
+		else if (index != 0) // if operand to removed is not 1st & last, then operator to remove will depend upon the immediate bracket surrounding that operand. 
 		{
 			int preNesting = logicalConnectors.get(index - 1).getNestingNumber();
 			int postNesting = logicalConnectors.get(index).getNestingNumber();

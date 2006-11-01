@@ -74,6 +74,7 @@ public class ExpressionTestCases extends TestCase
 		super.tearDown();
 	}
 
+	
 	/*
 	 * Expression is (a or b) and c -- we try to remove operand b; 
 	 * it should give us a and c as the final expression
@@ -433,5 +434,40 @@ public class ExpressionTestCases extends TestCase
 		{
 			assertTrue("Unexpected IllegalArgumentException, while adding Operand with the connector behind it!!!",false);
 		}
+	}
+	
+	/**
+	 * To test the method addOperand(IExpressionOperand)
+	 * If Expression already contains some Expressions, then next call to this method should throw IllegalArgumentException.
+	 */
+	public void testAddOperand3()
+	{
+		try
+		{
+			expr.addOperand(d);
+			assertTrue("Expected IllegalArgumentException, while adding Operand with out connector when Expression already has some Operands !!!",false);
+		}
+		catch (IllegalArgumentException e)
+		{
+		}
+		
+	}
+	
+	/**
+	 * To test the method addOperand(ILogicalConnector, IExpressionOperand)
+	 * If Expression contains no Expressions, then next call to this method should throw IndexOutOfBoundsException.
+	 */
+	public void testAddOperand4()
+	{
+		IExpression expression = new Expression();
+		try
+		{
+			expression.addOperand(andCond,a);
+			assertTrue("Expected IndexOutOfBoundsException, while adding Operand with connector when Expression has no Operands !!!",false);
+		}
+		catch (IndexOutOfBoundsException e)
+		{
+		}
+		
 	}
 }

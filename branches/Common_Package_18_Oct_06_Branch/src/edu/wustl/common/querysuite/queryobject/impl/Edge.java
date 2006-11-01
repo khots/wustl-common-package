@@ -15,7 +15,7 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 public class Edge
 {
 
-	private IExpressionId incommingExpressionId, outGoingExpressionId;
+	private IExpressionId incomingExpressionId, outGoingExpressionId;
 	private IAssociation association;
 
 	/**
@@ -24,10 +24,10 @@ public class Edge
 	 * @param outGoingExpression The outgoing Expression id.
 	 * @param association The Association between thow Expressions.
 	 */
-	public Edge(IExpressionId incommingExpressionId, IExpressionId outGoingExpressionId,
+	public Edge(IExpressionId incomingExpressionId, IExpressionId outGoingExpressionId,
 			IAssociation association)
 	{
-		this.incommingExpressionId = incommingExpressionId;
+		this.incomingExpressionId = incomingExpressionId;
 		this.outGoingExpressionId = outGoingExpressionId;
 		this.association = association;
 	}
@@ -51,17 +51,17 @@ public class Edge
 	/**
 	 * @return the incommingExpression
 	 */
-	public IExpressionId getIncommingExpression()
+	public IExpressionId getIncomingExpressionId()
 	{
-		return incommingExpressionId;
+		return incomingExpressionId;
 	}
 
 	/**
 	 * @param incommingExpression the incommingExpression to set
 	 */
-	public void setIncommingExpression(IExpressionId incommingExpression)
+	public void setIncomingExpressionId(IExpressionId incommingExpression)
 	{
-		this.incommingExpressionId = incommingExpression;
+		this.incomingExpressionId = incommingExpression;
 	}
 
 	/**

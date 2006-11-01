@@ -85,12 +85,14 @@ public interface IExpression extends IExpressionOperand
 	 * expression.
 	 * @param operand
 	 *            the operand to be added.
+	 * @throws IllegalArgumentException If an Expression already contains atleast one Operand.
 	 */
 	public IExpressionOperand addOperand(IExpressionOperand operand);
 
 	/**
 	 * @param logicalConnector
 	 * @param operand
+	 * @throws IndexOutOfBoundsException if there is no Operand in the Expression.
 	 */
 	public void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand);
 
@@ -98,6 +100,7 @@ public interface IExpression extends IExpressionOperand
 	 * Inserts an operand with the connector in front of it.
 	 * @param logicalConnector
 	 * @param operand
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size()).
 	 */
 	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand);
 
@@ -105,6 +108,7 @@ public interface IExpression extends IExpressionOperand
 	 * Inserts an operand with the connector behind it.
 	 * @param logicalConnector
 	 * @param operand
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size()). 
 	 */
 	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector);
 

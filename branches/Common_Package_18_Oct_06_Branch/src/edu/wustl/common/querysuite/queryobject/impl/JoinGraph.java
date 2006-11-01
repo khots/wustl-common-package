@@ -249,7 +249,7 @@ public class JoinGraph implements IJoinGraph
 			Edge edge = edges.get(i);
 			if (isIncommingEdge)
 			{
-				if (edge.getIncommingExpression().equals(expressionIndex))
+				if (edge.getIncomingExpressionId().equals(expressionIndex))
 					return edge;
 			}
 			else
@@ -270,16 +270,19 @@ public class JoinGraph implements IJoinGraph
 		int[] ordinalNos = new int[expressionIds.size()];// ordinal numbers for graph’s visited nodes.
 		boolean[] inProg = new boolean[expressionIds.size()];// Keep track if the search on a given node is currently in progress.
 		k = 0;
+		boolean isCyclic = true;
+
 		for (int i = 0; i < expressionIds.size(); i++)
 		{
-			if (ordinalNos[i] == 0)
+			List<Edge> incomingList = incommingEdgeMap.get(expressionIds.get(i));
+			if (incomingList != null && !incomingList.isEmpty())
 			{
-				boolean isCyclic = checkCycleUsingDFS(i, ordinalNos, inProg);
+				isCyclic = checkCycleUsingDFS(i, ordinalNos, inProg);
 				if (isCyclic)
 					return true;
 			}
 		}
-		return false;
+		return isCyclic;
 	}
 
 	private int k = 0; // ordinal number for the node to be visited next.
