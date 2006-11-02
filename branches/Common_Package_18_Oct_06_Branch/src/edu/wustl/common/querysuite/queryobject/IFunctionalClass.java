@@ -28,7 +28,7 @@ public interface IFunctionalClass
 	 * @param attribute
 	 * 
 	 */
-	public void addAttribute(IAttribute attribute);
+	public boolean addAttribute(IAttribute attribute);
 
 	/**
 	 * can be null if the class does not belong to a category
