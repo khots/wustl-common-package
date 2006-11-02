@@ -442,15 +442,11 @@ public class ExpressionTestCases extends TestCase
 	 */
 	public void testAddOperand3()
 	{
-		try
-		{
 			expr.addOperand(d);
-			assertTrue("Expected IllegalArgumentException, while adding Operand with out connector when Expression already has some Operands !!!",false);
-		}
-		catch (IllegalArgumentException e)
-		{
-		}
-		
+			assertEquals(andCond, expr.getLogicalConnector(2, 3));	
+			assertTrue(expr.removeOperand(c));
+			assertEquals(b, expr.getOperand(1));
+			assertEquals(d, expr.getOperand(2));
 	}
 	
 	/**
