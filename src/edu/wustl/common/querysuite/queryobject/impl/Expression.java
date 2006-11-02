@@ -10,11 +10,13 @@ package edu.wustl.common.querysuite.queryobject.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 
 public class Expression implements IExpression
 {
@@ -67,9 +69,9 @@ public class Expression implements IExpression
 	 */
 	public IExpressionOperand addOperand(IExpressionOperand operand)
 	{
-		if (expressionOperands.size() != 0)
-			throw new IllegalArgumentException();
 		expressionOperands.add(operand);
+		if(expressionOperands.size() != 1)
+			logicalConnectors.add(QueryObjectFactory.createLogicalConnector(LogicalOperator.And, 0));
 		return operand;
 	}
 
