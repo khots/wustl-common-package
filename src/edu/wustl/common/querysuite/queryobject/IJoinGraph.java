@@ -62,8 +62,9 @@ public interface IJoinGraph
 	 * indicates if the graph is a connected graph. for building queries
 	 * (DCQL/CQL) the graph should be connected. So this can be used by UI and
 	 * querybuilding code for validation purposes.
+	 * @throws MultipleRootsException 
 	 */
-	public boolean isConnected();
+	public boolean isConnected() throws MultipleRootsException;
 
 	/**
 	 * True if the graph contains an association between the specified
@@ -75,4 +76,11 @@ public interface IJoinGraph
 			IExpressionId childExpressionId);
 
 	public IExpressionId getRoot() throws MultipleRootsException;
+	
+	/**
+	 * Removes the specified id from the list of IExpressionId if one exists
+	 * @param id
+	 * @return true upon removing specified existing id; false otherwise
+	 */
+	public boolean removeIExpressionId(IExpressionId id);
 }
