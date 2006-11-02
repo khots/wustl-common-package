@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,9 +34,12 @@ import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.bizlogic.SimpleQueryBizLogic;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
+import edu.wustl.common.query.DataElement;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.QueryFactory;
+import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.SimpleQuery;
+import edu.wustl.common.query.Table;
 import edu.wustl.common.util.MapDataParser;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -94,6 +98,24 @@ public class SimpleSearchAction extends BaseAction
 
 		MapDataParser parser = new MapDataParser("edu.wustl.common.query");
 		Collection simpleConditionNodeCollection = parser.generateData(map, true);
+		
+		/**
+		 * Bug-2778: Results should return at least the attribute that was queried.
+		 * 
+		 */
+		List fieldList = new ArrayList();
+		if(simpleConditionNodeCollection != null && !simpleConditionNodeCollection.isEmpty() ) 
+		{
+			Iterator itr = simpleConditionNodeCollection.iterator();
+			while(itr.hasNext())
+			{
+				SimpleConditionsNode simpleConditionsNode = (SimpleConditionsNode) itr.next();
+				Table table = simpleConditionsNode.getCondition().getDataElement().getTable();	
+				DataElement dataElement = simpleConditionsNode.getCondition().getDataElement();
+				String field = table.getTableName() + "." + dataElement.getField();				
+				fieldList.add(field);
+			}
+		}
 
 		Map queryResultObjectDataMap = new HashMap();
 
@@ -121,8 +143,24 @@ public class SimpleSearchAction extends BaseAction
 
 		// Set the result view for the query.
 		List columnNames = new ArrayList();
-		Vector selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,
-				aliasList, columnNames, true);
+		Vector selectDataElements =null;
+		
+		/**
+		 * Bug-2778: Results should return at least the attribute that was queried.
+		 * If selectedColumns is null, then we are showing all the default view attribute
+		 * plus the attibute that was queried. And if selectedColumns is not null, then we
+		 * are showing only those attribute that are selected in Define View.
+		 */
+		if (selectedColumns != null)
+		{
+			selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,
+					aliasList, columnNames, true, null);
+		}
+		else
+		{
+			selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,
+				aliasList, columnNames, true, fieldList);
+		}
 		query.setResultView(selectDataElements);
 
 		Set fromTables = new HashSet();
