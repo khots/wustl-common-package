@@ -23,9 +23,9 @@ public class FunctionalClass implements IFunctionalClass
 
 	public FunctionalClass(List<IAttribute> attributes, ICategory category)
 	{
-		this.category = category;
 		if (attributes != null)
 			this.attributes = attributes;
+		this.category = category;
 	}
 
 	public FunctionalClass()
@@ -46,9 +46,9 @@ public class FunctionalClass implements IFunctionalClass
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#addAttribute(edu.wustl.common.querysuite.queryobject.IAttribute)
 	 */
-	public void addAttribute(IAttribute attribute)
+	public boolean addAttribute(IAttribute attribute)
 	{
-		attributes.add(attribute);
+			return(attributes.add(attribute));
 	}
 
 	/**
