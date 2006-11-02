@@ -33,7 +33,7 @@ public class SpecimenTreeListener extends AppletTreeListener
 	  */
 	 public SpecimenTreeListener()
 	 {
-		 
+		 super();
 	 }
 	 
 	 /**
@@ -46,114 +46,26 @@ public class SpecimenTreeListener extends AppletTreeListener
 		 specimenClass = nodeClass;
 	 }
 	 
-	 /**
-     * Corresponds to an applet environment.
-     */
-    private AppletContext appletContext = null;
-    
-    /**
-     * @return Returns the appletContext.
-     */
-    public AppletContext getAppletContext()
-    {
-        return appletContext;
-    }
-    
-    /**
-     * @param appletContext The appletContext to set.
-     */
-    public void setAppletContext(AppletContext appletContext)
-    {
-        this.appletContext = appletContext;
-    }
-    
-    public void mouseClicked(MouseEvent e) 
-    {
-        try
-        {
-			// TODO Auto-generated method stub
-	    	if(e.getClickCount()==2)
-	        {
-	    		Object object = e.getSource();
-	    		JTree tree = null;
-	
-	    		if (object instanceof JTree)
-	    		{
-	    			tree = (JTree) object;
-	    			
-	    			DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-	                     .getLastSelectedPathComponent();
-	
-	    			SpecimenTreeNode  treeNode = (SpecimenTreeNode) node
-	                     .getUserObject();
-	             
-	    			//Set the values in the parent window.
-	    			Applet applet = this.appletContext.getApplet(Constants.TREE_APPLET_NAME);
-	    			System.out.println("applet name "+applet);
-	    			//Kapil: MAC ISSUE JDK 1.3.1	    			
-	    			JSObject window = JSObject.getWindow(applet);
-	    			//commented as this will set in MouseClick
-	    			String propertyName = applet.getParameter(Constants.PROPERTY_NAME);
-	    			
-	    			// if Root node selected or node is not of given type, then do nothing.
-	    			if(treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME) || !treeNode.getType().equalsIgnoreCase(type))
-	    			{
-	    				return;
-	    			}
-	    			String setValue = new String();
-	    			//Poornima:Make the Category nodes non-clickable if child exists. Refer to Bug 1718
-	    			if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
-	    			{
-	    				setValue="setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
-	    			}
-					else
-					{
-						return;
-					}
-	             
-	    			//Kapil: MAC ISSUE JDK 1.3.1
-	    			//commented as this will set in MouseClick
-	    			window.eval(setValue);
-	    			window.eval("closeWindow()");
-	    		}
-	        }
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-        }
+
+	public void displayClickedSpecimenNode() 
+	{
+		SpecimenTreeNode treeNode = (SpecimenTreeNode) node
+        .getUserObject();
+    	
+		//If Root node selected or node is not of given type, then do nothing.
+		if(treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME) || !(treeNode.getType().equalsIgnoreCase(type)) && (treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass)))
+		{
+			return;
+		}	
+		if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
+		{
+			setValue="setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
+		}
+		else
+		{
+			return;
+		}
 		
 	}
 
-		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-	
-		}
-	
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-	
-		}
-	
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-	
-		}
-	
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-	
-		}
-	
-		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub
-	
-		}
-	
-		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
-	
-		}
-
-	
 }
