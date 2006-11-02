@@ -85,7 +85,7 @@ public abstract class AppletTreeListener implements MouseInputListener
 	    			window = JSObject.getWindow(applet);
 	    			
 	    			//This method implemented in the sub class.
-	    			displayAppletWindow();
+	    			displayClickedSpecimenNode();
 	    			
 	    			//Kapil: MAC ISSUE JDK 1.3.1
 	    			//commented as this will set in MouseClick
@@ -100,7 +100,7 @@ public abstract class AppletTreeListener implements MouseInputListener
 		}
 	}
 	
-	public abstract void displayAppletWindow();
+	public abstract void displayClickedSpecimenNode();
 
 	public void mousePressed(MouseEvent arg0) 
 	{
