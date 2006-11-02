@@ -206,7 +206,7 @@ public class Graph<V, E>
 	/**
 	 * This method will return the Root node of the tree. 
 	 * The node having no incomming edges will be treated as Root node. 
-	 * @return root 
+	 * @return root node of the expression
 	 * @throws MultipleRootsException if more than 2 roots exists or no root exists for the expression tree
 	 */
 	public V getRoot() throws MultipleRootsException
@@ -253,8 +253,10 @@ public class Graph<V, E>
 	}
 	
 	/**
-	 * Check if the Graph is cyclic.
-	 * @return true if any cycle exists in the Graph
+	 * Check if the Graph is cyclic. Visits each node and checks
+	 * simultaneously if the node has been visited before. Stores this
+	 * information in a boolean array for checking.
+	 * @return true if any cycle exists between elements in the Graph
 	 */
 	private boolean isCyclic()
 	{
@@ -310,7 +312,7 @@ public class Graph<V, E>
 	}
 
 	/**
-	 * Method to traverse Using Depth First algorithm. 
+	 * Method to traverse using Depth First algorithm. 
 	 * It marks the entry for the index in visited array as true while visiting each node.
 	 * @param index
 	 * @param visited
