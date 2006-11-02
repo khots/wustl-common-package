@@ -81,9 +81,9 @@ public class Class implements IClass
 	 * @param attribute
 	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#addAttribute(edu.wustl.common.querysuite.queryobject.IAttribute)
 	 */
-	public void addAttribute(IAttribute attribute)
+	public boolean addAttribute(IAttribute attribute)
 	{
-		attributes.add(attribute);
+		return(attributes.add(attribute));
 	}
 
 	/**
