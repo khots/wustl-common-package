@@ -227,7 +227,7 @@ public class TreeApplet extends JApplet
             	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(specimenType,specimenClass);
             	specimenTreeListener.setAppletContext(this.getAppletContext());
 	            tree.addMouseListener(specimenTreeListener);
-	            tree.setCellRenderer(new SpecimenTreeRenderer(specimenType,specimenClass));
+	            //tree.setCellRenderer(new SpecimenTreeRenderer(specimenType,specimenClass));
             }
             else if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) ||  (pageOf.equals(Constants.PAGEOF_SPECIMEN)) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
             {
