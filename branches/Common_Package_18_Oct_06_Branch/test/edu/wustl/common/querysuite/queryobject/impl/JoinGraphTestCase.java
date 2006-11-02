@@ -259,14 +259,22 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testIsConnected1()
 	{
-		boolean flag = joinGraph.isConnected();
-		assertTrue("Expected true value from isConnected method, for Connected graph!!!", flag);
+		try
+		{
+			boolean flag = joinGraph.isConnected();
+			assertTrue("Expected true value from isConnected method, for Connected graph!!!", flag);
+		}
+		catch(MultipleRootsException e)
+		{
+			assertFalse(true);
+		}
+		
 	}
 
 	/**
 	 *  To check the isConnected() method.
 	 *  
-	 *  After removing association between exp1 & exp2, Following graph will become disconnected graph.
+	 *  After removing association between exp1 & exp2, following graph will become disconnected graph.
 	 *  
 	 * 	exp1-->Exp2-->Exp5
 	 * 	  \ \-->Exp3
@@ -275,8 +283,16 @@ public class JoinGraphTestCase extends TestCase
 	public void testIsConnected2()
 	{
 		joinGraph.removeAssociation(expId1, expId2);
-		boolean flag = joinGraph.isConnected();
-		assertFalse("Expected false value from isConnected method, for disconnected graph!!!", flag);
+		try
+		{
+			boolean flag = joinGraph.isConnected();
+			assertFalse(true);
+			assertTrue("Expected false value from isConnected method, for disconnected graph!!!", flag);
+		}
+		catch(MultipleRootsException e)
+		{
+			
+		}
 	}
 
 	/**
@@ -301,6 +317,10 @@ public class JoinGraphTestCase extends TestCase
 			assertTrue(
 					"UnExpected CyclicException, while adding Association for Testing isConnected method!!!",
 					false);
+		}
+		catch(MultipleRootsException e)
+		{
+			assertFalse(true);
 		}
 	}
 
