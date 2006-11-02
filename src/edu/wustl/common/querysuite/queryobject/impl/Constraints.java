@@ -69,6 +69,7 @@ public class Constraints implements IConstraints
 	 */
 	public IExpression removeExpressionWithId(IExpressionId id)
 	{
+		joinGraph.removeIExpressionId(id);
 		return expressions.remove(id);
 	}
 
