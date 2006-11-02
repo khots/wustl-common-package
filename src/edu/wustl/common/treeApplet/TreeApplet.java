@@ -31,6 +31,7 @@ import javax.swing.JTree;
 
 import edu.wustl.common.tree.AdvanceQueryTreeRenderer;
 import edu.wustl.common.tree.GenerateTree;
+import edu.wustl.common.tree.SpecimenTreeRenderer;
 import edu.wustl.common.tree.StorageContainerRenderer;
 import edu.wustl.common.util.global.Constants;
 
@@ -226,6 +227,7 @@ public class TreeApplet extends JApplet
             	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(specimenType,specimenClass);
             	specimenTreeListener.setAppletContext(this.getAppletContext());
 	            tree.addMouseListener(specimenTreeListener);
+	            tree.setCellRenderer(new SpecimenTreeRenderer(specimenType,specimenClass));
             }
             else if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) ||  (pageOf.equals(Constants.PAGEOF_SPECIMEN)) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
             {
