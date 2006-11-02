@@ -74,9 +74,13 @@ public class JoinGraph implements IJoinGraph
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#isConnected()
+	 * Checks if the graph is connected by getting the root IExpressionId
+	 * The traversing is done on root and if more than one root found, the graph
+	 * is considered to be disjoint and a MultipleRootsException is thrown 
+	 * @return true if graph is connected; false if graph is disjoint
+	 * @throws MultipleRootsException if more than one root found
 	 */
-	public boolean isConnected()
+	public boolean isConnected() throws MultipleRootsException
 	{
 		boolean isConnected = true;
 
@@ -94,14 +98,16 @@ public class JoinGraph implements IJoinGraph
 		catch (MultipleRootsException e)
 		{
 			isConnected = false;
+			throw e;
 		}
 		return isConnected;
 	}
 
 	/**
-	 * Method to traverse Using Depth First algorithm. It marks the entry for the index in visited array as true while visiting each node.
-	 * @param index An int representing index of the node to traverse from expressionIds list. 
-	 * @param visited array of boolean representing status of whether each node is visited or not. true value at index i represents, that i'th node from expressions list is visited.  
+	 * Method to traverse Using Depth First algorithm. It marks the entry for the 
+	 * index in visited array as true while visiting each node.
+	 * @param index an int representing index of the node to traverse from expressionIds list. 
+	 * @param visited an array of boolean representing status of whether each node is visited or not. true value at index i represents, that i'th node from expressions list is visited.  
 	 */
 	private void dfs(int index, boolean[] visited)
 	{
@@ -200,10 +206,29 @@ public class JoinGraph implements IJoinGraph
 		}
 		return false;
 	}
+	
+	/**
+	 * Removes the specified id from the list of IExpressionId if one exists
+	 * @param id
+	 * @return true upon removing specified existing id; false otherwise
+	 */
+	public boolean removeIExpressionId(IExpressionId id)
+	{
+		boolean flag = expressionIds.remove(id);
+		if (flag)
+		{
+			incommingEdgeMap.remove(id);
+			outgoingEdgeMap.remove(id);
+		}
+		return flag;
+	}
 
 	/**
-	 * This method will return the Root Expression id node of the Expression tree. The node having no incomming Edges will be treated as Root node. 
-	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#getRoot()
+	 * For each element in IExpressionId list, the root node will be checked 
+	 * for incoming edges for that element.The node having no incomming edges 
+	 * will be treated as Root node. 
+	 * @return root node of the expression
+	 * @throws MultipleRootsException if more than 1 roots exists or no root exists for the expression tree
 	 */
 	public IExpressionId getRoot() throws MultipleRootsException
 	{
@@ -262,8 +287,9 @@ public class JoinGraph implements IJoinGraph
 	}
 
 	/**
-	 * To check wether the JongGraph is cyclin or not.
-	 * @return <code>true</code> if There exist any cycle in the Graph.
+	 * Check if the graph is cyclic. Visits each node and simultaneously 
+	 * checks if the node has been visited before. 
+	 * @return true if any cycle exists between elements in the graph; false otherwise
 	 */
 	private boolean isCyclic()
 	{
@@ -288,11 +314,13 @@ public class JoinGraph implements IJoinGraph
 	private int k = 0; // ordinal number for the node to be visited next.
 
 	/**
-	 * DFS searching for Cycle.
+	 * DFS which checks for the cycles present in the graph by checking
+	 * recursively for all edges for a particular node. Stores this
+	 * information in a boolean array for each node visited.
 	 * @param currentIndex
 	 * @param ordinalNos
 	 * @param inProg
-	 * @return
+	 * @return true if a node has already been visited; false otherwise
 	 */
 	private boolean checkCycleUsingDFS(int currentIndex, int[] ordinalNos, boolean[] inProg)
 	{
