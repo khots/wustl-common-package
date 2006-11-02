@@ -438,12 +438,14 @@ public class ExpressionTestCases extends TestCase
 	
 	/**
 	 * To test the method addOperand(IExpressionOperand)
-	 * If Expression already contains some Expressions, then next call to this method should throw IllegalArgumentException.
+	 * Expression is a or b and c and d; we verify the connector between c and d
+	 * then remove c and check operand at position 2 which should be d
 	 */
 	public void testAddOperand3()
 	{
 			expr.addOperand(d);
 			assertEquals(andCond, expr.getLogicalConnector(2, 3));	
+			assertEquals(d, expr.getOperand(3));
 			assertTrue(expr.removeOperand(c));
 			assertEquals(b, expr.getOperand(1));
 			assertEquals(d, expr.getOperand(2));
