@@ -25,6 +25,7 @@ import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.query.DataElement;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.SimpleConditionsNode;
+import edu.wustl.common.query.Table;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -325,6 +326,124 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		return selectDataElements;
 	}
 
+	/**
+	 * Bug-2778: Results should return at least the attribute that was queried.
+	 * @param selectedColumns The Array of String of selectedColumns.
+	 * @param tableList The list of Table AliasName.
+	 * @param columnNames The list of Columns to be shown in the result view.
+	 * @param onlyDefaultAttributes The boolean value, which will decide the list of columns in returned list. 
+	 * 			If true, it will return only default view attributes corresponding to a table aliasName, else return all attributes.
+	 * @param fieldList List.
+	 * 		  If not null or not empty, then add the attibutes from the List to selectDataElements and columnNames
+	 * @return The Vector of data elements objects for given table alias.
+	 * @throws DAOException
+	 */
+	public Vector getSelectDataElements(String[] selectedColumns, List tableList, List columnNames,
+			boolean onlyDefaultAttributes, List fieldList) throws DAOException
+	{
+		Vector selectDataElements = getSelectDataElements(selectedColumns,tableList,columnNames,onlyDefaultAttributes);	
+		
+		/**
+		 * Bug-2778: Results should return at least the attribute that was queried.
+		 * If not null or not empty, then add the attibutes from the List to selectDataElements and columnNames
+		 */
+		if(fieldList != null && !fieldList.isEmpty())
+		{
+			Iterator itr = fieldList.iterator();
+			while (itr.hasNext()) 
+			{
+				String field = (String) itr.next();
+				
+				StringTokenizer st = new StringTokenizer(field, ".");
+				DataElement dataElement = new DataElement();
+				Table table = new Table();
+			
+				String parentTableAliasName = st.nextToken();
+				String childTableAliasName =  st.nextToken();
+				String columnName = st.nextToken();
+				String fieldType = st.nextToken();
+				String tablePath = null;
+				
+				table.setTableName(childTableAliasName);				
+				dataElement.setTable(table);
+				dataElement.setField(columnName);
+				dataElement.setFieldType(fieldType);
+				if (!selectDataElements.contains(dataElement))
+				{
+					selectDataElements.add(dataElement);
+					
+					//Getting the column Display name from actual column name ex. LAST_NAME to Participant Last Name.
+					String displayColumnName = getColumnDisplayName(childTableAliasName,columnName,parentTableAliasName);
+					if(displayColumnName != null )
+					{
+						columnNames.add(displayColumnName);
+					}					
+				}			
+			}				
+		}
+		return selectDataElements; 
+	}
+	
+	/**
+	 * returns display column name from the actual column name.
+	 * @param aliasName String
+	 * @param columnName String
+	 * @return String
+	 * @throws DAOException
+	 */
+	private String getColumnDisplayName(String childTableAliasName, String columnName,String parentTableAliasName) throws DAOException
+	{
+		String displayColumnName = null;
+		try
+		{
+			JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			jdbcDao.openSession(null);			
+			Logger.out.debug("Alias Name : ............." + childTableAliasName);
+
+			String sql = "SELECT sc.display_name, tab.alias_name FROM   " +
+					"catissue_search_display_data sc, catissue_table_relation tr, " +
+					"catissue_interface_column_data col, catissue_query_table_data tab, catissue_query_table_data maintab " +
+					"WHERE  tr.relationship_id = sc.relationship_id AND " +
+					"col.identifier = sc.col_id AND col.table_id = tab.table_id AND " +
+					"maintab.table_id = tr.parent_table_id " +
+					"AND maintab.alias_name = '" +
+					parentTableAliasName +
+					"' AND tab.alias_name='" +
+					childTableAliasName +
+					"' AND col.COLUMN_NAME='" +
+					columnName+
+					"'";       
+
+			Logger.out.debug("DATA ELEMENT SQL : " + sql);
+
+			List list = jdbcDao.executeQuery(sql, null, false, null);
+			String nameSql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
+					+ parentTableAliasName + "'";
+			List nameList = jdbcDao.executeQuery(nameSql, null, false, null);
+			String tableDisplayName = new String();
+			if (!nameList.isEmpty())
+			{
+				List rowNameList = (List) nameList.get(0);
+				tableDisplayName = (String) rowNameList.get(0);
+			}
+			Logger.out.debug("tableDisplayName in getviewelements:" + tableDisplayName);
+			Logger.out.debug("list.size()************************" + list.size());
+			Iterator iterator = list.iterator();
+			int i = 0;
+			while (iterator.hasNext())
+			{
+				List rowList = (List) iterator.next();								
+				displayColumnName = (String) rowList.get(0) + " : " + tableDisplayName;
+			}		
+			jdbcDao.closeSession();
+		}
+		catch (ClassNotFoundException classExp)
+		{
+			throw new DAOException(classExp.getMessage(), classExp);
+		}	
+		return displayColumnName;
+	}
+	
 	/**
 	 * Gets the fields from select clause of the query and returns 
 	 * Set of objects of that attributes to be added in the from clause.  
