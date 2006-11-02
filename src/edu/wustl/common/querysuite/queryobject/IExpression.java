@@ -80,12 +80,10 @@ public interface IExpression extends IExpressionOperand
 	public void addParantheses();
 
 	/**
-	 * Adds an operand at the end of the operands list. An empty default
-	 * connector will be used to connect this operand with the rest of the
-	 * expression.
+	 * Adds an operand to the operands list. A default logical connector AND will
+	 * be added to the connectors list provided there are atleast two operands
+	 * in the operands list.
 	 * @param operand
-	 *            the operand to be added.
-	 * @throws IllegalArgumentException If an Expression already contains atleast one Operand.
 	 */
 	public IExpressionOperand addOperand(IExpressionOperand operand);
 
