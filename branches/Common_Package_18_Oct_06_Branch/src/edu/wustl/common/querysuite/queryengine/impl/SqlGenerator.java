@@ -4,12 +4,15 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domain.Attribute;
 import edu.common.dynamicextensions.domain.Entity;
@@ -24,6 +27,7 @@ import edu.wustl.common.querysuite.queryobject.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
@@ -47,14 +51,16 @@ public class SqlGenerator implements ISqlGenerator
 
 	private EntityManager entityManager;
 
-	private Map<String, Entity> entityMap = new HashMap<String, Entity>();
+	private Map<String, Entity> entityMap = new HashMap<String, Entity>(); // to cache the Dynamic Extension Entity object to avoid multiple call to APIs.
+
+	Map<IExpression, List<String>> sqlMap = new LinkedHashMap<IExpression, List<String>>(); // Stores SQL Queries for each Expression.
+
+	Map<IIntraModelAssociation, AssociationInterface> associationMap = new LinkedHashMap<IIntraModelAssociation, AssociationInterface>();
 
 	SqlGenerator(EntityManager entityManager)
 	{
 		this.entityManager = entityManager;
 	}
-
-	IQuery query;
 
 	/**
 	 * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#generateSQL(edu.wustl.common.querysuite.queryobject.IQuery)
@@ -63,29 +69,186 @@ public class SqlGenerator implements ISqlGenerator
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		// TODO Auto-generated method stub
-		this.query = query;
+		IExpression rootExpression = buildQuery(query);
+		String wherePart = getWherePartSQL();
+		String fromPart = getFromPartSQL(rootExpression);
+		String selectPart = getSelectPart(rootExpression);
+		String SQL = selectPart + " " + fromPart + " " + wherePart;
+		return SQL;
+	}
 
-		return null;
+	/**
+	 * To initialize map the variables.  
+	 * @param query the IQuery reference.
+	 * @return The Root Expetssion of the IQuery. 
+	 * @throws MultipleRootsException
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
+	IExpression buildQuery(IQuery query) throws MultipleRootsException,
+			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+	{
+		IConstraints constraints = query.getConstraints();
+		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
+		entityMap = new HashMap<String, Entity>();
+		sqlMap = new LinkedHashMap<IExpression, List<String>>();
+		associationMap = new LinkedHashMap<IIntraModelAssociation, AssociationInterface>();
+		getSQL(rootExpression, constraints.getJoinGraph(), null);
+		return rootExpression;
+	}
+
+	/**
+	 * To get the Select clause of the Query.
+	 * @param expression The Expression which will appear in the Select part.
+	 * @return the Select clause of the Query.
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
+	String getSelectPart(IExpression expression) throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		StringBuffer buffer = new StringBuffer("Select ");
+		Entity entity = getEntity((IClass) expression.getFunctionalClass());
+		String aliasName = getAliasName(entity);
+		Iterator attributeCollectionItr = entity.getAbstractAttributeCollection().iterator();
+		while (attributeCollectionItr.hasNext())
+		{
+			Attribute attribute = (Attribute) attributeCollectionItr.next();
+			buffer.append(aliasName + "." + attribute.getColumnProperties().getName());
+			if (attributeCollectionItr.hasNext())
+				buffer.append(", ");
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 *  To get the From clause of the Query.
+	 * @param expression The Root Expression.
+	 * @return the From clause of the SQL.
+	 * @throws DynamicExtensionsSystemException
+	 * @throws DynamicExtensionsApplicationException
+	 */
+	String getFromPartSQL(IExpression expression) throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		StringBuffer buffer = new StringBuffer("From ");
+		Set<IIntraModelAssociation> set = associationMap.keySet();
+		if (set.isEmpty()) // there are no associations
+		{
+			Entity leftEntity = getEntity((IClass) expression.getFunctionalClass());
+
+			String leftAlias = getAliasName(leftEntity);
+			buffer.append(leftEntity.getTableProperties().getName() + " " + leftAlias);
+		}
+		else
+		{
+			Iterator<IIntraModelAssociation> itr = set.iterator();
+			while (itr.hasNext())
+			{
+				IIntraModelAssociation association = itr.next();
+
+				IClass leftClass = association.getSourceClass();
+				Entity leftEntity = getEntity(leftClass);
+				String leftAlias = getAliasName(leftEntity);
+
+				IClass rightClass = association.getTargetClass();
+				Entity rightEntity = getEntity(rightClass);
+				String rightAlias = getAliasName(rightEntity);
+
+				buffer.append(leftEntity.getTableProperties().getName() + " " + leftAlias
+						+ " left join ");
+				buffer.append(rightEntity.getTableProperties().getName() + " " + rightAlias
+						+ " on ");
+
+				AssociationInterface eavAssociation = associationMap.get(association);
+
+				String leftAttribute = leftAlias + "."
+						+ eavAssociation.getConstraintProperties().getSourceEntityKey();
+				String rightAttribute = rightAlias + "."
+						+ eavAssociation.getConstraintProperties().getTargetEntityKey();
+
+				buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
+			}
+		}
+
+		return buffer.toString();
+	}
+
+	String getLeftJoinSQL() throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		StringBuffer buffer = new StringBuffer("");
+
+		return buffer.toString();
+	}
+
+	/**
+	 * To get the Where Part of the SQL Query. 
+	 * @return The String representing Where part og the Query.
+	 * @throws DynamicExtensionsApplicationException 
+	 * @throws DynamicExtensionsSystemException 
+	 */
+	String getWherePartSQL() throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		StringBuffer buffer = new StringBuffer("Where ");
+		Iterator<IExpression> keys = sqlMap.keySet().iterator();
+		while (keys.hasNext())
+		{
+			// Forming Restriction Criteria for Each Expressions.
+			IExpression expression = keys.next();
+			List<String> sqlList = sqlMap.get(expression);
+			IClass iClass = (IClass) expression.getFunctionalClass();
+			String selectAttribute = getPrimaryKeyAttrinbute(iClass);
+			if (sqlList.size() == 1)
+			{
+				buffer.append(selectAttribute + " = ANY(" + sqlList.get(0) + ") ");
+			}
+			else
+			// if there are multiple sql for Expression, then they will be connected by OR condition
+			{
+				buffer.append("(");
+				for (int i = 0; i < sqlList.size(); i++)
+				{
+					buffer.append(selectAttribute + " = ANY(" + sqlList.get(i) + ") ");
+					if (i != sqlList.size() - 1)
+						buffer.append(LogicalOperator.Or + " ");
+				}
+				buffer.append(") ");
+			}
+			if (keys.hasNext())
+				buffer.append(LogicalOperator.And + " "); // Anding all Restriction criterias.
+		}
+		return buffer.toString();
 	}
 
 	/**
 	 * To get the SQL representation of the Expression.
-	 * @param expression
+	 * @param expression the Expression whose SQL to be generated.
+	 * @param joinGraph the refrence to Join Graph.
+	 * @param parentExpression The Parent Expression.
 	 * @return The SQL representation of the Expression.
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
-	 * @throws NoSuchElementException when The Class in an expression does not have an 'id' attribute.
+	 * @throws NoSuchElementException when The Class in an expression does not have Primary Key attribute.
 	 */
 	String getSQL(IExpression expression, IJoinGraph joinGraph, IExpression parentExpression)
 			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		StringBuffer sql = new StringBuffer("");
+		StringBuffer buffer = new StringBuffer("");
 		int noOfRules = expression.getSize();
 		int prevNesting = 0;
 		int openingBraces = 0; // holds number of opening Braces added to SQL.
 
-		IClass iClass = getClass(expression);
-		IAttribute attribute = null;
+		// Put the Expression in the sqlMap.
+		List<String> sqlList = sqlMap.get(expression);
+		if (sqlList == null)
+		{
+			sqlList = new ArrayList<String>();
+			sqlMap.put(expression, sqlList);
+		}
+
+		IClass iClass = (IClass) expression.getFunctionalClass();
 
 		Entity entity = getEntity(iClass);
 		String tableName = entity.getTableProperties().getName() + " ";
@@ -93,8 +256,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		if (parentExpression == null)
 		{
-			attribute = getParentKeyAttrinbute(iClass);
-			selectAttribute = getSQL(attribute);
+			selectAttribute = getPrimaryKeyAttrinbute(iClass);
 		}
 		else
 		{
@@ -105,7 +267,7 @@ public class SqlGenerator implements ISqlGenerator
 					+ eavAssociation.getConstraintProperties().getTargetEntityKey();
 		}
 
-		sql.append("Select " + selectAttribute + " From " + tableName + getAliasName(entity)
+		buffer.append("Select " + selectAttribute + " From " + tableName + getAliasName(entity)
 				+ " where ");
 
 		for (int i = 0; i < noOfRules; i++)
@@ -141,28 +303,32 @@ public class SqlGenerator implements ISqlGenerator
 
 				if (prevNesting < nestingNumber)
 				{
-					sql.append("(" + ruleSQL + " " + connector.getLogicalOperator());
+					buffer.append("(" + ruleSQL + " " + connector.getLogicalOperator());
 					openingBraces++;
 				}
 				else if (prevNesting > nestingNumber)
 				{
-					sql.append(ruleSQL + ") " + connector.getLogicalOperator());
+					buffer.append(ruleSQL + ") " + connector.getLogicalOperator());
 					openingBraces--;
 				}
 				else
-					sql.append(ruleSQL + " " + connector.getLogicalOperator());
+					buffer.append(ruleSQL + " " + connector.getLogicalOperator());
 				prevNesting = nestingNumber;
 			}
 			else
 			{ // finiching SQL.
-				sql.append(ruleSQL);
+				buffer.append(ruleSQL);
 				if (openingBraces != 0)
 				{
-					sql.append(")");
+					buffer.append(")");
 				}
 			}
 		}
-		return sql.toString();
+		String sql = buffer.toString();
+
+		sqlList.add(sql); //Add the SQL in the SQL map
+
+		return sql;
 	}
 
 	/**
@@ -175,6 +341,9 @@ public class SqlGenerator implements ISqlGenerator
 	private AssociationInterface getAssoication(IIntraModelAssociation association)
 			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
+		if (associationMap.containsKey(association))
+			return associationMap.get(association);
+
 		Collection associations = entityManager.getAssociations(association.getSourceClass()
 				.getFullyQualifiedName(), association.getTargetClass().getFullyQualifiedName());
 		AssociationInterface theAssociation = null;
@@ -182,53 +351,13 @@ public class SqlGenerator implements ISqlGenerator
 		while (itr.hasNext())
 		{
 			theAssociation = (AssociationInterface) itr.next();
+
 			if (association.getSourceRoleName().equals(theAssociation.getSourceRole().getName())
 					&& (association.getTargetRoleName() == null || association.getTargetRoleName()
 							.equals(theAssociation.getTargetRole().getName())))
-				return theAssociation;
-		}
-		return null;
-	}
-
-	/**
-	 * To get the Primary key attribute of the Class, i.e. attribute having name as "id". 
-	 * @param iClass the iClass reference.
-	 * @return the reference to attribute having name as "id". if not present returns null.
-	 */
-	private IAttribute getParentKeyAttrinbute(IClass iClass)
-	{
-		List<IAttribute> list = iClass.getAttributes();
-		IAttribute attribute = null;
-		for (int i = 0; i < list.size(); i++)
-		{
-			attribute = list.get(i);
-			if (attribute.getAttributeName().equals(Constants.SYSTEM_IDENTIFIER))
-				return attribute;
-		}
-
-		throw new NoSuchElementException(Constants.SYSTEM_IDENTIFIER
-				+ " Attribute not found for class " + iClass.getFullyQualifiedName());
-	}
-
-	/**
-	 * To get the IClass for the given Expression.
-	 * @param expression The IExpression reference.
-	 * @return the IClass reference for the given Expression.
-	 */
-	private IClass getClass(IExpression expression)
-	{
-		int noOfRules = expression.getSize();
-		for (int i = 0; i < noOfRules; i++)
-		{
-			IExpressionOperand operand = expression.getOperand(i);
-			if (!operand.isSubExpressionOperand())
 			{
-				IRule rule = (IRule) operand;
-				for (int j = 0; j < rule.getSize(); j++)
-				{
-					ICondition condition = rule.getCondition(j);
-					return condition.getAttribute().getUMLClass();
-				}
+				associationMap.put(association, theAssociation);
+				return theAssociation;
 			}
 		}
 		return null;
@@ -244,7 +373,7 @@ public class SqlGenerator implements ISqlGenerator
 	String getSQL(IRule rule) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		StringBuffer sql = new StringBuffer("");
+		StringBuffer buffer = new StringBuffer("");
 		int noOfConditions = rule.getSize();
 
 		for (int i = 0; i < noOfConditions; i++) // Processing all conditions in Rule combining them with AND operator.
@@ -252,12 +381,12 @@ public class SqlGenerator implements ISqlGenerator
 			String condition = getSQL(rule.getCondition(i));
 
 			if (i != noOfConditions - 1) // Intermediate Condition.
-				sql.append(condition + " " + LogicalOperator.And + " ");
+				buffer.append(condition + " " + LogicalOperator.And + " ");
 			else
 				// Last Condition
-				sql.append(condition);
+				buffer.append(condition);
 		}
-		return sql.toString();
+		return buffer.toString();
 	}
 
 	/**
@@ -270,44 +399,45 @@ public class SqlGenerator implements ISqlGenerator
 	String getSQL(ICondition condition) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		StringBuffer sql = new StringBuffer("");
+		StringBuffer buffer = new StringBuffer("");
 		IAttribute attribute = condition.getAttribute();
 		DataType dataType = attribute.getDataType();
 		String attributeName = getSQL(attribute);
 
 		RelationalOperator operator = condition.getRelationalOperator();
 		String strOperator = RelationalOperator.getSQL(operator);
-		//Processing Between Operator, it will be treated as (op>=val1 and op<=;val2)
-		if (operator.equals(RelationalOperator.Between))
+
+		if (operator.equals(RelationalOperator.Between))//Processing Between Operator, it will be treated as (op>=val1 and op<=;val2)
 		{
 			List<String> values = condition.getValues();
-			String firstValue = encodeValueInQuotesIfNeeded(values.get(0), dataType);
-			String secondValue = encodeValueInQuotesIfNeeded(values.get(1), dataType);
+			String firstValue = modifyValueforDataType(values.get(0), dataType);
+			String secondValue = modifyValueforDataType(values.get(1), dataType);
 
-			sql.append("(" + attributeName);
-			sql.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals) + firstValue);
-			sql.append(" " + LogicalOperator.And + " " + attributeName
+			buffer.append("(" + attributeName);
+			buffer.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals)
+					+ firstValue);
+			buffer.append(" " + LogicalOperator.And + " " + attributeName
 					+ RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals)
 					+ secondValue + ")");
 		}
 		else if (operator.equals(RelationalOperator.In)) // Processing In Operator
 		{
-			sql.append(attributeName + " " + strOperator + " (");
+			buffer.append(attributeName + " " + strOperator + " (");
 			List<String> valueList = condition.getValues();
 			for (int i = 0; i < valueList.size(); i++)
 			{
-				String value = encodeValueInQuotesIfNeeded(valueList.get(i), dataType);
+				String value = modifyValueforDataType(valueList.get(i), dataType);
 
 				if (i == valueList.size() - 1)
-					sql.append(value + ")");
+					buffer.append(value + ")");
 				else
-					sql.append(value + ",");
+					buffer.append(value + ",");
 			}
 		}
 		else if (operator.equals(RelationalOperator.IsNotNull)
 				|| operator.equals(RelationalOperator.IsNull)) // Processing isNull & isNotNull operator.
 		{
-			sql.append(attributeName + " " + strOperator);
+			buffer.append(attributeName + " " + strOperator);
 		}
 		else if (operator.equals(RelationalOperator.Contains)
 				|| operator.equals(RelationalOperator.StartsWith)
@@ -321,32 +451,39 @@ public class SqlGenerator implements ISqlGenerator
 			else if (operator.equals(RelationalOperator.EndsWith))
 				value = "'%" + value + "'";
 
-			sql.append(attributeName + " like " + value);
+			buffer.append(attributeName + " like " + value);
 		}
 		else
 		// Processing rest operators like =, !=, <, > , <=, >= etc.
 		{
 			String value = condition.getValue();
-			value = encodeValueInQuotesIfNeeded(value, dataType);
-			sql.append(attributeName + strOperator + value);
+			value = modifyValueforDataType(value, dataType);
+			buffer.append(attributeName + strOperator + value);
 		}
 
-		return sql.toString();
+		return buffer.toString();
 	}
 
 	/**
-	 * To enclose the Given String values by single Quotes if required. 
-	 * It will be required for String & Date datatype values.
-	 * @param value The String to be encoded.
+	 * To Modify value as per the Data type. 
+	 * 1. Enclose the Given values by single Quotes for String & Date Data type. 
+	 * 2. For Boolean DataType it will change value to 1 if its TRUE, else 0.
+	 * @param value the Modified value.
 	 * @param dataType The DataType of the passed value.
 	 * @return The encoded String.
 	 */
-	String encodeValueInQuotesIfNeeded(String value, DataType dataType)
+	String modifyValueforDataType(String value, DataType dataType)
 	{
 
 		if (dataType.equals(DataType.String) || dataType.equals(DataType.Date))
 			value = "'" + value + "'";
-
+		else if (dataType.equals(DataType.Boolean))
+		{
+			if (value != null && value.toUpperCase().equals("TRUE"))
+				value = "1";
+			else
+				value = "0";
+		}
 		return value;
 	}
 
@@ -417,4 +554,36 @@ public class SqlGenerator implements ISqlGenerator
 
 		return entityAttribute;
 	}
+
+	/**
+	 * To get the Primary key attribute of the Class. 
+	 * @param iClass the iClass reference.
+	 * @return the actual Column name of the primary Attribute concatenated with alias name.
+	 * @throws DynamicExtensionsApplicationException 
+	 * @throws DynamicExtensionsSystemException 
+	 * @throws NoSuchElementException if The Primary key Attribute not found.
+	 */
+	private String getPrimaryKeyAttrinbute(IClass iClass) throws DynamicExtensionsSystemException,
+			DynamicExtensionsApplicationException
+	{
+		Entity entity = getEntity(iClass);
+
+		Collection attributeCollection = entity.getAbstractAttributeCollection();
+		for (Iterator iter = attributeCollection.iterator(); iter.hasNext();)
+		{
+			Attribute element = (Attribute) iter.next();
+			Boolean isPrimaryKey = element.getIsPrimaryKey();
+
+			if (isPrimaryKey != null && isPrimaryKey.booleanValue() == true)
+			{
+				String primaryKeyName = getAliasName(entity) + "."
+						+ element.getColumnProperties().getName();
+				return primaryKeyName;
+			}
+		}
+
+		throw new NoSuchElementException(Constants.SYSTEM_IDENTIFIER
+				+ " Attribute not found for class " + iClass.getFullyQualifiedName());
+	}
+
 }

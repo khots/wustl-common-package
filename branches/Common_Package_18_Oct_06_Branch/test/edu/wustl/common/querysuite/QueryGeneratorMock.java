@@ -33,16 +33,6 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
 public class QueryGeneratorMock
 {
 
-	public IQuery createQuery1()
-	{
-		IQuery query = QueryObjectFactory.createQuery();
-		IConstraints constraints = QueryObjectFactory.createConstraints();
-
-		query.setConstraints(constraints);
-
-		return query;
-	}
-
 	/**
 	 * Create Participant Class: with Attributes as: id, activityStatus, birthDate
 	 * @return  Participant Class.
@@ -189,7 +179,7 @@ public class QueryGeneratorMock
 	 */
 	public static IExpression creatParticipantExpression1(IClass participant)
 	{
-		IExpression expression = new Expression(null, 1);
+		IExpression expression = new Expression(participant, 1);
 		expression.addOperand(createParticipantRule1(participant));
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or,
 				0);
@@ -221,7 +211,7 @@ public class QueryGeneratorMock
 	 * @param expression The Expression reference created by function creatParticipantExpression2()
 	 * @return The corresponding join Graph reference.
 	 */
-	public static IQuery creatParticipantQuery()
+	public static IQuery creatParticipantQuery1()
 	{
 		IClass participantClass = createParticantClass();
 		IClass pmClass = createParticantMedicalIdentifierClass();
@@ -231,12 +221,12 @@ public class QueryGeneratorMock
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
 		
-		IExpression participantExpression = constraints.addExpression(null);
+		IExpression participantExpression = constraints.addExpression(participantClass);
 		participantExpression.addOperand(createParticipantRule2(participantClass));
 		
-		IExpression pmExpression = constraints.addExpression(null);
+		IExpression pmExpression = constraints.addExpression(pmClass);
 		
-		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or,
+		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And,
 				0);
 		participantExpression.addOperand(connector,pmExpression);
 		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass));
@@ -256,6 +246,30 @@ public class QueryGeneratorMock
 		return query;
 	}
 
+	/**
+	 * To create IQuery for the Participant as: [activityStatus = 'Active']
+	 * @param expression The Expression reference created by function creatParticipantExpression2()
+	 * @return The corresponding join Graph reference.
+	 */
+	public static IQuery creatParticipantQuery2()
+	{
+		IClass participantClass = createParticantClass();
+		
+		IQuery query = QueryObjectFactory.createQuery();
+		
+		IConstraints constraints = QueryObjectFactory.createConstraints();
+		query.setConstraints(constraints);
+		
+		IExpression participantExpression = constraints.addExpression(participantClass);
+		participantExpression.addOperand(createParticipantRule2(participantClass));
+		
+		
+		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
+		constraints.setJoinGraph(joinGraph);
+		
+		return query;
+	}
+	
 	/**
 	 * Create Participant Medical Identifier Class: with Attributes as: id, medicalRecordNumber, ParticipantId
 	 * @return  Participant Medical Identifier Class.
