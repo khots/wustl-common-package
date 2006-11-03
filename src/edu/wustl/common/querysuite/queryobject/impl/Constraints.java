@@ -61,6 +61,11 @@ public class Constraints implements IConstraints
 	 */
 	public IExpressionId getRootExpressionId() throws MultipleRootsException
 	{
+		Set<IExpressionId> expressionSet = expressions.keySet();
+		if (expressionSet.size()==1)
+		{
+			return expressionSet.iterator().next();
+		}
 		return joinGraph.getRoot();
 	}
 
