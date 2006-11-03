@@ -770,6 +770,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c7 = new ColumnProperties();
 		c7.setName("IDENTIFIER");
 		att7.setColumnProperties(c7);
+		att7.setIsPrimaryKey(new Boolean(true));
 
 		StringAttribute att8 = new StringAttribute();
 		//att8.setDefaultValue("lastName");
@@ -842,6 +843,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c1 = new ColumnProperties();
 		c1.setName("IDENTIFIER");
 		att1.setColumnProperties(c1);
+		att1.setIsPrimaryKey(new Boolean(true));
 
 		StringAttribute att2 = new StringAttribute();
 		att2.setName("medicalRecordNumber");
@@ -850,16 +852,16 @@ public class EntityManagerMock extends EntityManager
 		c2.setName("MEDICAL_RECORD_NUMBER");
 		att2.setColumnProperties(c2);
 
-		LongAttribute att3 = new LongAttribute();
-		att3.setName("id");
-		att3.setMeasurementUnits("Long");
-		ColumnProperties c3 = new ColumnProperties();
-		c3.setName("PARTICIPANT_ID");
-		att3.setColumnProperties(c3);
+//		LongAttribute att3 = new LongAttribute();
+//		att3.setName("id");
+//		att3.setMeasurementUnits("Long");
+//		ColumnProperties c3 = new ColumnProperties();
+//		c3.setName("PARTICIPANT_ID");
+//		att3.setColumnProperties(c3);
 		
 		participantMedicalIdentifierAttributes.add(0, att1);
 		participantMedicalIdentifierAttributes.add(1, att2);
-		participantMedicalIdentifierAttributes.add(2, att3);
+//		participantMedicalIdentifierAttributes.add(2, att3);
 		return participantMedicalIdentifierAttributes;
 	}
 
@@ -885,6 +887,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c2 = new ColumnProperties();
 		c2.setName("IDENTIFIER");
 		att2.setColumnProperties(c2);
+		att2.setIsPrimaryKey(new Boolean(true));
 
 		StringAttribute att3 = new StringAttribute();
 		att3.setName("protocolParticipantIdentifier");
@@ -971,6 +974,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c5 = new ColumnProperties();
 		c5.setName("IDENTIFIER");
 		att5.setColumnProperties(c5);
+		att5.setIsPrimaryKey(new Boolean(true));
 
 		StringAttribute att6 = new StringAttribute();
 		att6.setName("irbIdentifier");
@@ -1035,6 +1039,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c2 = new ColumnProperties();
 		c2.setName("IDENTIFIER");
 		att2.setColumnProperties(c2);
+		att2.setIsPrimaryKey(new Boolean(true));
 
 		DoubleAttribute att3 = new DoubleAttribute();
 		att3.setName("studyCalendarEventPoint");
@@ -1065,6 +1070,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c1 = new ColumnProperties();
 		c1.setName("IDENTIFIER");
 		att1.setColumnProperties(c1);
+		att1.setIsPrimaryKey(new Boolean(true));
 
 		StringAttribute att2 = new StringAttribute();
 		att2.setName("name");
@@ -1145,6 +1151,7 @@ public class EntityManagerMock extends EntityManager
 		ColumnProperties c5 = new ColumnProperties();
 		c5.setName("IDENTIFIER");
 		att5.setColumnProperties(c5);
+		att5.setIsPrimaryKey(new Boolean(true));
 
 		StringAttribute att6 = new StringAttribute();
 		att6.setName("label");
