@@ -78,6 +78,19 @@ public interface IExpression extends IExpressionOperand
 	 * Just calls addParantheses(0, size-1)
 	 */
 	public void addParantheses();
+	
+	/**
+	 * Decrements nesting num of all the logical connectors in the expression
+	 * between the specified operands' indexes, both inclusive.
+	 * @param leftOperandIndex
+	 * @param rightOperandIndex
+	 */
+	public void removeParantheses(int leftOperandIndex, int rightOperandIndex);
+	
+	/**
+	 * Just calls removeParantheses(0, size-1)
+	 */
+	public void removeParantheses();
 
 	/**
 	 * Adds an operand to the operands list. A default logical connector AND will
