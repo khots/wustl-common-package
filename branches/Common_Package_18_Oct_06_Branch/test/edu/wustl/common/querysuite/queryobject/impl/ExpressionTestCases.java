@@ -19,6 +19,7 @@ public class ExpressionTestCases extends TestCase
 
 	IExpression expr;
 	IExpression expr2;
+	IExpression bigExpr;
 	ILogicalConnector orCond;
 	ILogicalConnector andCond;
 	IRule a;
@@ -466,6 +467,69 @@ public class ExpressionTestCases extends TestCase
 		catch (IndexOutOfBoundsException e)
 		{
 		}
-		
 	}
+	
+	/**
+	 * To test the method setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
+			ILogicalConnector logicalConnector)
+	 * We try to set an invalid logical connector between two remote operands; so method 
+	 * should throw an IllegalArgumentException.
+	 */
+	public void testsetLogicalConnector1()
+	{
+		try
+		{
+			expr.setLogicalConnector(1, 3, andCond);
+			assertTrue(false);
+		}
+		catch (IllegalArgumentException e)
+		{
+			
+		}
+	}
+	
+	/**
+	 * To test the method setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
+			ILogicalConnector logicalConnector)
+	 * We try to set an valid logical connector between two adjacent operands; 
+	 * so method  should not throw any IllegalArgumentException.
+	 */
+	public void testsetLogicalConnector2()
+	{
+		try
+		{
+			expr.setLogicalConnector(1, 2, andCond);	
+		}
+		catch (IllegalArgumentException e)
+		{
+			assertTrue(false);
+		}
+	}
+	
+	/**
+	 * To test the method addParantheses(int leftOperandIndex, int rightOperandIndex)
+	 * We add parantheses between remote operands and verify the nesting number of
+	 * each logical connector.
+	 */
+	public void testaddParantheses1()
+	{
+		expr.addParantheses(0, 2);
+		assertEquals(1, expr.getLogicalConnector(0, 1).getNestingNumber());
+		assertEquals(1, expr.getLogicalConnector(1, 2).getNestingNumber());
+		assertNotSame(2, expr.getLogicalConnector(1, 2).getNestingNumber());
+	}
+	
+	/**
+	 * To test the method addParantheses(int leftOperandIndex, int rightOperandIndex)
+	 * We add parantheses between remote operands and verify the nesting number of
+	 * each logical connector.
+	 */
+	public void testaddParantheses2()
+	{
+		expr.addParantheses(0, 1);
+		assertEquals(1, expr.getLogicalConnector(0, 1).getNestingNumber());
+		assertEquals(0, expr.getLogicalConnector(1, 2).getNestingNumber());
+		assertNotSame(1, expr.getLogicalConnector(1, 2).getNestingNumber());
+	}
+	
 }
