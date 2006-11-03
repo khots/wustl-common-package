@@ -92,6 +92,10 @@ public class Expression implements IExpression
 	{
 		expressionOperands.add(index, operand);
 		logicalConnectors.add(index - 1, logicalConnector);
+		if(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() > ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber())
+		{
+			((LogicalConnector) logicalConnectors.get(index - 1)).setNestingNumber(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber());
+		}
 	}
 
 	/**
@@ -101,6 +105,10 @@ public class Expression implements IExpression
 	{
 		expressionOperands.add(index, operand);
 		logicalConnectors.add(index, logicalConnector);
+		if(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() < ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber())
+		{
+			((LogicalConnector) logicalConnectors.get(index)).setNestingNumber(((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber());
+		}
 	}
 
 	/**
@@ -120,6 +128,26 @@ public class Expression implements IExpression
 		for (int i = leftOperandIndex; i < rightOperandIndex; i++)
 		{
 			((LogicalConnector) logicalConnectors.get(i)).incrementNestingNumber();
+		}
+	}
+
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeParantheses()
+	 */
+	public void removeParantheses()
+	{
+		removeParantheses(0, logicalConnectors.size() - 1);
+		
+	}
+
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeParantheses(int, int)
+	 */
+	public void removeParantheses(int leftOperandIndex, int rightOperandIndex)
+	{
+		for (int i = leftOperandIndex; i < rightOperandIndex; i++)
+		{
+			((LogicalConnector) logicalConnectors.get(i)).setNestingNumber(((LogicalConnector) logicalConnectors.get(i)).getNestingNumber() - 1);
 		}
 	}
 
