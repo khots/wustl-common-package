@@ -26,6 +26,7 @@ public interface ILogicalConnector
 	/**
 	 * @param nestingNumber
 	 */
-	// public void setNestingNumber(int nestingNumber);
-	// public void incrementNestingNumber();
+	public void setNestingNumber(int nestingNumber);
+	
+	public void incrementNestingNumber();
 }
