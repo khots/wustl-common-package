@@ -56,6 +56,12 @@ public class LogicalConnector implements ILogicalConnector
 		logicalOperator = logicOperatorCode;
 	}
 
+	public void setNestingNumber(int nestingNumber)
+	{
+		this.nestingNumber = nestingNumber;
+		
+	}
+	
 	public void incrementNestingNumber()
 	{
 		nestingNumber++;
