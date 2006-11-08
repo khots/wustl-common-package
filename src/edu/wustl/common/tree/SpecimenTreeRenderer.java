@@ -42,8 +42,15 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 	/**
 	 * public no-args constructor
 	 */
+	public SpecimenTreeRenderer()
+	{
+		super();
+	}
+	
+	
 	public SpecimenTreeRenderer(String specimenType,String specimenClass)
 	{
+		this();
 		this.specimenType = specimenType;
 		this.specimenClass = specimenClass;
 	}
@@ -64,20 +71,31 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
                         tree, value, sel,
                         expanded, leaf, row,
                         hasFocus);
-        
+  
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+        
         SpecimenTreeNode treeNode = (SpecimenTreeNode)node.getUserObject();
-    	Icon icon = createImageIcon("disabled.gif");     
     	
-    	/*The node is clickable when the specimen  type and specimen class of the node is same as that selected by user.
-    	 * In that case,display enabled.gif image to indicate to the use that it is clickable.Otherwise,
-    	 * display disabled.gif.
-    	 */
-    	
-    	if(treeNode.getType().equalsIgnoreCase(specimenType) && treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass))
+        //If the clicked node is root node (i.e, label for specimen tree),then dont display Specimen.gif icon. 
+        Icon icon = createImageIcon("Specimen.gif");
+        
+    	if(!treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME))
     	{
-    		icon = createImageIcon("enabled.gif");       
-            setIcon(icon);
+    		/*The node is clickable when the specimen  type and specimen class of the node is same as that selected by user.
+        	 * In that case,display enabled.gif image to indicate to the use that it is clickable.Otherwise,
+        	 * display disabled.gif.
+        	 */
+    		
+        	if(treeNode.getType().equalsIgnoreCase(specimenType) && treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass))
+        	{
+        		icon = createImageIcon("enabled.gif");       
+                setIcon(icon);
+        	}
+        	else
+        	{
+        		 icon = createImageIcon("disabled.gif");
+        	}
+    		
     	}
   
         setIcon(icon);
@@ -91,6 +109,7 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
     protected Icon createImageIcon(String name) {
 		Icon newLeafIcon = new ImageIcon(getClass().getClassLoader()
 				.getResource("images/" + name));
+			
 		return newLeafIcon;
     }
 }
