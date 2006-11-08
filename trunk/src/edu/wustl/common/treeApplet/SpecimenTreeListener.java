@@ -27,7 +27,17 @@ public class SpecimenTreeListener extends AppletTreeListener
 	 
 	 private String specimenClass;
 	 
-	 /**
+	 private String disabled;
+	 
+	 public String getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(String disabled) {
+		this.disabled = disabled;
+	}
+
+	/**
 	  * public No-Args Constructor.
 	  *
 	  */
@@ -40,10 +50,11 @@ public class SpecimenTreeListener extends AppletTreeListener
 	  * public parametrized Constructor to set the type of specimen node.
 	  *
 	  */
-	 public SpecimenTreeListener(String nodeType,String nodeClass)
+	 public SpecimenTreeListener(String nodeType,String nodeClass,String disabled)
 	 {
 		 type = nodeType;
 		 specimenClass = nodeClass;
+		 this.disabled = disabled;
 	 }
 	 
 
@@ -52,13 +63,24 @@ public class SpecimenTreeListener extends AppletTreeListener
 		SpecimenTreeNode treeNode = (SpecimenTreeNode) node
         .getUserObject();
     	
-		//If Root node selected or node is not of given type, then do nothing.
-		if(treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME) || !(treeNode.getType().equalsIgnoreCase(type)) && (treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass)))
+		//If Root node selected then do nothing
+		if(treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME))
+		{
+			//return;
+		}	
+		//If selected node is not of given type and class, then do nothing.
+		if(!treeNode.getType().equalsIgnoreCase(type) && !treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass))
 		{
 			return;
-		}	
-		if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
+		}
+		//if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
+		
+		//If selected node is of given type and class, then set its value in dropdown and the dropdown is not disabled.
+		else if(treeNode.getType().equalsIgnoreCase(type) && treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass) && disabled.equalsIgnoreCase("false"))
 		{
+				System.out.println("...treeNode.getType() " + treeNode.getType());
+				System.out.println("...treeNode.getSpecimenClass()  " + treeNode.getSpecimenClass());
+				System.out.println("...disabled = " + disabled);
 			setValue="setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
 		}
 		else

@@ -57,7 +57,7 @@ public class TreeApplet extends JApplet
             int port = codeBase.getPort();
             
             String pageOf = this.getParameter(Constants.PAGEOF);
-            String storageContainerType = null,propertyName = null, cdeName = null ,specimenType = null,specimenClass = null;
+            String storageContainerType = null,propertyName = null, cdeName = null ,specimenType = null,specimenClass = null ,disabled=null;
             int treeType = Constants.TISSUE_SITE_TREE_ID;
             
             //Sri: Added for selecting node in the storage tree
@@ -84,6 +84,7 @@ public class TreeApplet extends JApplet
             	treeType = Constants.SPECIMEN_TREE_ID;    
             	specimenType = this.getParameter(Constants.SPECIMEN_TYPE);   
             	specimenClass = this.getParameter(Constants.SPECIMEN_CLASS);
+            	disabled = this.getParameter("disabled");
             }
             
             String session_id = this.getParameter("session_id");
@@ -132,7 +133,7 @@ public class TreeApplet extends JApplet
             else if(pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE))
             {
             	urlSuffix = urlSuffix + "&" + Constants.PROPERTY_NAME + "=" + URLEncoder.encode(propertyName)+ "&" +Constants.SPECIMEN_TYPE+ "=" + URLEncoder.encode(specimenType);
-            	urlSuffix = urlSuffix + "&" + Constants.SPECIMEN_CLASS + "=" + URLEncoder.encode(specimenClass);
+            	urlSuffix = urlSuffix + "&" + Constants.SPECIMEN_CLASS + "=" + URLEncoder.encode(specimenClass) + "&disabled=" + URLEncoder.encode(disabled);
             }
             
             System.out.println("URL......................................"+urlSuffix);
@@ -224,10 +225,10 @@ public class TreeApplet extends JApplet
             else if(pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE))
             {            	
             	//Get the node type from request parameter.
-            	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(specimenType,specimenClass);
+            	SpecimenTreeListener specimenTreeListener = new SpecimenTreeListener(specimenType,specimenClass,disabled);
             	specimenTreeListener.setAppletContext(this.getAppletContext());
 	            tree.addMouseListener(specimenTreeListener);
-	            //tree.setCellRenderer(new SpecimenTreeRenderer(specimenType,specimenClass));
+	            tree.setCellRenderer(new SpecimenTreeRenderer(specimenType,specimenClass));
             }
             else if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) ||  (pageOf.equals(Constants.PAGEOF_SPECIMEN)) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
             {
