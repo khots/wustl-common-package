@@ -111,23 +111,25 @@ public class PagenationTag extends TagSupport
            * Changed by Jitendra on 20/09/06.
            * Previously for some conditions it was failing because of which Next>> link was not showing for some conditions.
            */
-                    if ((m_pageLinkEnd*numResultsPerPage >= totalResults))
-                    {
-                    	m_showNext = false;
-                    }
-
-		            resultLowRange = (pageNum - 1) * numResultsPerPage + 1;
-		            if (totalResults - ((pageNum - 1) * numResultsPerPage) < numResultsPerPage)
-		            {
-		                resultHighRange = resultLowRange + totalResults
-		                        - ((pageNum - 1) * numResultsPerPage) - 1;
-		            }
-		            else
-		            {
-		                resultHighRange = resultLowRange + numResultsPerPage - 1;
-		            }
+                    
                 
                 }
+            	
+            	if ((m_pageLinkEnd*numResultsPerPage >= totalResults))
+                {
+                	m_showNext = false;
+                }
+            	
+            	resultLowRange = (pageNum - 1) * numResultsPerPage + 1;
+	            if (totalResults - ((pageNum - 1) * numResultsPerPage) < numResultsPerPage)
+	            {
+	                resultHighRange = resultLowRange + totalResults
+	                        - ((pageNum - 1) * numResultsPerPage) - 1;
+	            }
+	            else
+	            {
+	                resultHighRange = resultLowRange + numResultsPerPage - 1;
+	            }
             }
 
 //            System.out.println("resultLowRange = "+resultLowRange+" resultHighRange "+resultHighRange+" pageNum = "+pageNum);
