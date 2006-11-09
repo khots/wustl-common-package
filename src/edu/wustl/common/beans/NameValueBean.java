@@ -25,7 +25,9 @@ public class NameValueBean implements Comparable
 {
     private Object name=new Object();
     private Object value=new Object();
-    
+    //To decide whether the NameValueBean has to be sorted by value.
+    //By default it will sort by name.
+    private boolean sortByValue = false;
     public NameValueBean()
     {
         
@@ -36,7 +38,28 @@ public class NameValueBean implements Comparable
         this.name = name;
         this.value = value;
     }
+    public NameValueBean(Object name, Object value,boolean sortByValue)
+    {
+        this.name = name;
+        this.value = value;
+        this.sortByValue = sortByValue;
+    }
     
+
+	/**
+	 * @return Returns the sortByValue.
+	 */
+	public boolean isSortByValue()
+	{
+		return sortByValue;
+	}
+	/**
+	 * @param sortByValue The sortByValue to set.
+	 */
+	public void setSortByValue(boolean sortByValue)
+	{
+		this.sortByValue = sortByValue;
+	}
     /**
      * @return Returns the name.
      */
@@ -87,7 +110,17 @@ public class NameValueBean implements Comparable
 			NameValueBean nameValueBean = (NameValueBean)obj;
 			if(nameValueBean.name instanceof String  )
 			{
-				return name.toString().toLowerCase().compareTo(nameValueBean.getName().toString().toLowerCase());
+			//This fix was required for bug:2818
+			//Sort by value if the variable is set to true.
+				if(sortByValue && nameValueBean.isSortByValue())
+				{
+					return (new Long(Long.parseLong(value.toString()))).compareTo(new Long(Long.parseLong(nameValueBean.getValue())));
+				}
+				else
+				{
+					return name.toString().toLowerCase().compareTo(nameValueBean.getName().toString().toLowerCase());
+				}
+				
 			}
 			else
 			{
