@@ -144,10 +144,4 @@ public class Class implements IClass
 		return "[" + fullQualifiedName + "]";
 	}
 
-	public List<String> allUrls()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

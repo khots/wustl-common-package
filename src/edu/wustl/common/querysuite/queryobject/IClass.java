@@ -1,7 +1,6 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
-import java.util.List;
 
 /**
  * @version 1.0
@@ -31,10 +30,5 @@ public interface IClass extends IFunctionalClass
 	 * @param visible
 	 */
 	public void setVisible(boolean visible);
-	
-	/**
-	 * @return all the urls containing this class.
-	 */
-	public List<String> allUrls();
 
 }
