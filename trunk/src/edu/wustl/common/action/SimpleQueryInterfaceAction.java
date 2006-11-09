@@ -65,14 +65,15 @@ public class SimpleQueryInterfaceAction extends SecureAction
         {
         	Map map = simpleQueryInterfaceForm.getValues();
         	
-        	if(map.containsKey(objectChanged))
-        	{
-        		String objectValue = (String)map.get(objectChanged);
-        		String newFieldValue = objectValue + ".IDENTIFIER.bigint";
-        		
-        		String fieldKey = objectChanged.replaceAll("table","field");
-        		map.put(fieldKey,newFieldValue);
-        	}
+        	//To fixed the bug which says Label/Title should be selected by default in search attibute drop down.
+//        	if(map.containsKey(objectChanged))
+//        	{
+//        		String objectValue = (String)map.get(objectChanged);
+//        		String newFieldValue = objectValue + ".IDENTIFIER.bigint";
+//        		
+//        		String fieldKey = objectChanged.replaceAll("table","field");
+//        		map.put(fieldKey,newFieldValue);
+//        	}
         }
         int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
         for (int i=1;i<=counter;i++)
