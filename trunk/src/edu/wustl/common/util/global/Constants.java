@@ -316,6 +316,9 @@ public class Constants
 	public static final String SPECIMEN_CLASS= "specimenClass";
 	public static final String SPECIMEN_TREE_ROOT_NAME = "Specimens";
 	
+	// Experiment Module
+	public static final int EXPERIMETN_TREE_ID = 5;
+	
 	// Constants for Storage Container.
 	public static final String STORAGE_CONTAINER_TYPE = "storageType";
 	public static final String STORAGE_CONTAINER_TO_BE_SELECTED = "storageToBeSelected";
