@@ -15,7 +15,7 @@ import java.io.Serializable;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CDETreeNode extends TreeNodeImpl implements Serializable
+public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparable
 {
 	private static final long serialVersionUID = 1234567890L;
 	
@@ -53,4 +53,11 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable
     {
         return this.value;
     }
+    
+    //Bug-2717: For sorting
+    public int compareTo(Object tmpobj)
+	{
+    	CDETreeNode treeNode = (CDETreeNode) tmpobj;
+    	return value.compareTo(treeNode.getValue());
+	}
 }
