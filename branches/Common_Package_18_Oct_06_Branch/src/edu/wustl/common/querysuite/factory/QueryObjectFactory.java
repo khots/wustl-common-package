@@ -2,7 +2,6 @@
 package edu.wustl.common.querysuite.factory;
 
 import java.util.List;
-import java.util.Map;
 
 import edu.wustl.common.querysuite.category.ICategory;
 import edu.wustl.common.querysuite.queryobject.DataType;
@@ -23,7 +22,6 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Attribute;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
-import edu.wustl.common.querysuite.queryobject.impl.Edge;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
 import edu.wustl.common.querysuite.queryobject.impl.IntraModelAssociation;
@@ -134,16 +132,14 @@ public class QueryObjectFactory
 		return new Rule(null, null);
 	}
 
-	public static IJoinGraph createJoinGraph(List<IExpressionId> expressionIds,
-			Map<IExpressionId, List<Edge>> incommingEdgeMap,
-			Map<IExpressionId, List<Edge>> outgoingEdgeMap)
+	public static IJoinGraph createJoinGraph(List<IExpressionId> expressionIds)
 	{
-		return new JoinGraph(expressionIds, incommingEdgeMap, outgoingEdgeMap);
+		return new JoinGraph(expressionIds);
 	}
 
 	public static IJoinGraph createJoinGraph()
 	{
-		return new JoinGraph(null, null, null);
+		return new JoinGraph(null);
 	}
 
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
