@@ -7,6 +7,8 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 15.00.04 AM
  */
 
+import java.util.List;
+
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IAssociation;
@@ -16,14 +18,18 @@ import edu.wustl.common.util.Graph;
 
 public class JoinGraph implements IJoinGraph
 {
+	public Graph<IExpressionId, IAssociation> joinGraph;
 
-	Graph<IExpressionId, IAssociation> joinGraph = new Graph<IExpressionId, IAssociation>();
+	public JoinGraph(List<IExpressionId> expressionIds)
+	{
+		joinGraph = new Graph<IExpressionId, IAssociation>();
+		joinGraph.setVertexList(expressionIds);
+	}
 
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#containsAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
-	public boolean containsAssociation(IExpressionId parentExpressionIndex,
-			IExpressionId childExpressionIndex)
+	public boolean containsAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex)
 	{
 		return joinGraph.containsEdge(parentExpressionIndex, childExpressionIndex);
 	}
@@ -31,8 +37,7 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#getAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
-	public IAssociation getAssociation(IExpressionId parentExpressionIndex,
-			IExpressionId childExpressionIndex)
+	public IAssociation getAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex)
 	{
 		return joinGraph.getEdge(parentExpressionIndex, childExpressionIndex);
 	}
@@ -52,8 +57,8 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#putAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IAssociation)
 	 */
-	public IAssociation putAssociation(IExpressionId parentExpressionIndex,
-			IExpressionId childExpressionIndex, IAssociation association) throws CyclicException
+	public IAssociation putAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex, IAssociation association)
+			throws CyclicException
 	{
 		return joinGraph.putEdge(parentExpressionIndex, childExpressionIndex, association);
 	}
@@ -61,12 +66,11 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#removeAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
-	public boolean removeAssociation(IExpressionId firstExpressionIndex,
-			IExpressionId secondExpressionIndex)
+	public boolean removeAssociation(IExpressionId firstExpressionIndex, IExpressionId secondExpressionIndex)
 	{
-		return joinGraph.removeEdge(firstExpressionIndex, secondExpressionIndex)!=null;
+		return joinGraph.removeEdge(firstExpressionIndex, secondExpressionIndex) != null;
 	}
-	
+
 	/**
 	 * Removes the specified id from the list of IExpressionId if one exists
 	 * @param id
@@ -88,5 +92,5 @@ public class JoinGraph implements IJoinGraph
 	{
 		return joinGraph.getRoot();
 	}
-	
+
 }
