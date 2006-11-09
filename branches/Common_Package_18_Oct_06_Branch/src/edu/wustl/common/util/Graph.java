@@ -63,6 +63,36 @@ public class Graph<V, E>
 	}
 
 	/**
+	 * Set the list of vertices for a graph
+	 * @param vertexList
+	 * @return
+	 */
+	public boolean setVertexList(List<V> vertexList)
+	{
+		if(vertexList != null)
+		{
+			this.vertexList = vertexList;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Add a vertex to the list of vertices if same does not exist in the list
+	 * @param vertex
+	 * @return true upon adding vertex to existing vertex list; false otherwise
+	 */
+	public boolean addVertex(V vertex)
+	{
+		if (vertex != null)
+		{
+			if(!(vertexList.contains(vertex)))
+				return vertexList.add(vertex);
+		}
+		return false;
+	}
+	
+	/**
 	 * Get the edge from the list of edges, if one exists between source vertex and target vertex.
 	 * @param sourceVertex
 	 * @param targetVertex
@@ -81,6 +111,8 @@ public class Graph<V, E>
 		}
 		return null;
 	}
+	
+	
 
 	/**
 	 * This method checks whether an edge lies between the source vertex and target vertex.
@@ -179,7 +211,7 @@ public class Graph<V, E>
 
 	/**
 	 * Checks if the graph is connected
-	 * @return true if graph is connected; false otherwise
+	 * @return true if graph is connected; false if graph is disjoint
 	 */
 	public boolean isConnected()
 	{
