@@ -54,21 +54,27 @@ public class PasswordManager
 	public static String generatePassword()
     {
     	//Define a Constants alpha-numeric String 
-    	final String CHAR_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    	final String UPPER_CHAR_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    	final String LOWER_CHAR_STRING = "abcdefghijklmnopqrstuvwxyz";
+    	final String DIGITS_STRING = "0123456789";
     	
     	// Generate password of length 6
-    	final int PASSWORD_LENGTH = 6;
+    	//final int PASSWORD_LENGTH = 6;
     	
     	Random random = new Random();
     	StringBuffer passwordBuff = new StringBuffer(); 
-    	
-    	for (int i = 0; i < PASSWORD_LENGTH ; i++)
+    	//This password must satisfy the following criteria:New Password must include at least one 
+    	//Upper Case, Lower Case letter and a Number. It must not include Space.
+    	for (int i = 0; i < 2 ; i++)
 		{
     		//Generate a random number from 0(inclusive) to lenght of CHAR_STRING(exclusive).
-    		int randomVal = random.nextInt(CHAR_STRING.length());
-    		
     		//Get the character corrosponding to random number and append it to password buffer.
-    		passwordBuff.append(CHAR_STRING.charAt(randomVal));
+    		int randomVal = random.nextInt(UPPER_CHAR_STRING.length());
+    		passwordBuff.append(UPPER_CHAR_STRING.charAt(randomVal));
+    		randomVal = random.nextInt(LOWER_CHAR_STRING.length());
+    		passwordBuff.append(LOWER_CHAR_STRING.charAt(randomVal));
+    		randomVal = random.nextInt(DIGITS_STRING.length());
+    		passwordBuff.append(DIGITS_STRING.charAt(randomVal));
 		}
     	return passwordBuff.toString();
     }
@@ -446,7 +452,7 @@ public class PasswordManager
     	String encodedPWD = encode(pwd);
     	System.out.println("encodedPWD "+encodedPWD);
     	
-        System.out.println(decode("65416a575265696c7063656f"));
+        System.out.println(decode("4e41705731654f6c7263316f"));
         
         //Mandar 08-May-06
         if(args.length > 1 )

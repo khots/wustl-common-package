@@ -11,6 +11,7 @@
 package edu.wustl.common.bizlogic;
 
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -142,10 +143,14 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
                     								permissibleValueImpl.getSubPermissibleValues());
             if (subPermissibleValues != null)
             {
+            	//Bug-2717: For sorting  
+            	Collections.sort(subPermissibleValues);
                 treeNode.setChildNodes(subPermissibleValues);
             }
             
             treeNodeVector.add(treeNode);
+            //Bug-2717: For sorting
+            Collections.sort(treeNodeVector);
         }
         
         return treeNodeVector;
@@ -176,6 +181,8 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
             	getFilteredCDE(subPermissibleValues,permissibleValueList);
             }
         }
+        //Bug-2717: For sorting
+        Collections.sort(permissibleValueList);
     }
     
 	/* (non-Javadoc)
