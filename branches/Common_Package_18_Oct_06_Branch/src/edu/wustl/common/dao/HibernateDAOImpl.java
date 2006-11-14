@@ -172,10 +172,10 @@ public class HibernateDAOImpl implements HibernateDAO
 			}
     		
     		String sql = "UPDATE "+tableName+" SET ACTIVITY_STATUS = '"+Constants.ACTIVITY_STATUS_DISABLED+ "' WHERE "+whereColumnName+" IN ( "+buff.toString()+")";
-    		Logger.out.debug("sql "+sql);
+    		//Logger.out.debug("sql "+sql);
     		int count = st.executeUpdate(sql);
     		st.close();
-    		Logger.out.debug("Update count "+count);
+    		//Logger.out.debug("Update count "+count);
         }
         catch (HibernateException dbex)
         {
@@ -226,7 +226,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     isAuthorized = false;
                 }
             }
-            Logger.out.debug(" User's Authorization to insert "+obj.getClass()+" , "+isAuthorized);
+            //Logger.out.debug(" User's Authorization to insert "+obj.getClass()+" , "+isAuthorized);
             
             if(isAuthorized)
             {
@@ -273,7 +273,7 @@ public class HibernateDAOImpl implements HibernateDAO
             {
                 for (int i = 0; i < str.length; i++)
                 {
-                	Logger.out.debug("str:" + str[i]);
+                	//Logger.out.debug("str:" + str[i]);
                     message.append(str[i] + " ");
                 }
             }
@@ -369,7 +369,7 @@ public class HibernateDAOImpl implements HibernateDAO
         {
             if (obj instanceof Auditable && isAuditable)
             {
-                Logger.out.debug("In update audit...................................");
+                //Logger.out.debug("In update audit...................................");
                 auditManager.compare((Auditable) obj, (Auditable)oldObj, "UPDATE");
             }
         }
@@ -459,7 +459,7 @@ public class HibernateDAOImpl implements HibernateDAO
             
             String className = Utility.parseClassName(sourceObjectName);
             
-            Logger.out.debug("***********className:"+className);
+            //Logger.out.debug("***********className:"+className);
             if (selectColumnName != null && selectColumnName.length > 0)
             {
                 sqlBuff.append("Select ");
@@ -508,7 +508,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     	Object valArr[] = (Object [])whereColumnValue[i];
                     	for (int j = 0; j < valArr.length; j++)
 						{
-                    		Logger.out.debug(sqlBuff);
+                    		//Logger.out.debug(sqlBuff);
                     		sqlBuff.append("? ");
                     		if((j+1)<valArr.length)
                     			sqlBuff.append(", ");
@@ -532,7 +532,7 @@ public class HibernateDAOImpl implements HibernateDAO
                         sqlBuff.append(" " + joinCondition + " ");
                 }
                 
-                Logger.out.debug(sqlBuff.toString());
+                //Logger.out.debug(sqlBuff.toString());
                 
                 query = session.createQuery(sqlBuff.toString());
                 
@@ -643,7 +643,7 @@ public class HibernateDAOImpl implements HibernateDAO
 //            }
             //---------------------------------
             
-            Logger.out.debug(" String : " + sqlBuff.toString());
+            //Logger.out.debug(" String : " + sqlBuff.toString());
         }
         catch (HibernateException hibExp)
         {

@@ -1,3 +1,4 @@
+
 package edu.wustl.common.util.dbManager;
 
 import java.io.PrintStream;
@@ -11,27 +12,29 @@ import java.io.PrintWriter;
  */
 public class DAOException extends Exception
 {
-	private Exception wrapException; 
-	
+
+	private Exception wrapException;
+
 	/**
 	 *  message initialised with super.getMessage()
 	 */
 	private String message = super.getMessage();
-	
+
 	/**
-	 *  message initialised with super.getMessage()
+	 *  message which is used as supporting message to the main message
 	 */
-	private String supportingMessage; 
+	private String supportingMessage;
+
 	public DAOException(String message)
 	{
-		this(message,null);
+		this(message, null);
 	}
-	
+
 	public DAOException(Exception ex)
 	{
-		this("",ex);
+		this("", ex);
 	}
-	
+
 	/**
 	 * @param wrapException The wrapException to set.
 	 */
@@ -40,7 +43,7 @@ public class DAOException extends Exception
 		super(message);
 		this.wrapException = wrapException;
 	}
-	
+
 	/**
 	 * @return Returns the wrapException.
 	 */
@@ -48,7 +51,7 @@ public class DAOException extends Exception
 	{
 		return wrapException;
 	}
-	
+
 	/**
 	 * @param wrapException The wrapException to set.
 	 */
@@ -56,28 +59,31 @@ public class DAOException extends Exception
 	{
 		this.wrapException = wrapException;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Throwable#printStackTrace()
 	 */
 	public void printStackTrace()
 	{
 		super.printStackTrace();
-		if(wrapException!=null)
+		if (wrapException != null)
 			wrapException.printStackTrace();
 	}
+
 	public void printStackTrace(PrintWriter thePrintWriter)
 	{
 		super.printStackTrace(thePrintWriter);
-		if(wrapException!=null)
+		if (wrapException != null)
 			wrapException.printStackTrace(thePrintWriter);
 	}
+
 	public void printStackTrace(PrintStream thePrintStream)
 	{
 		super.printStackTrace(thePrintStream);
-		if(wrapException!=null)
+		if (wrapException != null)
 			wrapException.printStackTrace(thePrintStream);
 	}
+
 	/**
 	 * @return Returns the message.
 	 */
@@ -85,6 +91,7 @@ public class DAOException extends Exception
 	{
 		return message;
 	}
+
 	/**
 	 * @param message The message to set.
 	 */
@@ -92,6 +99,7 @@ public class DAOException extends Exception
 	{
 		this.message = message;
 	}
+
 	/**
 	 * @return Returns the supportingMessage.
 	 */
@@ -99,6 +107,7 @@ public class DAOException extends Exception
 	{
 		return supportingMessage;
 	}
+
 	/**
 	 * @param supportingMessage The supportingMessage to set.
 	 */

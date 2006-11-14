@@ -53,10 +53,11 @@ public class SimpleQueryInterfaceAction extends SecureAction
         	String originalCounter = (String)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
     		simpleQueryInterfaceForm.setValues(simpleQueryMap);
     		simpleQueryInterfaceForm.setCounter(originalCounter);
-    		//Set the session objects to null after it is set in the form.
-    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
-    		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
     	}
+		//Set the session objects to null after it is set in the form.
+		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
+		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
+
         //Patch for Bug : 806
         String objectChanged = request.getParameter("objectChanged");
         
@@ -64,14 +65,15 @@ public class SimpleQueryInterfaceAction extends SecureAction
         {
         	Map map = simpleQueryInterfaceForm.getValues();
         	
-        	if(map.containsKey(objectChanged))
-        	{
-        		String objectValue = (String)map.get(objectChanged);
-        		String newFieldValue = objectValue + ".IDENTIFIER.bigint";
-        		
-        		String fieldKey = objectChanged.replaceAll("table","field");
-        		map.put(fieldKey,newFieldValue);
-        	}
+        	//To fixed the bug which says Label/Title should be selected by default in search attibute drop down.
+//        	if(map.containsKey(objectChanged))
+//        	{
+//        		String objectValue = (String)map.get(objectChanged);
+//        		String newFieldValue = objectValue + ".IDENTIFIER.bigint";
+//        		
+//        		String fieldKey = objectChanged.replaceAll("table","field");
+//        		map.put(fieldKey,newFieldValue);
+//        	}
         }
         int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
         for (int i=1;i<=counter;i++)

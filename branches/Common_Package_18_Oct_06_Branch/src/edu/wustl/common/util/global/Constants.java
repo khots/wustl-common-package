@@ -134,6 +134,8 @@ public class Constants
 	
 	public static final String  ORACLE_DATABASE = "ORACLE";
 	public static final String  MYSQL_DATABASE = "MYSQL";
+	public static final String  POSTGRESQL_DATABASE = "POSTGRESQL";
+	
 	
 	// The unique key voilation message is "Duplicate entry %s for key %d"
 	// This string is used for searching " for key " string in the above error message
@@ -306,14 +308,18 @@ public class Constants
 	public static final String PAGEOF_SPECIMEN = "pageOfSpecimen";
 	public static final String PAGEOF_TISSUE_SITE = "pageOfTissueSite";
 	public static final String PAGEOF_MULTIPLE_SPECIMEN = "pageOfMultipleSpecimen";
+	//Added By Ramya
+	public static final String PAGEOF_SPECIMEN_TREE = "pageOfSpecimenTree";
 	
 	//Added By Ramya
 	//Constants to display Specimen Tree in RequestDetails.jsp
-	public static final String PAGEOF_REQUEST_DETAILS = "pageOfRequestDetails";
-	public static final int REQUEST_DETAILS_ID = 4;
-	public static final String REQUEST_DETAILS = "Specimen Tree";
-	public static final String SPECIMEN_TYPE = "type";
+	public static final int SPECIMEN_TREE_ID = 4;
+	public static final String SPECIMEN_TYPE = "type";	
+	public static final String SPECIMEN_CLASS= "specimenClass";
 	public static final String SPECIMEN_TREE_ROOT_NAME = "Specimens";
+	
+	// Experiment Module
+	public static final int EXPERIMETN_TREE_ID = 5;
 	
 	// Constants for Storage Container.
 	public static final String STORAGE_CONTAINER_TYPE = "storageType";
@@ -465,4 +471,5 @@ public class Constants
 	public static final String SPECIMEN = "Specimen";
 	public static final String SPECIMEN_COLLECTION_GROUP ="SpecimenCollectionGroup";
 	public static final String ALL = "All";
+	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 }
