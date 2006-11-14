@@ -196,6 +196,10 @@ public class HibernateMetaData
 		{
 			dbName=Constants.MYSQL_DATABASE;
 		}
+		else if (dialect.toLowerCase().indexOf("PostgreSQL") != -1)
+		{
+			dbName = Constants.POSTGRESQL_DATABASE;
+		}
 		return dbName;
 	}
 	public static void getDATA(Class classObj)
