@@ -6,6 +6,7 @@
 	<!--define require dir and Properties -->	
 	<property name="base.dir" value="."/>
     <property name="src.dir" value="${base.dir}/src"/>
+    <property name="test.dir" value="${base.dir}/test"/>
     <property name="target.dir" value="${base.dir}/classes"/>
     <property name="lib.dir" value="${base.dir}/lib"/>
     <property name="build.dir" value="${base.dir}/build"/>
@@ -47,6 +48,8 @@
     <target name="compile" depends="init">
         <javac destdir="${target.dir}" includes="**/*.*" includeAntRuntime="false">
             <src path="${src.dir}"/>
+            <src path="${test.dir}"/>
+ 	
             <classpath>
               <fileset dir="${lib.dir}">
                   <include name="*.jar"/>
@@ -55,6 +58,12 @@
         </javac>
     	<copy todir="${target.dir}">
     		<fileset dir="${src.dir}">
+    			<include name="**/*.properties"/>
+    			<include name="**/*.xml"/>
+    			<include name="**/*.hbm.xml"/>
+    			<include name="**/*.ser"/>
+	    	</fileset>
+    		<fileset dir="${test.dir}">
     			<include name="**/*.properties"/>
     			<include name="**/*.xml"/>
     			<include name="**/*.hbm.xml"/>
@@ -196,7 +205,12 @@
         </delete>
         
         <jar taskname="build_jar" jarfile="${build.dir}/commonpackage.jar">
-            <fileset dir="${target.dir}" includes="**/*"/>
+            <fileset dir="${target.dir}">
+            	<include name="**/*"/>
+        		<exclude name="**/SqlGeneratorTestCase*"/>
+            	<exclude name="**/ExpressionTestCases*"/>
+            	<exclude name="**/JoinGraphTestCase*"/>
+            </fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties"/>	
         </jar>
 		
