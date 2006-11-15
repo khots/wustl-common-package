@@ -105,6 +105,6 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
     public int compareTo(Object tmpobj)
 	{
     	StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
-    	return value.compareTo(treeNode.getValue());
+    	return this.identifier.compareTo(treeNode.identifier);
 	}
  }
