@@ -18,19 +18,28 @@ import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.jdesktop.swingx.JXTree;
+
 /**
  * GenerateTree generates tree for the storage structure.
  * @author gautam_shetty
  */
 public class GenerateTree
 {
+	
+	public JTree createTree(Vector dataVector, int treeType)
+    {
+		JTree tree = createTree(dataVector, treeType, false);
+		return tree;
+    }
+	
     /**
      * Creates and returns the JTree from the vector of data nodes passed.
      * @param dataVector the data vector.
      * @param treeType the type of tree.
      * @return the JTree from the vector of data nodes passed.
      */
-    public JTree createTree(Vector dataVector, int treeType)
+    public JTree createTree(Vector dataVector, int treeType,boolean isJXTree)
     {
         TreeNode rootName = null;
         if (dataVector != null && (dataVector.isEmpty()==false))
@@ -46,24 +55,30 @@ public class GenerateTree
         
         //Create the hierarchy under the root node.
         createHierarchy(root, dataVector);
-        
-        JTree tree = new JTree(root){
+        JTree tree;
+        if(isJXTree)
+        {
+        	tree = new JXTree(root);
+        }else
+        {
+        	tree = new JTree(root){
 			public String getToolTipText(MouseEvent e) {
-				String tip = "";
-				TreePath path = getPathForLocation(e.getX(), e.getY());
-				if (path != null) 
-				{
-					Object treeNode = path.getLastPathComponent();
-					if (treeNode instanceof DefaultMutableTreeNode)
+					String tip = "";
+					TreePath path = getPathForLocation(e.getX(), e.getY());
+					if (path != null) 
 					{
-						TreeNodeImpl userObject = (TreeNodeImpl)((DefaultMutableTreeNode)treeNode).getUserObject();
-						tip = userObject.getToolTip();
+						Object treeNode = path.getLastPathComponent();
+						if (treeNode instanceof DefaultMutableTreeNode)
+						{
+							TreeNodeImpl userObject = (TreeNodeImpl)((DefaultMutableTreeNode)treeNode).getUserObject();
+							tip = userObject.getToolTip();
+						}
 					}
+					return tip;
 				}
-				return tip;
-			}
-		};
-		ToolTipManager.sharedInstance().registerComponent(tree);
+        	};
+        	ToolTipManager.sharedInstance().registerComponent(tree);
+        }
         return tree;
     }
     
