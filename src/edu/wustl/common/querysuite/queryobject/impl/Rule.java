@@ -8,22 +8,29 @@ package edu.wustl.common.querysuite.queryobject.impl;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.LogicalOperator;
+import edu.wustl.common.util.global.Constants;
 
 public class Rule implements IRule
 {
 
+	private static final long serialVersionUID = 7408369497435719981L;
 	private List<ICondition> conditions = new ArrayList<ICondition>();
 	private IExpression containingExpression;
 
-	public Rule(List<ICondition> conditions, IExpression containingExpression)
+	public Rule ()
 	{
-		this.containingExpression = containingExpression;
+		
+	}
+	public Rule(List<ICondition> conditions)
+	{
 		if (conditions != null)
 			this.conditions = conditions;
 	}
@@ -72,11 +79,64 @@ public class Rule implements IRule
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IRule#getSize()
+	 * @see edu.wustl.common.querysuite.queryobject.IRule#size()
 	 */
-	public int getSize()
+	public int size()
 	{
 		return conditions.size();
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		String string = "";
+		for (int i = 0; i < conditions.size(); i++)
+		{
+			string = string + conditions.get(i).toString();
+			if (i != conditions.size())
+				string = string + " " + LogicalOperator.And + " ";
+		}
+		return "[" + string + "]";
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+
+		if (containingExpression != null)
+			hash = hash & Constants.HASH_PRIME + containingExpression.hashCode();
+
+		if (conditions != null)
+			hash = hash * Constants.HASH_PRIME + new HashSet<ICondition>(conditions).hashCode();
+
+		return hash;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+
+		if (obj != null && this.getClass() == obj.getClass())
+		{
+			Rule rule = (Rule) obj;
+			if (this.containingExpression != null
+					&& this.containingExpression.equals(rule.containingExpression)
+					&& new HashSet<ICondition>(this.conditions).equals(new HashSet<ICondition>(
+							rule.conditions)))
+				return true;
+		}
+		return false;
+	}
 }

@@ -7,7 +7,7 @@ package edu.wustl.common.querysuite.queryobject;
  * @version 1.0
  * @updated 11-Oct-2006 02:56:16 PM
  */
-public interface IExpressionOperand
+public interface IExpressionOperand extends IBaseQueryObject
 {
 
 	/**

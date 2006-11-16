@@ -18,12 +18,13 @@ import edu.wustl.common.util.Graph;
 
 public class JoinGraph implements IJoinGraph
 {
+
+	private static final long serialVersionUID = 2671567170682456142L;
 	public Graph<IExpressionId, IAssociation> joinGraph;
 
-	public JoinGraph(List<IExpressionId> expressionIds)
+	public JoinGraph()
 	{
 		joinGraph = new Graph<IExpressionId, IAssociation>();
-		joinGraph.setVertexList(expressionIds);
 	}
 
 	/**
@@ -90,7 +91,20 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public IExpressionId getRoot() throws MultipleRootsException
 	{
-		return joinGraph.getRoot();
+		List<IExpressionId> unReachableNode = joinGraph.getUnreachableNodeList();
+		
+		if (unReachableNode.size()==0)
+			throw new MultipleRootsException("No Root Exist for the Joing Graph!!!!");
+		
+		if (unReachableNode.size()!=1)
+			throw new MultipleRootsException("Multiple Root Exist for the Joing Graph!!!!");
+		
+		return unReachableNode.get(0);
+	}
+
+	public boolean addIExpressionId(IExpressionId id)
+	{
+		return joinGraph.addVertex(id);
 	}
 
 }

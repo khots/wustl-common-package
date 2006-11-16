@@ -18,7 +18,7 @@ import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
  * @see edu.wustl.common.querysuite.queryobject.IExpression
  * @see edu.wustl.common.querysuite.queryobject.IJoinGraph
  */
-public interface IConstraints
+public interface IConstraints extends IBaseQueryObject
 {
 
 	/**

@@ -23,11 +23,14 @@ import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 public class Constraints implements IConstraints
 {
 
+	private static final long serialVersionUID = 6169601255945564445L;
+
 	private Map<IExpressionId, IExpression> expressions = new LinkedHashMap<IExpressionId, IExpression>();
 
 	private IJoinGraph joinGraph;
 
 	private int currentExpressionId = 0;
+
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#addExpression(edu.wustl.common.querysuite.queryobject.IFunctionalClass)
 	 */
@@ -35,6 +38,7 @@ public class Constraints implements IConstraints
 	{
 		IExpression expression = new Expression(functionalClass, ++currentExpressionId);
 		expressions.put(expression.getExpressionId(), expression);
+		joinGraph.addIExpressionId(expression.getExpressionId());
 		return expression;
 	}
 
@@ -61,11 +65,6 @@ public class Constraints implements IConstraints
 	 */
 	public IExpressionId getRootExpressionId() throws MultipleRootsException
 	{
-		Set<IExpressionId> expressionSet = expressions.keySet();
-		if (expressionSet.size()==1)
-		{
-			return expressionSet.iterator().next();
-		}
 		return joinGraph.getRoot();
 	}
 

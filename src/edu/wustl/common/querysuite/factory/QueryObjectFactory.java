@@ -124,22 +124,17 @@ public class QueryObjectFactory
 
 	public static IRule createRule(List<ICondition> conditions, IExpression containingExpression)
 	{
-		return new Rule(conditions, containingExpression);
+		return new Rule(conditions);
 	}
 
 	public static IRule createRule()
 	{
-		return new Rule(null, null);
-	}
-
-	public static IJoinGraph createJoinGraph(List<IExpressionId> expressionIds)
-	{
-		return new JoinGraph(expressionIds);
+		return new Rule();
 	}
 
 	public static IJoinGraph createJoinGraph()
 	{
-		return new JoinGraph(null);
+		return new JoinGraph();
 	}
 
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,

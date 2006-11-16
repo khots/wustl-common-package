@@ -25,7 +25,7 @@ import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
  * @version 1.0
  * @updated 11-Oct-2006 02:57:02 PM
  */
-public interface IJoinGraph
+public interface IJoinGraph extends IBaseQueryObject
 {
 
 	/**
@@ -82,5 +82,12 @@ public interface IJoinGraph
 	 * @param id
 	 * @return true upon removing specified existing id; false otherwise
 	 */
-	public boolean removeIExpressionId(IExpressionId id);
+	boolean removeIExpressionId(IExpressionId id);
+	
+	/**
+	 * Adds the IExpressionId to the graph graph.
+	 * @param id the reference to IExpressionId
+	 * @return true if the given expression id already exist in grapg; false otherwise
+	 */
+	boolean addIExpressionId(IExpressionId id);
 }

@@ -7,30 +7,35 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 11.12.04 AM
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.category.ICategory;
-import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
+import edu.wustl.common.util.global.Constants;
 
-public class Class implements IClass
+public class Class extends FunctionalClass implements IClass
 {
 
-	private String fullQualifiedName;
+	private static final long serialVersionUID = 4139633557474223876L;
+	private String fullyQualifiedName;
 	private boolean visible;
-	private List<IAttribute> attributes = new ArrayList<IAttribute>();
-	private ICategory category;
-
+	
+	/**
+	 * 
+	 * @param fullQualifiedName
+	 * @param attributes
+	 * @param category
+	 * @param isVisible
+	 */
 	public Class(String fullQualifiedName, List<IAttribute> attributes, ICategory category,
 			boolean isVisible)
 	{
-		this.fullQualifiedName = fullQualifiedName;
+		this.fullyQualifiedName = fullQualifiedName;
 		this.visible = isVisible;
 		if (attributes != null)
-			this.attributes = attributes;
-		this.category = category;
+			this.attributes= attributes;
+		this.category  = category;
 	}
 
 	/**
@@ -38,7 +43,7 @@ public class Class implements IClass
 	 */
 	public String getFullyQualifiedName()
 	{
-		return fullQualifiedName;
+		return fullyQualifiedName;
 	}
 
 	/**
@@ -50,16 +55,14 @@ public class Class implements IClass
 	}
 
 	/**
-	 * @param fullyQualifiedName
 	 * @see edu.wustl.common.querysuite.queryobject.IClass#setFullyQualifiedName(java.lang.String)
 	 */
 	public void setFullyQualifiedName(String fullyQualifiedName)
 	{
-		fullQualifiedName = fullyQualifiedName;
+		this.fullyQualifiedName = fullyQualifiedName;
 	}
 
 	/**
-	 * @param visible
 	 * @see edu.wustl.common.querysuite.queryobject.IClass#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible)
@@ -68,69 +71,31 @@ public class Class implements IClass
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#addAttribute()
+	 * @see java.lang.Object#hashCode()
 	 */
-	public IAttribute addAttribute()
+	@Override
+	public int hashCode()
 	{
-		IAttribute iAttribute = QueryObjectFactory.createAttribute();
-		attributes.add(iAttribute);
-		return iAttribute;
+		int hash = 1;
+		if (fullyQualifiedName!=null)
+			hash = hash*Constants.HASH_PRIME + fullyQualifiedName.hashCode();
+		return hash;
 	}
-
-	/**
-	 * @param attribute
-	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#addAttribute(edu.wustl.common.querysuite.queryobject.IAttribute)
-	 */
-	public boolean addAttribute(IAttribute attribute)
-	{
-		return(attributes.add(attribute));
-	}
-
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#getAttributes()
-	 */
-	public List<IAttribute> getAttributes()
-	{
-		return attributes;
-	}
-
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#getCategory()
-	 */
-	public ICategory getCategory()
-	{
-		return category;
-	}
-
-	/**
-	 * @param attributes
-	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#setAttributes(java.util.List)
-	 */
-	public void setAttributes(List<IAttribute> attributes)
-	{
-		this.attributes = attributes;
-	}
-
-	/**
-	 * @param category
-	 * @see edu.wustl.common.querysuite.queryobject.IFunctionalClass#setCategory(edu.wustl.common.querysuite.category.ICategory)
-	 */
-	public void setCategory(ICategory category)
-	{
-		this.category = category;
-	}
-
+	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj != null && obj instanceof Class)
+		if (this==obj)
+			return true;
+		
+		if (obj != null && this.getClass()==obj.getClass())
 		{
 			Class theClass = (Class) obj;
-			if (fullQualifiedName != null && fullQualifiedName.equals(theClass.fullQualifiedName))
-				return true;
+			if (fullyQualifiedName != null && fullyQualifiedName.equals(theClass.fullyQualifiedName))
+				return super.equals(theClass);
 		}
 		return false;
 	}
@@ -141,7 +106,6 @@ public class Class implements IClass
 	@Override
 	public String toString()
 	{
-		return "[" + fullQualifiedName + "]";
+		return "[" + fullyQualifiedName+":" + attributes + "]";
 	}
-
 }

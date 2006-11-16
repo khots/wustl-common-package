@@ -171,7 +171,7 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			String sql = generator.generateSQL(query);
-						System.out.println(sql);
+//						System.out.println(sql);
 
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
