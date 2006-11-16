@@ -8,18 +8,21 @@ package edu.wustl.common.querysuite.queryobject.impl;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.wustl.common.querysuite.category.ICategory;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
+import edu.wustl.common.util.global.Constants;
 
 public class FunctionalClass implements IFunctionalClass
 {
 
-	private List<IAttribute> attributes = new ArrayList<IAttribute>();
-	private ICategory category;
+	private static final long serialVersionUID = 2251317784460798583L;
+	protected List<IAttribute> attributes = new ArrayList<IAttribute>();
+	protected ICategory category;
 
 	public FunctionalClass(List<IAttribute> attributes, ICategory category)
 	{
@@ -48,7 +51,7 @@ public class FunctionalClass implements IFunctionalClass
 	 */
 	public boolean addAttribute(IAttribute attribute)
 	{
-			return(attributes.add(attribute));
+		return (attributes.add(attribute));
 	}
 
 	/**
@@ -83,6 +86,51 @@ public class FunctionalClass implements IFunctionalClass
 	public void setCategory(ICategory category)
 	{
 		this.category = category;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "[" + category + ":" + attributes + "]";
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (category != null)
+			hash = hash * Constants.HASH_PRIME + category.hashCode();
+
+		hash = hash * Constants.HASH_PRIME + new HashSet<IAttribute>(attributes).hashCode();
+
+		return hash;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+
+		if (obj != null && this.getClass() == obj.getClass())
+		{
+			FunctionalClass theClass = (FunctionalClass) obj;
+			if (category != null
+					&& category.equals(theClass.category)
+					&& new HashSet<IAttribute>(attributes).equals(new HashSet<IAttribute>(
+							theClass.attributes)))
+				return true;
+		}
+		return false;
 	}
 
 }

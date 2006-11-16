@@ -236,7 +236,7 @@ public class SqlGenerator implements ISqlGenerator
 			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
-		int noOfRules = expression.getSize();
+		int noOfRules = expression.numberOfOperands();
 		int prevNesting = 0;
 		int openingBraces = 0; // holds number of opening Braces added to SQL.
 
@@ -374,7 +374,7 @@ public class SqlGenerator implements ISqlGenerator
 			DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
-		int noOfConditions = rule.getSize();
+		int noOfConditions = rule.size();
 
 		for (int i = 0; i < noOfConditions; i++) // Processing all conditions in Rule combining them with AND operator.
 		{

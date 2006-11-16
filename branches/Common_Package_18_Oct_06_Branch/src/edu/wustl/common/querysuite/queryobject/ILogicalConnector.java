@@ -8,7 +8,7 @@ package edu.wustl.common.querysuite.queryobject;
  * @version 1.0
  * @updated 11-Oct-2006 02:57:02 PM
  */
-public interface ILogicalConnector
+public interface ILogicalConnector extends IBaseQueryObject
 {
 
 	public LogicalOperator getLogicalOperator();

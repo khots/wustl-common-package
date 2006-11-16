@@ -13,10 +13,12 @@ import java.util.List;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.util.global.Constants;
 
 public class Condition implements ICondition
 {
 
+	private static final long serialVersionUID = -307627971270099316L;
 	private IAttribute attribute;
 	private RelationalOperator relationalOperator;
 	private List<String> values = new ArrayList<String>();
@@ -97,7 +99,10 @@ public class Condition implements ICondition
 	 */
 	public void setValue(String value)
 	{
-		values.set(0, value);
+		if (values.isEmpty())
+			values.add(value);
+		else
+			values.set(0, value);
 	}
 
 	/**
@@ -106,31 +111,43 @@ public class Condition implements ICondition
 	 */
 	public void setValues(List<String> values)
 	{
+		if (values==null)
+			values = new ArrayList<String>();
 		this.values = values;
 	}
 
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (attribute!=null)
+			hash = hash*Constants.HASH_PRIME + attribute.hashCode();
+		if (relationalOperator!=null)
+			hash = hash*Constants.HASH_PRIME + relationalOperator.hashCode();
+		
+		return hash;
+	}
+	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj != null && obj instanceof Condition)
+		if (this == obj)
+			return true;
+		if (obj != null && this.getClass() == obj.getClass())
 		{
 			Condition condition = (Condition) obj;
 			if (attribute != null && attribute.equals(condition.attribute)
 					&& relationalOperator != null
-					&& relationalOperator.equals(condition.relationalOperator))
+					&& relationalOperator.equals(condition.relationalOperator)
+					&& values.equals(condition.values))
 			{
-				if (values.size() == condition.values.size())
-				{
-					for (int i = 0; i < values.size(); i++)
-					{
-						if (!values.get(i).equals(condition.values.get(i)))
-							return false;
-					}
-					return true;
-				}
+				return true;
 			}
 
 		}
@@ -143,7 +160,7 @@ public class Condition implements ICondition
 	@Override
 	public String toString()
 	{
-		return "[" + attribute + "." + relationalOperator + " = " + values + "]";
+		return "[" + attribute.getAttributeName() + "." + relationalOperator + " = " + values + "]";
 	}
 
 }

@@ -20,7 +20,7 @@ public class ExpressionTestCases extends TestCase
 	IExpression expr;
 	IExpression expr2;
 	IExpression bigExpr;
-	ILogicalConnector orCond;
+	ILogicalConnector orCondB,orCondE;
 	ILogicalConnector andCond;
 	IRule a;
 	IRule b;
@@ -49,8 +49,8 @@ public class ExpressionTestCases extends TestCase
 		expr.addOperand(a);
 
 		b = QueryObjectFactory.createRule();
-		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
-		expr.addOperand(orCond, b);
+		orCondB = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
+		expr.addOperand(orCondB, b);
 
 		c = QueryObjectFactory.createRule();
 		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.And, 0);
@@ -61,8 +61,8 @@ public class ExpressionTestCases extends TestCase
 		expr2.addOperand(d);
 
 		e = QueryObjectFactory.createRule();
-		orCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
-		expr2.addOperand(orCond, e);
+		orCondE = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
+		expr2.addOperand(orCondE, e);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class ExpressionTestCases extends TestCase
 
 		try
 		{
-			assertEquals(orCond, expr.getLogicalConnector(0, 1));
+			assertEquals(orCondB, expr.getLogicalConnector(0, 1));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -125,7 +125,7 @@ public class ExpressionTestCases extends TestCase
 
 		try
 		{
-			assertEquals(orCond, expr.getLogicalConnector(0, 1));
+			assertEquals(orCondB, expr.getLogicalConnector(0, 1));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -163,7 +163,7 @@ public class ExpressionTestCases extends TestCase
 
 		try
 		{
-			assertEquals(orCond, expr.getLogicalConnector(0, 1));
+			assertEquals(orCondB, expr.getLogicalConnector(0, 1));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -182,7 +182,7 @@ public class ExpressionTestCases extends TestCase
 
 		try
 		{
-			assertEquals(orCond, expr.getLogicalConnector(0, 1));
+			assertEquals(orCondB, expr.getLogicalConnector(0, 1));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -239,7 +239,7 @@ public class ExpressionTestCases extends TestCase
 
 		try
 		{
-			assertEquals(orCond, expr.getLogicalConnector(0, 1));
+			assertEquals(orCondB, expr.getLogicalConnector(0, 1));
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -249,21 +249,24 @@ public class ExpressionTestCases extends TestCase
 
 	/*
 	 * Expression is (d or e)-- we try to remove operand d; 
-	 * it should give us e as the final expression
+	 * it should give us e as the final expression with no logical connector
 	 */
 	public void testremoveOperandCase10()
 	{
 		expr2.addParantheses(0, 1);
 		assertTrue(expr2.removeOperand(e));
 
-		/*try
+		try
 		 {
-		 assertEquals(orCond, expr2.getLogicalConnector(0,1));
+			expr2.getLogicalConnector(0,1);
+			assertTrue("Expected IndexOutOfBoundsException for removed Logical Connector!!!",false);
+			expr2.getOperand(1);
+			assertTrue("Expected IndexOutOfBoundsException for removed Operand!!!",false);
 		 }
-		 catch (IllegalArgumentException e)
+		 catch (IndexOutOfBoundsException e)
 		 {
-		 assertTrue(false);
-		 }*/
+		 }
+		 
 	}
 
 	/*
@@ -354,7 +357,7 @@ public class ExpressionTestCases extends TestCase
 	{
 		try
 		{
-			assertEquals(orCond, expr.getLogicalConnector(0, 1));
+			assertEquals(orCondB, expr.getLogicalConnector(0, 1));
 		}
 		catch (IllegalArgumentException e)
 		{

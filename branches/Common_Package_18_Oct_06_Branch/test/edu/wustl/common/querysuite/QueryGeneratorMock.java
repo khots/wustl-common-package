@@ -221,6 +221,9 @@ public class QueryGeneratorMock
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
 		
+		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
+		constraints.setJoinGraph(joinGraph);
+
 		IExpression participantExpression = constraints.addExpression(participantClass);
 		participantExpression.addOperand(createParticipantRule2(participantClass));
 		
@@ -231,8 +234,6 @@ public class QueryGeneratorMock
 		participantExpression.addOperand(connector,pmExpression);
 		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass));
 		
-		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
-		constraints.setJoinGraph(joinGraph);
 		
 		IAssociation association = QueryObjectFactory.createIntraModelAssociation(participantClass, pmClass, "participant", "participantMedicalIdentifierCollection", true);
 		
@@ -260,12 +261,13 @@ public class QueryGeneratorMock
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
 		
+		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
+		constraints.setJoinGraph(joinGraph);
+
+		
 		IExpression participantExpression = constraints.addExpression(participantClass);
 		participantExpression.addOperand(createParticipantRule2(participantClass));
 		
-		
-		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
-		constraints.setJoinGraph(joinGraph);
 		
 		return query;
 	}

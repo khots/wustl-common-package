@@ -25,7 +25,7 @@ import edu.wustl.common.querysuite.exceptions.DuplicateChildException;
  * used quantities).<br>
  * @author srinath_k
  */
-public interface IOutputTreeNode
+public interface IOutputTreeNode extends IBaseQueryObject
 {
 
 	/**

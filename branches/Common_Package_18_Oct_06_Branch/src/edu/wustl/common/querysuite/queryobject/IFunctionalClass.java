@@ -11,7 +11,7 @@ import java.util.List;
  * @version 1.0
  * @updated 11-Oct-2006 02:56:22 PM
  */
-public interface IFunctionalClass
+public interface IFunctionalClass extends IBaseQueryObject
 {
 
 	public List<IAttribute> getAttributes();

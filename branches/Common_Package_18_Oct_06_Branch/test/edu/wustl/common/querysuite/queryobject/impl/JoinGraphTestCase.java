@@ -286,8 +286,7 @@ public class JoinGraphTestCase extends TestCase
 		try
 		{
 			boolean flag = joinGraph.isConnected();
-			assertFalse(true);
-			assertTrue("Expected false value from isConnected method, for disconnected graph!!!", flag);
+			assertFalse("Expected false value from isConnected method, for disconnected graph!!!", flag);
 		}
 		catch(MultipleRootsException e)
 		{

@@ -2,6 +2,7 @@
 package edu.wustl.common.querysuite.queryobject.impl;
 
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Mandar Shidhore
@@ -12,6 +13,7 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 public class ExpressionId implements IExpressionId
 {
 
+	private static final long serialVersionUID = 2012640054952775498L;
 	private int id;
 
 	public ExpressionId(int id)
@@ -36,13 +38,28 @@ public class ExpressionId implements IExpressionId
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		hash = hash*Constants.HASH_PRIME + id;
+		
+		return hash;
+	}
+	
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj != null && obj instanceof ExpressionId)
+		if (this==obj)
+			return true;
+		
+		if (obj != null && this.getClass() == obj.getClass())
 		{
 			ExpressionId expressionId = (ExpressionId) obj;
 			if (this.id == expressionId.id)

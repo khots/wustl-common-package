@@ -4,6 +4,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Mandar Shidhore
@@ -14,6 +15,7 @@ import edu.wustl.common.querysuite.queryobject.IClass;
 public class Attribute implements IAttribute
 {
 
+	private static final long serialVersionUID = -7803229839713253088L;
 	private DataType dataType;
 	private IClass umlCLass;
 	private String attributeName;
@@ -82,7 +84,10 @@ public class Attribute implements IAttribute
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj != null && obj instanceof Attribute)
+		if (this == obj)
+			return true;
+		
+		if (obj != null && this.getClass() == obj.getClass())
 		{
 			Attribute attribute = (Attribute) obj;
 			if (umlCLass != null && umlCLass.equals(attribute.umlCLass) && attributeName != null
@@ -90,6 +95,21 @@ public class Attribute implements IAttribute
 				return true;
 		}
 		return false;
+	}
+
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (umlCLass!=null)
+			hash = hash*Constants.HASH_PRIME + umlCLass.hashCode();
+		if (attributeName!=null)
+			hash = hash*Constants.HASH_PRIME + attributeName.hashCode();
+		return hash;
 	}
 
 	/**

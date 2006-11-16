@@ -31,6 +31,6 @@ public interface IRule extends IExpressionOperand
 	 */
 	public IExpression getContainingExpression();
 
-	public int getSize();
+	public int size();
 
 }

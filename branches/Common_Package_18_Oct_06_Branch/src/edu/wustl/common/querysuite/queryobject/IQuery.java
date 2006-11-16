@@ -7,7 +7,7 @@ package edu.wustl.common.querysuite.queryobject;
  * @version 1.0
  * @updated 11-Oct-2006 02:57:13 PM
  */
-public interface IQuery
+public interface IQuery extends IBaseQueryObject
 {
 
 	/**

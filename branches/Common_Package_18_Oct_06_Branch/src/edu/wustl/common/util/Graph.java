@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
-import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Mandar Shidhore
@@ -21,7 +21,7 @@ public class Graph<V, E>
 	private List<V> vertexList = new ArrayList<V>();
 	private Map<V, List<Edge>> incommingEdgeMap = new HashMap<V, List<Edge>>();
 	private Map<V, List<Edge>> outgoingEdgeMap = new HashMap<V, List<Edge>>();
-	private int k = 0; // Ordinal number for the node to be visited next.
+	private int ordinalNumber = 0; // Ordinal number for the currently visited node.
 
 	public Graph()
 	{
@@ -30,6 +30,7 @@ public class Graph<V, E>
 	// Internal Edge class to create the edge object
 	class Edge
 	{
+
 		private V sourceVertex;
 		private V targetVertex;
 		private E edgeObj;
@@ -55,28 +56,37 @@ public class Graph<V, E>
 		{
 			return edgeObj;
 		}
-		
+
 		public void setEdgeObject(E edgeObj)
 		{
 			this.edgeObj = edgeObj;
 		}
+
+		/**
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode()
+		{
+			int hash = 1;
+			hash = hash *Constants.HASH_PRIME + edgeObj.hashCode();
+			hash = hash *Constants.HASH_PRIME + sourceVertex.hashCode();
+			hash = hash *Constants.HASH_PRIME + targetVertex.hashCode();
+			
+			return super.hashCode();
+		}
+
+		/**
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString()
+		{
+			return "["+sourceVertex+"--"+ edgeObj+ "-->"+ targetVertex +"]";
+		}
+		
 	}
 
-	/**
-	 * Set the list of vertices for a graph
-	 * @param vertexList
-	 * @return
-	 */
-	public boolean setVertexList(List<V> vertexList)
-	{
-		if(vertexList != null)
-		{
-			this.vertexList = vertexList;
-			return true;
-		}
-		return false;
-	}
-	
 	/**
 	 * Add a vertex to the list of vertices if same does not exist in the list
 	 * @param vertex
@@ -86,12 +96,12 @@ public class Graph<V, E>
 	{
 		if (vertex != null)
 		{
-			if(!(vertexList.contains(vertex)))
+			if (!(vertexList.contains(vertex)))
 				return vertexList.add(vertex);
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Get the edge from the list of edges, if one exists between source vertex and target vertex.
 	 * @param sourceVertex
@@ -104,15 +114,13 @@ public class Graph<V, E>
 
 		if (edges != null)
 		{
-			Edge edge =  getEdgeFromList(edges, targetVertex, false);
+			Edge edge = getEdgeFromList(edges, targetVertex, false);
 
 			if (edge != null)
 				return edge.getEdgeObject();
 		}
 		return null;
 	}
-	
-	
 
 	/**
 	 * This method checks whether an edge lies between the source vertex and target vertex.
@@ -161,7 +169,9 @@ public class Graph<V, E>
 	 */
 	public E putEdge(V sourceVertex, V targetVertex, E edge) throws CyclicException
 	{
-		Edge theEdge = (Edge) getEdge(sourceVertex, targetVertex);
+		Edge theEdge = (Edge) getEdgeFromList(outgoingEdgeMap.get(sourceVertex), targetVertex,
+				false);
+		//		Edge theEdge = (Edge)getEdge(sourceVertex, targetVertex);
 
 		if (theEdge == null) // The edge does not exist!!
 		{
@@ -190,7 +200,7 @@ public class Graph<V, E>
 				incommingEdgeMap.put(targetVertex, incomingEdges);
 			}
 			incomingEdges.add((Edge) newEdge);
-			
+
 			if (isCyclic())
 			{
 				// Clean already added data.
@@ -217,55 +227,42 @@ public class Graph<V, E>
 	{
 		boolean isConnected = true;
 
-		try
+		List<V> unreachableNodes = getUnreachableNodeList();
+		if (unreachableNodes.size() != 1)
+			return false;
+
+		V root = unreachableNodes.get(0);
+		boolean[] visited = new boolean[vertexList.size()];
+		dfs(vertexList.indexOf(root), visited);
+		for (int i = 0; i < visited.length; i++)
 		{
-			V root = getRoot();
-			boolean[] visited = new boolean[vertexList.size()];
-			dfs(vertexList.indexOf(root), visited);
-			for (int i = 0; i < visited.length; i++)
-			{
-				if (visited[i] == false)
-					return false;
-			}
-		}
-		catch (MultipleRootsException e)
-		{
-			isConnected = false;
+			if (visited[i] == false)
+				return false;
 		}
 		return isConnected;
 	}
 
 	/**
-	 * This method will return the Root node of the tree. 
+	 * This method will return the list of vertices having no incomming Edges. 
 	 * The node having no incomming edges will be treated as Root node. 
-	 * @return root node of the expression
-	 * @throws MultipleRootsException if more than 2 roots exists or no root exists for the expression tree
+	 * @return list of vertices having no incomming Edges.
 	 */
-	public V getRoot() throws MultipleRootsException
+	public List<V> getUnreachableNodeList()
 	{
-		V root = null;
+		List<V> list = new ArrayList<V>();
 
 		for (int i = 0; i < vertexList.size(); i++)
 		{
-			V expression = vertexList.get(i);
-			List<Edge> incommingEdges = incommingEdgeMap.get(expression);
+			V vertex = vertexList.get(i);
+			List<Edge> incommingEdges = incommingEdgeMap.get(vertex);
 
 			if (incommingEdges == null || incommingEdges.isEmpty())
 			{
-				if (root != null) //Multiple root node condition.
-				{
-					throw new MultipleRootsException("The Expression tree has multiple Root nodes!!!");
-				}
-				root = expression;
+				list.add(vertex);
 			}
-
 		}
 
-		if (root == null) // No root node Exist in tree.
-		{
-			throw new MultipleRootsException("The Expression tree has no Root node!!!");
-		}
-		return root;
+		return list;
 	}
 
 	/**
@@ -278,12 +275,37 @@ public class Graph<V, E>
 		boolean flag = vertexList.remove(vertex);
 		if (flag)
 		{
+			removeEdges(vertex, true); // removing all incomming edges references.
+			removeEdges(vertex, false); // removing all outgoing edges references.
 			incommingEdgeMap.remove(vertex);
 			outgoingEdgeMap.remove(vertex);
 		}
 		return flag;
 	}
-	
+
+	/**
+	 * To remove incomming or outgoing edges & there references from the graph depending upon the value of isIncomming parameter.  
+	 * @param vertex
+	 * @param isIncomming
+	 */
+	private void removeEdges(V vertex, boolean isIncomming)
+	{
+		List<Edge> edges = null;
+		if (isIncomming)
+			edges = incommingEdgeMap.get(vertex);
+		else
+			edges = outgoingEdgeMap.get(vertex);
+
+		for (int i = 0; i < edges.size(); i++)
+		{
+			Edge edge = edges.get(i);
+			if (isIncomming)
+				removeEdge(edge.targetVertex, vertex);
+			else
+				removeEdge(vertex, edge.sourceVertex);
+		}
+	}
+
 	/**
 	 * Check if the Graph is cyclic. Visits each node and checks
 	 * simultaneously if the node has been visited before. Stores this
@@ -294,7 +316,7 @@ public class Graph<V, E>
 	{
 		int[] ordinalNos = new int[vertexList.size()];// ordinal numbers for graph’s visited nodes.
 		boolean[] inProg = new boolean[vertexList.size()];// Keep track if the search on a given node is currently in progress.
-		k = 0;
+		ordinalNumber = 0;
 		boolean isCyclic = true;
 
 		for (int i = 0; i < vertexList.size(); i++)
@@ -319,7 +341,7 @@ public class Graph<V, E>
 	 */
 	private boolean checkCycleUsingDFS(int currentIndex, int[] ordinalNos, boolean[] inProg)
 	{
-		ordinalNos[currentIndex] = k++;
+		ordinalNos[currentIndex] = ordinalNumber++;
 		inProg[currentIndex] = true;
 		List<Edge> edges = outgoingEdgeMap.get(vertexList.get(currentIndex));
 		if (edges != null)
@@ -375,18 +397,21 @@ public class Graph<V, E>
 	 */
 	private Edge getEdgeFromList(List<Edge> edges, V targetVertex, boolean isIncommingEdge)
 	{
-		for (int i = 0; i < edges.size(); i++)
+		if (edges != null)
 		{
-			Edge edge = edges.get(i);
-			if (isIncommingEdge)
+			for (int i = 0; i < edges.size(); i++)
 			{
-				if (edge.getSourceVertex().equals(targetVertex))
-					return edge;
-			}
-			else
-			{
-				if (edge.getTargetVertex().equals(targetVertex))
-					return edge;
+				Edge edge = edges.get(i);
+				if (isIncommingEdge)
+				{
+					if (edge.getSourceVertex().equals(targetVertex))
+						return edge;
+				}
+				else
+				{
+					if (edge.getTargetVertex().equals(targetVertex))
+						return edge;
+				}
 			}
 		}
 		return null;

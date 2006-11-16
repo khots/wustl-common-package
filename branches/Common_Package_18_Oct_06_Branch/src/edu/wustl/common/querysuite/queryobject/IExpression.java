@@ -41,9 +41,11 @@ public interface IExpression extends IExpressionOperand
 	public IFunctionalClass getFunctionalClass();
 
 	/**
-	 * @param i
+	 * To set the operand in the Expression at index position
+	 * @param index the expected index of the operand in he Expression 
+	 * @param operand The operand to be added in the Expression.
 	 */
-	public void setOperand(int i);
+	public void setOperand(int index, IExpressionOperand operand);
 
 	/**
 	 * An operator is indexed by {left operand, right operand} i.e. if left
@@ -158,6 +160,6 @@ public interface IExpression extends IExpressionOperand
 	/**
 	 * @return the no. of operands in the expression.
 	 */
-	public int getSize();
+	public int numberOfOperands();
 
 }

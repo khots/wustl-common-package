@@ -17,9 +17,11 @@ import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
+import edu.wustl.common.util.global.Constants;
 
 public class Expression implements IExpression
 {
+	private static final long serialVersionUID = 1426555905287966634L;
 
 	private List<IExpressionOperand> expressionOperands = new ArrayList<IExpressionOperand>();
 
@@ -236,30 +238,45 @@ public class Expression implements IExpression
 	}
 
 	/**
-	 * @param i
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setOperand(int)
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setOperand(int,IExpressionOperand)
 	 */
-	public void setOperand(int i)
+	public void setOperand(int index, IExpressionOperand operand)
 	{
-		// TODO Auto-generated method stub
-
+		expressionOperands.set(index, operand);
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getSize()
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#numberOfOperands()
 	 */
-	public int getSize()
+	public int numberOfOperands()
 	{
 		return expressionOperands.size();
 	}
 
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (expressionId!=null)
+			hash = hash*Constants.HASH_PRIME + expressionId.hashCode();
+		
+		return hash;
+	}
+
+	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj != null && obj instanceof Expression)
+		if (this == obj)
+			return true;
+		
+		if (obj != null && this.getClass() == obj.getClass())
 		{
 			Expression expression = (Expression) obj;
 			if (this.expressionId != null & this.expressionId.equals(expression.expressionId))
@@ -328,4 +345,5 @@ public class Expression implements IExpression
 		return true;
 	}
 
+	
 }

@@ -10,7 +10,7 @@ package edu.wustl.common.querysuite.queryobject;
  * @version 1.0
  * @updated 11-Oct-2006 02:55:29 PM
  */
-public interface IAssociation
+public interface IAssociation extends IBaseQueryObject
 {
 
 	public IClass getSourceClass();

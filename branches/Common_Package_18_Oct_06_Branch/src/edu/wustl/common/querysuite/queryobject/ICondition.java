@@ -10,7 +10,7 @@ import java.util.List;
  * @version 1.0
  * @updated 11-Oct-2006 02:56:07 PM
  */
-public interface ICondition
+public interface ICondition extends IBaseQueryObject
 {
 
 	public IAttribute getAttribute();
