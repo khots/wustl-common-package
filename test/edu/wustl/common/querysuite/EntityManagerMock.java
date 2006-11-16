@@ -10,6 +10,7 @@ package edu.wustl.common.querysuite;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domain.Attribute;
@@ -34,6 +35,8 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 public class EntityManagerMock extends EntityManager
 {
 
+	public List<Entity> entityList = new ArrayList<Entity>();
+	
 	/**
 	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#createEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
 	 */
@@ -60,8 +63,13 @@ public class EntityManagerMock extends EntityManager
 	@Override
 	public Collection getAllEntities() throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		// TODO Auto-generated method stub
-		return super.getAllEntities();
+		entityList.add((Entity)getEntityByName("edu.wustl.catissuecore.domain.Participant"));
+		entityList.add((Entity)getEntityByName("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"));
+		entityList.add((Entity)getEntityByName("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"));
+		entityList.add((Entity)getEntityByName("edu.wustl.catissuecore.domain.CollectionProtocol"));
+		entityList.add((Entity)getEntityByName("edu.wustl.catissuecore.domain.CollectionProtocolEvent"));
+		entityList.add((Entity)getEntityByName("edu.wustl.catissuecore.domain.CheckInCheckOutEventParameter"));
+		return entityList;
 	}
 
 	/**
@@ -509,6 +517,26 @@ public class EntityManagerMock extends EntityManager
 		{
 			return createSpecimenEntity(name);
 		}
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.SpecimenEventParameters"))
+		{
+			return createSpecimenEventParametersEntity(name);
+		}
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.CheckInCheckOutEventParameter"))
+		{
+			return createCheckInCheckOutEventParameterEntity(name);
+		}
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.FrozenEventParameters"))
+		{
+			return createFrozenEventParametersEntity(name);
+		}
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.ProcedureEventParameters"))
+		{
+			return createProcedureEventParametersEntity(name);
+		}
+		else if (name.equalsIgnoreCase("edu.wustl.catissuecore.domain.ReceivedEventParameters"))
+		{
+			return createReceivedEventParametersEntity(name);
+		}
 		return null;
 	}
 
@@ -705,6 +733,121 @@ public class EntityManagerMock extends EntityManager
 		e.setTableProperties(specimenTableProperties);
 		return e;
 	}
+	
+	/*
+	 * @param name
+	 * Creates a specimen event parameters entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private Entity createSpecimenEventParametersEntity(String name)
+	{
+		Entity e = new Entity();
+		e.setName(name);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a specimen event parameters entity");
+		e.setId(9L);
+		e.setLastUpdated(new Date());
+
+		e.setAbstractAttributeCollection(getSpecimenEventParametersAttributes());
+
+		TableProperties specimenEventParametersTableProperties = new TableProperties();
+		specimenEventParametersTableProperties.setName("catissue_specimen_event_param");
+		specimenEventParametersTableProperties.setId(9L);
+		e.setTableProperties(specimenEventParametersTableProperties);
+		return e;
+	}
+	
+	/*
+	 * @param name
+	 * Creates a check in check out event parameters entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private Entity createCheckInCheckOutEventParameterEntity(String name)
+	{
+		Entity e = new Entity();
+		e.setName(name);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a check in check out event parameters entity");
+		e.setId(10L);
+		e.setLastUpdated(new Date());
+
+		e.setAbstractAttributeCollection(getCheckInCheckOutEventParameterAttributes());
+
+		TableProperties checkInCheckOutEventParameterTableProperties = new TableProperties();
+		checkInCheckOutEventParameterTableProperties.setName("catissue_in_out_event_param");
+		checkInCheckOutEventParameterTableProperties.setId(10L);
+		e.setTableProperties(checkInCheckOutEventParameterTableProperties);
+		return e;
+	}
+	
+	/*
+	 * @param name
+	 * Creates a frozen event parameters entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private Entity createFrozenEventParametersEntity(String name)
+	{
+		Entity e = new Entity();
+		e.setName(name);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a frozen event parameters entity");
+		e.setId(11L);
+		e.setLastUpdated(new Date());
+
+		e.setAbstractAttributeCollection(getFrozenEventParameterAttributes());
+
+		TableProperties frozenEventParameterTableProperties = new TableProperties();
+		frozenEventParameterTableProperties.setName("catissue_frozen_event_param");
+		frozenEventParameterTableProperties.setId(11L);
+		e.setTableProperties(frozenEventParameterTableProperties);
+		return e;
+	}	
+	
+	/*
+	 * @param name
+	 * Creates a procedure event parameters entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private Entity createProcedureEventParametersEntity(String name)
+	{
+		Entity e = new Entity();
+		e.setName(name);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a procedure event parameters entity");
+		e.setId(12L);
+		e.setLastUpdated(new Date());
+
+		e.setAbstractAttributeCollection(getProcedureEventParametersAttributes());
+
+		TableProperties procedureEventParametersTableProperties = new TableProperties();
+		procedureEventParametersTableProperties.setName("catissue_procedure_event_param");
+		procedureEventParametersTableProperties.setId(12L);
+		e.setTableProperties(procedureEventParametersTableProperties);
+		return e;
+	}	
+	
+	/*
+	 * @param name
+	 * Creates a received event parameters entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private Entity createReceivedEventParametersEntity(String name)
+	{
+		Entity e = new Entity();
+		e.setName(name);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a received event parameters entity");
+		e.setId(13L);
+		e.setLastUpdated(new Date());
+
+		e.setAbstractAttributeCollection(getReceivedEventParametersAttributes());
+
+		TableProperties receivedEventParametersTableProperties = new TableProperties();
+		receivedEventParametersTableProperties.setName("catissue_received_event_param");
+		receivedEventParametersTableProperties.setId(13L);
+		e.setTableProperties(receivedEventParametersTableProperties);
+		return e;
+	}	
 
 	/*
 	 * Creates attributes for participant entity, creates and sets a 
@@ -1208,6 +1351,135 @@ public class EntityManagerMock extends EntityManager
 		specimenAttributes.add(10, att11);
 
 		return specimenAttributes;
+	}
+	
+	/*
+	 * Creates attributes for specimen event parameters entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getSpecimenEventParametersAttributes()
+	{
+		ArrayList<Attribute> specimenEventParametersAttributes = new ArrayList<Attribute>();
+		
+		LongAttribute att1 = new LongAttribute();
+		att1.setName("id");
+		att1.setMeasurementUnits("Long");
+		ColumnProperties c1 = new ColumnProperties();
+		c1.setName("IDENTIFIER");
+		att1.setColumnProperties(c1);
+		
+		DateAttribute att2 = new DateAttribute();
+		att2.setName("timestamp");
+		att2.setFormat("DD-MM-YYYY");
+		ColumnProperties c2 = new ColumnProperties();
+		c2.setName("EVENT_TIMESTAMP");
+		att2.setColumnProperties(c2);
+		
+		StringAttribute att3 = new StringAttribute();
+		att3.setName("comments");
+		att3.setSize(200);
+		ColumnProperties c3 = new ColumnProperties();
+		c3.setName("COMMENTS");
+		att3.setColumnProperties(c3);
+		
+		specimenEventParametersAttributes.add(0, att1);
+		specimenEventParametersAttributes.add(1, att2);
+		specimenEventParametersAttributes.add(2, att3);
+		
+		return specimenEventParametersAttributes;
+	}
+	
+	/*
+	 * Creates attributes for check in check out event parameters entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getCheckInCheckOutEventParameterAttributes()
+	{
+		ArrayList<Attribute> checkInCheckOutEventParameterAttributes = new ArrayList<Attribute>();
+			
+		StringAttribute att1 = new StringAttribute();
+		att1.setName("storageStatus");
+		att1.setSize(100);
+		ColumnProperties c1 = new ColumnProperties();
+		c1.setName("STORAGE_STATUS");
+		att1.setColumnProperties(c1);
+		
+		checkInCheckOutEventParameterAttributes.add(0, att1);
+		
+		return checkInCheckOutEventParameterAttributes;
+	}
+	
+	/*
+	 * Creates attributes for frozen event parameters entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getFrozenEventParameterAttributes()
+	{
+		ArrayList<Attribute> frozenEventParameterAttributes = new ArrayList<Attribute>();
+			
+		StringAttribute att1 = new StringAttribute();
+		att1.setName("method");
+		att1.setSize(50);
+		ColumnProperties c1 = new ColumnProperties();
+		c1.setName("METHOD");
+		att1.setColumnProperties(c1);
+		
+		frozenEventParameterAttributes.add(0, att1);
+		
+		return frozenEventParameterAttributes;
+	}
+	
+	/*
+	 * Creates attributes for procedure event parameters entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getProcedureEventParametersAttributes()
+	{
+		ArrayList<Attribute> procedureEventParameterAttributes = new ArrayList<Attribute>();
+			
+		StringAttribute att1 = new StringAttribute();
+		att1.setName("url");
+		att1.setSize(200);
+		ColumnProperties c1 = new ColumnProperties();
+		c1.setName("URL");
+		att1.setColumnProperties(c1);
+		
+		StringAttribute att2 = new StringAttribute();
+		att2.setName("name");
+		att2.setSize(50);
+		ColumnProperties c2 = new ColumnProperties();
+		c2.setName("NAME");
+		att1.setColumnProperties(c2);
+		
+		procedureEventParameterAttributes.add(0, att1);
+		procedureEventParameterAttributes.add(0, att2);
+		
+		return procedureEventParameterAttributes;
+	}
+	
+	/*
+	 * Creates attributes for received event parameters entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getReceivedEventParametersAttributes()
+	{
+		ArrayList<Attribute> receivedEventParameterAttributes = new ArrayList<Attribute>();
+			
+		StringAttribute att1 = new StringAttribute();
+		att1.setName("receivedQuality");
+		att1.setSize(255);
+		ColumnProperties c1 = new ColumnProperties();
+		c1.setName("RECEIVED_QUALITY");
+		att1.setColumnProperties(c1);
+		
+		receivedEventParameterAttributes.add(0, att1);
+		
+		return receivedEventParameterAttributes;
 	}
 
 	private Attribute getSpecificAttribute(ArrayList list, String aName)
