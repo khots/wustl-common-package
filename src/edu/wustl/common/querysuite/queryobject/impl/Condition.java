@@ -160,7 +160,7 @@ public class Condition implements ICondition
 	@Override
 	public String toString()
 	{
-		return "[" + attribute.getAttributeName() + "." + relationalOperator + " = " + values + "]";
+		return "[" + attribute.getAttributeName() + relationalOperator + values + "]";
 	}
 
 }
