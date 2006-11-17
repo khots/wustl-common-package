@@ -54,11 +54,6 @@ public interface IConstraints extends IBaseQueryObject
 	public IJoinGraph getJoinGraph();
 
 	/**
-	 * @param joinGraph
-	 */
-	public void setJoinGraph(IJoinGraph joinGraph);
-
-	/**
 	 * @return the root expression of the join graph.
 	 * @throws MultipleRootsException
 	 */
