@@ -27,7 +27,7 @@ public class Constraints implements IConstraints
 
 	private Map<IExpressionId, IExpression> expressions = new LinkedHashMap<IExpressionId, IExpression>();
 
-	private IJoinGraph joinGraph;
+	private IJoinGraph joinGraph = new JoinGraph();
 
 	private int currentExpressionId = 0;
 
@@ -83,13 +83,5 @@ public class Constraints implements IConstraints
 	public IExpression getExpression(IExpressionId id)
 	{
 		return expressions.get(id);
-	}
-
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#setJoinGraph(edu.wustl.common.querysuite.queryobject.IJoinGraph)
-	 */
-	public void setJoinGraph(IJoinGraph joinGraph)
-	{
-		this.joinGraph = joinGraph;
 	}
 }
