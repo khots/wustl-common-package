@@ -10,6 +10,8 @@
 
 package edu.wustl.common.domain;
 
+import java.io.Serializable;
+
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.exception.AssignDataException;
@@ -19,7 +21,7 @@ import edu.wustl.common.exception.AssignDataException;
  * AbstractDomain class is the superclass of all the domain classes.
  * @author gautam_shetty
  */
-public abstract class AbstractDomainObject implements Auditable
+public abstract class AbstractDomainObject implements Auditable, Serializable
 {
 	public String getObjectId() 
 	{
