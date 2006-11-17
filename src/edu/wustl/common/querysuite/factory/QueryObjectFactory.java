@@ -13,7 +13,6 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
-import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
@@ -25,7 +24,6 @@ import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
 import edu.wustl.common.querysuite.queryobject.impl.IntraModelAssociation;
-import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -64,14 +62,19 @@ public class QueryObjectFactory
 	{
 		return new Attribute(null, null, null);
 	}
-
+	
+    public static IClass createClass()
+    {
+        return createClass(null, null, null, false);
+    }
+    
 	public static IClass createClass(String fullQualifiedName, List<IAttribute> attributes,
 			ICategory category, boolean isVisible)
 	{
 		return new edu.wustl.common.querysuite.queryobject.impl.Class(fullQualifiedName,
 				attributes, category, isVisible);
 	}
-
+	
 	public static ICondition createCondition(IAttribute attribute,
 			RelationalOperator relationalOperator, List<String> values)
 	{
@@ -131,12 +134,7 @@ public class QueryObjectFactory
 	{
 		return new Rule();
 	}
-
-	public static IJoinGraph createJoinGraph()
-	{
-		return new JoinGraph();
-	}
-
+	
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
 			IClass rightClass, String roleName, String revereseRoleName, boolean bidirectional)
 	{
@@ -148,5 +146,4 @@ public class QueryObjectFactory
 	{
 		return new Query();
 	}
-	
 }
