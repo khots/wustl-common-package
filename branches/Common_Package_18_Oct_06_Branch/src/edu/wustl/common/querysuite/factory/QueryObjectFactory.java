@@ -12,6 +12,7 @@ import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
+import edu.wustl.common.querysuite.queryobject.IInterModelAssociation;
 import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -23,6 +24,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Condition;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
+import edu.wustl.common.querysuite.queryobject.impl.InterModelAssociation;
 import edu.wustl.common.querysuite.queryobject.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
@@ -62,19 +64,19 @@ public class QueryObjectFactory
 	{
 		return new Attribute(null, null, null);
 	}
-	
-    public static IClass createClass()
-    {
-        return createClass(null, null, null, false);
-    }
-    
+
+	public static IClass createClass()
+	{
+		return createClass(null, null, null, false);
+	}
+
 	public static IClass createClass(String fullQualifiedName, List<IAttribute> attributes,
 			ICategory category, boolean isVisible)
 	{
 		return new edu.wustl.common.querysuite.queryobject.impl.Class(fullQualifiedName,
 				attributes, category, isVisible);
 	}
-	
+
 	public static ICondition createCondition(IAttribute attribute,
 			RelationalOperator relationalOperator, List<String> values)
 	{
@@ -134,14 +136,20 @@ public class QueryObjectFactory
 	{
 		return new Rule();
 	}
-	
+
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
 			IClass rightClass, String roleName, String revereseRoleName, boolean bidirectional)
 	{
 		return new IntraModelAssociation(leftClass, rightClass, roleName, revereseRoleName,
 				bidirectional);
 	}
-	
+
+	public static IInterModelAssociation createInterModelAssociation(IAttribute sourceAttribute,
+			IAttribute targetAttribute)
+	{
+		return new InterModelAssociation(sourceAttribute, targetAttribute);
+	}
+
 	public static IQuery createQuery()
 	{
 		return new Query();
