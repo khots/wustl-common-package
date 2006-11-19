@@ -1,7 +1,7 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * urls are conceptually a {@link java.util.Map} with key=leftServiceUrl, and
@@ -20,14 +20,14 @@ public interface IInterModelAssociation extends IAssociation
 
 	public IAttribute getTargetAttribute();
 
-	public List<String> getSourceServiceUrls();
+	public Set<String> getSourceServiceUrls();
 
 	/**
 	 * returns list of urls for the class on target side of association, for the
 	 * given source side url
 	 * @param leftServiceUrl
 	 */
-	public List<String> getTargetServiceUrls(String sourceServiceUrl);
+	public Set<String> getTargetServiceUrls(String sourceServiceUrl);
 
 	/**
 	 * boolean return: true if source url existed previously, false otherwise
@@ -41,13 +41,14 @@ public interface IInterModelAssociation extends IAssociation
 	 */
 	public boolean removeTargetServiceUrl(String sourceServiceUrl, String targetServiceUrl);
 
-	/**
-	 * Usage example: On ui, all possible source and target service urls will be
-	 * shown. The user will finally chose some of these. So we could clone the
-	 * original association object, and use the new clone for the user
-	 * operations.
-	 */
-	public IInterModelAssociation clone();
+	//
+	//	/**
+	//	 * Usage example: On ui, all possible source and target service urls will be
+	//	 * shown. The user will finally chose some of these. So we could clone the
+	//	 * original association object, and use the new clone for the user
+	//	 * operations.
+	//	 */
+	//	public IInterModelAssociation cloneToInterModelAssociation();
 
 	/**
 	 * @param attribute
@@ -66,8 +67,8 @@ public interface IInterModelAssociation extends IAssociation
 
 	/**
 	 * @param leftServiceUrl
-	 * @param rightServiceUrl
+	 * @param targetServiceUrl
 	 */
-	public void addTargetServiceUrl(String sourceServiceUrl, String rightServiceUrl);
+	public void addTargetServiceUrl(String sourceServiceUrl, String targetServiceUrl);
 
 }
