@@ -19,13 +19,13 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class DBUtil
 {
-	//A factory for DB Session which provides the Connection for client. 
+	//A factory for DB Session which provides the Connection for client.
 	private static  SessionFactory m_sessionFactory;
 
-	//ThreadLocal to hold the Session for the current executing thread. 
+	//ThreadLocal to hold the Session for the current executing thread.
 	private static final ThreadLocal threadLocal = new ThreadLocal();
 	//Initialize the session Factory in the Static block.
-	static 
+	static
 	{
 		try
 		{
@@ -39,8 +39,8 @@ public class DBUtil
 		    Logger.out.debug("Exception: "+ex.getMessage(),ex);
 			throw new RuntimeException(ex.getMessage());
 		}
-		
-		
+
+
 //		try
 //
 //		{
@@ -85,12 +85,12 @@ public class DBUtil
 
 	/**
 	 * Follows the singleton pattern and returns only current opened session.
-	 * @return Returns the current db session.  
+	 * @return Returns the current db session.
 	 * */
 	public static Session currentSession() throws HibernateException
 	{
 		Session s = (Session) threadLocal.get();
-		
+
 		//Open a new Session, if this Thread has none yet
 		if (s == null)
 		{
@@ -113,19 +113,47 @@ public class DBUtil
 	 * */
 	public static void closeSession() throws HibernateException
 	{
-		Session s = (Session) threadLocal.get(); 
+		Session s = (Session) threadLocal.get();
 		threadLocal.set(null);
 		if (s != null)
 			s.close();
 	}
-	
+
 	public static Connection getConnection() throws HibernateException
 	{
 		return currentSession().connection();
 	}
-	
+
 	public static void closeConnection() throws HibernateException
 	{
 		closeSession();
 	}
+
+	/**
+	 * This method opens a new session, loads an object with given class and Id, and closes
+	 * the session. This method should be used only when an object is to be opened in separate session.
+	 *
+	 * @param objectClass class of the object
+	 * @param identifier id of the object
+	 * @return object
+	 * @throws HibernateException
+	 */
+	public static Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
+	{
+		Session session = null;
+		try
+		{
+			session = m_sessionFactory.openSession();
+			return session.load(objectClass, identifier);
+		}
+		catch (HibernateException e)
+		{
+			throw e;
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+
 }
