@@ -31,6 +31,7 @@ public class Expression implements IExpression
 
 	private IFunctionalClass functionalClass;
 
+	private int aliasAppend = 1;
 	/**
 	 * @param functionalClass
 	 */
@@ -345,5 +346,22 @@ public class Expression implements IExpression
 		return true;
 	}
 
+
+	/**
+	 * @return the aliasAppend
+	 */
+	public int getAliasAppend()
+	{
+		return aliasAppend;
+	}
+
 	
+	/**
+	 * @param aliasAppend the aliasAppend to set
+	 */
+	public void setAliasAppend(int aliasAppend)
+	{
+		this.aliasAppend = aliasAppend;
+	}
+
 }

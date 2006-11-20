@@ -29,14 +29,16 @@ import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
-import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.querysuite.queryobject.impl.Expression;
+import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -53,10 +55,13 @@ public class SqlGenerator implements ISqlGenerator
 
 	private Map<String, Entity> entityMap = new HashMap<String, Entity>(); // to cache the Dynamic Extension Entity object to avoid multiple call to APIs.
 
-	Map<IExpression, List<String>> sqlMap = new LinkedHashMap<IExpression, List<String>>(); // Stores SQL Queries for each Expression.
+	Map<IExpression, List<String>> sqlMap = new LinkedHashMap<IExpression, List<String>>(); // Stores SQL Queries for each Expression. values in this map will be inserted while compiling Query.
 
 	Map<IIntraModelAssociation, AssociationInterface> associationMap = new LinkedHashMap<IIntraModelAssociation, AssociationInterface>();
+	
 
+	JoinGraph joinGraph;
+	IConstraints constraints;
 	SqlGenerator(EntityManager entityManager)
 	{
 		this.entityManager = entityManager;
@@ -88,12 +93,13 @@ public class SqlGenerator implements ISqlGenerator
 	IExpression buildQuery(IQuery query) throws MultipleRootsException,
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		IConstraints constraints = query.getConstraints();
+		constraints = query.getConstraints();
+		this.joinGraph = (JoinGraph)constraints.getJoinGraph();
 		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
 		entityMap = new HashMap<String, Entity>();
 		sqlMap = new LinkedHashMap<IExpression, List<String>>();
 		associationMap = new LinkedHashMap<IIntraModelAssociation, AssociationInterface>();
-		getSQL(rootExpression, constraints.getJoinGraph(), null);
+		getSQL(rootExpression, null);
 		return rootExpression;
 	}
 
@@ -109,7 +115,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("Select ");
 		Entity entity = getEntity((IClass) expression.getFunctionalClass());
-		String aliasName = getAliasName(entity);
+		String aliasName = getAliasName(entity, expression);
 		Iterator attributeCollectionItr = entity.getAbstractAttributeCollection().iterator();
 		while (attributeCollectionItr.hasNext())
 		{
@@ -137,7 +143,7 @@ public class SqlGenerator implements ISqlGenerator
 		{
 			Entity leftEntity = getEntity((IClass) expression.getFunctionalClass());
 
-			String leftAlias = getAliasName(leftEntity);
+			String leftAlias = getAliasName(leftEntity, expression);
 			buffer.append(leftEntity.getTableProperties().getName() + " " + leftAlias);
 		}
 		else
@@ -149,11 +155,11 @@ public class SqlGenerator implements ISqlGenerator
 
 				IClass leftClass = association.getSourceClass();
 				Entity leftEntity = getEntity(leftClass);
-				String leftAlias = getAliasName(leftEntity);
+				String leftAlias = getAliasName(leftEntity, expression);
 
 				IClass rightClass = association.getTargetClass();
 				Entity rightEntity = getEntity(rightClass);
-				String rightAlias = getAliasName(rightEntity);
+				String rightAlias = getAliasName(rightEntity, expression);
 
 				buffer.append(leftEntity.getTableProperties().getName() + " " + leftAlias
 						+ " left join ");
@@ -199,7 +205,7 @@ public class SqlGenerator implements ISqlGenerator
 			IExpression expression = keys.next();
 			List<String> sqlList = sqlMap.get(expression);
 			IClass iClass = (IClass) expression.getFunctionalClass();
-			String selectAttribute = getPrimaryKeyAttrinbute(iClass);
+			String selectAttribute = getPrimaryKeyAttrinbute(iClass, expression);
 			if (sqlList.size() == 1)
 			{
 				buffer.append(selectAttribute + " = ANY(" + sqlList.get(0) + ") ");
@@ -223,16 +229,15 @@ public class SqlGenerator implements ISqlGenerator
 	}
 
 	/**
-	 * To get the SQL representation of the Expression.
+	 * To compile the SQL & get the SQL representation of the Expression.
 	 * @param expression the Expression whose SQL to be generated.
-	 * @param joinGraph the refrence to Join Graph.
 	 * @param parentExpression The Parent Expression.
 	 * @return The SQL representation of the Expression.
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 * @throws NoSuchElementException when The Class in an expression does not have Primary Key attribute.
 	 */
-	String getSQL(IExpression expression, IJoinGraph joinGraph, IExpression parentExpression)
+	String getSQL(IExpression expression, IExpression parentExpression)
 			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
@@ -256,18 +261,18 @@ public class SqlGenerator implements ISqlGenerator
 
 		if (parentExpression == null)
 		{
-			selectAttribute = getPrimaryKeyAttrinbute(iClass);
+			selectAttribute = getPrimaryKeyAttrinbute(iClass, expression);
 		}
 		else
 		{
 			IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(),
 					expression.getExpressionId());
 			AssociationInterface eavAssociation = getAssoication((IIntraModelAssociation) association);
-			selectAttribute = getAliasName(entity) + "."
+			selectAttribute = getAliasName(entity, expression) + "."
 					+ eavAssociation.getConstraintProperties().getTargetEntityKey();
 		}
 
-		buffer.append("Select " + selectAttribute + " From " + tableName + getAliasName(entity)
+		buffer.append("Select " + selectAttribute + " From " + tableName + getAliasName(entity, expression)
 				+ " where ");
 
 		for (int i = 0; i < noOfRules; i++)
@@ -285,10 +290,10 @@ public class SqlGenerator implements ISqlGenerator
 				IAssociation association = joinGraph.getAssociation(expression.getExpressionId(),
 						childExpression.getExpressionId());
 				AssociationInterface eavAssociation = getAssoication((IIntraModelAssociation) association);
-				String joinAttribute = getAliasName(entity) + "."
+				String joinAttribute = getAliasName(entity, expression) + "."
 						+ eavAssociation.getConstraintProperties().getSourceEntityKey();
 
-				ruleSQL = getSQL(childExpression, joinGraph, expression);
+				ruleSQL = getSQL(childExpression, expression);
 
 				ruleSQL = joinAttribute + " = ANY(" + ruleSQL + ")";
 			}
@@ -344,23 +349,27 @@ public class SqlGenerator implements ISqlGenerator
 		if (associationMap.containsKey(association))
 			return associationMap.get(association);
 
-		Collection associations = entityManager.getAssociations(association.getSourceClass()
-				.getFullyQualifiedName(), association.getTargetClass().getFullyQualifiedName());
-		AssociationInterface theAssociation = null;
-		Iterator itr = associations.iterator();
-		while (itr.hasNext())
-		{
-			theAssociation = (AssociationInterface) itr.next();
-
-			if (association.getSourceRoleName().equals(theAssociation.getSourceRole().getName())
-					&& (association.getTargetRoleName() == null || association.getTargetRoleName()
-							.equals(theAssociation.getTargetRole().getName())))
-			{
-				associationMap.put(association, theAssociation);
-				return theAssociation;
-			}
-		}
-		return null;
+//		Collection associations = entityManager.getAssociation(association.getSourceClass()
+//				.getFullyQualifiedName(), association.getSourceRoleName());
+//		AssociationInterface theAssociation = null;
+//		Iterator itr = associations.iterator();
+//		while (itr.hasNext())
+//		{
+//			theAssociation = (AssociationInterface) itr.next();
+//
+//			if (association.getSourceRoleName().equals(theAssociation.getSourceRole().getName())
+//					&& (association.getTargetRoleName() == null || association.getTargetRoleName()
+//							.equals(theAssociation.getTargetRole().getName())))
+//			{
+//				associationMap.put(association, theAssociation);
+//				return theAssociation;
+//			}
+//		}
+//		return null;
+		AssociationInterface theAssociation = entityManager.getAssociation(association.getSourceClass()
+				.getFullyQualifiedName(), association.getSourceRoleName());
+		associationMap.put(association, theAssociation);
+		return theAssociation;
 	}
 
 	/**
@@ -378,7 +387,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		for (int i = 0; i < noOfConditions; i++) // Processing all conditions in Rule combining them with AND operator.
 		{
-			String condition = getSQL(rule.getCondition(i));
+			String condition = getSQL(rule.getCondition(i), rule.getContainingExpression());
 
 			if (i != noOfConditions - 1) // Intermediate Condition.
 				buffer.append(condition + " " + LogicalOperator.And + " ");
@@ -396,13 +405,13 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	String getSQL(ICondition condition) throws DynamicExtensionsSystemException,
+	String getSQL(ICondition condition, IExpression expression) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		IAttribute attribute = condition.getAttribute();
 		DataType dataType = attribute.getDataType();
-		String attributeName = getSQL(attribute);
+		String attributeName = getSQL(attribute, expression);
 
 		RelationalOperator operator = condition.getRelationalOperator();
 		String strOperator = RelationalOperator.getSQL(operator);
@@ -494,11 +503,11 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsSystemException
 	 * @throws DynamicExtensionsApplicationException
 	 */
-	String getSQL(IAttribute attribute) throws DynamicExtensionsSystemException,
+	String getSQL(IAttribute attribute,IExpression expression) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		Entity entity = getEntity(attribute.getUMLClass());
-		String tableName = getAliasName(entity);
+		String tableName = getAliasName(entity, expression);
 		Attribute entityAttribute = getAttribute(attribute);
 		return tableName + "." + entityAttribute.getColumnProperties().getName();
 	}
@@ -506,12 +515,13 @@ public class SqlGenerator implements ISqlGenerator
 	/**
 	 * To get the Alias Name for the given Entity.
 	 * @param entity the reference to Entity.
+	 * @param expression TODO
 	 * @return The Alias Name for the given Entity.
 	 */
-	private String getAliasName(Entity entity)
+	private String getAliasName(Entity entity, IExpression expression)
 	{
 		String tableName = entity.getName();
-		tableName = tableName.substring(tableName.lastIndexOf('.') + 1, tableName.length())
+		tableName = tableName.substring(tableName.lastIndexOf('.') + ((Expression)expression).getAliasAppend(), tableName.length())
 				+ tableSuffix;
 		return tableName;
 	}
@@ -558,12 +568,13 @@ public class SqlGenerator implements ISqlGenerator
 	/**
 	 * To get the Primary key attribute of the Class. 
 	 * @param iClass the iClass reference.
+	 * @param expression TODO
 	 * @return the actual Column name of the primary Attribute concatenated with alias name.
 	 * @throws DynamicExtensionsApplicationException 
 	 * @throws DynamicExtensionsSystemException 
 	 * @throws NoSuchElementException if The Primary key Attribute not found.
 	 */
-	private String getPrimaryKeyAttrinbute(IClass iClass) throws DynamicExtensionsSystemException,
+	private String getPrimaryKeyAttrinbute(IClass iClass, IExpression expression) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
 		Entity entity = getEntity(iClass);
@@ -576,7 +587,7 @@ public class SqlGenerator implements ISqlGenerator
 
 			if (isPrimaryKey != null && isPrimaryKey.booleanValue() == true)
 			{
-				String primaryKeyName = getAliasName(entity) + "."
+				String primaryKeyName = getAliasName(entity, expression) + "."
 						+ element.getColumnProperties().getName();
 				return primaryKeyName;
 			}
@@ -586,4 +597,8 @@ public class SqlGenerator implements ISqlGenerator
 				+ " Attribute not found for class " + iClass.getFullyQualifiedName());
 	}
 
+	void setJoinGraph(JoinGraph joinGraph)
+	{
+		this.joinGraph = joinGraph;
+	}
 }

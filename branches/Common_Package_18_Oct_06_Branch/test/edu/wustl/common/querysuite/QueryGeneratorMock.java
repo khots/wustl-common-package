@@ -137,12 +137,12 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule Created.
 	 */
-	public static IRule createParticipantRule1(IClass participant)
+	public static IRule createParticipantRule1(IClass participant, IExpression containingExpression)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition2(participant));
 		conditions.add(createParticipantCondition3(participant));
-		IRule rule = QueryObjectFactory.createRule(conditions, null);
+		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
 		return rule;
 	}
 
@@ -151,11 +151,12 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule reference.
 	 */
-	public static IRule createParticipantRule2(IClass participant)
+	public static IRule createParticipantRule2(IClass participant,IExpression containingExpression)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition1(participant));
-		IRule rule = QueryObjectFactory.createRule(conditions, null);
+		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
+		
 		return rule;
 	}
 
@@ -164,11 +165,11 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule reference.
 	 */
-	public static IRule createParticipantRule3(IClass participant)
+	public static IRule createParticipantRule3(IClass participant, IExpression containingExpression)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition4(participant));
-		IRule rule = QueryObjectFactory.createRule(conditions, null);
+		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
 		return rule;
 	}
 
@@ -180,10 +181,10 @@ public class QueryGeneratorMock
 	public static IExpression creatParticipantExpression1(IClass participant)
 	{
 		IExpression expression = new Expression(participant, 1);
-		expression.addOperand(createParticipantRule1(participant));
+		expression.addOperand(createParticipantRule1(participant, expression));
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or,
 				0);
-		expression.addOperand(connector, createParticipantRule2(participant));
+		expression.addOperand(connector, createParticipantRule2(participant,expression));
 
 		return expression;
 	}
@@ -198,7 +199,7 @@ public class QueryGeneratorMock
 	public static IExpression creatParticipantExpression2(IClass participant)
 	{
 		IExpression expression = new Expression(null, 1);
-		expression.addOperand(createParticipantRule3(participant));
+		expression.addOperand(createParticipantRule3(participant,expression));
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(
 				LogicalOperator.And, 0);
 		expression.addOperand(connector, (IExpressionOperand) creatParticipantMedicalIdentifierExpression(createParticantMedicalIdentifierClass()));
@@ -221,18 +222,17 @@ public class QueryGeneratorMock
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
 		
-		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
-		constraints.setJoinGraph(joinGraph);
-
+		IJoinGraph joinGraph = constraints.getJoinGraph();
+		
 		IExpression participantExpression = constraints.addExpression(participantClass);
-		participantExpression.addOperand(createParticipantRule2(participantClass));
+		participantExpression.addOperand(createParticipantRule2(participantClass, participantExpression));
 		
 		IExpression pmExpression = constraints.addExpression(pmClass);
 		
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And,
 				0);
 		participantExpression.addOperand(connector,pmExpression);
-		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass));
+		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass,pmExpression));
 		
 		
 		IAssociation association = QueryObjectFactory.createIntraModelAssociation(participantClass, pmClass, "participant", "participantMedicalIdentifierCollection", true);
@@ -261,12 +261,8 @@ public class QueryGeneratorMock
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
 		
-		IJoinGraph joinGraph = QueryObjectFactory.createJoinGraph();
-		constraints.setJoinGraph(joinGraph);
-
-		
 		IExpression participantExpression = constraints.addExpression(participantClass);
-		participantExpression.addOperand(createParticipantRule2(participantClass));
+		participantExpression.addOperand(createParticipantRule2(participantClass,participantExpression));
 		
 		
 		return query;
@@ -314,11 +310,11 @@ public class QueryGeneratorMock
 	 * @param participantMedicalId The Iclass representing Participant Medical Identifier obje 
 	 * @return The Rule reference.
 	 */
-	private static IRule createParticipantMedicalIdentifierRule1(IClass participantMedicalId)
+	private static IRule createParticipantMedicalIdentifierRule1(IClass participantMedicalId, IExpression containingExpression)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantMedicalIdentifierCondition1(participantMedicalId));
-		IRule rule = QueryObjectFactory.createRule(conditions, null);
+		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
 		return rule;
 	}
 	
@@ -330,7 +326,7 @@ public class QueryGeneratorMock
 	public static IExpression creatParticipantMedicalIdentifierExpression(IClass participantMedicalId)
 	{
 		IExpression expression = new Expression(null, 2);
-		IRule rule = createParticipantMedicalIdentifierRule1(participantMedicalId);
+		IRule rule = createParticipantMedicalIdentifierRule1(participantMedicalId,expression);
 		expression.addOperand(rule);
 		return expression;
 	}

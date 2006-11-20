@@ -129,12 +129,12 @@ public class QueryObjectFactory
 
 	public static IRule createRule(List<ICondition> conditions, IExpression containingExpression)
 	{
-		return new Rule(conditions);
+		return new Rule(conditions, containingExpression);
 	}
 
 	public static IRule createRule()
 	{
-		return new Rule();
+		return new Rule(null,null);
 	}
 
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,

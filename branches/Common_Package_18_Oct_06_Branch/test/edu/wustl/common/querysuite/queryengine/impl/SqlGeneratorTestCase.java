@@ -13,6 +13,7 @@ import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 
 /**
  * TestCase class for SqlGenerator.
@@ -41,21 +42,22 @@ public class SqlGeneratorTestCase extends TestCase
 	public void testParticpiantCondition()
 	{
 		IClass class1 = QueryGeneratorMock.createParticantClass();
+		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
 		ICondition condition1;
 		try
 		{
 			condition1 = QueryGeneratorMock.createParticipantCondition1(class1);
-			assertEquals(generator.getSQL(condition1), "Participant0.ACTIVITY_STATUS='Active'");
+			assertEquals(generator.getSQL(condition1,expression), "Participant0.ACTIVITY_STATUS='Active'");
 
 			condition1 = QueryGeneratorMock.createParticipantCondition2(class1);
-			assertEquals(generator.getSQL(condition1), "Participant0.IDENTIFIER in (1,2,3,4)");
+			assertEquals(generator.getSQL(condition1,expression), "Participant0.IDENTIFIER in (1,2,3,4)");
 
 			condition1 = QueryGeneratorMock.createParticipantCondition3(class1);
-			assertEquals(generator.getSQL(condition1),
+			assertEquals(generator.getSQL(condition1,expression),
 					"(Participant0.BIRTH_DATE<='1-1-2000' And Participant0.BIRTH_DATE>='1-2-2000')");
 
 			condition1 = QueryGeneratorMock.createParticipantCondition5(class1);
-			assertEquals(generator.getSQL(condition1),
+			assertEquals(generator.getSQL(condition1,expression),
 					"Participant0.ACTIVITY_STATUS like '%Active%'");
 		}
 		catch (Exception e)
@@ -71,7 +73,8 @@ public class SqlGeneratorTestCase extends TestCase
 	public void testParticpiantRule()
 	{
 		IClass class1 = QueryGeneratorMock.createParticantClass();
-		IRule rule = QueryGeneratorMock.createParticipantRule1(class1);
+		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
+		IRule rule = QueryGeneratorMock.createParticipantRule1(class1,expression);
 		try
 		{
 			assertEquals(
@@ -92,9 +95,10 @@ public class SqlGeneratorTestCase extends TestCase
 	{
 		IClass class1 = QueryGeneratorMock.createParticantClass();
 		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
+		
 		try
 		{
-			String SQL = generator.getSQL(expression, null, null);
+			String SQL = generator.getSQL(expression, null);
 			//			System.out.println(SQL);
 			assertEquals(
 					SQL,
@@ -122,9 +126,8 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			rootExpression = constraints.getExpression(constraints.getRootExpressionId());
-
-			String SQL = generator.getSQL(rootExpression, query.getConstraints().getJoinGraph(),
-					null);
+			generator.setJoinGraph((JoinGraph)constraints.getJoinGraph());
+			String SQL = generator.getSQL(rootExpression, null);
 			//			System.out.println("*********"+SQL);
 			assertEquals(
 					"Incorrect SQL formed for the Root Expression !!!",
@@ -147,12 +150,13 @@ public class SqlGeneratorTestCase extends TestCase
 					"Select Participant0.ACTIVITY_STATUS, Participant0.BIRTH_DATE, Participant0.DEATH_DATE, Participant0.ETHNICITY, Participant0.FIRST_NAME, Participant0.GENDER, Participant0.IDENTIFIER, Participant0.LAST_NAME, Participant0.MIDDLE_NAME, Participant0.GENOTYPE, Participant0.SOCIAL_SECURITY_NUMBER, Participant0.VITAL_STATUS");
 
 			String fromPart = generator.getFromPartSQL(rootExpression);
+//			System.out.println(fromPart);
+//			System.out.println("From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID)");
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
 					fromPart,
 					"From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID)");
 
-			//			System.out.println(fromPart);
 
 		}
 		catch (Exception e)
@@ -173,6 +177,8 @@ public class SqlGeneratorTestCase extends TestCase
 			String sql = generator.generateSQL(query);
 //						System.out.println(sql);
 
+//			System.out.println(sql);
+//			System.out.println("Select Participant0.ACTIVITY_STATUS, Participant0.BIRTH_DATE, Participant0.DEATH_DATE, Participant0.ETHNICITY, Participant0.FIRST_NAME, Participant0.GENDER, Participant0.IDENTIFIER, Participant0.LAST_NAME, Participant0.MIDDLE_NAME, Participant0.GENOTYPE, Participant0.SOCIAL_SECURITY_NUMBER, Participant0.VITAL_STATUS From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID) Where Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') And(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) And ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') ");
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
 					sql,
@@ -203,7 +209,6 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}

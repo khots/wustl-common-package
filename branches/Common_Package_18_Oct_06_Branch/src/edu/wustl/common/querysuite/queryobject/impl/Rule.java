@@ -25,14 +25,11 @@ public class Rule implements IRule
 	private List<ICondition> conditions = new ArrayList<ICondition>();
 	private IExpression containingExpression;
 
-	public Rule ()
-	{
-		
-	}
-	public Rule(List<ICondition> conditions)
+	public Rule(List<ICondition> conditions, IExpression containingExpression)
 	{
 		if (conditions != null)
 			this.conditions = conditions;
+		this.containingExpression = containingExpression;
 	}
 
 	/**
