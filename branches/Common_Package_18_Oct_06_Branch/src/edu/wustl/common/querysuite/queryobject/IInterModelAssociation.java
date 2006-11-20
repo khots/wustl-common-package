@@ -20,6 +20,10 @@ public interface IInterModelAssociation extends IAssociation
 
 	public IAttribute getTargetAttribute();
 
+	/**
+	 * Use the set for read-only purposes. For adding/removing use the other methods (removeSourceServiceUrl, addSourceServiceUrl).
+	 * @return a set view of the source service urls.
+	 */
 	public Set<String> getSourceServiceUrls();
 
 	/**
