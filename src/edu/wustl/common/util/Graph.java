@@ -3,8 +3,11 @@ package edu.wustl.common.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.util.global.Constants;
@@ -18,10 +21,8 @@ import edu.wustl.common.util.global.Constants;
 public class Graph<V, E>
 {
 
-	private List<V> vertexList = new ArrayList<V>();
 	private Map<V, List<Edge>> incommingEdgeMap = new HashMap<V, List<Edge>>();
 	private Map<V, List<Edge>> outgoingEdgeMap = new HashMap<V, List<Edge>>();
-	private int ordinalNumber = 0; // Ordinal number for the currently visited node.
 
 	public Graph()
 	{
@@ -96,8 +97,14 @@ public class Graph<V, E>
 	{
 		if (vertex != null)
 		{
-			if (!(vertexList.contains(vertex)))
-				return vertexList.add(vertex);
+			if (incommingEdgeMap.containsKey(vertex))
+				return false;
+			else
+			{
+				incommingEdgeMap.put(vertex, new ArrayList<Edge>());
+				outgoingEdgeMap.put(vertex, new ArrayList<Edge>());
+				return true;
+			}
 		}
 		return false;
 	}
@@ -171,43 +178,22 @@ public class Graph<V, E>
 	{
 		Edge theEdge = (Edge) getEdgeFromList(outgoingEdgeMap.get(sourceVertex), targetVertex,
 				false);
-		//		Edge theEdge = (Edge)getEdge(sourceVertex, targetVertex);
 
 		if (theEdge == null) // The edge does not exist!!
 		{
-			// Add source vertex & target vertex in the vertices list.
-			if (!vertexList.contains(sourceVertex))
-				vertexList.add(sourceVertex);
-			if (!vertexList.contains(targetVertex))
-				vertexList.add(targetVertex);
+			//Adding vertex in the vertex list if not present.
+			addVertex(sourceVertex);
+			addVertex(targetVertex);
 
-			Edge newEdge = new Edge(sourceVertex, targetVertex, edge);
-
-			// Add this Edge in outgoing Edges.
-			List<Edge> outgoingEdges = outgoingEdgeMap.get(sourceVertex);
-			if (outgoingEdges == null)
+			if (isReverseReachable(sourceVertex, targetVertex))
 			{
-				outgoingEdges = new ArrayList<Edge>();
-				outgoingEdgeMap.put(sourceVertex, outgoingEdges);
-			}
-			outgoingEdges.add((Edge) newEdge);
-
-			// Add this Edge in incomming Edges.
-			List<Edge> incomingEdges = incommingEdgeMap.get(targetVertex);
-			if (incomingEdges == null)
-			{
-				incomingEdges = new ArrayList<Edge>();
-				incommingEdgeMap.put(targetVertex, incomingEdges);
-			}
-			incomingEdges.add((Edge) newEdge);
-
-			if (isCyclic())
-			{
-				// Clean already added data.
-				outgoingEdges.remove(newEdge);
-				incomingEdges.remove(newEdge);
 				throw new CyclicException("Adding this Edge will form a Cycle in Graph.");
 			}
+			
+			//Add this Edge in outgoing & incomming Edges.
+			Edge newEdge = new Edge(sourceVertex, targetVertex, edge);
+			outgoingEdgeMap.get(sourceVertex).add(newEdge);
+			incommingEdgeMap.get(targetVertex).add(newEdge);
 		}
 		else
 		// The edge already exists, so replace the existing edge and return it.
@@ -220,25 +206,28 @@ public class Graph<V, E>
 	}
 
 	/**
-	 * Checks if the graph is connected
+	 * Checks if the graph is weakly connected.
+	 * Graph will be connected if
+	 *  1. after Depth first traversing (without considering edge Direction) through graph from (the only one)unreachable node, results into  
 	 * @return true if graph is connected; false if graph is disjoint
 	 */
 	public boolean isConnected()
-	{
+	{ 
 		boolean isConnected = true;
 
 		List<V> unreachableNodes = getUnreachableNodeList();
-		if (unreachableNodes.size() != 1)
-			return false;
+//		if (unreachableNodes.size() >  1)
+//			return false;
 
-		V root = unreachableNodes.get(0);
-		boolean[] visited = new boolean[vertexList.size()];
-		dfs(vertexList.indexOf(root), visited);
-		for (int i = 0; i < visited.length; i++)
-		{
-			if (visited[i] == false)
-				return false;
-		}
+		Set<V> allVertexSet = new  HashSet<V>();
+		allVertexSet.addAll(incommingEdgeMap.keySet());
+	
+		dfs(unreachableNodes.get(0),allVertexSet);
+		if (allVertexSet.isEmpty()) 
+			isConnected = true;
+		else // after traversing if the allVertexSet is not empty means its a disconnected graph.
+			isConnected = false;
+		
 		return isConnected;
 	}
 
@@ -250,18 +239,15 @@ public class Graph<V, E>
 	public List<V> getUnreachableNodeList()
 	{
 		List<V> list = new ArrayList<V>();
-
-		for (int i = 0; i < vertexList.size(); i++)
+		
+		Set<V> vertices = incommingEdgeMap.keySet();
+		for (Iterator<V> iter = vertices.iterator(); iter.hasNext();)
 		{
-			V vertex = vertexList.get(i);
+			V vertex = iter.next();
 			List<Edge> incommingEdges = incommingEdgeMap.get(vertex);
-
-			if (incommingEdges == null || incommingEdges.isEmpty())
-			{
+			if (incommingEdges==null || incommingEdges.isEmpty())
 				list.add(vertex);
-			}
 		}
-
 		return list;
 	}
 
@@ -272,119 +258,66 @@ public class Graph<V, E>
 	 */
 	public boolean removeVertex(V vertex)
 	{
-		boolean flag = vertexList.remove(vertex);
-		if (flag)
+		boolean flag = false;
+		if (incommingEdgeMap.containsKey(vertex))
 		{
-			removeEdges(vertex, true); // removing all incomming edges references.
-			removeEdges(vertex, false); // removing all outgoing edges references.
 			incommingEdgeMap.remove(vertex);
 			outgoingEdgeMap.remove(vertex);
+			flag = true;
 		}
 		return flag;
 	}
 
 	/**
-	 * To remove incomming or outgoing edges & there references from the graph depending upon the value of isIncomming parameter.  
-	 * @param vertex
-	 * @param isIncomming
+	 * This method checks whether adding node from sourceVertex to targetVertex will result into cyclic graph or not.
+	 * 
+	 * Adding an edge will result into cycle only when the target vertex is reachable from source vertex i.e. 
+	 * Vertex B is reachable from vertex A if and only if 
+	 * 		1. There is direct edge from vertex C to B 
+	 * 		2. and C is reachable from A.
+	 *   
+	 * @param sourceVertex The source vertex of edge to be added.
+	 * @param targetVertex The target vertex of edge to be added.
+	 * @return true if the 
 	 */
-	private void removeEdges(V vertex, boolean isIncomming)
+	private boolean isReverseReachable(V sourceVertex, V targetVertex)
 	{
-		List<Edge> edges = null;
-		if (isIncomming)
-			edges = incommingEdgeMap.get(vertex);
-		else
-			edges = outgoingEdgeMap.get(vertex);
-
+		if (sourceVertex.equals(targetVertex))
+			return true; //finaly reached from source to target!!! 
+		List<Edge> edges = incommingEdgeMap.get(sourceVertex);
 		for (int i = 0; i < edges.size(); i++)
 		{
-			Edge edge = edges.get(i);
-			if (isIncomming)
-				removeEdge(edge.targetVertex, vertex);
-			else
-				removeEdge(vertex, edge.sourceVertex);
+			 boolean isCyclic = isReverseReachable(edges.get(i).sourceVertex, targetVertex);
+			 if (isCyclic)
+				 return true;
 		}
-	}
-
-	/**
-	 * Check if the Graph is cyclic. Visits each node and checks
-	 * simultaneously if the node has been visited before. Stores this
-	 * information in a boolean array for checking.
-	 * @return true if any cycle exists between elements in the Graph
-	 */
-	private boolean isCyclic()
-	{
-		int[] ordinalNos = new int[vertexList.size()];// ordinal numbers for graph’s visited nodes.
-		boolean[] inProg = new boolean[vertexList.size()];// Keep track if the search on a given node is currently in progress.
-		ordinalNumber = 0;
-		boolean isCyclic = true;
-
-		for (int i = 0; i < vertexList.size(); i++)
-		{
-			List<Edge> incomingList = incommingEdgeMap.get(vertexList.get(i));
-			if (incomingList != null && !incomingList.isEmpty())
-			{
-				isCyclic = checkCycleUsingDFS(i, ordinalNos, inProg);
-				if (isCyclic)
-					return true;
-			}
-		}
-		return isCyclic;
-	}
-
-	/**
-	 * DFS searching for cycle present in the graph
-	 * @param currentIndex
-	 * @param ordinalNos
-	 * @param inProg
-	 * @return true if a node has already been visited; false otherwise
-	 */
-	private boolean checkCycleUsingDFS(int currentIndex, int[] ordinalNos, boolean[] inProg)
-	{
-		ordinalNos[currentIndex] = ordinalNumber++;
-		inProg[currentIndex] = true;
-		List<Edge> edges = outgoingEdgeMap.get(vertexList.get(currentIndex));
-		if (edges != null)
-		{
-			for (int edgeCounter = 0; edgeCounter < edges.size(); edgeCounter++)
-			{
-				Edge edge = edges.get(edgeCounter);
-				int index = vertexList.indexOf(edge.getTargetVertex());
-				if (inProg[index])
-				{
-					return true;
-				}
-				else if (ordinalNos[index] == 0)
-				{
-					boolean isCyclic = checkCycleUsingDFS(index, ordinalNos, inProg);
-					if (isCyclic)
-						return true;
-				}
-			}
-		}
+		
 		return false;
 	}
 
+
 	/**
 	 * Method to traverse using Depth First algorithm. 
-	 * It marks the entry for the index in visited array as true while visiting each node.
-	 * @param index
-	 * @param visited
+	 * It removes the vertex from allVertexSet while visiting each vertex. dfs of connected graph should result into the allVetrexSet empty.
+	 * @param vertex The vertex to be visited.
+	 * @param allVertexSet Set of all nodes not visited yet.
 	 */
-	private void dfs(int index, boolean[] visited)
+	private void dfs(V vertex, Set<V> allVertexSet)
 	{
-		if (visited[index] == true)
-			return;
-
-		visited[index] = true;
-		V node = vertexList.get(index);
-		List<Edge> outgoingEdges = outgoingEdgeMap.get(node);
-		if (outgoingEdges != null)
+		allVertexSet.remove(vertex);
+		List<Edge> edges = new ArrayList<Edge>();
+		edges.addAll(outgoingEdgeMap.get(vertex));
+		edges.addAll(incommingEdgeMap.get(vertex));
+		
+		if (edges != null)
 		{
-			for (int i = 0; i < outgoingEdges.size(); i++)
+			for (int i = 0; i < edges.size(); i++)
 			{
-				Edge edge = outgoingEdges.get(i);
-				dfs(vertexList.indexOf(edge.getTargetVertex()), visited);
+				Edge edge = edges.get(i);
+				if (allVertexSet.contains(edge.targetVertex))
+					dfs(edge.targetVertex, allVertexSet); // this vertex is not yet visited.
+				if (allVertexSet.contains(edge.sourceVertex))
+					dfs(edge.sourceVertex, allVertexSet); // this vertex is not yet visited.
 			}
 		}
 	}
@@ -417,4 +350,49 @@ public class Graph<V, E>
 		return null;
 	}
 
+	
+	/**
+	 * To get the list directly reachable Vertices from the given vertex. 
+	 * @return List of Vertices directly reachable from the given vertex. 
+	 * Returns null if vertex is not present in graph,
+	 * Returns empty list if vertex has no directly reachable node.
+	 */
+	public List<V> getDirectSuccessorOf(V vertex)
+	{
+		List<Edge> edges = outgoingEdgeMap.get(vertex);
+		List<V> vertices = null;
+		if (edges!=null)
+		{
+			vertices = new ArrayList<V>();
+			Iterator<Edge> iter = edges.iterator();
+			while (iter.hasNext())
+			{
+				vertices.add(iter.next().targetVertex);
+				
+			}
+		}
+		return vertices;
+	}
+	
+	/**
+	 * To get the list of vertices from which the given vertex is directly reachable. 
+	 * @return List of Vertices from which the given vertex is directly reachable. 
+	 * Returns null if vertex is not present in graph,
+	 * Returns empty list if vertex has no incomming Edges.
+	 */
+	public List<V> getDirectPredecessorOf(V vertex)
+	{
+		List<Edge> edges = incommingEdgeMap.get(vertex);
+		List<V> vertices = null;
+		if (edges!=null)
+		{
+			vertices = new ArrayList<V>();
+			Iterator<Edge> iter = edges.iterator();
+			while (iter.hasNext())
+			{
+				vertices.add(iter.next().sourceVertex);
+			}
+		}
+		return vertices;
+	}
 }

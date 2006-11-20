@@ -107,4 +107,12 @@ public class JoinGraph implements IJoinGraph
 		return joinGraph.addVertex(id);
 	}
 
+	/**
+	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#getParentList(edu.wustl.common.querysuite.queryobject.IExpressionId)
+	 */
+	public List<IExpressionId> getParentList(IExpressionId childExpressionId)
+	{
+		return joinGraph.getDirectPredecessorOf(childExpressionId);
+	}
+
 }

@@ -38,7 +38,7 @@ public class Constraints implements IConstraints
 	{
 		IExpression expression = new Expression(functionalClass, ++currentExpressionId);
 		expressions.put(expression.getExpressionId(), expression);
-		joinGraph.addIExpressionId(expression.getExpressionId());
+		((JoinGraph)joinGraph).addIExpressionId(expression.getExpressionId());
 		return expression;
 	}
 
@@ -73,7 +73,7 @@ public class Constraints implements IConstraints
 	 */
 	public IExpression removeExpressionWithId(IExpressionId id)
 	{
-		joinGraph.removeIExpressionId(id);
+		((JoinGraph)joinGraph).removeIExpressionId(id);
 		return expressions.remove(id);
 	}
 

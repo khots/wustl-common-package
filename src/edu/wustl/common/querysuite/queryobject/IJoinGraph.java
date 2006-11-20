@@ -1,6 +1,8 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
+import java.util.List;
+
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 
@@ -76,18 +78,11 @@ public interface IJoinGraph extends IBaseQueryObject
 			IExpressionId childExpressionId);
 
 	public IExpressionId getRoot() throws MultipleRootsException;
-	
+
 	/**
-	 * Removes the specified id from the list of IExpressionId if one exists
-	 * @param id
-	 * @return true upon removing specified existing id; false otherwise
+	 * To get the list of Parents of the given ExpressionId.
+	 * @param childExpressionId the Child Expression Id reference.
+	 * @return The List parent of ExpressionId for th given childExpressionId. 
 	 */
-	boolean removeIExpressionId(IExpressionId id);
-	
-	/**
-	 * Adds the IExpressionId to the graph graph.
-	 * @param id the reference to IExpressionId
-	 * @return true if the given expression id already exist in grapg; false otherwise
-	 */
-	boolean addIExpressionId(IExpressionId id);
+	public List<IExpressionId> getParentList(IExpressionId childExpressionId);
 }

@@ -46,7 +46,7 @@ public class JoinGraphTestCase extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		joinGraph = QueryObjectFactory.createJoinGraph();
+		joinGraph = new JoinGraph();
 
 		joinGraph.putAssociation(expId1, expId2, association12);
 		joinGraph.putAssociation(expId1, expId3, association13);
@@ -128,7 +128,7 @@ public class JoinGraphTestCase extends TestCase
 
 	/**
 	 * To check CyclicException condition of putAssociation method. 
-	 * If user tries to add an Assiciation which is causing Cycle, the it should throw Exception.
+	 * Adding edge in Exp3 to Exp5 should not throw CyclicException.
 	 * 
 	 * 	exp1-->Exp2-->Exp5
 	 * 	  \ \-->Exp3-->|
@@ -141,11 +141,11 @@ public class JoinGraphTestCase extends TestCase
 		try
 		{
 			IAssociation newAssociation = joinGraph.putAssociation(expId3, expId5, association35);
-			assertTrue("Expected CyclicException!!!", false);
 			assertNull("Expected null value of Association!!!", newAssociation);
 		}
 		catch (CyclicException e)
 		{
+			assertTrue("UnExpected CyclicException, while adding Association!!!", false);
 		}
 	}
 
@@ -304,7 +304,7 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testIsConnected3()
 	{
-		IJoinGraph theJoinGraph = QueryObjectFactory.createJoinGraph();
+		IJoinGraph theJoinGraph = new JoinGraph();
 		try
 		{
 			theJoinGraph.putAssociation(expId1, expId2, association12);
