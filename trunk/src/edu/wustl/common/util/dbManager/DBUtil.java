@@ -1,3 +1,4 @@
+
 package edu.wustl.common.util.dbManager;
 
 import java.sql.Connection;
@@ -19,13 +20,14 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class DBUtil
 {
+
 	//A factory for DB Session which provides the Connection for client. 
-	private static  SessionFactory m_sessionFactory;
+	private static SessionFactory m_sessionFactory;
 
 	//ThreadLocal to hold the Session for the current executing thread. 
 	private static final ThreadLocal threadLocal = new ThreadLocal();
 	//Initialize the session Factory in the Static block.
-	static 
+	static
 	{
 		try
 		{
@@ -33,53 +35,51 @@ public class DBUtil
 			m_sessionFactory = cfg.configure().buildSessionFactory();
 			HibernateMetaData.initHibernateMetaData(cfg);
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			ex.printStackTrace();
-		    Logger.out.debug("Exception: "+ex.getMessage(),ex);
+			Logger.out.debug("Exception: " + ex.getMessage(), ex);
 			throw new RuntimeException(ex.getMessage());
 		}
-		
-		
-//		try
-//
-//		{
-//
-//		File file = new File(Variables.catissueHome+System.getProperty("file.separator")+"db.properties");
-//
-//		Logger.out.info("File "+file);
-//
-//		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
-//
-//		Properties p = new Properties();
-//
-//		p.load(stram);
-//
-//
-//		stram.close();
-//
-//		Configuration cfg = new Configuration();
-//
-//		cfg.setProperties(p);
-//
-//		m_sessionFactory = cfg.configure().buildSessionFactory();
-//
-//		HibernateMetaData.initHibernateMetaData(cfg);
-//
-//		}
-//
-//		catch(Exception ex)
-//
-//		{
-//
-//		ex.printStackTrace();
-//
-//		Logger.out.debug("Exception: "+ex.getMessage(),ex);
-//
-//		throw new RuntimeException(ex.getMessage());
 
-//		}
+		//		try
+		//
+		//		{
+		//
+		//		File file = new File(Variables.catissueHome+System.getProperty("file.separator")+"db.properties");
+		//
+		//		Logger.out.info("File "+file);
+		//
+		//		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
+		//
+		//		Properties p = new Properties();
+		//
+		//		p.load(stram);
+		//
+		//
+		//		stram.close();
+		//
+		//		Configuration cfg = new Configuration();
+		//
+		//		cfg.setProperties(p);
+		//
+		//		m_sessionFactory = cfg.configure().buildSessionFactory();
+		//
+		//		HibernateMetaData.initHibernateMetaData(cfg);
+		//
+		//		}
+		//
+		//		catch(Exception ex)
+		//
+		//		{
+		//
+		//		ex.printStackTrace();
+		//
+		//		Logger.out.debug("Exception: "+ex.getMessage(),ex);
+		//
+		//		throw new RuntimeException(ex.getMessage());
 
+		//		}
 
 	}
 
@@ -90,7 +90,7 @@ public class DBUtil
 	public static Session currentSession() throws HibernateException
 	{
 		Session s = (Session) threadLocal.get();
-		
+
 		//Open a new Session, if this Thread has none yet
 		if (s == null)
 		{
@@ -99,9 +99,9 @@ public class DBUtil
 			{
 				s.connection().setAutoCommit(false);
 			}
-			catch(SQLException ex)
+			catch (SQLException ex)
 			{
-				throw new HibernateException(ex.getMessage(),ex);
+				throw new HibernateException(ex.getMessage(), ex);
 			}
 			threadLocal.set(s);
 		}
@@ -113,19 +113,46 @@ public class DBUtil
 	 * */
 	public static void closeSession() throws HibernateException
 	{
-		Session s = (Session) threadLocal.get(); 
+		Session s = (Session) threadLocal.get();
 		threadLocal.set(null);
 		if (s != null)
 			s.close();
 	}
-	
+
 	public static Connection getConnection() throws HibernateException
 	{
 		return currentSession().connection();
 	}
-	
+
 	public static void closeConnection() throws HibernateException
 	{
 		closeSession();
+	}
+
+	/**
+	 * This method opens a new session, loads an object with given class and Id, and closes
+	 * the session. This method should be used only when an object is to be opened in separate session.  
+	 * 
+	 * @param objectClass class of the object
+	 * @param identifier id of the object
+	 * @return object
+	 * @throws HibernateException
+	 */
+	public static Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
+	{
+		Session session = null;
+		try
+		{
+			session = m_sessionFactory.openSession();
+			return session.load(objectClass, identifier);
+		}
+		catch (HibernateException e)
+		{
+			throw e;
+		}
+		finally
+		{
+			session.close();
+		}
 	}
 }
