@@ -4,8 +4,8 @@ package edu.wustl.common.querysuite.queryobject;
 import java.util.Set;
 
 /**
- * urls are conceptually a {@link java.util.Map} with key=leftServiceUrl, and
- * value = {@link java.util.List}<rightServiceUrl>. These associations are
+ * Wrapper around a {@link java.util.LinkedHashMap} with key=leftServiceUrl, and
+ * value = {@link java.util.LinkedHashSet}<rightServiceUrl>. These associations are
  * always bidirectional.
  * @version 1.0
  * @updated 11-Oct-2006 02:56:58 PM
