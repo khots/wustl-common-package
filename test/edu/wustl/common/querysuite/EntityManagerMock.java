@@ -14,20 +14,15 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domain.Attribute;
-import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domain.Entity;
-import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.Role;
-import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.databaseproperties.ColumnProperties;
 import edu.common.dynamicextensions.domain.databaseproperties.ConstraintProperties;
 import edu.common.dynamicextensions.domain.databaseproperties.TableProperties;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.databaseproperties.ColumnPropertiesInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
@@ -35,8 +30,8 @@ import edu.common.dynamicextensions.util.global.Constants;
 
 public class EntityManagerMock extends EntityManager
 {
-
-	public List<Entity> entityList = new ArrayList<Entity>();
+	DomainObjectFactory factory = DomainObjectFactory.getInstance();
+	public List<EntityInterface> entityList = new ArrayList<EntityInterface>();
 	public static String PARTICIPANT_NAME = "edu.wustl.catissuecore.domain.Participant";
 	public static String PARTICIPANT_MEDICAL_ID_NAME = "edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier";
 	public static String COLLECTION_PROTOCOL_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";
@@ -82,12 +77,12 @@ public class EntityManagerMock extends EntityManager
 	@Override
 	public Collection getAllEntities() throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		entityList.add((Entity)getEntityByName(PARTICIPANT_NAME));
-		entityList.add((Entity)getEntityByName(PARTICIPANT_MEDICAL_ID_NAME));
-		entityList.add((Entity)getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME));
-		entityList.add((Entity)getEntityByName(COLLECTION_PROTOCOL_NAME));
-		entityList.add((Entity)getEntityByName(COLLECTION_PROTOCOL_EVT_NAME));
-		entityList.add((Entity)getEntityByName(CHKIN_CHKOUT_EVT_NAME));
+		entityList.add((EntityInterface)getEntityByName(PARTICIPANT_NAME));
+		entityList.add((EntityInterface)getEntityByName(PARTICIPANT_MEDICAL_ID_NAME));
+		entityList.add((EntityInterface)getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME));
+		entityList.add((EntityInterface)getEntityByName(COLLECTION_PROTOCOL_NAME));
+		entityList.add((EntityInterface)getEntityByName(COLLECTION_PROTOCOL_EVT_NAME));
+		entityList.add((EntityInterface)getEntityByName(CHKIN_CHKOUT_EVT_NAME));
 		return entityList;
 	}
 
@@ -98,10 +93,10 @@ public class EntityManagerMock extends EntityManager
 	public AssociationInterface getAssociation(String sourceEntityName, String sourceRoleName) throws DynamicExtensionsSystemException,
 			DynamicExtensionsApplicationException
 	{
-		Association association = null;
+		AssociationInterface association = null;
 		if (sourceEntityName.equals(PARTICIPANT_NAME) && sourceRoleName.equals("participant"))
 		{
-			association = new Association();
+			association = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(PARTICIPANT_NAME);
 			EntityInterface targetEntity = getEntityByName(PARTICIPANT_MEDICAL_ID_NAME);
@@ -130,7 +125,7 @@ public class EntityManagerMock extends EntityManager
 			ConstraintProperties constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("IDENTIFIER");
 			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
-			association.setConstraintProperties(constraintProperties);
+			((Association)association).setConstraintProperties(constraintProperties);
 			
 		}
 	
@@ -148,7 +143,7 @@ public class EntityManagerMock extends EntityManager
 
 		if (sourceEntityId.equals(PARTICIPANT_NAME) && targetEntityId.equals(PARTICIPANT_MEDICAL_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(PARTICIPANT_NAME);
 			EntityInterface targetEntity = getEntityByName(PARTICIPANT_MEDICAL_ID_NAME);
@@ -177,12 +172,12 @@ public class EntityManagerMock extends EntityManager
 			ConstraintProperties constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("IDENTIFIER");
 			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
-			currentAssociation.setConstraintProperties(constraintProperties);
+			((Association)currentAssociation).setConstraintProperties(constraintProperties);
 			
 		}
 		else if (sourceEntityId.equals(PARTICIPANT_ID) && targetEntityId.equals(COLLECTION_PROTOCOL_REGISTRATION_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(PARTICIPANT_NAME);
 			EntityInterface targetEntity = getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
@@ -214,7 +209,7 @@ public class EntityManagerMock extends EntityManager
 		}
 		else if (sourceEntityId.equals(COLLECTION_PROTOCOL_REGISTRATION_ID) && targetEntityId.equals(COLLECTION_PROTOCOL_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
 			EntityInterface targetEntity = getEntityByName(COLLECTION_PROTOCOL_NAME);
@@ -247,7 +242,7 @@ public class EntityManagerMock extends EntityManager
 		}
 		else if (sourceEntityId.equals(COLLECTION_PROTOCOL_REGISTRATION_ID) && targetEntityId.equals(SPECIMEN_COLLECTION_GROUP_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
 			EntityInterface targetEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
@@ -280,7 +275,7 @@ public class EntityManagerMock extends EntityManager
 		}
 		else if (sourceEntityId.equals(SPECIMEN_COLLECTION_GROUP_ID) && targetEntityId.equals(COLLECTION_PROTOCOL_EVT_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
 			EntityInterface targetEntity = getEntityByName(COLLECTION_PROTOCOL_EVT_NAME);
@@ -314,7 +309,7 @@ public class EntityManagerMock extends EntityManager
 		}
 		else if (sourceEntityId.equals(COLLECTION_PROTOCOL_ID) && targetEntityId.equals(COLLECTION_PROTOCOL_EVT_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(COLLECTION_PROTOCOL_NAME);
 			EntityInterface targetEntity = getEntityByName(COLLECTION_PROTOCOL_EVT_NAME);
@@ -347,7 +342,7 @@ public class EntityManagerMock extends EntityManager
 		}
 		else if (sourceEntityId.equals(SPECIMEN_COLLECTION_GROUP_ID) && targetEntityId.equals(SPECIMEN_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
 			EntityInterface targetEntity = getEntityByName(SPECIMEN_NAME);
@@ -380,7 +375,7 @@ public class EntityManagerMock extends EntityManager
 		}
 		else if (sourceEntityId.equals(SPECIMEN_ID) && targetEntityId.equals(SPECIMEN_ID))
 		{
-			Association currentAssociation = new Association();
+			AssociationInterface currentAssociation = factory.createAssociation();
 	
 			EntityInterface sourceEntity = getEntityByName(SPECIMEN_NAME);
 			EntityInterface targetEntity = getEntityByName(SPECIMEN_NAME);
@@ -607,21 +602,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a participant entity, sets the attributes collection and
 	 * table properties for the entity.
 	 */
-	private Entity createParticipantEntity(String name)
+	private EntityInterface createParticipantEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(PARTICIPANT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a participant entity");
 		e.setId(PARTICIPANT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getParticipantAttributes());
+		((Entity)e).setAbstractAttributeCollection(getParticipantAttributes());
 
 		TableProperties participantTableProperties = new TableProperties();
 		participantTableProperties.setName("catissue_participant");
 		participantTableProperties.setId(PARTICIPANT_ID);
-		e.setTableProperties(participantTableProperties);
+		((Entity)e).setTableProperties(participantTableProperties);
 		return e;
 	}
 
@@ -630,21 +625,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a participant medical identifier entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createParticipantMedicalIdentifierEntity(String name)
+	private EntityInterface createParticipantMedicalIdentifierEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(PARTICIPANT_MEDICAL_ID_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a participant medical identifier entity");
 		e.setId(PARTICIPANT_MEDICAL_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getParticipantMedicalIdentifierAttributes());
+		((Entity)e).setAbstractAttributeCollection(getParticipantMedicalIdentifierAttributes());
 
 		TableProperties participantMedicalIdentifierTableProperties = new TableProperties();
 		participantMedicalIdentifierTableProperties.setName("catissue_part_medical_id");
 		participantMedicalIdentifierTableProperties.setId(PARTICIPANT_MEDICAL_ID);
-		e.setTableProperties(participantMedicalIdentifierTableProperties);
+		((Entity)e).setTableProperties(participantMedicalIdentifierTableProperties);
 		return e;
 	}
 
@@ -653,21 +648,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a collection protocol registration entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createCollectionProtocolRegistrationEntity(String name)
+	private EntityInterface createCollectionProtocolRegistrationEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a collection protocol registration entity");
 		e.setId(COLLECTION_PROTOCOL_REGISTRATION_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getCollectionProtocolRegistrationAttributes());
+		((Entity)e).setAbstractAttributeCollection(getCollectionProtocolRegistrationAttributes());
 
 		TableProperties collectionProtocolRegistrationTableProperties = new TableProperties();
 		collectionProtocolRegistrationTableProperties.setName("catissue_coll_prot_reg");
 		collectionProtocolRegistrationTableProperties.setId(COLLECTION_PROTOCOL_REGISTRATION_ID);
-		e.setTableProperties(collectionProtocolRegistrationTableProperties);
+		((Entity)e).setTableProperties(collectionProtocolRegistrationTableProperties);
 		return e;
 	}
 
@@ -676,21 +671,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a collection protocol entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createCollectionProtocolEntity(String name)
+	private EntityInterface createCollectionProtocolEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(COLLECTION_PROTOCOL_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a collection protocol entity");
 		e.setId(COLLECTION_PROTOCOL_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getCollectionProtocolAttributes());
+		((Entity)e).setAbstractAttributeCollection(getCollectionProtocolAttributes());
 
 		TableProperties collectionProtocolTableProperties = new TableProperties();
 		collectionProtocolTableProperties.setName("catissue_collection_protocol");
 		collectionProtocolTableProperties.setId(COLLECTION_PROTOCOL_ID);
-		e.setTableProperties(collectionProtocolTableProperties);
+		((Entity)e).setTableProperties(collectionProtocolTableProperties);
 		return e;
 	}
 
@@ -699,21 +694,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a specimen protocol entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createSpecimenProtocolEntity(String name)
+	private EntityInterface createSpecimenProtocolEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(SPECIMEN_PROTOCOL_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a specimen protocol entity");
 		e.setId(SPECIMEN_PROTOCOL_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getSpecimenProtocolAttributes());
+		((Entity)e).setAbstractAttributeCollection(getSpecimenProtocolAttributes());
 
 		TableProperties specimenProtocolTableProperties = new TableProperties();
 		specimenProtocolTableProperties.setName("catissue_specimen_protocol");
 		specimenProtocolTableProperties.setId(SPECIMEN_PROTOCOL_ID);
-		e.setTableProperties(specimenProtocolTableProperties);
+		((Entity)e).setTableProperties(specimenProtocolTableProperties);
 		return e;
 	}
 
@@ -722,21 +717,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a collection protocol event entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createCollectionProtocolEventEntity(String name)
+	private EntityInterface createCollectionProtocolEventEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(COLLECTION_PROTOCOL_EVT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a collection protocol event entity");
 		e.setId(COLLECTION_PROTOCOL_EVT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getCollectionProtocolEventAttributes());
+		((Entity)e).setAbstractAttributeCollection(getCollectionProtocolEventAttributes());
 
 		TableProperties collectionProtocolEventTableProperties = new TableProperties();
 		collectionProtocolEventTableProperties.setName("catissue_coll_prot_event");
 		collectionProtocolEventTableProperties.setId(COLLECTION_PROTOCOL_EVT_ID);
-		e.setTableProperties(collectionProtocolEventTableProperties);
+		((Entity)e).setTableProperties(collectionProtocolEventTableProperties);
 		return e;
 	}
 
@@ -745,21 +740,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a specimen collection group entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createSpecimenCollectionGroupEntity(String name)
+	private EntityInterface createSpecimenCollectionGroupEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(SPECIMEN_COLLECTION_GROUP_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a specimen collection group entity");
 		e.setId(SPECIMEN_COLLECTION_GROUP_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getSpecimenCollectionGroupAttributes());
+		((Entity)e).setAbstractAttributeCollection(getSpecimenCollectionGroupAttributes());
 
 		TableProperties specimenCollectionGroupTableProperties = new TableProperties();
 		specimenCollectionGroupTableProperties.setName("catissue_coll_prot_event");
 		specimenCollectionGroupTableProperties.setId(SPECIMEN_COLLECTION_GROUP_ID);
-		e.setTableProperties(specimenCollectionGroupTableProperties);
+		((Entity)e).setTableProperties(specimenCollectionGroupTableProperties);
 		return e;
 	}
 
@@ -768,21 +763,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a specimen entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createSpecimenEntity(String name)
+	private EntityInterface createSpecimenEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(SPECIMEN_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a specimen entity");
 		e.setId(SPECIMEN_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getSpecimenAttributes());
+		((Entity)e).setAbstractAttributeCollection(getSpecimenAttributes());
 
 		TableProperties specimenTableProperties = new TableProperties();
 		specimenTableProperties.setName("catissue_specimen");
 		specimenTableProperties.setId(SPECIMEN_ID);
-		e.setTableProperties(specimenTableProperties);
+		((Entity)e).setTableProperties(specimenTableProperties);
 		return e;
 	}
 	
@@ -791,21 +786,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a specimen event parameters entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createSpecimenEventParametersEntity(String name)
+	private EntityInterface createSpecimenEventParametersEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(SPECIMEN_EVT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a specimen event parameters entity");
 		e.setId(SPECIMEN_EVT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getSpecimenEventParametersAttributes());
+		((Entity)e).setAbstractAttributeCollection(getSpecimenEventParametersAttributes());
 
 		TableProperties specimenEventParametersTableProperties = new TableProperties();
 		specimenEventParametersTableProperties.setName("catissue_specimen_event_param");
 		specimenEventParametersTableProperties.setId(SPECIMEN_EVT_ID);
-		e.setTableProperties(specimenEventParametersTableProperties);
+		((Entity)e).setTableProperties(specimenEventParametersTableProperties);
 		return e;
 	}
 	
@@ -814,21 +809,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a check in check out event parameters entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createCheckInCheckOutEventParameterEntity(String name)
+	private EntityInterface createCheckInCheckOutEventParameterEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(CHKIN_CHKOUT_EVT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a check in check out event parameters entity");
 		e.setId(CHKIN_CHKOUT_EVT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getCheckInCheckOutEventParameterAttributes());
+		((Entity)e).setAbstractAttributeCollection(getCheckInCheckOutEventParameterAttributes());
 
 		TableProperties checkInCheckOutEventParameterTableProperties = new TableProperties();
 		checkInCheckOutEventParameterTableProperties.setName("catissue_in_out_event_param");
 		checkInCheckOutEventParameterTableProperties.setId(CHKIN_CHKOUT_EVT_ID);
-		e.setTableProperties(checkInCheckOutEventParameterTableProperties);
+		((Entity)e).setTableProperties(checkInCheckOutEventParameterTableProperties);
 		return e;
 	}
 	
@@ -837,21 +832,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a frozen event parameters entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createFrozenEventParametersEntity(String name)
+	private EntityInterface createFrozenEventParametersEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(FROZEN_EVT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a frozen event parameters entity");
 		e.setId(FROZEN_EVT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getFrozenEventParameterAttributes());
+		((Entity)e).setAbstractAttributeCollection(getFrozenEventParameterAttributes());
 
 		TableProperties frozenEventParameterTableProperties = new TableProperties();
 		frozenEventParameterTableProperties.setName("catissue_frozen_event_param");
 		frozenEventParameterTableProperties.setId(FROZEN_EVT_ID);
-		e.setTableProperties(frozenEventParameterTableProperties);
+		((Entity)e).setTableProperties(frozenEventParameterTableProperties);
 		return e;
 	}	
 	
@@ -860,21 +855,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a procedure event parameters entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createProcedureEventParametersEntity(String name)
+	private EntityInterface createProcedureEventParametersEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(PROCEDURE_EVT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a procedure event parameters entity");
 		e.setId(PROCEDURE_EVT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getProcedureEventParametersAttributes());
+		((Entity)e).setAbstractAttributeCollection(getProcedureEventParametersAttributes());
 
 		TableProperties procedureEventParametersTableProperties = new TableProperties();
 		procedureEventParametersTableProperties.setName("catissue_procedure_event_param");
 		procedureEventParametersTableProperties.setId(PROCEDURE_EVT_ID);
-		e.setTableProperties(procedureEventParametersTableProperties);
+		((Entity)e).setTableProperties(procedureEventParametersTableProperties);
 		return e;
 	}	
 	
@@ -883,21 +878,21 @@ public class EntityManagerMock extends EntityManager
 	 * Creates a received event parameters entity, sets attributes collection 
 	 * and table properties for the entity.
 	 */
-	private Entity createReceivedEventParametersEntity(String name)
+	private EntityInterface createReceivedEventParametersEntity(String name)
 	{
-		Entity e = new Entity();
+		EntityInterface e = factory.createEntity();
 		e.setName(RECEIVED_EVT_NAME);
 		e.setCreatedDate(new Date());
 		e.setDescription("This is a received event parameters entity");
 		e.setId(RECEIVED_EVT_ID);
 		e.setLastUpdated(new Date());
 
-		e.setAbstractAttributeCollection(getReceivedEventParametersAttributes());
+		((Entity)e).setAbstractAttributeCollection(getReceivedEventParametersAttributes());
 
 		TableProperties receivedEventParametersTableProperties = new TableProperties();
 		receivedEventParametersTableProperties.setName("catissue_received_event_param");
 		receivedEventParametersTableProperties.setId(RECEIVED_EVT_ID);
-		e.setTableProperties(receivedEventParametersTableProperties);
+		((Entity)e).setTableProperties(receivedEventParametersTableProperties);
 		return e;
 	}	
 
@@ -908,114 +903,93 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getParticipantAttributes()
 	{
-		ArrayList<Attribute> participantAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> participantAttributes = new ArrayList<AttributeInterface>();
 		
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		DateAttributeTypeInformation date = new DateAttributeTypeInformation();
-		date.setFormat("DD-MM-YYYY");
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		//att1.setDefaultValue("activityStatus");
 		att1.setName("activityStatus");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("ACTIVITY_STATUS");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createDateAttribute();
 		//att2.setDefaultValue(new Date(12 - 03 - 1995));
 		att2.setName("birthDate");
-		att2.setAttributeTypeInformation(date);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("BIRTH_DATE");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 =  factory.createDateAttribute();
 		//att3.setDefaultValue(new Date(12 - 03 - 2005));
 		att3.setName("deathDate");
-		att3.setAttributeTypeInformation(date);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("DEATH_DATE");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 
-		Attribute att4 = new Attribute();
+		AttributeInterface att4 =  factory.createStringAttribute();
 		//att4.setDefaultValue("ethnicity");
 		att4.setName("ethnicity");
-		att4.setAttributeTypeInformation(string);
-		ColumnProperties c4 = new ColumnProperties();
+		ColumnPropertiesInterface c4 = factory.createColumnProperties();
 		c4.setName("ETHNICITY");
-		att4.setColumnProperties(c4);
+		((Attribute)att4).setColumnProperties(c4);
 
-		Attribute att5 = new Attribute();
+		AttributeInterface att5 =  factory.createStringAttribute();
 		//att5.setDefaultValue("firstName");
 		att5.setName("firstName");
-		att5.setAttributeTypeInformation(string);
-		ColumnProperties c5 = new ColumnProperties();
+		ColumnPropertiesInterface c5 = factory.createColumnProperties();
 		c5.setName("FIRST_NAME");
-		att5.setColumnProperties(c5);
+		((Attribute)att5).setColumnProperties(c5);
 
-		Attribute att6 = new Attribute();
+		AttributeInterface att6 = factory.createStringAttribute();
 		//att6.setDefaultValue("gender");
 		att6.setName("gender");
-		att6.setAttributeTypeInformation(string);
-		ColumnProperties c6 = new ColumnProperties();
+		ColumnPropertiesInterface c6 = factory.createColumnProperties();
 		c6.setName("GENDER");
-		att6.setColumnProperties(c6);
+		((Attribute)att6).setColumnProperties(c6);
 
-		Attribute att7 = new Attribute();
+		AttributeInterface att7 = factory.createLongAttribute();
 		//att7.setDefaultValue(20L);
 		att7.setName("id");
-		att7.setAttributeTypeInformation(longType);
 		
-		ColumnProperties c7 = new ColumnProperties();
+		ColumnPropertiesInterface c7 = factory.createColumnProperties();
 		c7.setName("IDENTIFIER");
-		att7.setColumnProperties(c7);
-		att7.setIsPrimaryKey(new Boolean(true));
+		((Attribute)att7).setColumnProperties(c7);
+		(att7).setIsPrimaryKey(new Boolean(true));
 
-		Attribute att8 = new Attribute();
+		AttributeInterface att8 = new Attribute();
 		//att8.setDefaultValue("lastName");
 		att8.setName("lastName");
-		att8.setAttributeTypeInformation(string);
-		ColumnProperties c8 = new ColumnProperties();
+		ColumnPropertiesInterface c8 = factory.createColumnProperties();
 		c8.setName("LAST_NAME");
-		att8.setColumnProperties(c8);
+		((Attribute)att8).setColumnProperties(c8);
 
-		Attribute att9 = new Attribute();
+		AttributeInterface att9 = factory.createStringAttribute();
 		//att9.setDefaultValue("middleName");
 		att9.setName("middleName");
-		att9.setAttributeTypeInformation(string);
-		ColumnProperties c9 = new ColumnProperties();
+		ColumnPropertiesInterface c9 = factory.createColumnProperties();
 		c9.setName("MIDDLE_NAME");
-		att9.setColumnProperties(c9);
+		((Attribute)att9).setColumnProperties(c9);
 
-		Attribute att10 = new Attribute();
+		AttributeInterface att10 = factory.createStringAttribute();
 		//att10.setDefaultValue("sexGenotype");
 		att10.setName("sexGenotype");
-		att10.setAttributeTypeInformation(string);
-		ColumnProperties c10 = new ColumnProperties();
+		ColumnPropertiesInterface c10 = factory.createColumnProperties();
 		c10.setName("GENOTYPE");
-		att10.setColumnProperties(c10);
+		((Attribute)att10).setColumnProperties(c10);
 
-		Attribute att11 = new Attribute();
+		AttributeInterface att11 = factory.createStringAttribute();
 		//att11.setDefaultValue("socialSecurityNumber");
 		att11.setName("socialSecurityNumber");
-		att11.setAttributeTypeInformation(string);
-		ColumnProperties c11 = new ColumnProperties();
+		ColumnPropertiesInterface c11 = factory.createColumnProperties();
 		c11.setName("SOCIAL_SECURITY_NUMBER");
-		att11.setColumnProperties(c11);
+		((Attribute)att11).setColumnProperties(c11);
 
-		Attribute att12 = new Attribute();
+		AttributeInterface att12 = factory.createStringAttribute();
 		//att12.setDefaultValue("vitalStatus");
 		att12.setName("vitalStatus");
-		att12.setAttributeTypeInformation(string);
-		ColumnProperties c12 = new ColumnProperties();
+		ColumnPropertiesInterface c12 = factory.createColumnProperties();
 		c12.setName("VITAL_STATUS");
-		att12.setColumnProperties(c12);
+		((Attribute)att12).setColumnProperties(c12);
 
 		participantAttributes.add(0, att1);
 		participantAttributes.add(1, att2);
@@ -1040,33 +1014,25 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getParticipantMedicalIdentifierAttributes()
 	{
-		ArrayList<Attribute> participantMedicalIdentifierAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> participantMedicalIdentifierAttributes = new ArrayList<AttributeInterface>();
 
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createLongAttribute();
 		att1.setName("id");
-		att1.setAttributeTypeInformation(longType);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("IDENTIFIER");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		att1.setIsPrimaryKey(new Boolean(true));
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createStringAttribute();
 		att2.setName("medicalRecordNumber");
-		att2.setAttributeTypeInformation(string);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("MEDICAL_RECORD_NUMBER");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 
 //		LongAttribute att3 = new LongAttribute();
 //		att3.setName("id");
 //		att3.setMeasurementUnits("Long");
-//		ColumnProperties c3 = new ColumnProperties();
+//		ColumnProperties c3 = factory.createColumnProperties();
 //		c3.setName("PARTICIPANT_ID");
 //		att3.setColumnProperties(c3);
 		
@@ -1083,46 +1049,32 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getCollectionProtocolRegistrationAttributes()
 	{
-		ArrayList<Attribute> collectionProtocolRegistrationAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> collectionProtocolRegistrationAttributes = new ArrayList<AttributeInterface>();
 
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		DateAttributeTypeInformation date = new DateAttributeTypeInformation();
-		date.setFormat("DD-MM-YYYY");
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("activityStatus");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("ACTIVITY_STATUS");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createLongAttribute();
 		att2.setName("id");
-		att2.setAttributeTypeInformation(longType);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("IDENTIFIER");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 		att2.setIsPrimaryKey(new Boolean(true));
 
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 = factory.createStringAttribute();
 		att3.setName("protocolParticipantIdentifier");
-		att3.setAttributeTypeInformation(string);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("PROTOCOL_PARTICIPANT_ID");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 
-		Attribute att4 = new Attribute();
+		AttributeInterface att4 = factory.createDateAttribute();
 		att4.setName("registrationDate");
-		att4.setAttributeTypeInformation(date);
-		ColumnProperties c4 = new ColumnProperties();
+		ColumnPropertiesInterface c4 = factory.createColumnProperties();
 		c4.setName("REGISTRATION_DATE");
-		att4.setColumnProperties(c4);
+		((Attribute)att4).setColumnProperties(c4);
 
 		collectionProtocolRegistrationAttributes.add(0, att1);
 		collectionProtocolRegistrationAttributes.add(1, att2);
@@ -1139,16 +1091,13 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getCollectionProtocolAttributes()
 	{
-		ArrayList<Attribute> collectionProtocolAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> collectionProtocolAttributes = new ArrayList<AttributeInterface>();
 
-		BooleanAttributeTypeInformation booleanType = new BooleanAttributeTypeInformation();
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createBooleanAttribute();
 		att1.setName("aliquotInSameContainer");
-		att1.setAttributeTypeInformation(booleanType);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("ALIQUOT_IN_SAME_CONTAINER");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 
 		collectionProtocolAttributes.add(0, att1);
 
@@ -1162,84 +1111,62 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getSpecimenProtocolAttributes()
 	{
-		ArrayList<Attribute> specimenProtocolAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> specimenProtocolAttributes = new ArrayList<AttributeInterface>();
 
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		DateAttributeTypeInformation date = new DateAttributeTypeInformation();
-		date.setFormat("DD-MM-YYYY");
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-		IntegerAttributeTypeInformation integer = new IntegerAttributeTypeInformation();
-		integer.setMeasurementUnits("Integer");
-		
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("activityStatus");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("ACTIVITY_STATUS");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createStringAttribute();
 		att2.setName("descriptionURL");
-		att2.setAttributeTypeInformation(string);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("DESCRIPTION_URL");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 = factory.createDateAttribute();
 		att3.setName("endDate");
-		att3.setAttributeTypeInformation(date);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("END_DATE");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 
-		Attribute att4 = new Attribute();
+		AttributeInterface att4 =factory.createIntegerAttribute();
 		att4.setName("enrollment");
-		att4.setAttributeTypeInformation(integer);
-		ColumnProperties c4 = new ColumnProperties();
+		ColumnPropertiesInterface c4 = factory.createColumnProperties();
 		c4.setName("ENROLLMENT");
-		att4.setColumnProperties(c4);
+		((Attribute)att4).setColumnProperties(c4);
 
-		Attribute att5 = new Attribute();
+		AttributeInterface att5 = factory.createLongAttribute();
 		att5.setName("id");
-		att5.setAttributeTypeInformation(longType);
-		ColumnProperties c5 = new ColumnProperties();
+		ColumnPropertiesInterface c5 = factory.createColumnProperties();
 		c5.setName("IDENTIFIER");
-		att5.setColumnProperties(c5);
+		((Attribute)att5).setColumnProperties(c5);
 		att5.setIsPrimaryKey(new Boolean(true));
 
-		Attribute att6 = new Attribute();
+		AttributeInterface att6 = factory.createStringAttribute();
 		att6.setName("irbIdentifier");
-		att6.setAttributeTypeInformation(string);
-		ColumnProperties c6 = new ColumnProperties();
+		ColumnPropertiesInterface c6 = factory.createColumnProperties();
 		c6.setName("IRB_IDENTIFIER");
-		att6.setColumnProperties(c6);
+		((Attribute)att6).setColumnProperties(c6);
 
-		Attribute att7 = new Attribute();
+		AttributeInterface att7 = factory.createStringAttribute();
 		att7.setName("shortTitle");
-		att7.setAttributeTypeInformation(string);
-		ColumnProperties c7 = new ColumnProperties();
+		ColumnPropertiesInterface c7 = factory.createColumnProperties();
 		c7.setName("SHORT_TITLE");
-		att7.setColumnProperties(c7);
+		((Attribute)att7).setColumnProperties(c7);
 
-		Attribute att8 = new Attribute();
+		AttributeInterface att8 = factory.createDateAttribute();
 		att8.setName("startDate");
-		att8.setAttributeTypeInformation(date);
-		ColumnProperties c8 = new ColumnProperties();
+		ColumnPropertiesInterface c8 = factory.createColumnProperties();
 		c8.setName("START_DATE");
-		att8.setColumnProperties(c8);
+		((Attribute)att8).setColumnProperties(c8);
 
-		Attribute att9 = new Attribute();
+		AttributeInterface att9 = factory.createStringAttribute();
 		att9.setName("title");
-		att9.setAttributeTypeInformation(string);
-		ColumnProperties c9 = new ColumnProperties();
+		ColumnPropertiesInterface c9 = factory.createColumnProperties();
 		c9.setName("TITLE");
-		att9.setColumnProperties(c9);
+		((Attribute)att9).setColumnProperties(c9);
 
 		specimenProtocolAttributes.add(0, att1);
 		specimenProtocolAttributes.add(1, att2);
@@ -1261,42 +1188,27 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getCollectionProtocolEventAttributes()
 	{
-		ArrayList<Attribute> collectionProtocolEventAttributes = new ArrayList<Attribute>();
-
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
+		ArrayList<AttributeInterface> collectionProtocolEventAttributes = new ArrayList<AttributeInterface>();
 		
-		DateAttributeTypeInformation date = new DateAttributeTypeInformation();
-		date.setFormat("DD-MM-YYYY");
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-		DoubleAttributeTypeInformation doubleType = new DoubleAttributeTypeInformation();
-		
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("clinicalStatus");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("CLINICAL_STATUS");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createLongAttribute();
 		att2.setName("id");
-		att2.setAttributeTypeInformation(longType);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("IDENTIFIER");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 		att2.setIsPrimaryKey(new Boolean(true));
 
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 = factory.createDoubleAttribute();
 		att3.setName("studyCalendarEventPoint");
 		//att3.setSize(50);
-		att3.setAttributeTypeInformation(doubleType);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("STUDY_CALENDAR_EVENT_POINT");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 
 		collectionProtocolEventAttributes.add(0, att1);
 		collectionProtocolEventAttributes.add(1, att2);
@@ -1312,50 +1224,38 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getSpecimenCollectionGroupAttributes()
 	{
-		ArrayList<Attribute> specimenCollectionGroupAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> specimenCollectionGroupAttributes = new ArrayList<AttributeInterface>();
 
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createLongAttribute();
 		att1.setName("id");
-		att1.setAttributeTypeInformation(longType);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("IDENTIFIER");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		att1.setIsPrimaryKey(new Boolean(true));
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createStringAttribute();
 		att2.setName("name");
-		att2.setAttributeTypeInformation(string);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("NAME");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 = factory.createStringAttribute();
 		att3.setName("clinicalDiagnosis");
-		att3.setAttributeTypeInformation(string);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("CLINICAL_DIAGNOSIS");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 
-		Attribute att4 = new Attribute();
+		AttributeInterface att4 = factory.createStringAttribute();
 		att4.setName("clinicalStatus");
-		att4.setAttributeTypeInformation(string);
-		ColumnProperties c4 = new ColumnProperties();
+		ColumnPropertiesInterface c4 = factory.createColumnProperties();
 		c4.setName("CLINICAL_STATUS");
-		att4.setColumnProperties(c4);
+		((Attribute)att4).setColumnProperties(c4);
 
-		Attribute att5 = new Attribute();
+		AttributeInterface att5 = factory.createStringAttribute();
 		att5.setName("activityStatus");
-		att5.setAttributeTypeInformation(string);
-		ColumnProperties c5 = new ColumnProperties();
+		ColumnPropertiesInterface c5 = factory.createColumnProperties();
 		c5.setName("ACTIVITY_STATUS");
-		att5.setColumnProperties(c5);
+		((Attribute)att5).setColumnProperties(c5);
 
 		specimenCollectionGroupAttributes.add(0, att1);
 		specimenCollectionGroupAttributes.add(1, att2);
@@ -1373,99 +1273,74 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getSpecimenAttributes()
 	{
-		ArrayList<Attribute> specimenAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> specimenAttributes = new ArrayList<AttributeInterface>();
 		
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		DateAttributeTypeInformation date = new DateAttributeTypeInformation();
-		date.setFormat("DD-MM-YYYY");
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-		BooleanAttributeTypeInformation booleanType = new BooleanAttributeTypeInformation();
-		
-		IntegerAttributeTypeInformation integer = new IntegerAttributeTypeInformation();
-		integer.setMeasurementUnits("Integer");
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("activityStatus");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("ACTIVITY_STATUS");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createBooleanAttribute();
 		att2.setName("available");
-		att2.setAttributeTypeInformation(booleanType);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("AVAILABLE");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 = factory.createStringAttribute();
 		att3.setName("barcode");
-		att3.setAttributeTypeInformation(string);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("BARCODE");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 
-		Attribute att4 = new Attribute();
+		AttributeInterface att4 = factory.createStringAttribute();
 		att4.setName("comment");
-		att4.setAttributeTypeInformation(string);
-		ColumnProperties c4 = new ColumnProperties();
+		ColumnPropertiesInterface c4 = factory.createColumnProperties();
 		c4.setName("COMMENTS");
-		att4.setColumnProperties(c4);
+		((Attribute)att4).setColumnProperties(c4);
 
-		Attribute att5 = new Attribute();
+		AttributeInterface att5 = factory.createLongAttribute();
 		att5.setName("id");
-		att5.setAttributeTypeInformation(longType);
-		ColumnProperties c5 = new ColumnProperties();
+		ColumnPropertiesInterface c5 = factory.createColumnProperties();
 		c5.setName("IDENTIFIER");
-		att5.setColumnProperties(c5);
+		((Attribute)att5).setColumnProperties(c5);
 		att5.setIsPrimaryKey(new Boolean(true));
 
-		Attribute att6 = new Attribute();
+		AttributeInterface att6 = factory.createStringAttribute();
 		att6.setName("label");
-		att6.setAttributeTypeInformation(string);
-		ColumnProperties c6 = new ColumnProperties();
+		ColumnPropertiesInterface c6 = factory.createColumnProperties();
 		c6.setName("LABEL");
-		att6.setColumnProperties(c6);
+		((Attribute)att6).setColumnProperties(c6);
 
-		Attribute att7 = new Attribute();
+		AttributeInterface att7 = factory.createStringAttribute();
 		att7.setName("lineage");
-		att7.setAttributeTypeInformation(string);
-		ColumnProperties c7 = new ColumnProperties();
+		ColumnPropertiesInterface c7 = factory.createColumnProperties();
 		c7.setName("LINEAGE");
-		att7.setColumnProperties(c7);
+		((Attribute)att7).setColumnProperties(c7);
 
-		Attribute att8 = new Attribute();
+		AttributeInterface att8 = factory.createStringAttribute();
 		att8.setName("pathologicalStatus");
-		att8.setAttributeTypeInformation(string);
-		ColumnProperties c8 = new ColumnProperties();
+		ColumnPropertiesInterface c8 = factory.createColumnProperties();
 		c8.setName("PATHOLOGICAL_STATUS");
-		att8.setColumnProperties(c8);
+		((Attribute)att8).setColumnProperties(c8);
 
-		Attribute att9 = new Attribute();
+		AttributeInterface att9 = factory.createIntegerAttribute();
 		att9.setName("positionDimensionOne");
-		att9.setAttributeTypeInformation(integer);
-		ColumnProperties c9 = new ColumnProperties();
+		ColumnPropertiesInterface c9 = factory.createColumnProperties();
 		c9.setName("POSITION_DIMENSION_ONE");
-		att9.setColumnProperties(c9);
+		((Attribute)att9).setColumnProperties(c9);
 
-		Attribute att10 = new Attribute();
+		AttributeInterface att10 = factory.createIntegerAttribute();
 		att10.setName("positionDimensionTwo");
-		att10.setAttributeTypeInformation(integer);
-		ColumnProperties c10 = new ColumnProperties();
+		ColumnPropertiesInterface c10 = factory.createColumnProperties();
 		c10.setName("POSITION_DIMENSION_TWO");
-		att10.setColumnProperties(c10);
+		((Attribute)att10).setColumnProperties(c10);
 
-		Attribute att11 = new Attribute();
+		AttributeInterface att11 = factory.createStringAttribute();
 		att11.setName("type");
-		att11.setAttributeTypeInformation(string);
-		ColumnProperties c11 = new ColumnProperties();
+		ColumnPropertiesInterface c11 = factory.createColumnProperties();
 		c11.setName("TYPE");
-		att11.setColumnProperties(c11);
+		((Attribute)att11).setColumnProperties(c11);
 
 		specimenAttributes.add(0, att1);
 		specimenAttributes.add(1, att2);
@@ -1489,41 +1364,25 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getSpecimenEventParametersAttributes()
 	{
-		ArrayList<Attribute> specimenEventParametersAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> specimenEventParametersAttributes = new ArrayList<AttributeInterface>();
 		
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		DateAttributeTypeInformation date = new DateAttributeTypeInformation();
-		date.setFormat("DD-MM-YYYY");
-		
-		LongAttributeTypeInformation longType = new LongAttributeTypeInformation();
-		longType.setMeasurementUnits("Long");
-		
-	
-		IntegerAttributeTypeInformation integer = new IntegerAttributeTypeInformation();
-		integer.setMeasurementUnits("Integer");
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createLongAttribute();
 		att1.setName("id");
-		att1.setAttributeTypeInformation(longType);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("IDENTIFIER");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createDateAttribute();
 		att2.setName("timestamp");
-		att2.setAttributeTypeInformation(date);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("EVENT_TIMESTAMP");
-		att2.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 		
-		Attribute att3 = new Attribute();
+		AttributeInterface att3 = factory.createStringAttribute();
 		att3.setName("comments");
-		att3.setAttributeTypeInformation(string);
-		ColumnProperties c3 = new ColumnProperties();
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("COMMENTS");
-		att3.setColumnProperties(c3);
+		((Attribute)att3).setColumnProperties(c3);
 		
 		specimenEventParametersAttributes.add(0, att1);
 		specimenEventParametersAttributes.add(1, att2);
@@ -1539,19 +1398,13 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getCheckInCheckOutEventParameterAttributes()
 	{
-		ArrayList<Attribute> checkInCheckOutEventParameterAttributes = new ArrayList<Attribute>();
-			
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
+		ArrayList<AttributeInterface> checkInCheckOutEventParameterAttributes = new ArrayList<AttributeInterface>();
 		
-		
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("storageStatus");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("STORAGE_STATUS");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		
 		checkInCheckOutEventParameterAttributes.add(0, att1);
 		
@@ -1565,17 +1418,13 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getFrozenEventParameterAttributes()
 	{
-		ArrayList<Attribute> frozenEventParameterAttributes = new ArrayList<Attribute>();
-			
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
+		ArrayList<AttributeInterface> frozenEventParameterAttributes = new ArrayList<AttributeInterface>();
 		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("method");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("METHOD");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		
 		frozenEventParameterAttributes.add(0, att1);
 		
@@ -1589,25 +1438,19 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getProcedureEventParametersAttributes()
 	{
-		ArrayList<Attribute> procedureEventParameterAttributes = new ArrayList<Attribute>();
+		ArrayList<AttributeInterface> procedureEventParameterAttributes = new ArrayList<AttributeInterface>();
 			
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
-		
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("url");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("URL");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		
-		Attribute att2 = new Attribute();
+		AttributeInterface att2 = factory.createStringAttribute();
 		att2.setName("name");
-		att2.setAttributeTypeInformation(string);
-		ColumnProperties c2 = new ColumnProperties();
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("NAME");
-		att1.setColumnProperties(c2);
+		((Attribute)att2).setColumnProperties(c2);
 		
 		procedureEventParameterAttributes.add(0, att1);
 		procedureEventParameterAttributes.add(0, att2);
@@ -1622,18 +1465,13 @@ public class EntityManagerMock extends EntityManager
 	 */
 	private ArrayList getReceivedEventParametersAttributes()
 	{
-		ArrayList<Attribute> receivedEventParameterAttributes = new ArrayList<Attribute>();
-			
-		StringAttributeTypeInformation string = new StringAttributeTypeInformation();
-		string.setSize(50);
+		ArrayList<AttributeInterface> receivedEventParameterAttributes = new ArrayList<AttributeInterface>();
 		
-		
-		Attribute att1 = new Attribute();
+		AttributeInterface att1 = factory.createStringAttribute();
 		att1.setName("receivedQuality");
-		att1.setAttributeTypeInformation(string);
-		ColumnProperties c1 = new ColumnProperties();
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
 		c1.setName("RECEIVED_QUALITY");
-		att1.setColumnProperties(c1);
+		((Attribute)att1).setColumnProperties(c1);
 		
 		receivedEventParameterAttributes.add(0, att1);
 		
@@ -1644,7 +1482,7 @@ public class EntityManagerMock extends EntityManager
 	{
 		for (int i = 0; i < list.size(); i++)
 		{
-			if ((((Attribute) list.get(i)).getName()).equalsIgnoreCase(aName))
+			if ((((AttributeInterface) list.get(i)).getName()).equalsIgnoreCase(aName))
 			{
 				return (Attribute) list.get(i);
 			}
