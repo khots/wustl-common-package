@@ -338,14 +338,6 @@ public class Expression implements IExpression
 		return expressionOperands.indexOf(operand);
 	}
 
-	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IExpressionOperand#isSubExpressionOperand()
-	 */
-	public boolean isSubExpressionOperand()
-	{
-		return true;
-	}
-
 
 	/**
 	 * @return the aliasAppend
