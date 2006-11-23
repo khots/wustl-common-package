@@ -27,7 +27,8 @@ public enum RelationalOperator {
 	In(Integer.MAX_VALUE),
 	Contains(1),
 	StartsWith(1),
-	EndsWith(1);
+	EndsWith(1),
+    NotIn(Integer.MAX_VALUE);
 
 	private int numberOfValuesRequired;
 
@@ -67,6 +68,8 @@ public enum RelationalOperator {
 			sql = ">=";
 		else if (relationalOperator.equals(RelationalOperator.In))
 			sql = "in";
+        else if (relationalOperator.equals(RelationalOperator.NotIn))
+            sql = "not in";
 		return sql;
 	}
 }
