@@ -231,7 +231,7 @@ public class QueryGeneratorMock
 		
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And,
 				0);
-		participantExpression.addOperand(connector,pmExpression);
+		participantExpression.addOperand(connector,pmExpression.getExpressionId());
 		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass,pmExpression));
 		
 		
