@@ -1,8 +1,18 @@
 
 package edu.wustl.common.querysuite.factory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
+import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.category.ICategory;
 import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
@@ -154,4 +164,93 @@ public class QueryObjectFactory
 	{
 		return new Query();
 	}
+    
+    /**
+     * Creates the query Class object from dynamic extension's Entity object.
+     * The attributes for the class are not set and need to be set explicitly.
+     * @param entity The entity object.
+     * @return the Class object from Entity object.
+     */
+    public static IClass createClass(EntityInterface entity)
+    {
+        IClass classObj = createClass();
+//        classObj.setAttributes(createAttributes((List)entity.getAttributeCollection()));
+        classObj.setFullyQualifiedName(entity.getName());
+        
+        return classObj;
+    }
+    
+    /**
+     * Creates & returns the list of query Attributes from the dynamic extension Attribute objects.  
+     * @param attributes The dynamic extension Attribute objects.
+     * @return the list of query Attributes from the dynamic extension Attribute objects.
+     */
+    public static List<IAttribute> createAttributes(List<AttributeInterface> attributes)
+    {
+        List<IAttribute> queryAttributes = new ArrayList<IAttribute>();
+        Iterator iterator = attributes.iterator();
+        
+        while (iterator.hasNext())
+        {
+            AttributeInterface attribute = (AttributeInterface) iterator.next();
+            IAttribute queryAttribute = createAttribute();
+            queryAttribute.setAttributeName(attribute.getName());
+            queryAttribute.setDataType(getAttributeDataType(attribute.getAttributeTypeInformation()));
+            IClass iclass = createClass(attribute.getEntity());
+            iclass.setAttributes(queryAttributes);
+            
+            queryAttribute.setUMLClass(iclass);
+            queryAttributes.add(queryAttribute);
+        }
+        
+        return queryAttributes;
+    }
+    
+    /**
+     * Creates & returns the query Attribute object from the dynamic extension Attribute object.  
+     * @param attribute The dybnamic extension object.
+     * @return the query Attribute object from the dynamic extension Attribute object.
+     */
+    public static IAttribute createAttribute(AttributeInterface attribute)
+    {
+        IAttribute queryAttribute = createAttribute();
+        queryAttribute.setAttributeName(attribute.getName());
+        queryAttribute.setDataType(getAttributeDataType(attribute.getAttributeTypeInformation()));
+        IClass iclass = createClass(attribute.getEntity());
+        iclass.setAttributes(createAttributes((List<AttributeInterface>)attribute.getEntity().getAttributeCollection()));
+        
+        return queryAttribute;
+    }
+    
+    /**
+     * Returns the datatype of attribute depending on the AttributeTypeInformation of the attribute. 
+     * @param attributeTypeInformation The attribute type information.
+     * @return the datatype of attribute depending on the AttributeTypeInformation of the attribute.
+     */
+    private static DataType getAttributeDataType(AttributeTypeInformationInterface attributeTypeInformation)
+    {
+        DataType dataType = DataType.String;
+        if (attributeTypeInformation instanceof LongAttributeTypeInformation)
+        {
+            dataType = DataType.Long;
+        }
+        else if (attributeTypeInformation instanceof DateAttributeTypeInformation)
+        {
+            dataType = DataType.Date;
+        }
+        else if (attributeTypeInformation instanceof BooleanAttributeTypeInformation)
+        {
+            dataType = DataType.Boolean;
+        }
+        else if (attributeTypeInformation instanceof DoubleAttributeTypeInformation)
+        {
+            dataType = DataType.Double;
+        }
+        else if (attributeTypeInformation instanceof IntegerAttributeTypeInformation)
+        {
+            dataType = DataType.Integer;
+        }
+        
+        return dataType;
+    }
 }
