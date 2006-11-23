@@ -2,14 +2,17 @@
 package edu.wustl.common.querysuite.factory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
+import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -167,7 +170,7 @@ public class QueryObjectFactory
     
     /**
      * Creates the query Class object from dynamic extension's Entity object.
-     * The attributes for the class are not set and need to be set explicitly.
+     * The attributes for the class are set and need not to be set explicitly.
      * @param entity The entity object.
      * @return the Class object from Entity object.
      */
@@ -177,9 +180,54 @@ public class QueryObjectFactory
 //        classObj.setAttributes(createAttributes((List)entity.getAttributeCollection()));
         classObj.setFullyQualifiedName(entity.getName());
         
+        Collection<AbstractAttributeInterface> col = entity.getAbstractAttributeCollection();
+        
+        for (Iterator<AbstractAttributeInterface> iter = col.iterator(); iter.hasNext();)
+		{
+        	AttributeInterface element = (AttributeInterface)iter.next();
+			IAttribute queryAttribute = createAttributeForClass(element, classObj);
+			classObj.addAttribute(queryAttribute);
+		}
         return classObj;
     }
-    
+    /**
+     * Create IAttribute instance for the given Dynamic Extenstion attribute & set its class as QueryClass.
+     * @param attribute The dynamic extension Attribute object
+     * @param queryClass The reference to IClass in which this attribute is expected to present.
+     * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
+     */
+    private static IAttribute createAttributeForClass(AttributeInterface attribute, IClass queryClass)
+    {
+    	IAttribute queryAttribute = createAttribute();
+        queryAttribute.setUMLClass(queryClass);
+
+    	// set all expected values for queryAttribute.
+        queryAttribute.setAttributeName(attribute.getName());
+        queryAttribute.setDataType(getAttributeDataType(attribute.getAttributeTypeInformation()));
+        
+        return queryAttribute;
+    }
+    /**
+     * To search the Query attribute representing the dynamic extension attribute in the given queryClass.
+     * @param attribute The dynamic extension Attribute object
+     * @param queryClass The reference to IClass in which this attribute is expected to present.
+     * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
+     * @thorws NoSuchElementException if the attribute is does not belongs to the given queryClass. 
+     */
+    private static IAttribute getAttribute(AttributeInterface attribute, IClass queryClass)
+    {
+    	IAttribute queryAttribute = null;
+    	List<IAttribute> tempQueryAttributes = queryClass.getAttributes();
+    	String attributeName =  attribute.getName();
+    	DataType dataType = getAttributeDataType(attribute.getAttributeTypeInformation());
+    	for (int index = 0; index < tempQueryAttributes.size(); index++)
+		{
+    		queryAttribute = tempQueryAttributes.get(index);
+    		if (queryAttribute.getAttributeName().equals(attributeName) && queryAttribute.getDataType().equals(dataType))
+    			return queryAttribute;
+		}
+    	throw new NoSuchElementException(attribute + " Not Exists in the Class: "+ queryClass.getFullyQualifiedName());
+    }
     /**
      * Creates & returns the list of query Attributes from the dynamic extension Attribute objects.  
      * @param attributes The dynamic extension Attribute objects.
@@ -188,21 +236,18 @@ public class QueryObjectFactory
     public static List<IAttribute> createAttributes(List<AttributeInterface> attributes)
     {
         List<IAttribute> queryAttributes = new ArrayList<IAttribute>();
-        Iterator iterator = attributes.iterator();
         
-        while (iterator.hasNext())
+        if (!attributes.isEmpty())
         {
-            AttributeInterface attribute = (AttributeInterface) iterator.next();
-            IAttribute queryAttribute = createAttribute();
-            queryAttribute.setAttributeName(attribute.getName());
-            queryAttribute.setDataType(getAttributeDataType(attribute.getAttributeTypeInformation()));
-            IClass iclass = createClass(attribute.getEntity());
-            iclass.setAttributes(queryAttributes);
-            
-            queryAttribute.setUMLClass(iclass);
-            queryAttributes.add(queryAttribute);
+        	AttributeInterface attribute = attributes.get(0);
+        	IClass iclass = createClass(attribute.getEntity()); //this wil create IClass for the given attributes.
+        	for (int index = 0; index < attributes.size(); index++) // search the Query attribute corresponding to the dynamic Extension attribute from the IClass attribute list.
+			{
+        		attribute = attributes.get(index);
+                IAttribute queryAttribute = getAttribute(attribute, iclass);
+                queryAttributes.add(queryAttribute);
+			}
         }
-        
         return queryAttributes;
     }
     
@@ -213,14 +258,9 @@ public class QueryObjectFactory
      */
     public static IAttribute createAttribute(AttributeInterface attribute)
     {
-        IAttribute queryAttribute = createAttribute();
-        queryAttribute.setAttributeName(attribute.getName());
-        queryAttribute.setDataType(getAttributeDataType(attribute.getAttributeTypeInformation()));
-        IClass iclass = createClass(attribute.getEntity());
-        iclass.setAttributes(createAttributes((List<AttributeInterface>)attribute.getEntity().getAttributeCollection()));
-        
-        return queryAttribute;
-    }
+    	 IClass queryClass = createClass(attribute.getEntity());
+    	 return getAttribute(attribute, queryClass);
+   }
     
     /**
      * Returns the datatype of attribute depending on the AttributeTypeInformation of the attribute. 
