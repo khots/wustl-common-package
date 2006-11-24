@@ -472,4 +472,5 @@ public class Constants
 	public static final String SPECIMEN_COLLECTION_GROUP ="SpecimenCollectionGroup";
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
+	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
 }
