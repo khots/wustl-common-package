@@ -68,7 +68,8 @@ public class TreeApplet extends JApplet
                 storageContainerType = this.getParameter(Constants.STORAGE_CONTAINER_TYPE);
                 treeType = Constants.STORAGE_CONTAINER_TREE_ID;                
             }
-            else if(pageOf.equals(Constants.PAGEOF_SPECIMEN) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
+            else if(pageOf.equals(Constants.PAGEOF_SPECIMEN) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN)
+            		|| pageOf.equals(Constants.PAGEOF_ALIQUOT))
             	treeType = Constants.STORAGE_CONTAINER_TREE_ID;
             else if (pageOf.equals(Constants.PAGEOF_QUERY_RESULTS))
                 treeType = Constants.QUERY_RESULTS_TREE_ID;
@@ -150,10 +151,12 @@ public class TreeApplet extends JApplet
             Vector treeDataVector = null;
             if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) || pageOf.equals(Constants.PAGEOF_SPECIMEN)
                     || pageOf.equals(Constants.PAGEOF_TISSUE_SITE) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN)
-                    || pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE))
+                    || pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE) || pageOf.equals(Constants.PAGEOF_ALIQUOT))
             {
+            	
             	Vector dataVector = (Vector) in.readObject();
                 GenerateTree generateTree = new GenerateTree();
+                
                 tree = generateTree.createTree(dataVector, treeType);                
             }
             else
@@ -229,7 +232,8 @@ public class TreeApplet extends JApplet
 	            tree.addMouseListener(specimenTreeListener);
 	            tree.setCellRenderer(new SpecimenTreeRenderer(specimenType,specimenClass));
             }
-            else if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) ||  (pageOf.equals(Constants.PAGEOF_SPECIMEN)) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN))
+            else if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) ||  (pageOf.equals(Constants.PAGEOF_SPECIMEN)) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN)
+            		|| pageOf.equals(Constants.PAGEOF_ALIQUOT))
             {
                 StorageLocationViewListener viewListener 
         			= new StorageLocationViewListener(this.getCodeBase(), this.getAppletContext());
