@@ -23,6 +23,13 @@ import edu.wustl.common.exception.AssignDataException;
  */
 public abstract class AbstractDomainObject implements Auditable, Serializable
 {
+	
+	/**
+	 * Serial Version Unique Identifier
+	 */
+	private static final long serialVersionUID = 1234567890L;
+	
+	
 	public String getObjectId() 
 	{
 		return this.getClass().getName()+ "_" + this.getId();
