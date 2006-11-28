@@ -21,7 +21,7 @@ public class ExpressionTestCases extends TestCase
 	IExpression expr2;
 	IExpression bigExpr;
 	ILogicalConnector orCondB,orCondE;
-	ILogicalConnector andCond;
+	ILogicalConnector andCond,unknownCond;
 	IRule a;
 	IRule b;
 	IRule c;
@@ -45,24 +45,26 @@ public class ExpressionTestCases extends TestCase
 	protected void setUp() throws Exception
 	{
 		expr = new Expression();
-		a = QueryObjectFactory.createRule();
+		a = QueryObjectFactory.createRule(null);
 		expr.addOperand(a);
 
-		b = QueryObjectFactory.createRule();
-		orCondB = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
+		b = QueryObjectFactory.createRule(null);
+		orCondB = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 		expr.addOperand(orCondB, b);
 
-		c = QueryObjectFactory.createRule();
-		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.And, 0);
+		c = QueryObjectFactory.createRule(null);
+		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
 		expr.addOperand(andCond, c);
 
 		expr2 = new Expression();
-		d = QueryObjectFactory.createRule();
+		d = QueryObjectFactory.createRule(null);
 		expr2.addOperand(d);
 
-		e = QueryObjectFactory.createRule();
-		orCondE = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
+		e = QueryObjectFactory.createRule(null);
+		orCondE = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 		expr2.addOperand(orCondE, e);
+		
+		unknownCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.Unknown);
 	}
 
 	/**
@@ -448,7 +450,7 @@ public class ExpressionTestCases extends TestCase
 	public void testAddOperand3()
 	{
 			expr.addOperand(d);
-			assertEquals(andCond, expr.getLogicalConnector(2, 3));	
+			assertEquals(unknownCond, expr.getLogicalConnector(2, 3));	
 			assertEquals(d, expr.getOperand(3));
 			assertTrue(expr.removeOperand(c));
 			assertEquals(b, expr.getOperand(1));
@@ -517,9 +519,9 @@ public class ExpressionTestCases extends TestCase
 	public void testaddParantheses1()
 	{
 		expr.addParantheses(0, 2);
-		assertEquals(1, expr.getLogicalConnector(0, 1).getNestingNumber());
-		assertEquals(1, expr.getLogicalConnector(1, 2).getNestingNumber());
-		assertNotSame(2, expr.getLogicalConnector(1, 2).getNestingNumber());
+		assertEquals(1, ((LogicalConnector)expr.getLogicalConnector(0, 1)).getNestingNumber());
+		assertEquals(1, ((LogicalConnector)expr.getLogicalConnector(1, 2)).getNestingNumber());
+		assertNotSame(2, ((LogicalConnector)expr.getLogicalConnector(1, 2)).getNestingNumber());
 	}
 	
 	/**
@@ -530,9 +532,9 @@ public class ExpressionTestCases extends TestCase
 	public void testaddParantheses2()
 	{
 		expr.addParantheses(0, 1);
-		assertEquals(1, expr.getLogicalConnector(0, 1).getNestingNumber());
-		assertEquals(0, expr.getLogicalConnector(1, 2).getNestingNumber());
-		assertNotSame(1, expr.getLogicalConnector(1, 2).getNestingNumber());
+		assertEquals(1, ((LogicalConnector)expr.getLogicalConnector(0, 1)).getNestingNumber());
+		assertEquals(0, ((LogicalConnector)expr.getLogicalConnector(1, 2)).getNestingNumber());
+		assertNotSame(1, ((LogicalConnector)expr.getLogicalConnector(1, 2)).getNestingNumber());
 	}
 	
 }

@@ -118,7 +118,8 @@ public class Attribute implements IAttribute
 	@Override
 	public String toString()
 	{
-		return "[" + umlCLass + "." + attributeName + "]";
+		
+		return "[" + umlCLass.getFullyQualifiedName() + "." + attributeName + "]";
 	}
 
 }

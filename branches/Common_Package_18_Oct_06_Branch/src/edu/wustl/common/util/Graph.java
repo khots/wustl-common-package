@@ -395,4 +395,106 @@ public class Graph<V, E>
 		}
 		return vertices;
 	}
+	
+	/**
+	 * All possible path between two vertices.
+	 * @param fromVertex the begining vertex.
+	 * @param toVetrex the ending vertix.
+	 * @return List of all paths, where path is again List of Vertices.
+	 * @throws IllegalArgumentException when the fromVetrex or toVetrex is not in the graph.
+	 */
+	public List<List<V>> getReachablePaths(V fromVertex, V toVetrex)
+	{
+		if (!incommingEdgeMap.containsKey(fromVertex))
+		{
+			throw new IllegalArgumentException("fromVertex is not present in graph!!!");
+		}
+		if (!incommingEdgeMap.containsKey(toVetrex))
+		{
+			throw new IllegalArgumentException("toVetrex is not present in graph!!!");
+		}
+		List<List<V>> paths =new ArrayList<List<V>>();
+		List<Edge> edges = incommingEdgeMap.get(toVetrex);
+		for (int i = 0; i < edges.size(); i++)
+		{
+			Edge edge = edges.get(i);
+			if (fromVertex.equals(edge.sourceVertex))
+			{
+				List<V> path = new ArrayList<V>();
+				path.add(fromVertex);
+				path.add(toVetrex);
+				paths.add(path);
+				continue;
+			}
+			
+			List<List<V>> thePaths = getReachablePaths(fromVertex,  edge.sourceVertex);
+			if (!thePaths.isEmpty())
+			{
+				for (int j = 0; j < thePaths.size(); j++)
+				{
+					List<V> path = thePaths.get(j);
+					path.add(toVetrex);
+				}
+				paths.addAll(thePaths);
+			}
+		}
+		return paths;
+	}
+	
+	/**
+	 * All possible path Edges between two vertices.
+	 * @param fromVertex the begining vertex.
+	 * @param toVetrex the ending vertix.
+	 * @return List of all path Edges, where path is again List of Vertices.
+	 * @throws IllegalArgumentException when the fromVetrex or toVetrex is not in the graph.
+	 */
+	public List<List<E>> getReachableEdgePaths(V fromVertex, V toVetrex)
+	{
+		List<List<E>> edgePaths = new ArrayList<List<E>>();
+		List<List<V>> verticesPaths = getReachablePaths(fromVertex,toVetrex);
+		for (int i = 0; i < verticesPaths.size(); i++)
+		{
+			List<V> thePath = verticesPaths.get(i);
+			List<E> theEdgePath = new ArrayList<E>();
+			for (int j = 1; j < thePath.size(); j++)
+			{
+				theEdgePath.add(getEdge(thePath.get(j-1), thePath.get(j)));
+				edgePaths.add(theEdgePath);
+			}
+		}
+		return edgePaths;
+	}
+	/**
+	 * To get the List of Vertices having outgoing Edges from given vertex.
+	 * @param vertex
+	 * @return
+	 * @throws IllegalArgumentException if the vertex does not exists in graph.
+	 */
+	public List<V> getOutgoingVertices(V vertex)
+	{
+		if (!outgoingEdgeMap.containsKey(vertex))
+		{
+			throw new IllegalArgumentException("vertex is not present in graph!!!");
+		}
+		List<Edge> edges = outgoingEdgeMap.get(vertex);
+		List<V> vertices = new ArrayList<V>();
+		
+		for (int i=0;i<edges.size();i++)
+		{
+			vertices.add(edges.get(i).targetVertex);
+		}
+		return vertices;
+	}
+	
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return outgoingEdgeMap.toString();
+	}
+	
+	
 }

@@ -94,7 +94,8 @@ public class FunctionalClass implements IFunctionalClass
 	@Override
 	public String toString()
 	{
-		return "[" + category + ":" + attributes + "]";
+		return "[FunctionalClass:" + attributes.size() + "]";
+//		return "[" + category + ":" + attributes + "]";
 	}
 
 	/**
@@ -125,9 +126,9 @@ public class FunctionalClass implements IFunctionalClass
 		{
 			FunctionalClass theClass = (FunctionalClass) obj;
 			if (category != null
-					&& category.equals(theClass.category)
-					&& new HashSet<IAttribute>(attributes).equals(new HashSet<IAttribute>(
-							theClass.attributes)))
+					&& category.equals(theClass.category))
+//					&& new HashSet<IAttribute>(attributes).equals(new HashSet<IAttribute>(
+//							theClass.attributes)))
 				return true;
 		}
 		return false;

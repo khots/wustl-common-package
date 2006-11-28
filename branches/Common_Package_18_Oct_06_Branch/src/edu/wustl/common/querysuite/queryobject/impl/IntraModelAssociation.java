@@ -100,16 +100,18 @@ public class IntraModelAssociation extends AbstractAssociation implements IIntra
 				return false;
 			}
 			IntraModelAssociation association = (IntraModelAssociation) obj;
-			if (this.sourceRoleName != null && sourceRoleName.equals(association.sourceRoleName)
-					&& this.targetRoleName != null
-					&& targetRoleName.equals(association.targetRoleName)
+			if ((this.sourceRoleName == null ? association.sourceRoleName == null : sourceRoleName
+					.equals(association.sourceRoleName))
+					&& (this.targetRoleName == null
+							? association.targetRoleName == null
+							: targetRoleName.equals(association.targetRoleName))
 			//					&& bidirectional == association.bidirectional
 			//					&& this.sourceClass != null
 			//					&& sourceClass.equals(association.sourceClass)
 			//					&& this.targetClass != null
 			//					&& targetClass.equals(association.targetClass)
 			)
-				return true;
+				return super.equals(obj);
 		}
 		return false;
 	}

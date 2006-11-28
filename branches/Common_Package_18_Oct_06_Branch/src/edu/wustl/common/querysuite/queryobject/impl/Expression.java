@@ -21,6 +21,7 @@ import edu.wustl.common.util.global.Constants;
 
 public class Expression implements IExpression
 {
+
 	private static final long serialVersionUID = 1426555905287966634L;
 
 	private List<IExpressionOperand> expressionOperands = new ArrayList<IExpressionOperand>();
@@ -31,7 +32,6 @@ public class Expression implements IExpression
 
 	private IFunctionalClass functionalClass;
 
-	private int aliasAppend = 1;
 	/**
 	 * @param functionalClass
 	 */
@@ -73,8 +73,9 @@ public class Expression implements IExpression
 	public IExpressionOperand addOperand(IExpressionOperand operand)
 	{
 		expressionOperands.add(operand);
-		if(expressionOperands.size() != 1)
-			logicalConnectors.add(QueryObjectFactory.createLogicalConnector(LogicalOperator.And, 0));
+		if (expressionOperands.size() != 1)
+			logicalConnectors.add(QueryObjectFactory
+					.createLogicalConnector(LogicalOperator.Unknown));
 		return operand;
 	}
 
@@ -95,9 +96,12 @@ public class Expression implements IExpression
 	{
 		expressionOperands.add(index, operand);
 		logicalConnectors.add(index - 1, logicalConnector);
-		if(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() > ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber())
+		if (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() > ((LogicalConnector) logicalConnectors
+				.get(index - 1)).getNestingNumber())
 		{
-			((LogicalConnector) logicalConnectors.get(index - 1)).setNestingNumber(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber());
+			((LogicalConnector) logicalConnectors.get(index - 1))
+					.setNestingNumber(((LogicalConnector) logicalConnectors.get(index))
+							.getNestingNumber());
 		}
 	}
 
@@ -108,9 +112,12 @@ public class Expression implements IExpression
 	{
 		expressionOperands.add(index, operand);
 		logicalConnectors.add(index, logicalConnector);
-		if(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() < ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber())
+		if (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() < ((LogicalConnector) logicalConnectors
+				.get(index - 1)).getNestingNumber())
 		{
-			((LogicalConnector) logicalConnectors.get(index)).setNestingNumber(((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber());
+			((LogicalConnector) logicalConnectors.get(index))
+					.setNestingNumber(((LogicalConnector) logicalConnectors.get(index - 1))
+							.getNestingNumber());
 		}
 	}
 
@@ -140,7 +147,7 @@ public class Expression implements IExpression
 	public void removeParantheses()
 	{
 		removeParantheses(0, logicalConnectors.size() - 1);
-		
+
 	}
 
 	/**
@@ -150,7 +157,9 @@ public class Expression implements IExpression
 	{
 		for (int i = leftOperandIndex; i < rightOperandIndex; i++)
 		{
-			((LogicalConnector) logicalConnectors.get(i)).setNestingNumber(((LogicalConnector) logicalConnectors.get(i)).getNestingNumber() - 1);
+			((LogicalConnector) logicalConnectors.get(i))
+					.setNestingNumber(((LogicalConnector) logicalConnectors.get(i))
+							.getNestingNumber() - 1);
 		}
 	}
 
@@ -261,13 +270,12 @@ public class Expression implements IExpression
 	public int hashCode()
 	{
 		int hash = 1;
-		if (expressionId!=null)
-			hash = hash*Constants.HASH_PRIME + expressionId.hashCode();
-		
+		if (expressionId != null)
+			hash = hash * Constants.HASH_PRIME + expressionId.hashCode();
+
 		return hash;
 	}
 
-	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -276,7 +284,7 @@ public class Expression implements IExpression
 	{
 		if (this == obj)
 			return true;
-		
+
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			Expression expression = (Expression) obj;
@@ -306,25 +314,15 @@ public class Expression implements IExpression
 		// A and (B or C) remove C => A and B
 		// A and (B or C) remove B => A and C
 		// A and (B or C) remove A => B or C
-		int connectorIndex = index; // if removing 1st operand then 1st operator must be removed. 
-		if (index == expressionOperands.size() - 1) // if removing last operand then last operator must be removed.
-		{
-			connectorIndex = index - 1;
-		}
-		else if (index != 0) // if operand to removed is not 1st & last, then operator to remove will depend upon the immediate bracket surrounding that operand. 
-		{
-			int preNesting = logicalConnectors.get(index - 1).getNestingNumber();
-			int postNesting = logicalConnectors.get(index).getNestingNumber();
-			if (postNesting < preNesting)
-			{
-				connectorIndex--;
-			}
-		}
-
+		// A and B or C   remove B => A and C
+		int connectorIndex = getOperandOf(expressionOperands.get(index));
 		IExpressionOperand operand = expressionOperands.get(index);
 
 		expressionOperands.remove(index);
-		if (connectorIndex >= 0)
+		if (connectorIndex == -2) // if both adjacent connectors have same nesting no. then remove connector following the operand.
+			connectorIndex = index;
+
+		if (connectorIndex != -1)
 			logicalConnectors.remove(connectorIndex);
 
 		return operand;
@@ -338,22 +336,93 @@ public class Expression implements IExpression
 		return expressionOperands.indexOf(operand);
 	}
 
-
 	/**
-	 * @return the aliasAppend
+	 * To get the adjacent logical connector with the greater nesting number.
+	 * @param operand
+	 * @return index of adjuscent Logical connector with greater nesting number. 
+	 * 		-1 if operand not found or there is no logical connector present in the Expression.
+	 * 		-2 if both adjacent connectors are of same nesting number
 	 */
-	public int getAliasAppend()
+	public int getOperandOf(IExpressionOperand operand)
 	{
-		return aliasAppend;
+		int index = expressionOperands.indexOf(operand);
+
+		if (index != -1)
+		{
+			if (index == expressionOperands.size() - 1) // if expression is last operand then index of last connector will be returned.
+			{
+				index = index - 1;
+			}
+			else if (index != 0) // if expression is not 1st & last, then index will depend upon the immediate bracket surrounding that expression. 
+			{
+				int preNesting = ((LogicalConnector) logicalConnectors.get(index - 1))
+						.getNestingNumber();
+				int postNesting = ((LogicalConnector) logicalConnectors.get(index))
+						.getNestingNumber();
+				if (postNesting == preNesting) // if nesting no are same, then there is not direct bracket sorrounding operand.
+				{
+					index = -2;
+				}
+				else if (postNesting < preNesting)
+				{
+					index--;
+				}
+			}
+		}
+		return index;
 	}
 
-	
 	/**
-	 * @param aliasAppend the aliasAppend to set
+	 * To check whether the child Expression is pseudo anded with the other expression.
+	 * @param expressionId The child Expression Id.
+	 * @return true if the given Expression is pseudoAnded with other Expression, else returns false.
+	 * @throws IllegalArgumentException if the given Expression Id is not child of the Expression.
 	 */
-	public void setAliasAppend(int aliasAppend)
+	public boolean isPseudoAnded(IExpressionId expressionId)
 	{
-		this.aliasAppend = aliasAppend;
-	}
+		int index = expressionOperands.indexOf(expressionId);
 
+		if (index < -1)
+		{
+			throw new IllegalArgumentException("The given Expression Id not found!!!");
+		}
+
+		int immediateOperandIndex = getOperandOf((IExpressionOperand) expressionId);
+
+		if (immediateOperandIndex == -1) // there is no operand around this Expression.
+			return false;
+		else if (immediateOperandIndex == -2) // both logical connector sorrounding this expression have same nesting no. need to check 'And' operator for both.
+		{
+			int preIndex = index - 1;
+			int postindex = index + 1;
+
+			IExpressionOperand operand = expressionOperands.get(preIndex);
+			if (operand.isSubExpressionOperand()
+					&& LogicalOperator.And.equals(getLogicalConnector(preIndex, index)
+							.getLogicalOperator()))
+			{
+				return true;
+			}
+
+			operand = expressionOperands.get(postindex);
+			if (operand.isSubExpressionOperand()
+					&& LogicalOperator.And.equals(getLogicalConnector(index, postindex)
+							.getLogicalOperator()))
+			{
+				return true;
+			}
+		}
+		else
+		// check logical connector between immediateOperandIndex & index.
+		{
+			if (LogicalOperator.And.equals(logicalConnectors.get(immediateOperandIndex)
+					.getLogicalOperator()))
+			{
+				int otherOperandIndex = immediateOperandIndex == index ? index + 1 : index - 1; //otherOperandIndex = immediateOperandIndex => other operand  index is (index+1)
+				if (expressionOperands.get(otherOperandIndex).isSubExpressionOperand())
+					return true;
+			}
+		}
+		return false;
+	}
 }

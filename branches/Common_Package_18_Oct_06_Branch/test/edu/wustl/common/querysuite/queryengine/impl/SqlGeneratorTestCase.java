@@ -4,6 +4,8 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.util.HashSet;
+
 import junit.framework.TestCase;
 import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
@@ -98,11 +100,11 @@ public class SqlGeneratorTestCase extends TestCase
 		
 		try
 		{
-			String SQL = generator.getSQL(expression, null);
-			//			System.out.println(SQL);
+			String SQL = generator.getSQL(expression, null,false);
+//			System.out.println("testParticpiantExpression:"+ SQL);
 			assertEquals(
 					SQL,
-					"Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.IDENTIFIER in (1,2,3,4) And (Participant0.BIRTH_DATE<='1-1-2000' And Participant0.BIRTH_DATE>='1-2-2000')) Or(Participant0.ACTIVITY_STATUS='Active')");
+					"Where (Participant0.IDENTIFIER in (1,2,3,4) And (Participant0.BIRTH_DATE<='1-1-2000' And Participant0.BIRTH_DATE>='1-2-2000')) Or(Participant0.ACTIVITY_STATUS='Active')");
 			//			expression = QueryGeneratorMock.creatParticipantExpression2(class1);
 			//			SQL = generator.getSQL(expression,null,null);
 			//			System.out.println(SQL);
@@ -127,35 +129,40 @@ public class SqlGeneratorTestCase extends TestCase
 		{
 			rootExpression = constraints.getExpression(constraints.getRootExpressionId());
 			generator.setJoinGraph((JoinGraph)constraints.getJoinGraph());
-			String SQL = generator.getSQL(rootExpression, null);
-			//			System.out.println("*********"+SQL);
+			
+			generator.buildQuery(query);
+			String SQL = generator.getSQL(rootExpression, null, false);
+//			System.out.println("*********"+SQL);
 			assertEquals(
 					"Incorrect SQL formed for the Root Expression !!!",
-					SQL,
-					"Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') And(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))");
+					"Where (Participant1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentifier2.MEDICAL_RECORD_NUMBER='M001')",
+					SQL
+					);
 
-			String wherePart = generator.getWherePartSQL();
-			//			System.out.println(wherePart);
-			//			System.out.println("Where ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') And Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') Or(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) ");
-			assertEquals(
-					"Incorrect SQL formed for Where clause of the Expression !!!",
-					wherePart,
-					"Where Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') And(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) And ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') ");
+//			String wherePart = generator.getWherePartSQL();
+//			//			System.out.println(wherePart);
+//			//			System.out.println("Where ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') And Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') Or(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) ");
+//			assertEquals(
+//					"Incorrect SQL formed for Where clause of the Expression !!!",
+//					"Where Participant1.IDENTIFIER = ANY(Where (Participant1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentifier2.MEDICAL_RECORD_NUMBER='M001')) And ParticipantMedicalIdentifier2.IDENTIFIER = ANY(ParticipantMedicalIdentifier2.MEDICAL_RECORD_NUMBER='M001') ",
+//					wherePart);
 
 			String selectPart = generator.getSelectPart(rootExpression);
 			//			System.out.println(selectPart);
 			assertEquals(
 					"Incorrect SQL formed for Select clause of the Expression !!!",
-					selectPart,
-					"Select Participant0.ACTIVITY_STATUS, Participant0.BIRTH_DATE, Participant0.DEATH_DATE, Participant0.ETHNICITY, Participant0.FIRST_NAME, Participant0.GENDER, Participant0.IDENTIFIER, Participant0.LAST_NAME, Participant0.MIDDLE_NAME, Participant0.GENOTYPE, Participant0.SOCIAL_SECURITY_NUMBER, Participant0.VITAL_STATUS");
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS",
+					selectPart
+					);
 
-			String fromPart = generator.getFromPartSQL(rootExpression);
+			String fromPart = generator.getFromPartSQL(rootExpression,null, new HashSet<Integer>());
 //			System.out.println(fromPart);
 //			System.out.println("From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID)");
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					fromPart,
-					"From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID)");
+					"From catissue_participant Participant1 left join catissue_part_medical_id ParticipantMedicalIdentifier2 on (Participant1.IDENTIFIER=ParticipantMedicalIdentifier2.PARTICIPANT_ID)",
+					fromPart
+					);
 
 
 		}
@@ -175,14 +182,15 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			String sql = generator.generateSQL(query);
-//						System.out.println(sql);
+//			System.out.println("testParticipantQuery1:"+sql);
 
 //			System.out.println(sql);
 //			System.out.println("Select Participant0.ACTIVITY_STATUS, Participant0.BIRTH_DATE, Participant0.DEATH_DATE, Participant0.ETHNICITY, Participant0.FIRST_NAME, Participant0.GENDER, Participant0.IDENTIFIER, Participant0.LAST_NAME, Participant0.MIDDLE_NAME, Participant0.GENOTYPE, Participant0.SOCIAL_SECURITY_NUMBER, Participant0.VITAL_STATUS From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID) Where Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') And(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) And ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') ");
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					sql,
-					"Select Participant0.ACTIVITY_STATUS, Participant0.BIRTH_DATE, Participant0.DEATH_DATE, Participant0.ETHNICITY, Participant0.FIRST_NAME, Participant0.GENDER, Participant0.IDENTIFIER, Participant0.LAST_NAME, Participant0.MIDDLE_NAME, Participant0.GENOTYPE, Participant0.SOCIAL_SECURITY_NUMBER, Participant0.VITAL_STATUS From catissue_participant Participant0 left join catissue_part_medical_id ParticipantMedicalIdentifier0 on (Participant0.IDENTIFIER=ParticipantMedicalIdentifier0.PARTICIPANT_ID) Where Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') And(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) And ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') ");
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_part_medical_id ParticipantMedicalIdentifier2 on (Participant1.IDENTIFIER=ParticipantMedicalIdentifier2.PARTICIPANT_ID) Where (Participant1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentifier2.MEDICAL_RECORD_NUMBER='M001')",
+					sql
+					);
 		}
 		catch (Exception e)
 		{
@@ -201,11 +209,12 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			String sql = generator.generateSQL(query);
-			//			System.out.println(sql);
+//			System.out.println("testParticipantQuery2:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					sql,
-					"Select Participant0.ACTIVITY_STATUS, Participant0.BIRTH_DATE, Participant0.DEATH_DATE, Participant0.ETHNICITY, Participant0.FIRST_NAME, Participant0.GENDER, Participant0.IDENTIFIER, Participant0.LAST_NAME, Participant0.MIDDLE_NAME, Participant0.GENOTYPE, Participant0.SOCIAL_SECURITY_NUMBER, Participant0.VITAL_STATUS From catissue_participant Participant0 Where Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where Participant0.ACTIVITY_STATUS='Active') ");
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 Where Participant1.ACTIVITY_STATUS='Active'",
+					sql
+					);
 		}
 		catch (Exception e)
 		{
@@ -213,4 +222,65 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 	}
 
+	
+	public void testScgQuery1()
+	{
+		IQuery query = QueryGeneratorMock.createSCGQuery();
+		try
+		{
+			String sql = generator.generateSQL(query);
+//			System.out.println("---------------"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select SpecimenCollectionGroup1.IDENTIFIER, SpecimenCollectionGroup1.NAME, SpecimenCollectionGroup1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup1.CLINICAL_STATUS, SpecimenCollectionGroup1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup1 left join catissue_specimen Specimen2 on (SpecimenCollectionGroup1.IDENTIFIER=Specimen2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen3 on (Specimen2.IDENTIFIER=Specimen3.PARENT_SPECIMEN_ID) Where (SpecimenCollectionGroup1.ACTIVITY_STATUS like 'value1%') Or(SpecimenCollectionGroup1.IDENTIFIER = ANY(Select Specimen2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen2 left join catissue_specimen Specimen3 on (Specimen2.IDENTIFIER=Specimen3.PARENT_SPECIMEN_ID) where (Specimen2.TYPE like 'value1%') Or(Specimen3.TYPE like 'value1%'))) And(SpecimenCollectionGroup1.IDENTIFIER = ANY(Select Specimen2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen2 where Specimen2.PATHOLOGICAL_STATUS='value1')) Or(Specimen2.PATHOLOGICAL_STATUS!='value1')",
+					sql
+					);
+		}
+		catch (Exception e)
+		{
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	
+	public void testSampleQuery1()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testSampleQuery1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant1.FIRST_NAME like 's%') And((Specimen4.TYPE='Fixed Tissue') Or(Specimen4.TYPE='Fresh Tissue'))",
+					sql
+					);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	
+	public void testSampleQuery3()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery3();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testSampleQuery3:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup5 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup5.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen6 on (SpecimenCollectionGroup5.IDENTIFIER=Specimen6.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='New Diagnosis') And((Specimen4.TYPE='DNA') Or(Specimen4.TYPE='null')))) And(CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup5.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup5 left join catissue_specimen Specimen6 on (SpecimenCollectionGroup5.IDENTIFIER=Specimen6.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup5.CLINICAL_DIAGNOSIS='Post-Operative') And((Specimen6.TYPE='Fixed Tissue') Or(Specimen6.TYPE='Fixed Tissue'))))",
+					sql
+					);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
 }
