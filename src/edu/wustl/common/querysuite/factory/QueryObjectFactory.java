@@ -12,12 +12,14 @@ import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
-import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.util.global.Constants;
 import edu.wustl.common.querysuite.category.ICategory;
 import edu.wustl.common.querysuite.queryobject.DataType;
+import edu.wustl.common.querysuite.queryobject.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -61,10 +63,9 @@ public class QueryObjectFactory
 
 	}
 
-	public static ILogicalConnector createLogicalConnector(LogicalOperator logicalOperator,
-			int nestingNumber)
+	public static ILogicalConnector createLogicalConnector(LogicalOperator logicalOperator)
 	{
-		return new LogicalConnector(logicalOperator, nestingNumber);
+		return new LogicalConnector(logicalOperator);
 	}
 
 	public static IAttribute createAttribute(DataType dataType, IClass umlCLass,
@@ -145,9 +146,9 @@ public class QueryObjectFactory
 		return new Rule(conditions, containingExpression);
 	}
 
-	public static IRule createRule()
+	public static IRule createRule(IExpression containingExpression)
 	{
-		return new Rule(null,null);
+		return new Rule(null,containingExpression);
 	}
 
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
@@ -180,9 +181,9 @@ public class QueryObjectFactory
 //        classObj.setAttributes(createAttributes((List)entity.getAttributeCollection()));
         classObj.setFullyQualifiedName(entity.getName());
         
-        Collection<AbstractAttributeInterface> col = entity.getAbstractAttributeCollection();
+        Collection col = entity.getAttributeCollection();
         
-        for (Iterator<AbstractAttributeInterface> iter = col.iterator(); iter.hasNext();)
+        for (Iterator iter = col.iterator(); iter.hasNext();)
 		{
         	AttributeInterface element = (AttributeInterface)iter.next();
 			IAttribute queryAttribute = createAttributeForClass(element, classObj);
@@ -214,7 +215,7 @@ public class QueryObjectFactory
      * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
      * @thorws NoSuchElementException if the attribute is does not belongs to the given queryClass. 
      */
-    private static IAttribute getAttribute(AttributeInterface attribute, IClass queryClass)
+    public static IAttribute getAttribute(AttributeInterface attribute, IClass queryClass)
     {
     	IAttribute queryAttribute = null;
     	List<IAttribute> tempQueryAttributes = queryClass.getAttributes();
@@ -260,8 +261,24 @@ public class QueryObjectFactory
     {
     	 IClass queryClass = createClass(attribute.getEntity());
     	 return getAttribute(attribute, queryClass);
-   }
+    }
     
+    /**
+     * To instanciate object of a class extending IIntraModelAssociation interface.  
+     * @param association
+     * @return
+     */
+    public static IAssociation createAssociation(AssociationInterface association)
+    {
+    	IClass leftClass = createClass(association.getEntity());
+    	IClass rightClass = createClass(association.getTargetEntity());
+    	String roleName = association.getSourceRole().getName();
+    	String revereseRoleName = association.getTargetRole().getName();
+    	boolean bidirectional = association.getAssociationDirection().equals(Constants.AssociationDirection.BI_DIRECTIONAL);
+    	
+    	IAssociation queryAssociation = QueryObjectFactory.createIntraModelAssociation(leftClass, rightClass, roleName, revereseRoleName, bidirectional);
+    	return queryAssociation;
+    }
     /**
      * Returns the datatype of attribute depending on the AttributeTypeInformation of the attribute. 
      * @param attributeTypeInformation The attribute type information.

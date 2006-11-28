@@ -7,6 +7,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 15.00.04 AM
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
@@ -20,11 +21,11 @@ public class JoinGraph implements IJoinGraph
 {
 
 	private static final long serialVersionUID = 2671567170682456142L;
-	public Graph<IExpressionId, IAssociation> joinGraph;
+	public Graph<IExpressionId, IAssociation> graph;
 
 	public JoinGraph()
 	{
-		joinGraph = new Graph<IExpressionId, IAssociation>();
+		graph = new Graph<IExpressionId, IAssociation>();
 	}
 
 	/**
@@ -32,7 +33,7 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public boolean containsAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex)
 	{
-		return joinGraph.containsEdge(parentExpressionIndex, childExpressionIndex);
+		return graph.containsEdge(parentExpressionIndex, childExpressionIndex);
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public IAssociation getAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex)
 	{
-		return joinGraph.getEdge(parentExpressionIndex, childExpressionIndex);
+		return graph.getEdge(parentExpressionIndex, childExpressionIndex);
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public boolean isConnected() throws MultipleRootsException
 	{
-		return joinGraph.isConnected();
+		return graph.isConnected();
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class JoinGraph implements IJoinGraph
 	public IAssociation putAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex, IAssociation association)
 			throws CyclicException
 	{
-		return joinGraph.putEdge(parentExpressionIndex, childExpressionIndex, association);
+		return graph.putEdge(parentExpressionIndex, childExpressionIndex, association);
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public boolean removeAssociation(IExpressionId firstExpressionIndex, IExpressionId secondExpressionIndex)
 	{
-		return joinGraph.removeEdge(firstExpressionIndex, secondExpressionIndex) != null;
+		return graph.removeEdge(firstExpressionIndex, secondExpressionIndex) != null;
 	}
 
 	/**
@@ -79,7 +80,7 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public boolean removeIExpressionId(IExpressionId id)
 	{
-		return joinGraph.removeVertex(id);
+		return graph.removeVertex(id);
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public IExpressionId getRoot() throws MultipleRootsException
 	{
-		List<IExpressionId> unReachableNode = joinGraph.getUnreachableNodeList();
+		List<IExpressionId> unReachableNode = graph.getUnreachableNodeList();
 		
 		if (unReachableNode.size()==0)
 			throw new MultipleRootsException("No Root Exist for the Joing Graph!!!!");
@@ -104,7 +105,7 @@ public class JoinGraph implements IJoinGraph
 
 	public boolean addIExpressionId(IExpressionId id)
 	{
-		return joinGraph.addVertex(id);
+		return graph.addVertex(id);
 	}
 
 	/**
@@ -112,7 +113,79 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public List<IExpressionId> getParentList(IExpressionId childExpressionId)
 	{
-		return joinGraph.getDirectPredecessorOf(childExpressionId);
+		return graph.getDirectPredecessorOf(childExpressionId);
 	}
 
+	/**
+	 * To get the path of the  given ExpressionId from the root Expression.
+	 * @param expressionId reference to ExpressionId 
+	 * @return the List of paths of the given ExpressionId from root. returns empty path list if there is no path.
+	 */
+	public List<List<IExpressionId>> getPaths(IExpressionId expressionId) throws MultipleRootsException
+	{
+		return graph.getReachablePaths(getRoot(), expressionId);
+	}
+	/**
+	 * To get the first path of the  given ExpressionId from the root Expression.
+	 * @param expressionId regerence to ExpressionId 
+	 * @return the List of vertices representing path of the given ExpressionId from root. returns empty path list if there is no path.
+	 */
+	public List<IExpressionId> getPath(IExpressionId expressionId) throws MultipleRootsException
+	{
+		List<List<IExpressionId>> paths =graph.getReachablePaths(getRoot(), expressionId);
+		
+		if (paths.isEmpty())
+			return new ArrayList<IExpressionId>();
+		
+		return paths.get(0);
+	}
+	
+	/**
+	 * To get the edge path of the  given ExpressionId from the root Expression.
+	 * @param expressionId reference to ExpressionId 
+	 * @return the List of paths of the given ExpressionId from root. returns empty path list if there is no path.
+	 */
+	public List<List<IAssociation>> getEdgesPaths(IExpressionId expressionId) throws MultipleRootsException
+	{
+		return graph.getReachableEdgePaths(getRoot(), expressionId);
+	}
+
+	/**
+	 * To get the first edge path of the  given ExpressionId from the root Expression.
+	 * @param expressionId regerence to ExpressionId 
+	 * @return the List of Associations representing path of the given ExpressionId from root. returns empty path list if there is no path.
+	 * @throws MultipleRootsException if there are multpile roots present in join graph.
+	 * @throws IllegalArgumentException when the expressionId is not in the graph.
+	 */
+	public List<IAssociation> getEdgePath(IExpressionId expressionId) throws MultipleRootsException
+	{
+		List<List<IAssociation>> paths =graph.getReachableEdgePaths(getRoot(), expressionId);
+		
+		if (paths.isEmpty())
+			return new ArrayList<IAssociation>();
+		
+		return paths.get(0);
+	}
+	
+	/**
+	 * To get the list of IExpressionIds from which the given expressionId is directly reachable. 
+	 * @return List of IExpressionIds from which the given expressionId is directly reachable. 
+	 * Returns null if expressionId is not present in graph,
+	 * Returns empty list if expressionId has no incomming Edges.
+	 */
+	public List<IExpressionId> getDirectPredecessorOf(IExpressionId expressionId)
+	{
+		return graph.getDirectPredecessorOf(expressionId);
+	}
+	
+	/**
+	 * To get the list directly reachable expressionIds from the given expressionId. 
+	 * @return List of expressionIds directly reachable from the given expressionId. 
+	 * Returns null if expressionId is not present in graph,
+	 * Returns empty list if expressionId has no directly reachable node.
+	 */
+	public List<IExpressionId> getDirectSuccessorOf(IExpressionId expressionId)
+	{
+		return graph.getDirectSuccessorOf(expressionId);
+	}
 }

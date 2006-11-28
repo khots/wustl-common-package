@@ -16,21 +16,11 @@ public class LogicalConnector implements ILogicalConnector
 
 	private static final long serialVersionUID = 3065606993455242889L;
 	private LogicalOperator logicalOperator;
-	private int nestingNumber;
+	private int nestingNumber=0;
 
-	public LogicalConnector(LogicalOperator logicalOperator, int nestingNumber)
+	public LogicalConnector(LogicalOperator logicalOperator)
 	{
 		this.logicalOperator = logicalOperator;
-		this.nestingNumber = nestingNumber;
-	}
-
-	/**
-	 * Constructor to create instance of the LogicalConnector class, with the specified nestingNumber.
-	 * @param nestingNumber
-	 */
-	public LogicalConnector(int nestingNumber)
-	{
-		this.nestingNumber = nestingNumber;
 	}
 
 	/**
@@ -108,6 +98,7 @@ public class LogicalConnector implements ILogicalConnector
 	@Override
 	public String toString()
 	{
+		
 		return "[" + logicalOperator + ":" + nestingNumber + "]";
 	}
 
