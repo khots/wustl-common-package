@@ -23,10 +23,4 @@ public interface ILogicalConnector extends IBaseQueryObject
 	 */
 	public int getNestingNumber();
 
-	/**
-	 * @param nestingNumber
-	 */
-	public void setNestingNumber(int nestingNumber);
-	
-	public void incrementNestingNumber();
 }
