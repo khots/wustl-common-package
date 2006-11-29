@@ -15,7 +15,7 @@ import edu.wustl.common.querysuite.exceptions.CyclicException;
  * @author prafull_kadam
  * Test Case class for the Graph class.
  */
-public class TestGraph extends TestCase
+public class GraphTestCase extends TestCase
 {
 
 	Graph<Integer, String> graph;

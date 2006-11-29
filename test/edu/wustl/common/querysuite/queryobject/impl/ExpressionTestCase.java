@@ -14,7 +14,7 @@ import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 
-public class ExpressionTestCases extends TestCase
+public class ExpressionTestCase extends TestCase
 {
 
 	IExpression expr;
@@ -28,12 +28,12 @@ public class ExpressionTestCases extends TestCase
 	IRule d;
 	IRule e;
 
-	public ExpressionTestCases()
+	public ExpressionTestCase()
 	{
 		super();
 	}
 
-	public ExpressionTestCases(String name)
+	public ExpressionTestCase(String name)
 	{
 		super(name);
 	}
