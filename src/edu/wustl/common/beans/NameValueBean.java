@@ -167,5 +167,43 @@ public class NameValueBean implements Comparable
 //		Logger.out.debug("Number type didnot match");
 		return 0;
 	}
+//-----------
+	public boolean equals(Object object)
+
+    {
+
+            
+
+            if(this.getClass().getName().equals(object.getClass().getName()))
+
+            {
+
+                        NameValueBean nvb = (NameValueBean)object;
+
+                        if(this.getName().equals(nvb.getName()) && this.getValue().equals(nvb.getValue()))
+
+                                    return true;
+
+            }
+
+            return false;
+
+    }
+
+            public int hashCode()
+
+            {
+
+                        if(this.getName() != null && this.getValue() != null)
+
+                                    return this.getName().hashCode() * this.getValue().hashCode();
+
+                        
+
+                        return super.hashCode();
+
+            }
+
+            
 
 }

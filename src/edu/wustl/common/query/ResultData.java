@@ -8,6 +8,7 @@
  */
 package edu.wustl.common.query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.beans.SessionDataBean;
@@ -44,11 +45,11 @@ public class ResultData
         }
         /*if(whereColumnName.length==2)
         	Logger.out.debug("arrayvalues:"+whereColumnName[0]+":"+whereColumnName[1]+":"+whereColumnValue[0]+":"+whereColumnValue[1]);*/
-        List dataList = null;
+        List dataList = new ArrayList();
+        //Bug#2003: For having unique records in result view
+        JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
         try
         {
-            //Bug#2003: For having unique records in result view
-            JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
             dao.openSession(sessionDataBean);
             boolean onlyDistinctRows= true;
             Logger.out.debug("Get only distinct rows:"+onlyDistinctRows);
@@ -56,17 +57,24 @@ public class ResultData
                     				 whereColumnName,whereColumnCondition,
                     				 whereColumnValue,null,onlyDistinctRows);
             Logger.out.debug("List of spreadsheet data for advance search:"+dataList);
-             dao.closeSession();
+            
              //End of Bug#2003: For having unique records in result view
         }
         catch (DAOException sqlExp)
         {
             Logger.out.error(sqlExp.getMessage(),sqlExp);
         }
-        catch (Exception exp)
-        {
-            Logger.out.error(exp.getMessage(),exp);
-        }
+        finally
+		{
+        	try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException e)
+			{
+				Logger.out.error(e.getMessage(),e);
+			}
+		}
         
         return dataList;
     }

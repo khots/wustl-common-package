@@ -196,7 +196,7 @@ public class HibernateMetaData
 		{
 			dbName=Constants.MYSQL_DATABASE;
 		}
-		else if (dialect.toLowerCase().indexOf("PostgreSQL") != -1)
+		else if (dialect.toLowerCase().indexOf("postgresql") != -1)
 		{
 			dbName = Constants.POSTGRESQL_DATABASE;
 		}
