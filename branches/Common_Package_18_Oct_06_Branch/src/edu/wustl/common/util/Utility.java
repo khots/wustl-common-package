@@ -14,14 +14,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -537,4 +540,18 @@ public class Utility
 		return columnLength;
 	}
 	//Mandar 17-Apr-06 Bugid : 1667 : end
+	
+	/**
+	 * To sort the Tree nodes based on the comparators overidden by the TreeNodeImpl object.
+	 * @param nodes reference to the Vector containing object of class implementing TreeNodeImpl class.
+	 */
+	public static void sortTreeVector(Vector nodes)
+	{
+		Collections.sort(nodes);
+		for (int i=0;i<nodes.size();i++)
+		{
+			TreeNodeImpl child = (TreeNodeImpl)nodes.get(i);
+			sortTreeVector(child.getChildNodes());
+		}
+	}
 }

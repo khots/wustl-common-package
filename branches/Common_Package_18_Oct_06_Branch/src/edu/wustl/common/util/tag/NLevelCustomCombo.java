@@ -48,6 +48,11 @@ public class NLevelCustomCombo extends TagSupport
 	private String[] attributeNames;
 	
 	/**
+     * List of string values used for naming each combos.
+     */
+	private String[] tdStyleClassArray;
+	
+	/**
      * List of string values used to initailize first n-1 combos.
      */
 	private String[] initialValues;
@@ -377,14 +382,20 @@ public class NLevelCustomCombo extends TagSupport
      */
 	private void getCombos(Object dMap)
 	{
+		if(tdStyleClassArray != null)
+		{
+			tdStyleClass = tdStyleClassArray[comboCounter];
+		}
 	  if( (dMap instanceof Map && ((Map)dMap).size() > 0 ) || (dMap instanceof List) && (((List)dMap).size() > 0) )
 	  {
 		if(dMap instanceof Map)
 		{
 			Set keySet = ((Map)dMap).keySet();
-			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+tdStyleClass+"\" nowrap> "
+			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+formLabelStyle+"\" nowrap> "
 												+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 												+"\" style =\""+styleClass
+												+"\" onmouseover =\"showTip(this.id)\""
+												+"\" onmouseout =\"hideTip(this.id)\""
 												+"\" class=\""+tdStyleClass
 												+"\" id =\"customListBox_"+rowNumber+"_"+comboCounter
 												+"\" onChange=\""+onChange+"\"";
@@ -442,7 +453,7 @@ public class NLevelCustomCombo extends TagSupport
 		}else if(dMap instanceof List)      // Termination condition for recursion
 		{
 			List dList = (List) dMap;
-			combosHTMLStr = combosHTMLStr + verticalCombosStart +"<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+tdStyleClass+"\" nowrap> "
+			combosHTMLStr = combosHTMLStr + verticalCombosStart +"<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+formLabelStyle+"\" nowrap> "
 												+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 												+"\" style =\""+styleClass
 												+"\" class=\""+tdStyleClass
@@ -485,6 +496,7 @@ public class NLevelCustomCombo extends TagSupport
 	  	
 		for(int i = 0; i < Integer.parseInt(noOfEmptyCombos); i++ )
 		{
+			tdStyleClass = tdStyleClassArray[comboCounter];
 			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\" nowrap> "+labelNames[comboCounter]
 									+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 									+"\" style =\""+styleClass
@@ -542,4 +554,18 @@ public class NLevelCustomCombo extends TagSupport
 		this.formLabelStyle = value;
 	}
 	
+	/**
+	 * @return Returns the tdStyleClassArray.
+	 */
+	public String[] getTdStyleClassArray()
+	{
+		return tdStyleClassArray;
+	}
+	/**
+	 * @param tdStyleClassArray The tdStyleClassArray to set.
+	 */
+	public void setTdStyleClassArray(String[] tdStyleClassArray)
+	{
+		this.tdStyleClassArray = tdStyleClassArray;
+	}
 }

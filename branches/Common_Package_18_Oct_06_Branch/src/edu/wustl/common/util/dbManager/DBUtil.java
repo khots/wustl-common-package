@@ -1,3 +1,4 @@
+
 package edu.wustl.common.util.dbManager;
 
 import java.sql.Connection;
@@ -7,6 +8,7 @@ import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
 import net.sf.hibernate.cfg.Configuration;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -19,10 +21,11 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class DBUtil
 {
-	//A factory for DB Session which provides the Connection for client.
-	private static  SessionFactory m_sessionFactory;
 
-	//ThreadLocal to hold the Session for the current executing thread.
+	//A factory for DB Session which provides the Connection for client. 
+	private static SessionFactory m_sessionFactory;
+
+	//ThreadLocal to hold the Session for the current executing thread. 
 	private static final ThreadLocal threadLocal = new ThreadLocal();
 	//Initialize the session Factory in the Static block.
 	static
@@ -32,60 +35,59 @@ public class DBUtil
 			Configuration cfg = new Configuration();
 			m_sessionFactory = cfg.configure().buildSessionFactory();
 			HibernateMetaData.initHibernateMetaData(cfg);
+			Variables.databaseName = HibernateMetaData.getDataBaseName();
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			ex.printStackTrace();
-		    Logger.out.debug("Exception: "+ex.getMessage(),ex);
+			Logger.out.debug("Exception: " + ex.getMessage(), ex);
 			throw new RuntimeException(ex.getMessage());
 		}
 
+		//		try
+		//
+		//		{
+		//
+		//		File file = new File(Variables.catissueHome+System.getProperty("file.separator")+"db.properties");
+		//
+		//		Logger.out.info("File "+file);
+		//
+		//		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
+		//
+		//		Properties p = new Properties();
+		//
+		//		p.load(stram);
+		//
+		//
+		//		stram.close();
+		//
+		//		Configuration cfg = new Configuration();
+		//
+		//		cfg.setProperties(p);
+		//
+		//		m_sessionFactory = cfg.configure().buildSessionFactory();
+		//
+		//		HibernateMetaData.initHibernateMetaData(cfg);
+		//
+		//		}
+		//
+		//		catch(Exception ex)
+		//
+		//		{
+		//
+		//		ex.printStackTrace();
+		//
+		//		Logger.out.debug("Exception: "+ex.getMessage(),ex);
+		//
+		//		throw new RuntimeException(ex.getMessage());
 
-//		try
-//
-//		{
-//
-//		File file = new File(Variables.catissueHome+System.getProperty("file.separator")+"db.properties");
-//
-//		Logger.out.info("File "+file);
-//
-//		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
-//
-//		Properties p = new Properties();
-//
-//		p.load(stram);
-//
-//
-//		stram.close();
-//
-//		Configuration cfg = new Configuration();
-//
-//		cfg.setProperties(p);
-//
-//		m_sessionFactory = cfg.configure().buildSessionFactory();
-//
-//		HibernateMetaData.initHibernateMetaData(cfg);
-//
-//		}
-//
-//		catch(Exception ex)
-//
-//		{
-//
-//		ex.printStackTrace();
-//
-//		Logger.out.debug("Exception: "+ex.getMessage(),ex);
-//
-//		throw new RuntimeException(ex.getMessage());
-
-//		}
-
+		//		}
 
 	}
 
 	/**
 	 * Follows the singleton pattern and returns only current opened session.
-	 * @return Returns the current db session.
+	 * @return Returns the current db session.  
 	 * */
 	public static Session currentSession() throws HibernateException
 	{
@@ -99,9 +101,9 @@ public class DBUtil
 			{
 				s.connection().setAutoCommit(false);
 			}
-			catch(SQLException ex)
+			catch (SQLException ex)
 			{
-				throw new HibernateException(ex.getMessage(),ex);
+				throw new HibernateException(ex.getMessage(), ex);
 			}
 			threadLocal.set(s);
 		}
@@ -131,8 +133,8 @@ public class DBUtil
 
 	/**
 	 * This method opens a new session, loads an object with given class and Id, and closes
-	 * the session. This method should be used only when an object is to be opened in separate session.
-	 *
+	 * the session. This method should be used only when an object is to be opened in separate session.  
+	 * 
 	 * @param objectClass class of the object
 	 * @param identifier id of the object
 	 * @return object
@@ -155,5 +157,4 @@ public class DBUtil
 			session.close();
 		}
 	}
-
 }
