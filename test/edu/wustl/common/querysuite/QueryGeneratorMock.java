@@ -37,6 +37,7 @@ public class QueryGeneratorMock
 {
 
 	static EntityManagerMock enitytManager = new EntityManagerMock();
+
 	/**
 	 * Create Participant Class: with Attributes as: id, activityStatus, birthDate
 	 * @return  Participant Class.
@@ -45,7 +46,8 @@ public class QueryGeneratorMock
 	{
 		List<IAttribute> attributes = new ArrayList<IAttribute>();
 
-		IClass class1 = QueryObjectFactory.createClass("edu.wustl.catissuecore.domain.Participant", attributes, null, true);
+		IClass class1 = QueryObjectFactory.createClass("edu.wustl.catissuecore.domain.Participant",
+				attributes, null, true);
 
 		IAttribute att1 = QueryObjectFactory.createAttribute(DataType.String, class1,
 				"activityStatus");
@@ -155,12 +157,12 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule reference.
 	 */
-	public static IRule createParticipantRule2(IClass participant,IExpression containingExpression)
+	public static IRule createParticipantRule2(IClass participant, IExpression containingExpression)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition1(participant));
 		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
-		
+
 		return rule;
 	}
 
@@ -187,12 +189,11 @@ public class QueryGeneratorMock
 		IExpression expression = new Expression(participant, 1);
 		expression.addOperand(createParticipantRule1(participant, expression));
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
-		expression.addOperand(connector, createParticipantRule2(participant,expression));
+		expression.addOperand(connector, createParticipantRule2(participant, expression));
 
 		return expression;
 	}
 
-	
 	/**
 	 * Create Expression for given Participant as: [Expression1] And [id < 10]
 	 * Where Expression1 is : [medicalRecordNumber = 'M001']
@@ -202,10 +203,13 @@ public class QueryGeneratorMock
 	public static IExpression creatParticipantExpression2(IClass participant)
 	{
 		IExpression expression = new Expression(null, 1);
-		expression.addOperand(createParticipantRule3(participant,expression));
-		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(
-				LogicalOperator.And);
-		expression.addOperand(connector, (IExpressionOperand) creatParticipantMedicalIdentifierExpression(createParticantMedicalIdentifierClass()));
+		expression.addOperand(createParticipantRule3(participant, expression));
+		ILogicalConnector connector = QueryObjectFactory
+				.createLogicalConnector(LogicalOperator.And);
+		expression
+				.addOperand(
+						connector,
+						(IExpressionOperand) creatParticipantMedicalIdentifierExpression(createParticantMedicalIdentifierClass()));
 
 		return expression;
 	}
@@ -219,29 +223,32 @@ public class QueryGeneratorMock
 	{
 		IClass participantClass = createParticantClass();
 		IClass pmClass = createParticantMedicalIdentifierClass();
-		
+
 		IQuery query = QueryObjectFactory.createQuery();
-		
+
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
-		
+
 		IJoinGraph joinGraph = constraints.getJoinGraph();
-		
+
 		IExpression participantExpression = constraints.addExpression(participantClass);
-		participantExpression.addOperand(createParticipantRule2(participantClass, participantExpression));
-		
+		participantExpression.addOperand(createParticipantRule2(participantClass,
+				participantExpression));
+
 		IExpression pmExpression = constraints.addExpression(pmClass);
-		
-		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
-		participantExpression.addOperand(connector,pmExpression.getExpressionId());
-		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass,pmExpression));
-		
-		
-		IAssociation association = QueryObjectFactory.createIntraModelAssociation(participantClass, pmClass, "participant", "participantMedicalIdentifierCollection", true);
-		
+
+		ILogicalConnector connector = QueryObjectFactory
+				.createLogicalConnector(LogicalOperator.And);
+		participantExpression.addOperand(connector, pmExpression.getExpressionId());
+		pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmClass, pmExpression));
+
+		IAssociation association = QueryObjectFactory.createIntraModelAssociation(participantClass,
+				pmClass, "participant", "participantMedicalIdentifierCollection", true);
+
 		try
 		{
-			joinGraph.putAssociation(participantExpression.getExpressionId(), pmExpression.getExpressionId(),association);
+			joinGraph.putAssociation(participantExpression.getExpressionId(), pmExpression
+					.getExpressionId(), association);
 		}
 		catch (CyclicException e)
 		{
@@ -251,26 +258,26 @@ public class QueryGeneratorMock
 
 	public static IQuery createSCGQuery()
 	{
-		
-		IClass specimenCollectionGroup= null;
+
+		IClass specimenCollectionGroup = null;
 		IClass specimenClass = null;
-		EntityInterface specimenEntity= null;
+		EntityInterface specimenEntity = null;
 		EntityInterface scgEntity = null;
-		
+
 		try
 		{
 			specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
 			specimenClass = QueryObjectFactory.createClass(specimenEntity);
-			scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			scgEntity = enitytManager
+					.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
 			specimenCollectionGroup = QueryObjectFactory.createClass(scgEntity);
-			
-			
+
 		}
 		catch (DynamicExtensionsSystemException e)
 		{
 			return null;
 		}
-		
+
 		List<String> values = new ArrayList<String>();
 		values.add("value1");
 
@@ -278,66 +285,73 @@ public class QueryGeneratorMock
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
 
-		IJoinGraph joinGraph  = constraints.getJoinGraph();
-		
+		IJoinGraph joinGraph = constraints.getJoinGraph();
+
 		IExpression scgExpression = constraints.addExpression(specimenCollectionGroup);
-		IRule SCGRule = QueryObjectFactory.createRule(null,scgExpression);
-		ICondition SCGCondition = QueryObjectFactory.createCondition(specimenCollectionGroup.getAttributes()
-				.get(0), RelationalOperator.StartsWith, values);
+		IRule SCGRule = QueryObjectFactory.createRule(null, scgExpression);
+		ICondition SCGCondition = QueryObjectFactory.createCondition(specimenCollectionGroup
+				.getAttributes().get(0), RelationalOperator.StartsWith, values);
 		SCGRule.addCondition(SCGCondition);
 		scgExpression.addOperand(SCGRule);
-		
-		ILogicalConnector orConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
+
+		ILogicalConnector orConnector = QueryObjectFactory
+				.createLogicalConnector(LogicalOperator.Or);
 		IExpression SpecimenExpression1 = constraints.addExpression(specimenClass);
-		IRule specimenRule1 = QueryObjectFactory.createRule(null,SpecimenExpression1);
-		ICondition specimenCondition1 = QueryObjectFactory.createCondition(specimenClass.getAttributes()
-				.get(0), RelationalOperator.StartsWith, values);
+		IRule specimenRule1 = QueryObjectFactory.createRule(null, SpecimenExpression1);
+		ICondition specimenCondition1 = QueryObjectFactory.createCondition(specimenClass
+				.getAttributes().get(0), RelationalOperator.StartsWith, values);
 		specimenRule1.addCondition(specimenCondition1);
 		SpecimenExpression1.addOperand(specimenRule1);
 		scgExpression.addOperand(orConnector, SpecimenExpression1.getExpressionId());
-		
-		
+
 		IExpression childSpecimenExpression = constraints.addExpression(specimenClass);
-		IRule childSpecimenRule = QueryObjectFactory.createRule(null,childSpecimenExpression);
-		ICondition childSpecimenCondition = QueryObjectFactory.createCondition(specimenClass.getAttributes()
-				.get(0), RelationalOperator.StartsWith, values);
-		
+		IRule childSpecimenRule = QueryObjectFactory.createRule(null, childSpecimenExpression);
+		ICondition childSpecimenCondition = QueryObjectFactory.createCondition(specimenClass
+				.getAttributes().get(0), RelationalOperator.StartsWith, values);
+
 		childSpecimenRule.addCondition(childSpecimenCondition);
 		childSpecimenExpression.addOperand(childSpecimenRule);
 		SpecimenExpression1.addOperand(orConnector, childSpecimenExpression.getExpressionId());
-		
-		
+
 		IExpression SpecimenExpression2 = constraints.addExpression(specimenClass);
-		IRule specimenRule2 = QueryObjectFactory.createRule(null,SpecimenExpression2);
-		ICondition specimenCondition2 = QueryObjectFactory.createCondition(specimenClass.getAttributes()
-				.get(3), RelationalOperator.Equals, values);
+		IRule specimenRule2 = QueryObjectFactory.createRule(null, SpecimenExpression2);
+		ICondition specimenCondition2 = QueryObjectFactory.createCondition(specimenClass
+				.getAttributes().get(3), RelationalOperator.Equals, values);
 		specimenRule2.addCondition(specimenCondition2);
 		SpecimenExpression2.addOperand(specimenRule2);
-//		ILogicalConnector pAndConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.PAnd);
-		ILogicalConnector pAndConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
-		scgExpression.addOperand(pAndConnector, SpecimenExpression2.getExpressionId());		
+		//		ILogicalConnector pAndConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.PAnd);
+		ILogicalConnector pAndConnector = QueryObjectFactory
+				.createLogicalConnector(LogicalOperator.And);
+		scgExpression.addOperand(pAndConnector, SpecimenExpression2.getExpressionId());
 
-		
-		IAssociation scgAndSpecimenAssociation = QueryObjectFactory.createIntraModelAssociation(specimenCollectionGroup, specimenClass, "specimenCollectionGroup", "specimenCollection", true);
-		IAssociation specimenAndSpecimenAssociation = QueryObjectFactory.createIntraModelAssociation(specimenClass, specimenClass, "childrenSpecimen", "parentSpecimen", true);
-		
+		IAssociation scgAndSpecimenAssociation = QueryObjectFactory.createIntraModelAssociation(
+				specimenCollectionGroup, specimenClass, "specimenCollectionGroup",
+				"specimenCollection", true);
+		IAssociation specimenAndSpecimenAssociation = QueryObjectFactory
+				.createIntraModelAssociation(specimenClass, specimenClass, "childrenSpecimen",
+						"parentSpecimen", true);
+
 		//----
 		IExpression SpecimenExpression3 = constraints.addExpression(specimenClass);
-		IRule specimenRule3 = QueryObjectFactory.createRule(null,SpecimenExpression3);
-		ICondition specimenCondition3 = QueryObjectFactory.createCondition(specimenClass.getAttributes()
-				.get(3), RelationalOperator.NotEquals, values);
+		IRule specimenRule3 = QueryObjectFactory.createRule(null, SpecimenExpression3);
+		ICondition specimenCondition3 = QueryObjectFactory.createCondition(specimenClass
+				.getAttributes().get(3), RelationalOperator.NotEquals, values);
 		specimenRule3.addCondition(specimenCondition3);
 		SpecimenExpression3.addOperand(specimenRule3);
-		scgExpression.addOperand(orConnector, SpecimenExpression3.getExpressionId());		
+		scgExpression.addOperand(orConnector, SpecimenExpression3.getExpressionId());
 		//---
 		try
 		{
-			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression1.getExpressionId(), scgAndSpecimenAssociation);
-			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression2.getExpressionId(), scgAndSpecimenAssociation);
-			joinGraph.putAssociation(SpecimenExpression1.getExpressionId(), childSpecimenExpression.getExpressionId(), specimenAndSpecimenAssociation);
-			
+			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression1
+					.getExpressionId(), scgAndSpecimenAssociation);
+			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression2
+					.getExpressionId(), scgAndSpecimenAssociation);
+			joinGraph.putAssociation(SpecimenExpression1.getExpressionId(), childSpecimenExpression
+					.getExpressionId(), specimenAndSpecimenAssociation);
+
 			//--
-			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression3.getExpressionId(), scgAndSpecimenAssociation);
+			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression3
+					.getExpressionId(), scgAndSpecimenAssociation);
 			//--
 		}
 		catch (CyclicException e)
@@ -345,9 +359,10 @@ public class QueryGeneratorMock
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return query;
 	}
+
 	/**
 	 * To create IQuery for the Participant as: [activityStatus = 'Active']
 	 * @param expression The Expression reference created by function creatParticipantExpression2()
@@ -356,19 +371,19 @@ public class QueryGeneratorMock
 	public static IQuery creatParticipantQuery2()
 	{
 		IClass participantClass = createParticantClass();
-		
+
 		IQuery query = QueryObjectFactory.createQuery();
-		
+
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		query.setConstraints(constraints);
-		
+
 		IExpression participantExpression = constraints.addExpression(participantClass);
-		participantExpression.addOperand(createParticipantRule2(participantClass,participantExpression));
-		
-		
+		participantExpression.addOperand(createParticipantRule2(participantClass,
+				participantExpression));
+
 		return query;
 	}
-	
+
 	/**
 	 * Create Participant Medical Identifier Class: with Attributes as: id, medicalRecordNumber, ParticipantId
 	 * @return  Participant Medical Identifier Class.
@@ -377,71 +392,80 @@ public class QueryGeneratorMock
 	{
 		List<IAttribute> attributes = new ArrayList<IAttribute>();
 
-		IClass class1 = QueryObjectFactory.createClass("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier", attributes, null, true);
+		IClass class1 = QueryObjectFactory.createClass(
+				"edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier", attributes, null,
+				true);
 
 		IAttribute att1 = QueryObjectFactory.createAttribute(DataType.Integer, class1, "id");
 		attributes.add(att1);
 
-		IAttribute att2 = QueryObjectFactory.createAttribute(DataType.String, class1,"medicalRecordNumber");
+		IAttribute att2 = QueryObjectFactory.createAttribute(DataType.String, class1,
+				"medicalRecordNumber");
 		attributes.add(att2);
 
-		IAttribute att3 = QueryObjectFactory.createAttribute(DataType.Integer, class1, "ParticipantId");
+		IAttribute att3 = QueryObjectFactory.createAttribute(DataType.Integer, class1,
+				"ParticipantId");
 		attributes.add(att3);
 
 		return class1;
 	}
-	
+
 	/**
 	 * Create Condition for given Participant: medicalRecordNumber = 'M001'
 	 * @param participantMedicalId The Iclass representing Participant Medical Identifier obje
 	 * @return The Condition object reference.
 	 */
-	public static ICondition createParticipantMedicalIdentifierCondition1(IClass participantMedicalId)
+	public static ICondition createParticipantMedicalIdentifierCondition1(
+			IClass participantMedicalId)
 	{
 		List<String> values = new ArrayList<String>();
 		values.add("M001");
-		ICondition condition = QueryObjectFactory.createCondition(participantMedicalId.getAttributes()
-				.get(1), RelationalOperator.Equals, values);
+		ICondition condition = QueryObjectFactory.createCondition(participantMedicalId
+				.getAttributes().get(1), RelationalOperator.Equals, values);
 
 		return condition;
 	}
-	
+
 	/**
 	 * Create Rule for Participant Medical Identifier as: [medicalRecordNumber = 'M001']
 	 * @param participantMedicalId The Iclass representing Participant Medical Identifier obje 
 	 * @return The Rule reference.
 	 */
-	private static IRule createParticipantMedicalIdentifierRule1(IClass participantMedicalId, IExpression containingExpression)
+	private static IRule createParticipantMedicalIdentifierRule1(IClass participantMedicalId,
+			IExpression containingExpression)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantMedicalIdentifierCondition1(participantMedicalId));
 		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
 		return rule;
 	}
-	
+
 	/**
 	 * Create Expression for Participant Medical Identifier as: [medicalRecordNumber = 'M001']
 	 * @param participantMedicalId The Iclass representing Participant Medical Identifier object.
 	 * @return The Expression reference
 	 */
-	public static IExpression creatParticipantMedicalIdentifierExpression(IClass participantMedicalId)
+	public static IExpression creatParticipantMedicalIdentifierExpression(
+			IClass participantMedicalId)
 	{
 		IExpression expression = new Expression(null, 2);
-		IRule rule = createParticipantMedicalIdentifierRule1(participantMedicalId,expression);
+		IRule rule = createParticipantMedicalIdentifierRule1(participantMedicalId, expression);
 		expression.addOperand(rule);
 		return expression;
 	}
-	
+
 	/**
 	 * 
-	 * @return the IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
-	 * 
-	 *  P: LastNameStarts with 'S'
+	 * @return The IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 * The Query is as follows:
+	 *  P: LastNameStarts with 'S'<P>
 	 *  	C: ANY
 	 *  		G: ANY
 	 *  			S: Type equals "Fixed Tissue"
 	 *  					OR
 	 *  			S: Type equals "Fresh Tissue" 
+	 * </pre>
 	 *  	
 	 */
 	public static IQuery createSampleQuery1()
@@ -567,8 +591,9 @@ public class QueryGeneratorMock
 
 	/**
 	 * 
-	 * @return the IQuery Object representation for the sample query no. 3 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
-	 * 
+	 * @return The IQuery Object representation for the sample query no. 3 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 * The Query is as follows:
 	 *  P: ANY
 	 *  	C: ANY
 	 *  		G: Clinical status equals "New Diagnosis"
@@ -580,7 +605,7 @@ public class QueryGeneratorMock
 	 *  			S: Type equals "Fixed Tissue"
 	 *  			OR
 	 *  			S: Type equals "Fresh Tissue" 
-	 *  	
+	 *  </pre>	
 	 */
 	public static IQuery createSampleQuery3()
 	{
@@ -684,9 +709,9 @@ public class QueryGeneratorMock
 			specimenExpression1.addOperand(orConnector, specimenExpression1Rule2);
 
 			ILogicalConnector pandConnector = QueryObjectFactory
-			.createLogicalConnector(LogicalOperator.And);
-//			ILogicalConnector pandConnector = QueryObjectFactory
-//			.createLogicalConnector(LogicalOperator.PAnd);
+					.createLogicalConnector(LogicalOperator.And);
+			//			ILogicalConnector pandConnector = QueryObjectFactory
+			//			.createLogicalConnector(LogicalOperator.PAnd);
 			//			 creating expression for SpecimenCollectionGroup2.
 			IExpression specimenCollectionGroupExpression2 = constraints
 					.addExpression(specimenCollectionGroup);
@@ -747,5 +772,127 @@ public class QueryGeneratorMock
 			return null;
 		}
 		return query;
-	}	
+	}
+
+	/**
+	 * 
+	 * @return The IQuery Object representation for the sample query no. 6 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 * The Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Type equals "Fixed Tissue" 
+	 *  				S: Type equals "Amniotic Fluid"
+	 * </pre> 	
+	 */
+	public static IQuery createSampleQuery6()
+	{
+		IQuery query = QueryObjectFactory.createQuery();
+
+		try
+		{
+			IClass participantClass = null;
+			IClass collectionProtocolRegClass = null;
+			IClass specimenCollectionGroup = null;
+			IClass specimenClass = null;
+
+			participantClass = QueryObjectFactory.createClass(enitytManager
+					.getEntityByName(EntityManagerMock.PARTICIPANT_NAME));
+			collectionProtocolRegClass = QueryObjectFactory.createClass(enitytManager
+					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME));
+			specimenClass = QueryObjectFactory.createClass(enitytManager
+					.getEntityByName(EntityManagerMock.SPECIMEN_NAME));
+			specimenCollectionGroup = QueryObjectFactory.createClass(enitytManager
+					.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME));
+
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			ILogicalConnector andConnector = QueryObjectFactory
+					.createLogicalConnector(LogicalOperator.And);
+
+			// creating expression for Participant.
+			IExpression participantExpression = constraints.addExpression(participantClass);
+
+			// creating expression for collection Protocol Registration
+			IExpression collectionProtocolRegExpression = constraints
+					.addExpression(collectionProtocolRegClass);
+			participantExpression.addOperand(collectionProtocolRegExpression.getExpressionId());
+			AssociationInterface participanCPRegAssociation = enitytManager.getAssociation(
+					EntityManagerMock.PARTICIPANT_NAME,
+					EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME, "participant");
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					collectionProtocolRegExpression.getExpressionId(), QueryObjectFactory
+							.createAssociation(participanCPRegAssociation));
+
+			// creating expression for SpecimenCollectionGroup.
+			IExpression specimenCollectionGroupExpression1 = constraints
+					.addExpression(specimenCollectionGroup);
+			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression1
+					.getExpressionId());
+			AssociationInterface cprAndSpgAssociation = enitytManager.getAssociation(
+					EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME,
+					EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					"collectionProtocolRegistration");
+			joinGraph.putAssociation(collectionProtocolRegExpression.getExpressionId(),
+					specimenCollectionGroupExpression1.getExpressionId(), QueryObjectFactory
+							.createAssociation(cprAndSpgAssociation));
+
+			//creating Parent SpecimeExpression.
+			IExpression specimenExpression1 = constraints.addExpression(specimenClass);
+
+			specimenCollectionGroupExpression1.addOperand(specimenExpression1.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = enitytManager.getAssociation(
+					EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					EntityManagerMock.SPECIMEN_NAME, "specimenCollectionGroup");
+			joinGraph.putAssociation(specimenCollectionGroupExpression1.getExpressionId(),
+					specimenExpression1.getExpressionId(), QueryObjectFactory
+							.createAssociation(spgAndSpecimeAssociation));
+
+			List<String> specimenExpression1Rule1Values = new ArrayList<String>();
+			specimenExpression1Rule1Values.add("Fixed Tissue");
+
+			IAttribute specimenAttributeType = QueryObjectFactory.getAttribute(enitytManager
+					.getAttribute(EntityManagerMock.SPECIMEN_NAME, "type"), specimenClass);
+			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					specimenAttributeType, RelationalOperator.Equals,
+					specimenExpression1Rule1Values);
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(specimenExpression1);
+			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
+			specimenExpression1.addOperand(specimenExpression1Rule1);
+
+			//creating child SpecimeExpression.
+			IExpression specimenExpression2 = constraints.addExpression(specimenClass);
+
+			specimenExpression1.addOperand(andConnector, specimenExpression2.getExpressionId());
+			AssociationInterface specimenAndSpecimeAssociation = enitytManager.getAssociation(
+					EntityManagerMock.SPECIMEN_NAME, EntityManagerMock.SPECIMEN_NAME,
+					"childrenSpecimen");
+			joinGraph.putAssociation(specimenExpression1.getExpressionId(), specimenExpression2
+					.getExpressionId(), QueryObjectFactory
+					.createAssociation(specimenAndSpecimeAssociation));
+
+			List<String> specimenExpression2Rule1Values = new ArrayList<String>();
+			specimenExpression2Rule1Values.add("Amniotic Fluid");
+
+			IAttribute childSpecimenAttributeType = QueryObjectFactory.getAttribute(enitytManager
+					.getAttribute(EntityManagerMock.SPECIMEN_NAME, "type"), specimenClass);
+			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					childSpecimenAttributeType, RelationalOperator.Equals,
+					specimenExpression2Rule1Values);
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(specimenExpression2);
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
+			specimenExpression2.addOperand(specimenExpression2Rule1);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+
 }
