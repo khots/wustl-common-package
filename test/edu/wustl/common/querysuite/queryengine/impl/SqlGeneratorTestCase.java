@@ -241,7 +241,18 @@ public class SqlGeneratorTestCase extends TestCase
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
-	
+	/**
+	 * 
+	 * To Test the SQL for sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc".
+	 * <pre>
+	 *  P: LastNameStarts with 'S'
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Type equals "Fixed Tissue"
+	 *  					OR
+	 *  			S: Type equals "Fresh Tissue" 
+	 * </pre>  	
+	 */	
 	public void testSampleQuery1()
 	{
 		IQuery query = QueryGeneratorMock.createSampleQuery1();
@@ -258,11 +269,28 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+//			e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
 	
+	/**
+	 * 
+	 * To test the SQL for sample query no. 3 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: Clinical status equals "New Diagnosis"
+	 *  			S: Type equals "DNA"
+	 *  			OR
+	 *  			S: Type equals "Fresh Tissue" 
+	 *  		Pseudo AND
+	 *  		G: Clinical status equals "Post Operative"
+	 *  			S: Type equals "Fixed Tissue"
+	 *  			OR
+	 *  			S: Type equals "Fresh Tissue" 
+	 *  </pre>
+	 */
 	public void testSampleQuery3()
 	{
 		IQuery query = QueryGeneratorMock.createSampleQuery3();
@@ -279,7 +307,38 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+//			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	/**
+	 * 
+	 * To test the SQL for the sample query no. 6 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Type equals "Fixed Tissue" 
+	 *  				S: Type equals "Amniotic Fluid"
+	 * </pre> 	
+	 */
+	public void testSampleQuery6()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery6();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testSampleQuery6:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen5 on (Specimen4.IDENTIFIER=Specimen5.PARENT_SPECIMEN_ID) Where (Specimen4.TYPE='Fixed Tissue') And(Specimen5.TYPE='Amniotic Fluid')",
+					sql
+					);
+		}
+		catch (Exception e)
+		{
+//			e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
