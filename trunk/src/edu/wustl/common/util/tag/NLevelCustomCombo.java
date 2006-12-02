@@ -496,7 +496,10 @@ public class NLevelCustomCombo extends TagSupport
 	  	
 		for(int i = 0; i < Integer.parseInt(noOfEmptyCombos); i++ )
 		{
-			tdStyleClass = tdStyleClassArray[comboCounter];
+			if(tdStyleClassArray != null)
+			{
+				tdStyleClass = tdStyleClassArray[comboCounter];
+			}
 			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\" nowrap> "+labelNames[comboCounter]
 									+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 									+"\" style =\""+styleClass
