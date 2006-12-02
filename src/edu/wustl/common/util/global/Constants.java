@@ -234,6 +234,7 @@ public class Constants
 	public static final String SIMPLE_QUERY_INTERFACE_ACTION = "/SimpleQueryInterface.do";
 	
 	public static final String PAGEOF = "pageOf";
+	public static final String STORAGE_CONTAINER = "storageContainerName";
 	public static final String TABLE_ALIAS_NAME = "aliasName";
 	public static final String SIMPLE_QUERY_NO_RESULTS = "noResults";
 	public static final String SEARCH_OBJECT_ACTION = "/SearchObject.do";
