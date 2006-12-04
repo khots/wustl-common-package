@@ -67,6 +67,12 @@ public class QueryObjectFactory
 	{
 		return new LogicalConnector(logicalOperator);
 	}
+    
+    public static ILogicalConnector createLogicalConnector(LogicalOperator logicalOperator,
+            int nestingNumber)
+    {
+        return new LogicalConnector(logicalOperator, nestingNumber);
+    }
 
 	public static IAttribute createAttribute(DataType dataType, IClass umlCLass,
 			String attributeName)
