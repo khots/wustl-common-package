@@ -23,6 +23,12 @@ public class LogicalConnector implements ILogicalConnector
 		this.logicalOperator = logicalOperator;
 	}
 
+    public LogicalConnector(LogicalOperator logicalOperator, int nestingNumber)
+    {
+        this.logicalOperator = logicalOperator;
+        this.nestingNumber = nestingNumber;
+    }
+    
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.ILogicalConnector#getLogicalOperator()
 	 */
