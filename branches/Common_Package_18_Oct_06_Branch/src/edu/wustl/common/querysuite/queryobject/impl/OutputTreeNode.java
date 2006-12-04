@@ -28,9 +28,18 @@ public class OutputTreeNode implements IOutputTreeNode
 
 	// List of associations of children with Parent. childrenAssoiations[i] represents Association of children[i] with parent node. 
 	private List<IAssociation> childrenAssoiations = new ArrayList<IAssociation>();
-
+	
 	IFunctionalClass functionalClass;
-
+    
+    public OutputTreeNode()
+    {
+    }
+	
+    public OutputTreeNode(IFunctionalClass iFunctionalClass)
+    {
+        this.functionalClass = iFunctionalClass;
+    }
+    
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IOutputTreeNode#addChild(edu.wustl.common.querysuite.queryobject.IAssociation, edu.wustl.common.querysuite.queryobject.IFunctionalClass)
 	 */
