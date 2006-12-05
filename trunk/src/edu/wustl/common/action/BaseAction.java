@@ -46,6 +46,8 @@ public abstract class BaseAction extends Action
 	   /**
 	    *  This flag based checking is specific to Password Security feature.
 	    */
+		preExecute(mapping, form, request, response);
+		
 		boolean flag = true;
 		if(request.getSession().getAttribute(Constants.TEMP_SESSION_DATA) != null && request.getParameter(Constants.ACCESS)!=null)
 		{	
@@ -70,6 +72,18 @@ public abstract class BaseAction extends Action
     	return executeAction(mapping, form, request, response);
 	}
 	
+	/**
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 */
+	protected void preExecute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	{
+		
+		
+	}
+
 	protected void setRequestData(HttpServletRequest request)
 	{
 		//Gets the value of the operation parameter.
