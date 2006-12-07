@@ -58,6 +58,7 @@
     	
         <javac destdir="${target.dir}" includes="**/*.*" includeAntRuntime="false">
             <src path="${src.dir}"/>
+        	<src path="${test.dir}"/>
             <classpath>
               <fileset dir="${lib.dir}">
                   <include name="*.jar"/>
@@ -66,6 +67,12 @@
         </javac>
     	<copy todir="${target.dir}">
     		<fileset dir="${src.dir}">
+    			<include name="**/*.properties"/>
+    			<include name="**/*.xml"/>
+    			<include name="**/*.hbm.xml"/>
+    			<include name="**/*.ser"/>
+	    	</fileset>
+			<fileset dir="${test.dir}">
     			<include name="**/*.properties"/>
     			<include name="**/*.xml"/>
     			<include name="**/*.hbm.xml"/>
