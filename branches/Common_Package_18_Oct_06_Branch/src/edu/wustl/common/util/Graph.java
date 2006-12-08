@@ -1,6 +1,7 @@
 
 package edu.wustl.common.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
+import edu.wustl.common.querysuite.queryobject.IBaseQueryObject;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -18,7 +20,7 @@ import edu.wustl.common.util.global.Constants;
  * @created 31-Oct-2006 12.46.04 PM
  */
 
-public class Graph<V, E>
+public class Graph<V, E> implements IBaseQueryObject
 {
 
 	private Map<V, List<Edge>> incommingEdgeMap = new HashMap<V, List<Edge>>();
@@ -29,7 +31,7 @@ public class Graph<V, E>
 	}
 
 	// Internal Edge class to create the edge object
-	class Edge
+	class Edge implements Serializable
 	{
 
 		private V sourceVertex;
