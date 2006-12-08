@@ -243,8 +243,11 @@ public class SimpleSearchAction extends BaseAction
 			session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER, null);
 
 			String path = Constants.SIMPLE_QUERY_INTERFACE_ACTION + "?" + Constants.PAGEOF + "="
-					+ simpleQueryInterfaceForm.getPageOf() + "&" + Constants.TABLE_ALIAS_NAME + "="
-					+ alias;
+					+ simpleQueryInterfaceForm.getPageOf() + "&" ;
+			if(alias != null)
+			{
+				path = path + Constants.TABLE_ALIAS_NAME + "="	+ alias;
+			}
 
 			return getActionForward(Constants.SIMPLE_QUERY_NO_RESULTS, path);
 		}
