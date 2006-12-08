@@ -235,6 +235,28 @@ public class QueryObjectFactory
 		}
     	throw new NoSuchElementException(attribute + " Not Exists in the Class: "+ queryClass.getFullyQualifiedName());
     }
+    
+    /**
+     * To search the Query attribute representing the dynamic extension attribute in the given queryClass.
+     * @param attribute The dynamic extension Attribute object
+     * @param queryClass The reference to IClass in which this attribute is expected to present.
+     * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
+     * @thorws NoSuchElementException if the attribute is does not belongs to the given queryClass. 
+     */
+    public static List<IAttribute> getAttribute(List<AttributeInterface> attributes, IClass queryClass) throws NoSuchElementException
+    {
+        List<IAttribute> queryAttributeList = new ArrayList<IAttribute>();
+        Iterator iterator = attributes.iterator();
+        while (iterator.hasNext())
+        {
+            AttributeInterface attributeInterface = (AttributeInterface) iterator.next();
+            IAttribute iAttribute = getAttribute(attributeInterface, queryClass);
+            queryAttributeList.add(iAttribute);
+        }
+        
+        return queryAttributeList;
+    }
+    
     /**
      * Creates & returns the list of query Attributes from the dynamic extension Attribute objects.  
      * @param attributes The dynamic extension Attribute objects.
