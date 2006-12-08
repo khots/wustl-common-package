@@ -83,6 +83,45 @@ public class GenerateTree
     }
     
     /**
+     * Creates and returns the JTree from the vector of data nodes passed.
+     * @param dataVector the data vector.
+     * @param treeType the type of tree.
+     * @return the JTree from the vector of data nodes passed.
+     */
+    public JTree createTree(TreeNodeImpl rootNode, boolean isJXTree)
+    {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
+        
+        //Create the hierarchy under the root node.
+        createHierarchy(root, rootNode.getChildNodes());
+        JTree tree;
+        if(isJXTree)
+        {
+            tree = new JXTree(root);
+        }else
+        {
+            tree = new JTree(root){
+            public String getToolTipText(MouseEvent e) {
+                    String tip = "";
+                    TreePath path = getPathForLocation(e.getX(), e.getY());
+                    if (path != null) 
+                    {
+                        Object treeNode = path.getLastPathComponent();
+                        if (treeNode instanceof DefaultMutableTreeNode)
+                        {
+                            TreeNodeImpl userObject = (TreeNodeImpl)((DefaultMutableTreeNode)treeNode).getUserObject();
+                            tip = userObject.getToolTip();
+                        }
+                    }
+                    return tip;
+                }
+            };
+            ToolTipManager.sharedInstance().registerComponent(tree);
+        }
+        return tree;
+    }
+    
+    /**
      * Creates the hierarchy of nodes under the parent node with the child nodes passed.
      * @param parentNode the parent node.
      * @param childNodes the child nodes.
