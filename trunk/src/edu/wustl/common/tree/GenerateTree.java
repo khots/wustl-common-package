@@ -123,7 +123,7 @@ public class GenerateTree
 			TreeNodeImpl childNode = (TreeNodeImpl) iterator.next();
 			DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(childNode);
 			parentNode.add(childTreeNode);
-			if (childNode.getValue() != null && childNode.getValue().equals(containerName))
+			if (childNode.getValue() != null && childNode.getValue().equalsIgnoreCase(containerName))
 			{
 			    TreePath treePath = new TreePath(childTreeNode.getPath());
 				list = new ArrayList();
