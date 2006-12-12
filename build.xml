@@ -255,7 +255,7 @@
 	 	<delete>
 	 		<fileset dir="${junit.report.dir}" includes="**/*"/>
 	 	</delete>
-	    <junit printsummary="yes" haltonerror="no" fork="yes">
+	    <junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
       		<formatter type="plain"/>
       		<batchtest todir="${junit.report.dir}">
       			<fileset dir="${test.dir}">
