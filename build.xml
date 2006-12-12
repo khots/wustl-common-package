@@ -256,12 +256,13 @@
 	 		<fileset dir="${junit.report.dir}" includes="**/*"/>
 	 	</delete>
 	    <junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
+		 	<test name="edu.wustl.common.querysuite.TestAll" outfile="${junit.report.dir}/Junit_report_CommonPackage"/>
       		<formatter type="plain"/>
-      		<batchtest todir="${junit.report.dir}">
+      		<!--batchtest todir="${junit.report.dir}">
       			<fileset dir="${test.dir}">
 					<include name="**/TestAll.java"/>
 			    </fileset>
-			</batchtest>    
+			</batchtest-->    
 			<classpath>
 				<pathelement location="${junit.classes.dir}"/>
 				<pathelement location="${target.dir}"/>
