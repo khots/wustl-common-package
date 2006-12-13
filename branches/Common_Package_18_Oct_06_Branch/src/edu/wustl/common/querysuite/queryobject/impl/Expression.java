@@ -22,6 +22,9 @@ import edu.wustl.common.util.global.Constants;
 public class Expression implements IExpression
 {
 
+	public static final int NO_LOGICAL_CONNECTOR = -1;
+	public static final int BOTH_LOGICAL_CONNECTOR = -2;
+	
 	private static final long serialVersionUID = 1426555905287966634L;
 
 	private List<IExpressionOperand> expressionOperands = new ArrayList<IExpressionOperand>();
@@ -315,14 +318,14 @@ public class Expression implements IExpression
 		// A and (B or C) remove B => A and C
 		// A and (B or C) remove A => B or C
 		// A and B or C   remove B => A and C
-		int connectorIndex = getOperandOf(expressionOperands.get(index));
+		int connectorIndex = indexOfConnectorForOperand(expressionOperands.get(index));
 		IExpressionOperand operand = expressionOperands.get(index);
 
 		expressionOperands.remove(index);
-		if (connectorIndex == -2) // if both adjacent connectors have same nesting no. then remove connector following the operand.
+		if (connectorIndex == Expression.BOTH_LOGICAL_CONNECTOR) // if both adjacent connectors have same nesting no. then remove connector following the operand.
 			connectorIndex = index;
 
-		if (connectorIndex != -1)
+		if (connectorIndex != Expression.NO_LOGICAL_CONNECTOR)
 			logicalConnectors.remove(connectorIndex);
 
 		return operand;
@@ -338,18 +341,20 @@ public class Expression implements IExpression
 
 	/**
 	 * To get the adjacent logical connector with the greater nesting number.
-	 * @param operand
+	 * @param operand The reference to IExpressionOperand of which the Logical connector to search.
 	 * @return index of adjuscent Logical connector with greater nesting number. 
-	 * 		-1 if operand not found or there is no logical connector present in the Expression.
-	 * 		-2 if both adjacent connectors are of same nesting number
+	 * 		Expression.NO_LOGICAL_CONNECTOR if operand not found or there is no logical connector present in the Expression.
+	 * 		Expression.BOTH_LOGICAL_CONNECTOR if both adjacent connectors are of same nesting number
 	 */
-	public int getOperandOf(IExpressionOperand operand)
+	public int indexOfConnectorForOperand(IExpressionOperand operand)
 	{
 		int index = expressionOperands.indexOf(operand);
 
 		if (index != -1)
 		{
-			if (index == expressionOperands.size() - 1) // if expression is last operand then index of last connector will be returned.
+			if (expressionOperands.size() == 1) // if there is only one Expression then there is no logical connector associated with it.
+				index = Expression.NO_LOGICAL_CONNECTOR;
+			else if (index == expressionOperands.size() - 1) // if expression is last operand then index of last connector will be returned.
 			{
 				index = index - 1;
 			}
@@ -361,7 +366,7 @@ public class Expression implements IExpression
 						.getNestingNumber();
 				if (postNesting == preNesting) // if nesting no are same, then there is not direct bracket sorrounding operand.
 				{
-					index = -2;
+					index = Expression.BOTH_LOGICAL_CONNECTOR;
 				}
 				else if (postNesting < preNesting)
 				{
@@ -369,6 +374,9 @@ public class Expression implements IExpression
 				}
 			}
 		}
+		else
+			index = Expression.NO_LOGICAL_CONNECTOR;
+		
 		return index;
 	}
 
@@ -387,11 +395,11 @@ public class Expression implements IExpression
 			throw new IllegalArgumentException("The given Expression Id not found!!!");
 		}
 
-		int immediateOperandIndex = getOperandOf((IExpressionOperand) expressionId);
+		int immediateOperandIndex = indexOfConnectorForOperand((IExpressionOperand) expressionId);
 
-		if (immediateOperandIndex == -1) // there is no operand around this Expression.
+		if (immediateOperandIndex == Expression.NO_LOGICAL_CONNECTOR) // there is no operand around this Expression.
 			return false;
-		else if (immediateOperandIndex == -2) // both logical connector sorrounding this expression have same nesting no. need to check 'And' operator for both.
+		else if (immediateOperandIndex == Expression.BOTH_LOGICAL_CONNECTOR) // both logical connector sorrounding this expression have same nesting no. need to check 'And' operator for both.
 		{
 			int preIndex = index - 1;
 			int postindex = index + 1;

@@ -23,6 +23,7 @@ import edu.wustl.common.util.global.Constants;
 public class Graph<V, E> implements IBaseQueryObject
 {
 
+	private static final long serialVersionUID = 2744129191470144562L;
 	private Map<V, List<Edge>> incommingEdgeMap = new HashMap<V, List<Edge>>();
 	private Map<V, List<Edge>> outgoingEdgeMap = new HashMap<V, List<Edge>>();
 
@@ -34,6 +35,7 @@ public class Graph<V, E> implements IBaseQueryObject
 	class Edge implements Serializable
 	{
 
+		private static final long serialVersionUID = 2747448736801686112L;
 		private V sourceVertex;
 		private V targetVertex;
 		private E edgeObj;
@@ -72,10 +74,10 @@ public class Graph<V, E> implements IBaseQueryObject
 		public int hashCode()
 		{
 			int hash = 1;
-			hash = hash *Constants.HASH_PRIME + edgeObj.hashCode();
-			hash = hash *Constants.HASH_PRIME + sourceVertex.hashCode();
-			hash = hash *Constants.HASH_PRIME + targetVertex.hashCode();
-			
+			hash = hash * Constants.HASH_PRIME + edgeObj.hashCode();
+			hash = hash * Constants.HASH_PRIME + sourceVertex.hashCode();
+			hash = hash * Constants.HASH_PRIME + targetVertex.hashCode();
+
 			return super.hashCode();
 		}
 
@@ -85,9 +87,9 @@ public class Graph<V, E> implements IBaseQueryObject
 		@Override
 		public String toString()
 		{
-			return "["+sourceVertex+"--"+ edgeObj+ "-->"+ targetVertex +"]";
+			return "[" + sourceVertex + "--" + edgeObj + "-->" + targetVertex + "]";
 		}
-		
+
 	}
 
 	/**
@@ -191,7 +193,7 @@ public class Graph<V, E> implements IBaseQueryObject
 			{
 				throw new CyclicException("Adding this Edge will form a Cycle in Graph.");
 			}
-			
+
 			//Add this Edge in outgoing & incomming Edges.
 			Edge newEdge = new Edge(sourceVertex, targetVertex, edge);
 			outgoingEdgeMap.get(sourceVertex).add(newEdge);
@@ -214,22 +216,23 @@ public class Graph<V, E> implements IBaseQueryObject
 	 * @return true if graph is connected; false if graph is disjoint
 	 */
 	public boolean isConnected()
-	{ 
+	{
 		boolean isConnected = true;
 
 		List<V> unreachableNodes = getUnreachableNodeList();
-//		if (unreachableNodes.size() >  1)
-//			return false;
+		//		if (unreachableNodes.size() >  1)
+		//			return false;
 
-		Set<V> allVertexSet = new  HashSet<V>();
+		Set<V> allVertexSet = new HashSet<V>();
 		allVertexSet.addAll(incommingEdgeMap.keySet());
-	
-		dfs(unreachableNodes.get(0),allVertexSet);
-		if (allVertexSet.isEmpty()) 
+
+		dfs(unreachableNodes.get(0), allVertexSet);
+		if (allVertexSet.isEmpty())
 			isConnected = true;
-		else // after traversing if the allVertexSet is not empty means its a disconnected graph.
+		else
+			// after traversing if the allVertexSet is not empty means its a disconnected graph.
 			isConnected = false;
-		
+
 		return isConnected;
 	}
 
@@ -241,13 +244,13 @@ public class Graph<V, E> implements IBaseQueryObject
 	public List<V> getUnreachableNodeList()
 	{
 		List<V> list = new ArrayList<V>();
-		
+
 		Set<V> vertices = incommingEdgeMap.keySet();
 		for (Iterator<V> iter = vertices.iterator(); iter.hasNext();)
 		{
 			V vertex = iter.next();
 			List<Edge> incommingEdges = incommingEdgeMap.get(vertex);
-			if (incommingEdges==null || incommingEdges.isEmpty())
+			if (incommingEdges == null || incommingEdges.isEmpty())
 				list.add(vertex);
 		}
 		return list;
@@ -289,14 +292,13 @@ public class Graph<V, E> implements IBaseQueryObject
 		List<Edge> edges = incommingEdgeMap.get(sourceVertex);
 		for (int i = 0; i < edges.size(); i++)
 		{
-			 boolean isCyclic = isReverseReachable(edges.get(i).sourceVertex, targetVertex);
-			 if (isCyclic)
-				 return true;
+			boolean isCyclic = isReverseReachable(edges.get(i).sourceVertex, targetVertex);
+			if (isCyclic)
+				return true;
 		}
-		
+
 		return false;
 	}
-
 
 	/**
 	 * Method to traverse using Depth First algorithm. 
@@ -310,7 +312,7 @@ public class Graph<V, E> implements IBaseQueryObject
 		List<Edge> edges = new ArrayList<Edge>();
 		edges.addAll(outgoingEdgeMap.get(vertex));
 		edges.addAll(incommingEdgeMap.get(vertex));
-		
+
 		if (edges != null)
 		{
 			for (int i = 0; i < edges.size(); i++)
@@ -352,7 +354,6 @@ public class Graph<V, E> implements IBaseQueryObject
 		return null;
 	}
 
-	
 	/**
 	 * To get the list directly reachable Vertices from the given vertex. 
 	 * @return List of Vertices directly reachable from the given vertex. 
@@ -363,19 +364,19 @@ public class Graph<V, E> implements IBaseQueryObject
 	{
 		List<Edge> edges = outgoingEdgeMap.get(vertex);
 		List<V> vertices = null;
-		if (edges!=null)
+		if (edges != null)
 		{
 			vertices = new ArrayList<V>();
 			Iterator<Edge> iter = edges.iterator();
 			while (iter.hasNext())
 			{
 				vertices.add(iter.next().targetVertex);
-				
+
 			}
 		}
 		return vertices;
 	}
-	
+
 	/**
 	 * To get the list of vertices from which the given vertex is directly reachable. 
 	 * @return List of Vertices from which the given vertex is directly reachable. 
@@ -386,7 +387,7 @@ public class Graph<V, E> implements IBaseQueryObject
 	{
 		List<Edge> edges = incommingEdgeMap.get(vertex);
 		List<V> vertices = null;
-		if (edges!=null)
+		if (edges != null)
 		{
 			vertices = new ArrayList<V>();
 			Iterator<Edge> iter = edges.iterator();
@@ -397,7 +398,7 @@ public class Graph<V, E> implements IBaseQueryObject
 		}
 		return vertices;
 	}
-	
+
 	/**
 	 * All possible path between two vertices.
 	 * @param fromVertex the begining vertex.
@@ -407,7 +408,7 @@ public class Graph<V, E> implements IBaseQueryObject
 	 */
 	public List<List<V>> getReachablePaths(V fromVertex, V toVetrex)
 	{
-		if (!incommingEdgeMap.containsKey(fromVertex))
+		if (!outgoingEdgeMap.containsKey(fromVertex))
 		{
 			throw new IllegalArgumentException("fromVertex is not present in graph!!!");
 		}
@@ -415,7 +416,7 @@ public class Graph<V, E> implements IBaseQueryObject
 		{
 			throw new IllegalArgumentException("toVetrex is not present in graph!!!");
 		}
-		List<List<V>> paths =new ArrayList<List<V>>();
+		List<List<V>> paths = new ArrayList<List<V>>();
 		List<Edge> edges = incommingEdgeMap.get(toVetrex);
 		for (int i = 0; i < edges.size(); i++)
 		{
@@ -428,8 +429,8 @@ public class Graph<V, E> implements IBaseQueryObject
 				paths.add(path);
 				continue;
 			}
-			
-			List<List<V>> thePaths = getReachablePaths(fromVertex,  edge.sourceVertex);
+
+			List<List<V>> thePaths = getReachablePaths(fromVertex, edge.sourceVertex);
 			if (!thePaths.isEmpty())
 			{
 				for (int j = 0; j < thePaths.size(); j++)
@@ -442,7 +443,7 @@ public class Graph<V, E> implements IBaseQueryObject
 		}
 		return paths;
 	}
-	
+
 	/**
 	 * All possible path Edges between two vertices.
 	 * @param fromVertex the begining vertex.
@@ -453,19 +454,20 @@ public class Graph<V, E> implements IBaseQueryObject
 	public List<List<E>> getReachableEdgePaths(V fromVertex, V toVetrex)
 	{
 		List<List<E>> edgePaths = new ArrayList<List<E>>();
-		List<List<V>> verticesPaths = getReachablePaths(fromVertex,toVetrex);
+		List<List<V>> verticesPaths = getReachablePaths(fromVertex, toVetrex);
 		for (int i = 0; i < verticesPaths.size(); i++)
 		{
 			List<V> thePath = verticesPaths.get(i);
 			List<E> theEdgePath = new ArrayList<E>();
 			for (int j = 1; j < thePath.size(); j++)
 			{
-				theEdgePath.add(getEdge(thePath.get(j-1), thePath.get(j)));
+				theEdgePath.add(getEdge(thePath.get(j - 1), thePath.get(j)));
 				edgePaths.add(theEdgePath);
 			}
 		}
 		return edgePaths;
 	}
+
 	/**
 	 * To get the List of Vertices having outgoing Edges from given vertex.
 	 * @param vertex
@@ -480,15 +482,14 @@ public class Graph<V, E> implements IBaseQueryObject
 		}
 		List<Edge> edges = outgoingEdgeMap.get(vertex);
 		List<V> vertices = new ArrayList<V>();
-		
-		for (int i=0;i<edges.size();i++)
+
+		for (int i = 0; i < edges.size(); i++)
 		{
 			vertices.add(edges.get(i).targetVertex);
 		}
 		return vertices;
 	}
-	
-	
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
@@ -497,6 +498,5 @@ public class Graph<V, E> implements IBaseQueryObject
 	{
 		return outgoingEdgeMap.toString();
 	}
-	
-	
+
 }

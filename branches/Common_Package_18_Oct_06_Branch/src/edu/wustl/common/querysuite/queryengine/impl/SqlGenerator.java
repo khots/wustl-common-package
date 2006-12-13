@@ -1,11 +1,9 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -50,9 +48,7 @@ public class SqlGenerator implements ISqlGenerator
 
 	private Map<String, Entity> entityMap = new HashMap<String, Entity>(); // to cache the Dynamic Extension Entity object to avoid multiple call to APIs.
 
-	Map<IExpression, List<String>> sqlMap = new LinkedHashMap<IExpression, List<String>>(); // Stores SQL Queries for each Expression. values in this map will be inserted while compiling Query.
-
-	Map<IIntraModelAssociation, AssociationInterface> associationMap = new LinkedHashMap<IIntraModelAssociation, AssociationInterface>();
+	Map<IIntraModelAssociation, AssociationInterface> associationMap = new HashMap<IIntraModelAssociation, AssociationInterface>();
 
 	Map<IExpressionId, Integer> aliasMap = new HashMap<IExpressionId, Integer>();
 	Map<List<IAssociation>, IExpressionId> pathMap = new HashMap<List<IAssociation>, IExpressionId>();
@@ -71,17 +67,11 @@ public class SqlGenerator implements ISqlGenerator
 	public String generateSQL(IQuery query) throws MultipleRootsException,
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		//		// TODO Auto-generated method stub
-		//		IExpression rootExpression = buildQuery(query);
-		//		String wherePart = getWherePartSQL();
-		//		String fromPart = getFromPartSQL(rootExpression,null, new HashSet<Integer>());
-		//		String selectPart = getSelectPart(rootExpression);
-		//		String SQL = selectPart + " " + fromPart + " " + wherePart;
 		return buildQuery(query);
 	}
 
 	/**
-	 * To initialize map the variables.  
+	 * To initialize map the variables. & build the SQL for the Given Query Object.  
 	 * @param query the IQuery reference.
 	 * @return The Root Expetssion of the IQuery. 
 	 * @throws MultipleRootsException
@@ -94,19 +84,21 @@ public class SqlGenerator implements ISqlGenerator
 		constraints = query.getConstraints();
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
 		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
+		
+		// Initializin map variables.
 		entityMap = new HashMap<String, Entity>();
-		sqlMap = new LinkedHashMap<IExpression, List<String>>();
-		associationMap = new LinkedHashMap<IIntraModelAssociation, AssociationInterface>();
-
+		associationMap = new HashMap<IIntraModelAssociation, AssociationInterface>();
 		aliasMap = new HashMap<IExpressionId, Integer>();
 		pathMap = new HashMap<List<IAssociation>, IExpressionId>();
+
 		createAliasAppenderMap(rootExpression, 1, new Integer(1));
 
-		String wherePart = getSQL(rootExpression, null, false);
+		//Creating SQL.
+		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
 		String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
 		String selectPart = getSelectPart(rootExpression);
-		String SQL = selectPart + " " + fromPart + " " + wherePart;
-		return SQL;
+		String sql = selectPart + " " + fromPart + " " + wherePart;
+		return sql;
 	}
 
 	/**
@@ -136,6 +128,7 @@ public class SqlGenerator implements ISqlGenerator
 	/**
 	 *  To get the From clause of the Query.
 	 * @param expression The Root Expression.
+	 * @param leftAlias the String representing alias of left table. This will be alias of table represented by Parent Expression. Will be null for the Root Expression.  
 	 * @param processedAlias The set of aliases processed.
 	 * @return the From clause of the SQL.
 	 * @throws DynamicExtensionsSystemException
@@ -190,55 +183,6 @@ public class SqlGenerator implements ISqlGenerator
 		return buffer.toString();
 	}
 
-	String getLeftJoinSQL() throws DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
-	{
-		StringBuffer buffer = new StringBuffer("");
-
-		return buffer.toString();
-	}
-
-	//  Not using this method, since Query Building Logic is changed.
-	//	/**
-	//	 * To get the Where Part of the SQL Query. 
-	//	 * @return The String representing Where part og the Query.
-	//	 * @throws DynamicExtensionsApplicationException 
-	//	 * @throws DynamicExtensionsSystemException 
-	//	 */
-	//	String getWherePartSQL() throws DynamicExtensionsSystemException,
-	//			DynamicExtensionsApplicationException
-	//	{
-	//		StringBuffer buffer = new StringBuffer("Where ");
-	//		Iterator<IExpression> keys = sqlMap.keySet().iterator();
-	//		while (keys.hasNext())
-	//		{
-	//			// Forming Restriction Criteria for Each Expressions.
-	//			IExpression expression = keys.next();
-	//			List<String> sqlList = sqlMap.get(expression);
-	//			IClass iClass = (IClass) expression.getFunctionalClass();
-	//			String selectAttribute = getPrimaryKeyAttrinbute(iClass, expression);
-	//			if (sqlList.size() == 1)
-	//			{
-	//				buffer.append(selectAttribute + " = ANY(" + sqlList.get(0) + ") ");
-	//			}
-	//			else
-	//			// if there are multiple sql for Expression, then they will be connected by OR condition
-	//			{
-	//				buffer.append("(");
-	//				for (int i = 0; i < sqlList.size(); i++)
-	//				{
-	//					buffer.append(selectAttribute + " = ANY(" + sqlList.get(i) + ") ");
-	//					if (i != sqlList.size() - 1)
-	//						buffer.append(LogicalOperator.Or + " ");
-	//				}
-	//				buffer.append(") ");
-	//			}
-	//			if (keys.hasNext())
-	//				buffer.append(LogicalOperator.And + " "); // Anding all Restriction criterias.
-	//		}
-	//		return buffer.toString();
-	//	}
-
 	/**
 	 * To compile the SQL & get the SQL representation of the Expression.
 	 * @param expression the Expression whose SQL to be generated.
@@ -248,23 +192,12 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws DynamicExtensionsApplicationException
 	 * @throws NoSuchElementException when The Class in an expression does not have Primary Key attribute.
 	 */
-	String getSQL(IExpression expression, IExpression parentExpression, boolean isPAND)
+	String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND)
 			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
-		if (parentExpression == null)
-			buffer.append("Where ");
-		int noOfRules = expression.numberOfOperands();
 		int prevNesting = 0;
 		int openingBraces = 0; // holds number of opening Braces added to SQL.
-
-		// Put the Expression in the sqlMap.
-		List<String> sqlList = sqlMap.get(expression);
-		if (sqlList == null)
-		{
-			sqlList = new ArrayList<String>();
-			sqlMap.put(expression, sqlList);
-		}
 
 		IClass iClass = (IClass) expression.getFunctionalClass();
 		Entity entity = getEntity(iClass);
@@ -274,7 +207,7 @@ public class SqlGenerator implements ISqlGenerator
 			IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(),
 					expression.getExpressionId());
 			AssociationInterface eavAssociation = getAssoication((IIntraModelAssociation) association);
-			if (isPAND)
+			if (isPAND) // Adding Pseudo and condition in the where part.
 			{
 				String tableName = entity.getTableProperties().getName() + " ";
 				String leftAlias = getAliasName(entity, expression);
@@ -282,7 +215,6 @@ public class SqlGenerator implements ISqlGenerator
 						+ eavAssociation.getConstraintProperties().getTargetEntityKey();
 
 				buffer.append("Select " + selectAttribute);
-				// TODO from part.
 				Set<Integer> processedAlias = new HashSet<Integer>();
 				processedAlias.add(aliasMap.get(expression.getExpressionId()));
 				String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
@@ -291,6 +223,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		}
 
+		int noOfRules = expression.numberOfOperands();
 		for (int i = 0; i < noOfRules; i++)
 		{
 			IExpressionOperand operand = expression.getOperand(i);
@@ -305,7 +238,7 @@ public class SqlGenerator implements ISqlGenerator
 				IExpression childExpression = constraints.getExpression((IExpressionId) operand);
 
 				isPAND = ((Expression) expression).isPseudoAnded(childExpression.getExpressionId());
-				ruleSQL = getSQL(childExpression, expression, isPAND);
+				ruleSQL = getWherePartSQL(childExpression, expression, isPAND);
 				if (isPAND)
 				{
 					IAssociation association = joinGraph.getAssociation(expression
@@ -352,8 +285,6 @@ public class SqlGenerator implements ISqlGenerator
 		}
 		String sql = buffer.toString();
 
-		sqlList.add(sql); //Add the SQL in the SQL map
-
 		return sql;
 	}
 
@@ -370,23 +301,6 @@ public class SqlGenerator implements ISqlGenerator
 		if (associationMap.containsKey(association))
 			return associationMap.get(association);
 
-		//		Collection associations = entityManager.getAssociation(association.getSourceClass()
-		//				.getFullyQualifiedName(), association.getSourceRoleName());
-		//		AssociationInterface theAssociation = null;
-		//		Iterator itr = associations.iterator();
-		//		while (itr.hasNext())
-		//		{
-		//			theAssociation = (AssociationInterface) itr.next();
-		//
-		//			if (association.getSourceRoleName().equals(theAssociation.getSourceRole().getName())
-		//					&& (association.getTargetRoleName() == null || association.getTargetRoleName()
-		//							.equals(theAssociation.getTargetRole().getName())))
-		//			{
-		//				associationMap.put(association, theAssociation);
-		//				return theAssociation;
-		//			}
-		//		}
-		//		return null;
 		AssociationInterface theAssociation = entityManager.getAssociation(association
 				.getSourceClass().getFullyQualifiedName(), association.getSourceRoleName());
 		associationMap.put(association, theAssociation);
@@ -535,8 +449,8 @@ public class SqlGenerator implements ISqlGenerator
 
 	/**
 	 * To get the Alias Name for the given Entity.
-	 * @param entity the reference to Entity.
-	 * @param expression TODO
+	 * @param entity the reference to Entity represented by the functional Class of the expression.
+	 * @param expression The reference to IExpression.
 	 * @return The Alias Name for the given Entity.
 	 */
 	private String getAliasName(Entity entity, IExpression expression)
@@ -629,40 +543,10 @@ public class SqlGenerator implements ISqlGenerator
 		return entityAttribute;
 	}
 
-	//
-	//	  Not using this method, since Query Building Logic is changed.
-	//	/**
-	//	 * To get the Primary key attribute of the Class. 
-	//	 * @param iClass the iClass reference.
-	//	 * @param expression TODO
-	//	 * @return the actual Column name of the primary Attribute concatenated with alias name.
-	//	 * @throws DynamicExtensionsApplicationException 
-	//	 * @throws DynamicExtensionsSystemException 
-	//	 * @throws NoSuchElementException if The Primary key Attribute not found.
-	//	 */
-	//	private String getPrimaryKeyAttrinbute(IClass iClass, IExpression expression) throws DynamicExtensionsSystemException,
-	//			DynamicExtensionsApplicationException
-	//	{
-	//		Entity entity = getEntity(iClass);
-	//
-	//		Collection attributeCollection = entity.getAbstractAttributeCollection();
-	//		for (Iterator iter = attributeCollection.iterator(); iter.hasNext();)
-	//		{
-	//			Attribute element = (Attribute) iter.next();
-	//			Boolean isPrimaryKey = element.getIsPrimaryKey();
-	//
-	//			if (isPrimaryKey != null && isPrimaryKey.booleanValue() == true)
-	//			{
-	//				String primaryKeyName = getAliasName(entity, expression) + "."
-	//						+ element.getColumnProperties().getName();
-	//				return primaryKeyName;
-	//			}
-	//		}
-	//
-	//		throw new NoSuchElementException(Constants.SYSTEM_IDENTIFIER
-	//				+ " Attribute not found for class " + iClass.getFullyQualifiedName());
-	//	}
-
+	/**
+	 * This method will be used by Query Mock to set the join Graph externally. 
+	 * @param joinGraph the reference to joinGraph.
+	 */
 	void setJoinGraph(JoinGraph joinGraph)
 	{
 		this.joinGraph = joinGraph;
