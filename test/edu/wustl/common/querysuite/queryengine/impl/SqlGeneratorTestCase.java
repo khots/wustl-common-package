@@ -100,11 +100,11 @@ public class SqlGeneratorTestCase extends TestCase
 		
 		try
 		{
-			String SQL = generator.getSQL(expression, null,false);
+			String SQL = generator.getWherePartSQL(expression, null,false);
 //			System.out.println("testParticpiantExpression:"+ SQL);
 			assertEquals(
 					SQL,
-					"Where (Participant0.IDENTIFIER in (1,2,3,4) And (Participant0.BIRTH_DATE<='1-1-2000' And Participant0.BIRTH_DATE>='1-2-2000')) Or(Participant0.ACTIVITY_STATUS='Active')");
+					"(Participant0.IDENTIFIER in (1,2,3,4) And (Participant0.BIRTH_DATE<='1-1-2000' And Participant0.BIRTH_DATE>='1-2-2000')) Or(Participant0.ACTIVITY_STATUS='Active')");
 			//			expression = QueryGeneratorMock.creatParticipantExpression2(class1);
 			//			SQL = generator.getSQL(expression,null,null);
 			//			System.out.println(SQL);
@@ -131,11 +131,11 @@ public class SqlGeneratorTestCase extends TestCase
 			generator.setJoinGraph((JoinGraph)constraints.getJoinGraph());
 			
 			generator.buildQuery(query);
-			String SQL = generator.getSQL(rootExpression, null, false);
+			String SQL = generator.getWherePartSQL(rootExpression, null, false);
 //			System.out.println("*********"+SQL);
 			assertEquals(
 					"Incorrect SQL formed for the Root Expression !!!",
-					"Where (Participant1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentifier2.MEDICAL_RECORD_NUMBER='M001')",
+					"(Participant1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentifier2.MEDICAL_RECORD_NUMBER='M001')",
 					SQL
 					);
 
@@ -301,7 +301,7 @@ public class SqlGeneratorTestCase extends TestCase
 //			System.out.println("testSampleQuery3:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup5 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup5.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen6 on (SpecimenCollectionGroup5.IDENTIFIER=Specimen6.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='New Diagnosis') And((Specimen4.TYPE='DNA') Or(Specimen4.TYPE='null')))) And(CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup5.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup5 left join catissue_specimen Specimen6 on (SpecimenCollectionGroup5.IDENTIFIER=Specimen6.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup5.CLINICAL_DIAGNOSIS='Post-Operative') And((Specimen6.TYPE='Fixed Tissue') Or(Specimen6.TYPE='Fixed Tissue'))))",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='New Diagnosis') And((Specimen4.TYPE='DNA') Or(Specimen4.TYPE='null')))) And(CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='Post-Operative') And((Specimen4.TYPE='Fixed Tissue') Or(Specimen4.TYPE='Fixed Tissue'))))",
 					sql
 					);
 		}

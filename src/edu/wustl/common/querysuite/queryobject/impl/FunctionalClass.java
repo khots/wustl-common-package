@@ -95,7 +95,7 @@ public class FunctionalClass implements IFunctionalClass
 	public String toString()
 	{
 		return "[FunctionalClass:" + attributes.size() + "]";
-//		return "[" + category + ":" + attributes + "]";
+		//		return "[" + category + ":" + attributes + "]";
 	}
 
 	/**
@@ -125,10 +125,9 @@ public class FunctionalClass implements IFunctionalClass
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			FunctionalClass theClass = (FunctionalClass) obj;
-			if (category != null
-					&& category.equals(theClass.category))
-//					&& new HashSet<IAttribute>(attributes).equals(new HashSet<IAttribute>(
-//							theClass.attributes)))
+			if (category == null ? theClass.category == null : category.equals(theClass.category))
+				//					&& new HashSet<IAttribute>(attributes).equals(new HashSet<IAttribute>(
+				//							theClass.attributes)))
 				return true;
 		}
 		return false;
