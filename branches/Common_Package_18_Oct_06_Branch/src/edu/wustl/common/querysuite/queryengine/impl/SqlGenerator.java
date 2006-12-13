@@ -51,7 +51,6 @@ public class SqlGenerator implements ISqlGenerator
 	Map<IIntraModelAssociation, AssociationInterface> associationMap = new HashMap<IIntraModelAssociation, AssociationInterface>();
 
 	Map<IExpressionId, Integer> aliasMap = new HashMap<IExpressionId, Integer>();
-	Map<List<IAssociation>, IExpressionId> pathMap = new HashMap<List<IAssociation>, IExpressionId>();
 
 	JoinGraph joinGraph;
 	IConstraints constraints;
@@ -84,14 +83,14 @@ public class SqlGenerator implements ISqlGenerator
 		constraints = query.getConstraints();
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
 		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
-		
+
 		// Initializin map variables.
 		entityMap = new HashMap<String, Entity>();
 		associationMap = new HashMap<IIntraModelAssociation, AssociationInterface>();
 		aliasMap = new HashMap<IExpressionId, Integer>();
-		pathMap = new HashMap<List<IAssociation>, IExpressionId>();
 
-		createAliasAppenderMap(rootExpression, 1, new Integer(1));
+		createAliasAppenderMap(rootExpression, 1, new Integer(1),
+				new HashMap<List<IAssociation>, IExpressionId>());
 
 		//Creating SQL.
 		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
@@ -152,6 +151,7 @@ public class SqlGenerator implements ISqlGenerator
 		List<IExpressionId> children = joinGraph.getDirectSuccessorOf(parentExpressionId);
 		if (!children.isEmpty())
 		{
+			// processing all outgoing edges/nodes from the current node in the joingraph.
 			for (int index = 0; index < children.size(); index++)
 			{
 				IExpressionId childExpressionId = children.get(index);
@@ -176,6 +176,7 @@ public class SqlGenerator implements ISqlGenerator
 
 					buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
 
+					// append from part SQL for the next Expressions.
 					buffer.append(getFromPartSQL(childExpression, rightAlias, processedAlias));
 				}
 			}
@@ -327,7 +328,7 @@ public class SqlGenerator implements ISqlGenerator
 			if (i != noOfConditions - 1) // Intermediate Condition.
 				buffer.append(condition + " " + LogicalOperator.And + " ");
 			else
-				// Last Condition
+				// Last Condition, this will not followed by And logical operator.
 				buffer.append(condition);
 		}
 		return buffer.toString();
@@ -351,7 +352,7 @@ public class SqlGenerator implements ISqlGenerator
 		RelationalOperator operator = condition.getRelationalOperator();
 		String strOperator = RelationalOperator.getSQL(operator);
 
-		if (operator.equals(RelationalOperator.Between))//Processing Between Operator, it will be treated as (op>=val1 and op<=;val2)
+		if (operator.equals(RelationalOperator.Between))//Processing Between Operator, it will be treated as (op>=val1 and op<=val2)
 		{
 			List<String> values = condition.getValues();
 			String firstValue = modifyValueforDataType(values.get(0), dataType);
@@ -414,14 +415,14 @@ public class SqlGenerator implements ISqlGenerator
 	 * 2. For Boolean DataType it will change value to 1 if its TRUE, else 0.
 	 * @param value the Modified value.
 	 * @param dataType The DataType of the passed value.
-	 * @return The encoded String.
+	 * @return The String representing encoded value for the given value & datatype.
 	 */
 	String modifyValueforDataType(String value, DataType dataType)
 	{
 
-		if (dataType.equals(DataType.String) || dataType.equals(DataType.Date))
+		if (dataType.equals(DataType.String) || dataType.equals(DataType.Date)) // for data type String & date it will be enclosed in single quote.
 			value = "'" + value + "'";
-		else if (dataType.equals(DataType.Boolean))
+		else if (dataType.equals(DataType.Boolean)) // defining value for boolean datatype.
 		{
 			if (value != null && value.toUpperCase().equals("TRUE"))
 				value = "1";
@@ -464,10 +465,20 @@ public class SqlGenerator implements ISqlGenerator
 		return tableName;
 	}
 
-	int createAliasAppenderMap(IExpression expression, int currentAliasCount, Integer aliasToSet)
-			throws MultipleRootsException
+	/**
+	 * To assign alias to each tablename in the Expression. It will generate alias that will be assigned to each entity in Expression. 
+	 * @param expression the Root Expression of the Query.
+	 * @param currentAliasCount The count from which it will start to assign alias appender.
+	 * @param aliasToSet The alias to set for the current expression.
+	 * @param pathMap The map of path verses the ExpressionId. entry in this map means, for such path, there is already alias assigned to some Expression.
+	 * @return The int representing the modified alias appender count that will be used for further processing.
+	 * @throws MultipleRootsException
+	 */
+	int createAliasAppenderMap(IExpression expression, int currentAliasCount, Integer aliasToSet,
+			Map<List<IAssociation>, IExpressionId> pathMap) throws MultipleRootsException
 	{
 		aliasMap.put(expression.getExpressionId(), aliasToSet);
+		//processing all sub Expressions of this expression.
 		for (int index = 0; index < expression.numberOfOperands(); index++)
 		{
 			IExpressionOperand operand = expression.getOperand(index);
@@ -490,7 +501,7 @@ public class SqlGenerator implements ISqlGenerator
 					aliasToSet = new Integer(++currentAliasCount);// assigned alias to this class, hence increment currentAliasCount. 
 				}
 				currentAliasCount = createAliasAppenderMap(childExpression, currentAliasCount,
-						aliasToSet);
+						aliasToSet, pathMap);
 			}
 		}
 		return currentAliasCount;
@@ -520,7 +531,7 @@ public class SqlGenerator implements ISqlGenerator
 		if (entity == null)
 		{
 			entity = (Entity) entityManager.getEntityByName(fullyQualifiedName);
-			entityMap.put(fullyQualifiedName, entity);
+			entityMap.put(fullyQualifiedName, entity); // storing entity in the entity map.
 		}
 		return entity;
 	}
