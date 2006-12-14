@@ -56,7 +56,7 @@ public class SqlGenerator implements ISqlGenerator
 	JoinGraph joinGraph;
 	IConstraints constraints;
 
-	SqlGenerator(EntityManager entityManager)
+	public SqlGenerator(EntityManager entityManager)
 	{
 		this.entityManager = entityManager;
 	}
