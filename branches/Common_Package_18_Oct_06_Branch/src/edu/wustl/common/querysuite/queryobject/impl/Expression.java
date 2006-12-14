@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
@@ -382,13 +383,16 @@ public class Expression implements IExpression
 
 	/**
 	 * To check whether the child Expression is pseudo anded with the other expression.
+	 * The given expression is pseudo Anded if and only if it has atleast one Expression having Equal Functional class as that of given Expression's & logical connector between then should be AND. 
 	 * @param expressionId The child Expression Id.
+	 * @param constraints The reference to Constraints, which is having reference to this Expression & the passed expressionId.
 	 * @return true if the given Expression is pseudoAnded with other Expression, else returns false.
 	 * @throws IllegalArgumentException if the given Expression Id is not child of the Expression.
 	 */
-	public boolean isPseudoAnded(IExpressionId expressionId)
+	public boolean isPseudoAnded(IExpressionId expressionId, IConstraints constraints)
 	{
 		int index = expressionOperands.indexOf(expressionId);
+		IExpression currentExpression = constraints.getExpression((IExpressionId)expressionOperands.get(index));
 
 		if (index < -1)
 		{
@@ -409,7 +413,8 @@ public class Expression implements IExpression
 					&& LogicalOperator.And.equals(getLogicalConnector(preIndex, index)
 							.getLogicalOperator()))
 			{
-				return true;
+				IExpression expression = constraints.getExpression((IExpressionId)operand);
+				return isHavingSameClass(currentExpression,expression);
 			}
 
 			operand = expressionOperands.get(postindex);
@@ -417,7 +422,8 @@ public class Expression implements IExpression
 					&& LogicalOperator.And.equals(getLogicalConnector(index, postindex)
 							.getLogicalOperator()))
 			{
-				return true;
+				IExpression expression = constraints.getExpression((IExpressionId)operand);
+				return isHavingSameClass(currentExpression,expression);
 			}
 		}
 		else
@@ -427,10 +433,24 @@ public class Expression implements IExpression
 					.getLogicalOperator()))
 			{
 				int otherOperandIndex = immediateOperandIndex == index ? index + 1 : index - 1; //otherOperandIndex = immediateOperandIndex => other operand  index is (index+1)
-				if (expressionOperands.get(otherOperandIndex).isSubExpressionOperand())
-					return true;
+				IExpressionOperand operand = expressionOperands.get(otherOperandIndex);
+				if (operand.isSubExpressionOperand())
+				{
+					IExpression expression = constraints.getExpression((IExpressionId)operand);
+					return isHavingSameClass(currentExpression,expression);
+				}
 			}
 		}
 		return false;
+	}
+	/**
+	 * To check wether the given 2 Expressions having equal FunctionalClass.
+	 * @param expression1
+	 * @param expression2
+	 * @return
+	 */
+	private boolean isHavingSameClass(IExpression expression1, IExpression expression2)
+	{
+		return expression1.getFunctionalClass().equals(expression2.getFunctionalClass());
 	}
 }
