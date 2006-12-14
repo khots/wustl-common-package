@@ -1,6 +1,7 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -238,7 +239,7 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				IExpression childExpression = constraints.getExpression((IExpressionId) operand);
 
-				isPAND = ((Expression) expression).isPseudoAnded(childExpression.getExpressionId());
+				isPAND = ((Expression) expression).isPseudoAnded(childExpression.getExpressionId(), constraints);
 				ruleSQL = getWherePartSQL(childExpression, expression, isPAND);
 				if (isPAND)
 				{
@@ -302,10 +303,19 @@ public class SqlGenerator implements ISqlGenerator
 		if (associationMap.containsKey(association))
 			return associationMap.get(association);
 
-		AssociationInterface theAssociation = entityManager.getAssociation(association
+		Collection<AssociationInterface> associations =entityManager.getAssociation(association
 				.getSourceClass().getFullyQualifiedName(), association.getSourceRoleName());
-		associationMap.put(association, theAssociation);
-		return theAssociation;
+		for (Iterator<AssociationInterface> iter = associations.iterator(); iter.hasNext();)
+		{
+			AssociationInterface theAssociation = iter.next();
+			if (theAssociation.getTargetEntity().getName().equals(association.getTargetClass().getFullyQualifiedName()))
+			{
+				associationMap.put(association, theAssociation);
+				return theAssociation;
+			}
+		}
+		
+		return null;
 	}
 
 	/**
