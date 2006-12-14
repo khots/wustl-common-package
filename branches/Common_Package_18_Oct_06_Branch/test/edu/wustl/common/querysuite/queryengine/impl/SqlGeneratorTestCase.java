@@ -224,7 +224,7 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			String sql = generator.generateSQL(query);
-//			System.out.println("testScgQuery1:" + sql);
+			//			System.out.println("testScgQuery1:" + sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
 					"Select SpecimenCollectionGroup1.IDENTIFIER, SpecimenCollectionGroup1.NAME, SpecimenCollectionGroup1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup1.CLINICAL_STATUS, SpecimenCollectionGroup1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup1 left join catissue_specimen Specimen2 on (SpecimenCollectionGroup1.IDENTIFIER=Specimen2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen3 on (Specimen2.IDENTIFIER=Specimen3.PARENT_SPECIMEN_ID) Where (SpecimenCollectionGroup1.NAME like 'X%') Or(SpecimenCollectionGroup1.IDENTIFIER = ANY(Select Specimen2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen2 left join catissue_specimen Specimen3 on (Specimen2.IDENTIFIER=Specimen3.PARENT_SPECIMEN_ID) where (Specimen2.TYPE='RNA') Or(Specimen3.TYPE='DNA'))) And(SpecimenCollectionGroup1.IDENTIFIER = ANY(Select Specimen2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen2 where Specimen2.AVAILABLE=0)) Or(Specimen2.TYPE!='DNA')",
@@ -263,7 +263,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			//			e.printStackTrace();
+			//e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
@@ -277,14 +277,15 @@ public class SqlGeneratorTestCase extends TestCase
 	 *  			S: Type equals "Fixed Tissue" OR Type equals "Fresh Tissue"
 	 * </pre>
 	 *  	
-	 */	public void testSampleQuery2()
+	 */
+	public void testSampleQuery2()
 	{
 		IQuery query = QueryGeneratorMock.createSampleQuery2();
 		String sql;
 		try
 		{
 			sql = generator.generateSQL(query);
-//			System.out.println("testSampleQuery6:" + sql);
+			//			System.out.println("testSampleQuery2:" + sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
 					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_site Site4 on (SpecimenCollectionGroup3.SITE_ID=Site4.IDENTIFIER) left join catissue_specimen Specimen5 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen5.SPECIMEN_COLLECTION_GROUP_ID) Where ((Site4.NAME='Site1') Or(Site4.NAME='Site1')) And((Specimen5.TYPE='Fixed Tissue') Or(Specimen5.TYPE='Fresh Tissue'))",
@@ -292,11 +293,11 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			//			e.printStackTrace();
+			//e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
-	 
+
 	/**
 	 * 
 	 * To test the SQL for sample query no. 3 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
@@ -324,7 +325,77 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testSampleQuery3:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='New Diagnosis') And((Specimen4.TYPE='DNA') Or(Specimen4.TYPE='null')))) And(CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='Post-Operative') And((Specimen4.TYPE='Fixed Tissue') Or(Specimen4.TYPE='Fixed Tissue'))))",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='New Diagnosis') And((Specimen4.TYPE='DNA') Or(Specimen4.TYPE='Fresh Tissue')))) And(CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_DIAGNOSIS='Post-Operative') And((Specimen4.TYPE='Fixed Tissue') Or(Specimen4.TYPE='Fixed Tissue'))))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			//			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+
+	/**
+	 * 
+	 * To test the SQL for the sample query no. 4 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 * The Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: Clinical status equals "New Diagnosis"
+	 *  			S: Type equals "DNA"
+	 *  			Pseudo AND
+	 *  			S: Type equals "Milk" 
+	 *  		Pseudo AND
+	 *  		G: Clinical status equals "Post Operative"
+	 *  			S: Type equals "Fixed Tissue"
+	 *  			OR
+	 *  			S: Type equals "Fresh Tissue" 
+	 *  </pre>	
+	 */
+	public void testSampleQuery4()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery4();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//			System.out.println("testSampleQuery4:" + sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_STATUS='New Diagnosis') And(SpecimenCollectionGroup3.IDENTIFIER = ANY(Select Specimen4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen4 where Specimen4.TYPE='DNA')) And(SpecimenCollectionGroup3.IDENTIFIER = ANY(Select Specimen4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen4 where Specimen4.TYPE='Milk')))) And(CollectionProtocolRegistration2.IDENTIFIER = ANY(Select SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup3 left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup3.CLINICAL_STATUS='Post Operative') And(Specimen4.TYPE='Fixed Tissue') Or(Specimen4.TYPE='Fresh Tissue')))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			//			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+
+	/**
+	 * 
+	 * To test the SQL for the sample query no. 5 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * <pre>
+	 * The Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Type equals "Fixed Tissue"
+	 *	  				S: Type equals "Milk" 
+	 *  </pre>	
+	 */
+	public void testSampleQuery5()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery5();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//			System.out.println("testSampleQuery5:" + sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant1.ACTIVITY_STATUS, Participant1.BIRTH_DATE, Participant1.DEATH_DATE, Participant1.ETHNICITY, Participant1.FIRST_NAME, Participant1.GENDER, Participant1.IDENTIFIER, Participant1.LAST_NAME, Participant1.MIDDLE_NAME, Participant1.GENOTYPE, Participant1.SOCIAL_SECURITY_NUMBER, Participant1.VITAL_STATUS From catissue_participant Participant1 left join catissue_coll_prot_reg CollectionProtocolRegistration2 on (Participant1.IDENTIFIER=CollectionProtocolRegistration2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup3 on (CollectionProtocolRegistration2.IDENTIFIER=SpecimenCollectionGroup3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen4 on (SpecimenCollectionGroup3.IDENTIFIER=Specimen4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen5 on (Specimen4.IDENTIFIER=Specimen5.PARENT_SPECIMEN_ID) Where (Specimen4.TYPE='Fixed Tissue') And(Specimen5.TYPE='Milk')",
 					sql);
 		}
 		catch (Exception e)
@@ -337,6 +408,7 @@ public class SqlGeneratorTestCase extends TestCase
 	/**
 	 * 
 	 * To test the SQL for the sample query no. 6 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
+	 * TODO add Specimen Event parameter part in this Query.
 	 * <pre>
 	 *  P: ANY
 	 *  	C: ANY
@@ -360,10 +432,8 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			//			e.printStackTrace();
+			//e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
-
-
 }
