@@ -166,25 +166,8 @@ public class JoinGraph implements IJoinGraph
 		
 		return paths.get(0);
 	}
-	
-	/**
-	 * To get the list of IExpressionIds from which the given expressionId is directly reachable. 
-	 * @return List of IExpressionIds from which the given expressionId is directly reachable. 
-	 * Returns null if expressionId is not present in graph,
-	 * Returns empty list if expressionId has no incomming Edges.
-	 */
-	public List<IExpressionId> getDirectPredecessorOf(IExpressionId expressionId)
-	{
-		return graph.getDirectPredecessorOf(expressionId);
-	}
-	
-	/**
-	 * To get the list directly reachable expressionIds from the given expressionId. 
-	 * @return List of expressionIds directly reachable from the given expressionId. 
-	 * Returns null if expressionId is not present in graph,
-	 * Returns empty list if expressionId has no directly reachable node.
-	 */
-	public List<IExpressionId> getDirectSuccessorOf(IExpressionId expressionId)
+
+	public List<IExpressionId> getChildrenList(IExpressionId expressionId)
 	{
 		return graph.getDirectSuccessorOf(expressionId);
 	}
