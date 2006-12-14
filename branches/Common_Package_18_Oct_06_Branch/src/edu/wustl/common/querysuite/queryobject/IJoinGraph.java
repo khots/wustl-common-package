@@ -85,4 +85,11 @@ public interface IJoinGraph extends IBaseQueryObject
 	 * @return The List parent of ExpressionId for th given childExpressionId. 
 	 */
 	public List<IExpressionId> getParentList(IExpressionId childExpressionId);
+	
+	/**
+	 * To get the list of children of the given ExpressionId.
+	 * @param expressionId the expr id whose children are to be found.
+	 * @return children of given expressionId. 
+	 */
+	public List<IExpressionId> getChildrenList(IExpressionId expressionId);
 }

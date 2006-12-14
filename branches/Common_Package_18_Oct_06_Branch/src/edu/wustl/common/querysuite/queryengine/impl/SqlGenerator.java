@@ -149,7 +149,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		processedAlias.add(aliasMap.get(parentExpressionId));
 
-		List<IExpressionId> children = joinGraph.getDirectSuccessorOf(parentExpressionId);
+		List<IExpressionId> children = joinGraph.getChildrenList(parentExpressionId);
 		if (!children.isEmpty())
 		{
 			// processing all outgoing edges/nodes from the current node in the joingraph.
