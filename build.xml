@@ -198,6 +198,7 @@
         <jar taskname="build_jar" jarfile="${build.dir}/commonpackage.jar">
             <fileset dir="${target.dir}" includes="**/*"/>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties"/>	
+			<fileset dir="${base.dir}" includes="**/dbutil.properties"/>	
         </jar>
 		
 		<antcall target="build_code_zip"/>
