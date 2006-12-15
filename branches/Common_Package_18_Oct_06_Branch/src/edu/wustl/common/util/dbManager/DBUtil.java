@@ -1,13 +1,24 @@
 
 package edu.wustl.common.util.dbManager;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
 import net.sf.hibernate.cfg.Configuration;
+import net.sf.hibernate.util.XMLHelper;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.DOMWriter;
+import org.xml.sax.InputSource;
+
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
@@ -33,8 +44,33 @@ public class DBUtil
 		try
 		{
 			Configuration cfg = new Configuration();
-			m_sessionFactory = cfg.configure().buildSessionFactory();
+
+			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
+					"dbutil.properties");
+			Properties p = new Properties();
+			p.load(inputStream);
+			inputStream.close();
+
+			String configurationFileNames = p.getProperty("hibernate.configuration.files");
+
+			String[] fileNames = configurationFileNames.split(",");
+
+			// if no configuraiton file found, get the default one.
+			if (fileNames.length == 0) {
+				fileNames = new String[] {"hibernate.cfg.xml"};
+			}
+			
+            //get all configuration files 
+			for (int i = 0; i < fileNames.length; i++)
+			{
+				String fileName = fileNames[i];
+				fileName = fileName.trim();
+				addConfigurationFile(fileName, cfg);
+			}
+
+			m_sessionFactory = cfg.buildSessionFactory();
 			HibernateMetaData.initHibernateMetaData(cfg);
+
 			Variables.databaseName = HibernateMetaData.getDataBaseName();
 		}
 		catch (Exception ex)
@@ -43,46 +79,37 @@ public class DBUtil
 			Logger.out.debug("Exception: " + ex.getMessage(), ex);
 			throw new RuntimeException(ex.getMessage());
 		}
+	}
 
-		//		try
-		//
-		//		{
-		//
-		//		File file = new File(Variables.catissueHome+System.getProperty("file.separator")+"db.properties");
-		//
-		//		Logger.out.info("File "+file);
-		//
-		//		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
-		//
-		//		Properties p = new Properties();
-		//
-		//		p.load(stram);
-		//
-		//
-		//		stram.close();
-		//
-		//		Configuration cfg = new Configuration();
-		//
-		//		cfg.setProperties(p);
-		//
-		//		m_sessionFactory = cfg.configure().buildSessionFactory();
-		//
-		//		HibernateMetaData.initHibernateMetaData(cfg);
-		//
-		//		}
-		//
-		//		catch(Exception ex)
-		//
-		//		{
-		//
-		//		ex.printStackTrace();
-		//
-		//		Logger.out.debug("Exception: "+ex.getMessage(),ex);
-		//
-		//		throw new RuntimeException(ex.getMessage());
+	/**
+	 * This method adds configuration file to Hibernate Configuration. 
+	 * @param fileName name of the file that needs to be added
+	 * @param cfg Configuration to which this file is added.
+	 */
+	private static void addConfigurationFile(String fileName, Configuration cfg)
+	{
 
-		//		}
-
+		try
+		{
+			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(fileName);
+			List errors = new ArrayList();
+			//hibernate api to read configuration file and convert it to Document(dom4j) object.
+			Document document = XMLHelper.createSAXReader(fileName, errors).read(
+					new InputSource(inputStream));
+			//convert to w3c Document object.
+			DOMWriter writer = new DOMWriter();
+			org.w3c.dom.Document doc = writer.write(document);
+			//configure
+			cfg.configure(doc);
+		}
+		catch (DocumentException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
+		catch (HibernateException e)
+		{
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 	/**
