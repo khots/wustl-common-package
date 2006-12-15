@@ -51,8 +51,9 @@ public class SqlGenerator implements ISqlGenerator
 
 	Map<IIntraModelAssociation, AssociationInterface> associationMap = new HashMap<IIntraModelAssociation, AssociationInterface>();
 
-	Map<IExpressionId, Integer> aliasMap = new HashMap<IExpressionId, Integer>();
+	Map<IExpressionId, Integer> aliasAppenderMap = new HashMap<IExpressionId, Integer>();
 
+	Map<String, String> aliasNameMap = new HashMap<String, String>();
 	JoinGraph joinGraph;
 	IConstraints constraints;
 
@@ -88,8 +89,8 @@ public class SqlGenerator implements ISqlGenerator
 		// Initializin map variables.
 		entityMap = new HashMap<String, Entity>();
 		associationMap = new HashMap<IIntraModelAssociation, AssociationInterface>();
-		aliasMap = new HashMap<IExpressionId, Integer>();
-
+		aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+		aliasNameMap = new HashMap<String, String>();
 		createAliasAppenderMap(rootExpression, 1, new Integer(1),
 				new HashMap<List<IAssociation>, IExpressionId>());
 
@@ -147,7 +148,7 @@ public class SqlGenerator implements ISqlGenerator
 			buffer.append("From " + leftEntity.getTableProperties().getName() + " " + leftAlias);
 		}
 
-		processedAlias.add(aliasMap.get(parentExpressionId));
+		processedAlias.add(aliasAppenderMap.get(parentExpressionId));
 
 		List<IExpressionId> children = joinGraph.getChildrenList(parentExpressionId);
 		if (!children.isEmpty())
@@ -157,7 +158,7 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				IExpressionId childExpressionId = children.get(index);
 				IExpression childExpression = constraints.getExpression(childExpressionId);
-				if (!processedAlias.contains(aliasMap.get(childExpressionId)))
+				if (!processedAlias.contains(aliasAppenderMap.get(childExpressionId)))
 				{
 					IAssociation association = joinGraph.getAssociation(parentExpressionId,
 							childExpressionId);
@@ -218,7 +219,7 @@ public class SqlGenerator implements ISqlGenerator
 
 				buffer.append("Select " + selectAttribute);
 				Set<Integer> processedAlias = new HashSet<Integer>();
-				processedAlias.add(aliasMap.get(expression.getExpressionId()));
+				processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
 				String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
 				buffer.append(" From " + tableName + " " + leftAlias + fromPart + " where ");
 			}
@@ -458,21 +459,43 @@ public class SqlGenerator implements ISqlGenerator
 		return tableName + "." + entityAttribute.getColumnProperties().getName();
 	}
 
+	private final int ALIAS_NAME_LENGTH = 25;
 	/**
 	 * To get the Alias Name for the given Entity.
 	 * @param entity the reference to Entity represented by the functional Class of the expression.
 	 * @param expression The reference to IExpression.
 	 * @return The Alias Name for the given Entity.
 	 */
-	private String getAliasName(Entity entity, IExpression expression)
+	String getAliasName(Entity entity, IExpression expression)
 	{
-		String tableName = entity.getName();
-		Integer alias = aliasMap.get(expression.getExpressionId());
+		String className = entity.getName();
+		
+		String aliasName = aliasNameMap.get(className);
+		
+		if (aliasName==null)
+		{
+			aliasName = className.substring(className.lastIndexOf('.') + 1, className.length());
+			if (aliasName.length() > ALIAS_NAME_LENGTH)
+			{
+				aliasName = aliasName.substring(0,ALIAS_NAME_LENGTH);
+			}
+			// get unique aliasName for the given class.
+			int count = 1;
+			String theAliasName = aliasName;
+			Collection<String> allAssignedAliases = aliasNameMap.values();
+			while (allAssignedAliases.contains(theAliasName))
+			{
+				theAliasName = aliasName + count++;
+			}
+			aliasName = theAliasName;	
+			aliasNameMap.put(className, aliasName);
+		}
+		Integer alias = aliasAppenderMap.get(expression.getExpressionId());
 		if (alias == null)
 			alias = new Integer(0);
-		tableName = tableName.substring(tableName.lastIndexOf('.') + 1, tableName.length()) + alias;
+		aliasName = aliasName+ "_" + alias;
 
-		return tableName;
+		return aliasName;
 	}
 
 	/**
@@ -487,7 +510,7 @@ public class SqlGenerator implements ISqlGenerator
 	int createAliasAppenderMap(IExpression expression, int currentAliasCount, Integer aliasToSet,
 			Map<List<IAssociation>, IExpressionId> pathMap) throws MultipleRootsException
 	{
-		aliasMap.put(expression.getExpressionId(), aliasToSet);
+		aliasAppenderMap.put(expression.getExpressionId(), aliasToSet);
 		//processing all sub Expressions of this expression.
 		for (int index = 0; index < expression.numberOfOperands(); index++)
 		{
@@ -501,7 +524,7 @@ public class SqlGenerator implements ISqlGenerator
 				IExpressionId simillarPathExpressionId = pathMap.get(path);
 				if (simillarPathExpressionId != null) // use already existing alias.
 				{
-					aliasToSet = aliasMap.get(simillarPathExpressionId);
+					aliasToSet = aliasAppenderMap.get(simillarPathExpressionId);
 				}
 				else
 				// define new alias.
@@ -518,11 +541,11 @@ public class SqlGenerator implements ISqlGenerator
 	}
 
 	/**
-	 * @return the aliasMap
+	 * @return the aliasAppenderMap
 	 */
 	Map<IExpressionId, Integer> getAliasMap()
 	{
-		return aliasMap;
+		return aliasAppenderMap;
 	}
 
 	/**
