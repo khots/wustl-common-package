@@ -30,6 +30,7 @@ import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.IInterModelAssociation;
 import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
@@ -42,6 +43,7 @@ import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
 import edu.wustl.common.querysuite.queryobject.impl.InterModelAssociation;
 import edu.wustl.common.querysuite.queryobject.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.OutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
 
@@ -337,5 +339,17 @@ public class QueryObjectFactory
         }
         
         return dataType;
+    }
+    
+    /**
+     * Method to instantiate object of a class implementing IOutputTreeNode interface.
+     * This method will be called only once to instanciate the Root node object. Further to instantiate child objects call addChild method present in IOutputTreeNode.
+     * @param functionalClass The reference to functional class, that this tree node will represent.
+     * @return The reference to OutputTreeNode treenode object.
+     * @see edu.wustl.common.querysuite.queryobject.IOutputTreeNode#addChild(edu.wustl.common.querysuite.queryobject.IAssociation, edu.wustl.common.querysuite.queryobject.IFunctionalClass)
+     */
+    public static IOutputTreeNode createOutputTreeNode(IFunctionalClass functionalClass)
+    {
+    	return new OutputTreeNode(functionalClass);
     }
 }
