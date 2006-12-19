@@ -9,6 +9,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
 
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -73,7 +74,15 @@ public class Constraints implements IConstraints
 	 */
 	public IExpression removeExpressionWithId(IExpressionId id)
 	{
-		((JoinGraph)joinGraph).removeIExpressionId(id);
+		JoinGraph theJoinGraph = (JoinGraph)joinGraph;
+		
+		List<IExpressionId> parents = theJoinGraph.getParentList(id);
+		for (int i = 0; i < parents.size(); i++)
+		{
+			IExpression parentExpression = expressions.get(parents.get(i));
+			parentExpression.removeOperand(id);
+		}
+		theJoinGraph.removeIExpressionId(id);
 		return expressions.remove(id);
 	}
 
