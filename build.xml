@@ -50,6 +50,11 @@
 		<path refid="app.classpath"/>
 		<pathelement location="${target.dir}"/>
 	</path>
+	
+	<path id="checkstyle.classpath">
+		<pathelement location="${build.dir}/commonpackage.jar"/>
+		<pathelement location="${lib.dir}/DynamicExtensions.jar"/>
+	</path>	
 	<!-- sub tasks -->
 	<target name="init">
     	<!-- Create the time stamp -->
@@ -287,10 +292,10 @@
 		</junit>
 	</target>
 
-	<target name="checkstyle" depends="init" description="Generates a report of code convention violations.">
+	<target name="checkstyle" depends="build_jar" description="Generates a report of code convention violations.">
 		<taskdef resource="checkstyletask.properties" classpath="${extra_lib.dir}/checkstyle-all-4.2.jar"/>  
 
-	    <checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false">
+	    <checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false" classpathref="checkstyle.classpath" >
 			<formatter type="xml" tofile="${checkstyle.unformatted.report}" />
 			<!-- Adding all querysuite packages-->
 			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/*.java"/>
