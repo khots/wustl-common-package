@@ -18,6 +18,14 @@
     <property name="junit.report.dir" value="${junit.dir}/reports"/>
     <property name="junit.classes.dir" value="${junit.dir}/classes"/>
 	
+	<!--Properties set for checkstyle "Tools that generate report of code convention violations"-->
+	<property name="checkstyle.dir" value="${base.dir}/checkstyle"/>
+	<property name="checkstyle.rules.file" value="${checkstyle.dir}/CheckStyleRules.xml"/>
+	<property name="checkstyle.report.formatter" value="${checkstyle.dir}/report_formatter/checkstyle-simple.xsl"/>
+	<property name="checkstyle.report.dir" value="${checkstyle.dir}/checkstyle_reports"/>
+	<property name="checkstyle.unformatted.report" value="${checkstyle.report.dir}/checkstyle_report.xml"/>
+	<property name="checkstyle.formatted.report" value="${checkstyle.report.dir}/CommonPackage_checkstyle_report.html"/>
+	
 	<path id="app.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="*.jar"/>
@@ -50,7 +58,12 @@
 	    <mkdir dir="${target.dir}"/>
 	    <mkdir dir="${build.dir}"/>
 		<mkdir dir="${applet.dir}"/>
+		<delete dir="${junit.dir}"/>
 		<mkdir dir="${junit.dir}"/>
+		<!-- Create the checkstyle report directory-->
+		<delete dir="${checkstyle.report.dir}"/>
+		<mkdir dir="${checkstyle.report.dir}"/>
+
   	</target>
 	
 	<!-- Compile all files, generated and hand-written -->
@@ -272,5 +285,30 @@
 				 </fileset>
 			</classpath>
 		</junit>
+	</target>
+
+	<target name="checkstyle" depends="init" description="Generates a report of code convention violations.">
+		<taskdef resource="checkstyletask.properties" classpath="${extra_lib.dir}/checkstyle-all-4.2.jar"/>  
+
+	    <checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false">
+			<formatter type="xml" tofile="${checkstyle.unformatted.report}" />
+			<!-- Adding all querysuite packages-->
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/category/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/category/impl/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/exceptions/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/factory/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryengine/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
+			<!-- Adding junit test packages for querysuite-->
+			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/*.java"/>
+			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
+			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
+			<fileset dir="${test.dir}" includes="**/edu/wustl/common/util/*.java"/>
+		</checkstyle>
+
+	    <style in="${checkstyle.unformatted.report}" out="${checkstyle.formatted.report}" style="${checkstyle.report.formatter}"/>
 	</target>
 </project>
