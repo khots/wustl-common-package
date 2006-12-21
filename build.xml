@@ -308,7 +308,7 @@
 			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/*.java"/>
 			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
 			<!-- Adding junit test packages for querysuite-->
-			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/*.java"/>
+			<!--fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/*.java"/-->
 			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
 			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
 			<fileset dir="${test.dir}" includes="**/edu/wustl/common/util/*.java"/>
