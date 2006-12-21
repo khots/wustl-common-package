@@ -11,16 +11,22 @@ package edu.wustl.common.querysuite.queryobject;
 public interface ILogicalConnector extends IBaseQueryObject
 {
 
-	public LogicalOperator getLogicalOperator();
+	/**
+	 * To get the Logical operator associated with this object. 
+	 * @return the reference to the Logical operator.
+	 */
+	LogicalOperator getLogicalOperator();
 
 	/**
-	 * @param logicOperatorCode
+	 * To set the Logical operator.
+	 * @param logicalOperator The logical operator to set. 
 	 */
-	public void setLogicalOperator(LogicalOperator logicalOperator);
+	void setLogicalOperator(LogicalOperator logicalOperator);
 
 	/**
 	 * denotes no. of parantheses around this operator
+	 * @return integer value, that represents no. of parantheses sorrounding this connector.
 	 */
-	public int getNestingNumber();
+	int getNestingNumber();
 
 }

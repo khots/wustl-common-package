@@ -14,6 +14,6 @@ public interface IExpressionOperand extends IBaseQueryObject
 	 * Used to determine whether the operand is an expression or a rule.
 	 * @return true- if subexpression, false - if this is a rule.
 	 */
-	public boolean isSubExpressionOperand();
+	boolean isSubExpressionOperand();
 
 }

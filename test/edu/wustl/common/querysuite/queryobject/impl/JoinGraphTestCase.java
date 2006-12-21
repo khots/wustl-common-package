@@ -163,8 +163,9 @@ public class JoinGraphTestCase extends TestCase
 	{
 		IAssociation association21 = QueryObjectFactory.createIntraModelAssociation(null, null, "",
 				"", false);
-		assertTrue("Expected true value from removeAssociation method, for existing edge!!!",joinGraph.removeAssociation(expId1,expId2));
-		
+		assertTrue("Expected true value from removeAssociation method, for existing edge!!!",
+				joinGraph.removeAssociation(expId1, expId2));
+
 		try
 		{
 			IAssociation newAssociation = joinGraph.putAssociation(expId2, expId1, association21);
@@ -175,6 +176,7 @@ public class JoinGraphTestCase extends TestCase
 			assertTrue("UnExpected CyclicException, while adding Association!!!", false);
 		}
 	}
+
 	/**
 	 *  To check the getRoot() method with positive test case. for the created graph it will return exp1 node.
 	 *
@@ -259,16 +261,9 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testIsConnected1()
 	{
-		try
-		{
-			boolean flag = joinGraph.isConnected();
-			assertTrue("Expected true value from isConnected method, for Connected graph!!!", flag);
-		}
-		catch(MultipleRootsException e)
-		{
-			assertFalse(true);
-		}
-		
+		boolean flag = joinGraph.isConnected();
+		assertTrue("Expected true value from isConnected method, for Connected graph!!!", flag);
+
 	}
 
 	/**
@@ -283,15 +278,8 @@ public class JoinGraphTestCase extends TestCase
 	public void testIsConnected2()
 	{
 		joinGraph.removeAssociation(expId1, expId2);
-		try
-		{
-			boolean flag = joinGraph.isConnected();
-			assertFalse("Expected false value from isConnected method, for disconnected graph!!!", flag);
-		}
-		catch(MultipleRootsException e)
-		{
-			
-		}
+		boolean flag = joinGraph.isConnected();
+		assertFalse("Expected false value from isConnected method, for disconnected graph!!!", flag);
 	}
 
 	/**
@@ -316,10 +304,6 @@ public class JoinGraphTestCase extends TestCase
 			assertTrue(
 					"UnExpected CyclicException, while adding Association for Testing isConnected method!!!",
 					false);
-		}
-		catch(MultipleRootsException e)
-		{
-			assertFalse(true);
 		}
 	}
 

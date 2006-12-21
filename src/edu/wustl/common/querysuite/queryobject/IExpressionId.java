@@ -11,6 +11,10 @@ package edu.wustl.common.querysuite.queryobject;
 public interface IExpressionId extends IExpressionOperand
 {
 
-	public int getInt();
+	/**
+	 * To get the integer value assigned to this Expression id.
+	 * @return The integer value sassigned to this Expression id.
+	 */
+	int getInt();
 
 }

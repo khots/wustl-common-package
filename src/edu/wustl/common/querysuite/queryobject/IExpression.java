@@ -31,99 +31,107 @@ public interface IExpression extends IBaseQueryObject
 {
 
 	/**
-	 * @param i
+	 * To get the operand identified by index.
+	 * @param index the index of operand.
+	 * @return The operand identified by ithe given ndex.
 	 */
-	public IExpressionOperand getOperand(int i);
+	IExpressionOperand getOperand(int index);
 
 	/**
 	 * the functionalClass of IRule is constructor param to impl class.
+	 * @return teh reference to the functional class.
 	 */
-	public IFunctionalClass getFunctionalClass();
+	IFunctionalClass getFunctionalClass();
 
 	/**
 	 * To set the operand in the Expression at index position
 	 * @param index the expected index of the operand in he Expression 
 	 * @param operand The operand to be added in the Expression.
 	 */
-	public void setOperand(int index, IExpressionOperand operand);
+	void setOperand(int index, IExpressionOperand operand);
 
 	/**
 	 * An operator is indexed by {left operand, right operand} i.e. if left
 	 * index is "i", value of right index must be "i+1" this is just to make the
 	 * method intuitively clearer...
-	 * @param leftOperandIndex
-	 * @param rightOperandIndex
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand.
+	 * @return The reference to logical connector between who operands.
 	 * @throws IllegalArgumentException
 	 *             if rightOperandIndex != leftOperandIndex + 1.
 	 */
-	public ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex);
+	ILogicalConnector getLogicalConnector(int leftOperandIndex, int rightOperandIndex);
 
 	/**
-	 * @param leftOperandIndex
-	 * @param rightOperandIndex
-	 * @param logicalConnector
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand.
+	 * @param logicalConnector The logical connector to be set between two operands.
 	 * @throws IllegalArgumentException
 	 *             if rightOperandIndex != leftOperandIndex + 1.
 	 */
-	public void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
+	void setLogicalConnector(int leftOperandIndex, int rightOperandIndex,
 			ILogicalConnector logicalConnector);
 
 	/**
 	 * Increments nesting num of all the logical connectors in the expression
 	 * between the specified operands' indexes, both inclusive.
-	 * @param leftOperandIndex
-	 * @param rightOperandIndex
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand.
 	 */
-	public void addParantheses(int leftOperandIndex, int rightOperandIndex);
+	void addParantheses(int leftOperandIndex, int rightOperandIndex);
 
 	/**
 	 * Just calls addParantheses(0, size-1)
 	 */
-	public void addParantheses();
-	
+	void addParantheses();
+
 	/**
 	 * Decrements nesting num of all the logical connectors in the expression
 	 * between the specified operands' indexes, both inclusive.
-	 * @param leftOperandIndex
-	 * @param rightOperandIndex
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of right operand.
 	 */
-	public void removeParantheses(int leftOperandIndex, int rightOperandIndex);
-	
+	void removeParantheses(int leftOperandIndex, int rightOperandIndex);
+
 	/**
 	 * Just calls removeParantheses(0, size-1)
 	 */
-	public void removeParantheses();
+	void removeParantheses();
 
 	/**
-	 * Adds an operand to the operands list. A default logical connector AND will
+	 * Adds an operand to the operands list. A default logical connector 'Unknown' will
 	 * be added to the connectors list provided there are atleast two operands
 	 * in the operands list.
-	 * @param operand
+	 * @param operand The operand to be added in Expression.
+	 * @return the reference of the operand added.
 	 */
-	public IExpressionOperand addOperand(IExpressionOperand operand);
+	IExpressionOperand addOperand(IExpressionOperand operand);
 
 	/**
-	 * @param logicalConnector
-	 * @param operand
+	 * Adds the operand at the end of the Expression.
+	 * @param logicalConnector  the Logical connector by which the operand will be connected to the operand behind it.
+	 * @param operand The operand to be added in Expression.
 	 * @throws IndexOutOfBoundsException if there is no Operand in the Expression.
 	 */
-	public void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand);
+	void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand);
 
 	/**
 	 * Inserts an operand with the connector in front of it.
-	 * @param logicalConnector
-	 * @param operand
+	 * @param index The index at which the operand to be inserted.
+	 * @param logicalConnector  the Logical connector by which the operand will be connected to the operand behind it.
+	 * @param operand The operand to be added in Expression.
 	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size()).
 	 */
-	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand);
+	void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand);
 
 	/**
 	 * Inserts an operand with the connector behind it.
-	 * @param logicalConnector
-	 * @param operand
+	 * @param index The index at which the operand to be inserted.
+	 * @param operand The operand to be added in Expression.
+	 * @param logicalConnector the Logical connector by which the operand will be connected operand in front of it.
 	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size()). 
 	 */
-	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector);
+	void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector);
 
 	/**
 	 * Removes the operand, and the appropriate connector. The adjacent logical
@@ -134,7 +142,7 @@ public interface IExpression extends IBaseQueryObject
 	 *            the index of operand to be removed.
 	 * @return the removed operand.
 	 */
-	public IExpressionOperand removeOperand(int index);
+	IExpressionOperand removeOperand(int index);
 
 	/**
 	 * Removes the operand, and the appropriate connector. The adjacent logical
@@ -145,21 +153,23 @@ public interface IExpression extends IBaseQueryObject
 	 *            the operand to be removed.
 	 * @return true if the operand was found; false otherwise.
 	 */
-	public boolean removeOperand(IExpressionOperand operand);
+	boolean removeOperand(IExpressionOperand operand);
 
 	/**
+	 * @param operand the reference to IExpressionOperand, to be searched in the Expression. 
+	 * @return the index of the given Expression operand.
 	 * @see java.util.List#indexOf(java.lang.Object)
 	 */
-	public int indexOfOperand(IExpressionOperand operand);
+	int indexOfOperand(IExpressionOperand operand);
 
 	/**
 	 * @return the id of this expression.
 	 */
-	public IExpressionId getExpressionId();
+	IExpressionId getExpressionId();
 
 	/**
 	 * @return the no. of operands in the expression.
 	 */
-	public int numberOfOperands();
+	int numberOfOperands();
 
 }
