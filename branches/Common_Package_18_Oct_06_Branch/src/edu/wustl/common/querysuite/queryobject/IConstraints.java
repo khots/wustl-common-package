@@ -22,23 +22,25 @@ public interface IConstraints extends IBaseQueryObject
 {
 
 	/**
+	 * To get the Expression corresponding to the Expression id.
 	 * @param id
 	 *            the id (usually obtained from getExpressionIds)
+	 * @return the reference to the IExpression associatied with the given IExpressionId. 
 	 */
-	public IExpression getExpression(IExpressionId id);
+	IExpression getExpression(IExpressionId id);
 
 	/**
 	 * @param id
 	 *            the id of the expression to be removed
 	 * @return the removed expression
 	 */
-	public IExpression removeExpressionWithId(IExpressionId id);
+	IExpression removeExpressionWithId(IExpressionId id);
 
 	/**
 	 * @return an enumeration of the expressions' ids.
 	 * @see Enumeration
 	 */
-	public Enumeration<IExpressionId> getExpressionIds();
+	Enumeration<IExpressionId> getExpressionIds();
 
 	/**
 	 * Creates a new {@link IExpression}, adds it to the list, and returns it.
@@ -47,15 +49,17 @@ public interface IConstraints extends IBaseQueryObject
 	 * @param functionalClass
 	 *            the functional class for which the new expr is created.
 	 * @return the newly created expression.
-	 * @see IExpressionId
 	 */
-	public IExpression addExpression(IFunctionalClass functionalClass);
+	IExpression addExpression(IFunctionalClass functionalClass);
 
-	public IJoinGraph getJoinGraph();
+	/**
+	 * @return the reference to joingraph.
+	 */
+	IJoinGraph getJoinGraph();
 
 	/**
 	 * @return the root expression of the join graph.
-	 * @throws MultipleRootsException
+	 * @throws MultipleRootsException When there exists multiple roots in joingraph.
 	 */
-	public IExpressionId getRootExpressionId() throws MultipleRootsException;
+	IExpressionId getRootExpressionId() throws MultipleRootsException;
 }

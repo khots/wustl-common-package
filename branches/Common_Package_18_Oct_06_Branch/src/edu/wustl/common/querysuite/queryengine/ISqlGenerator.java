@@ -21,10 +21,10 @@ public interface ISqlGenerator
 	 * Generates SQL for the given Query Object.
 	 * @param query The Reference to Query Object.
 	 * @return the String representing SQL for the given Query object.
-	 * @throws MultipleRootsException
-	 * @throws DynamicExtensionsSystemException
-	 * @throws DynamicExtensionsApplicationException
+	 * @throws MultipleRootsException When there are multpile roots present in a graph.
+	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.  
+	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails. 
 	 */
-	public String generateSQL(IQuery query) throws MultipleRootsException,
+	String generateSQL(IQuery query) throws MultipleRootsException,
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException;
 }

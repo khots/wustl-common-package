@@ -5,6 +5,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @author Mandar Shidhore
  * @version 1.0
  * @created 12-Oct-2006 15.07.04 AM
+ * The IQuery implementation class.
  */
 
 import edu.wustl.common.querysuite.queryobject.IConstraints;
@@ -33,8 +34,10 @@ public class Query implements IQuery
 	 */
 	public IConstraints getConstraints()
 	{
-		if (constraints==null)
+		if (constraints == null)
+		{
 			constraints = new Constraints();
+		}
 		return constraints;
 	}
 

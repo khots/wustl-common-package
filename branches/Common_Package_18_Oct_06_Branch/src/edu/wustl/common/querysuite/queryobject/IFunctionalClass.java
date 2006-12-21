@@ -14,31 +14,31 @@ import java.util.List;
 public interface IFunctionalClass extends IBaseQueryObject
 {
 
-	public List<IAttribute> getAttributes();
+	List<IAttribute> getAttributes();
 
 	/**
 	 * @param attributes
 	 * 
 	 */
-	public void setAttributes(List<IAttribute> attributes);
+	void setAttributes(List<IAttribute> attributes);
 
-	public IAttribute addAttribute();
+	IAttribute addAttribute();
 
 	/**
 	 * @param attribute
 	 * 
 	 */
-	public boolean addAttribute(IAttribute attribute);
+	boolean addAttribute(IAttribute attribute);
 
 	/**
 	 * can be null if the class does not belong to a category
 	 */
-	public ICategory getCategory();
+	ICategory getCategory();
 
 	/**
 	 * @param category
 	 * 
 	 */
-	public void setCategory(ICategory category);
+	void setCategory(ICategory category);
 
 }

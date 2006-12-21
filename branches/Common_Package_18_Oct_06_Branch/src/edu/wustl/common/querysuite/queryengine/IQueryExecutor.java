@@ -10,11 +10,14 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 public interface IQueryExecutor
 {
 
-	public void finalize() throws Throwable;
+	/**
+	 * TODO
+	 * @throws Throwable TODO
+	 */
+	void finalize() throws Throwable;
 
 	/**
-	 * @param query
-	 * 
+	 * @param query The reference to the query to be executed.
 	 */
-	public void executeQuery(IQuery query);
+	void executeQuery(IQuery query);
 }

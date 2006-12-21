@@ -31,7 +31,8 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#containsAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
-	public boolean containsAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex)
+	public boolean containsAssociation(IExpressionId parentExpressionIndex,
+			IExpressionId childExpressionIndex)
 	{
 		return graph.containsEdge(parentExpressionIndex, childExpressionIndex);
 	}
@@ -39,7 +40,8 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#getAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
-	public IAssociation getAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex)
+	public IAssociation getAssociation(IExpressionId parentExpressionIndex,
+			IExpressionId childExpressionIndex)
 	{
 		return graph.getEdge(parentExpressionIndex, childExpressionIndex);
 	}
@@ -49,9 +51,8 @@ public class JoinGraph implements IJoinGraph
 	 * The traversing is done on root and if more than one root found, the graph
 	 * is considered to be disjoint and a MultipleRootsException is thrown 
 	 * @return true if graph is connected; false if graph is disjoint
-	 * @throws MultipleRootsException if more than one root found
 	 */
-	public boolean isConnected() throws MultipleRootsException
+	public boolean isConnected()
 	{
 		return graph.isConnected();
 	}
@@ -59,8 +60,8 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#putAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IAssociation)
 	 */
-	public IAssociation putAssociation(IExpressionId parentExpressionIndex, IExpressionId childExpressionIndex, IAssociation association)
-			throws CyclicException
+	public IAssociation putAssociation(IExpressionId parentExpressionIndex,
+			IExpressionId childExpressionIndex, IAssociation association) throws CyclicException
 	{
 		return graph.putEdge(parentExpressionIndex, childExpressionIndex, association);
 	}
@@ -68,7 +69,8 @@ public class JoinGraph implements IJoinGraph
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IJoinGraph#removeAssociation(edu.wustl.common.querysuite.queryobject.IExpressionId, edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
-	public boolean removeAssociation(IExpressionId firstExpressionIndex, IExpressionId secondExpressionIndex)
+	public boolean removeAssociation(IExpressionId firstExpressionIndex,
+			IExpressionId secondExpressionIndex)
 	{
 		return graph.removeEdge(firstExpressionIndex, secondExpressionIndex) != null;
 	}
@@ -93,17 +95,17 @@ public class JoinGraph implements IJoinGraph
 	public IExpressionId getRoot() throws MultipleRootsException
 	{
 		List<IExpressionId> unReachableNode = graph.getUnreachableNodeList();
-		
-		if (unReachableNode.size()==0)
+
+		if (unReachableNode.size() == 0)
 		{
 			return null;
-//			Prafull: instead of throwing exception it will return null.
-//			throw new MultipleRootsException("No Root Exist for the Joing Graph!!!!");
+			//			Prafull: instead of throwing exception it will return null.
+			//			throw new MultipleRootsException("No Root Exist for the Joing Graph!!!!");
 		}
-		
-		if (unReachableNode.size()!=1)
+
+		if (unReachableNode.size() != 1)
 			throw new MultipleRootsException("Multiple Root Exist for the Joing Graph!!!!");
-		
+
 		return unReachableNode.get(0);
 	}
 
@@ -125,10 +127,12 @@ public class JoinGraph implements IJoinGraph
 	 * @param expressionId reference to ExpressionId 
 	 * @return the List of paths of the given ExpressionId from root. returns empty path list if there is no path.
 	 */
-	public List<List<IExpressionId>> getPaths(IExpressionId expressionId) throws MultipleRootsException
+	public List<List<IExpressionId>> getPaths(IExpressionId expressionId)
+			throws MultipleRootsException
 	{
 		return graph.getReachablePaths(getRoot(), expressionId);
 	}
+
 	/**
 	 * To get the first path of the  given ExpressionId from the root Expression.
 	 * @param expressionId regerence to ExpressionId 
@@ -136,20 +140,21 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public List<IExpressionId> getPath(IExpressionId expressionId) throws MultipleRootsException
 	{
-		List<List<IExpressionId>> paths =graph.getReachablePaths(getRoot(), expressionId);
-		
+		List<List<IExpressionId>> paths = graph.getReachablePaths(getRoot(), expressionId);
+
 		if (paths.isEmpty())
 			return new ArrayList<IExpressionId>();
-		
+
 		return paths.get(0);
 	}
-	
+
 	/**
 	 * To get the edge path of the  given ExpressionId from the root Expression.
 	 * @param expressionId reference to ExpressionId 
 	 * @return the List of paths of the given ExpressionId from root. returns empty path list if there is no path.
 	 */
-	public List<List<IAssociation>> getEdgesPaths(IExpressionId expressionId) throws MultipleRootsException
+	public List<List<IAssociation>> getEdgesPaths(IExpressionId expressionId)
+			throws MultipleRootsException
 	{
 		return graph.getReachableEdgePaths(getRoot(), expressionId);
 	}
@@ -163,11 +168,11 @@ public class JoinGraph implements IJoinGraph
 	 */
 	public List<IAssociation> getEdgePath(IExpressionId expressionId) throws MultipleRootsException
 	{
-		List<List<IAssociation>> paths =graph.getReachableEdgePaths(getRoot(), expressionId);
-		
+		List<List<IAssociation>> paths = graph.getReachableEdgePaths(getRoot(), expressionId);
+
 		if (paths.isEmpty())
 			return new ArrayList<IAssociation>();
-		
+
 		return paths.get(0);
 	}
 
