@@ -87,15 +87,19 @@ public class JoinGraph implements IJoinGraph
 	 * For each element in IExpressionId list, the root node will be checked 
 	 * for incoming edges for that element.The node having no incomming edges 
 	 * will be treated as Root node. 
-	 * @return root node of the expression
-	 * @throws MultipleRootsException if more than 1 roots exists or no root exists for the expression tree
+	 * @return root node of the expression, null if no root exists for the expression tree
+	 * @throws MultipleRootsException if more than 1 roots exists.
 	 */
 	public IExpressionId getRoot() throws MultipleRootsException
 	{
 		List<IExpressionId> unReachableNode = graph.getUnreachableNodeList();
 		
 		if (unReachableNode.size()==0)
-			throw new MultipleRootsException("No Root Exist for the Joing Graph!!!!");
+		{
+			return null;
+//			Prafull: instead of throwing exception it will return null.
+//			throw new MultipleRootsException("No Root Exist for the Joing Graph!!!!");
+		}
 		
 		if (unReachableNode.size()!=1)
 			throw new MultipleRootsException("Multiple Root Exist for the Joing Graph!!!!");

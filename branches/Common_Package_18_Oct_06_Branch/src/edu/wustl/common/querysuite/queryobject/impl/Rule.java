@@ -25,11 +25,14 @@ public class Rule implements IRule
 	private List<ICondition> conditions = new ArrayList<ICondition>();
 	private IExpression containingExpression;
 
-	public Rule(List<ICondition> conditions, IExpression containingExpression)
+	/**
+	 * Constructor to instanciate object of Rule class.
+	 * @param conditions The list of Conditions to set.
+	 */
+	public Rule(List<ICondition> conditions)
 	{
 		if (conditions != null)
 			this.conditions = conditions;
-		this.containingExpression = containingExpression;
 	}
 
 	/**
@@ -135,5 +138,14 @@ public class Rule implements IRule
 				return true;
 		}
 		return false;
+	}
+
+	
+	/**
+	 * @param containingExpression the containingExpression to set
+	 */
+	void setContainingExpression(IExpression containingExpression)
+	{
+		this.containingExpression = containingExpression;
 	}
 }

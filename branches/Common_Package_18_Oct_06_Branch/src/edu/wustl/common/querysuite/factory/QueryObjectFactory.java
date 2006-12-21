@@ -24,7 +24,6 @@ import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
-import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.IInterModelAssociation;
@@ -149,14 +148,9 @@ public class QueryObjectFactory
 		return new FunctionalClass(attributes, category);
 	}
 
-	public static IRule createRule(List<ICondition> conditions, IExpression containingExpression)
+	public static IRule createRule(List<ICondition> conditions)
 	{
-		return new Rule(conditions, containingExpression);
-	}
-
-	public static IRule createRule(IExpression containingExpression)
-	{
-		return new Rule(null, containingExpression);
+		return new Rule(conditions);
 	}
 
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,

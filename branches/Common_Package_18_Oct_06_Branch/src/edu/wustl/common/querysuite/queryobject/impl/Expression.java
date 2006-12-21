@@ -77,12 +77,25 @@ public class Expression implements IExpression
 	public IExpressionOperand addOperand(IExpressionOperand operand)
 	{
 		expressionOperands.add(operand);
+		setContainingExpressionForRule(operand);
 		if (expressionOperands.size() != 1)
 			logicalConnectors.add(QueryObjectFactory
 					.createLogicalConnector(LogicalOperator.Unknown));
 		return operand;
 	}
-
+	
+	/**
+	 * To set the containing Expression in case when the operand is Rule.
+	 * @param operand The reference to IExpressionOperand.
+	 */
+	private void setContainingExpressionForRule(IExpressionOperand operand)
+	{
+		if (operand instanceof Rule)
+		{
+			Rule rule = (Rule) operand;
+			rule.setContainingExpression(this);
+		}
+	}
 	/**
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.ILogicalConnector,
 	 *      edu.wustl.common.querysuite.queryobject.IExpressionOperand)
@@ -90,6 +103,7 @@ public class Expression implements IExpression
 	public void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand)
 	{
 		expressionOperands.add(operand);
+		setContainingExpressionForRule(operand);
 		logicalConnectors.add(expressionOperands.size() - 2, logicalConnector);
 	}
 
@@ -99,6 +113,7 @@ public class Expression implements IExpression
 	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand)
 	{
 		expressionOperands.add(index, operand);
+		setContainingExpressionForRule(operand);
 		logicalConnectors.add(index - 1, logicalConnector);
 		if (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() > ((LogicalConnector) logicalConnectors
 				.get(index - 1)).getNestingNumber())
@@ -115,6 +130,7 @@ public class Expression implements IExpression
 	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector)
 	{
 		expressionOperands.add(index, operand);
+		setContainingExpressionForRule(operand);
 		logicalConnectors.add(index, logicalConnector);
 		if (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() < ((LogicalConnector) logicalConnectors
 				.get(index - 1)).getNestingNumber())
