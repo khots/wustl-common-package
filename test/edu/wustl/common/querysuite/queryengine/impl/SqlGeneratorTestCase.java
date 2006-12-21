@@ -9,8 +9,6 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.Entity;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
@@ -85,7 +83,8 @@ public class SqlGeneratorTestCase extends TestCase
 	{
 		IClass class1 = QueryGeneratorMock.createParticantClass();
 		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
-		IRule rule = QueryGeneratorMock.createParticipantRule1(class1, expression);
+		IRule rule = QueryGeneratorMock.createParticipantRule1(class1);
+		expression.addOperand(rule);
 		try
 		{
 			assertEquals(

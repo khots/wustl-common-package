@@ -145,12 +145,12 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule Created.
 	 */
-	public static IRule createParticipantRule1(IClass participant, IExpression containingExpression)
+	public static IRule createParticipantRule1(IClass participant)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition2(participant));
 		conditions.add(createParticipantCondition3(participant));
-		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
+		IRule rule = QueryObjectFactory.createRule(conditions);
 		return rule;
 	}
 
@@ -159,11 +159,11 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule reference.
 	 */
-	public static IRule createParticipantRule2(IClass participant, IExpression containingExpression)
+	public static IRule createParticipantRule2(IClass participant)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition1(participant));
-		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
+		IRule rule = QueryObjectFactory.createRule(conditions);
 
 		return rule;
 	}
@@ -173,11 +173,11 @@ public class QueryGeneratorMock
 	 * @param participant
 	 * @return The Rule reference.
 	 */
-	public static IRule createParticipantRule3(IClass participant, IExpression containingExpression)
+	public static IRule createParticipantRule3(IClass participant)
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantCondition4(participant));
-		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
+		IRule rule = QueryObjectFactory.createRule(conditions);
 		return rule;
 	}
 
@@ -189,9 +189,9 @@ public class QueryGeneratorMock
 	public static IExpression creatParticipantExpression1(IClass participant)
 	{
 		IExpression expression = new Expression(participant, 1);
-		expression.addOperand(createParticipantRule1(participant, expression));
+		expression.addOperand(createParticipantRule1(participant));
 		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
-		expression.addOperand(connector, createParticipantRule2(participant, expression));
+		expression.addOperand(connector, createParticipantRule2(participant));
 
 		return expression;
 	}
@@ -205,7 +205,7 @@ public class QueryGeneratorMock
 	public static IExpression creatParticipantExpression2(IClass participant)
 	{
 		IExpression expression = new Expression(null, 1);
-		expression.addOperand(createParticipantRule3(participant, expression));
+		expression.addOperand(createParticipantRule3(participant));
 		ILogicalConnector connector = QueryObjectFactory
 				.createLogicalConnector(LogicalOperator.And);
 		expression
@@ -234,8 +234,7 @@ public class QueryGeneratorMock
 		IJoinGraph joinGraph = constraints.getJoinGraph();
 
 		IExpression participantExpression = constraints.addExpression(participantClass);
-		participantExpression.addOperand(createParticipantRule2(participantClass,
-				participantExpression));
+		participantExpression.addOperand(createParticipantRule2(participantClass));
 
 		IExpression pmExpression = constraints.addExpression(pmClass);
 
@@ -302,7 +301,7 @@ public class QueryGeneratorMock
 		IJoinGraph joinGraph = constraints.getJoinGraph();
 
 		IExpression scgExpression = constraints.addExpression(specimenCollectionGroup);
-		IRule SCGRule = QueryObjectFactory.createRule(null, scgExpression);
+		IRule SCGRule = QueryObjectFactory.createRule(null);
 		ICondition SCGCondition = QueryObjectFactory.createCondition(specimenCollectionGroup
 				.getAttributes().get(3), RelationalOperator.StartsWith, values);
 		SCGRule.addCondition(SCGCondition);
@@ -313,7 +312,7 @@ public class QueryGeneratorMock
 		List<String> SpecimenExpression1Values = new ArrayList<String>();
 		SpecimenExpression1Values.add("RNA");
 		IExpression SpecimenExpression1 = constraints.addExpression(specimenClass);
-		IRule specimenRule1 = QueryObjectFactory.createRule(null, SpecimenExpression1);
+		IRule specimenRule1 = QueryObjectFactory.createRule(null);
 		ICondition specimenCondition1 = QueryObjectFactory.createCondition(specimenClass
 				.getAttributes().get(0), RelationalOperator.Equals, SpecimenExpression1Values);
 		specimenRule1.addCondition(specimenCondition1);
@@ -323,7 +322,7 @@ public class QueryGeneratorMock
 		List<String> childSpecimenExpressionValues = new ArrayList<String>();
 		childSpecimenExpressionValues.add("DNA");
 		IExpression childSpecimenExpression = constraints.addExpression(specimenClass);
-		IRule childSpecimenRule = QueryObjectFactory.createRule(null, childSpecimenExpression);
+		IRule childSpecimenRule = QueryObjectFactory.createRule(null);
 		ICondition childSpecimenCondition = QueryObjectFactory.createCondition(specimenClass
 				.getAttributes().get(0), RelationalOperator.Equals, childSpecimenExpressionValues);
 
@@ -334,7 +333,7 @@ public class QueryGeneratorMock
 		List<String> SpecimenExpression2Values = new ArrayList<String>();
 		SpecimenExpression2Values.add("DNA");
 		IExpression SpecimenExpression2 = constraints.addExpression(specimenClass);
-		IRule specimenRule2 = QueryObjectFactory.createRule(null, SpecimenExpression2);
+		IRule specimenRule2 = QueryObjectFactory.createRule(null);
 		ICondition specimenCondition2 = QueryObjectFactory.createCondition(specimenClass
 				.getAttributes().get(9), RelationalOperator.Equals, SpecimenExpression2Values);
 		specimenRule2.addCondition(specimenCondition2);
@@ -355,7 +354,7 @@ public class QueryGeneratorMock
 		List<String> SpecimenExpression3Values = new ArrayList<String>();
 		SpecimenExpression3Values.add("DNA");
 		IExpression SpecimenExpression3 = constraints.addExpression(specimenClass);
-		IRule specimenRule3 = QueryObjectFactory.createRule(null, SpecimenExpression3);
+		IRule specimenRule3 = QueryObjectFactory.createRule(null);
 		ICondition specimenCondition3 = QueryObjectFactory.createCondition(specimenClass
 				.getAttributes().get(0), RelationalOperator.NotEquals, SpecimenExpression3Values);
 		specimenRule3.addCondition(specimenCondition3);
@@ -400,8 +399,7 @@ public class QueryGeneratorMock
 		query.setConstraints(constraints);
 
 		IExpression participantExpression = constraints.addExpression(participantClass);
-		participantExpression.addOperand(createParticipantRule2(participantClass,
-				participantExpression));
+		participantExpression.addOperand(createParticipantRule2(participantClass));
 
 		return query;
 	}
@@ -458,7 +456,7 @@ public class QueryGeneratorMock
 	{
 		List<ICondition> conditions = new ArrayList<ICondition>();
 		conditions.add(createParticipantMedicalIdentifierCondition1(participantMedicalId));
-		IRule rule = QueryObjectFactory.createRule(conditions, containingExpression);
+		IRule rule = QueryObjectFactory.createRule(conditions);
 		return rule;
 	}
 
@@ -519,7 +517,7 @@ public class QueryGeneratorMock
 
 			// creating expression for Participant.
 			IExpression participantExpression = constraints.addExpression(participantClass);
-			IRule participantRule = QueryObjectFactory.createRule(participantExpression);
+			IRule participantRule = QueryObjectFactory.createRule(null);
 			List<String> participantValues = new ArrayList<String>();
 			participantValues.add("s");
 			ICondition ParticipantCondition = QueryObjectFactory.createCondition(participantClass
@@ -575,7 +573,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule1Values);
-			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
@@ -586,7 +584,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule2Values);
-			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule2.addCondition(specimenExpression1Rule2Condition1);
 			specimenExpression1.addOperand(orConnetor, specimenExpression1Rule2);
 
@@ -688,7 +686,7 @@ public class QueryGeneratorMock
 					.getAttribute(EntityManagerMock.SITE_NAME, "name"), siteClass);
 			ICondition siteExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
 					siteNameAttribute1, RelationalOperator.Equals, siteExpression1Rule1Values);
-			IRule siteExpression1Rule1 = QueryObjectFactory.createRule(siteExpression1);
+			IRule siteExpression1Rule1 = QueryObjectFactory.createRule(null);
 			siteExpression1Rule1.addCondition(siteExpression1Rule1Condition1);
 			siteExpression1.addOperand(siteExpression1Rule1);
 
@@ -699,7 +697,7 @@ public class QueryGeneratorMock
 					.getAttribute(EntityManagerMock.SITE_NAME, "name"), siteClass);
 			ICondition siteExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
 					siteNameAttribute2, RelationalOperator.Equals, siteExpression1Rule2Values);
-			IRule siteExpression1Rule2 = QueryObjectFactory.createRule(siteExpression1);
+			IRule siteExpression1Rule2 = QueryObjectFactory.createRule(null);
 			siteExpression1Rule2.addCondition(siteExpression1Rule2Condition1);
 			siteExpression1.addOperand(orConnetor, siteExpression1Rule2);
 
@@ -723,7 +721,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule1Values);
-			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
@@ -732,7 +730,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule2Values);
-			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule2.addCondition(specimenExpression1Rule2Condition1);
 			specimenExpression1.addOperand(orConnetor, specimenExpression1Rule2);
 
@@ -820,7 +818,7 @@ public class QueryGeneratorMock
 							.createAssociation(cprAndSpgAssociation));
 
 			IRule specimenCollectionGroupExpression1Rule1 = QueryObjectFactory
-					.createRule(specimenCollectionGroupExpression1);
+					.createRule(null);
 			List<String> specimenCollectionGroupExpression1Rule1Values = new ArrayList<String>();
 			specimenCollectionGroupExpression1Rule1Values.add("New Diagnosis");
 			ICondition specimenCollectionGroupExpression1Rule1Condition = QueryObjectFactory
@@ -851,7 +849,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule1Values);
-			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
@@ -860,7 +858,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule2Values);
-			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule2.addCondition(specimenExpression1Rule2Condition1);
 			specimenExpression1.addOperand(orConnector, specimenExpression1Rule2);
 
@@ -879,7 +877,7 @@ public class QueryGeneratorMock
 							.createAssociation(cprAndSpgAssociation));
 
 			IRule specimenCollectionGroupExpression2Rule1 = QueryObjectFactory
-					.createRule(specimenCollectionGroupExpression2);
+					.createRule(null);
 			List<String> specimenCollectionGroupExpression2Rule1Values = new ArrayList<String>();
 			specimenCollectionGroupExpression2Rule1Values.add("Post-Operative");
 			ICondition specimenCollectionGroupExpression2Rule1Condition = QueryObjectFactory
@@ -907,7 +905,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression2Rule1Values);
-			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(specimenExpression2);
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
 			specimenExpression2.addOperand(specimenExpression2Rule1);
 
@@ -917,7 +915,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression2Rule2Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression2Rule2Values);
-			IRule specimenExpression2Rule2 = QueryObjectFactory.createRule(specimenExpression2);
+			IRule specimenExpression2Rule2 = QueryObjectFactory.createRule(null);
 			specimenExpression2Rule2.addCondition(specimenExpression2Rule2Condition1);
 			specimenExpression2.addOperand(orConnector, specimenExpression2Rule2);
 
@@ -1015,7 +1013,7 @@ public class QueryGeneratorMock
 					.createCondition(clinicalStatusAttribute1, RelationalOperator.Equals,
 							specimenCollectionGroupExpression1Rule1Values);
 			IRule specimenCollectionGroupExpression1Rule1 = QueryObjectFactory
-					.createRule(specimenCollectionGroupExpression1);
+					.createRule(null);
 			specimenCollectionGroupExpression1Rule1
 					.addCondition(specimenCollectionGroupExpression1Rule1Condition1);
 			specimenCollectionGroupExpression1.addOperand(specimenCollectionGroupExpression1Rule1);
@@ -1041,7 +1039,7 @@ public class QueryGeneratorMock
 					specimenAttributeType, RelationalOperator.Equals,
 					scg1SpecimenExpression1Rule1Values);
 			IRule scg1SpecimenExpression1Rule1 = QueryObjectFactory
-					.createRule(scg1SpecimenExpression1);
+					.createRule(null);
 			scg1SpecimenExpression1Rule1.addCondition(scg1SpecimenExpression1Rule1Condition1);
 			scg1SpecimenExpression1.addOperand(scg1SpecimenExpression1Rule1);
 
@@ -1061,7 +1059,7 @@ public class QueryGeneratorMock
 					specimenAttributeType, RelationalOperator.Equals,
 					scg1SpecimenExpression2Rule1Values);
 			IRule scg1SpecimenExpression2Rule1 = QueryObjectFactory
-					.createRule(scg1SpecimenExpression2);
+					.createRule(null);
 			scg1SpecimenExpression2Rule1.addCondition(scg1SpecimenExpression2Rule1Condition1);
 			scg1SpecimenExpression2.addOperand(scg1SpecimenExpression2Rule1);
 
@@ -1083,7 +1081,7 @@ public class QueryGeneratorMock
 					.createCondition(clinicalStatusAttribute1, RelationalOperator.Equals,
 							specimenCollectionGroupExpression2Rule1Values);
 			IRule specimenCollectionGroupExpression2Rule1 = QueryObjectFactory
-					.createRule(specimenCollectionGroupExpression2);
+					.createRule(null);
 			specimenCollectionGroupExpression2Rule1
 					.addCondition(specimenCollectionGroupExpression2Rule1Condition1);
 			specimenCollectionGroupExpression2.addOperand(specimenCollectionGroupExpression2Rule1);
@@ -1109,7 +1107,7 @@ public class QueryGeneratorMock
 					specimenAttributeType, RelationalOperator.Equals,
 					scg2SpecimenExpression1Rule1Values);
 			IRule scg2SpecimenExpression1Rule1 = QueryObjectFactory
-					.createRule(scg2SpecimenExpression1);
+					.createRule(null);
 			scg2SpecimenExpression1Rule1.addCondition(scg2SpecimenExpression1Rule1Condition1);
 			scg2SpecimenExpression1.addOperand(scg2SpecimenExpression1Rule1);
 
@@ -1129,7 +1127,7 @@ public class QueryGeneratorMock
 					specimenAttributeType, RelationalOperator.Equals,
 					scg2SpecimenExpression2Rule1Values);
 			IRule scg2SpecimenExpression2Rule1 = QueryObjectFactory
-					.createRule(scg2SpecimenExpression2);
+					.createRule(null);
 			scg2SpecimenExpression2Rule1.addCondition(scg2SpecimenExpression2Rule1Condition1);
 			scg2SpecimenExpression2.addOperand(scg2SpecimenExpression2Rule1);
 		}
@@ -1227,7 +1225,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule1Values);
-			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
@@ -1250,7 +1248,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression2Rule1Values);
-			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(specimenExpression2);
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
 			specimenExpression2.addOperand(specimenExpression2Rule1);
 		}
@@ -1347,7 +1345,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
 					specimenAttributeType, RelationalOperator.Equals,
 					specimenExpression1Rule1Values);
-			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(specimenExpression1);
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
@@ -1370,7 +1368,7 @@ public class QueryGeneratorMock
 			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
 					childSpecimenAttributeType, RelationalOperator.Equals,
 					specimenExpression2Rule1Values);
-			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(specimenExpression2);
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
 			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
 			specimenExpression2.addOperand(specimenExpression2Rule1);
 

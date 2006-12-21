@@ -7,12 +7,20 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 19-Oct-2006 16.12.04 PM
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
+import edu.wustl.common.querysuite.queryobject.DataType;
+import edu.wustl.common.querysuite.queryobject.IAttribute;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
+import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 
 public class ExpressionTestCase extends TestCase
 {
@@ -44,29 +52,50 @@ public class ExpressionTestCase extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		expr = new Expression();
-		a = QueryObjectFactory.createRule(null);
+		IConstraints constraints = QueryObjectFactory.createConstraints();
+		
+		expr = constraints.addExpression(null);
+		a = QueryObjectFactory.createRule(createCondition("a"));
 		expr.addOperand(a);
 
-		b = QueryObjectFactory.createRule(null);
+		b = QueryObjectFactory.createRule(createCondition("b"));
 		orCondB = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 		expr.addOperand(orCondB, b);
 
-		c = QueryObjectFactory.createRule(null);
+		c = QueryObjectFactory.createRule(createCondition("c"));
 		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
 		expr.addOperand(andCond, c);
 
-		expr2 = new Expression();
-		d = QueryObjectFactory.createRule(null);
+		expr2 = constraints.addExpression(null);
+		d = QueryObjectFactory.createRule(createCondition("d"));
 		expr2.addOperand(d);
 
-		e = QueryObjectFactory.createRule(null);
+		e = QueryObjectFactory.createRule(createCondition("e"));
 		orCondE = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 		expr2.addOperand(orCondE, e);
 		
 		unknownCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.Unknown);
 	}
 
+	/**
+	 * To create dummy Condition from the given name parameters as [name = 'name']
+	 * @param name the name of the attribute & value.
+	 * @return the List containing one ICondition object. 
+	 */
+	private List<ICondition> createCondition(String name)
+	{
+		List<ICondition> conditions = new ArrayList<ICondition>();
+		IAttribute attribute = QueryObjectFactory.createAttribute();
+		attribute.setAttributeName(name);
+		attribute.setDataType(DataType.String);
+		
+		List<String> values = new ArrayList<String>();
+		values.add(name);
+		ICondition condition = QueryObjectFactory.createCondition(attribute, RelationalOperator.Equals, values);
+		
+		conditions.add(condition);
+		return conditions;
+	}
 	/**
 	 * @see junit.framework.TestCase#tearDown()
 	 */
