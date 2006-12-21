@@ -152,6 +152,11 @@ public class QueryObjectFactory
 	{
 		return new Rule(conditions);
 	}
+	
+	public static IRule createRule()
+	{
+		return new Rule(new ArrayList<ICondition>());
+	}
 
 	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
 			IClass rightClass, String roleName, String revereseRoleName, boolean bidirectional)
