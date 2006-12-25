@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
-import edu.wustl.common.querysuite.queryobject.IAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 
@@ -26,14 +26,10 @@ public class JoinGraphTestCase extends TestCase
 	IExpressionId expId4 = QueryObjectFactory.createExpressionId(4);
 	IExpressionId expId5 = QueryObjectFactory.createExpressionId(5);
 
-	IAssociation association12 = QueryObjectFactory.createIntraModelAssociation(null, null, "", "",
-			false);
-	IAssociation association13 = QueryObjectFactory.createIntraModelAssociation(null, null, "", "",
-			false);
-	IAssociation association14 = QueryObjectFactory.createIntraModelAssociation(null, null, "", "",
-			false);
-	IAssociation association25 = QueryObjectFactory.createIntraModelAssociation(null, null, "", "",
-			false);
+	IAssociation association12 = QueryObjectFactory.createIntraModelAssociation(null);
+	IAssociation association13 = QueryObjectFactory.createIntraModelAssociation(null);
+	IAssociation association14 = QueryObjectFactory.createIntraModelAssociation(null);
+	IAssociation association25 = QueryObjectFactory.createIntraModelAssociation(null);
 
 	/**
 	 * @see junit.framework.TestCase#setUp()
@@ -63,8 +59,7 @@ public class JoinGraphTestCase extends TestCase
 	public void testputAssociation1()
 	{
 		IExpressionId expId6 = QueryObjectFactory.createExpressionId(6);
-		IAssociation association16 = QueryObjectFactory.createIntraModelAssociation(null, null, "",
-				"", false);
+		IAssociation association16 = QueryObjectFactory.createIntraModelAssociation(null);
 		try
 		{
 			IAssociation newAssociation = joinGraph.putAssociation(expId1, expId6, association16);
@@ -82,8 +77,7 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testputAssociation2()
 	{
-		IAssociation newAssociation12 = QueryObjectFactory.createIntraModelAssociation(null, null,
-				"", "", false);
+		IAssociation newAssociation12 = QueryObjectFactory.createIntraModelAssociation(null);
 		try
 		{
 			IAssociation oldAssociation = joinGraph
@@ -113,8 +107,7 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testputAssociation3()
 	{
-		IAssociation association51 = QueryObjectFactory.createIntraModelAssociation(null, null, "",
-				"", false);
+		IAssociation association51 = QueryObjectFactory.createIntraModelAssociation(null);
 		try
 		{
 			IAssociation newAssociation = joinGraph.putAssociation(expId5, expId1, association51);
@@ -136,8 +129,7 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testputAssociation4()
 	{
-		IAssociation association35 = QueryObjectFactory.createIntraModelAssociation(null, null, "",
-				"", false);
+		IAssociation association35 = QueryObjectFactory.createIntraModelAssociation(null);
 		try
 		{
 			IAssociation newAssociation = joinGraph.putAssociation(expId3, expId5, association35);
@@ -161,8 +153,7 @@ public class JoinGraphTestCase extends TestCase
 	 */
 	public void testputAssociation5()
 	{
-		IAssociation association21 = QueryObjectFactory.createIntraModelAssociation(null, null, "",
-				"", false);
+		IAssociation association21 = QueryObjectFactory.createIntraModelAssociation(null);
 		assertTrue("Expected true value from removeAssociation method, for existing edge!!!",
 				joinGraph.removeAssociation(expId1, expId2));
 

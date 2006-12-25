@@ -5,17 +5,18 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @author Mandar Shidhore
  * @version 1.0
  * @created 12-Oct-2006 11.12.04 AM
+ * Class implementation for IExpression.
  */
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
+import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.util.global.Constants;
@@ -25,7 +26,7 @@ public class Expression implements IExpression
 
 	public static final int NO_LOGICAL_CONNECTOR = -1;
 	public static final int BOTH_LOGICAL_CONNECTOR = -2;
-	
+
 	private static final long serialVersionUID = 1426555905287966634L;
 
 	private List<IExpressionOperand> expressionOperands = new ArrayList<IExpressionOperand>();
@@ -34,35 +35,54 @@ public class Expression implements IExpression
 
 	private IExpressionId expressionId;
 
-	private IFunctionalClass functionalClass;
+	private IConstraintEntity constraintEntity;
 
 	/**
-	 * @param functionalClass
+	 * 
+	 * @param constraintEntity The reference to the Constraint Entity associated with this class.
+	 * @param expressionId The Expression Id for this Expression.
 	 */
-	public Expression(IFunctionalClass functionalClass, int expressionId)
+	public Expression(IConstraintEntity constraintEntity, int expressionId)
 	{
-		this.functionalClass = functionalClass;
+		this.constraintEntity = constraintEntity;
 		this.expressionId = new ExpressionId(expressionId);
 	}
 
+	/**
+	 * Default Constructor, only required for junit testcases.
+	 *
+	 */
 	Expression()
 	{
 
 	}
 
-	public Expression(IFunctionalClass functionalClass,
+	/**
+	 * 
+	 * @param constraintEntity The reference to constraint Entity
+	 * @param expressionOperands List of all ExpressionOperand
+	 * @param logicalConnectors List of all Logical connectors joining Expression operands.
+	 * @param expressionId The expression for this Expression.
+	 */
+	public Expression(IConstraintEntity constraintEntity,
 			List<IExpressionOperand> expressionOperands, List<ILogicalConnector> logicalConnectors,
 			IExpressionId expressionId)
 	{
-		this.functionalClass = functionalClass;
+		this.constraintEntity = constraintEntity;
 		if (expressionOperands != null)
+		{
 			this.expressionOperands = expressionOperands;
+		}
 		if (logicalConnectors != null)
+		{
 			this.logicalConnectors = logicalConnectors;
+		}
 		this.expressionId = expressionId;
 	}
 
 	/**
+	 * @param operand the operand to be removed.
+	 * @return true if the operand was found; false otherwise.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeOperand(edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
 	public boolean removeOperand(IExpressionOperand operand)
@@ -72,6 +92,8 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @param operand The operand to be added in Expression.
+	 * @return the reference of the operand added.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
 	public IExpressionOperand addOperand(IExpressionOperand operand)
@@ -79,11 +101,13 @@ public class Expression implements IExpression
 		expressionOperands.add(operand);
 		setContainingExpressionForRule(operand);
 		if (expressionOperands.size() != 1)
+		{
 			logicalConnectors.add(QueryObjectFactory
 					.createLogicalConnector(LogicalOperator.Unknown));
+		}
 		return operand;
 	}
-	
+
 	/**
 	 * To set the containing Expression in case when the operand is Rule.
 	 * @param operand The reference to IExpressionOperand.
@@ -96,7 +120,10 @@ public class Expression implements IExpression
 			rule.setContainingExpression(this);
 		}
 	}
+
 	/**
+	 * @param logicalConnector the Logical connector by which the operand will be connected to the operand behind it.
+	 * @param operand The operand to be added in Expression.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.ILogicalConnector,
 	 *      edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
@@ -108,6 +135,10 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @param index The index at which the operand to be inserted.
+	 * @param logicalConnector the Logical connector by which the operand will be connected to the operand behind it.
+	 * @param operand The operand to be added in Expression.
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size()).
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(int, edu.wustl.common.querysuite.queryobject.ILogicalConnector, edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
 	public void addOperand(int index, ILogicalConnector logicalConnector, IExpressionOperand operand)
@@ -125,6 +156,9 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @param index The index at which the operand to be inserted.
+	 * @param operand The operand to be added in Expression.
+	 * @param logicalConnector the Logical connector by which the operand will be connected operand in front of it.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(int, edu.wustl.common.querysuite.queryobject.IExpressionOperand, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
 	 */
 	public void addOperand(int index, IExpressionOperand operand, ILogicalConnector logicalConnector)
@@ -142,6 +176,7 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * calls addParantheses(0, size-1) 
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addParantheses()
 	 */
 	public void addParantheses()
@@ -150,6 +185,8 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand. 
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addParantheses(int,
 	 *      int)
 	 */
@@ -162,6 +199,7 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * calls removeParantheses(0, size-1) 
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeParantheses()
 	 */
 	public void removeParantheses()
@@ -171,6 +209,9 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * Decrements nesting num of all the logical connectors in the expression between the specified operands' indexes, both inclusive. 
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand. 
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeParantheses(int, int)
 	 */
 	public void removeParantheses(int leftOperandIndex, int rightOperandIndex)
@@ -184,6 +225,7 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @return the Expression Id of this Expression.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getExpressionId()
 	 */
 	public IExpressionId getExpressionId()
@@ -192,14 +234,18 @@ public class Expression implements IExpression
 	}
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getFunctionalClass()
+	 * @return The Constraint Entity reference associated with this Expression.
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getConstraintEntity()
 	 */
-	public IFunctionalClass getFunctionalClass()
+	public IConstraintEntity getConstraintEntity()
 	{
-		return functionalClass;
+		return constraintEntity;
 	}
 
 	/**
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand.
+	 * @return The reference to logical connector between who operands.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getLogicalConnector(int,
 	 *      int)
 	 */
@@ -218,11 +264,13 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @param index the index of operand.
+	 * @return The operand identified by the given index.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#getOperand(int)
 	 */
-	public IExpressionOperand getOperand(int i)
+	public IExpressionOperand getOperand(int index)
 	{
-		return expressionOperands.get(i);
+		return expressionOperands.get(index);
 	}
 
 	/**
@@ -248,8 +296,9 @@ public class Expression implements IExpression
 	 */
 
 	/**
-	 * @param leftOperandIndex,
-	 *            rightOperandIndex, logicalConnector
+	 * @param leftOperandIndex The index of the left operand.
+	 * @param rightOperandIndex The index of the right operand.
+	 * @param logicalConnector the logical connector between let & Right operand.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setLogicalConnector(int,
 	 *      int, edu.wustl.common.querysuite.queryobject.ILogicalConnector)
 	 */
@@ -268,6 +317,8 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @param index the expected index of the operand in he Expression
+	 * @param operand The operand to be added in the Expression.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setOperand(int,IExpressionOperand)
 	 */
 	public void setOperand(int index, IExpressionOperand operand)
@@ -276,6 +327,7 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * @return the no. of operands in the expression.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#numberOfOperands()
 	 */
 	public int numberOfOperands()
@@ -284,6 +336,8 @@ public class Expression implements IExpression
 	}
 
 	/**
+	 * To get the HashCode for the object. It will be calculated based on expression Id.
+	 * @return The hash code value for the object.
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -291,46 +345,59 @@ public class Expression implements IExpression
 	{
 		int hash = 1;
 		if (expressionId != null)
+		{
 			hash = hash * Constants.HASH_PRIME + expressionId.hashCode();
-
+		}
 		return hash;
 	}
 
 	/**
+	 * To check whether two objects are equal.
+	 * @param obj reference to the object to be checked for equality.
+	 * @return true if attribute, expression id of both Expressions are equal.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
+		}
 
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			Expression expression = (Expression) obj;
 			if (this.expressionId != null & this.expressionId.equals(expression.expressionId))
+			{
 				return true;
+			}
 		}
 		return false;
 	}
 
 	/**
+	 * @return String representation of Expression object in the form: [ConstraintEntity : expressionId]
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString()
 	{
-		return "[" + functionalClass + ":" + expressionId + "]";
+		return "[" + constraintEntity + ":" + expressionId + "]";
 	}
 
 	/**
+	 * @param index the index of operand to be removed.
+	 * @return the removed operand.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#removeOperand(int)
 	 */
 	public IExpressionOperand removeOperand(int index)
 	{
 
 		if (index == -1)
+		{
 			return null;
+		}
 		// A and (B or C) remove C => A and B
 		// A and (B or C) remove B => A and C
 		// A and (B or C) remove A => B or C
@@ -340,15 +407,21 @@ public class Expression implements IExpression
 
 		expressionOperands.remove(index);
 		if (connectorIndex == Expression.BOTH_LOGICAL_CONNECTOR) // if both adjacent connectors have same nesting no. then remove connector following the operand.
+		{
 			connectorIndex = index;
+		}
 
 		if (connectorIndex != Expression.NO_LOGICAL_CONNECTOR)
+		{
 			logicalConnectors.remove(connectorIndex);
+		}
 
 		return operand;
 	}
 
 	/**
+	 * @param operand the reference to IExpressionOperand, to be searched in the Expression.
+	 * @return The index of the given Expression operand.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#indexOfOperand(edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
 	public int indexOfOperand(IExpressionOperand operand)
@@ -359,7 +432,7 @@ public class Expression implements IExpression
 	/**
 	 * To get the adjacent logical connector with the greater nesting number.
 	 * @param operand The reference to IExpressionOperand of which the Logical connector to search.
-	 * @return index of adjuscent Logical connector with greater nesting number. 
+	 * @return index of adjacent Logical connector with greater nesting number. 
 	 * 		Expression.NO_LOGICAL_CONNECTOR if operand not found or there is no logical connector present in the Expression.
 	 * 		Expression.BOTH_LOGICAL_CONNECTOR if both adjacent connectors are of same nesting number
 	 */
@@ -370,7 +443,9 @@ public class Expression implements IExpression
 		if (index != -1)
 		{
 			if (expressionOperands.size() == 1) // if there is only one Expression then there is no logical connector associated with it.
+			{
 				index = Expression.NO_LOGICAL_CONNECTOR;
+			}
 			else if (index == expressionOperands.size() - 1) // if expression is last operand then index of last connector will be returned.
 			{
 				index = index - 1;
@@ -392,14 +467,16 @@ public class Expression implements IExpression
 			}
 		}
 		else
+		{
 			index = Expression.NO_LOGICAL_CONNECTOR;
-		
+		}
+
 		return index;
 	}
 
 	/**
 	 * To check whether the child Expression is pseudo anded with the other expression.
-	 * The given expression is pseudo Anded if and only if it has atleast one Expression having Equal Functional class as that of given Expression's & logical connector between then should be AND. 
+	 * The given expression is pseudo Anded if and only if it has atleast one Expression having Equal Constraint Entity as that of given Expression's & logical connector between then should be AND. 
 	 * @param expressionId The child Expression Id.
 	 * @param constraints The reference to Constraints, which is having reference to this Expression & the passed expressionId.
 	 * @return true if the given Expression is pseudoAnded with other Expression, else returns false.
@@ -408,7 +485,8 @@ public class Expression implements IExpression
 	public boolean isPseudoAnded(IExpressionId expressionId, IConstraints constraints)
 	{
 		int index = expressionOperands.indexOf(expressionId);
-		IExpression currentExpression = constraints.getExpression((IExpressionId)expressionOperands.get(index));
+		IExpression currentExpression = constraints
+				.getExpression((IExpressionId) expressionOperands.get(index));
 
 		if (index < -1)
 		{
@@ -418,7 +496,9 @@ public class Expression implements IExpression
 		int immediateOperandIndex = indexOfConnectorForOperand((IExpressionOperand) expressionId);
 
 		if (immediateOperandIndex == Expression.NO_LOGICAL_CONNECTOR) // there is no operand around this Expression.
+		{
 			return false;
+		}
 		else if (immediateOperandIndex == Expression.BOTH_LOGICAL_CONNECTOR) // both logical connector sorrounding this expression have same nesting no. need to check 'And' operator for both.
 		{
 			int preIndex = index - 1;
@@ -429,8 +509,8 @@ public class Expression implements IExpression
 					&& LogicalOperator.And.equals(getLogicalConnector(preIndex, index)
 							.getLogicalOperator()))
 			{
-				IExpression expression = constraints.getExpression((IExpressionId)operand);
-				return isHavingSameClass(currentExpression,expression);
+				IExpression expression = constraints.getExpression((IExpressionId) operand);
+				return isHavingSameClass(currentExpression, expression);
 			}
 
 			operand = expressionOperands.get(postindex);
@@ -438,8 +518,8 @@ public class Expression implements IExpression
 					&& LogicalOperator.And.equals(getLogicalConnector(index, postindex)
 							.getLogicalOperator()))
 			{
-				IExpression expression = constraints.getExpression((IExpressionId)operand);
-				return isHavingSameClass(currentExpression,expression);
+				IExpression expression = constraints.getExpression((IExpressionId) operand);
+				return isHavingSameClass(currentExpression, expression);
 			}
 		}
 		else
@@ -452,21 +532,22 @@ public class Expression implements IExpression
 				IExpressionOperand operand = expressionOperands.get(otherOperandIndex);
 				if (operand.isSubExpressionOperand())
 				{
-					IExpression expression = constraints.getExpression((IExpressionId)operand);
-					return isHavingSameClass(currentExpression,expression);
+					IExpression expression = constraints.getExpression((IExpressionId) operand);
+					return isHavingSameClass(currentExpression, expression);
 				}
 			}
 		}
 		return false;
 	}
+
 	/**
-	 * To check wether the given 2 Expressions having equal FunctionalClass.
-	 * @param expression1
-	 * @param expression2
-	 * @return
+	 * To check wether the given 2 Expressions having equal Constraint Entity.
+	 * @param expression1 1st expression to check.
+	 * @param expression2 2nd expression to check.
+	 * @return true if both the expression have same ConstraintEntity.
 	 */
 	private boolean isHavingSameClass(IExpression expression1, IExpression expression2)
 	{
-		return expression1.getFunctionalClass().equals(expression2.getFunctionalClass());
+		return expression1.getConstraintEntity().equals(expression2.getConstraintEntity());
 	}
 }

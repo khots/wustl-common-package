@@ -39,6 +39,7 @@ public class LogicalConnector implements ILogicalConnector
 	}
 
 	/**
+	 * @return the reference to the Logical operator.
 	 * @see edu.wustl.common.querysuite.queryobject.ILogicalConnector#getLogicalOperator()
 	 */
 	public LogicalOperator getLogicalOperator()
@@ -47,6 +48,7 @@ public class LogicalConnector implements ILogicalConnector
 	}
 
 	/**
+	 * @return integer value, that represents no. of parantheses sorrounding this connector.
 	 * @see edu.wustl.common.querysuite.queryobject.ILogicalConnector#getNestingNumber()
 	 */
 	public int getNestingNumber()
@@ -55,7 +57,7 @@ public class LogicalConnector implements ILogicalConnector
 	}
 
 	/**
-	 * @param logicOperatorCode
+	 * @param logicOperatorCode The logical operator to set.
 	 * @see edu.wustl.common.querysuite.queryobject.ILogicalConnector#setLogicalOperator(edu.wustl.common.querysuite.queryobject.LogicalOperator)
 	 */
 	public void setLogicalOperator(LogicalOperator logicOperatorCode)

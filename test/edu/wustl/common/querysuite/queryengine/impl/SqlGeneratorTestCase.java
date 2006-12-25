@@ -9,11 +9,12 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.Entity;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
-import edu.wustl.common.querysuite.queryobject.IClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -30,14 +31,15 @@ public class SqlGeneratorTestCase extends TestCase
 {
 
 	SqlGenerator generator;
-
+	EntityManagerMock entityManager = new EntityManagerMock(); 
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception
 	{
-		generator = new SqlGenerator(new EntityManagerMock());
+		generator = new SqlGenerator();
 		super.setUp();
 	}
 
@@ -47,25 +49,26 @@ public class SqlGeneratorTestCase extends TestCase
 	 */
 	public void testParticpiantCondition()
 	{
-		IClass class1 = QueryGeneratorMock.createParticantClass();
-		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
-		ICondition condition1;
 		try
 		{
-			condition1 = QueryGeneratorMock.createParticipantCondition1(class1);
+			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstrainedEntity(participantEntity);
+			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
+			
+			ICondition condition1 = QueryGeneratorMock.createParticipantCondition1(participantEntity);
 			assertEquals("Participant_0.ACTIVITY_STATUS='Active'", generator.getSQL(condition1,
 					expression));
 
-			condition1 = QueryGeneratorMock.createParticipantCondition2(class1);
+			condition1 = QueryGeneratorMock.createParticipantCondition2(participantEntity);
 			assertEquals("Participant_0.IDENTIFIER in (1,2,3,4)", generator.getSQL(condition1,
 					expression));
 
-			condition1 = QueryGeneratorMock.createParticipantCondition3(class1);
+			condition1 = QueryGeneratorMock.createParticipantCondition3(participantEntity);
 			assertEquals(
 					"(Participant_0.BIRTH_DATE<='1-1-2000' And Participant_0.BIRTH_DATE>='1-2-2000')",
 					generator.getSQL(condition1, expression));
 
-			condition1 = QueryGeneratorMock.createParticipantCondition5(class1);
+			condition1 = QueryGeneratorMock.createParticipantCondition5(participantEntity);
 			assertEquals("Participant_0.ACTIVITY_STATUS like '%Active%'", generator.getSQL(
 					condition1, expression));
 		}
@@ -81,12 +84,15 @@ public class SqlGeneratorTestCase extends TestCase
 	 */
 	public void testParticpiantRule()
 	{
-		IClass class1 = QueryGeneratorMock.createParticantClass();
-		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
-		IRule rule = QueryGeneratorMock.createParticipantRule1(class1);
-		expression.addOperand(rule);
 		try
 		{
+			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstrainedEntity(participantEntity);
+			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
+		
+			IRule rule = QueryGeneratorMock.createParticipantRule1(participantEntity);
+			expression.addOperand(rule);
+		
 			assertEquals(
 					generator.getSQL(rule),
 					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<='1-1-2000' And Participant_0.BIRTH_DATE>='1-2-2000')");
@@ -103,11 +109,12 @@ public class SqlGeneratorTestCase extends TestCase
 	 */
 	public void testParticpiantExpression()
 	{
-		IClass class1 = QueryGeneratorMock.createParticantClass();
-		IExpression expression = QueryGeneratorMock.creatParticipantExpression1(class1);
-
 		try
 		{
+			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstrainedEntity(participantEntity);
+			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
+			
 			String SQL = generator.getWherePartSQL(expression, null, false);
 			//			System.out.println("testParticpiantExpression:"+ SQL);
 			assertEquals(
@@ -173,6 +180,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			assertTrue("Unexpected Expection!!!", false);
 		}
 	}
@@ -231,7 +239,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testScgQuery1:" + sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select SpecimenCollectionGroup_1.IDENTIFIER, SpecimenCollectionGroup_1.NAME, SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup_1.CLINICAL_STATUS, SpecimenCollectionGroup_1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) Where (SpecimenCollectionGroup_1.NAME like 'X%') Or(SpecimenCollectionGroup_1.IDENTIFIER = ANY(Select Specimen_2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_2 left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) where (Specimen_2.TYPE='RNA') Or(Specimen_3.TYPE='DNA'))) And(SpecimenCollectionGroup_1.IDENTIFIER = ANY(Select Specimen_2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_2 where Specimen_2.AVAILABLE=0)) Or(Specimen_2.TYPE!='DNA')",
+					"Select SpecimenCollectionGroup_1.IDENTIFIER, SpecimenCollectionGroup_1.NAME, SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup_1.CLINICAL_STATUS, SpecimenCollectionGroup_1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) Where (SpecimenCollectionGroup_1.NAME like 'X%') Or(SpecimenCollectionGroup_1.IDENTIFIER = ANY(Select Specimen_2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_2 left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) where (Specimen_2.TYPE='RNA') Or(Specimen_3.TYPE='DNA'))) And(SpecimenCollectionGroup_1.IDENTIFIER = ANY(Select Specimen_2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_2 where Specimen_2.AVAILABLE=1)) Or(Specimen_2.TYPE!='DNA')",
 					sql);
 		}
 		catch (Exception e)
@@ -262,7 +270,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testSampleQuery1:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant_1.FIRST_NAME like 's%') And((Specimen_4.TYPE='Fixed Tissue') Or(Specimen_4.TYPE='Fresh Tissue'))",
+					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant_1.LAST_NAME like 's%') And((Specimen_4.TYPE='Fixed Tissue') Or(Specimen_4.TYPE='Fresh Tissue'))",
 					sql);
 		}
 		catch (Exception e)
@@ -329,7 +337,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testSampleQuery3:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistr_2.IDENTIFIER = ANY(Select SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup_3 left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS='New Diagnosis') And((Specimen_4.TYPE='DNA') Or(Specimen_4.TYPE='Fresh Tissue')))) And(CollectionProtocolRegistr_2.IDENTIFIER = ANY(Select SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup_3 left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS='Post-Operative') And((Specimen_4.TYPE='Fixed Tissue') Or(Specimen_4.TYPE='Fixed Tissue'))))",
+					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (CollectionProtocolRegistr_2.IDENTIFIER = ANY(Select SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup_3 left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup_3.CLINICAL_STATUS='New Diagnosis') And((Specimen_4.TYPE='DNA') Or(Specimen_4.TYPE='Fresh Tissue')))) And(CollectionProtocolRegistr_2.IDENTIFIER = ANY(Select SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID From catissue_specimen_coll_group  SpecimenCollectionGroup_3 left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) where (SpecimenCollectionGroup_3.CLINICAL_STATUS='Post-Operative') And((Specimen_4.TYPE='Fixed Tissue') Or(Specimen_4.TYPE='Fixed Tissue'))))",
 					sql);
 		}
 		catch (Exception e)
@@ -404,7 +412,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			//			e.printStackTrace();
+			e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
@@ -450,18 +458,18 @@ public class SqlGeneratorTestCase extends TestCase
 	{
 		generator.aliasNameMap = new HashMap<String, String>();
 		generator.aliasAppenderMap = new HashMap<IExpressionId, Integer>();
-		EntityManagerMock enitytManager = new EntityManagerMock();
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		try
 		{
 			// Creating entity with name "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
-			Entity entityOne = (Entity) enitytManager
+			EntityInterface cprEntity = entityManager
 					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
-			IClass collectionProtocolRegClass = QueryObjectFactory.createClass(enitytManager
-					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME));
-			IExpression expressionOne = constraints.addExpression(collectionProtocolRegClass);
+			
+			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstrainedEntity(cprEntity);
+			
+			IExpression expressionOne = constraints.addExpression(cprConstraintEntity);
 			generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
-			String aliasNameExpected1 = generator.getAliasName(entityOne, expressionOne);
+			String aliasNameExpected1 = generator.getAliasName(expressionOne);
 			//			System.out.println(aliasNameExpected1);
 			assertTrue("The length of alias exceeds 30 characters!!!",
 					aliasNameExpected1.length() <= 30);
@@ -470,11 +478,9 @@ public class SqlGeneratorTestCase extends TestCase
 
 			// Creating another entity with name "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
 			// because of different ExpressionId the alias will different.
-			Entity entityTwo = (Entity) enitytManager
-					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
-			IExpression expressionTwo = constraints.addExpression(collectionProtocolRegClass);
+			IExpression expressionTwo = constraints.addExpression(cprConstraintEntity);
 			generator.aliasAppenderMap.put(expressionTwo.getExpressionId(), new Integer(2));
-			String aliasNameExpected2 = generator.getAliasName(entityTwo, expressionTwo);
+			String aliasNameExpected2 = generator.getAliasName(expressionTwo);
 			//			System.out.println(aliasNameExpected2);
 			assertNotSame(
 					"getAliasName method returned same alias name for the classes having same ClassName but are different Alias Appender!!!",
@@ -506,13 +512,13 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			// Creating entity with name "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
-			Entity entityOne = (Entity) enitytManager
-					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
-			IClass collectionProtocolRegClass = QueryObjectFactory.createClass(enitytManager
-					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME));
-			IExpression expressionOne = constraints.addExpression(collectionProtocolRegClass);
+			EntityInterface cprEntity = entityManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+	
+			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstrainedEntity(cprEntity);
+	
+			IExpression expressionOne = constraints.addExpression(cprConstraintEntity);
 			generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
-			String aliasNameExpected1 = generator.getAliasName(entityOne, expressionOne);
+			String aliasNameExpected1 = generator.getAliasName(expressionOne);
 			//			System.out.println(aliasNameExpected1);
 			assertTrue("The length of alias exceeds 30 characters!!!",
 					aliasNameExpected1.length() <= 30);
@@ -524,9 +530,11 @@ public class SqlGeneratorTestCase extends TestCase
 			Entity entityThree = (Entity) enitytManager
 					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
 			entityThree.setName("CA" + entityThree.getName());
-			IExpression expressionThree = constraints.addExpression(collectionProtocolRegClass);
+			cprConstraintEntity = QueryObjectFactory.createConstrainedEntity(entityThree);
+			
+			IExpression expressionThree = constraints.addExpression(cprConstraintEntity);
 			generator.aliasAppenderMap.put(expressionThree.getExpressionId(), new Integer(1));
-			String aliasNameExpected2 = generator.getAliasName(entityThree, expressionThree);
+			String aliasNameExpected2 = generator.getAliasName(expressionThree);
 			//			System.out.println(aliasNameExpected2);
 			assertNotSame(
 					"getAliasName method returned same alias name for the classes having same ClassName but are different packages!!!",

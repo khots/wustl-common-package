@@ -16,12 +16,17 @@ public class ExpressionId implements IExpressionId
 	private static final long serialVersionUID = 2012640054952775498L;
 	private int id;
 
+	/**
+	 * 
+	 * @param id The id to be assigned.
+	 */
 	public ExpressionId(int id)
 	{
 		this.id = id;
 	}
 
 	/**
+	 * @return The integer value sassigned to this Expression id.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpressionId#getInt()
 	 */
 	public int getInt()
@@ -31,6 +36,7 @@ public class ExpressionId implements IExpressionId
 
 	/**
 	 * This method will return true value always.
+	 * @return true.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpressionOperand#isSubExpressionOperand()
 	 */
 	public boolean isSubExpressionOperand()
@@ -39,6 +45,8 @@ public class ExpressionId implements IExpressionId
 	}
 
 	/**
+	 * To get the HashCode for the object. It will be calculated based on expression Id.
+	 * @return The hash code value for the object.
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -51,24 +59,31 @@ public class ExpressionId implements IExpressionId
 	}
 	
 	/**
+	 * To check whether two objects are equal.
+	 * @param obj reference to the object to be checked for equality.
+	 * @return true if expression id of both objects are equal.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
 		if (this==obj)
+		{
 			return true;
-		
+		}
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			ExpressionId expressionId = (ExpressionId) obj;
 			if (this.id == expressionId.id)
+			{
 				return true;
+			}
 		}
 		return false;
 	}
 
 	/**
+	 * @return String representation of Expression Id object in the form: [ExpressionId: id]
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

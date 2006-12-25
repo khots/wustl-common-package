@@ -11,21 +11,30 @@ public interface IQuery extends IBaseQueryObject
 {
 
 	/**
-	 * @return the constraints
+	 * @return the reference to constraints 
 	 * @see IConstraints
 	 */
-	public IConstraints getConstraints();
+	IConstraints getConstraints();
 
-	public void setConstraints(IConstraints constraints);
+	/**
+	 * To set the constraints object.
+	 * @param constraints the constraints to set.
+	 */
+	void setConstraints(IConstraints constraints);
 
 	/**
 	 * All the attributes of all the classes are selected. Note that the "class"
 	 * here is IFunctionalClass, a cab2b specific user-desired subset of
 	 * attributes will be present in the IFunctionalClass. The output classes
 	 * form a tree where the edges are associations.
+	 * @return the reference to the root noe of the output tree.
 	 * @see IOutputTreeNode
 	 */
-	public IOutputTreeNode getRootOutputClass();
+	IOutputTreeNode getRootOutputClass();
 
-	public void setRootOutputClass(IOutputTreeNode root);
+	/**
+	 * To set the output tree for the Query result view.
+	 * @param root The reference to the root noe of the output tree.
+	 */
+	void setRootOutputClass(IOutputTreeNode root);
 }

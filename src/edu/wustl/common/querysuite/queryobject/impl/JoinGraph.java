@@ -12,7 +12,7 @@ import java.util.List;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
-import edu.wustl.common.querysuite.queryobject.IAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.util.Graph;

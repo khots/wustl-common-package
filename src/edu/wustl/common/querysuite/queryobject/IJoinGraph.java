@@ -5,7 +5,7 @@ import java.util.List;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
-
+import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 /**
  * A rooted, directed acyclic graph with expressions as vertices, and
  * associations as edges.<br>

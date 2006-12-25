@@ -307,11 +307,15 @@
 			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
 			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/*.java"/>
 			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/associations/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/associations/impl/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/path/*.java"/>
+			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/path/impl/*.java"/>
 			<!-- Adding junit test packages for querysuite-->
 			<!--fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/*.java"/-->
-			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
+			<!--fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
 			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
-			<fileset dir="${test.dir}" includes="**/edu/wustl/common/util/*.java"/>
+			<fileset dir="${test.dir}" includes="**/edu/wustl/common/util/*.java"/-->
 		</checkstyle>
 
 	    <style in="${checkstyle.unformatted.report}" out="${checkstyle.formatted.report}" style="${checkstyle.report.formatter}"/>
