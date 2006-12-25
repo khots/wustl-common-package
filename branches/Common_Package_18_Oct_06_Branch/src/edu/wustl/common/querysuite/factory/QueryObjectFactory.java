@@ -2,45 +2,28 @@
 package edu.wustl.common.querysuite.factory;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation;
-import edu.common.dynamicextensions.domain.LongAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.common.dynamicextensions.util.global.Constants;
-import edu.wustl.common.querysuite.category.ICategory;
-import edu.wustl.common.querysuite.queryobject.DataType;
-import edu.wustl.common.querysuite.queryobject.IAssociation;
-import edu.wustl.common.querysuite.queryobject.IAttribute;
-import edu.wustl.common.querysuite.queryobject.IClass;
+import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
-import edu.wustl.common.querysuite.queryobject.IInterModelAssociation;
-import edu.wustl.common.querysuite.queryobject.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import edu.wustl.common.querysuite.queryobject.impl.Attribute;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
+import edu.wustl.common.querysuite.queryobject.impl.ConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
-import edu.wustl.common.querysuite.queryobject.impl.FunctionalClass;
-import edu.wustl.common.querysuite.queryobject.impl.InterModelAssociation;
-import edu.wustl.common.querysuite.queryobject.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
@@ -54,73 +37,68 @@ import edu.wustl.common.querysuite.queryobject.impl.Rule;
 public class QueryObjectFactory
 {
 
-	public QueryObjectFactory()
-	{
-
-	}
-
-	public void finalize() throws Throwable
-	{
-
-	}
-
+	/**
+	 * To instanciate Logical connector.
+	 * @param logicalOperator The Logical operator that connector will hold.  
+	 * @return The instance of LogicalConnector class.
+	 */
 	public static ILogicalConnector createLogicalConnector(LogicalOperator logicalOperator)
 	{
 		return new LogicalConnector(logicalOperator);
 	}
 
+	/**
+	 * 
+	 * To instanciate Logical connector.
+	 * @param logicalOperator The Logical operator that connector will hold.  
+	 * @param nestingNumber The nesting number, that represents no. of parantheses sorrounding this connector.
+	 * @return The instance of LogicalConnector class.
+	 */
 	public static ILogicalConnector createLogicalConnector(LogicalOperator logicalOperator,
 			int nestingNumber)
 	{
 		return new LogicalConnector(logicalOperator, nestingNumber);
 	}
 
-	public static IAttribute createAttribute(DataType dataType, IClass umlCLass,
-			String attributeName)
-	{
-		return new Attribute(dataType, umlCLass, attributeName);
-	}
-
-	public static IAttribute createAttribute()
-	{
-		return new Attribute(null, null, null);
-	}
-
-	public static IClass createClass()
-	{
-		return createClass(null, null, null, false);
-	}
-
-	public static IClass createClass(String fullQualifiedName, List<IAttribute> attributes,
-			ICategory category, boolean isVisible)
-	{
-		return new edu.wustl.common.querysuite.queryobject.impl.Class(fullQualifiedName,
-				attributes, category, isVisible);
-	}
-
-	public static ICondition createCondition(IAttribute attribute,
+	/**
+	 * To instanciate Condition object.
+	 * @param attribute The reference to Dynamic Extension attribute on which condition to be created.
+	 * @param relationalOperator The relational operator between attribute & values.
+	 * @param values The List of String representing values of the condition.
+	 * @return The instance of the Condition class.
+	 */
+	public static ICondition createCondition(AttributeInterface attribute,
 			RelationalOperator relationalOperator, List<String> values)
 	{
 		return new Condition(attribute, relationalOperator, values);
 	}
 
+	/**
+	 * To create an empty Condition.
+	 * @return The instance of the Condition class.
+	 */
 	public static ICondition createCondition()
 	{
 		return new Condition(null, null, null);
 	}
 
-	//	public static IExpression createExpression(IFunctionalClass functionalClass,
+	//	public static IExpression createExpression(IFunctionalClass outputEntity,
 	//			List<IExpressionOperand> expressionOperands, List<ILogicalConnector> logicalConnectors,
 	//			IExpressionId expressionId)
 	//	{
-	//		return new Expression(functionalClass, expressionOperands, logicalConnectors, expressionId);
+	//		return new Expression(outputEntity, expressionOperands, logicalConnectors, expressionId);
 	//	}
 	//
-	//	public static IExpression createExpression(IFunctionalClass functionalClass)
+	//	public static IExpression createExpression(IFunctionalClass outputEntity)
 	//	{
-	//		return new Expression(functionalClass, null, null, null);
+	//		return new Expression(outputEntity, null, null, null);
 	//	}
 
+	/**
+	 * To instanciate Expression Id object.
+	 * @param id The id to set.
+	 * @return The reference to the ExpressionId object.
+	 */
 	public static IExpressionId createExpressionId(int id)
 	{
 		return new ExpressionId(id);
@@ -132,233 +110,73 @@ public class QueryObjectFactory
 	//        return null;
 	//	}
 
+	/**
+	 * To instanciate Constraints class object.
+	 * @return The object of Constraints Class.
+	 */
 	public static IConstraints createConstraints()
 	{
 		return new Constraints();
 	}
 
-	public static IFunctionalClass createFunctionalClass()
-	{
-		return new FunctionalClass();
-	}
-
-	public static IFunctionalClass createFunctionalClass(List<IAttribute> attributes,
-			ICategory category)
-	{
-		return new FunctionalClass(attributes, category);
-	}
-
+	/**
+	 * To instanciate object of Rule class, with the given condition list.
+	 * @param conditions The list of Conditions to set.
+	 * @return The object of class Rule.
+	 */
 	public static IRule createRule(List<ICondition> conditions)
 	{
 		return new Rule(conditions);
 	}
-	
+
+	/**
+	 * To instanciate object of Rule class, with no conditions. 
+	 * @return The object of class Rule.
+	 */
 	public static IRule createRule()
 	{
 		return new Rule(new ArrayList<ICondition>());
 	}
 
-	public static IIntraModelAssociation createIntraModelAssociation(IClass leftClass,
-			IClass rightClass, String roleName, String revereseRoleName, boolean bidirectional)
+	/**
+	 * To instanciate object of IntraModelAssociation class.
+	 * @param association The reference to the dynamic Extension associated with this object.
+	 * @return The object of class IntraModelAssociation.
+	 */
+	public static IIntraModelAssociation createIntraModelAssociation(
+			AssociationInterface association)
 	{
-		return new IntraModelAssociation(leftClass, rightClass, roleName, revereseRoleName,
-				bidirectional);
+		return new IntraModelAssociation(association);
 	}
 
-	public static IInterModelAssociation createInterModelAssociation(IAttribute sourceAttribute,
-			IAttribute targetAttribute)
-	{
-		return new InterModelAssociation(sourceAttribute, targetAttribute);
-	}
-
+	/**
+	 * To create empty Query object.
+	 * @return the reference to the Query object.
+	 */
 	public static IQuery createQuery()
 	{
 		return new Query();
 	}
 
 	/**
-	 * Creates the query Class object from dynamic extension's Entity object.
-	 * The attributes for the class are set and need not to be set explicitly.
-	 * @param entity The entity object.
-	 * @return the Class object from Entity object.
-	 */
-	public static IClass createClass(EntityInterface entity)
-	{
-		IClass classObj = createClass();
-		//        classObj.setAttributes(createAttributes((List)entity.getAttributeCollection()));
-		classObj.setFullyQualifiedName(entity.getName());
-
-		Collection col = entity.getAttributeCollection();
-
-		for (Iterator iter = col.iterator(); iter.hasNext();)
-		{
-			AttributeInterface element = (AttributeInterface) iter.next();
-			IAttribute queryAttribute = createAttributeForClass(element, classObj);
-			classObj.addAttribute(queryAttribute);
-		}
-		return classObj;
-	}
-
-	/**
-	 * Create IAttribute instance for the given Dynamic Extenstion attribute & set its class as QueryClass.
-	 * @param attribute The dynamic extension Attribute object
-	 * @param queryClass The reference to IClass in which this attribute is expected to present.
-	 * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
-	 */
-	private static IAttribute createAttributeForClass(AttributeInterface attribute,
-			IClass queryClass)
-	{
-		IAttribute queryAttribute = createAttribute();
-		queryAttribute.setUMLClass(queryClass);
-
-		// set all expected values for queryAttribute.
-		queryAttribute.setAttributeName(attribute.getName());
-		queryAttribute.setDataType(getAttributeDataType(attribute.getAttributeTypeInformation()));
-
-		return queryAttribute;
-	}
-
-	/**
-	 * To search the Query attribute representing the dynamic extension attribute in the given queryClass.
-	 * @param attribute The dynamic extension Attribute object
-	 * @param queryClass The reference to IClass in which this attribute is expected to present.
-	 * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
-	 * @thorws NoSuchElementException if the attribute is does not belongs to the given queryClass. 
-	 */
-	public static IAttribute getAttribute(AttributeInterface attribute, IClass queryClass)
-	{
-		IAttribute queryAttribute = null;
-		List<IAttribute> tempQueryAttributes = queryClass.getAttributes();
-		String attributeName = attribute.getName();
-		DataType dataType = getAttributeDataType(attribute.getAttributeTypeInformation());
-		for (int index = 0; index < tempQueryAttributes.size(); index++)
-		{
-			queryAttribute = tempQueryAttributes.get(index);
-			if (queryAttribute.getAttributeName().equals(attributeName)
-					&& queryAttribute.getDataType().equals(dataType))
-				return queryAttribute;
-		}
-		throw new NoSuchElementException(attribute + " Not Exists in the Class: "
-				+ queryClass.getFullyQualifiedName());
-	}
-
-	/**
-	 * To search the Query attribute representing the dynamic extension attribute in the given queryClass.
-	 * @param attribute The dynamic extension Attribute object
-	 * @param queryClass The reference to IClass in which this attribute is expected to present.
-	 * @return The reference to IAttribute attribute corresponding to the given dynamic extension Attribute.
-	 * @thorws NoSuchElementException if the attribute is does not belongs to the given queryClass. 
-	 */
-	public static List<IAttribute> getAttribute(List<AttributeInterface> attributes,
-			IClass queryClass) throws NoSuchElementException
-	{
-		List<IAttribute> queryAttributeList = new ArrayList<IAttribute>();
-		Iterator iterator = attributes.iterator();
-		while (iterator.hasNext())
-		{
-			AttributeInterface attributeInterface = (AttributeInterface) iterator.next();
-			IAttribute iAttribute = getAttribute(attributeInterface, queryClass);
-			queryAttributeList.add(iAttribute);
-		}
-
-		return queryAttributeList;
-	}
-
-	/**
-	 * Creates & returns the list of query Attributes from the dynamic extension Attribute objects.  
-	 * @param attributes The dynamic extension Attribute objects.
-	 * @return the list of query Attributes from the dynamic extension Attribute objects.
-	 */
-	public static List<IAttribute> createAttributes(List<AttributeInterface> attributes)
-	{
-		List<IAttribute> queryAttributes = new ArrayList<IAttribute>();
-
-		if (!attributes.isEmpty())
-		{
-			AttributeInterface attribute = attributes.get(0);
-			IClass iclass = createClass(attribute.getEntity()); //this wil create IClass for the given attributes.
-			for (int index = 0; index < attributes.size(); index++) // search the Query attribute corresponding to the dynamic Extension attribute from the IClass attribute list.
-			{
-				attribute = attributes.get(index);
-				IAttribute queryAttribute = getAttribute(attribute, iclass);
-				queryAttributes.add(queryAttribute);
-			}
-		}
-		return queryAttributes;
-	}
-
-	/**
-	 * Creates & returns the query Attribute object from the dynamic extension Attribute object.  
-	 * @param attribute The dybnamic extension object.
-	 * @return the query Attribute object from the dynamic extension Attribute object.
-	 */
-	public static IAttribute createAttribute(AttributeInterface attribute)
-	{
-		IClass queryClass = createClass(attribute.getEntity());
-		return getAttribute(attribute, queryClass);
-	}
-
-	/**
-	 * To instanciate object of a class extending IIntraModelAssociation interface.  
-	 * @param association
-	 * @return
-	 */
-	public static IAssociation createAssociation(AssociationInterface association)
-	{
-		IClass leftClass = createClass(association.getEntity());
-		IClass rightClass = createClass(association.getTargetEntity());
-		String roleName = association.getSourceRole().getName();
-		String revereseRoleName = association.getTargetRole().getName();
-		boolean bidirectional = association.getAssociationDirection().equals(
-				Constants.AssociationDirection.BI_DIRECTIONAL);
-
-		IAssociation queryAssociation = QueryObjectFactory.createIntraModelAssociation(leftClass,
-				rightClass, roleName, revereseRoleName, bidirectional);
-		return queryAssociation;
-	}
-
-	/**
-	 * Returns the datatype of attribute depending on the AttributeTypeInformation of the attribute. 
-	 * @param attributeTypeInformation The attribute type information.
-	 * @return the datatype of attribute depending on the AttributeTypeInformation of the attribute.
-	 */
-	private static DataType getAttributeDataType(
-			AttributeTypeInformationInterface attributeTypeInformation)
-	{
-		DataType dataType = DataType.String;
-		if (attributeTypeInformation instanceof LongAttributeTypeInformation)
-		{
-			dataType = DataType.Long;
-		}
-		else if (attributeTypeInformation instanceof DateAttributeTypeInformation)
-		{
-			dataType = DataType.Date;
-		}
-		else if (attributeTypeInformation instanceof BooleanAttributeTypeInformation)
-		{
-			dataType = DataType.Boolean;
-		}
-		else if (attributeTypeInformation instanceof DoubleAttributeTypeInformation)
-		{
-			dataType = DataType.Double;
-		}
-		else if (attributeTypeInformation instanceof IntegerAttributeTypeInformation)
-		{
-			dataType = DataType.Integer;
-		}
-
-		return dataType;
-	}
-
-	/**
 	 * Method to instantiate object of a class implementing IOutputTreeNode interface.
 	 * This method will be called only once to instanciate the Root node object. Further to instantiate child objects call addChild method present in IOutputTreeNode.
-	 * @param functionalClass The reference to functional class, that this tree node will represent.
+	 * @param outputEntity The reference to output Entity, that this tree node will represent.
 	 * @return The reference to OutputTreeNode treenode object.
-	 * @see edu.wustl.common.querysuite.queryobject.IOutputTreeNode#addChild(edu.wustl.common.querysuite.queryobject.IAssociation, edu.wustl.common.querysuite.queryobject.IFunctionalClass)
+	 * @see edu.wustl.common.querysuite.queryobject.IOutputTreeNode#addChild(edu.wustl.common.querysuite.queryobject.IAssociation, edu.wustl.common.querysuite.queryobject.IOutputEntity)
 	 */
-	public static IOutputTreeNode createOutputTreeNode(IFunctionalClass functionalClass)
+	public static IOutputTreeNode createOutputTreeNode(IOutputEntity outputEntity)
 	{
-		return new OutputTreeNode(functionalClass);
+		return new OutputTreeNode(outputEntity);
+	}
+	
+	/**
+	 * To instanciate object of class implementing IConstraintEntity interface.
+	 * @param entityInterface The Dynamic Extension entity reference associated with this object. 
+	 * @return The reference to the ConstraintEntity object.
+	 */
+	public static IConstraintEntity createConstrainedEntity(EntityInterface entityInterface)
+	{
+		return new ConstraintEntity(entityInterface);
 	}
 }

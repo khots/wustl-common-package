@@ -13,24 +13,35 @@ package edu.wustl.common.querysuite.queryobject;
 public interface IRule extends IExpressionOperand
 {
 
-	public ICondition addCondition();
+	/**
+	 * To add an empty condition to the Rule.
+	 * @return The reference to the newly added condition.
+	 */
+	ICondition addCondition();
 
 	/**
-	 * returns the condition added
-	 * @param condition
+	 * To add condition to the Rule.
+	 * @param condition The condition to be added.
+	 * @return the reference to the newly added condition.
 	 */
-	public ICondition addCondition(ICondition condition);
+	ICondition addCondition(ICondition condition);
 
 	/**
-	 * @param i
+	 * To get the condition indexed by given index in the condition list of Rule.
+	 * @param index The index of the Condition.
+	 * @return the reference to the Condition indexed by given index in the condition list of Rule.
 	 */
-	public ICondition getCondition(int i);
+	ICondition getCondition(int index);
 
 	/**
 	 * @return the expression to which this rule belongs.
 	 */
-	public IExpression getContainingExpression();
+	IExpression getContainingExpression();
 
-	public int size();
+	/**
+	 * To get the no. of conditions present in the Rule.
+	 * @return The no. of conditions present in the Rule.
+	 */
+	int size();
 
 }

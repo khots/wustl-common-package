@@ -12,27 +12,33 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
  */
 public interface IInterModelAssociation extends IAssociation
 {
+
 	/**
 	 * removes the given right service url for given left service url
+	 * @return reference to source AttributeInterface.
 	 */
-	public AttributeInterface getSourceAttribute();
+	AttributeInterface getSourceAttribute();
 
-	public AttributeInterface getTargetAttribute();
+	/**
+	 * 
+	 * @return
+	 */
+	AttributeInterface getTargetAttribute();
 
-	public String getSourceServiceUrl();
+	String getSourceServiceUrl();
 
 	/**
 	 * @param url
 	 * 
 	 */
-	public void setSourceServiceUrl(String url);
+	void setSourceServiceUrl(String url);
 
-	public String getTargetServiceUrl();
+	String getTargetServiceUrl();
 
 	/**
 	 * @param url
 	 * 
 	 */
-	public void setTargetServiceUrl(String url);
+	void setTargetServiceUrl(String url);
 
 }

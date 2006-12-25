@@ -22,6 +22,7 @@ public class Query implements IQuery
 	private IOutputTreeNode root;
 
 	/**
+	 * @return the reference to the root noe of the output tree.
 	 * @see edu.wustl.common.querysuite.queryobject.IQuery#getRootOutputClass()
 	 */
 	public IOutputTreeNode getRootOutputClass()
@@ -30,6 +31,7 @@ public class Query implements IQuery
 	}
 
 	/**
+	 * @return the reference to constraints.
 	 * @see edu.wustl.common.querysuite.queryobject.IQuery#getConstraints()
 	 */
 	public IConstraints getConstraints()
@@ -42,6 +44,7 @@ public class Query implements IQuery
 	}
 
 	/**
+	 * @param constraints the constraints to set.
 	 * @see edu.wustl.common.querysuite.queryobject.IQuery#setConstraints(edu.wustl.common.querysuite.queryobject.IConstraints)
 	 */
 	public void setConstraints(IConstraints constraints)
@@ -51,6 +54,7 @@ public class Query implements IQuery
 	}
 
 	/**
+	 * @param root The reference to the root noe of the output tree.
 	 * @see edu.wustl.common.querysuite.queryobject.IQuery#setRootOutputClass(edu.wustl.common.querysuite.queryobject.IOutputTreeNode)
 	 */
 	public void setRootOutputClass(IOutputTreeNode root)

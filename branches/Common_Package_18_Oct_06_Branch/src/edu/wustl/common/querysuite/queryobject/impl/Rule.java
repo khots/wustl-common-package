@@ -32,10 +32,13 @@ public class Rule implements IRule
 	public Rule(List<ICondition> conditions)
 	{
 		if (conditions != null)
+		{
 			this.conditions = conditions;
+		}
 	}
 
 	/**
+	 * @return The reference to the newly added condition.
 	 * @see edu.wustl.common.querysuite.queryobject.IRule#addCondition()
 	 */
 	public ICondition addCondition()
@@ -46,6 +49,8 @@ public class Rule implements IRule
 	}
 
 	/**
+	 * @param condition The condition to be added.
+	 * @return the reference to the newly added condition.
 	 * @see edu.wustl.common.querysuite.queryobject.IRule#addCondition(edu.wustl.common.querysuite.queryobject.ICondition)
 	 */
 	public ICondition addCondition(ICondition condition)
@@ -55,14 +60,17 @@ public class Rule implements IRule
 	}
 
 	/**
+	 * @param index The index of the Condition.
+	 * @return the reference to the Condition indexed by given index in the condition list of Rule.
 	 * @see edu.wustl.common.querysuite.queryobject.IRule#getCondition(int)
 	 */
-	public ICondition getCondition(int i)
+	public ICondition getCondition(int index)
 	{
-		return conditions.get(i);
+		return conditions.get(index);
 	}
 
 	/**
+	 * @return the expression to which this rule belongs.
 	 * @see edu.wustl.common.querysuite.queryobject.IRule#getContainingExpression()
 	 */
 	public IExpression getContainingExpression()
@@ -71,6 +79,7 @@ public class Rule implements IRule
 	}
 
 	/**
+	 * @return false.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpressionOperand#isSubExpressionOperand()
 	 */
 	public boolean isSubExpressionOperand()
@@ -79,6 +88,7 @@ public class Rule implements IRule
 	}
 
 	/**
+	 * @return The no. of conditions present in the Rule.
 	 * @see edu.wustl.common.querysuite.queryobject.IRule#size()
 	 */
 	public int size()
@@ -87,6 +97,7 @@ public class Rule implements IRule
 	}
 
 	/**
+	 * @return String representation of Rule object in the form: [[conditions]]
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -97,12 +108,16 @@ public class Rule implements IRule
 		{
 			string = string + conditions.get(i).toString();
 			if (i != conditions.size())
+			{
 				string = string + " " + LogicalOperator.And + " ";
+			}
 		}
 		return "[" + string + "]";
 	}
 
 	/**
+	 * To get the HashCode for the object. It will be calculated based on containingExpression, conditions.
+	 * @return The hash code value for the object.
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -111,23 +126,31 @@ public class Rule implements IRule
 		int hash = 1;
 
 		if (containingExpression != null)
+		{
 			hash = hash & Constants.HASH_PRIME + containingExpression.hashCode();
+		}
 
 		if (conditions != null)
+		{
 			hash = hash * Constants.HASH_PRIME + new HashSet<ICondition>(conditions).hashCode();
+		}
 
 		return hash;
 	}
 
 	/**
+	 * To check whether two objects are equal.
+	 * @param obj reference to the object to be checked for equality.
+	 * @return true if containingExpression, conditions of both Rules are equal.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
-
+		}
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			Rule rule = (Rule) obj;
@@ -135,7 +158,9 @@ public class Rule implements IRule
 					&& this.containingExpression.equals(rule.containingExpression)
 					&& new HashSet<ICondition>(this.conditions).equals(new HashSet<ICondition>(
 							rule.conditions)))
+			{
 				return true;
+			}
 		}
 		return false;
 	}

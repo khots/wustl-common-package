@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.Vector;
 
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
-import edu.wustl.common.querysuite.queryobject.IFunctionalClass;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 
 public class Constraints implements IConstraints
@@ -33,17 +33,20 @@ public class Constraints implements IConstraints
 	private int currentExpressionId = 0;
 
 	/**
-	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#addExpression(edu.wustl.common.querysuite.queryobject.IFunctionalClass)
+	 * @param constraintEntity the constraint Entity for which the new expr is created.
+	 * @return the newly created expression.
+	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#addExpression(edu.wustl.common.querysuite.queryobject.IConstraintEntity)
 	 */
-	public IExpression addExpression(IFunctionalClass functionalClass)
+	public IExpression addExpression(IConstraintEntity constraintEntity)
 	{
-		IExpression expression = new Expression(functionalClass, ++currentExpressionId);
+		IExpression expression = new Expression(constraintEntity, ++currentExpressionId);
 		expressions.put(expression.getExpressionId(), expression);
-		((JoinGraph)joinGraph).addIExpressionId(expression.getExpressionId());
+		((JoinGraph) joinGraph).addIExpressionId(expression.getExpressionId());
 		return expression;
 	}
 
 	/**
+	 * @return an enumeration of the expressions' ids.
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#getExpressionIds()
 	 */
 	public Enumeration<IExpressionId> getExpressionIds()
@@ -54,6 +57,7 @@ public class Constraints implements IConstraints
 	}
 
 	/**
+	 * @return the reference to joingraph.
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#getJoinGraph()
 	 */
 	public IJoinGraph getJoinGraph()
@@ -62,6 +66,8 @@ public class Constraints implements IConstraints
 	}
 
 	/**
+	 * @return the root expression of the join graph.
+	 * @throws MultipleRootsException When there exists multiple roots in joingraph.
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#getRootExpressionId()
 	 */
 	public IExpressionId getRootExpressionId() throws MultipleRootsException
@@ -70,12 +76,14 @@ public class Constraints implements IConstraints
 	}
 
 	/**
+	 * @param id the id of the expression to be removed.
+	 * @return the removed expression.
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#removeExpressionWithId(edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
 	public IExpression removeExpressionWithId(IExpressionId id)
 	{
-		JoinGraph theJoinGraph = (JoinGraph)joinGraph;
-		
+		JoinGraph theJoinGraph = (JoinGraph) joinGraph;
+
 		List<IExpressionId> parents = theJoinGraph.getParentList(id);
 		for (int i = 0; i < parents.size(); i++)
 		{
@@ -87,6 +95,8 @@ public class Constraints implements IConstraints
 	}
 
 	/**
+	 * @param id the id (usually obtained from getExpressionIds)
+	 * @return the reference to the IExpression associatied with the given IExpressionId.
 	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#getExpression(edu.wustl.common.querysuite.queryobject.IExpressionId)
 	 */
 	public IExpression getExpression(IExpressionId id)

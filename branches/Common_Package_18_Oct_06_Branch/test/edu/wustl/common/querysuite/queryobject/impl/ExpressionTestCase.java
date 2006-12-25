@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
-import edu.wustl.common.querysuite.queryobject.DataType;
-import edu.wustl.common.querysuite.queryobject.IAttribute;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -55,22 +57,22 @@ public class ExpressionTestCase extends TestCase
 		IConstraints constraints = QueryObjectFactory.createConstraints();
 		
 		expr = constraints.addExpression(null);
-		a = QueryObjectFactory.createRule(createCondition("a"));
+		a = QueryObjectFactory.createRule(createCondition("activityStatus"));
 		expr.addOperand(a);
 
-		b = QueryObjectFactory.createRule(createCondition("b"));
+		b = QueryObjectFactory.createRule(createCondition("lastName"));
 		orCondB = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 		expr.addOperand(orCondB, b);
 
-		c = QueryObjectFactory.createRule(createCondition("c"));
+		c = QueryObjectFactory.createRule(createCondition("middleName"));
 		andCond = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
 		expr.addOperand(andCond, c);
 
 		expr2 = constraints.addExpression(null);
-		d = QueryObjectFactory.createRule(createCondition("d"));
+		d = QueryObjectFactory.createRule(createCondition("ethnicity"));
 		expr2.addOperand(d);
 
-		e = QueryObjectFactory.createRule(createCondition("e"));
+		e = QueryObjectFactory.createRule(createCondition("firstName"));
 		orCondE = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 		expr2.addOperand(orCondE, e);
 		
@@ -78,16 +80,18 @@ public class ExpressionTestCase extends TestCase
 	}
 
 	/**
-	 * To create dummy Condition from the given name parameters as [name = 'name']
+	 * To create dummy Condition on Participant from the given name parameters as [name = 'name']
 	 * @param name the name of the attribute & value.
 	 * @return the List containing one ICondition object. 
+	 * @throws DynamicExtensionsApplicationException 
+	 * @throws DynamicExtensionsSystemException 
 	 */
-	private List<ICondition> createCondition(String name)
+	private List<ICondition> createCondition(String name) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
+		EntityManagerMock entityManager = new EntityManagerMock();
 		List<ICondition> conditions = new ArrayList<ICondition>();
-		IAttribute attribute = QueryObjectFactory.createAttribute();
-		attribute.setAttributeName(name);
-		attribute.setDataType(DataType.String);
+		
+		AttributeInterface attribute = entityManager.getAttribute(EntityManagerMock.PARTICIPANT_NAME, name);
 		
 		List<String> values = new ArrayList<String>();
 		values.add(name);

@@ -3,6 +3,8 @@ package edu.wustl.common.querysuite.queryobject;
 
 import java.util.List;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+
 /**
  * A condition containing an attribute, relational operator and value(s).
  * e.g. participant.sex = 'Male'
@@ -13,47 +15,60 @@ import java.util.List;
 public interface ICondition extends IBaseQueryObject
 {
 
-	public IAttribute getAttribute();
+	/**
+	 * To get the left operand of the condition.
+	 * @return The Dynamic extension attribute, the left operand of the condition.
+	 */
+	AttributeInterface getAttribute();
 
-	public RelationalOperator getRelationalOperator();
+	/**
+	 * To get the relational operator of condition.
+	 * @return The relational operator of the Condition.
+	 */
+	RelationalOperator getRelationalOperator();
 
-	public List<String> getValues();
+	/**
+	 * To get the List of String representing value part of the condition.
+	 * @return List of String representing value part of the condition.
+	 */
+	List<String> getValues();
 
 	/**
 	 * basically calls getValues(0)
+	 * @return The String representing first value in the value list of the condition.
 	 */
-	public String getValue();
+	String getValue();
 
 	/**
-	 * @param attribute
+	 * To set the attribute in the condition.
+	 * @param attribute The reference to the Synamic Extension attribute on which condition to be formed.
 	 * 
 	 */
-	public void setAttribute(IAttribute attribute);
+	void setAttribute(AttributeInterface attribute);
 
 	/**
-	 * @param relationalOperator
-	 * 
+	 * To set relational operator for the Condition.
+	 * @param relationalOperator reference to RelationalOperator.
 	 */
-	public void setRelationalOperator(RelationalOperator relationalOperator);
+	void setRelationalOperator(RelationalOperator relationalOperator);
 
 	/**
 	 * Basically calls setValue(0, value). Use this for unary operators.
-	 * @param value
-	 * 
+	 * @param value The String representing value part of the condition. 
 	 */
-	public void setValue(String value);
+	void setValue(String value);
 
 	/**
-	 * @param values
+	 *  To set the list of values for the Condtion.
+	 * @param values The List of values to set
 	 * 
 	 */
-	public void setValues(List<String> values);
+	void setValues(List<String> values);
 
 	/**
-	 * returns the value added
-	 * @param value
-	 * 
+	 * To add value in the value list of condition.
+	 * @param value The String representing one of the value in value list of condition.
 	 */
-	public void addValue(String value);
+	void addValue(String value);
 
 }
