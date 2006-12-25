@@ -54,10 +54,9 @@ public interface IJoinGraph extends IBaseQueryObject
 
 	/**
 	 * Removes the association from the graph.
-	 * @return true if the association between the specified expressions
-	 *         existed.
 	 * @param parentExpressionId The parent Expression id
 	 * @param childExpressionId The child Expression id
+	 * @return true if the association between the specified expressions existed.
 	 */
 	boolean removeAssociation(IExpressionId parentExpressionId, IExpressionId childExpressionId);
 
@@ -73,7 +72,7 @@ public interface IJoinGraph extends IBaseQueryObject
 	 * To check wether there is an association between two Expression ids.
 	 * @param parentExpressionId The parent Expression id.
 	 * @param childExpressionId The child Expression id.
-	 * @return  True if the graph contains an association between the specified
+	 * @return  true if the graph contains an association between the specified
 	 * expressionIds.
 	 */
 	boolean containsAssociation(IExpressionId parentExpressionId, IExpressionId childExpressionId);
