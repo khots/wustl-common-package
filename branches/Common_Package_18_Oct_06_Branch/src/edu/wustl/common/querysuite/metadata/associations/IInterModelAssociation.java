@@ -14,29 +14,34 @@ public interface IInterModelAssociation extends IAssociation
 {
 
 	/**
-	 * removes the given right service url for given left service url
-	 * @return reference to source AttributeInterface.
+	 * @return the attribute from source entity.
 	 */
 	AttributeInterface getSourceAttribute();
 
 	/**
 	 * 
-	 * @return
+	 * @return the attribute from target entity.
 	 */
 	AttributeInterface getTargetAttribute();
 
+	/**
+	 * @return the source service url.
+	 */
 	String getSourceServiceUrl();
 
 	/**
-	 * @param url
+	 * @param url the source url.
 	 * 
 	 */
 	void setSourceServiceUrl(String url);
 
+	/**
+	 * @return the target service url
+	 */
 	String getTargetServiceUrl();
 
 	/**
-	 * @param url
+	 * @param url the target url
 	 * 
 	 */
 	void setTargetServiceUrl(String url);
