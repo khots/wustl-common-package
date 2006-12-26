@@ -40,6 +40,7 @@ public class EntityManagerMock extends EntityManager
 	public static String SPECIMEN_COLLECTION_GROUP_NAME = "edu.wustl.catissuecore.domain.SpecimenCollectionGroup";
 	public static String COLLECTION_PROTOCOL_EVT_NAME = "edu.wustl.catissuecore.domain.CollectionProtocolEvent";
 	public static String SPECIMEN_NAME = "edu.wustl.catissuecore.domain.Specimen";
+	public static String SPECIMEN_CHARACTERISTIC_NAME = "edu.wustl.catissuecore.domain.SpecimenCharacteristics";
 	public static String SPECIMEN_EVT_NAME = "edu.wustl.catissuecore.domain.SpecimenEventParameters";
 	public static String CHKIN_CHKOUT_EVT_NAME = "edu.wustl.catissuecore.domain.CheckInCheckOutEventParameter";
 	public static String FROZEN_EVT_NAME = "edu.wustl.catissuecore.domain.FrozenEventParameters";
@@ -61,6 +62,7 @@ public class EntityManagerMock extends EntityManager
 	public static Long PROCEDURE_EVT_ID = new Long(12);
 	public static Long RECEIVED_EVT_ID = new Long(13);
 	public static Long SITE_ID = new Long(14);
+	public static Long SPECIMEN_CHARACTERISTIC_ID = new Long(15);
 	
 	/**
 	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#findEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
@@ -673,6 +675,43 @@ public class EntityManagerMock extends EntityManager
 			
 			associations.add(association);
 		}
+		else if (sourceEntityName.equals(SPECIMEN_NAME) && sourceRoleName.equals(""))
+		{
+			AssociationInterface association = factory.createAssociation();
+	
+			EntityInterface sourceEntity = getEntityByName(SPECIMEN_NAME);
+			EntityInterface targetEntity = getEntityByName(SPECIMEN_CHARACTERISTIC_NAME);
+	
+			association.setEntity(sourceEntity);
+			association.setTargetEntity(targetEntity);
+			association.setAssociationDirection(Constants.AssociationDirection.SRC_DESTINATION);
+	
+			Role sourceRole = new Role();
+			sourceRole.setName("");
+			sourceRole.setId(1L);
+			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
+			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
+			sourceRole.setMaxCardinality(10);
+			sourceRole.setMinCardinality(0);
+			association.setSourceRole(sourceRole);
+	
+			Role targetRole = new Role();
+			targetRole.setName("specimenCharacteristics");
+			targetRole.setId(2L);
+			//TODO check association Type for linking: targetRole.setAssociationType("linking");
+			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
+	
+			targetRole.setMaxCardinality(1);
+			targetRole.setMinCardinality(1);
+			association.setTargetRole(targetRole);
+	
+			ConstraintProperties constraintProperties = new ConstraintProperties();
+			constraintProperties.setSourceEntityKey("SPECIMEN_CHARACTERISTICS_ID");
+			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			((Association)association).setConstraintProperties(constraintProperties);
+			
+			associations.add(association);
+		}
 		else if (sourceEntityName.equals(COLLECTION_PROTOCOL_REGISTRATION_NAME) && sourceRoleName.equals("collectionProtocolRegistration"))
 		{
 			AssociationInterface association = factory.createAssociation();
@@ -1109,6 +1148,45 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			return associationsCollection;
 		}
+		else if (sourceEntityId.equals(SPECIMEN_ID) && targetEntityId.equals(SPECIMEN_CHARACTERISTIC_ID))
+		{
+			AssociationInterface currentAssociation = factory.createAssociation();
+			
+			EntityInterface sourceEntity = getEntityByName(SPECIMEN_NAME);
+			EntityInterface targetEntity = getEntityByName(SPECIMEN_CHARACTERISTIC_NAME);
+	
+			currentAssociation.setEntity(sourceEntity);
+			currentAssociation.setTargetEntity(targetEntity);
+			currentAssociation.setAssociationDirection(Constants.AssociationDirection.SRC_DESTINATION);
+	
+			Role sourceRole = new Role();
+			sourceRole.setName("");
+			sourceRole.setId(1L);
+			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
+			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
+			sourceRole.setMaxCardinality(10);
+			sourceRole.setMinCardinality(0);
+			currentAssociation.setSourceRole(sourceRole);
+	
+			Role targetRole = new Role();
+			targetRole.setName("specimenCharacteristics");
+			targetRole.setId(2L);
+			//TODO check association Type for linking: targetRole.setAssociationType("linking");
+			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
+	
+			targetRole.setMaxCardinality(1);
+			targetRole.setMinCardinality(1);
+			currentAssociation.setTargetRole(targetRole);
+	
+			ConstraintProperties constraintProperties = new ConstraintProperties();
+			constraintProperties.setSourceEntityKey("SPECIMEN_CHARACTERISTICS_ID");
+			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			((Association)currentAssociation).setConstraintProperties(constraintProperties);
+			
+			associationsCollection.add(currentAssociation);
+			return associationsCollection;
+			
+		}
 		else
 		{
 			System.out.println("There is no association between these two entities");
@@ -1163,6 +1241,11 @@ public class EntityManagerMock extends EntityManager
 		else if (entityName.equalsIgnoreCase(SPECIMEN_NAME))
 		{
 			ArrayList list = getSpecimenAttributes();
+			return getSpecificAttribute(list, attributeName);
+		}
+		else if (entityName.equalsIgnoreCase(SPECIMEN_CHARACTERISTIC_NAME))
+		{
+			ArrayList list = getSpecimenCharacteristicAttributes();
 			return getSpecificAttribute(list, attributeName);
 		}
 		if (entityName.equalsIgnoreCase(SITE_NAME))
@@ -1280,6 +1363,10 @@ public class EntityManagerMock extends EntityManager
 		else if (name.equalsIgnoreCase(SPECIMEN_NAME))
 		{
 			return createSpecimenEntity(name);
+		}
+		else if (name.equalsIgnoreCase(SPECIMEN_CHARACTERISTIC_NAME))
+		{
+			return createSpecimenCharacteristicEntity(name);
 		}
 		else if (name.equalsIgnoreCase(SPECIMEN_EVT_NAME))
 		{
@@ -1513,7 +1600,30 @@ public class EntityManagerMock extends EntityManager
 		((Entity)e).setTableProperties(specimenTableProperties);
 		return e;
 	}
-	
+
+	/*
+	 * @param name
+	 * Creates a SpecimenCharacteristic entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private EntityInterface createSpecimenCharacteristicEntity(String name)
+	{
+		EntityInterface e = factory.createEntity();
+		e.setName(SPECIMEN_CHARACTERISTIC_NAME);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a specimen Characteristic entity");
+		e.setId(SPECIMEN_CHARACTERISTIC_ID);
+		e.setLastUpdated(new Date());
+
+		((Entity)e).setAbstractAttributeCollection(getSpecimenCharacteristicAttributes());
+
+		TableProperties specimenCharacteristicTableProperties = new TableProperties();
+		specimenCharacteristicTableProperties.setName("catissue_specimen_char");
+		specimenCharacteristicTableProperties.setId(SPECIMEN_CHARACTERISTIC_ID);
+		((Entity)e).setTableProperties(specimenCharacteristicTableProperties);
+		return e;
+	}
+
 	/*
 	 * @param name
 	 * Creates a specimen event parameters entity, sets attributes collection 
@@ -2142,6 +2252,43 @@ public class EntityManagerMock extends EntityManager
 		return specimenAttributes;
 	}
 	
+	/*
+	 * Creates attributes for SpecimenCharacteristic entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getSpecimenCharacteristicAttributes()
+	{
+		ArrayList<AttributeInterface> specimenCharacteristicAttributes = new ArrayList<AttributeInterface>();
+		
+		AttributeInterface att1= factory.createLongAttribute();
+		att1.setName("id");
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
+		c1.setName("IDENTIFIER");
+		((Attribute)att1).setColumnProperties(c1);
+		att1.setIsPrimaryKey(new Boolean(true));
+		
+		AttributeInterface att2 = factory.createStringAttribute();
+		att2.setName("tissueSite");
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
+		c2.setName("TISSUE_SITE");
+		((Attribute)att2).setColumnProperties(c2);
+		
+		AttributeInterface att3 = factory.createStringAttribute();
+		att3.setName("tissueSide");
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
+		c3.setName("TISSUE_SIDE");
+		((Attribute)att3).setColumnProperties(c3);
+		
+		
+
+		specimenCharacteristicAttributes.add(0, att1);
+		specimenCharacteristicAttributes.add(1, att2);
+		specimenCharacteristicAttributes.add(2, att3);
+		
+
+		return specimenCharacteristicAttributes;
+	}
 	/*
 	 * Creates attributes for specimen event parameters entity,  
 	 * creates and sets a column property for each attribute and adds all  
