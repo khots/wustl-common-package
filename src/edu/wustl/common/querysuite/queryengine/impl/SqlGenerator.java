@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domain.Attribute;
-import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
+import edu.common.dynamicextensions.domaininterface.BooleanTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.DateTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
@@ -444,9 +444,10 @@ public class SqlGenerator implements ISqlGenerator
 	}
 
 	/**
-	 * To Modify value as per the Data type. 
-	 * 1. Enclose the Given values by single Quotes for String & Date Data type. 
-	 * 2. For Boolean DataType it will change value to 1 if its TRUE, else 0.
+	 * To Modify value as per the Data type.
+	 * 1. In case of String datatype, replace occurence of single quote by singlequote twice. 
+	 * 2. Enclose the Given values by single Quotes for String & Date Data type. 
+	 * 3. For Boolean DataType it will change value to 1 if its TRUE, else 0.
 	 * @param value the Modified value.
 	 * @param dataType The DataType of the passed value.
 	 * @return The String representing encoded value for the given value & datatype.
@@ -454,12 +455,16 @@ public class SqlGenerator implements ISqlGenerator
 	String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType)
 	{
 
-		if (dataType instanceof StringTypeInformationInterface
-				|| dataType instanceof DateTypeInformationInterface) // for data type String & date it will be enclosed in single quote.
+		if (dataType instanceof StringTypeInformationInterface)//for data type String it will be enclosed in single quote.
+		{
+			value = value.replaceAll("'", "''");
+			value = "'" + value + "'";
+		}
+		else if(dataType instanceof DateTypeInformationInterface) // for data type date it will be enclosed in single quote.
 		{
 			value = "'" + value + "'";
 		}
-		else if (dataType instanceof BooleanAttributeTypeInformation) // defining value for boolean datatype.
+		else if (dataType instanceof BooleanTypeInformationInterface) // defining value for boolean datatype.
 		{
 			if (value != null && value.toUpperCase().equals("TRUE"))
 			{
