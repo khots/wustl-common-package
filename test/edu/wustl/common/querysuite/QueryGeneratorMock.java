@@ -1346,4 +1346,188 @@ public class QueryGeneratorMock
 		}
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @return The IQuery Object representation for the sample query no. 2 in the "caTissue Core NBN Query Results.doc"
+	 * <pre>
+	 * The Actual Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: quantity > 5 AND Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 *  			Pseudo AND
+	 *  			S: quantity > 5 AND Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Non-Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 * </pre>
+	 * <pre>
+	 * Note:quantity & Class conditions not added.
+	 * The implemented Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Type equals "DNA" AND Pathological Status Equals "Malignant" 
+	 *  				SCHAR: Tissue Site Equals "PROSTATE GLAND"
+	 *  			Pseudo AND
+	 *  			S: Type equals "DNA" AND Pathological Status Equals "Non-Malignant" 
+	 *  				SCHAR: Tissue Site Equals "PROSTATE GLAND"
+	 * </pre>
+	 */
+	public static IQuery createNBNSampleQuery2()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			ILogicalConnector andConnector = QueryObjectFactory
+					.createLogicalConnector(LogicalOperator.And);
+
+			
+			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			EntityInterface cprEntity = enitytManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface specimenCharacteristicEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+
+
+			// creating expression for Participant.
+			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstrainedEntity(participantEntity);
+			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
+			
+			// creating expression for collection Protocol Registration
+			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstrainedEntity(cprEntity);
+			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
+			participantExpression.addOperand(collectionProtocolRegExpression
+					.getExpressionId());
+
+			AssociationInterface participanCPRegAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			IIntraModelAssociation iParticipanCPRegAssociation = QueryObjectFactory.createIntraModelAssociation(participanCPRegAssociation);
+			
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					collectionProtocolRegExpression.getExpressionId(), iParticipanCPRegAssociation);
+
+			
+			// creating expression for SpecimenCollectionGroup.
+			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstrainedEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression.getExpressionId());
+			AssociationInterface cprAndSpgAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME,
+							"collectionProtocolRegistration"),
+					EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			IIntraModelAssociation iCprAndSpgAssociation = QueryObjectFactory.createIntraModelAssociation(cprAndSpgAssociation);
+			joinGraph.putAssociation(collectionProtocolRegExpression.getExpressionId(),
+					specimenCollectionGroupExpression.getExpressionId(), iCprAndSpgAssociation);
+
+			//creating first SpecimeExpression.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstrainedEntity(specimenEntity);
+			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+							"specimenCollectionGroup"), EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpgAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression1.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression1.addOperand(specimenExpression1Rule1);
+
+			List<String> specimenExpression1Rule1Values1 = new ArrayList<String>();
+			specimenExpression1Rule1Values1.add("DNA");
+			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression1Rule1Values1);
+
+			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
+			
+			List<String> specimenExpression1Rule1Values2 = new ArrayList<String>();
+			specimenExpression1Rule1Values2.add("Malignant");
+
+			ICondition specimenExpression1Rule1Condition2 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "pathologicalStatus"), RelationalOperator.Equals,
+					specimenExpression1Rule1Values2);
+			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition2);
+			
+			//creating specimenCharacteristic Expression under first specimen Expression.
+			IConstraintEntity specimenCharacteristicConstraintEntity = QueryObjectFactory.createConstrainedEntity(specimenCharacteristicEntity);
+			IExpression specimenCharacteristicExpression1 = constraints.addExpression(specimenCharacteristicConstraintEntity);
+
+			specimenExpression1.addOperand(andConnector,specimenCharacteristicExpression1.getExpressionId());
+			AssociationInterface specimeAndSpecimeCharacteristicAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME,
+							""), EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
+			IIntraModelAssociation iSpecimeAndSpecimeCharacteristicAssociation = QueryObjectFactory.createIntraModelAssociation(specimeAndSpecimeCharacteristicAssociation);
+			joinGraph.putAssociation(specimenExpression1.getExpressionId(),
+					specimenCharacteristicExpression1.getExpressionId(), iSpecimeAndSpecimeCharacteristicAssociation);
+
+			IRule specimenCharacteristicExpression1Rule1 = QueryObjectFactory.createRule(null);
+			specimenCharacteristicExpression1.addOperand(specimenCharacteristicExpression1Rule1);
+
+			List<String> specimenCharacteristicExpression1Rule1Values1 = new ArrayList<String>();
+			specimenCharacteristicExpression1Rule1Values1.add("Prostate Gland");
+			ICondition specimenCharacteristicExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenCharacteristicEntity, "tissueSite"), RelationalOperator.Equals,
+					specimenCharacteristicExpression1Rule1Values1);
+			specimenCharacteristicExpression1Rule1.addCondition(specimenCharacteristicExpression1Rule1Condition1);
+
+			
+			// creating second SpecimeExpression.
+			IExpression specimenExpression2 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(andConnector, specimenExpression2.getExpressionId());
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression2.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression2.addOperand(specimenExpression2Rule1);
+
+			List<String> specimenExpression2Rule1Values1 = new ArrayList<String>();
+			specimenExpression2Rule1Values1.add("DNA");
+			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression2Rule1Values1);
+
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
+			
+			List<String> specimenExpression2Rule1Values2 = new ArrayList<String>();
+			specimenExpression2Rule1Values2.add("Non-Malignant");
+
+			ICondition specimenExpression2Rule1Condition2 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "pathologicalStatus"), RelationalOperator.Equals,
+					specimenExpression2Rule1Values2);
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition2);
+			
+			
+			// creating specimenCharacteristic Expression under second Specimen Expression.
+			IExpression specimenCharacteristicExpression2 = constraints.addExpression(specimenCharacteristicConstraintEntity);
+
+			specimenExpression2.addOperand(andConnector,specimenCharacteristicExpression2.getExpressionId());
+			joinGraph.putAssociation(specimenExpression2.getExpressionId(),
+					specimenCharacteristicExpression2.getExpressionId(), iSpecimeAndSpecimeCharacteristicAssociation);
+
+			IRule specimenCharacteristicExpression2Rule1 = QueryObjectFactory.createRule(null);
+			specimenCharacteristicExpression2.addOperand(specimenCharacteristicExpression2Rule1);
+
+			List<String> specimenCharacteristicExpression2Rule1Values1 = new ArrayList<String>();
+			specimenCharacteristicExpression2Rule1Values1.add("Prostate Gland");
+			ICondition specimenCharacteristicExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenCharacteristicEntity, "tissueSite"), RelationalOperator.Equals,
+					specimenCharacteristicExpression2Rule1Values1);
+			specimenCharacteristicExpression2Rule1.addCondition(specimenCharacteristicExpression2Rule1Condition1);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
 }

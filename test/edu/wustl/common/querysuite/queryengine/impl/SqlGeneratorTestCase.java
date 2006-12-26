@@ -450,6 +450,48 @@ public class SqlGeneratorTestCase extends TestCase
 	}
 
 	/**
+	 * 
+	 * To test query for the sample query no. 2 in the "caTissue Core NBN Query Results.doc"
+	 * <pre>
+	 * The Actual Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: quantity > 5 AND Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 *  			Pseudo AND
+	 *  			S: quantity > 5 AND Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Non-Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 * </pre>
+	 * <pre>
+	 * Note:quantity & Class conditions not added.
+	 * The implemented Query is as follows:
+	 *  P: ANY
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Type equals "DNA" AND Pathological Status Equals "Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 *  			Pseudo AND
+	 *  			S: Type equals "DNA" AND Pathological Status Equals "Non-Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 * </pre>
+	 */
+	public void testNBNSampleQuery2()
+	{
+		IQuery query = QueryGeneratorMock.createNBNSampleQuery2();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testNBNSampleQuery2:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) Where (SpecimenCollectionGroup_3.IDENTIFIER = ANY(Select Specimen_4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_4 left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) where (Specimen_4.TYPE='DNA' And Specimen_4.PATHOLOGICAL_STATUS='Malignant') And(SpecimenCharacteristics_5.TISSUE_SITE='Prostate Gland'))) And(SpecimenCollectionGroup_3.IDENTIFIER = ANY(Select Specimen_4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_4 left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) where (Specimen_4.TYPE='DNA' And Specimen_4.PATHOLOGICAL_STATUS='Non-Malignant') And(SpecimenCharacteristics_5.TISSUE_SITE='Prostate Gland')))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	/**
 	 * To test the method get alias Name.
 	 * - The length of alias returned from this method should be less than 30. 
 	 * - The aliases for two different entities in two different Expression with different AliasAppender should not be same. 
