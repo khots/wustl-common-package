@@ -5,6 +5,7 @@
 package edu.wustl.common.querysuite.metadata.associations.impl;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 /**
@@ -68,6 +69,24 @@ public class InterModelAssociation extends Association implements IInterModelAss
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean isBidirectional()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public EntityInterface getSourceEntity()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public EntityInterface getTargetEntity()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
