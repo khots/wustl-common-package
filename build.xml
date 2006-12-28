@@ -26,6 +26,12 @@
 	<property name="checkstyle.unformatted.report" value="${checkstyle.report.dir}/checkstyle_report.xml"/>
 	<property name="checkstyle.formatted.report" value="${checkstyle.report.dir}/CommonPackage_checkstyle_report.html"/>
 	
+	<!--Properties set for checkstyle "PMD scans Java source code and looks for potential code problems"-->
+	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
+	<property name="pmd.dir" value="${base.dir}/pmd-3.8"/>
+	<property name="pmd.report.dir" value="${pmd.dir}/reports"/>
+	<property name="pmd.report.html" value="${pmd.report.dir}/Common_Package_PMD_Report.html"/>
+	
 	<path id="app.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="*.jar"/>
@@ -69,7 +75,10 @@
 		<!-- Create the checkstyle report directory-->
 		<delete dir="${checkstyle.report.dir}"/>
 		<mkdir dir="${checkstyle.report.dir}"/>
-
+		
+		<!-- Create the PMD report directory-->
+		<delete dir="${pmd.report.dir}"/>
+		<mkdir dir="${pmd.report.dir}"/>
   	</target>
 	
 	<!-- Compile all files, generated and hand-written -->
@@ -112,38 +121,6 @@
             </classpath>       
         </javac>
     </target>
-	<!-- Create the Applet JAR Begins-->
-    <!--target name="AppletJAR" depends="compile" >
-    	<delete>
-            <fileset dir="${applet.dir}">
-	            <exclude name="**/CVS*"/>
-	            <exclude name="**/java.policy.applet*"/>
-            </fileset>
-        </delete>
-        
-        <copy todir="${applet.dir}/edu/wustl/common/treeApplet">
-        	<fileset dir="${target.dir}/edu/wustl/common/treeApplet">
-            	<include name="**/*.class"/>
-        	</fileset>
-        </copy>
-        <copy todir="${applet.dir}/edu/wustl/common/tree">
-        	<fileset dir="${target.dir}/edu/wustl/common/tree">
-	    	    <include name="**/*.class"/>
-    		</fileset>
-    	</copy>
-		
-        <jar taskname="BuildJar" jarfile="${applet.dir}/TreeApplet.jar">
-            <fileset dir="${applet.dir}">
-	            <exclude name="**/CVS*"/>
-	            <exclude name="**/java.policy.applet*"/>
-            </fileset>
-        </jar>
-		
-		<delete dir="${applet.dir}/edu"/>
-    </target-->
-	<!-- Create the Applet JAR Ends-->
-	
-	
 	
 	<!-- Compile all files, generated and hand-written -->
     <target name="applet_compile" depends="init" >
@@ -299,26 +276,35 @@
 	    <checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false" classpathref="checkstyle.classpath" >
 			<formatter type="xml" tofile="${checkstyle.unformatted.report}" />
 			<!-- Adding all querysuite packages-->
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/category/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/category/impl/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/exceptions/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/factory/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryengine/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/associations/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/associations/impl/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/path/*.java"/>
-			<fileset dir="${src.dir}" includes="**/edu/wustl/common/querysuite/metadata/path/impl/*.java"/>
-			<!-- Adding junit test packages for querysuite-->
-			<!--fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/*.java"/-->
-			<!--fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryengine/impl/*.java"/>
-			<fileset dir="${test.dir}" includes="**/edu/wustl/common/querysuite/queryobject/impl/*.java"/>
-			<fileset dir="${test.dir}" includes="**/edu/wustl/common/util/*.java"/-->
+	    	<fileset dir="${src.dir}" includes="**/querysuite/**/*.java"/>
 		</checkstyle>
 
 	    <style in="${checkstyle.unformatted.report}" out="${checkstyle.formatted.report}" style="${checkstyle.report.formatter}"/>
+	</target>
+	
+	<!-- ,,,,,junit,logging-jakarta-commons,logging-java,migrating,,optimizations,strictexception,,,"-->
+	<target name="pmd" depends="init" description="PMD scans Java source code and looks for potential code problems.">
+		<taskdef name="pmd" classpath="${pmd.dir}/lib/pmd-3.8.jar" classname="net.sourceforge.pmd.ant.PMDTask"/>
+		<pmd shortFilenames="true">
+			<ruleset>basic</ruleset>
+			<ruleset>braces</ruleset>
+			<ruleset>clone</ruleset>
+			<ruleset>codesize</ruleset>
+			<ruleset>controversial</ruleset>
+			<ruleset>coupling</ruleset>
+			<ruleset>design</ruleset>
+			<ruleset>finalizers</ruleset>
+			<ruleset>imports</ruleset>
+			<ruleset>j2ee</ruleset>			
+			<ruleset>migrating</ruleset>
+			<ruleset>naming</ruleset>
+			<ruleset>strings</ruleset>
+			<ruleset>unusedcode</ruleset>
+			<ruleset>sunsecure</ruleset>
+			<!--ruleset>javabeans</ruleset-->
+			
+			<formatter type="html" toFile="${pmd.report.html}"/>
+			<fileset dir="${src.dir}" includes="**/querysuite/**/*.java"/>
+		</pmd>
 	</target>
 </project>
