@@ -13,14 +13,30 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 public interface IPath
 {
 
-	public EntityInterface getSourceEntity();
+	/**
+	 * @return the source entity of the path.
+	 */
+	EntityInterface getSourceEntity();
 
-	public EntityInterface getTargetEntity();
+	/**
+	 * @return the target entity of the path.
+	 */
+	EntityInterface getTargetEntity();
 
 	/**
 	 * srcEntity of 1st assoc = getSourceEntity()
 	 * targetEntity of last assoc = getTargetEntity()
 	 */
-	public List<IAssociation> getIntermediateAssociations();
+	List<IAssociation> getIntermediateAssociations();
 
+	/**
+	 * @return true - if all intermediate associations are bidirectional; false otherwise.
+	 */
+	boolean isBidirectional();
+
+	/**
+	 * Call iff isBidirectional() = true.
+	 * @return if bidirectional, returns a reverse path; otherwise returns null.
+	 */
+	IPath reverse();
 }
