@@ -256,6 +256,9 @@ public class Expression implements IExpression
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
+			if(leftOperandIndex == -1 || leftOperandIndex == logicalConnectors.size()) {
+				return QueryObjectFactory.createLogicalConnector(LogicalOperator.Unknown, -1);
+			}
 			return logicalConnectors.get(leftOperandIndex);
 		}
 		else
