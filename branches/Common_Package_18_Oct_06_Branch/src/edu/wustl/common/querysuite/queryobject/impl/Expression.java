@@ -93,10 +93,10 @@ public class Expression implements IExpression
 
 	/**
 	 * @param operand The operand to be added in Expression.
-	 * @return the reference of the operand added.
+	 * index of the added operand.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
-	public IExpressionOperand addOperand(IExpressionOperand operand)
+	public int addOperand(IExpressionOperand operand)
 	{
 		expressionOperands.add(operand);
 		setContainingExpressionForRule(operand);
@@ -105,7 +105,7 @@ public class Expression implements IExpression
 			logicalConnectors.add(QueryObjectFactory
 					.createLogicalConnector(LogicalOperator.Unknown));
 		}
-		return operand;
+		return expressionOperands.size() - 1;
 	}
 
 	/**
@@ -124,14 +124,16 @@ public class Expression implements IExpression
 	/**
 	 * @param logicalConnector the Logical connector by which the operand will be connected to the operand behind it.
 	 * @param operand The operand to be added in Expression.
+	 * @return index of the added operand.
 	 * @see edu.wustl.common.querysuite.queryobject.IExpression#addOperand(edu.wustl.common.querysuite.queryobject.ILogicalConnector,
 	 *      edu.wustl.common.querysuite.queryobject.IExpressionOperand)
 	 */
-	public void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand)
+	public int addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand)
 	{
 		expressionOperands.add(operand);
 		setContainingExpressionForRule(operand);
 		logicalConnectors.add(expressionOperands.size() - 2, logicalConnector);
+		return expressionOperands.size() - 1;
 	}
 
 	/**

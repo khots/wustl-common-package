@@ -99,16 +99,17 @@ public interface IExpression
 	 * added to the connectors list provided there are atleast two operands in the
 	 * operands list.
 	 * @param operand The reference of the operand added.
-	 * @return the reference of the operand added.
+	 * @return index of the added operand.
 	 */
-	IExpressionOperand addOperand(IExpressionOperand operand);
+	int addOperand(IExpressionOperand operand);
 
 	/**
 	 * To add operand to the Expression with the specified logical connector. This operand will be added as last operand in the operand list. 
 	 * @param logicalConnector the Logical connector by which the operand will be connected to the operand behind it.
 	 * @param operand The operand to be added in Expression.
+	 * @return index of the added operand.
 	 */
-	void addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand);
+	int addOperand(ILogicalConnector logicalConnector, IExpressionOperand operand);
 
 	/**
 	 * Inserts an operand with the connector in front of it.
