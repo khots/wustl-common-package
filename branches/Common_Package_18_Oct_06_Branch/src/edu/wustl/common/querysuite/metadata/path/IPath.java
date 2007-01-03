@@ -24,8 +24,13 @@ public interface IPath
 	EntityInterface getTargetEntity();
 
 	/**
-	 * srcEntity of 1st assoc = getSourceEntity()
-	 * targetEntity of last assoc = getTargetEntity()
+	 * If the source and target entities refer to classes, then<br>
+	 * srcEntity of 1st assoc = getSourceEntity() and <br>
+	 * targetEntity of last assoc = getTargetEntity().<br>
+	 * But if the source entity and/or target entity refer to a category, 
+	 * then the above will not hold...<br> e.g. getSourceEntity() 
+	 * will return the category's entity, whereas the srcEntity of the 
+	 * 1st association will be the entity corresponding to a class within that category.
 	 */
 	List<IAssociation> getIntermediateAssociations();
 
