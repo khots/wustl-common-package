@@ -129,7 +129,7 @@ public class TreeApplet extends JApplet
                 urlSuffix = urlSuffix + "&"+Constants.PROPERTY_NAME+"="+URLEncoder.encode(propertyName)+"&"+Constants.CDE_NAME+"="+URLEncoder.encode(cdeName);
             }
             	
-            //Added By Ramya.Construct urlSuffix when treeType = Constants.REQUEST_DETAILS_ID.
+            //Construct urlSuffix when treeType = Constants.SPECIMEN_TREE_ID.
             else if(pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE))
             {
             	urlSuffix = urlSuffix + "&" + Constants.PROPERTY_NAME + "=" + URLEncoder.encode(propertyName)+ "&" +Constants.SPECIMEN_TYPE+ "=" + URLEncoder.encode(specimenType);
@@ -156,7 +156,6 @@ public class TreeApplet extends JApplet
             	
             	Vector dataVector = (Vector) in.readObject();
                 GenerateTree generateTree = new GenerateTree();
-                
                 tree = generateTree.createTree(dataVector, treeType);                
             }
             else
