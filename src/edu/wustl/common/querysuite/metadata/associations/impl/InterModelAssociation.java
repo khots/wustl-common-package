@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package edu.wustl.common.querysuite.metadata.associations.impl;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -9,84 +5,107 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 
 /**
- * @author prafull_kadam
- * Implementation class for InterModelAssociation.
+ * This stores all the inter model connections present between given pair of entities.
+ * @see edu.wustl.common.querysuite.metadata.associations.IAssociation
+ * @author Chandrakant Talele
  */
-public class InterModelAssociation extends Association implements IInterModelAssociation
-{
+public class InterModelAssociation implements IInterModelAssociation {
 
-	private static final long serialVersionUID = 7575602979646972800L;
+    private static final long serialVersionUID = -3230037755747481080L;
 
-	/**
-	 * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getSourceAttribute()
-	 */
-	public AttributeInterface getSourceAttribute()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private String sourceServiceUrl;
 
-	/**
-	 * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getSourceServiceUrl()
-	 */
-	public String getSourceServiceUrl()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private String targetServiceUrl;
 
-	/**
-	 * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getTargetAttribute()
-	 */
-	public AttributeInterface getTargetAttribute()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    AttributeInterface sourceAttribute;
 
-	/**
-	 * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getTargetServiceUrl()
-	 */
-	public String getTargetServiceUrl()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    AttributeInterface targetAttribute;
 
-	/**
-	 * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#setSourceServiceUrl(java.lang.String)
-	 */
-	public void setSourceServiceUrl(String url)
-	{
-		// TODO Auto-generated method stub
+    /**
+     * @param sourceAttribute
+     * @param targetAttribute
+     */
+    public InterModelAssociation(AttributeInterface sourceAttribute, AttributeInterface targetAttribute) {
+        this.sourceAttribute = sourceAttribute;
+        this.targetAttribute = targetAttribute;
+    }
 
-	}
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IAssociation#getSourceEntity()
+     */
+    public EntityInterface getSourceEntity() {
+        return sourceAttribute.getEntity();
+    }
 
-	/**
-	 * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#setTargetServiceUrl(java.lang.String)
-	 */
-	public void setTargetServiceUrl(String url)
-	{
-		// TODO Auto-generated method stub
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getSourceAttribute()
+     */
+    public AttributeInterface getSourceAttribute() {
+        return sourceAttribute;
+    }
 
-	}
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IAssociation#getTargetEntity()
+     */
+    public EntityInterface getTargetEntity() {
+        return targetAttribute.getEntity();
+    }
 
-	public boolean isBidirectional()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getTargetAttribute()
+     */
+    public AttributeInterface getTargetAttribute() {
+        return targetAttribute;
+    }
 
-	public EntityInterface getSourceEntity()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IAssociation#isBidirectional()
+     */
+    public boolean isBidirectional() {
+        return true; //intermodel association is always bidirectional
+    }
 
-	public EntityInterface getTargetEntity()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getSourceServiceUrl()
+     */
+    public String getSourceServiceUrl() {
+        return sourceServiceUrl;
+    }
 
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#getTargetServiceUrl()
+     */
+    public String getTargetServiceUrl() {
+        return targetServiceUrl;
+    }
+
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#setSourceServiceUrl(java.lang.String)
+     */
+    public void setSourceServiceUrl(String sourceServiceUrl) {
+        this.sourceServiceUrl = sourceServiceUrl;
+    }
+
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation#setTargetServiceUrl(java.lang.String)
+     */
+    public void setTargetServiceUrl(String targetServiceUrl) {
+        this.targetServiceUrl = targetServiceUrl;
+    }
+    @Override
+    public String toString() {
+        StringBuffer buff = new StringBuffer();
+        buff.append("Source Attribute : "+ sourceAttribute.getName());
+        buff.append("\tSource Entity : "+ getSourceEntity().getName());
+        buff.append("\tTarget Attribute : "+ targetAttribute.getName());
+        buff.append("\tTarget Entity : "+ getTargetEntity().getName());
+        return buff.toString();
+    }
+    @Override
+    public InterModelAssociation clone() {
+        InterModelAssociation clone = new InterModelAssociation(sourceAttribute, targetAttribute);
+        clone.setSourceServiceUrl(sourceServiceUrl);
+        clone.setTargetServiceUrl(targetServiceUrl);
+        return clone;
+    }
 }

@@ -1,110 +1,57 @@
-/**
- * 
- */
-
 package edu.wustl.common.querysuite.metadata.associations.impl;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
-import edu.wustl.common.util.global.Constants;
 
 /**
- * @author prafull_kadam
- * Implementation class for IntraModelAssociation.
+ * @author Chandrakant Talele
+ * @version 1.0
+ * @created 25-Dec-2006 1:22:01 PM
  */
-public class IntraModelAssociation extends Association implements IIntraModelAssociation
-{
+public class IntraModelAssociation implements IIntraModelAssociation {
 
-	private static final long serialVersionUID = 8723649763990091864L;
+    private static final long serialVersionUID = 1477526671383920408L;
 
-	private AssociationInterface associationInterface;
+    private AssociationInterface dynamicExtensionsAssociation;
+    /**
+     * The only public constructor.
+     * @param dynamicExtensionsAssociation
+     */
+    public IntraModelAssociation(AssociationInterface dynamicExtensionsAssociation) {
+        this.dynamicExtensionsAssociation = dynamicExtensionsAssociation;
+    }
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IAssociation#getSourceEntity()
+     */
+    public EntityInterface getSourceEntity() {
+        return dynamicExtensionsAssociation.getEntity();
+    }
 
-	/**
-	 * 
-	 * @param associationInterface The reference to the dynamic Extension associated with this object.
-	 */
-	public IntraModelAssociation(AssociationInterface associationInterface)
-	{
-		this.associationInterface = associationInterface;
-	}
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IAssociation#getTargetEntity()
+     */
+    public EntityInterface getTargetEntity() {
+        return dynamicExtensionsAssociation.getTargetEntity();
+    }
 
-	/**
-	 * @return the reference to the Dynamic Extension Attribute.
-	 * @see edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation#getDynamicExtensionsAssociation()
-	 */
-	public AssociationInterface getDynamicExtensionsAssociation()
-	{
-		return associationInterface;
-	}
-
-	/**
-	 * @param obj the object to be compared.
-	 * @return true if the associationInterface of both the objects are same.
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-		{
-			return true;
-		}
-
-		if (obj != null && this.getClass() == obj.getClass())
-		{
-			IntraModelAssociation association = (IntraModelAssociation) obj;
-			if (this.associationInterface != null
-					&& this.associationInterface.equals(association.associationInterface))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * To get the HashCode for the object. It will be calculated based on associationInterface.
-	 * @return The hash code value for the object.
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		int hash = 1;
-		if (associationInterface != null)
-		{
-			hash = hash * Constants.HASH_PRIME + associationInterface.hashCode();
-		}
-		return hash;
-	}
-
-	/**
-	 * @return String representation of this object in the form: [associationInterface]
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return associationInterface + "";
-	}
-
-	public boolean isBidirectional()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public EntityInterface getSourceEntity()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public EntityInterface getTargetEntity()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IAssociation#isBidirectional()
+     */
+    public boolean isBidirectional() {
+        return (dynamicExtensionsAssociation.getAssociationDirection() == AssociationDirection.BI_DIRECTIONAL);
+    }
+    /**
+     * @see edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation#getDynamicExtensionsAssociation()
+     */
+    public AssociationInterface getDynamicExtensionsAssociation() {
+        return dynamicExtensionsAssociation;
+    }
+    @Override
+    public String toString() {
+        if(dynamicExtensionsAssociation!=null)
+        return "Dynamic Extension Association Id : " + dynamicExtensionsAssociation.getId();
+        return "";
+    }
 }

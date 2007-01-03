@@ -36,5 +36,10 @@ public class Category {
 	public EntityInterface getCategory(){
 		return null;
 	}
+	
+	public Category clone() {
+		// TODO by Chandu
+		return null;
+	}
 
 }

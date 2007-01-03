@@ -68,4 +68,21 @@ public class CategorialClass
 		}
 		return null;
 	}
+
+	public void addChildCategorialClass(CategorialClass child, IPath pathToChild)
+	{
+		children.add(child);
+		child.setParent(this);
+		child.setPathFromParent(pathToChild);
+	}
+
+	public void setParent(CategorialClass parent)
+	{
+		this.parent = parent;
+	}
+
+	public void setPathFromParent(IPath pathFromParent)
+	{
+		this.pathFromParent = pathFromParent;
+	}
 }
