@@ -1,14 +1,5 @@
 package edu.wustl.common.treeApplet;
 
-import java.applet.Applet;
-import java.applet.AppletContext;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JTree;
-import javax.swing.event.MouseInputListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import netscape.javascript.JSObject;
 import edu.wustl.common.tree.SpecimenTreeNode;
 import edu.wustl.common.util.global.Constants;
 
@@ -62,13 +53,10 @@ public class SpecimenTreeListener extends AppletTreeListener
 		{
 			return;
 		}
-		//if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
 		
 		//If selected node is of given type and class, then set its value in dropdown and the dropdown is not disabled.
 		else if(treeNode.getType().equalsIgnoreCase(type) && treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass))
 		{
-				/*System.out.println("...treeNode.getType() " + treeNode.getType());
-				System.out.println("...treeNode.getSpecimenClass()  " + treeNode.getSpecimenClass());*/
 			setValue="setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
 		}
 		else
