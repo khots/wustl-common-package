@@ -121,6 +121,36 @@
             </classpath>       
         </javac>
     </target>
+	<!-- Create the Applet JAR Begins-->
+  <!--target name="AppletJAR" depends="compile" >
+    	<delete>
+            <fileset dir="${applet.dir}">
+	            <exclude name="**/CVS*"/>
+	            <exclude name="**/java.policy.applet*"/>
+            </fileset>
+        </delete>
+        
+        <copy todir="${applet.dir}/edu/wustl/common/treeApplet">
+        	<fileset dir="${target.dir}/edu/wustl/common/treeApplet">
+            	<include name="**/*.class"/>
+        	</fileset>
+        </copy>
+        <copy todir="${applet.dir}/edu/wustl/common/tree">
+        	<fileset dir="${target.dir}/edu/wustl/common/tree">
+	    	    <include name="**/*.class"/>
+    		</fileset>
+    	</copy>
+		
+        <jar taskname="BuildJar" jarfile="${applet.dir}/TreeApplet.jar">
+            <fileset dir="${applet.dir}">
+	            <exclude name="**/CVS*"/>
+	            <exclude name="**/java.policy.applet*"/>
+            </fileset>
+        </jar>
+		
+		<delete dir="${applet.dir}/edu"/>
+    </target-->
+   	<!-- Create the Applet JAR Ends-->
 	
 	<!-- Compile all files, generated and hand-written -->
     <target name="applet_compile" depends="init" >
@@ -131,7 +161,7 @@
             </fileset>
     	 </delete>
     	
-        <javac destdir="${applet.dir}" includeAntRuntime="false" fork="yes" executable="C:/jdk1.3.1_18/bin/javac" compiler="javac1.3">
+        <javac destdir="${applet.dir}" includeAntRuntime="false" fork="yes" executable="C:/Program Files/Java/jdk1.5.0_05/bin/javac" compiler="javac1.5">
             <src path="${src.dir}"/>
 			
 			<include name="**/edu/wustl/common/tree/*.java"/>	
@@ -159,7 +189,16 @@
     		</fileset>
     	 </copy>
 
+		<copy todir="${applet.dir}">	
+    		<fileset dir="${lib.dir}">
+	    	    <include name="**/swingx-2006_10_08.jar"/>
+    		</fileset>
+    	 </copy> 
+
         <jar taskname="buildJar" jarfile="${applet.dir}/TreeApplet.jar">
+		 <manifest>
+		      <attribute name="Class-Path" value="swingx-2006_10_08.jar"/>
+		   </manifest>
             <fileset dir="${applet.dir}">
 	            <exclude name="**/CVS*"/>
 	            <exclude name="**/java.policy.applet*"/>
@@ -229,7 +268,6 @@
             	<exclude name="**/JoinGraphTestCase*"/>
             </fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties"/>	
-			<fileset dir="${base.dir}" includes="**/dbutil.properties"/>	
         </jar>
 		
 		<antcall target="build_code_zip"/>
