@@ -345,4 +345,42 @@
 			<fileset dir="${src.dir}" includes="**/querysuite/**/*.java"/>
 		</pmd>
 	</target>
+	
+	<target name="executeQueries">
+		<delete dir="${junit.classes.dir}"/>
+    	<mkdir dir="${junit.classes.dir}"/> 
+		<javac srcdir="${test.dir}" destdir="${junit.classes.dir}" >
+			<include name="edu/wustl/common/querysuite/ExecuteQueries.java"/>
+			<!--include name="**/ExecuteQueries.java"/-->
+			<classpath refid="app.classpath"/>
+		</javac>
+
+		<property file="queryDetails.properties"/>
+		<echo message="Database Settings:"/>
+		<echo message="Database Type: ${database.type}"/>
+		<echo message="Database Host: ${database.host}"/>
+		<echo message="Database Host: ${database.port}"/>
+		<echo message="Database Name: ${database.name}"/>
+		<echo message="Database User name: ${database.username}"/>
+		<echo message="Database Password: ${database.password}"/>
+		<echo message="SQL File: ${base.dir}/${sql.fileName}"/>
+		
+		<java classname="edu.wustl.common.querysuite.ExecuteQueries" fork="true">
+			<arg value="${database.type}"/>
+			<arg value="${database.host}"/>
+			<arg value="${database.port}"/>
+			<arg value="${database.name}"/>
+			<arg value="${database.username}"/>
+			<arg value="${database.password}"/>
+			<arg value="${base.dir}/${sql.fileName}"/>
+			<arg value="${databse.tableNames}"/>
+			<classpath>
+				<pathelement location="${junit.classes.dir}"/>
+				 <fileset dir="${lib.dir}">
+	                  <include name="*.jar"/>
+				 </fileset>
+			</classpath>
+			<classpath refid="app.classpath"/>
+		</java>
+	</target>
 </project>
