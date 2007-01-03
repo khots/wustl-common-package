@@ -41,7 +41,8 @@ public interface IPath
 
 	/**
 	 * Call iff isBidirectional() = true.
-	 * @return if bidirectional, returns a reverse path; otherwise returns null.
+	 * @return if bidirectional, returns a reverse path.
+	 * @throws java.lang.IllegalArgumentException if the path is not bidirectional.
 	 */
 	IPath reverse();
 }

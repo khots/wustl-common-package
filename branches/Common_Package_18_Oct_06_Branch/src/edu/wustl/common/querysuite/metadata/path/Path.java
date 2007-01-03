@@ -1,89 +1,129 @@
+
 package edu.wustl.common.querysuite.metadata.path;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 
 /**
  * @author Chandrakant Talele
  */
-public class Path implements IPath {
-    EntityInterface sourceEntity;
-    EntityInterface targetEntity;
-    List<IAssociation> intermediateAssociations;
-    
-    /**
-     * @param sourceEntity
-     * @param targetEntity
-     * @param intermediateAssociations
-     */
-    public Path(EntityInterface sourceEntity, EntityInterface targetEntity, List<IAssociation> intermediateAssociations) {
-        this.sourceEntity = sourceEntity;
-        this.targetEntity = targetEntity;
-        this.intermediateAssociations = intermediateAssociations;
-    }
+public class Path implements IPath
+{
 
-    public EntityInterface getSourceEntity() {
-        return sourceEntity;
-    }
+	EntityInterface sourceEntity;
+	EntityInterface targetEntity;
+	List<IAssociation> intermediateAssociations;
 
-    public EntityInterface getTargetEntity() {
-        return targetEntity;
-    }
+	/**
+	 * @param sourceEntity
+	 * @param targetEntity
+	 * @param intermediateAssociations
+	 */
+	public Path(EntityInterface sourceEntity, EntityInterface targetEntity,
+			List<IAssociation> intermediateAssociations)
+	{
+		this.sourceEntity = sourceEntity;
+		this.targetEntity = targetEntity;
+		this.intermediateAssociations = intermediateAssociations;
+	}
 
-    public List<IAssociation> getIntermediateAssociations() {
-        return intermediateAssociations;
-    }
+	public EntityInterface getSourceEntity()
+	{
+		return sourceEntity;
+	}
 
-    /**
-     * @see edu.wustl.common.querysuite.metadata.path.IPath#isBidirectional()
-     */
-    public boolean isBidirectional() {
-        for(IAssociation association : intermediateAssociations) {
-            if(!association.isBidirectional()) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public EntityInterface getTargetEntity()
+	{
+		return targetEntity;
+	}
 
-    /**
-     * @see edu.wustl.common.querysuite.metadata.path.IPath#reverse()
-     */
-    public IPath reverse() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public List<IAssociation> getIntermediateAssociations()
+	{
+		return intermediateAssociations;
+	}
 
-    /**
-     * @param intermediateAssociations The intermediateAssociations to set.
-     */
-    public void setIntermediateAssociations(List<IAssociation> intermediateAssociations) {
-        this.intermediateAssociations = intermediateAssociations;
-    }
+	/**
+	 * @see edu.wustl.common.querysuite.metadata.path.IPath#isBidirectional()
+	 */
+	public boolean isBidirectional()
+	{
+		for (IAssociation association : intermediateAssociations)
+		{
+			if (!association.isBidirectional())
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
-    /**
-     * @param sourceEntity The sourceEntity to set.
-     */
-    public void setSourceEntity(EntityInterface sourceEntity) {
-        this.sourceEntity = sourceEntity;
-    }
+	/**
+	 * @see edu.wustl.common.querysuite.metadata.path.IPath#reverse()
+	 */
 
-    /**
-     * @param targetEntity The targetEntity to set.
-     */
-    public void setTargetEntity(EntityInterface targetEntity) {
-        this.targetEntity = targetEntity;
-    }
-    @Override
-    public String toString() {
-        StringBuffer buff = new StringBuffer();
-        buff.append("Start Entity : " + sourceEntity.getName());
-        buff.append("End Entity : " + targetEntity.getName());
-        for(IAssociation association : intermediateAssociations) {
-            buff.append("\t" + association.toString());
-        }
-        return buff.toString();
-    }
+	// BEGIN REVERSING
+	public IPath reverse()
+	{
+		List<IAssociation> origAssociations = getIntermediateAssociations();
+		List<IAssociation> newAssociations = new ArrayList<IAssociation>(origAssociations.size());
+		for (IAssociation association : origAssociations)
+		{
+			if (!association.isBidirectional())
+			{
+				throw new IllegalArgumentException("Path ain't bidirectional... cannot reverse.");
+			}
+			if (association instanceof IInterModelAssociation)
+			{
+				newAssociations.add(((InterModelAssociation) association).reverse());
+			}
+			else
+			{
+				newAssociations.add(((IntraModelAssociation) association).reverse());
+			}
+		}
+		return new Path(getTargetEntity(), getSourceEntity(), newAssociations);
+	}
+
+	/**
+	 * @param intermediateAssociations The intermediateAssociations to set.
+	 */
+	public void setIntermediateAssociations(List<IAssociation> intermediateAssociations)
+	{
+		this.intermediateAssociations = intermediateAssociations;
+	}
+
+	/**
+	 * @param sourceEntity The sourceEntity to set.
+	 */
+	public void setSourceEntity(EntityInterface sourceEntity)
+	{
+		this.sourceEntity = sourceEntity;
+	}
+
+	/**
+	 * @param targetEntity The targetEntity to set.
+	 */
+	public void setTargetEntity(EntityInterface targetEntity)
+	{
+		this.targetEntity = targetEntity;
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuffer buff = new StringBuffer();
+		buff.append("Start Entity : " + sourceEntity.getName());
+		buff.append("End Entity : " + targetEntity.getName());
+		for (IAssociation association : intermediateAssociations)
+		{
+			buff.append("\t" + association.toString());
+		}
+		return buff.toString();
+	}
 }
