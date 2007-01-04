@@ -3,86 +3,181 @@ package edu.wustl.common.querysuite.metadata.category;
 
 import java.util.Set;
 
+import edu.common.dynamicextensions.domain.Entity;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.common.querysuite.metadata.path.IPath;
 
 /**
  * @version 1.0
  * @created 28-Dec-2006 2:01:13 AM
+ * @hibernate.class table="CATEGORIAL_CLASS"
  */
 public class CategorialClass
 {
 
-	private long id;
-	private long deEntityId;
-	public Category category;
-	public Set<CategorialAttribute> categorialAttributeCollection;
-	public Set<CategorialClass> children;
-	public CategorialClass parent;
-	public IPath pathFromParent;
+    private Long id;
+    private Entity deEntity;
+    private Category category;
+    private Set<CategorialAttribute> categorialAttributeCollection;
+    private Set<CategorialClass> children;
+    private CategorialClass parent;
+    private Long pathFromParentId;
+    
+    /**
+     * @return Returns the id.
+     * @hibernate.id name="id" column="ID" type="long"
+     * length="30" unsaved-value="null" generator-class="native"
+     * @hibernate.generator-param name="sequence" value="CATEGORIAL_CLASS_SEQ"
+     */
+    public Long getId()
+    {
+        return id;
+    }
 
-	public CategorialClass()
-	{
+    /**
+     * @return Returns the category.
+     * @hibernate.many-to-one column="CATEGORY_ID" class="edu.wustl.common.querysuite.metadata.category.Category"
+     * constrained="true"
+     */
+    public Category getCategory()
+    {
+        return category;
+    }
 
-	}
+    /**
+     * @param category The category to set.
+     */
+    public void setCategory(Category category)
+    {
+        this.category = category;
+    }
 
-	public void finalize() throws Throwable
-	{
+    /**
+     * @return Returns the deEntity.
+     * @hibernate.many-to-one column="DE_ENTITY_ID" class="edu.common.dynamicextensions.domain.Entity"
+     * constrained="true"
+     */
+    public Entity getDeEntity()
+    {
+        return deEntity;
+    }
 
-	}
+    /**
+     * @param deEntity The deEntity to set.
+     */
+    public void setDeEntity(Entity deEntity)
+    {
+        this.deEntity = deEntity;
+    }
 
-	public EntityInterface getDynamicExtensionsEntity()
-	{
-		return null;
-	}
+    /**
+     * @param id The id to set.
+     */
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
 
-	public Set<CategorialAttribute> getCategorialAttributeCollection()
-	{
-		return categorialAttributeCollection;
-	}
+    /**
+     * @param categorialAttributeCollection The categorialAttributeCollection to set.
+     */
+    public void setCategorialAttributeCollection(
+            Set categorialAttributeCollection)
+    {
+        this.categorialAttributeCollection = categorialAttributeCollection;
+    }
 
-	public Set<CategorialClass> getChildren()
-	{
-		return children;
-	}
+    /**
+     * @param children The children to set.
+     */
+    public void setChildren(Set children)
+    {
+        this.children = children;
+    }
 
-	public IPath getPathFromParent()
-	{
-		return pathFromParent;
-	}
+    public CategorialClass()
+    {
 
-	public CategorialClass getParent()
-	{
-		return parent;
-	}
+    }
 
-	public AttributeInterface findSourceAttribute(AttributeInterface catAttr)
-	{
-		for (CategorialAttribute categorialAttribute : getCategorialAttributeCollection())
-		{
-			if (catAttr.equals(categorialAttribute.getCategoryAttribute()))
-			{
-				return categorialAttribute.getSourceClassAttribute();
-			}
-		}
-		return null;
-	}
+    public void finalize() throws Throwable
+    {
 
-	public void addChildCategorialClass(CategorialClass child, IPath pathToChild)
-	{
-		children.add(child);
-		child.setParent(this);
-		child.setPathFromParent(pathToChild);
-	}
+    }
 
-	public void setParent(CategorialClass parent)
-	{
-		this.parent = parent;
-	}
+    public EntityInterface getDynamicExtensionsEntity()
+    {
+        return null;
+    }
 
-	public void setPathFromParent(IPath pathFromParent)
-	{
-		this.pathFromParent = pathFromParent;
-	}
+    /**
+     * @return
+     * @hibernate.set name="categorialAttributeCollection" table="CATEGORIAL_ATTRIBUTE"
+     * cascade="none" inverse="false" lazy="false"
+     * @hibernate.collection-key column="CATEGORIAL_CLASS_ID"
+     * @hibernate.collection-one-to-many class="edu.wustl.common.querysuite.metadata.category.CategorialAttribute"
+     */
+    public Set<CategorialAttribute> getCategorialAttributeCollection()
+    {
+        return categorialAttributeCollection;
+    }
+
+    /**
+     * @return
+     * @hibernate.set name="children" table="CATEGORIAL_CLASS"
+     * cascade="none" inverse="false" lazy="false"
+     * @hibernate.collection-key column="PARENT_CATEGORIAL_CLASS_ID"
+     * @hibernate.collection-one-to-many class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+     */
+    public Set<CategorialClass> getChildren()
+    {
+        return children;
+    }
+
+    /**
+     * @return
+     * @hibernate.property name="pathFromParentId" type="long" column="PATH_FROM_PARENT_ID"
+     */
+    public Long getPathFromParentId()
+    {
+        return pathFromParentId;
+    }
+
+    /**
+     * @hibernate.many-to-one column="PARENT_CATEGORIAL_CLASS_ID" 
+     * class="edu.wustl.common.querysuite.metadata.category.CategorialClass" constrained="true"
+     */
+    public CategorialClass getParent()
+    {
+        return parent;
+    }
+
+    public AttributeInterface findSourceAttribute(AttributeInterface catAttr)
+    {
+//        for (CategorialAttribute categorialAttribute : getCategorialAttributeCollection())
+//        {
+//            if (catAttr.equals(categorialAttribute.getCategoryAttribute()))
+//            {
+//                return categorialAttribute.getSourceClassAttribute();
+//            }
+//        }
+        return null;
+    }
+
+    public void addChildCategorialClass(CategorialClass child, Long pathToChildId)
+    {
+        children.add(child);
+        child.setParent(this);
+        child.setPathFromParentId(pathToChildId);
+    }
+
+    public void setParent(CategorialClass parent)
+    {
+        this.parent = parent;
+    }
+
+    public void setPathFromParentId(Long pathFromParentId)
+    {
+        this.pathFromParentId = pathFromParentId;
+    }
 }
