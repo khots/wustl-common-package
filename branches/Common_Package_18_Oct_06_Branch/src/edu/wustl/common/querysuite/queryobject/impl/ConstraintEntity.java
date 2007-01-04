@@ -27,15 +27,6 @@ public class ConstraintEntity extends QueryEntity implements IConstraintEntity
 	}
 
 	/**
-	 * @return false
-	 * @see edu.wustl.common.querysuite.queryobject.IQueryEntity#isCategory()
-	 */
-	public boolean isCategory()
-	{
-		return false;
-	}
-
-	/**
 	 * To check whether two objects are equal.
 	 * @param obj reference to the object to be checked for equality.
 	 * @return true if centityInterface of object is equal.

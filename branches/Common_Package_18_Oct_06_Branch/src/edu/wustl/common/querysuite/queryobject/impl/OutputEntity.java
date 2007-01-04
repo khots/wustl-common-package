@@ -40,15 +40,6 @@ public class OutputEntity extends QueryEntity implements IOutputEntity
 	}
 
 	/**
-	 * @return true.
-	 * @see edu.wustl.common.querysuite.queryobject.IQueryEntity#isCategory()
-	 */
-	public boolean isCategory()
-	{
-		return true;
-	}
-
-	/**
 	 * To check whether two objects are equal.
 	 * @param obj reference to the object to be checked for equality.
 	 * @return true if entityInterface of object is equal.
