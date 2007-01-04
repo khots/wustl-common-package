@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domain.Entity;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 
 /**
  * @version 1.0
@@ -122,16 +121,6 @@ public class Category
     public Collection<Category> getSubCategories()
     {
         return subCategories;
-    }
-
-    public void finalize() throws Throwable
-    {
-
-    }
-
-    public EntityInterface getCategory()
-    {
-        return null;
     }
 
     public Category clone()
