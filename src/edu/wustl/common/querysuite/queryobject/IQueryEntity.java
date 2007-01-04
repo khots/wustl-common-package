@@ -17,9 +17,4 @@ public interface IQueryEntity extends IBaseQueryObject
 	 */
 	EntityInterface getDynamicExtensionsEntity();
 
-	/**
-	 * @return true if the entity is a category; false if it is a class
-	 */
-	boolean isCategory();
-
 }
