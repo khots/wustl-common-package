@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="edu.wustl.common.querysuite.metadata.category.Category"
+        table="CATEGORY"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+
+        <id
+            name="id"
+            column="ID"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">CATEGORY_SEQ</param>
+            </generator>
+        </id>
+
+        <many-to-one
+            name="deEntity"
+            class="edu.common.dynamicextensions.domain.Entity"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="DE_ENTITY_ID"
+        />
+
+        <many-to-one
+            name="parentCategory"
+            class="edu.wustl.common.querysuite.metadata.category.Category"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="PARENT_CATEGORY_ID"
+        />
+
+        <many-to-one
+            name="rootClass"
+            class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="ROOT_CATEGORIAL_CLASS_ID"
+        />
+
+        <set
+            name="subCategories"
+            table="CATEGORY"
+            lazy="false"
+            inverse="false"
+            cascade="none"
+            sort="unsorted"
+        >
+
+              <key
+                  column="PARENT_CATEGORY_ID"
+              />
+
+              <one-to-many
+                  class="edu.wustl.common.querysuite.metadata.category.Category"
+              />
+        </set>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-Category.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>
