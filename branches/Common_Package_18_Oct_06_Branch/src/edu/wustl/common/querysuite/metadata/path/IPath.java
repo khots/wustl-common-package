@@ -1,6 +1,7 @@
 
 package edu.wustl.common.querysuite.metadata.path;
 
+import java.io.Serializable;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -10,7 +11,7 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
  * @version 1.0
  * @created 22-Dec-2006 2:49:27 PM
  */
-public interface IPath
+public interface IPath extends Serializable
 {
 
 	/**
