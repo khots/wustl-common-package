@@ -5,7 +5,6 @@ import java.util.Set;
 
 import edu.common.dynamicextensions.domain.Entity;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 
 /**
  * @version 1.0
@@ -82,7 +81,7 @@ public class CategorialClass
      * @param categorialAttributeCollection The categorialAttributeCollection to set.
      */
     public void setCategorialAttributeCollection(
-            Set categorialAttributeCollection)
+            Set<CategorialAttribute> categorialAttributeCollection)
     {
         this.categorialAttributeCollection = categorialAttributeCollection;
     }
@@ -90,7 +89,7 @@ public class CategorialClass
     /**
      * @param children The children to set.
      */
-    public void setChildren(Set children)
+    public void setChildren(Set<CategorialClass> children)
     {
         this.children = children;
     }
@@ -98,16 +97,6 @@ public class CategorialClass
     public CategorialClass()
     {
 
-    }
-
-    public void finalize() throws Throwable
-    {
-
-    }
-
-    public EntityInterface getDynamicExtensionsEntity()
-    {
-        return null;
     }
 
     /**

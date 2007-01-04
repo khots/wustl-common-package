@@ -99,19 +99,4 @@ public class CategorialAttribute
 
     }
 
-    public void finalize() throws Throwable
-    {
-
-    }
-
-    public AttributeInterface getCategoryAttribute()
-    {
-        return null;
-    }
-
-    public AttributeInterface getSourceClassAttribute()
-    {
-        return null;
-    }
-
 }
