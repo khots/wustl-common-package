@@ -143,13 +143,13 @@ public class CategorialClass
 
     public AttributeInterface findSourceAttribute(AttributeInterface catAttr)
     {
-//        for (CategorialAttribute categorialAttribute : getCategorialAttributeCollection())
-//        {
-//            if (catAttr.equals(categorialAttribute.getCategoryAttribute()))
-//            {
-//                return categorialAttribute.getSourceClassAttribute();
-//            }
-//        }
+        for (CategorialAttribute categorialAttribute : getCategorialAttributeCollection())
+        {
+            if (catAttr.equals(categorialAttribute.getDeCategoryAttribute()))
+            {
+                return categorialAttribute.getDeSourceClassAttribute();
+            }
+        }
         return null;
     }
 
