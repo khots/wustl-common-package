@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+    <class
+        name="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+        table="CATEGORIAL_CLASS"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+
+        <id
+            name="id"
+            column="ID"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">CATEGORIAL_CLASS_SEQ</param>
+            </generator>
+        </id>
+
+        <many-to-one
+            name="category"
+            class="edu.wustl.common.querysuite.metadata.category.Category"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="CATEGORY_ID"
+        />
+
+        <many-to-one
+            name="deEntity"
+            class="edu.common.dynamicextensions.domain.Entity"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="DE_ENTITY_ID"
+        />
+
+        <set
+            name="categorialAttributeCollection"
+            table="CATEGORIAL_ATTRIBUTE"
+            lazy="false"
+            inverse="false"
+            cascade="none"
+            sort="unsorted"
+        >
+
+              <key
+                  column="CATEGORIAL_CLASS_ID"
+              />
+
+              <one-to-many
+                  class="edu.wustl.common.querysuite.metadata.category.CategorialAttribute"
+              />
+        </set>
+
+        <set
+            name="children"
+            table="CATEGORIAL_CLASS"
+            lazy="false"
+            inverse="false"
+            cascade="none"
+            sort="unsorted"
+        >
+
+              <key
+                  column="PARENT_CATEGORIAL_CLASS_ID"
+              />
+
+              <one-to-many
+                  class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+              />
+        </set>
+
+        <property
+            name="pathFromParentId"
+            type="long"
+            update="true"
+            insert="true"
+            column="PATH_FROM_PARENT_ID"
+        />
+
+        <many-to-one
+            name="parent"
+            class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="PARENT_CATEGORIAL_CLASS_ID"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-CategorialClass.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>
