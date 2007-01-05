@@ -34,21 +34,17 @@
             column="CATEGORIAL_CLASS_ID"
         />
 
-        <many-to-one
-            name="deCategoryAttribute"
-            class="edu.common.dynamicextensions.domain.Attribute"
-            cascade="none"
-            outer-join="auto"
+        <property
+            name="deCategoryAttributeId"
+            type="long"
             update="true"
             insert="true"
             column="DE_CATEGORY_ATTRIBUTE_ID"
         />
 
-        <many-to-one
-            name="deSourceClassAttribute"
-            class="edu.common.dynamicextensions.domain.Attribute"
-            cascade="none"
-            outer-join="auto"
+        <property
+            name="deSourceClassAttributeId"
+            type="long"
             update="true"
             insert="true"
             column="DE_SOURCE_CLASS_ATTRIBUTE_ID"
