@@ -1,14 +1,20 @@
 
 package edu.wustl.common.querysuite.metadata.category;
 
+import java.io.Serializable;
+
 /**
  * @version 1.0
  * @created 28-Dec-2006 2:01:13 AM
  * @hibernate.class table="CATEGORIAL_ATTRIBUTE"
  */
-public class CategorialAttribute
+public class CategorialAttribute implements Serializable
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3284285745433302355L;
 	private Long id;
 	private Long deCategoryAttributeId;
 	private Long deSourceClassAttributeId;
