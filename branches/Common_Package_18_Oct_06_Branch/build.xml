@@ -221,6 +221,7 @@
 			<fileset dir="${src.dir}">
 				<include name="**/domain/*.java"/>
 				<include name="**/cde/*.java"/>
+				<include name="**/category/*.java"/>
 			</fileset>
     		<hibernate version="2.0"/>
 		</hibernatedoclet>	
@@ -229,6 +230,7 @@
 	    <replace dir="${src.dir}">
 	    	<include name="**/domain/*.hbm.xml"/>
 	        <include name="**/cde/*.hbm.xml"/>
+			<include name="**/category/*hbm.xml"/>
 	        <replacefilter token="readonly=" value="inverse="/>
 	        <replacefilter token="role=" value="name="/>
 	        <replacefilter token="hibernate-mapping.dtd" value="hibernate-mapping-2.0.dtd"/>
@@ -241,11 +243,15 @@
 	    	<fileset dir="${src.dir}/edu/wustl/common/cde">
 	    		<include name="*.hbm.xml"/>
 	       	</fileset>
+	    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category">
+	    		<include name="*.hbm.xml"/>
+	       	</fileset>
 	    </copy>
     	
     	<delete>
             <fileset dir="${src.dir}/edu/wustl/common/domain" includes="*.hbm.xml"/>
     		<fileset dir="${src.dir}/edu/wustl/common/cde" includes="*.hbm.xml"/>
+	    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category" includes="*.hbm.xml"/>
         </delete>
     </target>
 	
