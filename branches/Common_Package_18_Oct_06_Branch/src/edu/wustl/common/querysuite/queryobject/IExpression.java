@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @version 1.0
  * @updated 22-Dec-2006 2:50:17 PM
  */
-public interface IExpression extends Serializable
+public interface IExpression extends IBaseQueryObject
 {
 
 	/**
