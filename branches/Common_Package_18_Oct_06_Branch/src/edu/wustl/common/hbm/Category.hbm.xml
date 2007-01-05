@@ -24,11 +24,9 @@
             </generator>
         </id>
 
-        <many-to-one
-            name="deEntity"
-            class="edu.common.dynamicextensions.domain.Entity"
-            cascade="none"
-            outer-join="auto"
+        <property
+            name="deEntityId"
+            type="long"
             update="true"
             insert="true"
             column="DE_ENTITY_ID"
