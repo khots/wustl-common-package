@@ -1,6 +1,7 @@
 
 package edu.wustl.common.querysuite.metadata.category;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,9 +11,13 @@ import java.util.Set;
  * @created 28-Dec-2006 2:01:13 AM
  * @hibernate.class table="CATEGORY"
  */
-public class Category
+public class Category implements Serializable
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4899537928159969695L;
 	private Long id;
 	private Long deEntityId;
 	private CategorialClass rootClass;
