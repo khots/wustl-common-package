@@ -25,6 +25,7 @@ import edu.wustl.common.querysuite.queryobject.impl.ConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.OutputEntity;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -176,6 +177,26 @@ public class QueryObjectFactory
 	 * @return The reference to the ConstraintEntity object.
 	 */
 	public static IConstraintEntity createConstrainedEntity(EntityInterface entityInterface)
+	{
+		return new ConstraintEntity(entityInterface);
+	}
+	
+	/**
+	 * To instanciate object of class implementing  IOutputEntity interface.
+	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
+	 * @return The reference to the OutputEntity object.
+	 */
+	public static IOutputEntity createOutputEntity(EntityInterface entityInterface)
+	{
+		return new OutputEntity(entityInterface);
+	}
+	
+	/**
+	 * To instanciate object of class implementing  IConstraintEntity interface.
+	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
+	 * @return The reference to the ConstraintEntity object.
+	 */
+	public static IConstraintEntity createConstraintEntity(EntityInterface entityInterface)
 	{
 		return new ConstraintEntity(entityInterface);
 	}

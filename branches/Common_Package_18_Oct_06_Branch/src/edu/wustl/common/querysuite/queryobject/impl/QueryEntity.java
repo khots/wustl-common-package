@@ -18,6 +18,14 @@ abstract class QueryEntity implements IQueryEntity
 	protected EntityInterface entityInterface;
 
 	/**
+	 * TO initialize entityInterface object for this object.
+	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
+	 */
+	protected QueryEntity(EntityInterface entityInterface)
+	{
+		this.entityInterface = entityInterface;	
+	}
+	/**
 	 * To get the Dynamic Extension Entity reference.
 	 * @return The Dynamic Extension Entity reference corresponding to the QueryEntity.
 	 * @see edu.wustl.common.querysuite.queryobject.IQueryEntity#getDynamicExtensionsEntity()

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.util.global.Constants;
 
@@ -19,8 +20,17 @@ public class OutputEntity extends QueryEntity implements IOutputEntity
 {
 
 	private static final long serialVersionUID = -823732241107299703L;
-	List<AttributeInterface> selectedAttributes = new ArrayList<AttributeInterface>();
+	private List<AttributeInterface> selectedAttributes = new ArrayList<AttributeInterface>();
 
+	/**
+	 * To instanciate OutputEntity object.
+	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
+	 */
+	public OutputEntity(EntityInterface entityInterface)
+	{
+		super(entityInterface);
+	}
+	
 	/**
 	 * @return List of Dynamic Extenstion attributes that will be shown in the Output tree.
 	 * @see edu.wustl.common.querysuite.queryobject.IOutputEntity#getSelectedAttributes()
