@@ -23,7 +23,7 @@ public class ConstraintEntity extends QueryEntity implements IConstraintEntity
 	 */
 	public ConstraintEntity(EntityInterface entityInterface)
 	{
-		this.entityInterface = entityInterface;
+		super(entityInterface);
 	}
 
 	/**
