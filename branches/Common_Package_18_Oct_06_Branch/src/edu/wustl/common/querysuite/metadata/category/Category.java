@@ -4,7 +4,6 @@ package edu.wustl.common.querysuite.metadata.category;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @version 1.0
@@ -36,7 +35,7 @@ public class Category implements Serializable
 	/**
 	 * @param deEntityId The deEntity to set.
 	 */
-	public void setDeEntityid(Long deEntityId)
+	public void setDeEntityId(Long deEntityId)
 	{
 		this.deEntityId = deEntityId;
 	}
@@ -89,7 +88,7 @@ public class Category implements Serializable
 	/**
 	 * @param subCategories The subCategories to set.
 	 */
-	public void setSubCategories(Set<Category> subCategories)
+	public void setSubCategories(Collection<Category> subCategories)
 	{
 		this.subCategories = subCategories;
 	}
@@ -116,7 +115,7 @@ public class Category implements Serializable
 	/**
 	 * @return
 	 * @hibernate.set name="subCategories" table="CATEGORY"
-	 * cascade="none" inverse="false" lazy="false"
+	 * cascade="save-update" inverse="false" lazy="false"
 	 * @hibernate.collection-key column="PARENT_CATEGORY_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.querysuite.metadata.category.Category"
 	 */
