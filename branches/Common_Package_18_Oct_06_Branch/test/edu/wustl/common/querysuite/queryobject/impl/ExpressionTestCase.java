@@ -284,7 +284,7 @@ public class ExpressionTestCase extends TestCase
 
 	/*
 	 * Expression is (d or e)-- we try to remove operand d; 
-	 * it should give us e as the final expression with no logical connector
+	 * it should give us e as the final expression with no logical connector & getLogicalConnector(0,1) should return connector with 'unknown' logical operator. 
 	 */
 	public void testremoveOperandCase10()
 	{
@@ -293,8 +293,16 @@ public class ExpressionTestCase extends TestCase
 
 		try
 		 {
-			expr2.getLogicalConnector(0,1);
-			assertTrue("Expected IndexOutOfBoundsException for removed Logical Connector!!!",false);
+			ILogicalConnector  logicalConnector= expr2.getLogicalConnector(0,1);
+			assertEquals("Incorrect Logical connector returned from getLogicalConnector() method!!!", logicalConnector.getLogicalOperator(), unknownCond.getLogicalOperator());
+		 }
+		 catch (IndexOutOfBoundsException e)
+		 {
+				assertTrue("Unexpected IndexOutOfBoundsException for removed Logical Connector!!!",false);
+		 }
+		 
+		 try
+		 {
 			expr2.getOperand(1);
 			assertTrue("Expected IndexOutOfBoundsException for removed Operand!!!",false);
 		 }
