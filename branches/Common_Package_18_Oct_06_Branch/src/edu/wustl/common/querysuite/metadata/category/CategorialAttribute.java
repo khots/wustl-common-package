@@ -3,8 +3,6 @@ package edu.wustl.common.querysuite.metadata.category;
 
 import java.io.Serializable;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-
 /**
  * @version 1.0
  * @created 28-Dec-2006 2:01:13 AM
@@ -21,8 +19,6 @@ public class CategorialAttribute implements Serializable
 	private Long deCategoryAttributeId;
 	private Long deSourceClassAttributeId;
 	private CategorialClass categorialClass;
-	
-	private AttributeInterface categoryAttribute; 
 
 	/**
 	 * @return Returns the categorialClass.
@@ -102,24 +98,6 @@ public class CategorialAttribute implements Serializable
 	public CategorialAttribute()
 	{
 
-	}
-
-	
-	/**
-	 * @return the categoryAttribute.
-	 */
-	public AttributeInterface getCategoryAttribute()
-	{
-		return categoryAttribute;
-	}
-
-	
-	/**
-	 * @param categoryAttribute the categoryAttribute to set.
-	 */
-	public void setCategoryAttribute(AttributeInterface categoryAttribute)
-	{
-		this.categoryAttribute = categoryAttribute;
 	}
 
 }
