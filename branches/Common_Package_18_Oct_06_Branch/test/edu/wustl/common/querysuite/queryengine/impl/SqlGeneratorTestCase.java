@@ -21,6 +21,9 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * TestCase class for SqlGenerator.
@@ -33,6 +36,11 @@ public class SqlGeneratorTestCase extends TestCase
 	SqlGenerator generator;
 	EntityManagerMock entityManager = new EntityManagerMock(); 
 	
+	static
+	{
+		Logger.configure();// To avoid null pointer Exception for code calling logger statements.
+	}
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -41,8 +49,37 @@ public class SqlGeneratorTestCase extends TestCase
 	{
 		generator = new SqlGenerator();
 		super.setUp();
+		setDataBaseType(Constants.MYSQL_DATABASE);
 	}
 
+	/**
+	 * To set the Database Type as MySQL or Oracle.
+	 * @param databaseType Constants.ORACLE_DATABASE or Constants.MYSQL_DATABASE.
+	 */
+	private void setDataBaseType(String databaseType)
+	{
+		Variables.databaseName = databaseType;
+		
+		if(Variables.databaseName.equals(Constants.ORACLE_DATABASE))
+        {
+        	//set string/function for oracle
+        	Variables.datePattern = "mm-dd-yyyy";
+        	Variables.timePattern = "hh-mi-ss";
+        	Variables.dateFormatFunction="TO_CHAR";
+        	Variables.timeFormatFunction="TO_CHAR";
+        	Variables.dateTostrFunction = "TO_CHAR";
+        	Variables.strTodateFunction = "TO_DATE";
+        }
+        else
+        {
+        	Variables.datePattern = "%m-%d-%Y";
+        	Variables.timePattern = "%H:%i:%s";
+        	Variables.dateFormatFunction="DATE_FORMAT";
+        	Variables.timeFormatFunction="TIME_FORMAT";
+        	Variables.dateTostrFunction = "TO_CHAR";
+        	Variables.strTodateFunction = "STR_TO_DATE";
+        }
+	}
 	/**
 	 * To test the getSQL(ICondition condition) method.
 	 *
@@ -65,15 +102,23 @@ public class SqlGeneratorTestCase extends TestCase
 
 			condition1 = QueryGeneratorMock.createParticipantCondition3(participantEntity);
 			assertEquals(
-					"(Participant_0.BIRTH_DATE<='1-1-2000' And Participant_0.BIRTH_DATE>='1-2-2000')",
+					"Incorrect SQL generated for condition on Mysql database!!!",
+					"(Participant_0.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))",
 					generator.getSQL(condition1, expression));
 
+			setDataBaseType(Constants.ORACLE_DATABASE);
+			condition1 = QueryGeneratorMock.createParticipantCondition3(participantEntity);
+			assertEquals(
+					"Incorrect SQL generated for condition on Oracle database!!!",
+					"(Participant_0.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))",
+					generator.getSQL(condition1, expression));
 			condition1 = QueryGeneratorMock.createParticipantCondition5(participantEntity);
 			assertEquals("Participant_0.ACTIVITY_STATUS like '%Active%'", generator.getSQL(
 					condition1, expression));
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			assertTrue("Unexpected Expection!!!", false);
 		}
 	}
@@ -94,9 +139,16 @@ public class SqlGeneratorTestCase extends TestCase
 			expression.addOperand(rule);
 		
 			assertEquals(
-					generator.getSQL(rule),
-					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<='1-1-2000' And Participant_0.BIRTH_DATE>='1-2-2000')");
-		}
+					"Incorrect SQL generated for Rule on Mysql database!!!",
+					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))",
+					generator.getSQL(rule));
+
+			setDataBaseType(Constants.ORACLE_DATABASE);
+			assertEquals(
+					"Incorrect SQL generated for Rule on Oracle database!!!",
+					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))",
+					generator.getSQL(rule));
+}
 		catch (Exception e)
 		{
 			assertTrue("Unexpected Expection!!!", false);
@@ -118,12 +170,19 @@ public class SqlGeneratorTestCase extends TestCase
 			String SQL = generator.getWherePartSQL(expression, null, false);
 			//			System.out.println("testParticpiantExpression:"+ SQL);
 			assertEquals(
-					SQL,
-					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<='1-1-2000' And Participant_0.BIRTH_DATE>='1-2-2000')) Or(Participant_0.ACTIVITY_STATUS='Active')");
-			//			expression = QueryGeneratorMock.creatParticipantExpression2(class1);
-			//			SQL = generator.getSQL(expression,null,null);
-			//			System.out.println(SQL);
-			//			assertEquals(SQL,"((Participant0.IDENTIFIER in (1,2,3,4) And (Participant0.BIRTH_DATE<='1-1-2000' And Participant0.BIRTH_DATE>='1-2-2000')) Or(Participant0.ACTIVITY_STATUS='Active')) And(Participant0.IDENTIFIER<10)");
+					"Incorrect where part SQL formed for Mysql database!!!",
+					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) Or(Participant_0.ACTIVITY_STATUS='Active')",
+					SQL);
+			
+			// Testing for Oracle Database.
+			setDataBaseType(Constants.ORACLE_DATABASE);
+			SQL = generator.getWherePartSQL(expression, null, false);
+			//			System.out.println("testParticpiantExpression:"+ SQL);
+			assertEquals(
+					"Incorrect where part SQL formed for Oracle database!!!",
+					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))) Or(Participant_0.ACTIVITY_STATUS='Active')",
+					SQL);
+			
 		}
 		catch (Exception e)
 		{
@@ -137,7 +196,7 @@ public class SqlGeneratorTestCase extends TestCase
 	 */
 	public void testParticpiantExpression1()
 	{
-		IQuery query = QueryGeneratorMock.creatParticipantQuery1();
+		IQuery query = QueryGeneratorMock.createParticipantQuery1();
 		IConstraints constraints = query.getConstraints();
 		IExpression rootExpression;
 		try
@@ -149,18 +208,21 @@ public class SqlGeneratorTestCase extends TestCase
 			String SQL = generator.getWherePartSQL(rootExpression, null, false);
 			//			System.out.println("*********"+SQL);
 			assertEquals(
-					"Incorrect SQL formed for the Root Expression !!!",
-					"(Participant_1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					"Incorrect SQL formed for the Root Expression for MySQL database !!!",
+					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_1.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					SQL);
 
-			//			String wherePart = generator.getWherePartSQL();
-			//			//			System.out.println(wherePart);
-			//			//			System.out.println("Where ParticipantMedicalIdentifier0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001') And Participant0.IDENTIFIER = ANY(Select Participant0.IDENTIFIER From catissue_participant Participant0 where (Participant0.ACTIVITY_STATUS='Active') Or(Participant0.IDENTIFIER = ANY(Select ParticipantMedicalIdentifier0.PARTICIPANT_ID From catissue_part_medical_id ParticipantMedicalIdentifier0 where ParticipantMedicalIdentifier0.MEDICAL_RECORD_NUMBER='M001'))) ");
-			//			assertEquals(
-			//					"Incorrect SQL formed for Where clause of the Expression !!!",
-			//					"Where Participant1.IDENTIFIER = ANY(Where (Participant1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')) And ParticipantMedicalIdentif_2.IDENTIFIER = ANY(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001') ",
-			//					wherePart);
-
+			
+			// Testing for Oracle Database.
+			setDataBaseType(Constants.ORACLE_DATABASE);
+			generator.buildQuery(query);
+			SQL = generator.getWherePartSQL(rootExpression, null, false);
+			//			System.out.println("*********"+SQL);
+			assertEquals(
+					"Incorrect SQL formed for the Root Expression for Oracle database !!!",
+					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					SQL);
+			
 			String selectPart = generator.getSelectPart(rootExpression);
 			//			System.out.println(selectPart);
 			assertEquals(
@@ -186,20 +248,30 @@ public class SqlGeneratorTestCase extends TestCase
 	}
 
 	/**
-	 * To test the generateSQL(IQuery) method for a Query: [Participant.activityStatus = 'Active'] AND [ParticipantMedicalIdentifier.medicalRecordNumber = 'M001'] 
+	 * To test the generateSQL(IQuery) method for a Query: [activityStatus = 'Active'] AND [ id in (1,2,3,4) AND birthDate between ('1-1-2000','1-2-2000')] AND [medicalRecordNumber = 'M001'] 
 	 *
 	 */
 	public void testParticipantQuery1()
 	{
-		IQuery query = QueryGeneratorMock.creatParticipantQuery1();
+		IQuery query = QueryGeneratorMock.createParticipantQuery1();
 		try
 		{
 			String sql = generator.generateSQL(query);
 			//			System.out.println("testParticipantQuery1:"+sql);
 
 			assertEquals(
-					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					"Incorrect SQL formed for Query on MySQL !!!",
+					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_1.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					sql);
+			
+
+			// Testing same Query for Oracle database.
+			setDataBaseType(Constants.ORACLE_DATABASE);
+			sql = generator.generateSQL(query);
+			//			System.out.println("testParticipantQuery1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query on Oracle !!!",
+					"Select Participant_1.ACTIVITY_STATUS, Participant_1.BIRTH_DATE, Participant_1.DEATH_DATE, Participant_1.ETHNICITY, Participant_1.FIRST_NAME, Participant_1.GENDER, Participant_1.IDENTIFIER, Participant_1.LAST_NAME, Participant_1.MIDDLE_NAME, Participant_1.GENOTYPE, Participant_1.SOCIAL_SECURITY_NUMBER, Participant_1.VITAL_STATUS From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					sql);
 		}
 		catch (Exception e)

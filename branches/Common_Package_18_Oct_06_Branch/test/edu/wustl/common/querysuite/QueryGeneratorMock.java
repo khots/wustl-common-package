@@ -96,8 +96,8 @@ public class QueryGeneratorMock
 	public static ICondition createParticipantCondition3(EntityInterface participantEntity)
 	{
 		List<String> values = new ArrayList<String>();
-		values.add("1-1-2000");
-		values.add("1-2-2000");
+		values.add("01-01-2000");
+		values.add("01-02-2000");
 		AttributeInterface attribute = findAttribute(participantEntity, "birthDate");
 		
 		ICondition condition = QueryObjectFactory.createCondition(attribute, RelationalOperator.Between, values);
@@ -215,11 +215,11 @@ public class QueryGeneratorMock
 	}
 
 	/**
-	 * To create IQuery for the Participant & Participant Medical Identifier as: [activityStatus = 'Active'] OR [medicalRecordNumber = 'M001']
+	 * To create IQuery for the Participant & Participant Medical Identifier as: [activityStatus = 'Active'] AND [ id in (1,2,3,4) AND birthDate between ('1-1-2000','1-2-2000')] AND [medicalRecordNumber = 'M001']
 	 * @param expression The Expression reference created by function creatParticipantExpression2()
 	 * @return The corresponding join Graph reference.
 	 */
-	public static IQuery creatParticipantQuery1()
+	public static IQuery createParticipantQuery1()
 	{
 		IQuery query = null;
 		try
@@ -228,20 +228,22 @@ public class QueryGeneratorMock
 			IConstraints constraints = QueryObjectFactory.createConstraints();
 			query.setConstraints(constraints);
 			IJoinGraph joinGraph = constraints.getJoinGraph();
-			
+			ILogicalConnector andConnector = QueryObjectFactory
+			.createLogicalConnector(LogicalOperator.And);
+
 			// creating Participant Expression.
 			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
 			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstrainedEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 			participantExpression.addOperand(createParticipantRule2(participantEntity));
 	
+			participantExpression.addOperand(andConnector,createParticipantRule1(participantEntity));
 
 			// creating Participant medical Id Expression.
 			EntityInterface pmIdEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
 			IConstraintEntity pmIdConstraintEntity = QueryObjectFactory.createConstrainedEntity(pmIdEntity);
 			IExpression pmExpression = constraints.addExpression(pmIdConstraintEntity);
-			ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
-			participantExpression.addOperand(connector, pmExpression.getExpressionId());
+			participantExpression.addOperand(andConnector, pmExpression.getExpressionId());
 			pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmIdEntity, pmExpression));
 
 			// Adding association to joingraph.

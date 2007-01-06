@@ -1,7 +1,10 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +38,8 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.Variables;
 
 /**
  * To generate SQL from the given Query Object.
@@ -462,7 +467,36 @@ public class SqlGenerator implements ISqlGenerator
 		}
 		else if(dataType instanceof DateTypeInformationInterface) // for data type date it will be enclosed in single quote.
 		{
-			value = "'" + value + "'";
+			
+			try
+		    {
+		        Date date = new Date();
+		        date = Utility.parseDate(value);
+		        
+		        Calendar calendar = Calendar.getInstance();
+			    calendar.setTime(date);
+			    value = (calendar.get(Calendar.MONTH)+1) + "-" 
+			    			   + calendar.get(Calendar.DAY_OF_MONTH) + "-" 
+			    			   + calendar.get(Calendar.YEAR);
+			    
+			    String strToDateFunction = Variables.strTodateFunction;
+			    if (strToDateFunction==null || strToDateFunction.trim().equals(""))
+			    {
+			    	strToDateFunction = "STR_TO_DATE"; // using MySQL function if the Value is not defined.
+			    }
+			    
+			    String datePattern = Variables.datePattern;
+			    if (datePattern==null || datePattern.trim().equals(""))
+			    {
+			    	datePattern = "%m-%d-%Y"; // using MySQL function if the Value is not defined.
+			    }
+			    value = strToDateFunction 
+			    			+ "('" + value + "','" + datePattern + "')";
+		    }
+		    catch (ParseException parseExp)
+		    {
+//		        Logger.out.debug("Wrong Date Format");
+		    }
 		}
 		else if (dataType instanceof BooleanTypeInformationInterface) // defining value for boolean datatype.
 		{
