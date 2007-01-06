@@ -15,10 +15,14 @@ import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociat
  */
 public class Path implements IPath
 {
-
-	EntityInterface sourceEntity;
-	EntityInterface targetEntity;
-	List<IAssociation> intermediateAssociations;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2375912190167946239L;
+	private long pathId;
+	private EntityInterface sourceEntity;
+	private EntityInterface targetEntity;
+	private List<IAssociation> intermediateAssociations;
 
 	/**
 	 * @param sourceEntity
@@ -125,5 +129,23 @@ public class Path implements IPath
 			buff.append("\t" + association.toString());
 		}
 		return buff.toString();
+	}
+
+	
+	/**
+	 * @return the pathId.
+	 */
+	public long getPathId()
+	{
+		return pathId;
+	}
+
+	
+	/**
+	 * @param pathId the pathId to set.
+	 */
+	public void setPathId(long pathId)
+	{
+		this.pathId = pathId;
 	}
 }
