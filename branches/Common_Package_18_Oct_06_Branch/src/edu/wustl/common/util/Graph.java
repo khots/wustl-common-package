@@ -266,6 +266,9 @@ public class Graph<V, E> implements IBaseQueryObject
 		boolean flag = false;
 		if (incommingEdgeMap.containsKey(vertex))
 		{
+			removeAllEdgesOfVertex(vertex);
+
+			// removing refernce of vertex from edge maps.
 			incommingEdgeMap.remove(vertex);
 			outgoingEdgeMap.remove(vertex);
 			flag = true;
@@ -273,6 +276,29 @@ public class Graph<V, E> implements IBaseQueryObject
 		return flag;
 	}
 
+	/**
+	 * To remove all edges of Vertex. This will remove all incoming & outgoing edges of given vertex.
+	 * @param vertex the reference to vertex.
+	 */
+	private void removeAllEdgesOfVertex(V vertex)
+	{
+		// removing all incomming edges for the given vertex.
+		List<Edge> incommingEdges = incommingEdgeMap.get(vertex);
+		for (int index = 0; index < incommingEdges.size(); index++)
+		{
+			Edge edge = incommingEdges.get(index);
+			removeEdge(edge.sourceVertex,edge.targetVertex);
+		}
+		
+		// removing all outgoing edges for given vertex.
+		List<Edge> outgoingEdges = outgoingEdgeMap.get(vertex);
+		for (int index = 0; index < outgoingEdges.size(); index++)
+		{
+			Edge edge = outgoingEdges.get(index);
+			removeEdge(edge.sourceVertex,edge.targetVertex);
+		}
+	}
+	
 	/**
 	 * This method checks whether adding node from sourceVertex to targetVertex will result into cyclic graph or not.
 	 * 
