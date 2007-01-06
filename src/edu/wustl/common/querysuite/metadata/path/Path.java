@@ -15,6 +15,7 @@ import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociat
  */
 public class Path implements IPath
 {
+
 	/**
 	 * 
 	 */
@@ -24,14 +25,22 @@ public class Path implements IPath
 	private EntityInterface targetEntity;
 	private List<IAssociation> intermediateAssociations;
 
+	public Path(EntityInterface sourceEntity, EntityInterface targetEntity,
+			List<IAssociation> intermediateAssociations)
+	{
+		this(-1, sourceEntity, targetEntity, intermediateAssociations);
+	}
+
 	/**
+	 * @param pathId
 	 * @param sourceEntity
 	 * @param targetEntity
 	 * @param intermediateAssociations
 	 */
-	public Path(EntityInterface sourceEntity, EntityInterface targetEntity,
+	public Path(long pathId, EntityInterface sourceEntity, EntityInterface targetEntity,
 			List<IAssociation> intermediateAssociations)
 	{
+		this.pathId = pathId;
 		this.sourceEntity = sourceEntity;
 		this.targetEntity = targetEntity;
 		this.intermediateAssociations = intermediateAssociations;
@@ -129,23 +138,5 @@ public class Path implements IPath
 			buff.append("\t" + association.toString());
 		}
 		return buff.toString();
-	}
-
-	
-	/**
-	 * @return the pathId.
-	 */
-	public long getPathId()
-	{
-		return pathId;
-	}
-
-	
-	/**
-	 * @param pathId the pathId to set.
-	 */
-	public void setPathId(long pathId)
-	{
-		this.pathId = pathId;
 	}
 }

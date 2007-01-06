@@ -22,6 +22,7 @@ public class Category implements Serializable
 	private CategorialClass rootClass;
 	private Collection<Category> subCategories = new HashSet<Category>();
 	private Category parentCategory;
+
 	/**
 	 * @hibernate.property name="deEntityId" type="long" column="DE_ENTITY_ID"
 	 * @return Returns the deEntity.

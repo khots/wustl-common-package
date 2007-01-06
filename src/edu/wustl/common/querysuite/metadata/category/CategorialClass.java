@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.wustl.common.querysuite.metadata.path.IPath;
+
 /**
  * @version 1.0
  * @created 28-Dec-2006 2:01:13 AM
@@ -24,6 +26,24 @@ public class CategorialClass implements Serializable
 	private Set<CategorialClass> children;
 	private CategorialClass parent;
 	private Long pathFromParentId;
+
+	private IPath pathFromParent;
+
+	/**
+	 * @return the pathFromParent.
+	 */
+	public IPath getPathFromParent()
+	{
+		return pathFromParent;
+	}
+
+	/**
+	 * @param pathFromParent the pathFromParent to set.
+	 */
+	public void setPathFromParent(IPath pathFromParent)
+	{
+		this.pathFromParent = pathFromParent;
+	}
 
 	/**
 	 * @return Returns the id.
@@ -155,11 +175,11 @@ public class CategorialClass implements Serializable
 		return null;
 	}
 
-	public void addChildCategorialClass(CategorialClass child, Long pathToChildId)
+	public void addChildCategorialClass(CategorialClass child, IPath pathToChildId)
 	{
 		children.add(child);
 		child.setParent(this);
-		child.setPathFromParentId(pathToChildId);
+		child.setPathFromParent(pathToChildId);
 	}
 
 	public void setParent(CategorialClass parent)
@@ -171,9 +191,11 @@ public class CategorialClass implements Serializable
 	{
 		this.pathFromParentId = pathFromParentId;
 	}
-	
-	public void addCategorialAttribute(CategorialAttribute categorialAttribute) {
-		if(categorialAttributeCollection == null) {
+
+	public void addCategorialAttribute(CategorialAttribute categorialAttribute)
+	{
+		if (categorialAttributeCollection == null)
+		{
 			categorialAttributeCollection = new HashSet<CategorialAttribute>();
 		}
 		categorialAttributeCollection.add(categorialAttribute);
