@@ -46,9 +46,4 @@ public interface IPath extends Serializable
 	 * @throws java.lang.IllegalArgumentException if the path is not bidirectional.
 	 */
 	IPath reverse();
-	
-	/**
-	 * @return the path Id.
-	 */
-	long getPathId();
 }
