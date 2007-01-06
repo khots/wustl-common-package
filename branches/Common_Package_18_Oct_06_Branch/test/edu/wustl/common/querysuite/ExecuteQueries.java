@@ -102,7 +102,6 @@ public class ExecuteQueries
 					executeQuery(str, stmt);
 				}
 				in.close();
-				writer.close();
 			}
 			catch (IOException e)
 			{
@@ -117,6 +116,18 @@ public class ExecuteQueries
 		}
 		finally
 		{
+			if (writer!=null)
+			{
+				try
+				{
+					writer.close();
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			// release database resources
 			try
 			{
@@ -154,16 +165,13 @@ public class ExecuteQueries
 	{
 		println("Executing Query:" + query);
 		long start = System.currentTimeMillis();
-		// execute query and return result as a ResultSet
-//		ResultSet rs = stmt.executeQuery("select count(*) from ("+query + ") aa");
-		ResultSet rs = stmt.executeQuery(query);
+		// execute query.
+		ResultSet rs = stmt.executeQuery("select count(*) from ("+query +") aa");
 		long end = System.currentTimeMillis();
 		println("Time in seconds:" + (end - start) / 1000.0);
-//		rs.next();
-//		int noOfRecords = rs.getInt(1);
-//		println("Total records fetched by Query:" + noOfRecords);
+		rs.next();
+		println("Records Fetched by Query:"+rs.getInt(1));
 		println("--------------------------------------------------------");
-		rs.close();
 	}
 	/**
 	 * To write message in logger & To print message on console.
