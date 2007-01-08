@@ -139,4 +139,22 @@ public class Path implements IPath
 		}
 		return buff.toString();
 	}
+
+	
+	/**
+	 * @return the pathId.
+	 */
+	public long getPathId()
+	{
+		return pathId;
+	}
+
+	
+	/**
+	 * @param pathId the pathId to set.
+	 */
+	public void setPathId(long pathId)
+	{
+		this.pathId = pathId;
+	}
 }
