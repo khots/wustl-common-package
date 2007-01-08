@@ -2,8 +2,7 @@
 package edu.wustl.common.querysuite.metadata.category;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @version 1.0
@@ -20,7 +19,7 @@ public class Category implements Serializable
 	private Long id;
 	private Long deEntityId;
 	private CategorialClass rootClass;
-	private Collection<Category> subCategories = new HashSet<Category>();
+	private Set<Category> subCategories;
 	private Category parentCategory;
 
 	/**
@@ -88,7 +87,7 @@ public class Category implements Serializable
 	/**
 	 * @param subCategories The subCategories to set.
 	 */
-	public void setSubCategories(Collection<Category> subCategories)
+	public void setSubCategories(Set<Category> subCategories)
 	{
 		this.subCategories = subCategories;
 	}
@@ -119,7 +118,7 @@ public class Category implements Serializable
 	 * @hibernate.collection-key column="PARENT_CATEGORY_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.querysuite.metadata.category.Category"
 	 */
-	public Collection<Category> getSubCategories()
+	public Set<Category> getSubCategories()
 	{
 		return subCategories;
 	}
