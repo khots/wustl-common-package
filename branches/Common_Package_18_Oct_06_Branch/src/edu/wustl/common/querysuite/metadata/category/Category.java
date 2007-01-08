@@ -123,11 +123,4 @@ public class Category implements Serializable
 	{
 		return subCategories;
 	}
-
-	public Category clone()
-	{
-		// TODO by Chandu
-		return null;
-	}
-
 }
