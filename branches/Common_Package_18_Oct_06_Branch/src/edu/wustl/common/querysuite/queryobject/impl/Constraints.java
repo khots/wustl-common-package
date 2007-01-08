@@ -7,7 +7,9 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 13.35.04 AM
  */
 
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,4 +105,22 @@ public class Constraints implements IConstraints
 	{
 		return expressions.get(id);
 	}
+
+	/**
+	 * TO get the Set of all ConstraintEntites present in the Constraints object.
+	 * @return Set of all Constraint Entities.
+	 * @see edu.wustl.common.querysuite.queryobject.IConstraints#getConstraintEntities()
+	 */
+	public Set<IConstraintEntity> getConstraintEntities()
+	{
+		Set<IConstraintEntity> constraintEntitySet = new HashSet<IConstraintEntity>();
+		Collection<IExpression> allExpressions = expressions.values();
+		for(IExpression expression: allExpressions)
+		{
+			constraintEntitySet.add(expression.getConstraintEntity());
+		}
+		return constraintEntitySet;
+	}
+	
+	
 }

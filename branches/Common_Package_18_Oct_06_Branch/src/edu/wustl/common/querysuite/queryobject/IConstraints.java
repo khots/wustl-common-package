@@ -2,6 +2,7 @@
 package edu.wustl.common.querysuite.queryobject;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 
@@ -60,4 +61,10 @@ public interface IConstraints extends IBaseQueryObject
 	 * @throws MultipleRootsException When there exists multiple roots in joingraph.
 	 */
 	IExpressionId getRootExpressionId() throws MultipleRootsException;
+	
+	/**
+	 * TO get the Set of all ConstraintEntites present in the Constraints object.
+	 * @return Set of all Constraint Entities.
+	 */
+	Set<IConstraintEntity> getConstraintEntities();
 }
