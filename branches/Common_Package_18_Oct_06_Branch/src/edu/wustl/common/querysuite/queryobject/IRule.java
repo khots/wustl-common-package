@@ -43,5 +43,7 @@ public interface IRule extends IExpressionOperand
 	 * @return The no. of conditions present in the Rule.
 	 */
 	int size();
+    
+    public void removeAllConditions();
 
 }

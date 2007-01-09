@@ -173,4 +173,9 @@ public class Rule implements IRule
 	{
 		this.containingExpression = containingExpression;
 	}
+    
+    public void removeAllConditions()
+    {
+        conditions.clear();
+    }
 }
