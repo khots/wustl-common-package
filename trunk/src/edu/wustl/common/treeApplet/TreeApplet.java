@@ -153,7 +153,7 @@ public class TreeApplet extends JApplet
             List disableSpecimenIdsList = null;
             System.out.println("PageOf : "+pageOf);  
             Vector treeDataVector = null;
-            if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) || pageOf.equals(Constants.PAGEOF_SPECIMEN)
+              if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION) || pageOf.equals(Constants.PAGEOF_SPECIMEN)
                     || pageOf.equals(Constants.PAGEOF_TISSUE_SITE) || pageOf.equals(Constants.PAGEOF_MULTIPLE_SPECIMEN)
                     || pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE) || pageOf.equals(Constants.PAGEOF_ALIQUOT))
             {
