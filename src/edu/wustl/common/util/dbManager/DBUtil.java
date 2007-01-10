@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;

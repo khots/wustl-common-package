@@ -194,7 +194,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 */
 	public List retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
-			{
+	{
 		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
 				onlyDistinctRows);
@@ -212,7 +212,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	public List retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, boolean onlyDistinctRows) throws DAOException
-			{
+	{
 		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		List list = null;
 
