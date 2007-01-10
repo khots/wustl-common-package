@@ -16,6 +16,7 @@ import java.util.HashMap;
 public class Constants 
 {
 	
+	public static final int HASH_PRIME = 7;
 	
 	// constants for passwordManager
 	
@@ -234,6 +235,7 @@ public class Constants
 	public static final String SIMPLE_QUERY_INTERFACE_ACTION = "/SimpleQueryInterface.do";
 	
 	public static final String PAGEOF = "pageOf";
+	public static final String STORAGE_CONTAINER = "storageContainerName";
 	public static final String TABLE_ALIAS_NAME = "aliasName";
 	public static final String SIMPLE_QUERY_NO_RESULTS = "noResults";
 	public static final String SEARCH_OBJECT_ACTION = "/SearchObject.do";
@@ -473,5 +475,4 @@ public class Constants
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
-	public static final int HASH_PRIME = 7;
 }

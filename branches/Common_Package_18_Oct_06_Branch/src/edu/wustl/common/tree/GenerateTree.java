@@ -7,9 +7,11 @@
  * @version 1.00
  * Created on Apr 21, 2005
  */
+
 package edu.wustl.common.tree;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -26,12 +28,31 @@ import org.jdesktop.swingx.JXTree;
  */
 public class GenerateTree
 {
+
+	ArrayList list;
+	String containerName;
+
+	/**
+	 * Default consructor
+	 */
+	public GenerateTree()
+	{
+
+	}
+
+	/**
+	 * parameterised consructor
+	 */
+	public GenerateTree(String containerName)
+	{
+		this.containerName = containerName;
+	}
 	
-	public JTree createTree(Vector dataVector, int treeType)
-    {
-		JTree tree = createTree(dataVector, treeType, false);
-		return tree;
-    }
+//	public JTree createTree(Vector dataVector, int treeType)
+//    {
+//		JTree tree = createTree(dataVector, treeType, false);
+//		return tree;
+//    }
 	
     /**
      * Creates and returns the JTree from the vector of data nodes passed.
@@ -83,6 +104,70 @@ public class GenerateTree
     }
     
     /**
+	 * Creates and returns the JTree from the vector of data nodes passed.
+	 * @param dataVector the data vector.
+	 * @param treeType the type of tree.
+	 * @param tempList List in which id is set
+	 * @return the JTree from the vector of data nodes passed.
+	 */
+
+	public JTree createTree(Vector dataVector, int treeType, ArrayList tempList)
+	{
+		TreeNode rootName = null;
+		if (dataVector != null && (dataVector.isEmpty() == false))
+		{
+			rootName = (TreeNode) dataVector.get(0);
+		}
+
+		//Get the root node.
+		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
+		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
+		rootNode.setChildNodes(dataVector);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
+		createHierarchy(root, dataVector);
+
+		JTree tree = new JTree(root)
+		{
+
+			public String getToolTipText(MouseEvent e)
+			{
+				String tip = "";
+				TreePath path = getPathForLocation(e.getX(), e.getY());
+				if (path != null)
+				{
+					Object treeNode = path.getLastPathComponent();
+					if (treeNode instanceof DefaultMutableTreeNode)
+					{
+						TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode).getUserObject();
+						tip = userObject.getToolTip();
+					}
+				}
+				return tip;
+			}
+		};
+		if (list != null)
+		{
+			tree.setSelectionPath((TreePath) list.get(0));
+			if(tempList!=null)
+				tempList.add(list.get(1));
+		}
+		ToolTipManager.sharedInstance().registerComponent(tree);
+		return tree;
+		
+	}
+	
+	/**
+	 * Creates and returns the JTree from the vector of data nodes passed.
+	 * @param dataVector the data vector.
+	 * @param treeType the type of tree.
+	 * @return the JTree from the vector of data nodes passed.
+	 */
+	public JTree createTree(Vector dataVector, int treeType)
+	{
+		return createTree(dataVector,treeType,null);
+	}
+
+    /**
      * Creates and returns the JTree from the vector of data nodes passed.
      * @param dataVector the data vector.
      * @param treeType the type of tree.
@@ -120,22 +205,31 @@ public class GenerateTree
         }
         return tree;
     }
-    
-    /**
-     * Creates the hierarchy of nodes under the parent node with the child nodes passed.
-     * @param parentNode the parent node.
-     * @param childNodes the child nodes.
-     */
-    private void createHierarchy(DefaultMutableTreeNode parentNode, Vector childNodes)
-    {
-        Iterator iterator = childNodes.iterator();
-        while (iterator.hasNext())
-        {
-            TreeNodeImpl childNode = (TreeNodeImpl) iterator.next();
-            DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(childNode);
-            parentNode.add(childTreeNode);
-            
-            createHierarchy(childTreeNode, childNode.getChildNodes());
-        }
-    }
+	/**
+	 * Creates the hierarchy of nodes under the parent node with the child nodes passed.
+	 * @param parentNode the parent node.
+	 * @param childNodes the child nodes.
+	 */
+	private void createHierarchy(DefaultMutableTreeNode parentNode, Vector childNodes)
+	{
+		Iterator iterator = childNodes.iterator();
+		while (iterator.hasNext())
+		{
+			TreeNodeImpl childNode = (TreeNodeImpl) iterator.next();
+			DefaultMutableTreeNode childTreeNode = new DefaultMutableTreeNode(childNode);
+			parentNode.add(childTreeNode);
+			if (childNode.getValue() != null && containerName != null && childNode.getValue().equalsIgnoreCase(containerName.trim()))
+			{
+			    TreePath treePath = new TreePath(childTreeNode.getPath());
+				list = new ArrayList();
+				list.add(treePath);
+				list.add(childNode.getIdentifier());
+				
+			}
+
+			createHierarchy(childTreeNode, childNode.getChildNodes());
+		}
+	}
+
 }
+

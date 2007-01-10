@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -55,8 +56,11 @@ public class TreeApplet extends JApplet
             String protocol = codeBase.getProtocol();
             String host = codeBase.getHost();
             int port = codeBase.getPort();
+            ArrayList tempList = new ArrayList();
             
             String pageOf = this.getParameter(Constants.PAGEOF);
+            String storageContainerName = this.getParameter(Constants.STORAGE_CONTAINER);
+            System.out.println("storageContainerName-->" + storageContainerName);
             String storageContainerType = null,propertyName = null, cdeName = null ,specimenType = null,specimenClass = null;
             int treeType = Constants.TISSUE_SITE_TREE_ID;
             
@@ -129,7 +133,7 @@ public class TreeApplet extends JApplet
                 urlSuffix = urlSuffix + "&"+Constants.PROPERTY_NAME+"="+URLEncoder.encode(propertyName)+"&"+Constants.CDE_NAME+"="+URLEncoder.encode(cdeName);
             }
             	
-            //Construct urlSuffix when treeType = Constants.SPECIMEN_TREE_ID.
+            //Added By Ramya.Construct urlSuffix when treeType = Constants.REQUEST_DETAILS_ID.
             else if(pageOf.equals(Constants.PAGEOF_SPECIMEN_TREE))
             {
             	urlSuffix = urlSuffix + "&" + Constants.PROPERTY_NAME + "=" + URLEncoder.encode(propertyName)+ "&" +Constants.SPECIMEN_TYPE+ "=" + URLEncoder.encode(specimenType);
@@ -155,14 +159,15 @@ public class TreeApplet extends JApplet
             {
             	
             	Vector dataVector = (Vector) in.readObject();
-                GenerateTree generateTree = new GenerateTree();
-                tree = generateTree.createTree(dataVector, treeType);                
+                GenerateTree generateTree = new GenerateTree(storageContainerName);
+                tree = generateTree.createTree(dataVector,treeType,tempList);      
+              
             }
             else
             {
                 treeDataVector = (Vector) in.readObject();
                 disableSpecimenIdsList=(List)in.readObject();
-                GenerateTree generateTree = new GenerateTree();
+                GenerateTree generateTree = new  GenerateTree(storageContainerName);
                 tree = generateTree.createTree(treeDataVector, treeType);
             }
             
@@ -246,6 +251,16 @@ public class TreeApplet extends JApplet
             //Kapil: MAC ISSUE JDK 1.3.1
             contentPane.add(treePanel, BorderLayout.CENTER);
             System.out.println("25Aug06 : Tree set");
+            
+            
+            if(tempList.size()!=0)
+            {
+            	urlSuffix = applicationPath + Constants.SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION
+                + "?" + Constants.SYSTEM_IDENTIFIER + "=" + tempList.get(0)
+                + "&" + Constants.PAGEOF + "=" + pageOf;
+            	dataURL = new URL(protocol, host, port, urlSuffix);
+                this.getAppletContext().showDocument(dataURL,Constants.DATA_VIEW_FRAME);
+             }
             
             //Sri: Pass the position of the container to the next level
             // This is used to auto select the node
