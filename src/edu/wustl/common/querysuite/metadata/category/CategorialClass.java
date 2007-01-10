@@ -22,13 +22,13 @@ public class CategorialClass implements Serializable
 	private Long id;
 	private Long deEntityId;
 	private Category category;
-	private Set<CategorialAttribute> categorialAttributeCollection;
-	private Set<CategorialClass> children;
+	private Set<CategorialAttribute> categorialAttributeCollection = new HashSet<CategorialAttribute>();
+	private Set<CategorialClass> children = new HashSet<CategorialClass>();
 	private CategorialClass parent;
 	private Long pathFromParentId;
 
 	private IPath pathFromParent;
-
+	
 	/**
 	 * @return the pathFromParent.
 	 */
@@ -37,6 +37,7 @@ public class CategorialClass implements Serializable
 		return pathFromParent;
 	}
 
+	
 	/**
 	 * @param pathFromParent the pathFromParent to set.
 	 */
@@ -175,11 +176,16 @@ public class CategorialClass implements Serializable
 		return null;
 	}
 
-	public void addChildCategorialClass(CategorialClass child, IPath pathToChildId)
+	public void addChildCategorialClass(CategorialClass child, IPath pathToChild)
 	{
 		children.add(child);
 		child.setParent(this);
-		child.setPathFromParent(pathToChildId);
+		child.setPathFromParent(pathToChild);
+	}
+	// rets true if the child was found; false otherwise.
+	public boolean removeChildCategorialClass(CategorialClass child)
+	{
+		return children.remove(child);
 	}
 
 	public void setParent(CategorialClass parent)
