@@ -16,6 +16,7 @@ import java.util.HashMap;
 public class Constants 
 {
 	
+	public static final int HASH_PRIME = 7;
 	
 	// constants for passwordManager
 	

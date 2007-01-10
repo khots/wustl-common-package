@@ -246,8 +246,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        preUpdate(dao, currentObj, oldObj, sessionDataBean);
 	        if(isUpdateOnly)
 	        {
-	        	update(currentObj,daoType);
-	        }else{
+	        	update(dao,currentObj);
+	        }
+	        else
+	        {
 	        	update(dao, currentObj, oldObj, sessionDataBean);
 	        }
 	        dao.commit();
