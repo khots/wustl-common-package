@@ -221,4 +221,22 @@ public class JoinGraph implements IJoinGraph
 	{
 		return graph.getDirectSuccessorOf(expressionId);
 	}
+	
+	/**
+	 * To get the expressions having multiple parent nodes.
+	 * @return the List of expression ids having multiple parent nodes.
+	 */
+	public List<IExpressionId> getNodesWithMultipleParents()
+	{
+		List<IExpressionId> nodes = new ArrayList<IExpressionId>();
+		List<IExpressionId> allExpressionIds = graph.getVertices();
+		for (IExpressionId expression:allExpressionIds)
+		{
+			if (graph.getDirectPredecessorOf(expression).size()>1)
+			{
+				nodes.add(expression);
+			}
+		}
+		return nodes;
+	}
 }

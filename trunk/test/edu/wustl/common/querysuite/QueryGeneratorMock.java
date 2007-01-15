@@ -187,8 +187,7 @@ public class QueryGeneratorMock
 	{
 		IExpression expression = new Expression(participant, 1);
 		expression.addOperand(createParticipantRule1(participant.getDynamicExtensionsEntity()));
-		ILogicalConnector connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
-		expression.addOperand(connector, createParticipantRule2(participant.getDynamicExtensionsEntity()));
+		expression.addOperand(getOrConnector(), createParticipantRule2(participant.getDynamicExtensionsEntity()));
 
 		return expression;
 	}
@@ -1531,5 +1530,411 @@ public class QueryGeneratorMock
 			return null;
 		}
 		return query;
+	}
+	
+	/**
+	 * Creates Query for Multiple parent case type.
+	 * <pre>
+	 * 			/-- S: type equals 'DNA'--\
+	 *    SCG:ANY						   |-- S: type equals 'Amniotic Fluid'
+	 *    		\-- S: type equals 'RNA'--/
+	 * </pre>
+	 * @return reference to the query object.
+	 */
+	public static IQuery createMultipleParentQuery1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			ILogicalConnector orConnector = QueryObjectFactory
+					.createLogicalConnector(LogicalOperator.Or);
+			
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+
+			
+			// creating expression for SpecimenCollectionGroup.
+			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstrainedEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			
+			// creating first SpecimeExpression.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstrainedEntity(specimenEntity);
+			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+							"specimenCollectionGroup"), EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpgAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression1.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression1.addOperand(specimenExpression1Rule1);
+
+			List<String> specimenExpression1Rule1Values1 = new ArrayList<String>();
+			specimenExpression1Rule1Values1.add("DNA");
+			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression1Rule1Values1);
+
+			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
+			
+			
+			// creating second SpecimeExpression.
+			IExpression specimenExpression2 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(orConnector, specimenExpression2.getExpressionId());
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression2.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression2.addOperand(specimenExpression2Rule1);
+
+			List<String> specimenExpression2Rule1Values1 = new ArrayList<String>();
+			specimenExpression2Rule1Values1.add("RNA");
+			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression2Rule1Values1);
+
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
+			
+			// creating child SpecimeExpression & adding it under specimenExpression1.
+			IExpression childSpecimenExpression = constraints.addExpression(specimenConstraintEntity);
+
+			specimenExpression1.addOperand(orConnector, childSpecimenExpression.getExpressionId());
+			AssociationInterface specimenAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME, "childrenSpecimen"),
+					EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpecimenAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(specimenAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenExpression1.getExpressionId(), childSpecimenExpression
+					.getExpressionId(), iSpecimenAndSpecimeAssociation);
+
+			List<String> childSpecimenExpressionRule1Values = new ArrayList<String>();
+			childSpecimenExpressionRule1Values.add("Amniotic Fluid");
+
+			ICondition childSpecimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					childSpecimenExpressionRule1Values);
+			IRule childSpecimenExpressionRule1 = QueryObjectFactory.createRule(null);
+			childSpecimenExpressionRule1.addCondition(childSpecimenExpressionRule1Condition1);
+			childSpecimenExpression.addOperand(childSpecimenExpressionRule1);		
+			
+			
+			// Adding same Expression under specimenExpression2.
+			specimenExpression2.addOperand(orConnector,childSpecimenExpression.getExpressionId());
+			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * Creates Query for Multiple parent case type.
+	 * <pre>
+	 * 			/-- S: type equals 'DNA'--\
+	 *    SCG:ANY						   |-- S: type equals 'Amniotic Fluid'
+	 *    		\-- S: type equals 'RNA'--/            \
+	 *    							\                   \
+	 *    							 \---------------- S: type equals 'milk'
+	 * </pre>
+	 * @return reference to the query object.
+	 */
+
+	public static IQuery createMultipleParentQuery2()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			ILogicalConnector orConnector = QueryObjectFactory
+					.createLogicalConnector(LogicalOperator.Or);
+			
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+
+			
+			// creating expression for SpecimenCollectionGroup.
+			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstrainedEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			
+			// creating first SpecimeExpression.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstrainedEntity(specimenEntity);
+			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+							"specimenCollectionGroup"), EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpgAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression1.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression1.addOperand(specimenExpression1Rule1);
+
+			List<String> specimenExpression1Rule1Values1 = new ArrayList<String>();
+			specimenExpression1Rule1Values1.add("DNA");
+			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression1Rule1Values1);
+
+			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
+			
+			
+			// creating second SpecimeExpression.
+			IExpression specimenExpression2 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(orConnector, specimenExpression2.getExpressionId());
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression2.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression2.addOperand(specimenExpression2Rule1);
+
+			List<String> specimenExpression2Rule1Values1 = new ArrayList<String>();
+			specimenExpression2Rule1Values1.add("RNA");
+			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression2Rule1Values1);
+
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
+			
+			// creating child SpecimeExpression & adding it under specimenExpression1.
+			IExpression childSpecimenExpression = constraints.addExpression(specimenConstraintEntity);
+
+			specimenExpression1.addOperand(orConnector, childSpecimenExpression.getExpressionId());
+			AssociationInterface specimenAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME, "childrenSpecimen"),
+					EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpecimenAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(specimenAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenExpression1.getExpressionId(), childSpecimenExpression
+					.getExpressionId(), iSpecimenAndSpecimeAssociation);
+
+			List<String> childSpecimenExpressionRule1Values = new ArrayList<String>();
+			childSpecimenExpressionRule1Values.add("Amniotic Fluid");
+
+			ICondition childSpecimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					childSpecimenExpressionRule1Values);
+			IRule childSpecimenExpressionRule1 = QueryObjectFactory.createRule(null);
+			childSpecimenExpressionRule1.addCondition(childSpecimenExpressionRule1Condition1);
+			childSpecimenExpression.addOperand(childSpecimenExpressionRule1);		
+			
+			
+			// Adding same Expression under specimenExpression2.
+			specimenExpression2.addOperand(orConnector,childSpecimenExpression.getExpressionId());
+			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
+			
+			
+			// creating Grand child SpecimeExpression.
+			IExpression grandChildSpecimenExpression = constraints.addExpression(specimenConstraintEntity);
+			specimenExpression1.addOperand(orConnector, grandChildSpecimenExpression.getExpressionId());
+			joinGraph.putAssociation(specimenExpression1.getExpressionId(), grandChildSpecimenExpression
+					.getExpressionId(), iSpecimenAndSpecimeAssociation);
+			
+			List<String> grandChildSpecimenExpressionRule1Values = new ArrayList<String>();
+			grandChildSpecimenExpressionRule1Values.add("Milk");
+
+			ICondition grandChildSpecimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					grandChildSpecimenExpressionRule1Values);
+			IRule grandChildSpecimenExpressionRule1 = QueryObjectFactory.createRule(null);
+			grandChildSpecimenExpressionRule1.addCondition(grandChildSpecimenExpressionRule1Condition1);
+			grandChildSpecimenExpression.addOperand(grandChildSpecimenExpressionRule1);
+			
+//			 Adding grand child Expression under childSpecimenExpression.
+			childSpecimenExpression.addOperand(orConnector,grandChildSpecimenExpression.getExpressionId());
+			joinGraph.putAssociation(childSpecimenExpression.getExpressionId(), grandChildSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * Creates Query for Multiple parent case type, with the nesting numbers.
+	 * <pre>
+	 * 			/-- S: type equals ('DNA' Or 'cDNA')------------\
+	 *    SCG:ANY						  						 |-- S: type equals 'Amniotic Fluid' ---> S: type equals 'Milk'
+	 *    		\-- S: type equals 'RNA' Or (type equals 'RNA, cytoplasmic' or ChildExp)--/
+	 * </pre>
+	 * @return reference to the query object.
+	 */
+	public static IQuery createMultipleParentQuery3()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+
+			
+			// creating expression for SpecimenCollectionGroup.
+			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstrainedEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			
+			// creating first SpecimeExpression.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstrainedEntity(specimenEntity);
+			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+							"specimenCollectionGroup"), EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpgAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression1.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression1.addOperand(specimenExpression1Rule1);
+
+			List<String> specimenExpression1Rule1Values1 = new ArrayList<String>();
+			specimenExpression1Rule1Values1.add("DNA");
+			ICondition specimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression1Rule1Values1);
+
+			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
+			
+			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(null);
+			
+			specimenExpression1.addOperand(getOrConnector(),specimenExpression1Rule2);
+			specimenExpression1.addParantheses(0, 1);
+			
+			List<String> specimenExpression1Rule2Values1 = new ArrayList<String>();
+			specimenExpression1Rule2Values1.add("cDNA");
+			ICondition specimenExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression1Rule2Values1);
+
+			specimenExpression1Rule2.addCondition(specimenExpression1Rule2Condition1);
+			
+			// creating second SpecimeExpression.
+			IExpression specimenExpression2 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(getOrConnector(), specimenExpression2.getExpressionId());
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression2.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			IRule specimenExpression2Rule1 = QueryObjectFactory.createRule(null);
+			specimenExpression2.addOperand(specimenExpression2Rule1);
+
+			List<String> specimenExpression2Rule1Values1 = new ArrayList<String>();
+			specimenExpression2Rule1Values1.add("RNA");
+			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression2Rule1Values1);
+
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
+			
+			IRule specimenExpression2Rule2 = QueryObjectFactory.createRule(null);
+			specimenExpression2.addOperand(getOrConnector(),specimenExpression2Rule2);
+
+			List<String> specimenExpression2Rule2Values1 = new ArrayList<String>();
+			specimenExpression2Rule2Values1.add("RNA, cytoplasmic");
+			ICondition specimenExpression2Rule2Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression2Rule2Values1);
+
+			specimenExpression2Rule2.addCondition(specimenExpression2Rule2Condition1);
+			
+			// creating child SpecimeExpression & adding it under specimenExpression1.
+			IExpression childSpecimenExpression = constraints.addExpression(specimenConstraintEntity);
+
+			specimenExpression1.addOperand(getOrConnector(), childSpecimenExpression.getExpressionId());
+			AssociationInterface specimenAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME, "childrenSpecimen"),
+					EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpecimenAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(specimenAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenExpression1.getExpressionId(), childSpecimenExpression
+					.getExpressionId(), iSpecimenAndSpecimeAssociation);
+
+			List<String> childSpecimenExpressionRule1Values = new ArrayList<String>();
+			childSpecimenExpressionRule1Values.add("Amniotic Fluid");
+
+			ICondition childSpecimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					childSpecimenExpressionRule1Values);
+			IRule childSpecimenExpressionRule1 = QueryObjectFactory.createRule(null);
+			childSpecimenExpressionRule1.addCondition(childSpecimenExpressionRule1Condition1);
+			childSpecimenExpression.addOperand(childSpecimenExpressionRule1);		
+			
+			
+			// creating Grand child SpecimeExpression.
+			IExpression grandChildSpecimenExpression = constraints.addExpression(specimenConstraintEntity);
+			childSpecimenExpression.addOperand(getAndConnector(), grandChildSpecimenExpression.getExpressionId());
+			joinGraph.putAssociation(childSpecimenExpression.getExpressionId(), grandChildSpecimenExpression
+					.getExpressionId(), iSpecimenAndSpecimeAssociation);
+			
+			List<String> grandChildSpecimenExpressionRule1Values = new ArrayList<String>();
+			grandChildSpecimenExpressionRule1Values.add("Milk");
+
+			ICondition grandChildSpecimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					grandChildSpecimenExpressionRule1Values);
+			IRule grandChildSpecimenExpressionRule1 = QueryObjectFactory.createRule(null);
+			grandChildSpecimenExpressionRule1.addCondition(grandChildSpecimenExpressionRule1Condition1);
+			grandChildSpecimenExpression.addOperand(grandChildSpecimenExpressionRule1);
+			
+			// Adding same Expression under specimenExpression2.
+			specimenExpression2.addOperand(getOrConnector(),childSpecimenExpression.getExpressionId());
+			specimenExpression2.addParantheses(1,2);
+			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+
+	/**
+	 * To instantiate Logical connector for OR operator.
+	 * @return reference to logical connector contining 'OR' logical operator.
+	 */
+	private static ILogicalConnector getOrConnector()
+	{
+		 return QueryObjectFactory
+				.createLogicalConnector(LogicalOperator.Or);
+	}
+	
+	/**
+	 * To instantiate Logical connector for AND operator.
+	 * @return reference to logical connector contining 'AND' logical operator.
+	 */
+	private static ILogicalConnector getAndConnector()
+	{
+		 return QueryObjectFactory
+				.createLogicalConnector(LogicalOperator.And);
 	}
 }
