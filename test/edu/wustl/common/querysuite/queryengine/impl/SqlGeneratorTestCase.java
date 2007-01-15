@@ -118,7 +118,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+//			e.printStackTrace();
 			assertTrue("Unexpected Expection!!!", false);
 		}
 	}
@@ -663,6 +663,111 @@ public class SqlGeneratorTestCase extends TestCase
 		{
 			//			e.printStackTrace();
 			assertTrue("Unexpected Expection!!!", false);
+		}
+	}
+	
+	/**
+	 * To test Query for Multiple parent case type.
+	 * <pre>
+	 * 			/-- S: type equals 'DNA'--\
+	 *    SCG:ANY						   |-- S: type equals 'Amniotic Fluid'
+	 *    		\-- S: type equals 'RNA'--/
+	 * </pre>
+	 */
+	public void testCreateMultipleParentQuery1()
+	{
+		IQuery query = QueryGeneratorMock.createMultipleParentQuery1();
+		int multipleParentExpressions = ((JoinGraph)query.getConstraints().getJoinGraph()).getNodesWithMultipleParents().size();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testCreateMultipleParentQuery1:"+sql);
+			multipleParentExpressions = ((JoinGraph)generator.constraints.getJoinGraph()).getNodesWithMultipleParents().size();
+			assertEquals("Multiple Parent Expression not resolved succesfuly!!!",
+					0,
+					multipleParentExpressions);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select SpecimenCollectionGroup_1.IDENTIFIER, SpecimenCollectionGroup_1.NAME, SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup_1.CLINICAL_STATUS, SpecimenCollectionGroup_1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) Where ((Specimen_2.TYPE='DNA') Or(Specimen_3.TYPE='Amniotic Fluid')) Or((Specimen_2.TYPE='RNA') Or(Specimen_3.TYPE='Amniotic Fluid'))",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	
+	/**
+	 * To test Query for Multiple parent case type.
+	 * <pre>
+	 * 			/-- S: type equals 'DNA'--\
+	 *    SCG:ANY						   |-- S: type equals 'Amniotic Fluid'
+	 *    		\-- S: type equals 'RNA'--/            \
+	 *    							\                   \
+	 *    							 \---------------- S: type equals 'milk'
+	 * </pre>
+	 */
+	public void testCreateMultipleParentQuery2()
+	{
+		IQuery query = QueryGeneratorMock.createMultipleParentQuery2();
+		int multipleParentExpressions = ((JoinGraph)query.getConstraints().getJoinGraph()).getNodesWithMultipleParents().size();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testCreateMultipleParentQuery2:"+sql);
+			multipleParentExpressions = ((JoinGraph)generator.constraints.getJoinGraph()).getNodesWithMultipleParents().size();
+			assertEquals("Multiple Parent Expression not resolved succesfuly!!!",
+					0,
+					multipleParentExpressions);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select SpecimenCollectionGroup_1.IDENTIFIER, SpecimenCollectionGroup_1.NAME, SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup_1.CLINICAL_STATUS, SpecimenCollectionGroup_1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) left join catissue_specimen Specimen_4 on (Specimen_3.IDENTIFIER=Specimen_4.PARENT_SPECIMEN_ID) Where ((Specimen_2.TYPE='DNA') Or((Specimen_3.TYPE='Amniotic Fluid') Or(Specimen_4.TYPE='Milk')) Or(Specimen_3.TYPE='Milk')) Or((Specimen_2.TYPE='RNA') Or((Specimen_3.TYPE='Amniotic Fluid') Or(Specimen_4.TYPE='Milk')))",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	
+	/**
+	 * To test Query for Multiple parent case type with the nesting numbers.
+	 * <pre>
+	 * 			/-- S: type equals ('DNA' Or 'cDNA')------------\
+	 *    SCG:ANY						  						 |-- S: type equals 'Amniotic Fluid' ---> S: type equals 'Milk'
+	 *    		\-- S: type equals 'RNA' Or (type equals 'RNA, cytoplasmic' or ChildExp)--/
+	 * </pre>
+	 * @return reference to the query object.
+	 */
+	public void testCreateMultipleParentQuery3()
+	{
+		IQuery query = QueryGeneratorMock.createMultipleParentQuery3();
+		int multipleParentExpressions = ((JoinGraph)query.getConstraints().getJoinGraph()).getNodesWithMultipleParents().size();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testCreateMultipleParentQuery3:"+sql);
+			multipleParentExpressions = ((JoinGraph)generator.constraints.getJoinGraph()).getNodesWithMultipleParents().size();
+			assertEquals("Multiple Parent Expression not resolved succesfuly!!!",
+					0,
+					multipleParentExpressions);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select SpecimenCollectionGroup_1.IDENTIFIER, SpecimenCollectionGroup_1.NAME, SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS, SpecimenCollectionGroup_1.CLINICAL_STATUS, SpecimenCollectionGroup_1.ACTIVITY_STATUS From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) left join catissue_specimen Specimen_4 on (Specimen_3.IDENTIFIER=Specimen_4.PARENT_SPECIMEN_ID) Where (((Specimen_2.TYPE='DNA') Or(Specimen_2.TYPE='cDNA')) Or((Specimen_3.TYPE='Amniotic Fluid') And(Specimen_4.TYPE='Milk'))) Or((Specimen_2.TYPE='RNA') Or((Specimen_2.TYPE='RNA, cytoplasmic') Or((Specimen_3.TYPE='Amniotic Fluid') And(Specimen_4.TYPE='Milk'))))",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
 }

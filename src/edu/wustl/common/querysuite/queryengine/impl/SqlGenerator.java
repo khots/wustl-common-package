@@ -38,6 +38,7 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Variables;
 
@@ -89,7 +90,10 @@ public class SqlGenerator implements ISqlGenerator
 	String buildQuery(IQuery query) throws MultipleRootsException,
 			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
-		constraints = query.getConstraints();
+		IQuery queryClone = (IQuery)QueryObjectProcessor.getObjectCopy(query);
+//		IQuery queryClone = query;
+		constraints = queryClone.getConstraints();
+		QueryObjectProcessor.replaceMultipleParents(constraints);
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
 		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
 
@@ -106,6 +110,7 @@ public class SqlGenerator implements ISqlGenerator
 		String sql = selectPart + " " + fromPart + " " + wherePart;
 		return sql;
 	}
+
 
 	/**
 	 * To get the Select clause of the Query.
@@ -162,9 +167,8 @@ public class SqlGenerator implements ISqlGenerator
 		if (!children.isEmpty())
 		{
 			// processing all outgoing edges/nodes from the current node in the joingraph.
-			for (int index = 0; index < children.size(); index++)
+			for (IExpressionId childExpressionId : children)
 			{
-				IExpressionId childExpressionId = children.get(index);
 				IExpression childExpression = constraints.getExpression(childExpressionId);
 				if (!processedAlias.contains(aliasAppenderMap.get(childExpressionId)))
 				{
