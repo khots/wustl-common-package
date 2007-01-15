@@ -107,7 +107,7 @@ public class Rule implements IRule
 		for (int i = 0; i < conditions.size(); i++)
 		{
 			string = string + conditions.get(i).toString();
-			if (i != conditions.size())
+			if (i != conditions.size()-1)
 			{
 				string = string + " " + LogicalOperator.And + " ";
 			}
@@ -177,5 +177,17 @@ public class Rule implements IRule
     public void removeAllConditions()
     {
         conditions.clear();
+    }
+    
+    /**
+     * To get the copy of the Rule. Note that, this is not deep copy.
+     * @return The copy og the Rule.
+     */
+    public IRule getCopy()
+    {
+    	List<ICondition> conditions = new ArrayList<ICondition>();
+    	conditions.addAll(this.conditions);
+    	IRule rule = new Rule(conditions);
+    	return rule;
     }
 }
