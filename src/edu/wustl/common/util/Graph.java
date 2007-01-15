@@ -517,6 +517,17 @@ public class Graph<V, E> implements IBaseQueryObject
 	}
 
 	/**
+	 * To get List of all vertices present in graph.
+	 * @return List of all vertices present in graph.
+	 */
+	public List<V> getVertices()
+	{
+		List<V> vertices = new ArrayList<V>();
+		vertices.addAll(incommingEdgeMap.keySet());
+		return vertices;
+	}
+	
+	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
