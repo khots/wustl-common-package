@@ -95,7 +95,7 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	public String toString()
 	{
 		if (dynamicExtensionsAssociation != null)
-			return "Dynamic Extension Association Id : " + dynamicExtensionsAssociation.getId();
+			return "DE Association Id:" + dynamicExtensionsAssociation.getId();
 		return "";
 	}
 }
