@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.common.dynamicextensions.domain.Attribute;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
@@ -113,14 +112,20 @@ public class SqlGenerator implements ISqlGenerator
 		StringBuffer buffer = new StringBuffer("Select ");
 		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
 		String aliasName = getAliasName(expression);
-		Iterator attributeCollectionItr = entity.getAbstractAttributeCollection().iterator();
+		
+		Iterator<AttributeInterface> attributeCollectionItr = entity.getAttributeCollection().iterator();
 		while (attributeCollectionItr.hasNext())
 		{
-			Attribute attribute = (Attribute) attributeCollectionItr.next();
-			buffer.append(aliasName + "." + attribute.getColumnProperties().getName());
-			if (attributeCollectionItr.hasNext())
+			AttributeInterface attribute = attributeCollectionItr.next();
+			
+			String columnName = attribute.getColumnProperties().getName();
+			if (!columnName.startsWith("DE_")) // This check is temporary fix, should be removed when DE data is properly populated.
 			{
-				buffer.append(", ");
+				buffer.append(aliasName + "." + columnName);
+				if (attributeCollectionItr.hasNext())
+				{
+					buffer.append(", ");
+				}
 			}
 		}
 		return buffer.toString();
