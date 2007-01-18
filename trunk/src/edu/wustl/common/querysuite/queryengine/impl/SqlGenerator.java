@@ -20,8 +20,6 @@ import edu.common.dynamicextensions.domaininterface.BooleanTypeInformationInterf
 import edu.common.dynamicextensions.domaininterface.DateTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
-import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
@@ -69,12 +67,9 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param query The Reference to Query Object.
 	 * @return the String representing SQL for the given Query object.
 	 * @throws MultipleRootsException When there are multpile roots present in a graph.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.  
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#generateSQL(edu.wustl.common.querysuite.queryobject.IQuery)
 	 */
-	public String generateSQL(IQuery query) throws MultipleRootsException,
-			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+	public String generateSQL(IQuery query) throws MultipleRootsException
 	{
 		return buildQuery(query);
 	}
@@ -84,14 +79,11 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param query the IQuery reference.
 	 * @return The Root Expetssion of the IQuery. 
 	 * @throws MultipleRootsException When there exists multiple roots in joingraph.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
-	String buildQuery(IQuery query) throws MultipleRootsException,
-			DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+	String buildQuery(IQuery query) throws MultipleRootsException
 	{
-		IQuery queryClone = (IQuery)QueryObjectProcessor.getObjectCopy(query);
-//		IQuery queryClone = query;
+		IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
+		//		IQuery queryClone = query;
 		constraints = queryClone.getConstraints();
 		QueryObjectProcessor.replaceMultipleParents(constraints);
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
@@ -111,16 +103,12 @@ public class SqlGenerator implements ISqlGenerator
 		return sql;
 	}
 
-
 	/**
 	 * To get the Select clause of the Query.
 	 * @param expression The Expression which will appear in the Select part.
 	 * @return the Select clause of the Query.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
-	String getSelectPart(IExpression expression) throws DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
+	String getSelectPart(IExpression expression)
 	{
 		StringBuffer buffer = new StringBuffer("Select ");
 		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
@@ -144,11 +132,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param leftAlias the String representing alias of left table. This will be alias of table represented by Parent Expression. Will be null for the Root Expression.  
 	 * @param processedAlias The set of aliases processed.
 	 * @return the From clause of the SQL.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
 	String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		IExpressionId parentExpressionId = expression.getExpressionId();
@@ -206,11 +191,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param parentExpression The Parent Expression.
 	 * @param isPAND true if this Expression is psuedo anded with other Expression.
 	 * @return The SQL representation of the Expression.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
 	String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int prevNesting = 0;
@@ -309,43 +291,12 @@ public class SqlGenerator implements ISqlGenerator
 		return sql;
 	}
 
-	//	/**
-	//	 * To get the Association from Dynamic Extentsion for the given Assoctaion.
-	//	 * @param association The reference to association
-	//	 * @return the reference of Association from Dynamic Extentsion 
-	//	 * @throws DynamicExtensionsSystemException
-	//	 * @throws DynamicExtensionsApplicationException
-	//	 */
-	//	private AssociationInterface getAssoication(IIntraModelAssociation association)
-	//			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	//	{
-	//		if (associationMap.containsKey(association))
-	//			return associationMap.get(association);
-	//
-	//		Collection<AssociationInterface> associations =entityManager.getAssociation(association
-	//				.getSourceClass().getFullyQualifiedName(), association.getSourceRoleName());
-	//		for (Iterator<AssociationInterface> iter = associations.iterator(); iter.hasNext();)
-	//		{
-	//			AssociationInterface theAssociation = iter.next();
-	//			if (theAssociation.getTargetEntity().getName().equals(association.getTargetClass().getFullyQualifiedName()))
-	//			{
-	//				associationMap.put(association, theAssociation);
-	//				return theAssociation;
-	//			}
-	//		}
-	//		
-	//		return null;
-	//	}
-
 	/**
 	 * To get the SQL representation of the Rule.
 	 * @param rule The reference to Rule.
 	 * @return The SQL representation of the Rule.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
-	String getSQL(IRule rule) throws DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
+	String getSQL(IRule rule)
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int noOfConditions = rule.size();
@@ -372,11 +323,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param condition The reference to condition.
 	 * @param expression The reference to Expression to which this condition belongs.
 	 * @return The SQL Representation of the Condition.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
 	String getSQL(ICondition condition, IExpression expression)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		AttributeInterface attribute = condition.getAttribute();
@@ -520,11 +468,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param attribute The reference to AttributeInterface
 	 * @param expression The reference to Expression to which this attribute belongs.
 	 * @return The SQL representatio for Attribute.
-	 * @throws DynamicExtensionsSystemException when DB connection, Hibernate related problem occures.  
-	 * @throws DynamicExtensionsApplicationException when Dynamic Extension data validation fails.
 	 */
 	String getSQL(AttributeInterface attribute, IExpression expression)
-			throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
 	{
 		String tableName = getAliasName(expression);
 		return tableName + "." + attribute.getColumnProperties().getName();
@@ -621,45 +566,6 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		return aliasAppenderMap;
 	}
-
-	//	/**
-	//	 * To get the Entity Class from Dynamic Extension for the given class. 
-	//	 * It caches the Entity in the entityMap. First it checks whether the Entity is cached, if it is cached then it returns it from cache, else get it from Dynamic Extension. 
-	//	 * @param iClass The IClass reference.
-	//	 * @return The reference to Entity Class from Dynamic Extension for the given class.
-	//	 * @throws DynamicExtensionsSystemException
-	//	 * @throws DynamicExtensionsApplicationException
-	//	 */
-	//	private Entity getEntity(IClass iClass) throws DynamicExtensionsSystemException,
-	//			DynamicExtensionsApplicationException
-	//	{
-	//		String fullyQualifiedName = iClass.getFullyQualifiedName();
-	//		Entity entity = entityMap.get(fullyQualifiedName);
-	//		if (entity == null)
-	//		{
-	//			entity = (Entity) entityManager.getEntityByName(fullyQualifiedName);
-	//			entityMap.put(fullyQualifiedName, entity); // storing entity in the entity map.
-	//		}
-	//		return entity;
-	//	}
-
-	//	/**
-	//	 * To get the Attribute from Dynamic Extenstion for the Given Attribute.
-	//	 * @param attribute The IAttribute reference.
-	//	 * @return The reference to Attribute from Dynamic Extenstion for the Given Attribute.
-	//	 * @throws DynamicExtensionsSystemException
-	//	 * @throws DynamicExtensionsApplicationException
-	//	 */
-	//	private Attribute getAttribute(IAttribute attribute) throws DynamicExtensionsSystemException,
-	//			DynamicExtensionsApplicationException
-	//	{
-	//		Entity entity = getEntity(attribute.getUMLClass());
-	//
-	//		Attribute entityAttribute = (Attribute) entityManager.getAttribute(entity.getName(),
-	//				attribute.getAttributeName());
-	//
-	//		return entityAttribute;
-	//	}
 
 	/**
 	 * This method will be used by Query Mock to set the join Graph externally. 
