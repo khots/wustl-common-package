@@ -7,6 +7,10 @@ import java.util.List;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.client.ui.query.IPathFinder;
+import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
+import edu.wustl.cab2b.common.factory.caB2BFactory;
+import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -199,5 +203,16 @@ public class QueryObjectFactory
 	public static IConstraintEntity createConstraintEntity(EntityInterface entityInterface)
 	{
 		return new ConstraintEntity(entityInterface);
+	}
+	
+	/**
+	 * This returns an instance of the path finder class mentioned in Client.properties
+	 * @return IPathFinder 
+	 */
+	public static IPathFinder getPathFinder()
+	{
+		String pathFinderClassName = ClientPropertyLoader.getPathFinderClassName();
+		IPathFinder pathFinder = (IPathFinder) caB2BFactory.getInstance().getObjectofClass(pathFinderClassName);
+		return pathFinder;
 	}
 }
