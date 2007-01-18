@@ -1,8 +1,6 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
-import java.io.Serializable;
-
 /**
  * A list of operands, and the logical connectors (AND, OR), that together form a
  * logical expression<br> The connectors are identified by the position of the
