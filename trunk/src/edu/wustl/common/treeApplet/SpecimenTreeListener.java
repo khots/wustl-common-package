@@ -49,17 +49,12 @@ public class SpecimenTreeListener extends AppletTreeListener
 			//return;
 		}	
 		//If selected node is not of given type and class, then do nothing.
-		if(!treeNode.getType().equalsIgnoreCase(type) && !treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass))
-		{
-			return;
-		}
+	
 		//if(treeNode.getChildNodes()==null || treeNode.getChildNodes().size()==0)
 		
 		//If selected node is of given type and class, then set its value in dropdown and the dropdown is not disabled.
 		else if(treeNode.getType().equalsIgnoreCase(type) && treeNode.getSpecimenClass().equalsIgnoreCase(specimenClass))
 		{
-				/*System.out.println("...treeNode.getType() " + treeNode.getType());
-				System.out.println("...treeNode.getSpecimenClass()  " + treeNode.getSpecimenClass());*/
 			setValue="setParentWindowValue('"+propertyName+"','"+treeNode.toString()+"')";
 		}
 		else
