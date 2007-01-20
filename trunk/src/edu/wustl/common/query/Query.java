@@ -940,13 +940,21 @@ public abstract class Query {
 		String dataElementTableName;
 		String dataElementFieldName;
 		Vector identifiedData;
+		
 		for (int i = 0; i < resultView.size(); i++) {
 			dataElement = (DataElement) resultView.get(i);
 			dataElementTableName = dataElement.getTableAliasName();
 			dataElementFieldName = dataElement.getField();
-			//I
-			if (dataElementTableName.equals(tableAlias)
-					|| relatedTables.contains(dataElementTableName)) {
+			/** 
+			 *   The condition dataElementTableName.equals(Constants.PARTICIPANT) is added to fix
+			 *   bug 3449 (P1), it was not considering identified data of participant while searching SCG. 
+			 *   Need to consider whether the conditions in if loop are at all required. 
+			 *   -- Santosh
+			 */
+			if (dataElementTableName.equals(tableAlias) 
+					|| relatedTables.contains(dataElementTableName) || 
+					dataElementTableName.equals(Constants.PARTICIPANT)) 
+			{
 				identifiedData = (Vector) Client.identifiedDataMap
 						.get(dataElementTableName);
 				Logger.out.debug("Table:" + dataElementTableName
