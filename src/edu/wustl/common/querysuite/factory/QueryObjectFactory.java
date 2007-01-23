@@ -10,7 +10,6 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
 import edu.wustl.cab2b.common.factory.caB2BFactory;
-import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -39,7 +38,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Rule;
  * @version 1.0
  * @updated 11-Oct-2006 02:57:23 PM
  */
-public class QueryObjectFactory
+abstract public class QueryObjectFactory
 {
 
 	/**
@@ -174,7 +173,7 @@ public class QueryObjectFactory
 	{
 		return new OutputTreeNode(outputEntity);
 	}
-	
+
 	/**
 	 * To instanciate object of class implementing IConstraintEntity interface.
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object. 
@@ -184,7 +183,7 @@ public class QueryObjectFactory
 	{
 		return new ConstraintEntity(entityInterface);
 	}
-	
+
 	/**
 	 * To instanciate object of class implementing  IOutputEntity interface.
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
@@ -194,7 +193,7 @@ public class QueryObjectFactory
 	{
 		return new OutputEntity(entityInterface);
 	}
-	
+
 	/**
 	 * To instanciate object of class implementing  IConstraintEntity interface.
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
@@ -204,7 +203,7 @@ public class QueryObjectFactory
 	{
 		return new ConstraintEntity(entityInterface);
 	}
-	
+
 	/**
 	 * This returns an instance of the path finder class mentioned in Client.properties
 	 * @return IPathFinder 
@@ -212,7 +211,8 @@ public class QueryObjectFactory
 	public static IPathFinder getPathFinder()
 	{
 		String pathFinderClassName = ClientPropertyLoader.getPathFinderClassName();
-		IPathFinder pathFinder = (IPathFinder) caB2BFactory.getInstance().getObjectofClass(pathFinderClassName);
+		IPathFinder pathFinder = (IPathFinder) caB2BFactory.getInstance().getObjectofClass(
+				pathFinderClassName);
 		return pathFinder;
 	}
 }
