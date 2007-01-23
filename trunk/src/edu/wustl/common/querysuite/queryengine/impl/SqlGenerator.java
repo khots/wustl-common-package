@@ -12,14 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.BooleanTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.DateTypeInformationInterface;
+import edu.common.dynamicextensions.domaininterface.DoubleTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
+import edu.wustl.common.querysuite.exceptions.SqlException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
@@ -37,6 +41,8 @@ import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.global.Variables;
 
 /**
@@ -66,9 +72,10 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param query The Reference to Query Object.
 	 * @return the String representing SQL for the given Query object.
 	 * @throws MultipleRootsException When there are multpile roots present in a graph.
+	 * @throws SqlException When there is error in the passed IQuery object.
 	 * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#generateSQL(edu.wustl.common.querysuite.queryobject.IQuery)
 	 */
-	public String generateSQL(IQuery query) throws MultipleRootsException
+	public String generateSQL(IQuery query) throws MultipleRootsException, SqlException
 	{
 		return buildQuery(query);
 	}
@@ -78,8 +85,9 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param query the IQuery reference.
 	 * @return The Root Expetssion of the IQuery. 
 	 * @throws MultipleRootsException When there exists multiple roots in joingraph.
+	 * @throws SqlException When there is error in the passed IQuery object.
 	 */
-	String buildQuery(IQuery query) throws MultipleRootsException
+	String buildQuery(IQuery query) throws MultipleRootsException, SqlException
 	{
 		IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
 		//		IQuery queryClone = query;
@@ -196,8 +204,9 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param parentExpression The Parent Expression.
 	 * @param isPAND true if this Expression is psuedo anded with other Expression.
 	 * @return The SQL representation of the Expression.
+	 * @throws SqlException When there is error in the passed IQuery object.
 	 */
-	String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND)
+	String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND) throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int prevNesting = 0;
@@ -300,8 +309,9 @@ public class SqlGenerator implements ISqlGenerator
 	 * To get the SQL representation of the Rule.
 	 * @param rule The reference to Rule.
 	 * @return The SQL representation of the Rule.
+	 * @throws SqlException When there is error in the passed IQuery object.
 	 */
-	String getSQL(IRule rule)
+	String getSQL(IRule rule) throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int noOfConditions = rule.size();
@@ -328,80 +338,221 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param condition The reference to condition.
 	 * @param expression The reference to Expression to which this condition belongs.
 	 * @return The SQL Representation of the Condition.
+	 * @throws SqlException When there is error in the passed IQuery object.
 	 */
-	String getSQL(ICondition condition, IExpression expression)
+	String getSQL(ICondition condition, IExpression expression) throws SqlException
 	{
-		StringBuffer buffer = new StringBuffer("");
+		String sql = null;
 		AttributeInterface attribute = condition.getAttribute();
-		AttributeTypeInformationInterface dataType = attribute.getAttributeTypeInformation();
 		String attributeName = getSQL(attribute, expression);
 
 		RelationalOperator operator = condition.getRelationalOperator();
-		String strOperator = RelationalOperator.getSQL(operator);
 
 		if (operator.equals(RelationalOperator.Between))//Processing Between Operator, it will be treated as (op>=val1 and op<=val2)
 		{
-			List<String> values = condition.getValues();
-			String firstValue = modifyValueforDataType(values.get(0), dataType);
-			String secondValue = modifyValueforDataType(values.get(1), dataType);
-
-			buffer.append("(" + attributeName);
-			buffer.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals)
-					+ firstValue);
-			buffer.append(" " + LogicalOperator.And + " " + attributeName
-					+ RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals)
-					+ secondValue + ")");
+			sql = processBetweenOperator(condition, attributeName);
 		}
-		else if (operator.equals(RelationalOperator.In)) // Processing In Operator
+		else if (operator.equals(RelationalOperator.In)
+				|| operator.equals(RelationalOperator.NotIn)) // Processing In Operator
 		{
-			buffer.append(attributeName + " " + strOperator + " (");
-			List<String> valueList = condition.getValues();
-			for (int i = 0; i < valueList.size(); i++)
-			{
-				String value = modifyValueforDataType(valueList.get(i), dataType);
-
-				if (i == valueList.size() - 1)
-				{
-					buffer.append(value + ")");
-				}
-				else
-				{
-					buffer.append(value + ",");
-				}
-			}
+			
+			sql = processInOperator(condition, attributeName);
 		}
 		else if (operator.equals(RelationalOperator.IsNotNull)
 				|| operator.equals(RelationalOperator.IsNull)) // Processing isNull & isNotNull operator.
 		{
-			buffer.append(attributeName + " " + strOperator);
+			
+			sql = processNullCheckOperators(condition, attributeName);
 		}
 		else if (operator.equals(RelationalOperator.Contains)
 				|| operator.equals(RelationalOperator.StartsWith)
 				|| operator.equals(RelationalOperator.EndsWith)) // Processing String related Operators.
 		{
-			String value = condition.getValue();
-			if (operator.equals(RelationalOperator.Contains))
-			{
-				value = "'%" + value + "%'";
-			}
-			else if (operator.equals(RelationalOperator.StartsWith))
-			{
-				value = "'" + value + "%'";
-			}
-			else if (operator.equals(RelationalOperator.EndsWith))
-			{
-				value = "'%" + value + "'";
-			}
-			buffer.append(attributeName + " like " + value);
+			sql = processLikeOperators(condition, attributeName);
 		}
 		else
 		// Processing rest operators like =, !=, <, > , <=, >= etc.
 		{
-			String value = condition.getValue();
-			value = modifyValueforDataType(value, dataType);
-			buffer.append(attributeName + strOperator + value);
+			sql = processComparisionOperator(condition, attributeName);
 		}
 
+		return sql;
+	}
+
+	/**
+	 * Processing operators like =, !=, <, > , <=, >= etc.
+	 * @param condition the condition.
+	 * @param attributeName  the Name of the attribute to returned in SQL. 
+	 * @return SQL representation for given condition.
+	 * @throws SqlException when:
+	 * 		1. value list contains more/less than 1 value.
+	 * 		2. other than = ,!= operator present for String data type.
+	 */
+	private String processComparisionOperator(ICondition condition, String attributeName) throws SqlException
+	{
+		AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
+		RelationalOperator operator = condition.getRelationalOperator();
+		List<String> values = condition.getValues();
+		if (values.size()!=1)
+		{
+			throw new SqlException("Incorrect number of values found for Operator '" + operator +"' for condition:"+condition);			
+		}
+		String value = values.get(0);
+		if (dataType instanceof StringTypeInformationInterface)
+		{
+			 if (!(operator.equals(RelationalOperator.Equals) || operator.equals(RelationalOperator.NotEquals)))
+			 {
+				 throw new SqlException("Incorrect operator found for String datatype for condition:"+condition);
+			 }
+		}
+		
+		if (dataType instanceof BooleanAttributeTypeInformation)
+		{
+			 if (!(operator.equals(RelationalOperator.Equals) || operator.equals(RelationalOperator.NotEquals)))
+			 {
+				 throw new SqlException("Incorrect operator found for Boolean datatype for condition:"+condition);
+			 }
+		}
+		
+		value = modifyValueforDataType(value, dataType);
+		String sql = attributeName + RelationalOperator.getSQL(operator) + value;
+		return sql;
+	}
+
+	/**
+	 * To process String operators. for Ex. starts with, contains etc.
+	 * @param condition the condition.
+	 * @param attributeName  the Name of the attribute to returned in SQL. 
+	 * @return SQL representation for given condition.
+	 * @throws SqlException when 
+	 * 		1. The datatype of attribute is not String.
+	 * 		2. The value list empty or more than 1 value.
+	 */
+	private String processLikeOperators(ICondition condition, String attributeName) throws SqlException
+	{
+		RelationalOperator operator = condition.getRelationalOperator();
+		
+		if (!(condition.getAttribute().getAttributeTypeInformation() instanceof StringTypeInformationInterface))
+		{
+			throw new SqlException("Incorrect data type found for Operator '" + operator +"' for condition:"+condition);
+		}
+		
+		List<String> values = condition.getValues();
+		if (values.size()!=1)
+		{
+			throw new SqlException("Incorrect number of values found for Operator '" + operator +"' for condition:"+condition);
+		}
+		String value = values.get(0);
+		if (operator.equals(RelationalOperator.Contains))
+		{
+			value = "'%" + value + "%'";
+		}
+		else if (operator.equals(RelationalOperator.StartsWith))
+		{
+			value = "'" + value + "%'";
+		}
+		else if (operator.equals(RelationalOperator.EndsWith))
+		{
+			value = "'%" + value + "'";
+		}
+		
+		return attributeName + " like " + value;
+	}
+	
+	/**
+	 * To process 'Is Null' & 'Is Not Null' operator.
+	 * @param condition the condition.
+	 * @param attributeName  the Name of the attribute to returned in SQL. 
+	 * @return SQL representation for given condition.
+	 * @throws SqlException when the value list is not empty.
+	 */
+	private String processNullCheckOperators(ICondition condition, String attributeName) throws SqlException
+	{
+		String operatorStr = RelationalOperator.getSQL(condition.getRelationalOperator());
+		if (condition.getValues().size()>0)
+		{
+			throw new SqlException("No value expected in value part for '" + operatorStr + "' operator !!!");
+		}
+		
+		return attributeName + " " + operatorStr;
+
+	}
+
+	/**
+	 * To process 'In' & 'Not In' operator.
+	 * @param condition the condition.
+	 * @param attributeName  the Name of the attribute to returned in SQL. 
+	 * @return SQL representation for given condition.
+	 * @throws SqlException when the value list is empty or problem in parsing any of the value.
+	 */
+	private String processInOperator(ICondition condition, String attributeName) throws SqlException
+	{
+		StringBuffer buffer =  new StringBuffer("");
+		buffer.append(attributeName + " " + RelationalOperator.getSQL(condition.getRelationalOperator()) + " (");
+		List<String> valueList = condition.getValues();
+		AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
+		
+		if (valueList.size()==0)
+		{
+			throw new SqlException("atleast one value required for 'In' operand list for condition:"+condition);
+		}
+		
+		if (dataType instanceof BooleanAttributeTypeInformation)
+		{
+			 throw new SqlException("Incorrect operator found for Boolean datatype for condition:"+condition);
+		}
+		for (int i = 0; i < valueList.size(); i++)
+		{
+			
+			String value = modifyValueforDataType(valueList.get(i), dataType);
+
+			if (i == valueList.size() - 1)
+			{
+				buffer.append(value + ")");
+			}
+			else
+			{
+				buffer.append(value + ",");
+			}
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * To get the SQL for the given condition with Between operator. It will be treated as (op>=val1 and op<=val2)
+	 * @param condition The condition.
+	 * @param attributeName the Name of the attribute to returned in SQL.
+	 * @return SQL representation for given condition.
+	 * @throws SqlException when:
+	 * 		1. value list does not have 2 values
+	 * 		2. Datatype is not date
+	 * 		3. problem in parsing date.
+	 */
+	private String processBetweenOperator(ICondition condition, String attributeName) throws SqlException
+	{
+		StringBuffer buffer = new StringBuffer("");
+		List<String> values = condition.getValues();
+		if (values.size()!=2)
+		{
+			throw new SqlException("Incorrect number of operand for Between oparator in condition:"+condition);
+		}
+		
+		AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
+		if (!(dataType instanceof DateTypeInformationInterface))
+		{
+			throw new SqlException("Incorrect Data type of operand for Between oparator in condition:"+condition);
+		}
+		
+		String firstValue = modifyValueforDataType(values.get(0), dataType);
+		String secondValue = modifyValueforDataType(values.get(1), dataType);
+
+		buffer.append("(" + attributeName);
+		buffer.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals)
+				+ firstValue);
+		buffer.append(" " + LogicalOperator.And + " " + attributeName
+				+ RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals)
+				+ secondValue + ")");
+		
 		return buffer.toString();
 	}
 
@@ -413,8 +564,9 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param value the Modified value.
 	 * @param dataType The DataType of the passed value.
 	 * @return The String representing encoded value for the given value & datatype.
+	 * @throws SqlException when there is problem with the values, for Ex. unable to parse date/integer/double etc.
 	 */
-	String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType)
+	String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType) throws SqlException
 	{
 
 		if (dataType instanceof StringTypeInformationInterface)//for data type String it will be enclosed in single quote.
@@ -424,7 +576,6 @@ public class SqlGenerator implements ISqlGenerator
 		}
 		else if (dataType instanceof DateTypeInformationInterface) // for data type date it will be enclosed in single quote.
 		{
-
 			try
 			{
 				Date date = new Date();
@@ -450,19 +601,36 @@ public class SqlGenerator implements ISqlGenerator
 			}
 			catch (ParseException parseExp)
 			{
-				parseExp.printStackTrace();
-				//		        Logger.out.debug("Wrong Date Format");
+				throw new SqlException(parseExp.getMessage(),parseExp);
 			}
 		}
 		else if (dataType instanceof BooleanTypeInformationInterface) // defining value for boolean datatype.
 		{
-			if (value != null && value.toUpperCase().equals("TRUE"))
+			if (value == null || !(value.equalsIgnoreCase(Constants.TRUE) || value.equalsIgnoreCase(Constants.FALSE)))
+			{
+				throw new SqlException("Incorrect value found in value part for boolean operator!!!");
+			}
+			if (value.equalsIgnoreCase(Constants.TRUE))
 			{
 				value = "1";
 			}
 			else
 			{
 				value = "0";
+			}
+		}
+		else if (dataType instanceof IntegerTypeInformationInterface)
+		{
+			if (!new Validator().isNumeric(value))
+			{
+				throw new SqlException("Non numeric value found in value part!!!");
+			}
+		}
+		else if (dataType instanceof DoubleTypeInformationInterface)
+		{
+			if (!new Validator().isDouble(value))
+			{
+				throw new SqlException("Non numeric value found in value part!!!");
 			}
 		}
 		return value;
