@@ -5,6 +5,7 @@ package edu.wustl.common.querysuite;
  * 
  */
 
+import edu.wustl.common.querysuite.queryengine.impl.SqlGeneratorGenericTestCase;
 import edu.wustl.common.querysuite.queryengine.impl.SqlGeneratorTestCase;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionTestCase;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraphTestCase;
@@ -30,6 +31,7 @@ public class TestAll
 		suite.addTestSuite(ExpressionTestCase.class);
 		suite.addTestSuite(JoinGraphTestCase.class);
 		suite.addTestSuite(SqlGeneratorTestCase.class);
+		suite.addTestSuite(SqlGeneratorGenericTestCase.class);
 		suite.addTestSuite(GraphTestCase.class);
 		return suite;
 	}
