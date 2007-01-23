@@ -85,7 +85,7 @@ public enum RelationalOperator {
 		}
 		else if (relationalOperator.equals(RelationalOperator.NotIn))
 		{
-			sql = "not in";
+			sql = "NOT in";
 		}
 		return sql;
 	}
