@@ -7,6 +7,7 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Chandrakant Talele
@@ -98,4 +99,47 @@ public class IntraModelAssociation implements IIntraModelAssociation
 			return "DE Association Id:" + dynamicExtensionsAssociation.getId();
 		return "";
 	}
+
+	/**
+	 * To check equality of the two object. it will check equality based on dynamicExtensionsAssociation.
+	 * @param Object to be check for equality.
+	 * @return true if objects are equals.
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (obj != null && this.getClass() == obj.getClass())
+		{
+			IntraModelAssociation association = (IntraModelAssociation) obj;
+			if (this.dynamicExtensionsAssociation!=null && this.dynamicExtensionsAssociation.equals(association.dynamicExtensionsAssociation))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * To get the HashCode for the object. It will be calculated based on dynamicExtensionsAssociation.
+	 * @return The hash code value for the object.
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (dynamicExtensionsAssociation!=null)
+		{
+			hash = hash * Constants.HASH_PRIME + dynamicExtensionsAssociation.hashCode();
+		}
+		return hash;
+	}
+	
+	
 }
