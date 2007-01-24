@@ -198,7 +198,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
 				onlyDistinctRows);
-			}
+	}
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
@@ -276,7 +276,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		}
 
 		return list;
-			}
+	}
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
@@ -290,10 +290,10 @@ public class JDBCDAOImpl implements JDBCDAO
 	public List retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
-			{
+	{
 		return retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
 				whereColumnValue, joinCondition, false);
-			}
+	}
 
 	/**
 	 * Executes the query.
@@ -308,7 +308,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	public List executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException
-			{
+	{
 		//Aarti: Security checks
 		if (Constants.switchSecurity && isSecureExecute)
 		{
@@ -321,7 +321,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		List list = getQueryResultList(query, sessionDataBean, isSecureExecute, false,
 				queryResultObjectDataMap);
 		return list;
-			}
+	}
 
 	/**
 	 * Executes the query.
@@ -336,7 +336,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	public List executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
-			{
+	{
 		//Aarti: Security checks
 		if (Constants.switchSecurity && isSecureExecute)
 		{
@@ -349,7 +349,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		List list = getQueryResultList(query, sessionDataBean, isSecureExecute,
 				hasConditionOnIdentifiedField, queryResultObjectDataMap);
 		return list;
-			}
+	}
 
 	/**
 	 * This method exeuted query, parses the result and returns List of rows after doing security checks
@@ -367,7 +367,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	private List getQueryResultList(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws DAOException
-			{
+	{
 		PreparedStatement stmt = null;
 		ResultSet resultSet = null;
 		List list;
@@ -412,7 +412,7 @@ public class JDBCDAOImpl implements JDBCDAO
 							// default date format returned by toString was yyyy-dd-mm
 							// bug#463 
 							if (valueObj instanceof java.util.Date) // since all java.sql time 
-								//classes are derived from java.util.Date 
+							//classes are derived from java.util.Date 
 							{
 								SimpleDateFormat formatter = new SimpleDateFormat(
 										Constants.DATE_PATTERN_MM_DD_YYYY);
@@ -440,7 +440,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				{
 					boolean hasPrivilegeOnIdentifiedData = SecurityManager.getInstance(
 							this.getClass()).hasPrivilegeOnIdentifiedData(sessionDataBean,
-									queryResultObjectDataMap, aList);
+							queryResultObjectDataMap, aList);
 					if (!hasPrivilegeOnIdentifiedData)
 						continue;
 				}
@@ -479,14 +479,14 @@ public class JDBCDAOImpl implements JDBCDAO
 			}
 		}
 		return list;
-			}
+	}
 
 	/**
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
-	throws DAOException
+			throws DAOException
 	{
 		String whereColumnNames[] = {whereColumnName};
 		String whereColumnConditions[] = {"="};
@@ -612,9 +612,9 @@ public class JDBCDAOImpl implements JDBCDAO
 	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
 			boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException,
 			UserNotAuthorizedException
-			{
+	{
 		// TODO Auto-generated method stub
-			}
+	}
 
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.AbstractDAO#delete(java.lang.Object)
@@ -712,11 +712,11 @@ public class JDBCDAOImpl implements JDBCDAO
 	 */
 	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
 			boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
-			{
+	{
 		// TODO Auto-generated method stub
 		//		if(isAuditable)
 		//		auditManager.compare((AbstractDomainObject)obj,null,"INSERT");
-			}
+	}
 
 	public void executeUpdate(String query) throws DAOException
 	{
@@ -748,8 +748,8 @@ public class JDBCDAOImpl implements JDBCDAO
 
 	public void disableRelatedObjects(String tableName, String whereColumnName,
 			Long whereColumnValues[]) throws DAOException
-			{
-			}
+	{
+	}
 
 	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
 	{
@@ -758,16 +758,7 @@ public class JDBCDAOImpl implements JDBCDAO
 
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
 			boolean isAuditable) throws DAOException
-			{
-			}
-	/**
-	 * Returns the connection.
-	 * @return Connection Connection
-	 * @throws DAOException DAOException
-	 */
-	public Connection getConnection() throws DAOException
 	{
-		return connection;
 	}
-
+	
 }
