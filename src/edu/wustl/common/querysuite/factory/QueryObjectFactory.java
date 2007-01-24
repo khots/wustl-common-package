@@ -38,7 +38,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Rule;
  * @version 1.0
  * @updated 11-Oct-2006 02:57:23 PM
  */
-abstract public class QueryObjectFactory
+public abstract class QueryObjectFactory
 {
 
 	/**
