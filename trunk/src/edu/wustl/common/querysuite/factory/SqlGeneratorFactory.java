@@ -9,7 +9,7 @@ import edu.wustl.common.querysuite.queryengine.impl.SqlGenerator;
  * @author deepti_shelar
  *
  */
-abstract public class SqlGeneratorFactory
+public abstract class SqlGeneratorFactory
 {
 
 	/**
