@@ -23,7 +23,6 @@ import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 
-
 /**
  *  This Class contains the methods used for validation of the fields in the userform.
  *  @author gautam_shetty
@@ -300,7 +299,7 @@ public class Validator
     	try
 		{
     		
-    		Pattern re = Pattern.compile("^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3}(\\.[a-z]{2})?|[a-z]{2}(\\.[a-z]{2})?)$", Pattern.CASE_INSENSITIVE);
+    		Pattern re = Pattern.compile("^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$", Pattern.CASE_INSENSITIVE);
     		Matcher  mat =re.matcher(emailAddress); 
     		result = mat.matches();
 		}
