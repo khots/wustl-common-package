@@ -42,6 +42,16 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable{
 	private String specimenClass;
 	
 	/**
+	 * String containing Id of the parent node
+	 */
+	private String parentIdentifier;
+	
+	/**
+	 * String containing value of the parent node
+	 */
+	private String parentValue;
+	
+	/**
 	 * @return String containing the type of specimen node.
 	 */
 	public String getType() {
@@ -78,5 +88,37 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable{
 	public String toString()
 	{
 	    return this.value;
+	}
+
+	/**
+	 * Returns the parentIdentifier of the tree node.
+	 * @return parentIdentifier
+	 */
+	public String getParentIdentifier() {
+		return parentIdentifier;
+	}
+
+	/**
+	 * Sets the parentIdentifier of the tree node.
+	 * @param parentIdentifier
+	 */
+	public void setParentIdentifier(String parentIdentifier) {
+		this.parentIdentifier = parentIdentifier;
+	}
+
+	/**
+	 * Returns the parentValue of the tree node. 
+	 * @return parentValue
+	 */
+	public String getParentValue() {
+		return parentValue;
+	}
+
+	/**
+	 *Sets the parentValue of the tree node. 
+	 * @param parentValue
+	 */
+	public void setParentValue(String parentValue) {
+		this.parentValue = parentValue;
 	}
 }
