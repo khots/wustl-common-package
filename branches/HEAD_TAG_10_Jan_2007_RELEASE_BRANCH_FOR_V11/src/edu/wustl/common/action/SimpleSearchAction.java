@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.SimpleQuery;
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.MapDataParser;
+import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -63,7 +65,7 @@ public class SimpleSearchAction extends BaseAction
 		Logger.out.debug(Constants.MENU_SELECTED + " set in SimpleSearch Action : -- " + strMenu);
 		// -------- set the selected menu ------- end
 		HttpSession session = request.getSession();
-
+ 
 		String target = Constants.SUCCESS;
 		Map map = simpleQueryInterfaceForm.getValuesMap();
 		String counter = simpleQueryInterfaceForm.getCounter();
@@ -162,12 +164,27 @@ public class SimpleSearchAction extends BaseAction
 				aliasList, columnNames, true, fieldList);
 		}
 		query.setResultView(selectDataElements);
-
-		Set fromTables = new HashSet();
+       /**
+        *  To fix bug 3449, scientist seeing PHI data
+        */
+		Set fromTables = new HashSet(); 
+		
+	
+		Set tableSet = query.getTableSet();
+		Iterator itr = tableSet.iterator();
+		while(itr.hasNext()) 
+		{
+			Table table = (Table )itr.next(); 
+			fromTables.add(table.getTableName());
+		}
+		
+		//fromTables = new HashSet(); 
 		fromTables.addAll(fromTablesList);
+		fromTables.addAll(aliasList); 
+
 
 		// Set the from tables in the query.
-		query.setTableSet(fromTables);
+ 		query.setTableSet(fromTables);
 
 		// Checks and gets the activity status conditions for all the objects in
 		// the from clause
