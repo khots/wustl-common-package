@@ -130,7 +130,7 @@ public class GenericQueryGeneratorMock
 	 */
 	public static IExpression createExpression(EntityInterface entity)
 	{
-		IConstraintEntity constraintEntity = QueryObjectFactory.createConstrainedEntity(entity);
+		IConstraintEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
 
 		IExpression expression = new Expression(constraintEntity, 1);
 		expression.addOperand(createRule(constraintEntity.getDynamicExtensionsEntity(), "int"));
