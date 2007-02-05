@@ -178,6 +178,7 @@ public abstract class QueryObjectFactory
 	 * To instanciate object of class implementing IConstraintEntity interface.
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object. 
 	 * @return The reference to the ConstraintEntity object.
+	 * @deprecated Do not use this method, use method createConstraintEntity(EntityInterface)
 	 */
 	public static IConstraintEntity createConstrainedEntity(EntityInterface entityInterface)
 	{
