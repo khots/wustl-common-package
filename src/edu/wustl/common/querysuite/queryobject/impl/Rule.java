@@ -190,4 +190,12 @@ public class Rule implements IRule
     	IRule rule = new Rule(conditions);
     	return rule;
     }
+    /**
+     * To get the list of conditions of the rule.
+     * @return List of ICondition objects.
+     */
+    public List<ICondition> getConditions()
+    {
+    	return conditions;
+    }
 }

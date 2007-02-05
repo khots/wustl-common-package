@@ -1,6 +1,8 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
+import java.util.List;
+
 /**
  * A list of conditions, on different attributes. We could have checks to ensure
  * that conditions on the same attribute are not added to a rule. e.g. when user
@@ -45,5 +47,10 @@ public interface IRule extends IExpressionOperand
 	int size();
     
     public void removeAllConditions();
+    /**
+     * To get the list of conditions of the rule.
+     * @return List of ICondition objects.
+     */
+    public List<ICondition> getConditions();
 
 }
