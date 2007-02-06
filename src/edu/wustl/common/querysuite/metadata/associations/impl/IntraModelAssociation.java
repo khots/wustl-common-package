@@ -102,7 +102,7 @@ public class IntraModelAssociation implements IIntraModelAssociation
 
 	/**
 	 * To check equality of the two object. it will check equality based on dynamicExtensionsAssociation.
-	 * @param Object to be check for equality.
+	 * @param obj to be check for equality.
 	 * @return true if objects are equals.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

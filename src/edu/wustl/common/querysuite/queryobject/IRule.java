@@ -45,12 +45,16 @@ public interface IRule extends IExpressionOperand
 	 * @return The no. of conditions present in the Rule.
 	 */
 	int size();
-    
-    public void removeAllConditions();
-    /**
-     * To get the list of conditions of the rule.
-     * @return List of ICondition objects.
-     */
-    public List<ICondition> getConditions();
+
+	/**
+	 * To remove all conditions from the Rule.
+	 */
+	void removeAllConditions();
+
+	/**
+	 * To get the list of conditions of the rule.
+	 * @return List of ICondition objects.
+	 */
+	List<ICondition> getConditions();
 
 }

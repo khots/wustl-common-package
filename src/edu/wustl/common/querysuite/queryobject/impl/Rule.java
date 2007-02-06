@@ -107,7 +107,7 @@ public class Rule implements IRule
 		for (int i = 0; i < conditions.size(); i++)
 		{
 			string = string + conditions.get(i).toString();
-			if (i != conditions.size()-1)
+			if (i != conditions.size() - 1)
 			{
 				string = string + " " + LogicalOperator.And + " ";
 			}
@@ -165,7 +165,6 @@ public class Rule implements IRule
 		return false;
 	}
 
-	
 	/**
 	 * @param containingExpression the containingExpression to set
 	 */
@@ -173,29 +172,34 @@ public class Rule implements IRule
 	{
 		this.containingExpression = containingExpression;
 	}
-    
-    public void removeAllConditions()
-    {
-        conditions.clear();
-    }
-    
-    /**
-     * To get the copy of the Rule. Note that, this is not deep copy.
-     * @return The copy og the Rule.
-     */
-    public IRule getCopy()
-    {
-    	List<ICondition> conditions = new ArrayList<ICondition>();
-    	conditions.addAll(this.conditions);
-    	IRule rule = new Rule(conditions);
-    	return rule;
-    }
-    /**
-     * To get the list of conditions of the rule.
-     * @return List of ICondition objects.
-     */
-    public List<ICondition> getConditions()
-    {
-    	return conditions;
-    }
+
+	/**
+	 * To clear condition List of the Rule.
+	 * @see edu.wustl.common.querysuite.queryobject.IRule#removeAllConditions()
+	 */
+	public void removeAllConditions()
+	{
+		conditions.clear();
+	}
+
+	/**
+	 * To get the copy of the Rule. Note that, this is not deep copy.
+	 * @return The copy og the Rule.
+	 */
+	public IRule getCopy()
+	{
+		List<ICondition> theConditions = new ArrayList<ICondition>();
+		theConditions.addAll(this.conditions);
+		IRule rule = new Rule(theConditions);
+		return rule;
+	}
+
+	/**
+	 * To get the list of conditions of the rule.
+	 * @return List of ICondition objects.
+	 */
+	public List<ICondition> getConditions()
+	{
+		return conditions;
+	}
 }
