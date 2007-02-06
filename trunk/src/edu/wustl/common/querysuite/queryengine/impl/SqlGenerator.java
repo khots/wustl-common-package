@@ -22,6 +22,7 @@ import edu.common.dynamicextensions.domaininterface.DoubleTypeInformationInterfa
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
+import edu.common.dynamicextensions.domaininterface.databaseproperties.ConstraintPropertiesInterface;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -145,8 +146,9 @@ public class SqlGenerator implements ISqlGenerator
 	 * @param leftAlias the String representing alias of left table. This will be alias of table represented by Parent Expression. Will be null for the Root Expression.  
 	 * @param processedAlias The set of aliases processed.
 	 * @return the From clause of the SQL.
+	 * @throws SqlException When there is problem in creating from part. problem can be like: no primary key found in entity for join.
 	 */
-	String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias)
+	String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias) throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		IExpressionId parentExpressionId = expression.getExpressionId();
@@ -183,10 +185,31 @@ public class SqlGenerator implements ISqlGenerator
 					buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
 							+ rightAlias + " on ");
 
-					String leftAttribute = leftAlias + "."
-							+ eavAssociation.getConstraintProperties().getSourceEntityKey();
-					String rightAttribute = rightAlias + "."
-							+ eavAssociation.getConstraintProperties().getTargetEntityKey();
+					String leftAttribute = null;
+					String rightAttribute = null;
+
+					ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
+					if (constraintProperties.getSourceEntityKey()!= null &&  constraintProperties.getTargetEntityKey()!= null)
+					{
+						// Many to many case.
+						//TODO handle it seperately
+						throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
+					}
+					else
+					{
+						if (constraintProperties.getSourceEntityKey()!= null)
+						{
+							leftAttribute = leftAlias + "." + constraintProperties.getSourceEntityKey();
+							AttributeInterface primaryKey = getPrimaryKey(rightEntity);
+							rightAttribute = rightAlias + "." + primaryKey.getColumnProperties().getName();
+						}
+						else
+						{
+							AttributeInterface primaryKey = getPrimaryKey(rightEntity);
+							leftAttribute = leftAlias + "." + primaryKey.getColumnProperties().getName();
+							rightAttribute = rightAlias + "." + constraintProperties.getTargetEntityKey();
+						}
+					}
 
 					buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
 
@@ -224,9 +247,25 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				String tableName = entity.getTableProperties().getName() + " ";
 				String leftAlias = getAliasName(expression);
-				String selectAttribute = leftAlias + "."
-						+ eavAssociation.getConstraintProperties().getTargetEntityKey();
-
+				String selectAttribute = leftAlias + ".";
+				
+				if (eavAssociation.getConstraintProperties().getTargetEntityKey()==null)
+				{
+					selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
+				}
+				else
+				{
+					if (eavAssociation.getConstraintProperties().getSourceEntityKey()==null)
+					{
+						selectAttribute += eavAssociation.getConstraintProperties().getTargetEntityKey();
+					}
+					else
+					{
+						// Many to many case.
+						// TODO write logic for this.
+						throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
+					}
+				}
 				buffer.append("Select " + selectAttribute);
 				Set<Integer> processedAlias = new HashSet<Integer>();
 				processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
@@ -259,8 +298,27 @@ public class SqlGenerator implements ISqlGenerator
 							.getExpressionId(), childExpression.getExpressionId());
 					AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 							.getDynamicExtensionsAssociation();
-					String joinAttribute = getAliasName(expression) + "."
-							+ eavAssociation.getConstraintProperties().getSourceEntityKey();
+					String joinAttribute = getAliasName(expression) + ".";
+					
+					if (eavAssociation.getConstraintProperties().getSourceEntityKey()==null)
+					{
+						joinAttribute += getPrimaryKey(childExpression.getConstraintEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
+					}
+					else
+					{
+						if (eavAssociation.getConstraintProperties().getTargetEntityKey()==null)
+						{
+							joinAttribute += eavAssociation.getConstraintProperties().getSourceEntityKey();
+						}
+						else
+						{
+							// Many to Many case.
+							//TODO
+							throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
+						}
+
+						
+					}
 					ruleSQL = joinAttribute + " = ANY(" + ruleSQL + ")";
 				}
 
@@ -747,5 +805,24 @@ public class SqlGenerator implements ISqlGenerator
 	void setJoinGraph(JoinGraph joinGraph)
 	{
 		this.joinGraph = joinGraph;
+	}
+	
+	/**
+	 * To get the primary key attribute of the given entity.
+	 * @param entity the DE entity.
+	 * @return The Primary key attribute of the given entity.
+	 * @throws SqlException If there is no such attribute present in the attribute list of the entity.
+	 */
+	private AttributeInterface getPrimaryKey(EntityInterface entity) throws SqlException
+	{
+		Collection<AttributeInterface> attributes = entity.getAttributeCollection();
+		for (AttributeInterface attribute: attributes)
+		{
+			if (attribute.getIsPrimaryKey())
+			{
+				return attribute;
+			}
+		}
+		throw new SqlException("No Primary key attribute found for Entity:"+entity.getName());
 	}
 }
