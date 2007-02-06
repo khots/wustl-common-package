@@ -488,7 +488,7 @@ public class EntityManagerMock extends EntityManager
 	
 			
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
 			((Association)association).setConstraintProperties(constraintProperties);
 			
@@ -522,7 +522,7 @@ public class EntityManagerMock extends EntityManager
 			association.setTargetRole(targetRole);
 	
 			constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
 			((Association)association).setConstraintProperties(constraintProperties);
 			associations.add(association);
@@ -559,7 +559,7 @@ public class EntityManagerMock extends EntityManager
 	
 			
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("SPECIMEN_COLLECTION_GROUP_ID");
 			((Association)association).setConstraintProperties(constraintProperties);
 			
@@ -597,7 +597,7 @@ public class EntityManagerMock extends EntityManager
 	
 			constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("COLLECTION_PROTOCOL_REG_ID");
-			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey(null);
 			((Association)association).setConstraintProperties(constraintProperties);
 
 			associations.add(association);
@@ -632,7 +632,7 @@ public class EntityManagerMock extends EntityManager
 			
 			constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("SITE_ID");
-			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey(null);
 			((Association)association).setConstraintProperties(constraintProperties);
 			
 			associations.add(association);
@@ -669,7 +669,7 @@ public class EntityManagerMock extends EntityManager
 			association.setTargetRole(targetRole);
 	
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("PARENT_SPECIMEN_ID");
 			((Association)association).setConstraintProperties(constraintProperties);
 			
@@ -707,7 +707,7 @@ public class EntityManagerMock extends EntityManager
 	
 			ConstraintProperties constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("SPECIMEN_CHARACTERISTICS_ID");
-			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey(null);
 			((Association)association).setConstraintProperties(constraintProperties);
 			
 			associations.add(association);
@@ -743,7 +743,7 @@ public class EntityManagerMock extends EntityManager
 			association.setTargetRole(targetRole);
 	
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("COLLECTION_PROTOCOL_REG_ID");
 			((Association)association).setConstraintProperties(constraintProperties);
 
@@ -779,7 +779,7 @@ public class EntityManagerMock extends EntityManager
 	
 			constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("COLLECTION_PROTOCOL_ID");
-			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey(null);
 			((Association)association).setConstraintProperties(constraintProperties);
 
 			associations.add(association);
@@ -815,7 +815,7 @@ public class EntityManagerMock extends EntityManager
 			association.setTargetRole(targetRole);
 	
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("`COLLECTION_PROTOCOL_ID`");
 			((Association)association).setConstraintProperties(constraintProperties);
 
@@ -862,7 +862,7 @@ public class EntityManagerMock extends EntityManager
 	
 			
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
 			((Association)currentAssociation).setConstraintProperties(constraintProperties);
 			
@@ -1067,7 +1067,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("SPECIMEN_COLLECTION_GROUP_ID");
 			((Association)currentAssociation).setConstraintProperties(constraintProperties);
 			
@@ -1106,7 +1106,7 @@ public class EntityManagerMock extends EntityManager
 			associationsCollection.add(currentAssociation);
 			
 			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("IDENTIFIER");
+			constraintProperties.setSourceEntityKey(null);
 			constraintProperties.setTargetEntityKey("PARENT_SPECIMEN_ID");
 			((Association)currentAssociation).setConstraintProperties(constraintProperties);
 			
@@ -1142,7 +1142,7 @@ public class EntityManagerMock extends EntityManager
 			
 			ConstraintProperties constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("SITE_ID");
-			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey(null);
 			((Association)currentAssociation).setConstraintProperties(constraintProperties);
 			
 			associationsCollection.add(currentAssociation);
@@ -1180,7 +1180,7 @@ public class EntityManagerMock extends EntityManager
 	
 			ConstraintProperties constraintProperties = new ConstraintProperties();
 			constraintProperties.setSourceEntityKey("SPECIMEN_CHARACTERISTICS_ID");
-			constraintProperties.setTargetEntityKey("IDENTIFIER");
+			constraintProperties.setTargetEntityKey(null);
 			((Association)currentAssociation).setConstraintProperties(constraintProperties);
 			
 			associationsCollection.add(currentAssociation);
