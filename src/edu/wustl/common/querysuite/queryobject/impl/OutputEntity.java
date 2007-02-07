@@ -5,7 +5,9 @@
 package edu.wustl.common.querysuite.queryobject.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -52,7 +54,7 @@ public class OutputEntity extends QueryEntity implements IOutputEntity
 	/**
 	 * To check whether two objects are equal.
 	 * @param obj reference to the object to be checked for equality.
-	 * @return true if entityInterface of object is equal.
+	 * @return true if entityInterface & attributes of object are equal.
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -65,7 +67,9 @@ public class OutputEntity extends QueryEntity implements IOutputEntity
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			OutputEntity theObj = (OutputEntity) obj;
-			return selectedAttributes.equals(theObj.selectedAttributes) && super.equals(obj);
+			Set<AttributeInterface> attributeSet = new HashSet<AttributeInterface>(selectedAttributes);
+			Set<AttributeInterface> theAttributeSet = new HashSet<AttributeInterface>(theObj.selectedAttributes);
+			return attributeSet.equals(theAttributeSet) && super.equals(obj);
 		}
 		return false;
 	}
