@@ -64,7 +64,7 @@ public class SqlGenerator implements ISqlGenerator
 	IConstraints constraints;
 	Map<Long, Map<AttributeInterface, String>> columnMap;
 
-	private static final String COLUMN_NAME = "Column";
+	public static final String COLUMN_NAME = "Column";
 	// This will store mapping of output Tre node with the expression Id.
 	private Map<Long, IExpressionId> outPutNodeMap;
 
