@@ -63,7 +63,6 @@ public class SqlGenerator implements ISqlGenerator
 	JoinGraph joinGraph;
 	IConstraints constraints;
 	Map<Long, Map<AttributeInterface, String>> columnMap;
-	
 
 	private static final String COLUMN_NAME = "Column";
 	// This will store mapping of output Tre node with the expression Id.
@@ -110,20 +109,20 @@ public class SqlGenerator implements ISqlGenerator
 		aliasNameMap = new HashMap<String, String>();
 		createAliasAppenderMap(rootExpression, 1, new Integer(1),
 				new HashMap<List<IAssociation>, IExpressionId>());
-		
+
 		//Generating output tree.
 		outPutNodeMap = new HashMap<Long, IExpressionId>();
 		IOutputTreeNode root = createOuputTree();
 		query.setRootOutputClass(root);
 
-		columnMap = new HashMap<Long, Map<AttributeInterface,String>>();
-		
+		columnMap = new HashMap<Long, Map<AttributeInterface, String>>();
+
 		//Creating SQL.
 		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
 		String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
 		String selectPart = getSelectPart(root);
 		String sql = selectPart + " " + fromPart + " " + wherePart;
-		
+
 		return sql;
 	}
 
@@ -133,10 +132,11 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return map of DE attributes verses & their column names present in the select part of the SQL. null if no sql is generated.
 	 * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#getColumnMap()
 	 */
-	public Map<Long, Map<AttributeInterface,String>> getColumnMap()
+	public Map<Long, Map<AttributeInterface, String>> getColumnMap()
 	{
 		return columnMap;
 	}
+
 	/**
 	 * This method will create output tree with the same heirarchy as that of Constraints & sets in the constraints.
 	 * @return Root node of the output tree.
@@ -145,42 +145,45 @@ public class SqlGenerator implements ISqlGenerator
 	private IOutputTreeNode createOuputTree() throws MultipleRootsException
 	{
 		IExpressionId root = constraints.getRootExpressionId();
-		IExpression expression =constraints.getExpression(root);
-		
+		IExpression expression = constraints.getExpression(root);
+
 		EntityInterface rootEntity = expression.getConstraintEntity().getDynamicExtensionsEntity();
 		IOutputEntity rootOutputEntity = QueryObjectFactory.createOutputEntity(rootEntity);
 		rootOutputEntity.getSelectedAttributes().addAll(rootEntity.getAttributeCollection());
 		IOutputTreeNode rootNode = QueryObjectFactory.createOutputTreeNode(rootOutputEntity);
 		outPutNodeMap.put(rootNode.getId(), root);
-		copyChildren(expression,rootNode);
+		copyChildren(expression, rootNode);
 		return rootNode;
 	}
-	
+
 	/**
 	 * To create all simillar heirarchy of expressions under the given output tree node.
 	 * @param parentExpression The reference to expression.
 	 * @param parentNode the output tree node reference.
 	 */
-	private void copyChildren(IExpression parentExpression,IOutputTreeNode parentNode)
+	private void copyChildren(IExpression parentExpression, IOutputTreeNode parentNode)
 	{
-		for (int index = 0;index < parentExpression.numberOfOperands();index++)
+		for (int index = 0; index < parentExpression.numberOfOperands(); index++)
 		{
-			IExpressionOperand  operand = parentExpression.getOperand(index);
+			IExpressionOperand operand = parentExpression.getOperand(index);
 			if (operand.isSubExpressionOperand())
 			{
-				
-				IExpressionId childExpressionId = (IExpressionId)operand;
+
+				IExpressionId childExpressionId = (IExpressionId) operand;
 				IExpression childExpression = constraints.getExpression(childExpressionId);
-				EntityInterface entity  = childExpression.getConstraintEntity().getDynamicExtensionsEntity();
+				EntityInterface entity = childExpression.getConstraintEntity()
+						.getDynamicExtensionsEntity();
 				IOutputEntity outputEntity = QueryObjectFactory.createOutputEntity(entity);
 				outputEntity.getSelectedAttributes().addAll(entity.getAttributeCollection());
-				IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(), childExpressionId);
-				
+				IAssociation association = joinGraph.getAssociation(parentExpression
+						.getExpressionId(), childExpressionId);
+
 				List<IOutputTreeNode> childrenNodes = parentNode.getChildren();
 				boolean nodeExist = false;
-				for (IOutputTreeNode treeNode: childrenNodes)
+				for (IOutputTreeNode treeNode : childrenNodes)
 				{
-					if (treeNode.getOutputEntity().equals(outputEntity) && treeNode.getAssociationWithParent().equals(association))
+					if (treeNode.getOutputEntity().equals(outputEntity)
+							&& treeNode.getAssociationWithParent().equals(association))
 					{
 						nodeExist = true;
 						copyChildren(childExpression, treeNode);
@@ -191,18 +194,19 @@ public class SqlGenerator implements ISqlGenerator
 					try
 					{
 						IOutputTreeNode childNode = parentNode.addChild(association, outputEntity);
-//						childNode.getOutputEntity().getSelectedAttributes().addAll(entity.getAttributeCollection());
+						//						childNode.getOutputEntity().getSelectedAttributes().addAll(entity.getAttributeCollection());
 						outPutNodeMap.put(childNode.getId(), childExpressionId);
 						copyChildren(childExpression, childNode);
 					}
 					catch (DuplicateChildException e)
 					{
-						throw new RuntimeException("Unexpected error!!!",e);
+						throw new RuntimeException("Unexpected error!!!", e);
 					}
 				}
 			}
 		}
 	}
+
 	/**
 	 * To get the Select clause of the Query.
 	 * @param rootOutputTreeNode The root of the output tree.
@@ -212,32 +216,33 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		selectIndex = 0;
 		String selectAttribute = "Select " + getSelectAttributes(rootOutputTreeNode);
-		selectAttribute = selectAttribute.substring(0,selectAttribute.length()-2); // remove last part " ,"
+		selectAttribute = selectAttribute.substring(0, selectAttribute.length() - 2); // remove last part " ,"
 		return selectAttribute;
 
-//		StringBuffer buffer = new StringBuffer("Select ");
-//		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
-//		String aliasName = getAliasName(expression);
-//		
-//		Iterator<AttributeInterface> attributeCollectionItr = entity.getAttributeCollection().iterator();
-//		while (attributeCollectionItr.hasNext())
-//		{
-//			AttributeInterface attribute = attributeCollectionItr.next();
-//			
-//			String columnName = attribute.getColumnProperties().getName();
-//			if (!columnName.startsWith("DE_")) // This check is temporary fix, should be removed when DE data is properly populated.
-//			{
-//				buffer.append(aliasName + "." + columnName);
-//				if (attributeCollectionItr.hasNext())
-//				{
-//					buffer.append(", ");
-//				}
-//			}
-//		}
-//		return buffer.toString();
+		//		StringBuffer buffer = new StringBuffer("Select ");
+		//		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		//		String aliasName = getAliasName(expression);
+		//		
+		//		Iterator<AttributeInterface> attributeCollectionItr = entity.getAttributeCollection().iterator();
+		//		while (attributeCollectionItr.hasNext())
+		//		{
+		//			AttributeInterface attribute = attributeCollectionItr.next();
+		//			
+		//			String columnName = attribute.getColumnProperties().getName();
+		//			if (!columnName.startsWith("DE_")) // This check is temporary fix, should be removed when DE data is properly populated.
+		//			{
+		//				buffer.append(aliasName + "." + columnName);
+		//				if (attributeCollectionItr.hasNext())
+		//				{
+		//					buffer.append(", ");
+		//				}
+		//			}
+		//		}
+		//		return buffer.toString();
 	}
 
 	private int selectIndex;
+
 	/**
 	 * It will return the select part attributes for this node along with its child nodes.
 	 * @param treeNode the output tree node.
@@ -247,7 +252,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer selectPart = new StringBuffer("");
 		IOutputEntity outputEntity = treeNode.getOutputEntity();
-		
+
 		IExpression expression = constraints.getExpression(outPutNodeMap.get(treeNode.getId()));
 		String aliasName = getAliasName(expression);
 		List<AttributeInterface> attributes = outputEntity.getSelectedAttributes();
@@ -255,22 +260,23 @@ public class SqlGenerator implements ISqlGenerator
 		columnMap.put(treeNode.getId(), entityColumnMap);
 		for (AttributeInterface attribute : attributes)
 		{
-			selectPart.append(aliasName + "."  +attribute.getColumnProperties().getName());
+			selectPart.append(aliasName + "." + attribute.getColumnProperties().getName());
 			String columnAliasName = COLUMN_NAME + selectIndex;
 			selectPart.append(" " + columnAliasName + " ,");
 			entityColumnMap.put(attribute, columnAliasName);
-//			selectPart += aliasName + "."  +attribute.getColumnProperties().getName() + " " + COLUMN_NAME + selectIndex +" ,";
+			//			selectPart += aliasName + "."  +attribute.getColumnProperties().getName() + " " + COLUMN_NAME + selectIndex +" ,";
 			selectIndex++;
 		}
 		List<IOutputTreeNode> children = treeNode.getChildren();
 		for (IOutputTreeNode childTreeNode : children)
 		{
 			selectPart.append(getSelectAttributes(childTreeNode));
-//			selectPart+= getSelectAttributes(childTreeNode);
+			//			selectPart+= getSelectAttributes(childTreeNode);
 		}
-		
+
 		return selectPart.toString();
 	}
+
 	/**
 	 *  To get the From clause of the Query.
 	 * @param expression The Root Expression.
@@ -279,7 +285,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return the From clause of the SQL.
 	 * @throws SqlException When there is problem in creating from part. problem can be like: no primary key found in entity for join.
 	 */
-	String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias) throws SqlException
+	String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias)
+			throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		IExpressionId parentExpressionId = expression.getExpressionId();
@@ -319,26 +326,33 @@ public class SqlGenerator implements ISqlGenerator
 					String leftAttribute = null;
 					String rightAttribute = null;
 
-					ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
-					if (constraintProperties.getSourceEntityKey()!= null &&  constraintProperties.getTargetEntityKey()!= null)
+					ConstraintPropertiesInterface constraintProperties = eavAssociation
+							.getConstraintProperties();
+					if (constraintProperties.getSourceEntityKey() != null
+							&& constraintProperties.getTargetEntityKey() != null)
 					{
 						// Many to many case.
 						//TODO handle it seperately
-						throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
+						throw new RuntimeException(
+								"Many to many condition is not yet handled in sqlgenerator!!!");
 					}
 					else
 					{
-						if (constraintProperties.getSourceEntityKey()!= null)
+						if (constraintProperties.getSourceEntityKey() != null)
 						{
-							leftAttribute = leftAlias + "." + constraintProperties.getSourceEntityKey();
+							leftAttribute = leftAlias + "."
+									+ constraintProperties.getSourceEntityKey();
 							AttributeInterface primaryKey = getPrimaryKey(rightEntity);
-							rightAttribute = rightAlias + "." + primaryKey.getColumnProperties().getName();
+							rightAttribute = rightAlias + "."
+									+ primaryKey.getColumnProperties().getName();
 						}
 						else
 						{
 							AttributeInterface primaryKey = getPrimaryKey(rightEntity);
-							leftAttribute = leftAlias + "." + primaryKey.getColumnProperties().getName();
-							rightAttribute = rightAlias + "." + constraintProperties.getTargetEntityKey();
+							leftAttribute = leftAlias + "."
+									+ primaryKey.getColumnProperties().getName();
+							rightAttribute = rightAlias + "."
+									+ constraintProperties.getTargetEntityKey();
 						}
 					}
 
@@ -360,7 +374,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return The SQL representation of the Expression.
 	 * @throws SqlException When there is error in the passed IQuery object.
 	 */
-	String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND) throws SqlException
+	String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND)
+			throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int prevNesting = 0;
@@ -379,22 +394,24 @@ public class SqlGenerator implements ISqlGenerator
 				String tableName = entity.getTableProperties().getName() + " ";
 				String leftAlias = getAliasName(expression);
 				String selectAttribute = leftAlias + ".";
-				
-				if (eavAssociation.getConstraintProperties().getTargetEntityKey()==null)
+
+				if (eavAssociation.getConstraintProperties().getTargetEntityKey() == null)
 				{
 					selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
 				}
 				else
 				{
-					if (eavAssociation.getConstraintProperties().getSourceEntityKey()==null)
+					if (eavAssociation.getConstraintProperties().getSourceEntityKey() == null)
 					{
-						selectAttribute += eavAssociation.getConstraintProperties().getTargetEntityKey();
+						selectAttribute += eavAssociation.getConstraintProperties()
+								.getTargetEntityKey();
 					}
 					else
 					{
 						// Many to many case.
 						// TODO write logic for this.
-						throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
+						throw new RuntimeException(
+								"Many to many condition is not yet handled in sqlgenerator!!!");
 					}
 				}
 				buffer.append("Select " + selectAttribute);
@@ -430,22 +447,26 @@ public class SqlGenerator implements ISqlGenerator
 					AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 							.getDynamicExtensionsAssociation();
 					String joinAttribute = getAliasName(expression) + ".";
-					
-					if (eavAssociation.getConstraintProperties().getSourceEntityKey()==null)
+
+					if (eavAssociation.getConstraintProperties().getSourceEntityKey() == null)
 					{
-						joinAttribute += getPrimaryKey(childExpression.getConstraintEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
+						joinAttribute += getPrimaryKey(
+								childExpression.getConstraintEntity().getDynamicExtensionsEntity())
+								.getColumnProperties().getName();
 					}
 					else
 					{
-						if (eavAssociation.getConstraintProperties().getTargetEntityKey()==null)
+						if (eavAssociation.getConstraintProperties().getTargetEntityKey() == null)
 						{
-							joinAttribute += eavAssociation.getConstraintProperties().getSourceEntityKey();
+							joinAttribute += eavAssociation.getConstraintProperties()
+									.getSourceEntityKey();
 						}
 						else
 						{
 							// Many to Many case.
 							//TODO
-							throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
+							throw new RuntimeException(
+									"Many to many condition is not yet handled in sqlgenerator!!!");
 						}
 					}
 					ruleSQL = joinAttribute + " = ANY(" + ruleSQL + ")";
@@ -542,13 +563,13 @@ public class SqlGenerator implements ISqlGenerator
 		else if (operator.equals(RelationalOperator.In)
 				|| operator.equals(RelationalOperator.NotIn)) // Processing In Operator
 		{
-			
+
 			sql = processInOperator(condition, attributeName);
 		}
 		else if (operator.equals(RelationalOperator.IsNotNull)
 				|| operator.equals(RelationalOperator.IsNull)) // Processing isNull & isNotNull operator.
 		{
-			
+
 			sql = processNullCheckOperators(condition, attributeName);
 		}
 		else if (operator.equals(RelationalOperator.Contains)
@@ -575,32 +596,39 @@ public class SqlGenerator implements ISqlGenerator
 	 * 		1. value list contains more/less than 1 value.
 	 * 		2. other than = ,!= operator present for String data type.
 	 */
-	private String processComparisionOperator(ICondition condition, String attributeName) throws SqlException
+	private String processComparisionOperator(ICondition condition, String attributeName)
+			throws SqlException
 	{
-		AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
+		AttributeTypeInformationInterface dataType = condition.getAttribute()
+				.getAttributeTypeInformation();
 		RelationalOperator operator = condition.getRelationalOperator();
 		List<String> values = condition.getValues();
-		if (values.size()!=1)
+		if (values.size() != 1)
 		{
-			throw new SqlException("Incorrect number of values found for Operator '" + operator +"' for condition:"+condition);			
+			throw new SqlException("Incorrect number of values found for Operator '" + operator
+					+ "' for condition:" + condition);
 		}
 		String value = values.get(0);
 		if (dataType instanceof StringTypeInformationInterface)
 		{
-			 if (!(operator.equals(RelationalOperator.Equals) || operator.equals(RelationalOperator.NotEquals)))
-			 {
-				 throw new SqlException("Incorrect operator found for String datatype for condition:"+condition);
-			 }
+			if (!(operator.equals(RelationalOperator.Equals) || operator
+					.equals(RelationalOperator.NotEquals)))
+			{
+				throw new SqlException(
+						"Incorrect operator found for String datatype for condition:" + condition);
+			}
 		}
-		
+
 		if (dataType instanceof BooleanAttributeTypeInformation)
 		{
-			 if (!(operator.equals(RelationalOperator.Equals) || operator.equals(RelationalOperator.NotEquals)))
-			 {
-				 throw new SqlException("Incorrect operator found for Boolean datatype for condition:"+condition);
-			 }
+			if (!(operator.equals(RelationalOperator.Equals) || operator
+					.equals(RelationalOperator.NotEquals)))
+			{
+				throw new SqlException(
+						"Incorrect operator found for Boolean datatype for condition:" + condition);
+			}
 		}
-		
+
 		value = modifyValueforDataType(value, dataType);
 		String sql = attributeName + RelationalOperator.getSQL(operator) + value;
 		return sql;
@@ -615,19 +643,22 @@ public class SqlGenerator implements ISqlGenerator
 	 * 		1. The datatype of attribute is not String.
 	 * 		2. The value list empty or more than 1 value.
 	 */
-	private String processLikeOperators(ICondition condition, String attributeName) throws SqlException
+	private String processLikeOperators(ICondition condition, String attributeName)
+			throws SqlException
 	{
 		RelationalOperator operator = condition.getRelationalOperator();
-		
+
 		if (!(condition.getAttribute().getAttributeTypeInformation() instanceof StringTypeInformationInterface))
 		{
-			throw new SqlException("Incorrect data type found for Operator '" + operator +"' for condition:"+condition);
+			throw new SqlException("Incorrect data type found for Operator '" + operator
+					+ "' for condition:" + condition);
 		}
-		
+
 		List<String> values = condition.getValues();
-		if (values.size()!=1)
+		if (values.size() != 1)
 		{
-			throw new SqlException("Incorrect number of values found for Operator '" + operator +"' for condition:"+condition);
+			throw new SqlException("Incorrect number of values found for Operator '" + operator
+					+ "' for condition:" + condition);
 		}
 		String value = values.get(0);
 		if (operator.equals(RelationalOperator.Contains))
@@ -642,10 +673,10 @@ public class SqlGenerator implements ISqlGenerator
 		{
 			value = "'%" + value + "'";
 		}
-		
+
 		return attributeName + " like " + value;
 	}
-	
+
 	/**
 	 * To process 'Is Null' & 'Is Not Null' operator.
 	 * @param condition the condition.
@@ -653,14 +684,16 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return SQL representation for given condition.
 	 * @throws SqlException when the value list is not empty.
 	 */
-	private String processNullCheckOperators(ICondition condition, String attributeName) throws SqlException
+	private String processNullCheckOperators(ICondition condition, String attributeName)
+			throws SqlException
 	{
 		String operatorStr = RelationalOperator.getSQL(condition.getRelationalOperator());
-		if (condition.getValues().size()>0)
+		if (condition.getValues().size() > 0)
 		{
-			throw new SqlException("No value expected in value part for '" + operatorStr + "' operator !!!");
+			throw new SqlException("No value expected in value part for '" + operatorStr
+					+ "' operator !!!");
 		}
-		
+
 		return attributeName + " " + operatorStr;
 
 	}
@@ -672,25 +705,30 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return SQL representation for given condition.
 	 * @throws SqlException when the value list is empty or problem in parsing any of the value.
 	 */
-	private String processInOperator(ICondition condition, String attributeName) throws SqlException
+	private String processInOperator(ICondition condition, String attributeName)
+			throws SqlException
 	{
-		StringBuffer buffer =  new StringBuffer("");
-		buffer.append(attributeName + " " + RelationalOperator.getSQL(condition.getRelationalOperator()) + " (");
+		StringBuffer buffer = new StringBuffer("");
+		buffer.append(attributeName + " "
+				+ RelationalOperator.getSQL(condition.getRelationalOperator()) + " (");
 		List<String> valueList = condition.getValues();
-		AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
-		
-		if (valueList.size()==0)
+		AttributeTypeInformationInterface dataType = condition.getAttribute()
+				.getAttributeTypeInformation();
+
+		if (valueList.size() == 0)
 		{
-			throw new SqlException("atleast one value required for 'In' operand list for condition:"+condition);
+			throw new SqlException(
+					"atleast one value required for 'In' operand list for condition:" + condition);
 		}
-		
+
 		if (dataType instanceof BooleanAttributeTypeInformation)
 		{
-			 throw new SqlException("Incorrect operator found for Boolean datatype for condition:"+condition);
+			throw new SqlException("Incorrect operator found for Boolean datatype for condition:"
+					+ condition);
 		}
 		for (int i = 0; i < valueList.size(); i++)
 		{
-			
+
 			String value = modifyValueforDataType(valueList.get(i), dataType);
 
 			if (i == valueList.size() - 1)
@@ -715,31 +753,34 @@ public class SqlGenerator implements ISqlGenerator
 	 * 		2. Datatype is not date
 	 * 		3. problem in parsing date.
 	 */
-	private String processBetweenOperator(ICondition condition, String attributeName) throws SqlException
+	private String processBetweenOperator(ICondition condition, String attributeName)
+			throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
 		List<String> values = condition.getValues();
-		if (values.size()!=2)
+		if (values.size() != 2)
 		{
-			throw new SqlException("Incorrect number of operand for Between oparator in condition:"+condition);
+			throw new SqlException("Incorrect number of operand for Between oparator in condition:"
+					+ condition);
 		}
-		
-		AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
+
+		AttributeTypeInformationInterface dataType = condition.getAttribute()
+				.getAttributeTypeInformation();
 		if (!(dataType instanceof DateTypeInformationInterface))
 		{
-			throw new SqlException("Incorrect Data type of operand for Between oparator in condition:"+condition);
+			throw new SqlException(
+					"Incorrect Data type of operand for Between oparator in condition:" + condition);
 		}
-		
+
 		String firstValue = modifyValueforDataType(values.get(0), dataType);
 		String secondValue = modifyValueforDataType(values.get(1), dataType);
 
 		buffer.append("(" + attributeName);
-		buffer.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals)
-				+ firstValue);
+		buffer.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals) + firstValue);
 		buffer.append(" " + LogicalOperator.And + " " + attributeName
-				+ RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals)
-				+ secondValue + ")");
-		
+				+ RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals) + secondValue
+				+ ")");
+
 		return buffer.toString();
 	}
 
@@ -753,7 +794,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return The String representing encoded value for the given value & datatype.
 	 * @throws SqlException when there is problem with the values, for Ex. unable to parse date/integer/double etc.
 	 */
-	String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType) throws SqlException
+	String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType)
+			throws SqlException
 	{
 
 		if (dataType instanceof StringTypeInformationInterface)//for data type String it will be enclosed in single quote.
@@ -788,14 +830,17 @@ public class SqlGenerator implements ISqlGenerator
 			}
 			catch (ParseException parseExp)
 			{
-				throw new SqlException(parseExp.getMessage(),parseExp);
+				throw new SqlException(parseExp.getMessage(), parseExp);
 			}
 		}
 		else if (dataType instanceof BooleanTypeInformationInterface) // defining value for boolean datatype.
 		{
-			if (value == null || !(value.equalsIgnoreCase(Constants.TRUE) || value.equalsIgnoreCase(Constants.FALSE)))
+			if (value == null
+					|| !(value.equalsIgnoreCase(Constants.TRUE) || value
+							.equalsIgnoreCase(Constants.FALSE)))
 			{
-				throw new SqlException("Incorrect value found in value part for boolean operator!!!");
+				throw new SqlException(
+						"Incorrect value found in value part for boolean operator!!!");
 			}
 			if (value.equalsIgnoreCase(Constants.TRUE))
 			{
@@ -935,7 +980,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		this.joinGraph = joinGraph;
 	}
-	
+
 	/**
 	 * To get the primary key attribute of the given entity.
 	 * @param entity the DE entity.
@@ -945,13 +990,13 @@ public class SqlGenerator implements ISqlGenerator
 	private AttributeInterface getPrimaryKey(EntityInterface entity) throws SqlException
 	{
 		Collection<AttributeInterface> attributes = entity.getAttributeCollection();
-		for (AttributeInterface attribute: attributes)
+		for (AttributeInterface attribute : attributes)
 		{
 			if (attribute.getIsPrimaryKey())
 			{
 				return attribute;
 			}
 		}
-		throw new SqlException("No Primary key attribute found for Entity:"+entity.getName());
+		throw new SqlException("No Primary key attribute found for Entity:" + entity.getName());
 	}
 }
