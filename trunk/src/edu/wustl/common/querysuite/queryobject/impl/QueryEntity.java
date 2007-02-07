@@ -50,7 +50,8 @@ abstract class QueryEntity implements IQueryEntity
 		}
 		if (obj != null && this.getClass() == obj.getClass())
 		{
-			if (entityInterface != null && entityInterface.equals(obj.equals(obj)))
+			QueryEntity theObj = (QueryEntity)obj;
+			if (entityInterface != null && entityInterface.equals(theObj.entityInterface))
 			{
 				return true;
 			}
