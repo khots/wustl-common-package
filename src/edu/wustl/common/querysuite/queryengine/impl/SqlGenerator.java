@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +22,10 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.databaseproperties.ConstraintPropertiesInterface;
+import edu.wustl.common.querysuite.exceptions.DuplicateChildException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
@@ -33,6 +34,8 @@ import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
+import edu.wustl.common.querysuite.queryobject.IOutputEntity;
+import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
@@ -59,10 +62,15 @@ public class SqlGenerator implements ISqlGenerator
 	Map<String, String> aliasNameMap = new HashMap<String, String>();
 	JoinGraph joinGraph;
 	IConstraints constraints;
+	Map<Long, Map<AttributeInterface, String>> columnMap;
+	
+
+	private static final String COLUMN_NAME = "Column";
+	// This will store mapping of output Tre node with the expression Id.
+	private Map<Long, IExpressionId> outPutNodeMap;
 
 	/**
 	 * Default Constructor to instantiate SQL generator object.
-	 *
 	 */
 	public SqlGenerator()
 	{
@@ -102,44 +110,167 @@ public class SqlGenerator implements ISqlGenerator
 		aliasNameMap = new HashMap<String, String>();
 		createAliasAppenderMap(rootExpression, 1, new Integer(1),
 				new HashMap<List<IAssociation>, IExpressionId>());
+		
+		//Generating output tree.
+		outPutNodeMap = new HashMap<Long, IExpressionId>();
+		IOutputTreeNode root = createOuputTree();
+		query.setRootOutputClass(root);
 
+		columnMap = new HashMap<Long, Map<AttributeInterface,String>>();
+		
 		//Creating SQL.
 		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
 		String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
-		String selectPart = getSelectPart(rootExpression);
+		String selectPart = getSelectPart(root);
 		String sql = selectPart + " " + fromPart + " " + wherePart;
+		
 		return sql;
 	}
 
 	/**
-	 * To get the Select clause of the Query.
-	 * @param expression The Expression which will appear in the Select part.
-	 * @return the Select clause of the Query.
+	 * This method will return map of DE attributes verses & their column names present in the select part of the SQL. 
+	 * These DE attributes will be attributes of the each node present in the Output tree.
+	 * @return map of DE attributes verses & their column names present in the select part of the SQL. null if no sql is generated.
+	 * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#getColumnMap()
 	 */
-	String getSelectPart(IExpression expression)
+	public Map<Long, Map<AttributeInterface,String>> getColumnMap()
 	{
-		StringBuffer buffer = new StringBuffer("Select ");
-		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
-		String aliasName = getAliasName(expression);
+		return columnMap;
+	}
+	/**
+	 * This method will create output tree with the same heirarchy as that of Constraints & sets in the constraints.
+	 * @return Root node of the output tree.
+	 * @throws MultipleRootsException If there are multiplt roots persent in constraints.
+	 */
+	private IOutputTreeNode createOuputTree() throws MultipleRootsException
+	{
+		IExpressionId root = constraints.getRootExpressionId();
+		IExpression expression =constraints.getExpression(root);
 		
-		Iterator<AttributeInterface> attributeCollectionItr = entity.getAttributeCollection().iterator();
-		while (attributeCollectionItr.hasNext())
+		EntityInterface rootEntity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		IOutputEntity rootOutputEntity = QueryObjectFactory.createOutputEntity(rootEntity);
+		rootOutputEntity.getSelectedAttributes().addAll(rootEntity.getAttributeCollection());
+		IOutputTreeNode rootNode = QueryObjectFactory.createOutputTreeNode(rootOutputEntity);
+		outPutNodeMap.put(rootNode.getId(), root);
+		copyChildren(expression,rootNode);
+		return rootNode;
+	}
+	
+	/**
+	 * To create all simillar heirarchy of expressions under the given output tree node.
+	 * @param parentExpression The reference to expression.
+	 * @param parentNode the output tree node reference.
+	 */
+	private void copyChildren(IExpression parentExpression,IOutputTreeNode parentNode)
+	{
+		for (int index = 0;index < parentExpression.numberOfOperands();index++)
 		{
-			AttributeInterface attribute = attributeCollectionItr.next();
-			
-			String columnName = attribute.getColumnProperties().getName();
-			if (!columnName.startsWith("DE_")) // This check is temporary fix, should be removed when DE data is properly populated.
+			IExpressionOperand  operand = parentExpression.getOperand(index);
+			if (operand.isSubExpressionOperand())
 			{
-				buffer.append(aliasName + "." + columnName);
-				if (attributeCollectionItr.hasNext())
+				
+				IExpressionId childExpressionId = (IExpressionId)operand;
+				IExpression childExpression = constraints.getExpression(childExpressionId);
+				EntityInterface entity  = childExpression.getConstraintEntity().getDynamicExtensionsEntity();
+				IOutputEntity outputEntity = QueryObjectFactory.createOutputEntity(entity);
+				outputEntity.getSelectedAttributes().addAll(entity.getAttributeCollection());
+				IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(), childExpressionId);
+				
+				List<IOutputTreeNode> childrenNodes = parentNode.getChildren();
+				boolean nodeExist = false;
+				for (IOutputTreeNode treeNode: childrenNodes)
 				{
-					buffer.append(", ");
+					if (treeNode.getOutputEntity().equals(outputEntity) && treeNode.getAssociationWithParent().equals(association))
+					{
+						nodeExist = true;
+						copyChildren(childExpression, treeNode);
+					}
+				}
+				if (!nodeExist)
+				{
+					try
+					{
+						IOutputTreeNode childNode = parentNode.addChild(association, outputEntity);
+//						childNode.getOutputEntity().getSelectedAttributes().addAll(entity.getAttributeCollection());
+						outPutNodeMap.put(childNode.getId(), childExpressionId);
+						copyChildren(childExpression, childNode);
+					}
+					catch (DuplicateChildException e)
+					{
+						throw new RuntimeException("Unexpected error!!!",e);
+					}
 				}
 			}
 		}
-		return buffer.toString();
+	}
+	/**
+	 * To get the Select clause of the Query.
+	 * @param rootOutputTreeNode The root of the output tree.
+	 * @return the Select clause of the Query.
+	 */
+	String getSelectPart(IOutputTreeNode rootOutputTreeNode)
+	{
+		selectIndex = 0;
+		String selectAttribute = "Select " + getSelectAttributes(rootOutputTreeNode);
+		selectAttribute = selectAttribute.substring(0,selectAttribute.length()-2); // remove last part " ,"
+		return selectAttribute;
+
+//		StringBuffer buffer = new StringBuffer("Select ");
+//		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+//		String aliasName = getAliasName(expression);
+//		
+//		Iterator<AttributeInterface> attributeCollectionItr = entity.getAttributeCollection().iterator();
+//		while (attributeCollectionItr.hasNext())
+//		{
+//			AttributeInterface attribute = attributeCollectionItr.next();
+//			
+//			String columnName = attribute.getColumnProperties().getName();
+//			if (!columnName.startsWith("DE_")) // This check is temporary fix, should be removed when DE data is properly populated.
+//			{
+//				buffer.append(aliasName + "." + columnName);
+//				if (attributeCollectionItr.hasNext())
+//				{
+//					buffer.append(", ");
+//				}
+//			}
+//		}
+//		return buffer.toString();
 	}
 
+	private int selectIndex;
+	/**
+	 * It will return the select part attributes for this node along with its child nodes.
+	 * @param treeNode the output tree node.
+	 * @return  The select part attributes for this node along with its child nodes.
+	 */
+	private String getSelectAttributes(IOutputTreeNode treeNode)
+	{
+		StringBuffer selectPart = new StringBuffer("");
+		IOutputEntity outputEntity = treeNode.getOutputEntity();
+		
+		IExpression expression = constraints.getExpression(outPutNodeMap.get(treeNode.getId()));
+		String aliasName = getAliasName(expression);
+		List<AttributeInterface> attributes = outputEntity.getSelectedAttributes();
+		Map<AttributeInterface, String> entityColumnMap = new HashMap<AttributeInterface, String>();
+		columnMap.put(treeNode.getId(), entityColumnMap);
+		for (AttributeInterface attribute : attributes)
+		{
+			selectPart.append(aliasName + "."  +attribute.getColumnProperties().getName());
+			String columnAliasName = COLUMN_NAME + selectIndex;
+			selectPart.append(" " + columnAliasName + " ,");
+			entityColumnMap.put(attribute, columnAliasName);
+//			selectPart += aliasName + "."  +attribute.getColumnProperties().getName() + " " + COLUMN_NAME + selectIndex +" ,";
+			selectIndex++;
+		}
+		List<IOutputTreeNode> children = treeNode.getChildren();
+		for (IOutputTreeNode childTreeNode : children)
+		{
+			selectPart.append(getSelectAttributes(childTreeNode));
+//			selectPart+= getSelectAttributes(childTreeNode);
+		}
+		
+		return selectPart.toString();
+	}
 	/**
 	 *  To get the From clause of the Query.
 	 * @param expression The Root Expression.
@@ -316,8 +447,6 @@ public class SqlGenerator implements ISqlGenerator
 							//TODO
 							throw new RuntimeException("Many to many condition is not yet handled in sqlgenerator!!!");
 						}
-
-						
 					}
 					ruleSQL = joinAttribute + " = ANY(" + ruleSQL + ")";
 				}
