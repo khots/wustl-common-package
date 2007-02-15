@@ -51,7 +51,7 @@ public class GenericQueryGeneratorMock
 		e.setId(1L);
 		e.setLastUpdated(new Date());
 
-		((Entity) e).setAbstractAttributeCollection(getAttributes());
+		((Entity) e).setAbstractAttributeCollection(getAttributes(e));
 
 		TableProperties tableProperties = new TableProperties();
 		tableProperties.setName("catissue_temp");
@@ -62,9 +62,10 @@ public class GenericQueryGeneratorMock
 
 	/**
 	 * TO create attribute list, which contains all types of attributes.
+	 * @param entity the entity to which all attribues belongs.
 	 * @return list of attributes.
 	 */
-	public static ArrayList getAttributes()
+	public static ArrayList getAttributes(EntityInterface entity)
 	{
 		ArrayList<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
 
@@ -74,39 +75,46 @@ public class GenericQueryGeneratorMock
 		c1.setName("LONG_ATTRIBUTE");
 		((Attribute) att1).setColumnProperties(c1);
 		att1.setIsPrimaryKey(true);
-
+		att1.setEntity(entity);
+		
 		AttributeInterface att2 = factory.createDateAttribute();
 		att2.setName("date");
 		ColumnPropertiesInterface c2 = factory.createColumnProperties();
 		c2.setName("DATE_ATTRIBUTE");
 		((Attribute) att2).setColumnProperties(c2);
+		att2.setEntity(entity);
 
 		AttributeInterface att3 = factory.createLongAttribute();
 		att3.setName("int");
 		ColumnPropertiesInterface c3 = factory.createColumnProperties();
 		c3.setName("INT_ATTRIBUTE");
 		((Attribute) att3).setColumnProperties(c3);
+		att3.setEntity(entity);
 
 		AttributeInterface att4 = factory.createStringAttribute();
 		att4.setName("string");
 		ColumnPropertiesInterface c4 = factory.createColumnProperties();
 		c4.setName("STRING_ATTRIBUTE");
 		((Attribute) att4).setColumnProperties(c4);
+		att4.setEntity(entity);
 
 		AttributeInterface att5 = factory.createBooleanAttribute();
 		att5.setName("boolean");
 		ColumnPropertiesInterface c5 = factory.createColumnProperties();
 		c5.setName("BOOLEAN_ATTRIBUTE");
 		((Attribute) att5).setColumnProperties(c5);
+		att5.setEntity(entity);
 
 		AttributeInterface att6 = factory.createDoubleAttribute();
 		att6.setName("double");
 		ColumnPropertiesInterface c6 = factory.createColumnProperties();
 		c6.setName("DOUBLE_ATTRIBUTE");
 		((Attribute) att6).setColumnProperties(c6);
+		att6.setEntity(entity);
 
 		AttributeInterface att7 = factory.createFloatAttribute();
 		att7.setName("float");
+		att7.setEntity(entity);
 
 		ColumnPropertiesInterface c7 = factory.createColumnProperties();
 		c7.setName("FLOAT_ATTRIBUTE");
