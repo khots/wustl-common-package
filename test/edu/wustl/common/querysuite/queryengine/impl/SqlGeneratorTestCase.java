@@ -497,8 +497,8 @@ public class SqlGeneratorTestCase extends TestCase
 	 *  P: ANY
 	 *  	C: ANY
 	 *  		G: ANY
-	 *  			S: Type equals "Fixed Tissue" 
-	 *  				S: Type equals "Amniotic Fluid"
+	 *  			S: Class = "Tissue" and Type equals "Fixed Tissue" and Frozen Event Parameter.Method Starts with ='cry'
+	 *  				S: Class = "Fluid" and Type equals "Amniotic Fluid" and Frozen Event Parameter.Method Starts with ='dry'
 	 * </pre> 	
 	 */
 	public void testSampleQuery6()
@@ -508,15 +508,15 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			sql = generator.generateSQL(query);
-			//			System.out.println("testSampleQuery6:"+sql);
+						//System.out.println("testSampleQuery6:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,Specimen_5.TYPE Column32 ,Specimen_5.POSITION_DIMENSION_TWO Column33 ,Specimen_5.POSITION_DIMENSION_ONE Column34 ,Specimen_5.PATHOLOGICAL_STATUS Column35 ,Specimen_5.LINEAGE Column36 ,Specimen_5.LABEL Column37 ,Specimen_5.IDENTIFIER Column38 ,Specimen_5.COMMENTS Column39 ,Specimen_5.BARCODE Column40 ,Specimen_5.AVAILABLE Column41 ,Specimen_5.ACTIVITY_STATUS Column42 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_5 on (Specimen_4.IDENTIFIER=Specimen_5.PARENT_SPECIMEN_ID) Where (Specimen_4.TYPE='Fixed Tissue') And(Specimen_5.TYPE='Amniotic Fluid')",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,FrozenEventParameters_5.METHOD Column32 ,SpecimenEventParameters_5.COMMENTS Column33 ,SpecimenEventParameters_5.EVENT_TIMESTAMP Column34 ,SpecimenEventParameters_5.IDENTIFIER Column35 ,Specimen_6.TYPE Column36 ,Specimen_6.POSITION_DIMENSION_TWO Column37 ,Specimen_6.POSITION_DIMENSION_ONE Column38 ,Specimen_6.PATHOLOGICAL_STATUS Column39 ,Specimen_6.LINEAGE Column40 ,Specimen_6.LABEL Column41 ,Specimen_6.IDENTIFIER Column42 ,Specimen_6.COMMENTS Column43 ,Specimen_6.BARCODE Column44 ,Specimen_6.AVAILABLE Column45 ,Specimen_6.ACTIVITY_STATUS Column46 ,FrozenEventParameters_7.METHOD Column47 ,SpecimenEventParameters_7.COMMENTS Column48 ,SpecimenEventParameters_7.EVENT_TIMESTAMP Column49 ,SpecimenEventParameters_7.IDENTIFIER Column50 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen_event_param SpecimenEventParameters_5 on (Specimen_4.IDENTIFIER=SpecimenEventParameters_5.SPECIMEN_ID) left join catissue_frozen_event_param FrozenEventParameters_5 on (SpecimenEventParameters_5.IDENTIFIER=FrozenEventParameters_5.IDENTIFIER) left join catissue_specimen Specimen_6 on (Specimen_4.IDENTIFIER=Specimen_6.PARENT_SPECIMEN_ID) left join catissue_specimen_event_param SpecimenEventParameters_7 on (Specimen_6.IDENTIFIER=SpecimenEventParameters_7.SPECIMEN_ID) left join catissue_frozen_event_param FrozenEventParameters_7 on (SpecimenEventParameters_7.IDENTIFIER=FrozenEventParameters_7.IDENTIFIER) Where ((Specimen_4.TYPE='Fixed Tissue') And(FrozenEventParameters_5.METHOD like 'cry%') And(((Specimen_6.TYPE='Amniotic Fluid') And(FrozenEventParameters_7.METHOD like 'dry%')) And Specimen_6.SPECIMEN_CLASS='Fluid')) And Specimen_4.SPECIMEN_CLASS='Tissue'",
 					sql);
 		}
 		catch (Exception e)
 		{
-			//e.printStackTrace();
+			e.printStackTrace();
 			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
 		}
 	}
@@ -534,14 +534,14 @@ public class SqlGeneratorTestCase extends TestCase
 	 *  			S: quantity > 5 AND Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Non-Malignant" AND Tissue Site Equals "PROSTATE GLAND"
 	 * </pre>
 	 * <pre>
-	 * Note:quantity & Class conditions not added.
+	 * Note:quantity condition not added.
 	 * The implemented Query is as follows:
 	 *  P: ANY
 	 *  	C: ANY
 	 *  		G: ANY
-	 *  			S: Type equals "DNA" AND Pathological Status Equals "Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 *  			S: Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Malignant" AND Tissue Site Equals "PROSTATE GLAND"
 	 *  			Pseudo AND
-	 *  			S: Type equals "DNA" AND Pathological Status Equals "Non-Malignant" AND Tissue Site Equals "PROSTATE GLAND"
+	 *  			S: Class Equals "Molecular" AND Type equals "DNA" AND Pathological Status Equals "Non-Malignant" AND Tissue Site Equals "PROSTATE GLAND"
 	 * </pre>
 	 */
 	public void testNBNSampleQuery2()
@@ -554,7 +554,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//System.out.println("testNBNSampleQuery2:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,SpecimenCharacteristics_5.TISSUE_SIDE Column32 ,SpecimenCharacteristics_5.TISSUE_SITE Column33 ,SpecimenCharacteristics_5.IDENTIFIER Column34 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) Where (SpecimenCollectionGroup_3.IDENTIFIER = ANY(Select Specimen_4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_4 left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) where (Specimen_4.TYPE='DNA' And Specimen_4.PATHOLOGICAL_STATUS='Malignant') And(SpecimenCharacteristics_5.TISSUE_SITE='Prostate Gland'))) And(SpecimenCollectionGroup_3.IDENTIFIER = ANY(Select Specimen_4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_4 left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) where (Specimen_4.TYPE='DNA' And Specimen_4.PATHOLOGICAL_STATUS='Non-Malignant') And(SpecimenCharacteristics_5.TISSUE_SITE='Prostate Gland')))",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.CONCENTRATION Column21 ,Specimen_4.TYPE Column22 ,Specimen_4.POSITION_DIMENSION_TWO Column23 ,Specimen_4.POSITION_DIMENSION_ONE Column24 ,Specimen_4.PATHOLOGICAL_STATUS Column25 ,Specimen_4.LINEAGE Column26 ,Specimen_4.LABEL Column27 ,Specimen_4.IDENTIFIER Column28 ,Specimen_4.COMMENTS Column29 ,Specimen_4.BARCODE Column30 ,Specimen_4.AVAILABLE Column31 ,Specimen_4.ACTIVITY_STATUS Column32 ,SpecimenCharacteristics_5.TISSUE_SIDE Column33 ,SpecimenCharacteristics_5.TISSUE_SITE Column34 ,SpecimenCharacteristics_5.IDENTIFIER Column35 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) Where (SpecimenCollectionGroup_3.IDENTIFIER = ANY(Select Specimen_4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_4 left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) where ((Specimen_4.TYPE='DNA' And Specimen_4.PATHOLOGICAL_STATUS='Malignant') And(SpecimenCharacteristics_5.TISSUE_SITE='Prostate Gland')) And Specimen_4.SPECIMEN_CLASS='Molecular')) And(SpecimenCollectionGroup_3.IDENTIFIER = ANY(Select Specimen_4.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_4 left join catissue_specimen_char SpecimenCharacteristics_5 on (Specimen_4.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_5.IDENTIFIER) where ((Specimen_4.TYPE='DNA' And Specimen_4.PATHOLOGICAL_STATUS='Non-Malignant') And(SpecimenCharacteristics_5.TISSUE_SITE='Prostate Gland')) And Specimen_4.SPECIMEN_CLASS='Molecular'))",
 					sql);
 		}
 		catch (Exception e)
@@ -761,6 +761,86 @@ public class SqlGeneratorTestCase extends TestCase
 			assertEquals(
 					"Incorrect SQL formed for Query !!!",
 					"Select SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 ,Specimen_2.TYPE Column5 ,Specimen_2.POSITION_DIMENSION_TWO Column6 ,Specimen_2.POSITION_DIMENSION_ONE Column7 ,Specimen_2.PATHOLOGICAL_STATUS Column8 ,Specimen_2.LINEAGE Column9 ,Specimen_2.LABEL Column10 ,Specimen_2.IDENTIFIER Column11 ,Specimen_2.COMMENTS Column12 ,Specimen_2.BARCODE Column13 ,Specimen_2.AVAILABLE Column14 ,Specimen_2.ACTIVITY_STATUS Column15 ,Specimen_3.TYPE Column16 ,Specimen_3.POSITION_DIMENSION_TWO Column17 ,Specimen_3.POSITION_DIMENSION_ONE Column18 ,Specimen_3.PATHOLOGICAL_STATUS Column19 ,Specimen_3.LINEAGE Column20 ,Specimen_3.LABEL Column21 ,Specimen_3.IDENTIFIER Column22 ,Specimen_3.COMMENTS Column23 ,Specimen_3.BARCODE Column24 ,Specimen_3.AVAILABLE Column25 ,Specimen_3.ACTIVITY_STATUS Column26 ,Specimen_4.TYPE Column27 ,Specimen_4.POSITION_DIMENSION_TWO Column28 ,Specimen_4.POSITION_DIMENSION_ONE Column29 ,Specimen_4.PATHOLOGICAL_STATUS Column30 ,Specimen_4.LINEAGE Column31 ,Specimen_4.LABEL Column32 ,Specimen_4.IDENTIFIER Column33 ,Specimen_4.COMMENTS Column34 ,Specimen_4.BARCODE Column35 ,Specimen_4.AVAILABLE Column36 ,Specimen_4.ACTIVITY_STATUS Column37 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) left join catissue_specimen Specimen_4 on (Specimen_3.IDENTIFIER=Specimen_4.PARENT_SPECIMEN_ID) Where (((Specimen_2.TYPE='DNA') Or(Specimen_2.TYPE='cDNA')) Or((Specimen_3.TYPE='Amniotic Fluid') And(Specimen_4.TYPE='Milk'))) Or((Specimen_2.TYPE='RNA') Or((Specimen_2.TYPE='RNA, cytoplasmic') Or((Specimen_3.TYPE='Amniotic Fluid') And(Specimen_4.TYPE='Milk'))))",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	
+
+	/**
+	 * TO test query for the TABLE_PER_SUB_CLASS inheritance strategy. 
+	 * Query for Collection protocol class as: cp.aliquotInSameContainer = 'True' and cp.activityStatus = 'Active' 
+	 * Here,
+	 * 1. aliquotInSameContainer attribute is in the derived class i.e. Collection Protocol.
+	 * 2. activityStatus attribute is in the base class of Collection Protocol i.e. SpecimenProtocol. 
+	 */
+	public void testCreateInheritanceQuery1()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQuery1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testCreateInheritanceQuery1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select CollectionProtocol_1.ALIQUOT_IN_SAME_CONTAINER Column0 ,SpecimenProtocol_1.TITLE Column1 ,SpecimenProtocol_1.START_DATE Column2 ,SpecimenProtocol_1.SHORT_TITLE Column3 ,SpecimenProtocol_1.IRB_IDENTIFIER Column4 ,SpecimenProtocol_1.IDENTIFIER Column5 ,SpecimenProtocol_1.ENROLLMENT Column6 ,SpecimenProtocol_1.END_DATE Column7 ,SpecimenProtocol_1.DESCRIPTION_URL Column8 ,SpecimenProtocol_1.ACTIVITY_STATUS Column9 From catissue_collection_protocol CollectionProtocol_1 left join catissue_specimen_protocol SpecimenProtocol_1 on (CollectionProtocol_1.IDENTIFIER=SpecimenProtocol_1.IDENTIFIER) Where CollectionProtocol_1.ALIQUOT_IN_SAME_CONTAINER=1 And SpecimenProtocol_1.ACTIVITY_STATUS='Active'",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	/**
+	 * TO test query for the TABLE_PER_HEIRARCHY inheritance strategy. 
+	 * Query for Molecular Specimen class as: sp.label contains "1.2" 
+	 */
+	public void testCreateInheritanceQuery2()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQuery2();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testCreateInheritanceQuery2:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select Specimen_1.CONCENTRATION Column0 ,Specimen_1.TYPE Column1 ,Specimen_1.POSITION_DIMENSION_TWO Column2 ,Specimen_1.POSITION_DIMENSION_ONE Column3 ,Specimen_1.PATHOLOGICAL_STATUS Column4 ,Specimen_1.LINEAGE Column5 ,Specimen_1.LABEL Column6 ,Specimen_1.IDENTIFIER Column7 ,Specimen_1.COMMENTS Column8 ,Specimen_1.BARCODE Column9 ,Specimen_1.AVAILABLE Column10 ,Specimen_1.ACTIVITY_STATUS Column11 From catissue_specimen Specimen_1 Where (Specimen_1.LABEL like '%1.2%') And Specimen_1.SPECIMEN_CLASS='Molecular'",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+		}
+	}
+	/**
+	 * TO create query for the TABLE_PER_HEIRARCHY inheritance strategy with multilevel inheritance.
+	 * Query for Cell Specimen Review event parameter class as: srp.viableCellPercentage > 50 and srp.comments contains 'xyz'
+	 * Here,
+	 * viableCellPercentage: belongs to the base class
+	 * comments: belongs to the super class. 
+	 */
+	public void testCreateInheritanceQuery3()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQuery3();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testCreateInheritanceQuery3:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select CellSpecimenReviewParamet_1.VIABLE_CELL_PERCENTAGE Column0 ,CellSpecimenReviewParamet_1.NEOPLASTIC_CELLULARITY_PER Column1 ,SpecimenEventParameters_1.COMMENTS Column2 ,SpecimenEventParameters_1.EVENT_TIMESTAMP Column3 ,SpecimenEventParameters_1.IDENTIFIER Column4 From CATISSUE_CELL_SPE_REVIEW_PARAM CellSpecimenReviewParamet_1 left join catissue_event_param ReviewEventParameters_1 on (CellSpecimenReviewParamet_1.IDENTIFIER=ReviewEventParameters_1.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_1 on (ReviewEventParameters_1.IDENTIFIER=SpecimenEventParameters_1.IDENTIFIER) Where CellSpecimenReviewParamet_1.VIABLE_CELL_PERCENTAGE>50 And SpecimenEventParameters_1.COMMENTS like '%xyz%'",
 					sql);
 			
 		}
