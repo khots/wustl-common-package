@@ -9,7 +9,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -18,6 +20,7 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -203,5 +206,22 @@ public class QueryObjectProcessor
 		}
 		//		System.out.println("Time taken to copy:" + (System.currentTimeMillis() - startTime));
 		return copy;
+	}
+	
+	/**
+	 * To get map of all Children nodes along with their ids under given output tree node.
+	 * @param root The root noe of the output tree.
+	 * @return map of all Children nodes along with their ids under given output tree node.
+	 */
+	public static Map<Long, IOutputTreeNode> getAllChildrenNodes(IOutputTreeNode root)
+	{
+		Map<Long, IOutputTreeNode> map = new HashMap<Long, IOutputTreeNode>();
+		map.put(root.getId(), root);
+		List<IOutputTreeNode> children = root.getChildren();
+		for(IOutputTreeNode childNode: children)
+		{
+			map.putAll(getAllChildrenNodes(childNode));
+		}
+		return map;
 	}
 }
