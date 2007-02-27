@@ -123,6 +123,7 @@ public class AutoCompleteTag extends TagSupport
 			   readOnly = "false";
 			   dependsOn = "";
 			   size="300";
+			   disabled="false";
 
 			out.print(autocompleteHTMLStr);
 
