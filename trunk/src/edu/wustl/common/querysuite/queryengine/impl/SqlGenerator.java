@@ -1,6 +1,7 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.sql.Connection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,6 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
@@ -23,15 +27,20 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.databaseproperties.ConstraintPropertiesInterface;
+import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.util.global.Constants.InheritanceStrategy;
+import edu.wustl.cab2b.server.category.CategoryOperations;
+import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
 import edu.wustl.common.querysuite.exceptions.DuplicateChildException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
+import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -103,7 +112,39 @@ public class SqlGenerator implements ISqlGenerator
 		IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
 		//		IQuery queryClone = query;
 		constraints = queryClone.getConstraints();
-		QueryObjectProcessor.replaceMultipleParents(constraints);
+		QueryObjectProcessor.replaceMultipleParents(constraints);   
+		try 
+		{ 
+			if (containsCategrory(constraints))
+			{
+				EntityInterface rootEntity = null;
+				EntityInterface rootDEEntity = constraints.getExpression(constraints.getRootExpressionId()).getConstraintEntity().getDynamicExtensionsEntity();
+	 			boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(rootDEEntity);
+	 			
+	 			// This is temporary work around, This connection parameter will be reomoved in future.
+	 			InitialContext context = new InitialContext();
+	 			DataSource dataSource =  (DataSource) context.lookup("java:/catissuecore");
+	 			Connection connection = dataSource.getConnection();
+
+				if (isCategory)  
+				{
+					Category category = new CategoryOperations().getCategoryByEntityId(rootDEEntity.getId(), connection);
+					rootEntity = EntityManager.getInstance().getEntityByIdentifier(category.getRootClass().getDeEntityId());
+				}
+				else
+				{
+					rootEntity = rootDEEntity;
+				}
+				new CategoryPreprocessor().processCategories(constraints, rootEntity, connection);
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new SqlException("Error in preprocessing category!!!!",e);
+		}
+		
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
 		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
 
@@ -129,6 +170,22 @@ public class SqlGenerator implements ISqlGenerator
 		return sql;
 	}
 
+	/**
+	 * To check whether there is any Expression having Constraint Entity as category or not.
+	 * @param theConstraints reference to IConstraints of the Query object.
+	 * @return true if there is any constraint put on category. 
+	 */
+	private boolean containsCategrory(IConstraints theConstraints)
+	{
+		Set<IConstraintEntity>  constraintEntities = constraints.getConstraintEntities();
+		for(IConstraintEntity entity: constraintEntities)
+		{
+			boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(entity.getDynamicExtensionsEntity());
+			if (isCategory)
+				return true;
+		}
+		return false;
+	}
 	/**
 	 * This method will return map of DE attributes verses & their column names present in the select part of the SQL. 
 	 * These DE attributes will be attributes of the each node present in the Output tree.
