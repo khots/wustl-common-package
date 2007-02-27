@@ -23,7 +23,7 @@ public class CategorialClass implements Serializable
 	private Long deEntityId;
 	private Category category;
 	private Set<CategorialAttribute> categorialAttributeCollection;
-	private Set<CategorialClass> children;
+	private Set<CategorialClass> children = new HashSet<CategorialClass>();
 	private CategorialClass parent;
 	private Long pathFromParentId;
 
