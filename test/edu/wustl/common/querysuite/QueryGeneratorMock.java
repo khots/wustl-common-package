@@ -654,16 +654,25 @@ public class QueryGeneratorMock
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition1);
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
+			
 			ILogicalConnector orConnetor = QueryObjectFactory
 			.createLogicalConnector(LogicalOperator.Or);
-			List<String> specimenExpression1Rule2Values = new ArrayList<String>();
-			specimenExpression1Rule2Values.add("Fresh Tissue");
-			ICondition specimenExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
+			
+			IExpression specimenExpression2 = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(orConnetor, specimenExpression2.getExpressionId());
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression2.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			
+			List<String> specimenExpression2Rule2Values = new ArrayList<String>();
+			specimenExpression2Rule2Values.add("Fresh Tissue");
+			ICondition specimenExpression2Rule2Condition1 = QueryObjectFactory.createCondition(
 					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
-					specimenExpression1Rule2Values);
-			IRule specimenExpression1Rule2 = QueryObjectFactory.createRule(null);
-			specimenExpression1Rule2.addCondition(specimenExpression1Rule2Condition1);
-			specimenExpression1.addOperand(orConnetor, specimenExpression1Rule2);
+					specimenExpression2Rule2Values);
+			IRule specimenExpression2Rule2 = QueryObjectFactory.createRule(null);
+			specimenExpression2Rule2.addCondition(specimenExpression2Rule2Condition1);
+			specimenExpression2.addOperand(specimenExpression2Rule2);
 
 			// Creating output Tree.
 			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
