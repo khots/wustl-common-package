@@ -25,6 +25,7 @@ import edu.common.dynamicextensions.domaininterface.DateTypeInformationInterface
 import edu.common.dynamicextensions.domaininterface.DoubleTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
+import edu.common.dynamicextensions.domaininterface.LongTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.databaseproperties.ConstraintPropertiesInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
@@ -141,7 +142,6 @@ public class SqlGenerator implements ISqlGenerator
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new SqlException("Error in preprocessing category!!!!",e);
 		}
 		
@@ -182,7 +182,9 @@ public class SqlGenerator implements ISqlGenerator
 		{
 			boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(entity.getDynamicExtensionsEntity());
 			if (isCategory)
+			{
 				return true;
+			}
 		}
 		return false;
 	}
@@ -960,7 +962,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		AttributeTypeInformationInterface dataType = condition.getAttribute()
 				.getAttributeTypeInformation();
-		if (!(dataType instanceof DateTypeInformationInterface))
+		if (!(dataType instanceof DateTypeInformationInterface || dataType instanceof IntegerTypeInformationInterface  || dataType instanceof LongTypeInformationInterface || dataType instanceof DoubleTypeInformationInterface))
 		{
 			throw new SqlException(
 					"Incorrect Data type of operand for Between oparator in condition:" + condition);
@@ -970,9 +972,9 @@ public class SqlGenerator implements ISqlGenerator
 		String secondValue = modifyValueforDataType(values.get(1), dataType);
 
 		buffer.append("(" + attributeName);
-		buffer.append(RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals) + firstValue);
+		buffer.append(RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals) + firstValue);
 		buffer.append(" " + LogicalOperator.And + " " + attributeName
-				+ RelationalOperator.getSQL(RelationalOperator.GreaterThanOrEquals) + secondValue
+				+ RelationalOperator.getSQL(RelationalOperator.LessThanOrEquals) + secondValue
 				+ ")");
 
 		return buffer.toString();
