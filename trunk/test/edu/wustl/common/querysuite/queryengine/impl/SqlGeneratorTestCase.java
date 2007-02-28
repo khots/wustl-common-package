@@ -103,14 +103,14 @@ public class SqlGeneratorTestCase extends TestCase
 			condition1 = QueryGeneratorMock.createParticipantCondition3(participantEntity);
 			assertEquals(
 					"Incorrect SQL generated for condition on Mysql database!!!",
-					"(Participant_0.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))",
+					"(Participant_0.BIRTH_DATE>=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE<=STR_TO_DATE('1-2-2000','%m-%d-%Y'))",
 					generator.getSQL(condition1, expression));
 
 			setDataBaseType(Constants.ORACLE_DATABASE);
 			condition1 = QueryGeneratorMock.createParticipantCondition3(participantEntity);
 			assertEquals(
 					"Incorrect SQL generated for condition on Oracle database!!!",
-					"(Participant_0.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))",
+					"(Participant_0.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy'))",
 					generator.getSQL(condition1, expression));
 			condition1 = QueryGeneratorMock.createParticipantCondition5(participantEntity);
 			assertEquals("Participant_0.ACTIVITY_STATUS like '%Active%'", generator.getSQL(
@@ -140,13 +140,13 @@ public class SqlGeneratorTestCase extends TestCase
 		
 			assertEquals(
 					"Incorrect SQL generated for Rule on Mysql database!!!",
-					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))",
+					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE>=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE<=STR_TO_DATE('1-2-2000','%m-%d-%Y'))",
 					generator.getSQL(rule));
 
 			setDataBaseType(Constants.ORACLE_DATABASE);
 			assertEquals(
 					"Incorrect SQL generated for Rule on Oracle database!!!",
-					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))",
+					"Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy'))",
 					generator.getSQL(rule));
 }
 		catch (Exception e)
@@ -171,7 +171,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testParticpiantExpression:"+ SQL);
 			assertEquals(
 					"Incorrect where part SQL formed for Mysql database!!!",
-					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) Or(Participant_0.ACTIVITY_STATUS='Active')",
+					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE>=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_0.BIRTH_DATE<=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) Or(Participant_0.ACTIVITY_STATUS='Active')",
 					SQL);
 			
 			// Testing for Oracle Database.
@@ -180,7 +180,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testParticpiantExpression:"+ SQL);
 			assertEquals(
 					"Incorrect where part SQL formed for Oracle database!!!",
-					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))) Or(Participant_0.ACTIVITY_STATUS='Active')",
+					"(Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy'))) Or(Participant_0.ACTIVITY_STATUS='Active')",
 					SQL);
 			
 		}
@@ -209,7 +209,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("*********"+SQL);
 			assertEquals(
 					"Incorrect SQL formed for the Root Expression for MySQL database !!!",
-					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_1.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE>=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_1.BIRTH_DATE<=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					SQL);
 
 			
@@ -220,7 +220,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("*********"+SQL);
 			assertEquals(
 					"Incorrect SQL formed for the Root Expression for Oracle database !!!",
-					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					SQL);
 			
 			String selectPart = generator.getSelectPart(query.getRootOutputClass());
@@ -261,7 +261,7 @@ public class SqlGeneratorTestCase extends TestCase
 
 			assertEquals(
 					"Incorrect SQL formed for Query on MySQL !!!",
-					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER Column12 ,ParticipantMedicalIdentif_2.IDENTIFIER Column13 From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_1.BIRTH_DATE>=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER Column12 ,ParticipantMedicalIdentif_2.IDENTIFIER Column13 From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE>=STR_TO_DATE('1-1-2000','%m-%d-%Y') And Participant_1.BIRTH_DATE<=STR_TO_DATE('1-2-2000','%m-%d-%Y'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					sql);
 			
 
@@ -271,7 +271,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//			System.out.println("testParticipantQuery1:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for Query on Oracle !!!",
-					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER Column12 ,ParticipantMedicalIdentif_2.IDENTIFIER Column13 From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE<=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE>=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER Column12 ,ParticipantMedicalIdentif_2.IDENTIFIER Column13 From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					sql);
 		}
 		catch (Exception e)
