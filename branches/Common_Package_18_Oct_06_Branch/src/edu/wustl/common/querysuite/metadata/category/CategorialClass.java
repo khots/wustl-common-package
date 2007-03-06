@@ -182,6 +182,13 @@ public class CategorialClass implements Serializable
 		child.setParent(this);
 		child.setPathFromParent(pathToChild);
 	}
+	
+	public void addChildCategorialClass(CategorialClass child)
+	{
+		children.add(child);
+		child.setParent(this);
+	}
+
 	// rets true if the child was found; false otherwise.
 	public boolean removeChildCategorialClass(CategorialClass child)
 	{
