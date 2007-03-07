@@ -632,9 +632,9 @@ public class SqlGenerator implements ISqlGenerator
 	private String processOperands(IExpression expression) throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
-		int prevNesting = 0;
-		int openingBraces = 0; // holds number of opening Braces added to SQL.
+		int currentNestingCounter = 0;// holds current nesting number count i.e. no of opening Braces that needs to be closed.
 		int noOfRules = expression.numberOfOperands();
+		
 		for (int i = 0; i < noOfRules; i++)
 		{
 			IExpressionOperand operand = expression.getOperand(i);
@@ -648,36 +648,44 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				operandSQL = processSubExpression(expression, (IExpressionId) operand);
 			}
+			
 			if (!operandSQL.equals("") && noOfRules != 1)
 			{
 				operandSQL = "(" + operandSQL + ")"; // putting RuleSQL  in Braces so that it will not get mixed with other Rules.
 			}
-			if (!operandSQL.trim().equals("") && i != noOfRules - 1) // puts opening or closing brace in SQL depending upon nesting number along with LogicalOperator.
+			
+			if (i!=noOfRules-1)
 			{
 				LogicalConnector connector = (LogicalConnector) expression.getLogicalConnector(i,
 						i + 1);
 				int nestingNumber = connector.getNestingNumber();
-
-				if (prevNesting < nestingNumber)
+				
+				if (currentNestingCounter < nestingNumber)
 				{
-					buffer.append("(" + operandSQL + " " + connector.getLogicalOperator());
-					openingBraces++;
+					for (; currentNestingCounter<nestingNumber;currentNestingCounter++)
+					{
+						buffer.append("(");
+					}
+					buffer.append(operandSQL);
 				}
-				else if (prevNesting > nestingNumber)
+				else if (currentNestingCounter > nestingNumber)
 				{
-					buffer.append(operandSQL + ") " + connector.getLogicalOperator());
-					openingBraces--;
+					buffer.append(operandSQL);
+					for (; currentNestingCounter > nestingNumber;currentNestingCounter--)
+					{
+						buffer.append(")");
+					}
 				}
-				else
+				else 
 				{
-					buffer.append(operandSQL + " " + connector.getLogicalOperator());
+					buffer.append(operandSQL);
 				}
-				prevNesting = nestingNumber;
+				buffer.append( " " + connector.getLogicalOperator());
 			}
 			else
-			{ // finishing SQL.
+			{
 				buffer.append(operandSQL);
-				if (openingBraces != 0)
+				for (; currentNestingCounter > 0 ;currentNestingCounter--) // Finishing SQL by adding closing parenthesis if any.
 				{
 					buffer.append(")");
 				}
