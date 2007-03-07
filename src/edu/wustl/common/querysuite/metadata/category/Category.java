@@ -2,6 +2,7 @@
 package edu.wustl.common.querysuite.metadata.category;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,7 +20,7 @@ public class Category implements Serializable
 	private Long id;
 	private Long deEntityId;
 	private CategorialClass rootClass;
-	private Set<Category> subCategories;
+	private Set<Category> subCategories = new HashSet<Category>();
 	private Category parentCategory;
 
 	/**
