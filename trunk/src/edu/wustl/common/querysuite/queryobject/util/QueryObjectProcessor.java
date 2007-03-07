@@ -9,10 +9,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
+import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
@@ -224,4 +231,155 @@ public class QueryObjectProcessor
 		}
 		return map;
 	}
+	
+	
+	/**
+	 * To check whether the attribute is inherited attribute or not.
+	 * @param attribute The refrence to attribute
+	 * @return true if that attribute is inherited.
+	 */
+	public static boolean isInheritedAttribute(AttributeInterface attribute)
+	{
+		EntityInterface parentEntity = attribute.getEntity().getParentEntity();
+		if (parentEntity!= null)
+		{
+			String attributeName = attribute.getName();
+			Collection<AttributeInterface> attributes = parentEntity.getAttributeCollection();
+			for(AttributeInterface attr: attributes)
+			{
+				if (attributeName.equals(attr.getName()))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * To get the actual attribute in case of inherited attribute.
+	 * @param attribute The refrence to attribute
+	 * @return the actual attribute.
+	 */
+	public static AttributeInterface getActualAttribute(AttributeInterface attribute)
+	{
+		EntityInterface parentEntity = attribute.getEntity().getParentEntity();
+		if (parentEntity!= null)
+		{
+			String attributeName = attribute.getName();
+			Collection<AttributeInterface> attributes = parentEntity.getAttributeCollection();
+			for(AttributeInterface attr: attributes)
+			{
+				if (attributeName.equals(attr.getName()))
+				{
+					if (attr.getEntity().getParentEntity()!=null)
+					{
+						AttributeInterface attr1 = getActualAttribute(attr);
+						if (attr1 != null)
+						{
+							return attr1;
+						}
+					}
+					return attr;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+
+	/**
+	 * To check whether the association is inherited association or not.
+	 * @param association The refrence to association
+	 * @return true if that association is inherited.
+	 */	
+	public static boolean isInheritedAassociation(AssociationInterface association)
+	{
+		String sourceEntityName = association.getEntity().getName();
+		String targetEntityName = association.getTargetEntity().getName();
+		// These associations are not inherited associations.
+		if (sourceEntityName.equals(EntityManagerMock.SPECIMEN_NAME) && targetEntityName.equals(EntityManagerMock.SPECIMEN_NAME))
+		{
+			return false;
+		}
+		else if (sourceEntityName.equals(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME) && targetEntityName.equals(EntityManagerMock.SPECIMEN_NAME))
+		{
+			return false;
+		}
+		else if (sourceEntityName.equals(EntityManagerMock.SPECIMEN_NAME) && targetEntityName.equals(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME))
+		{
+			return false;
+		}
+		else if (sourceEntityName.equals(EntityManagerMock.SPECIMEN_NAME) && targetEntityName.equals(EntityManagerMock.SPECIMEN_EVT_NAME))
+		{
+			return false;
+		}
+ 		//Associations between parent & child specimen
+		if (EntityManagerMock.specimenClasses.contains(sourceEntityName) && EntityManagerMock.specimenClasses.contains(targetEntityName))
+		{
+			return true;
+		}
+		
+		//Associations between SCG & specimen
+		if (sourceEntityName.equals(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME) && EntityManagerMock.specimenClasses.contains(targetEntityName))
+		{
+			return true;
+		}
+		
+		//Associations between specimen & event heirarchy
+		if (EntityManagerMock.specimenClasses.contains(sourceEntityName) && EntityManagerMock.eventClasses.contains(targetEntityName))
+		{
+			return true;
+		}
+		
+		if (EntityManagerMock.specimenClasses.contains(sourceEntityName) && targetEntityName.equals(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME))
+		{
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * To get the actual association in case of inherited association.
+	 * @param attribute The refrence to association
+	 * @return the actual association.
+	 */
+	public static AssociationInterface getActualAassociation(AssociationInterface association)
+	{
+		EntityManagerMock entityManagerMock = new EntityManagerMock();
+		
+		String sourceEntityName = association.getEntity().getName();
+		String targetEntityName = association.getTargetEntity().getName();
+		try
+		{
+			//Associations between parent & child specimen
+			if (EntityManagerMock.specimenClasses.contains(sourceEntityName) && EntityManagerMock.specimenClasses.contains(targetEntityName))
+			{
+				return entityManagerMock.createAssociation(EntityManagerMock.SPECIMEN_NAME, EntityManagerMock.SPECIMEN_NAME, AssociationDirection.BI_DIRECTIONAL, "childrenSpecimen","collectionProtocolEvent", null, "PARENT_SPECIMEN_ID");
+			}
+			
+			//Associations between SCG & specimen
+			if (sourceEntityName.equals(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME) && EntityManagerMock.specimenClasses.contains(targetEntityName))
+			{
+				return entityManagerMock.createAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME, EntityManagerMock.SPECIMEN_NAME, AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup","specimenCollection", null, "SPECIMEN_COLLECTION_GROUP_ID");
+			}
+			
+			//Associations between specimen & event heirarchy
+			if (EntityManagerMock.specimenClasses.contains(sourceEntityName) && EntityManagerMock.eventClasses.contains(targetEntityName))
+			{
+				return entityManagerMock.createAssociation(EntityManagerMock.SPECIMEN_NAME, EntityManagerMock.SPECIMEN_EVT_NAME, AssociationDirection.BI_DIRECTIONAL, "specimen","specimenEventCollection", null, "SPECIMEN_ID");
+			}
+			if (EntityManagerMock.specimenClasses.contains(sourceEntityName) && targetEntityName.equals(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME))
+			{
+				return entityManagerMock.createAssociation(sourceEntityName, targetEntityName, AssociationDirection.SRC_DESTINATION, "","specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID", null);
+			}
+
+		}
+		catch (DynamicExtensionsSystemException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

@@ -220,7 +220,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		EntityInterface rootEntity = expression.getConstraintEntity().getDynamicExtensionsEntity();
 		IOutputEntity rootOutputEntity = QueryObjectFactory.createOutputEntity(rootEntity);
-		rootOutputEntity.getSelectedAttributes().addAll(rootEntity.getAllAttributes());
+		rootOutputEntity.getSelectedAttributes().addAll(rootEntity.getAttributeCollection());
 		IOutputTreeNode rootNode = QueryObjectFactory.createOutputTreeNode(rootOutputEntity);
 		outPutNodeMap.put(rootNode.getId(), root);
 		copyChildren(expression, rootNode);
@@ -245,7 +245,7 @@ public class SqlGenerator implements ISqlGenerator
 				EntityInterface entity = childExpression.getConstraintEntity()
 						.getDynamicExtensionsEntity();
 				IOutputEntity outputEntity = QueryObjectFactory.createOutputEntity(entity);
-				outputEntity.getSelectedAttributes().addAll(entity.getAllAttributes());
+				outputEntity.getSelectedAttributes().addAll(entity.getAttributeCollection());
 				IAssociation association = joinGraph.getAssociation(parentExpression
 						.getExpressionId(), childExpressionId);
 
@@ -407,6 +407,11 @@ public class SqlGenerator implements ISqlGenerator
 					AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 							.getDynamicExtensionsAssociation();
 
+					if (QueryObjectProcessor.isInheritedAassociation(eavAssociation))
+					{
+						eavAssociation = QueryObjectProcessor.getActualAassociation(eavAssociation);
+					}
+					
 					EntityInterface childEntity = childExpression.getConstraintEntity()
 							.getDynamicExtensionsEntity();
 
@@ -544,6 +549,12 @@ public class SqlGenerator implements ISqlGenerator
 					expression.getExpressionId());
 			AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 					.getDynamicExtensionsAssociation();
+			
+			if (QueryObjectProcessor.isInheritedAassociation(eavAssociation))
+			{
+				eavAssociation = QueryObjectProcessor.getActualAassociation(eavAssociation);
+			}
+			
 			if (isPAND) // Adding Pseudo and condition in the where part.
 			{
 				String tableName = entity.getTableProperties().getName() + " ";
@@ -696,6 +707,12 @@ public class SqlGenerator implements ISqlGenerator
 					childExpression.getExpressionId());
 			AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 					.getDynamicExtensionsAssociation();
+			
+			if (QueryObjectProcessor.isInheritedAassociation(eavAssociation))
+			{
+				eavAssociation = QueryObjectProcessor.getActualAassociation(eavAssociation);
+			}
+			
 			String joinAttribute = getAliasName(expression) + ".";
 
 			if (eavAssociation.getConstraintProperties().getSourceEntityKey() == null)
@@ -1090,10 +1107,17 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	String getSQL(AttributeInterface attribute, IExpression expression)
 	{
-		EntityInterface attributeEntity = attribute.getEntity();
+		
+		AttributeInterface actualAttribute = attribute;
+		
+		if (QueryObjectProcessor.isInheritedAttribute(attribute))
+		{
+			actualAttribute = QueryObjectProcessor.getActualAttribute(attribute);
+		}
+		EntityInterface attributeEntity = actualAttribute.getEntity();
 		String aliasName = getAliasFor(expression, attributeEntity);
 
-		String attributeName = aliasName + "." + attribute.getColumnProperties().getName();
+		String attributeName = aliasName + "." + actualAttribute.getColumnProperties().getName();
 
 		return attributeName;
 	}

@@ -1,5 +1,5 @@
-
 package edu.wustl.common.querysuite;
+
 
 /**
  * @author Mandar Shidhore
@@ -10,7 +10,9 @@ package edu.wustl.common.querysuite;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.common.dynamicextensions.domain.Association;
 import edu.common.dynamicextensions.domain.Attribute;
@@ -28,6 +30,7 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.common.dynamicextensions.util.global.Constants;
+import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.common.dynamicextensions.util.global.Constants.InheritanceStrategy;
 
 public class EntityManagerMock extends EntityManager
@@ -77,7 +80,23 @@ public class EntityManagerMock extends EntityManager
 	public static Long CELL_SPE_REVIEW_EVT_ID = new Long(18);
 	public static Long REVIEW_EVT_PARAM_ID = new Long(19);
 	public static Long FLUID_SPECIMEN_ID = new Long(20);
-	
+
+	public static Set<String> specimenClasses = new HashSet<String>();
+	public static Set<String> eventClasses = new HashSet<String>();
+	static 
+	{
+		specimenClasses.add(SPECIMEN_NAME);
+		specimenClasses.add(MOLECULAR_SPECIMEN_NAME);
+		specimenClasses.add(TISSUE_SPECIMEN_NAME);
+		specimenClasses.add(FLUID_SPECIMEN_NAME);
+
+		eventClasses.add(SPECIMEN_EVT_NAME);
+		eventClasses.add(FROZEN_EVT_NAME);
+		eventClasses.add(RECEIVED_EVT_NAME);
+		eventClasses.add(REVIEW_EVT_PARAM_NAME);
+		eventClasses.add(CELL_SPE_REVIEW_EVT_NAME);
+	}
+
 	/**
 	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#findEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
 	 */
@@ -475,404 +494,112 @@ public class EntityManagerMock extends EntityManager
 		Collection<AssociationInterface> associations = new ArrayList<AssociationInterface>();
 		if (sourceEntityName.equals(PARTICIPANT_NAME) && sourceRoleName.equals("participant"))
 		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(PARTICIPANT_NAME);
-			EntityInterface targetEntity = getEntityByName(PARTICIPANT_MEDICAL_ID_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("participant");
-			sourceRole.setId(1L);
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(1);
-			sourceRole.setMinCardinality(1);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("participantMedicalIdentifierCollection");
-			targetRole.setId(2L);
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			targetRole.setMaxCardinality(10);
-			targetRole.setMinCardinality(0);
-			association.setTargetRole(targetRole);
-	
-			
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
-			((Association)association).setConstraintProperties(constraintProperties);
-			
+			AssociationInterface association = createAssociation(PARTICIPANT_NAME, PARTICIPANT_MEDICAL_ID_NAME, AssociationDirection.BI_DIRECTIONAL, "participant","participantMedicalIdentifierCollection", null, "PARTICIPANT_ID");
 			associations.add(association);
 			
 			// another Association.
-			association = factory.createAssociation();
-			sourceEntity = getEntityByName(PARTICIPANT_NAME);
-			targetEntity = getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			sourceRole = new Role();
-			sourceRole.setName("participant");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(1);
-			sourceRole.setMinCardinality(1);
-			association.setSourceRole(sourceRole);
-	
-			targetRole = new Role();
-			targetRole.setName("collectionProtocolRegistrationCollection");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationsType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			targetRole.setMaxCardinality(10);
-			targetRole.setMinCardinality(0);
-			association.setTargetRole(targetRole);
-	
-			constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("PARTICIPANT_ID");
-			((Association)association).setConstraintProperties(constraintProperties);
+			association = createAssociation(PARTICIPANT_NAME, COLLECTION_PROTOCOL_REGISTRATION_NAME, AssociationDirection.BI_DIRECTIONAL, "participant","collectionProtocolRegistrationCollection", null, "PARTICIPANT_ID");
 			associations.add(association);
 		}
 		else if (sourceEntityName.equals(SPECIMEN_COLLECTION_GROUP_NAME) && sourceRoleName.equals("specimenCollectionGroup"))
 		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
-			EntityInterface targetEntity = getEntityByName(SPECIMEN_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("specimenCollectionGroup");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(1);
-			sourceRole.setMinCardinality(1);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("specimenCollection");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(10);
-			targetRole.setMinCardinality(1);
-			association.setTargetRole(targetRole);
-	
-			
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("SPECIMEN_COLLECTION_GROUP_ID");
-			((Association)association).setConstraintProperties(constraintProperties);
-			
+			AssociationInterface association = createAssociation(SPECIMEN_COLLECTION_GROUP_NAME, SPECIMEN_NAME, AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup","specimenCollection", null, "SPECIMEN_COLLECTION_GROUP_ID");
 			associations.add(association);
 			
-			// Another Association 2
-			association = factory.createAssociation();
+			for (String specimenClass: specimenClasses)
+			{
+				association = createAssociation(sourceEntityName, specimenClass, AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup","specimenCollection", null, "SPECIMEN_COLLECTION_GROUP_ID");
+				associations.add(association);
+			}
 			
-			sourceEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
-			targetEntity = getEntityByName(COLLECTION_PROTOCOL_EVT_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.SRC_DESTINATION);
-	//		association.setDirection("Source -> Destination");
-	
-			sourceRole = new Role();
-			sourceRole.setName("specimenCollectionGroup");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(10);
-			sourceRole.setMinCardinality(0);
-			association.setSourceRole(sourceRole);
-	
-			targetRole = new Role();
-			targetRole.setName("collectionProtocolEvent");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(1);
-			targetRole.setMinCardinality(1);
-			association.setTargetRole(targetRole);
-	
-			constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("COLLECTION_PROTOCOL_REG_ID");
-			constraintProperties.setTargetEntityKey(null);
-			((Association)association).setConstraintProperties(constraintProperties);
-
+			association = createAssociation(SPECIMEN_COLLECTION_GROUP_NAME, COLLECTION_PROTOCOL_EVT_NAME, AssociationDirection.SRC_DESTINATION, "specimenCollectionGroup","collectionProtocolEvent", "COLLECTION_PROTOCOL_REG_ID", null);
 			associations.add(association);
 			
-			// Another Association 3
-			
-			association = factory.createAssociation();
-			
-			sourceEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
-			targetEntity = getEntityByName(SITE_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			sourceRole = new Role();
-			sourceRole.setName("specimenCollectionGroup");
-			sourceRole.setId(1L);
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(1);
-			sourceRole.setMinCardinality(1);
-			association.setSourceRole(sourceRole);
-	
-			targetRole = new Role();
-			targetRole.setName("site");
-			targetRole.setId(2L);
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			targetRole.setMaxCardinality(10);
-			targetRole.setMinCardinality(0);
-			association.setTargetRole(targetRole);
-	
-			
-			constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("SITE_ID");
-			constraintProperties.setTargetEntityKey(null);
-			((Association)association).setConstraintProperties(constraintProperties);
-			
+			association = createAssociation(SPECIMEN_COLLECTION_GROUP_NAME, SITE_NAME, AssociationDirection.SRC_DESTINATION, "specimenCollectionGroup","site", "SITE_ID", null);
 			associations.add(association);
 
 		}
-		else if (sourceEntityName.equals(SPECIMEN_NAME) && sourceRoleName.equals("childrenSpecimen"))
+		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("childrenSpecimen"))
 		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(SPECIMEN_NAME);
-			EntityInterface targetEntity = getEntityByName(SPECIMEN_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("childrenSpecimen");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(10);
-			sourceRole.setMinCardinality(0);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("parentSpecimen");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(1);
-			targetRole.setMinCardinality(0);
-			association.setTargetRole(targetRole);
-	
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("PARENT_SPECIMEN_ID");
-			((Association)association).setConstraintProperties(constraintProperties);
-			
+			AssociationInterface association=null;
+
+			for (String specimenClass: specimenClasses)
+			{
+				association = createAssociation(sourceEntityName, specimenClass, AssociationDirection.BI_DIRECTIONAL, "childrenSpecimen","collectionProtocolEvent", null, "PARENT_SPECIMEN_ID");
+				associations.add(association);
+			}
+		}
+		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals(""))
+		{
+			AssociationInterface association = createAssociation(sourceEntityName, SPECIMEN_CHARACTERISTIC_NAME, AssociationDirection.SRC_DESTINATION, "","specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID", null);
 			associations.add(association);
 		}
-		else if (sourceEntityName.equals(SPECIMEN_NAME) && sourceRoleName.equals(""))
+		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("specimen"))
 		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(SPECIMEN_NAME);
-			EntityInterface targetEntity = getEntityByName(SPECIMEN_CHARACTERISTIC_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.SRC_DESTINATION);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(10);
-			sourceRole.setMinCardinality(0);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("specimenCharacteristics");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(1);
-			targetRole.setMinCardinality(1);
-			association.setTargetRole(targetRole);
-	
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("SPECIMEN_CHARACTERISTICS_ID");
-			constraintProperties.setTargetEntityKey(null);
-			((Association)association).setConstraintProperties(constraintProperties);
-			
-			associations.add(association);
-		}
-		else if (sourceEntityName.equals(SPECIMEN_NAME) && sourceRoleName.equals("specimen"))
-		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(SPECIMEN_NAME);
-			EntityInterface targetEntity = getEntityByName(SPECIMEN_EVT_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("specimen");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(10);
-			sourceRole.setMinCardinality(0);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("specimenEventCollection");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(1);
-			targetRole.setMinCardinality(1);
-			association.setTargetRole(targetRole);
-	
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("SPECIMEN_ID");
-			((Association)association).setConstraintProperties(constraintProperties);
-			
-			associations.add(association);
+			for(String event: eventClasses)
+			{
+				AssociationInterface association = createAssociation(sourceEntityName, event, AssociationDirection.BI_DIRECTIONAL, "specimen","specimenEventCollection", null, "SPECIMEN_ID");
+				associations.add(association);
+			}
 		}
 		else if (sourceEntityName.equals(COLLECTION_PROTOCOL_REGISTRATION_NAME) && sourceRoleName.equals("collectionProtocolRegistration"))
 		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
-			EntityInterface targetEntity = getEntityByName(SPECIMEN_COLLECTION_GROUP_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("collectionProtocolRegistration");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(1);
-			sourceRole.setMinCardinality(1);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("SpecimenCollectionGroupCollection");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(10);
-			targetRole.setMinCardinality(0);
-			association.setTargetRole(targetRole);
-	
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("COLLECTION_PROTOCOL_REG_ID");
-			((Association)association).setConstraintProperties(constraintProperties);
-
+			AssociationInterface association = createAssociation(COLLECTION_PROTOCOL_REGISTRATION_NAME, SPECIMEN_COLLECTION_GROUP_NAME, AssociationDirection.BI_DIRECTIONAL, "collectionProtocolRegistration","SpecimenCollectionGroupCollection", null, "COLLECTION_PROTOCOL_REG_ID");
 			associations.add(association);
-			
-			// another Association.
-			association = factory.createAssociation();
-			sourceEntity = getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME);
-			targetEntity = getEntityByName(COLLECTION_PROTOCOL_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.SRC_DESTINATION);
-	
-			sourceRole = new Role();
-			sourceRole.setName("");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(10);
-			sourceRole.setMinCardinality(0);
-			association.setSourceRole(sourceRole);
-	
-			targetRole = new Role();
-			targetRole.setName("collectionProtocol");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(1);
-			targetRole.setMinCardinality(1);
-			association.setTargetRole(targetRole);
-	
-			constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey("COLLECTION_PROTOCOL_ID");
-			constraintProperties.setTargetEntityKey(null);
-			((Association)association).setConstraintProperties(constraintProperties);
-
+		}
+		else if (sourceEntityName.equals(COLLECTION_PROTOCOL_REGISTRATION_NAME) && sourceRoleName.equals(""))
+		{
+			AssociationInterface association = createAssociation(COLLECTION_PROTOCOL_REGISTRATION_NAME, COLLECTION_PROTOCOL_NAME, AssociationDirection.SRC_DESTINATION, "","collectionProtocol", "COLLECTION_PROTOCOL_ID",null);
 			associations.add(association);
 		}
 		if (sourceEntityName.equals(COLLECTION_PROTOCOL_NAME) && sourceRoleName.equals("collectionProtocol"))
 		{
-			AssociationInterface association = factory.createAssociation();
-	
-			EntityInterface sourceEntity = getEntityByName(COLLECTION_PROTOCOL_NAME);
-			EntityInterface targetEntity = getEntityByName(COLLECTION_PROTOCOL_EVT_NAME);
-	
-			association.setEntity(sourceEntity);
-			association.setTargetEntity(targetEntity);
-			association.setAssociationDirection(Constants.AssociationDirection.BI_DIRECTIONAL);
-	
-			Role sourceRole = new Role();
-			sourceRole.setName("collectionProtocol");
-			sourceRole.setId(1L);
-			//TODO check association Type for linking: sourceRole.setAssociationType("linking");
-			sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-			sourceRole.setMaxCardinality(1);
-			sourceRole.setMinCardinality(1);
-			association.setSourceRole(sourceRole);
-	
-			Role targetRole = new Role();
-			targetRole.setName("collectionProtocolEventCollection");
-			targetRole.setId(2L);
-			//TODO check association Type for linking: targetRole.setAssociationType("linking");
-			targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
-	
-			targetRole.setMaxCardinality(10);
-			targetRole.setMinCardinality(1);
-			association.setTargetRole(targetRole);
-	
-			ConstraintProperties constraintProperties = new ConstraintProperties();
-			constraintProperties.setSourceEntityKey(null);
-			constraintProperties.setTargetEntityKey("`COLLECTION_PROTOCOL_ID`");
-			((Association)association).setConstraintProperties(constraintProperties);
-
+			AssociationInterface association = createAssociation(COLLECTION_PROTOCOL_NAME, COLLECTION_PROTOCOL_EVT_NAME, AssociationDirection.BI_DIRECTIONAL, "collectionProtocol","collectionProtocolEventCollection", null, "COLLECTION_PROTOCOL_ID");
 			associations.add(association);
 		}
 		return associations;
+	}
+
+	/**
+	 * @return
+	 * @throws DynamicExtensionsSystemException
+	 */
+	public AssociationInterface createAssociation(String source, String target,AssociationDirection direction, String sourceRoleName, String targetRoleName, String sourceKey, String targetKey ) throws DynamicExtensionsSystemException
+	{
+		AssociationInterface association = factory.createAssociation();
+
+		EntityInterface sourceEntity = getEntityByName(source);
+		EntityInterface targetEntity = getEntityByName(target);
+
+		association.setEntity(sourceEntity);
+		association.setTargetEntity(targetEntity);
+		association.setAssociationDirection(direction);
+
+		Role sourceRole = new Role();
+		sourceRole.setName(sourceRoleName);
+		sourceRole.setId(1L);
+		//TODO check association Type for linking: sourceRole.setAssociationType("linking");
+		sourceRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
+		sourceRole.setMaxCardinality(1);
+		sourceRole.setMinCardinality(1);
+		association.setSourceRole(sourceRole);
+
+		Role targetRole = new Role();
+		targetRole.setName(targetRoleName);
+		targetRole.setId(2L);
+		//TODO check association Type for linking: targetRole.setAssociationType("linking");
+		targetRole.setAssociationsType(Constants.AssociationType.CONTAINTMENT);
+
+		targetRole.setMaxCardinality(10);
+		targetRole.setMinCardinality(1);
+		association.setTargetRole(targetRole);
+
+		
+		ConstraintProperties constraintProperties = new ConstraintProperties();
+		constraintProperties.setSourceEntityKey(sourceKey);
+		constraintProperties.setTargetEntityKey(targetKey);
+		((Association)association).setConstraintProperties(constraintProperties);
+		return association;
 	}
 
 	/**
@@ -1594,7 +1321,7 @@ public class EntityManagerMock extends EntityManager
 		EntityInterface parent = createSpecimenProtocolEntity(SPECIMEN_PROTOCOL_NAME);
 		e.setParentEntity(parent);
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
-		
+		e.getAbstractAttributeCollection().addAll(getSpecimenProtocolAttributes(e));
 		return e;
 	}
 
@@ -1725,6 +1452,7 @@ public class EntityManagerMock extends EntityManager
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_HEIRARCHY);
 		e.setDiscriminatorValue("Molecular");
 		e.setDiscriminatorColumn("SPECIMEN_CLASS");
+		attributes.addAll(getSpecimenAttributes(e));
 		
 		return e;
 	}
@@ -1752,7 +1480,7 @@ public class EntityManagerMock extends EntityManager
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_HEIRARCHY);
 		e.setDiscriminatorValue("Tissue");
 		e.setDiscriminatorColumn("SPECIMEN_CLASS");
-		
+		e.getAbstractAttributeCollection().addAll(getSpecimenAttributes(e));
 		return e;
 	}
 
@@ -1779,6 +1507,7 @@ public class EntityManagerMock extends EntityManager
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_HEIRARCHY);
 		e.setDiscriminatorValue("Fluid");
 		e.setDiscriminatorColumn("SPECIMEN_CLASS");
+		e.getAbstractAttributeCollection().addAll(getSpecimenAttributes(e));
 		
 		return e;
 	}
@@ -1875,7 +1604,7 @@ public class EntityManagerMock extends EntityManager
 		
 		e.setParentEntity(createSpecimenEventParametersEntity(SPECIMEN_EVT_NAME));
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
-
+		e.getAbstractAttributeCollection().addAll(getSpecimenEventParametersAttributes(e));
 		return e;
 	}	
 	
@@ -1902,7 +1631,7 @@ public class EntityManagerMock extends EntityManager
 		
 		e.setParentEntity(createSpecimenEventParametersEntity(SPECIMEN_EVT_NAME));
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
-
+		e.getAbstractAttributeCollection().addAll(getSpecimenEventParametersAttributes(e));
 		return e;
 	}	
 	
@@ -1927,6 +1656,8 @@ public class EntityManagerMock extends EntityManager
 		
 		e.setParentEntity(createSpecimenEventParametersEntity(SPECIMEN_EVT_NAME));
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
+		e.getAbstractAttributeCollection().addAll(getSpecimenEventParametersAttributes(e));
+		
 		return e;
 	}	
 
@@ -1971,6 +1702,8 @@ public class EntityManagerMock extends EntityManager
 		
 		e.setParentEntity(createReviewEventParametersEntity(REVIEW_EVT_PARAM_NAME));
 		e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
+		
+		e.getAbstractAttributeCollection().addAll(getSpecimenEventParametersAttributes(e));
 		return e;
 	}	
 	/*
@@ -2711,5 +2444,4 @@ public class EntityManagerMock extends EntityManager
 			e.printStackTrace();
 		}
 	}
-
 }
