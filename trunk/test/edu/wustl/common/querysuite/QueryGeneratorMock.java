@@ -702,7 +702,7 @@ public class QueryGeneratorMock
 	 * 			Site: ANY  	
 	 * @return The IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc" with few empty expressions.
 	 */
-	public static IQuery createSampleQueryWithEmptyExp1()
+	public static IQuery createSampleQuery1WithEmptyExp()
 	{
 		IQuery query = null;
 
@@ -2406,5 +2406,244 @@ public class QueryGeneratorMock
 	{
 		return QueryObjectFactory
 		.createLogicalConnector(LogicalOperator.And);
+	}
+	
+	/**
+	 * Create Participan Expression with Empty Expressions as:
+	 * <pre>
+	 * 	P: firstName equals "Prafull"
+	 * 		CPR: activityStatus equals "Active"
+	 * 		PM: ANY
+	 * 		PM: ANY
+	 * 		CPR: activityStatus equals "Disabled"
+	 * 		PM: ANY
+	 * </pre>
+	 * Expression as : (P AND CPR1 AND PM1 AND PM2 AND CPR2 AND PM3)
+	 * @return
+	 */
+	public static IQuery createQueryWithEmptyExp()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+
+			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			EntityInterface cprEntity = enitytManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			EntityInterface pmEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
+
+			// creating expression for Participant.
+			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
+			
+			List<String> participantExpression1Rule2Values = new ArrayList<String>();
+			participantExpression1Rule2Values.add("Prafull");
+			ICondition participantExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(participantEntity, "firstName"), RelationalOperator.Equals,
+					participantExpression1Rule2Values);
+			IRule participantExpression1Rule2 = QueryObjectFactory.createRule(null);
+			participantExpression1Rule2.addCondition(participantExpression1Rule2Condition1);
+			participantExpression.addOperand(participantExpression1Rule2);
+			
+			
+			//  creating expression for collection Protocol Registration
+			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IExpression cprExpression1 = constraints.addExpression(cprConstraintEntity);
+			participantExpression.addOperand(getAndConnector(),cprExpression1.getExpressionId());
+
+			AssociationInterface participanCPRegAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			IIntraModelAssociation iParticipanCPRegAssociation = QueryObjectFactory.createIntraModelAssociation(participanCPRegAssociation);
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					cprExpression1.getExpressionId(), iParticipanCPRegAssociation);
+			
+			List<String> cprExpression1Rule2Values = new ArrayList<String>();
+			cprExpression1Rule2Values.add("Active");
+			ICondition cprExpression1Rule2Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(cprEntity, "activityStatus"), RelationalOperator.Equals,
+					cprExpression1Rule2Values);
+			IRule cprExpression1Rule2 = QueryObjectFactory.createRule(null);
+			cprExpression1Rule2.addCondition(cprExpression1Rule2Condition1);
+			cprExpression1.addOperand(cprExpression1Rule2);
+			
+			// creating empty expression for Participant Medical Id.
+			IConstraintEntity pmConstraintEntity = QueryObjectFactory.createConstraintEntity(pmEntity);
+			IExpression pmExpression1 = constraints.addExpression(pmConstraintEntity);
+			participantExpression.addOperand(getAndConnector(), pmExpression1.getExpressionId());
+			
+			AssociationInterface participanPMAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
+			IIntraModelAssociation iParticipanPMAssociation = QueryObjectFactory.createIntraModelAssociation(participanPMAssociation);
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					pmExpression1.getExpressionId(), iParticipanPMAssociation);
+			
+			// creating empty expression for Participant Medical Id.
+			IExpression pmExpression2 = constraints.addExpression(pmConstraintEntity);
+			participantExpression.addOperand(getAndConnector(), pmExpression2.getExpressionId());
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					pmExpression2.getExpressionId(), iParticipanPMAssociation);
+			
+			// creating expression for collection Protocol Registration
+			IExpression cprExpression2 = constraints.addExpression(cprConstraintEntity);
+			participantExpression.addOperand(getAndConnector(),cprExpression2.getExpressionId());
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					cprExpression2.getExpressionId(), iParticipanCPRegAssociation);
+			
+			List<String> cprExpression2Rule2Values = new ArrayList<String>();
+			cprExpression2Rule2Values.add("Disabled");
+			ICondition cprExpression2Rule2Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(cprEntity, "activityStatus"), RelationalOperator.Equals,
+					cprExpression2Rule2Values);
+			IRule cprExpression2Rule2 = QueryObjectFactory.createRule(null);
+			cprExpression2Rule2.addCondition(cprExpression2Rule2Condition1);
+			cprExpression2.addOperand(cprExpression2Rule2);
+			
+			// creating empty expression for Participant Medical Id.
+			IExpression pmExpression3 = constraints.addExpression(pmConstraintEntity);
+			participantExpression.addOperand(getAndConnector(), pmExpression3.getExpressionId());
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					pmExpression3.getExpressionId(), iParticipanPMAssociation);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createQueryWithEmptyExp()
+	 * Expression as : (P AND CPR1 AND PM1) AND PM2 AND CPR2 AND PM3
+	 * @return reference to the Query object.
+	 */
+	public static IQuery createQueryWithEmptyExpWithParenthesis1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createQueryWithEmptyExp();
+			IConstraints constraints = query.getConstraints();
+			IExpression participantExpression = constraints.getExpression(constraints.getRootExpressionId());
+			participantExpression.addParantheses(0,2);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createQueryWithEmptyExp()
+	 * Expression as : ((P AND CPR1) AND PM1 AND PM2 AND CPR2) AND PM3
+	 * @return reference to the Query object.
+	 */
+	public static IQuery createQueryWithEmptyExpWithParenthesis2()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createQueryWithEmptyExp();
+			IConstraints constraints = query.getConstraints();
+			IExpression participantExpression = constraints.getExpression(constraints.getRootExpressionId());
+			participantExpression.addParantheses(0,1);
+			participantExpression.addParantheses(0,4);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createQueryWithEmptyExp()
+	 * Expression as : (((P AND CPR1 AND PM1 AND PM2) AND CPR2) AND PM3)
+	 * @return reference to the Query object.
+	 */
+	public static IQuery createQueryWithEmptyExpWithParenthesis3()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createQueryWithEmptyExp();
+			IConstraints constraints = query.getConstraints();
+			IExpression participantExpression = constraints.getExpression(constraints.getRootExpressionId());
+			participantExpression.addParantheses(0,3);
+			participantExpression.addParantheses(0,4);
+			participantExpression.addParantheses(0,5);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+
+	/**
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createQueryWithEmptyExp()
+	 * Expression as : P AND (CPR1 AND PM1 AND PM2 AND CPR2) AND PM3
+	 * @return reference to the Query object.
+	 */
+	public static IQuery createQueryWithEmptyExpWithParenthesis4()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createQueryWithEmptyExp();
+			IConstraints constraints = query.getConstraints();
+			IExpression participantExpression = constraints.getExpression(constraints.getRootExpressionId());
+			participantExpression.addParantheses(1,4);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createQueryWithEmptyExp()
+	 * Expression as :  P AND CPR1 AND (PM1 AND PM2) AND CPR2 AND PM3
+	 * @return reference to the Query object.
+	 */
+	public static IQuery createQueryWithEmptyExpWithParenthesis5()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createQueryWithEmptyExp();
+			IConstraints constraints = query.getConstraints();
+			IExpression participantExpression = constraints.getExpression(constraints.getRootExpressionId());
+			participantExpression.addParantheses(2,3);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
 	}
 }

@@ -353,30 +353,6 @@ public class SqlGeneratorTestCase extends TestCase
 	}
 
 	/**
-	 * To test the Query having empty expressions.
-	 *
-	 */
-	public void testSampleQueryWithEmptyExp1()
-	{
-		IQuery query = QueryGeneratorMock.createSampleQueryWithEmptyExp1();
-		String sql;
-		try
-		{
-			sql = generator.generateSQL(query);
-			//			System.out.println("testSampleQuery1:"+sql);
-			assertEquals(
-					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column32 ,ParticipantMedicalIdentif_5.IDENTIFIER Column33 ,Site_6.ACTIVITY_STATUS Column34 ,Site_6.EMAIL_ADDRESS Column35 ,Site_6.TYPE Column36 ,Site_6.NAME Column37 ,Site_6.IDENTIFIER Column38 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) left join catissue_site Site_6 on (ParticipantMedicalIdentif_5.SITE_ID=Site_6.IDENTIFIER) Where (Participant_1.LAST_NAME like 's%') And(((Specimen_4.TYPE='Fixed Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue') Or((Specimen_4.TYPE='Fresh Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue'))",
-					sql);
-		}
-		catch (Exception e)
-		{
-			//e.printStackTrace();
-			fail("Unexpected Expection, While Generating SQL for the Query!!!");
-		}
-	}
-	
-	/**
 	 * To test the SQL for the sample query no. 2 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
 	 * <pre>
 	 *  P: ANY
@@ -872,6 +848,176 @@ public class SqlGeneratorTestCase extends TestCase
 		{
 			e.printStackTrace();
 			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions.
+	 *
+	 */
+	public void testSampleQuery1WithEmptyExp()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery1WithEmptyExp();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testSampleQuery1WithEmptyExp:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column32 ,ParticipantMedicalIdentif_5.IDENTIFIER Column33 ,Site_6.ACTIVITY_STATUS Column34 ,Site_6.EMAIL_ADDRESS Column35 ,Site_6.TYPE Column36 ,Site_6.NAME Column37 ,Site_6.IDENTIFIER Column38 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) left join catissue_site Site_6 on (ParticipantMedicalIdentif_5.SITE_ID=Site_6.IDENTIFIER) Where (Participant_1.LAST_NAME like 's%') And(((Specimen_4.TYPE='Fixed Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue') Or((Specimen_4.TYPE='Fresh Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue'))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions.
+	 * Expression:
+	 * P AND CPR1 AND PM1 AND PM2 AND CPR2 AND PM3
+	 * The where part should have conditions as: P AND CPR1 AND CPR2 
+	 */
+
+	public void testQueryWithEmptyExp()
+	{
+		IQuery query = QueryGeneratorMock.createQueryWithEmptyExp();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testQueryWithEmptyExp:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) Where (Participant_1.FIRST_NAME='Prafull') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Disabled')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions & parenthesis.
+	 * Expression: (P AND CPR1 AND PM1) AND PM2 AND CPR2 AND PM3
+	 * The where part should have conditions as: (P AND CPR1) AND CPR2 
+	 */
+	public void testQueryWithEmptyExpWithParenthesis1()
+	{
+		IQuery query = QueryGeneratorMock.createQueryWithEmptyExpWithParenthesis1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testQueryWithEmptyExpWithParenthesis1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression the Query with Empty Expressions with Parenthesis!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) Where ((Participant_1.FIRST_NAME='Prafull') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active')) And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Disabled')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			fail("Unexpected Expection, While Generating SQL for the Query with Empty Expressions with Parenthesis!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions & parenthesis.
+	 * Expression: ((P AND CPR1) AND PM1 AND PM2 AND CPR2) AND PM3
+	 * The where part should have conditions as: ((P AND CPR1) AND CPR2) 
+	 */
+	public void testQueryWithEmptyExpWithParenthesis2()
+	{
+		IQuery query = QueryGeneratorMock.createQueryWithEmptyExpWithParenthesis2();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testQueryWithEmptyExpWithParenthesis2:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression the Query with Empty Expressions with Parenthesis!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) Where (((Participant_1.FIRST_NAME='Prafull') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active')) And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Disabled'))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			fail("Unexpected Expection, While Generating SQL for the Query with Empty Expressions with Parenthesis!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions & parenthesis.
+	 * Expression:  (((P AND CPR1 AND PM1 AND PM2) AND CPR2) AND PM3)
+	 * The where part should have conditions as: (((P AND CPR1) AND CPR2)) 
+	 */
+	public void testQueryWithEmptyExpWithParenthesis3()
+	{
+		IQuery query = QueryGeneratorMock.createQueryWithEmptyExpWithParenthesis3();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testQueryWithEmptyExpWithParenthesis3:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression the Query with Empty Expressions with Parenthesis!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) Where ((((Participant_1.FIRST_NAME='Prafull') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active')) And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Disabled')))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			fail("Unexpected Expection, While Generating SQL for the Query with Empty Expressions with Parenthesis!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions & parenthesis.
+	 * Expression: P AND (CPR1 AND PM1 AND PM2 AND CPR2) AND PM3
+	 * The where part should have conditions as: P AND (CPR1 AND CPR2) 
+	 */
+	public void testQueryWithEmptyExpWithParenthesis4()
+	{
+		IQuery query = QueryGeneratorMock.createQueryWithEmptyExpWithParenthesis4();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testQueryWithEmptyExpWithParenthesis4:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression the Query with Empty Expressions with Parenthesis!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) Where (Participant_1.FIRST_NAME='Prafull') And((CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Disabled'))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			fail("Unexpected Expection, While Generating SQL for the Query with Empty Expressions with Parenthesis!!!");
+		}
+	}
+	
+	/**
+	 * To test the Query having empty expressions & parenthesis.
+	 * Expression: P AND CPR1 AND (PM1 AND PM2) AND CPR2 AND PM3
+	 * The where part should have conditions as: P AND CPR1 AND CPR2 
+	 */
+	public void testQueryWithEmptyExpWithParenthesis5()
+	{
+		IQuery query = QueryGeneratorMock.createQueryWithEmptyExpWithParenthesis5();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testQueryWithEmptyExpWithParenthesis5:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression the Query with Empty Expressions with Parenthesis!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) Where (Participant_1.FIRST_NAME='Prafull') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Disabled')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			fail("Unexpected Expection, While Generating SQL for the Query with Empty Expressions with Parenthesis!!!");
 		}
 	}
 }
