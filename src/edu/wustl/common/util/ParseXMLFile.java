@@ -64,11 +64,11 @@ public class ParseXMLFile
 	/**
 	 * Conditions Array for enumerated string data types.
 	 */
-	private Object[] enumStr = new Object[9];
+	private Object[] enumStr = new Object[2];
 	/**
 	 * Conditions Array for enumerated number data types.
 	 */
-	private Object[] enumNum = new Object[9];
+	private Object[] enumNum = new Object[2];
 	/**
 	 * Conditions Array for Boolean data types.
 	 */
@@ -94,9 +94,7 @@ public class ParseXMLFile
 	{
 		Document doc = parseFile(xmlFileName);
 		Node root = doc.getDocumentElement();
-		System.out.println("Statement of XML document...");
 		writeDocumentToOutput(root);
-		System.out.println("... end of statement");
 	}
 
 	/**
@@ -133,18 +131,15 @@ public class ParseXMLFile
 		String nodeValue = getElementValue(node);
 
 		NamedNodeMap attributes = node.getAttributes();
-		System.out.println("NodeName: " + nodeName + ", NodeValue: " + nodeValue);
 		for (int i = 0; i < attributes.getLength(); i++)
 		{
 			Node attribute = attributes.item(i);
-			System.out.println("AttributeName: " + attribute.getNodeName() + ", attributeValue: " + attribute.getNodeValue());
 		}
 
 		NodeList children = node.getChildNodes();
 		for (int i_count1 = 0; i_count1 < children.getLength(); i_count1++)
 		{
 			Node child = children.item(i_count1);
-			System.out.println(child.getNodeName());
 			if (child.getNodeType() == Node.ELEMENT_NODE)
 			{
 				if (child.getNodeName().equalsIgnoreCase("enumerated"))
@@ -153,7 +148,6 @@ public class ParseXMLFile
 					for (int i_count2 = 0; i_count2 < enumChildren.getLength(); i_count2++)
 					{
 						Node enumChild = enumChildren.item(i_count2);
-						System.out.println(enumChild.getNodeName());
 						if (enumChild.getNodeType() == Node.ELEMENT_NODE)
 						{
 							if (enumChild.getNodeName().equalsIgnoreCase("string"))
@@ -162,17 +156,14 @@ public class ParseXMLFile
 								for (int i_count3 = 0; i_count3 < strChildren.getLength(); i_count3++)
 								{
 									Node strChild = strChildren.item(i_count3);
-									System.out.println(strChild.getNodeName());
 									if (strChild.getNodeType() == Node.ELEMENT_NODE)
 									{
 										if (strChild.getNodeName().equalsIgnoreCase("conditions"))
 										{
 											NodeList condChildren = strChild.getChildNodes();
-											System.out.println(condChildren.getLength());
 											for (int i_count4 = 0; i_count4 < condChildren.getLength(); i_count4++)
 											{
 												Node condChild = condChildren.item(i_count4);
-												System.out.println("i = " + i_count4 + " : " + condChild.getNodeName());
 												if (condChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (condChild.getNodeName().equalsIgnoreCase("in"))
@@ -181,7 +172,6 @@ public class ParseXMLFile
 														for (int i_count5 = 0; i_count5 < dispInChildren.getLength(); i_count5++)
 														{
 															Node dispInChild = dispInChildren.item(i_count5);
-															System.out.println(dispInChild.getNodeName());
 															if (dispInChild.getNodeName().equalsIgnoreCase("displayname"))
 																enumStr[0] = (Object) getElementValue(dispInChild);
 														}
@@ -192,7 +182,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < dispNotInChildren.getLength(); i_count6++)
 														{
 															Node dispNotInChild = dispNotInChildren.item(i_count6);
-															System.out.println(dispNotInChild.getNodeName());
 															if (dispNotInChild.getNodeName().equalsIgnoreCase("displayname"))
 																enumStr[1] = (Object) getElementValue(dispNotInChild);
 														}
@@ -208,18 +197,15 @@ public class ParseXMLFile
 											for (int i_count8 = 0; i_count8 < recChildren.getLength(); i_count8++)
 											{
 												Node recChild = recChildren.item(i_count8);
-												System.out.println(recChild.getNodeName());
 												if (recChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (recChild.getNodeName().equalsIgnoreCase("components1"))
 													{
 														enumStr1[1] = (Object) getElementValue(recChild);
-														System.out.println(enumStr1[1]);
 													}
 													if (recChild.getNodeName().equalsIgnoreCase("components2"))
 													{
 														enumStr1[2] = (Object) getElementValue(recChild);
-														System.out.println(enumStr1[2]);
 													}
 												}
 
@@ -235,7 +221,6 @@ public class ParseXMLFile
 								for (int i_count7 = 0; i_count7 < numChildren.getLength(); i_count7++)
 								{
 									Node numChild = numChildren.item(i_count7);
-									System.out.println(numChild.getNodeName());
 									if (numChild.getNodeType() == Node.ELEMENT_NODE)
 									{
 										if (numChild.getNodeName().equalsIgnoreCase("conditions"))
@@ -244,7 +229,6 @@ public class ParseXMLFile
 											for (int i_count8 = 0; i_count8 < condChildren.getLength(); i_count8++)
 											{
 												Node condChild = condChildren.item(i_count8);
-												System.out.println(condChild.getNodeName());
 												if (condChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (condChild.getNodeName().equalsIgnoreCase("in"))
@@ -253,7 +237,6 @@ public class ParseXMLFile
 														for (int i_count9 = 0; i_count9 < dispInChildren.getLength(); i_count9++)
 														{
 															Node dispInChild = dispInChildren.item(i_count9);
-															System.out.println(dispInChild.getNodeName());
 															if (dispInChild.getNodeName().equalsIgnoreCase("displayname"))
 																enumNum[0] = (Object) getElementValue(dispInChild);
 														}
@@ -264,7 +247,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < dispNotInChildren.getLength(); i_count10++)
 														{
 															Node dispNotInChild = dispNotInChildren.item(i_count10);
-															System.out.println(dispNotInChild.getNodeName());
 															if (dispNotInChild.getNodeName().equalsIgnoreCase("displayname"))
 																enumNum[1] = (Object) getElementValue(dispNotInChild);
 														}
@@ -279,7 +261,6 @@ public class ParseXMLFile
 											for (int i_count8 = 0; i_count8 < recChildren.getLength(); i_count8++)
 											{
 												Node recChild = recChildren.item(i_count8);
-												System.out.println(recChild.getNodeName());
 												if (recChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (recChild.getNodeName().equalsIgnoreCase("components1"))
@@ -300,7 +281,6 @@ public class ParseXMLFile
 								for (int i_count11 = 0; i_count11 < boolChildren.getLength(); i_count11++)
 								{
 									Node boolChild = boolChildren.item(i_count11);
-									System.out.println(boolChild.getNodeName());
 									if (boolChild.getNodeType() == Node.ELEMENT_NODE)
 									{
 										if (boolChild.getNodeName().equalsIgnoreCase("conditions"))
@@ -309,7 +289,6 @@ public class ParseXMLFile
 											for (int i_count12 = 0; i_count12 < condChildren.getLength(); i_count12++)
 											{
 												Node condChild = condChildren.item(i_count12);
-												System.out.println(condChild.getNodeName());
 												if (condChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (condChild.getNodeName().equalsIgnoreCase("equals"))
@@ -318,7 +297,6 @@ public class ParseXMLFile
 														for (int i_count13 = 0; i_count13 < dispEqualsChildren.getLength(); i_count13++)
 														{
 															Node dispEqualsChild = dispEqualsChildren.item(i_count13);
-															System.out.println(dispEqualsChild.getNodeName());
 															if (dispEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																enumBool[0] = (Object) getElementValue(dispEqualsChild);
 														}
@@ -329,7 +307,6 @@ public class ParseXMLFile
 														for (int i_count14 = 0; i_count14 < dispNotEqualsChildren.getLength(); i_count14++)
 														{
 															Node dispNotEqualsChild = dispNotEqualsChildren.item(i_count14);
-															System.out.println(dispNotEqualsChild.getNodeName());
 															if (dispNotEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																enumBool[1] = (Object) getElementValue(dispNotEqualsChild);
 														}
@@ -376,7 +353,6 @@ public class ParseXMLFile
 					for (int i_count2 = 0; i_count2 < nonEnumChildren.getLength(); i_count2++)
 					{
 						Node nonEnumChild = nonEnumChildren.item(i_count2);
-						System.out.println(nonEnumChild.getNodeName());
 						if (nonEnumChild.getNodeType() == Node.ELEMENT_NODE)
 						{
 							if (nonEnumChild.getNodeName().equalsIgnoreCase("string"))
@@ -385,17 +361,14 @@ public class ParseXMLFile
 								for (int i_count3 = 0; i_count3 < nonEnumStrChildren.getLength(); i_count3++)
 								{
 									Node nonEnumStrChild = nonEnumStrChildren.item(i_count3);
-									System.out.println(nonEnumStrChild.getNodeName());
 									if (nonEnumStrChild.getNodeType() == Node.ELEMENT_NODE)
 									{
 										if (nonEnumStrChild.getNodeName().equalsIgnoreCase("conditions"))
 										{
 											NodeList nonEnumCondChildren = nonEnumStrChild.getChildNodes();
-											System.out.println(nonEnumCondChildren.getLength());
 											for (int i_count4 = 0; i_count4 < nonEnumCondChildren.getLength(); i_count4++)
 											{
 												Node nonEnumCondChild = nonEnumCondChildren.item(i_count4);
-												System.out.println("i = " + i_count4 + " : " + nonEnumCondChild.getNodeName());
 												if (nonEnumCondChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (nonEnumCondChild.getNodeName().equalsIgnoreCase("startswith"))
@@ -404,7 +377,6 @@ public class ParseXMLFile
 														for (int i_count5 = 0; i_count5 < nonEnumDispStartsWithChildren.getLength(); i_count5++)
 														{
 															Node nonEnumDispStartsWithChild = nonEnumDispStartsWithChildren.item(i_count5);
-															System.out.println(nonEnumDispStartsWithChild.getNodeName());
 															if (nonEnumDispStartsWithChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[0] = (Object) getElementValue(nonEnumDispStartsWithChild);
 														}
@@ -415,7 +387,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < nonEnumDispEndsWithChildren.getLength(); i_count6++)
 														{
 															Node nonEnumDispEndsWithChild = nonEnumDispEndsWithChildren.item(i_count6);
-															System.out.println(nonEnumDispEndsWithChild.getNodeName());
 															if (nonEnumDispEndsWithChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[1] = (Object) getElementValue(nonEnumDispEndsWithChild);
 														}
@@ -426,7 +397,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < nonEnumDispContainsChildren.getLength(); i_count6++)
 														{
 															Node nonEnumDispContainsChild = nonEnumDispContainsChildren.item(i_count6);
-															System.out.println(nonEnumDispContainsChild.getNodeName());
 															if (nonEnumDispContainsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[2] = (Object) getElementValue(nonEnumDispContainsChild);
 														}
@@ -437,7 +407,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < nonEnumDispEqualsChildren.getLength(); i_count6++)
 														{
 															Node nonEnumDispEqualsChild = nonEnumDispEqualsChildren.item(i_count6);
-															System.out.println(nonEnumDispEqualsChild.getNodeName());
 															if (nonEnumDispEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[3] = (Object) getElementValue(nonEnumDispEqualsChild);
 														}
@@ -448,7 +417,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < nonEnumDispNotEqualsChildren.getLength(); i_count6++)
 														{
 															Node nonEnumDispNotEqualsChild = nonEnumDispNotEqualsChildren.item(i_count6);
-															System.out.println(nonEnumDispNotEqualsChild.getNodeName());
 															if (nonEnumDispNotEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[4] = (Object) getElementValue(nonEnumDispNotEqualsChild);
 														}
@@ -459,7 +427,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < nonEnumDispIsNullChildren.getLength(); i_count6++)
 														{
 															Node nonEnumDispIsNullChild = nonEnumDispIsNullChildren.item(i_count6);
-															System.out.println(nonEnumDispIsNullChild.getNodeName());
 															if (nonEnumDispIsNullChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[5] = (Object) getElementValue(nonEnumDispIsNullChild);
 														}
@@ -470,7 +437,6 @@ public class ParseXMLFile
 														for (int i_count6 = 0; i_count6 < nonEnumDispIsNotNullChildren.getLength(); i_count6++)
 														{
 															Node nonEnumDispIsNotNullChild = nonEnumDispIsNotNullChildren.item(i_count6);
-															System.out.println(nonEnumDispIsNotNullChild.getNodeName());
 															if (nonEnumDispIsNotNullChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumStr[6] = (Object) getElementValue(nonEnumDispIsNotNullChild);
 														}
@@ -494,7 +460,6 @@ public class ParseXMLFile
 								for (int i_count7 = 0; i_count7 < nonEnumNumChildren.getLength(); i_count7++)
 								{
 									Node nonEnumNumChild = nonEnumNumChildren.item(i_count7);
-									System.out.println(nonEnumNumChild.getNodeName());
 									if (nonEnumNumChild.getNodeType() == Node.ELEMENT_NODE)
 									{
 										if (nonEnumNumChild.getNodeName().equalsIgnoreCase("conditions"))
@@ -503,7 +468,6 @@ public class ParseXMLFile
 											for (int i_count8 = 0; i_count8 < nonEnumCondChildren.getLength(); i_count8++)
 											{
 												Node nonEnumCondChild = nonEnumCondChildren.item(i_count8);
-												System.out.println(nonEnumCondChild.getNodeName());
 												if (nonEnumCondChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (nonEnumCondChild.getNodeName().equalsIgnoreCase("equals"))
@@ -512,7 +476,6 @@ public class ParseXMLFile
 														for (int i_count9 = 0; i_count9 < nonEnumDispEqualsChildren.getLength(); i_count9++)
 														{
 															Node nonEnumDispEqualsChild = nonEnumDispEqualsChildren.item(i_count9);
-															System.out.println(nonEnumDispEqualsChild.getNodeName());
 															if (nonEnumDispEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[0] = (Object) getElementValue(nonEnumDispEqualsChild);
 														}
@@ -523,7 +486,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispNotEqualsChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispNotEqualsChild = nonEnumDispNotEqualsChildren.item(i_count10);
-															System.out.println(nonEnumDispNotEqualsChild.getNodeName());
 															if (nonEnumDispNotEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[1] = (Object) getElementValue(nonEnumDispNotEqualsChild);
 														}
@@ -534,7 +496,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispBetweenChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispBetweenChild = nonEnumDispBetweenChildren.item(i_count10);
-															System.out.println(nonEnumDispBetweenChild.getNodeName());
 															if (nonEnumDispBetweenChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[2] = (Object) getElementValue(nonEnumDispBetweenChild);
 														}
@@ -545,7 +506,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispLessThanChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispLessThanChild = nonEnumDispLessThanChildren.item(i_count10);
-															System.out.println(nonEnumDispLessThanChild.getNodeName());
 															if (nonEnumDispLessThanChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[3] = (Object) getElementValue(nonEnumDispLessThanChild);
 														}
@@ -557,7 +517,6 @@ public class ParseXMLFile
 														{
 															Node nonEnumDispLessThanOrEqualToChild = nonEnumDispLessThanOrEqualToChildren
 																	.item(i_count10);
-															System.out.println(nonEnumDispLessThanOrEqualToChild.getNodeName());
 															if (nonEnumDispLessThanOrEqualToChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[4] = (Object) getElementValue(nonEnumDispLessThanOrEqualToChild);
 														}
@@ -568,7 +527,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispGreaterThanChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispGreaterThanChild = nonEnumDispGreaterThanChildren.item(i_count10);
-															System.out.println(nonEnumDispGreaterThanChild.getNodeName());
 															if (nonEnumDispGreaterThanChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[5] = (Object) getElementValue(nonEnumDispGreaterThanChild);
 														}
@@ -580,7 +538,6 @@ public class ParseXMLFile
 														{
 															Node nonEnumDispGreaterThanOrEqualToChild = nonEnumDispGreaterThanOrEqualToChildren
 																	.item(i_count10);
-															System.out.println(nonEnumDispGreaterThanOrEqualToChild.getNodeName());
 															if (nonEnumDispGreaterThanOrEqualToChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[6] = (Object) getElementValue(nonEnumDispGreaterThanOrEqualToChild);
 														}
@@ -591,7 +548,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispIsNullChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispIsNullChild = nonEnumDispIsNullChildren.item(i_count10);
-															System.out.println(nonEnumDispIsNullChild.getNodeName());
 															if (nonEnumDispIsNullChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[7] = (Object) getElementValue(nonEnumDispIsNullChild);
 														}
@@ -602,7 +558,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispNotInChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispIsNotNullChild = nonEnumDispNotInChildren.item(i_count10);
-															System.out.println(nonEnumDispIsNotNullChild.getNodeName());
 															if (nonEnumDispIsNotNullChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumNum[8] = (Object) getElementValue(nonEnumDispIsNotNullChild);
 														}
@@ -625,7 +580,6 @@ public class ParseXMLFile
 								for (int i_count11 = 0; i_count11 < dateChildren.getLength(); i_count11++)
 								{
 									Node dateChild = dateChildren.item(i_count11);
-									System.out.println(dateChild.getNodeName());
 									if (dateChild.getNodeType() == Node.ELEMENT_NODE)
 									{
 										if (dateChild.getNodeName().equalsIgnoreCase("conditions"))
@@ -634,7 +588,6 @@ public class ParseXMLFile
 											for (int i_count12 = 0; i_count12 < dateCondChildren.getLength(); i_count12++)
 											{
 												Node dateCondChild = dateCondChildren.item(i_count12);
-												System.out.println(dateCondChild.getNodeName());
 												if (dateCondChild.getNodeType() == Node.ELEMENT_NODE)
 												{
 													if (dateCondChild.getNodeName().equalsIgnoreCase("equals"))
@@ -643,7 +596,6 @@ public class ParseXMLFile
 														for (int i_count9 = 0; i_count9 < nonEnumDispEqualsChildren.getLength(); i_count9++)
 														{
 															Node nonEnumDispEqualsChild = nonEnumDispEqualsChildren.item(i_count9);
-															System.out.println(nonEnumDispEqualsChild.getNodeName());
 															if (nonEnumDispEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[0] = (Object) getElementValue(nonEnumDispEqualsChild);
 														}
@@ -654,7 +606,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispNotEqualsChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispNotEqualsChild = nonEnumDispNotEqualsChildren.item(i_count10);
-															System.out.println(nonEnumDispNotEqualsChild.getNodeName());
 															if (nonEnumDispNotEqualsChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[1] = (Object) getElementValue(nonEnumDispNotEqualsChild);
 														}
@@ -665,7 +616,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispBetweenChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispBetweenChild = nonEnumDispBetweenChildren.item(i_count10);
-															System.out.println(nonEnumDispBetweenChild.getNodeName());
 															if (nonEnumDispBetweenChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[2] = (Object) getElementValue(nonEnumDispBetweenChild);
 														}
@@ -676,7 +626,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispLessThanChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispLessThanChild = nonEnumDispLessThanChildren.item(i_count10);
-															System.out.println(nonEnumDispLessThanChild.getNodeName());
 															if (nonEnumDispLessThanChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[3] = (Object) getElementValue(nonEnumDispLessThanChild);
 														}
@@ -688,7 +637,6 @@ public class ParseXMLFile
 														{
 															Node nonEnumDispLessThanOrEqualToChild = nonEnumDispLessThanOrEqualToChildren
 																	.item(i_count10);
-															System.out.println(nonEnumDispLessThanOrEqualToChild.getNodeName());
 															if (nonEnumDispLessThanOrEqualToChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[4] = (Object) getElementValue(nonEnumDispLessThanOrEqualToChild);
 														}
@@ -699,7 +647,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispGreaterThanChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispGreaterThanChild = nonEnumDispGreaterThanChildren.item(i_count10);
-															System.out.println(nonEnumDispGreaterThanChild.getNodeName());
 															if (nonEnumDispGreaterThanChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[5] = (Object) getElementValue(nonEnumDispGreaterThanChild);
 														}
@@ -711,7 +658,6 @@ public class ParseXMLFile
 														{
 															Node nonEnumDispGreaterThanOrEqualToChild = nonEnumDispGreaterThanOrEqualToChildren
 																	.item(i_count10);
-															System.out.println(nonEnumDispGreaterThanOrEqualToChild.getNodeName());
 															if (nonEnumDispGreaterThanOrEqualToChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[6] = (Object) getElementValue(nonEnumDispGreaterThanOrEqualToChild);
 														}
@@ -722,7 +668,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispIsNullChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispIsNullChild = nonEnumDispIsNullChildren.item(i_count10);
-															System.out.println(nonEnumDispIsNullChild.getNodeName());
 															if (nonEnumDispIsNullChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[7] = (Object) getElementValue(nonEnumDispIsNullChild);
 														}
@@ -733,7 +678,6 @@ public class ParseXMLFile
 														for (int i_count10 = 0; i_count10 < nonEnumDispNotInChildren.getLength(); i_count10++)
 														{
 															Node nonEnumDispIsNotNullChild = nonEnumDispNotInChildren.item(i_count10);
-															System.out.println(nonEnumDispIsNotNullChild.getNodeName());
 															if (nonEnumDispIsNotNullChild.getNodeName().equalsIgnoreCase("displayname"))
 																nonEnumDate[8] = (Object) getElementValue(nonEnumDispIsNotNullChild);
 														}
@@ -854,10 +798,5 @@ public class ParseXMLFile
 	public Object[] getNonEnumStr()
 	{
 		return nonEnumStr;
-	}
-
-	public static void main(String[] args)
-	{
-		ParseXMLFile parseFile = new ParseXMLFile("dynamicUI.xml");
 	}
 }
