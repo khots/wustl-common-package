@@ -129,7 +129,7 @@ public class JoinGraph implements IJoinGraph
 
 		if (unReachableNode.size() != 1)
 		{
-			throw new MultipleRootsException("Multiple Root Exist for the Joing Graph!!!!");
+			throw new MultipleRootsException("Multiple Root Exist for the Joing Graph");
 		}
 		return unReachableNode.get(0);
 	}
