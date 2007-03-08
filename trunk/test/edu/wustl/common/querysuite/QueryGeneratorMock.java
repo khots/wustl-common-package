@@ -17,6 +17,7 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
@@ -684,6 +685,64 @@ public class QueryGeneratorMock
 			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
 			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
 
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+
+	/**
+	 * 
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createSampleQuery1()
+	 * Added two empty expressions under participant as:
+	 * 		PM: ANY
+	 * 			Site: ANY  	
+	 * @return The IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc" with few empty expressions.
+	 */
+	public static IQuery createSampleQueryWithEmptyExp1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createSampleQuery1(); 
+			IConstraints constraints = query.getConstraints();
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			IExpressionId root = constraints.getRootExpressionId();
+			
+			EntityInterface pmEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
+
+			// creating expression for Participant Medical Id.
+			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(pmEntity);
+			IExpression pmExpression = constraints.addExpression(participantConstraintEntity);
+			constraints.getExpression(root).addOperand(getAndConnector(), pmExpression.getExpressionId());
+			
+			AssociationInterface participanPMAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
+			IIntraModelAssociation iParticipanPMAssociation = QueryObjectFactory.createIntraModelAssociation(participanPMAssociation);
+
+			joinGraph.putAssociation(root,
+					pmExpression.getExpressionId(), iParticipanPMAssociation);
+
+			
+			EntityInterface siteEntity = enitytManager.getEntityByName(EntityManagerMock.SITE_NAME);
+
+			// creating expression for Site.
+			IConstraintEntity siteConstraintEntity = QueryObjectFactory.createConstraintEntity(siteEntity);
+			IExpression siteExpression = constraints.addExpression(siteConstraintEntity);
+			pmExpression.addOperand(siteExpression.getExpressionId());
+			
+			AssociationInterface pmSiteAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME, "ParticipantMedicalIdentifier"),
+					EntityManagerMock.SITE_NAME);
+			IIntraModelAssociation ipmSiteAssociation = QueryObjectFactory.createIntraModelAssociation(pmSiteAssociation);
+
+			joinGraph.putAssociation(pmExpression.getExpressionId(),siteExpression.getExpressionId(), ipmSiteAssociation);
+			
 		}
 		catch (Exception e)
 		{

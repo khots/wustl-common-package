@@ -1,5 +1,5 @@
-
 package edu.wustl.common.querysuite.queryengine.impl;
+
 
 import java.sql.Connection;
 import java.text.ParseException;
@@ -81,6 +81,8 @@ public class SqlGenerator implements ISqlGenerator
 	// This will store mapping of output Tre node with the expression Id.
 	private Map<Long, IExpressionId> outPutNodeMap;
 
+	private Set<IExpressionId> emptyExpressions;//Set of Empty Expressions.
+	
 	/**
 	 * Default Constructor to instantiate SQL generator object.
 	 */
@@ -161,6 +163,10 @@ public class SqlGenerator implements ISqlGenerator
 		createAliasAppenderMap(rootExpression, 1, new Integer(1),
 				new HashMap<List<IAssociation>, IExpressionId>());
 
+		// Identifying empty Expressions.
+		emptyExpressions = new HashSet<IExpressionId>();
+		isEmptyExpression(rootExpression.getExpressionId());
+		
 		//Generating output tree.
 		outPutNodeMap = new HashMap<Long, IExpressionId>();
 		IOutputTreeNode root = createOuputTree();
@@ -639,6 +645,7 @@ public class SqlGenerator implements ISqlGenerator
 		{
 			IExpressionOperand operand = expression.getOperand(i);
 			String operandSQL = "";
+			boolean emptyExppression = false;
 			if (!operand.isSubExpressionOperand())
 			{
 				operandSQL = getSQL((IRule) operand); // Processing Rule.
@@ -646,7 +653,11 @@ public class SqlGenerator implements ISqlGenerator
 			else
 			//Processing sub Expression.
 			{
-				operandSQL = processSubExpression(expression, (IExpressionId) operand);
+				emptyExppression = emptyExpressions.contains(operand);
+				if (!emptyExppression)
+				{
+					operandSQL = processSubExpression(expression, (IExpressionId) operand);
+				}
 			}
 			
 			if (!operandSQL.equals("") && noOfRules != 1)
@@ -659,41 +670,94 @@ public class SqlGenerator implements ISqlGenerator
 				LogicalConnector connector = (LogicalConnector) expression.getLogicalConnector(i,
 						i + 1);
 				int nestingNumber = connector.getNestingNumber();
-				
-				if (currentNestingCounter < nestingNumber)
+
+				int nextIndex = i+1;
+				IExpressionOperand nextOperand = expression.getOperand(nextIndex);
+				if (nextOperand.isSubExpressionOperand() && emptyExpressions.contains(nextOperand))
 				{
-					for (; currentNestingCounter<nestingNumber;currentNestingCounter++)
+					for (;nextIndex < noOfRules; nextIndex++)
 					{
-						buffer.append("(");
+						if (!(nextOperand.isSubExpressionOperand() && emptyExpressions.contains(nextOperand)))
+						{
+							break;
+						}
 					}
-					buffer.append(operandSQL);
-				}
-				else if (currentNestingCounter > nestingNumber)
-				{
-					buffer.append(operandSQL);
-					for (; currentNestingCounter > nestingNumber;currentNestingCounter--)
+					if (nextIndex==noOfRules)// Expression over add closing parenthesis.
 					{
-						buffer.append(")");
+						buffer.append(operandSQL);
+						buffer.append(getParenthesis(currentNestingCounter, ")"));
+						currentNestingCounter=0;
 					}
+					else
+					{
+						LogicalConnector newConnector = (LogicalConnector) expression.getLogicalConnector(nextIndex-1,
+								nextIndex);
+						int newNestingNumber = newConnector.getNestingNumber();
+						currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL, newNestingNumber);
+					}
+					i = nextIndex-1;
 				}
-				else 
+				else
 				{
-					buffer.append(operandSQL);
+					currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL, nestingNumber);
+					buffer.append(" " + connector.getLogicalOperator());
 				}
-				buffer.append( " " + connector.getLogicalOperator());
 			}
 			else
 			{
 				buffer.append(operandSQL);
-				for (; currentNestingCounter > 0 ;currentNestingCounter--) // Finishing SQL by adding closing parenthesis if any.
-				{
-					buffer.append(")");
-				}
+				buffer.append(getParenthesis(currentNestingCounter, ")"));// Finishing SQL by adding closing parenthesis if any.
+				currentNestingCounter=0;
 			}
 		}
 		return buffer.toString();
 	}
 
+	/**
+	 * To append the operand SQL to the SQL buffer, with required number of parenthesis.
+	 * @param buffer The reference to the String buffer containing SQL for SQL of operands of an expression.
+	 * @param currentNestingCounter The current nesting count.
+	 * @param operandSQL The SQL of the operand to be appended to buffer
+	 * @param nestingNumber The nesting number for the current operand's operator.
+	 * @return The updated current nesting count.
+	 */
+	private int attachOperandSQL(StringBuffer buffer, int currentNestingCounter, String operandSQL, int nestingNumber)
+	{
+		if (currentNestingCounter < nestingNumber)
+		{
+			buffer.append(getParenthesis(nestingNumber-currentNestingCounter, "("));
+			currentNestingCounter = nestingNumber;
+			buffer.append(operandSQL);
+		}
+		else if (currentNestingCounter > nestingNumber)
+		{
+			buffer.append(operandSQL);
+			buffer.append(getParenthesis(currentNestingCounter-nestingNumber, ")"));
+			currentNestingCounter = nestingNumber;
+		}
+		else 
+		{
+			buffer.append(operandSQL);
+		}
+		return currentNestingCounter;
+	}
+
+	/**
+	 * To get n number of parenthesis.
+	 * @param n The positive integer value
+	 * @param parenthesis either Opening parenthesis or closing parenthesis. 
+	 * @return The n number of parenthesis.
+	 */
+	String getParenthesis(int n, String parenthesis)
+	{
+		String string = "";
+		for (int i = 0; i < n; i++)
+		{
+			string+=parenthesis;
+		}
+		return string;
+	}
+	
 	/**
 	 * To Proceess sub Expression.
 	 * @param expression The reference to parent Expression.
@@ -1320,5 +1384,41 @@ public class SqlGenerator implements ISqlGenerator
 		}
 
 		throw new SqlException("No Primary key attribute found for Entity:" + entity.getName());
+	}
+	
+	/**
+	 * To check if the Expression is empty or not. It will simultaneously add such empty expressions in the emptyExpressions set.
+	 * 
+	 * An expression is said to be empty when:
+	 *  - it contains no rule as operand.
+	 *  - and all of its children(i.e subExpressions & their subExpressions & so on) contains no rule
+	 *  
+	 * @param expressionId the reference to the expression id.
+	 * @return true if the expression is empty.
+	 */
+	private boolean isEmptyExpression(IExpressionId expressionId)
+	{
+		Expression expression = (Expression)constraints.getExpression(expressionId);
+		List<IExpressionId> operandList = joinGraph.getChildrenList(expressionId);
+
+		boolean isEmpty = true;
+		if (!operandList.isEmpty()) // Check whether any of its children contains rule. 
+		{
+			for(IExpressionId subExpression: operandList)
+			{
+				if (!isEmptyExpression(subExpression))
+				{
+					isEmpty = false;
+				}
+			}
+		}
+
+		isEmpty  = isEmpty && !expression.containsRule();// check if there are rule present as subexpression.
+		if (isEmpty)
+		{
+			emptyExpressions.add(expressionId); // Expression is empty.
+		}
+
+		return isEmpty;
 	}
 }
