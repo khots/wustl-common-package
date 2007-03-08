@@ -2,8 +2,13 @@
 package edu.wustl.common.querysuite.queryengine.impl;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
@@ -33,11 +38,21 @@ public class CommonPathFinder implements IPathFinder
 		try
 		{
 			dao.openSession(null);
-			connection = dao.getConnection();
+			InitialContext context = new InitialContext();
+ 			DataSource dataSource =  (DataSource) context.lookup("java:/catissuecore");
+ 			connection = dataSource.getConnection();
 			PathFinder pathFinder = (PathFinder) PathFinder.getInstance();
 			pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity, connection);
 		}
 		catch (DAOException e)
+		{
+			e.printStackTrace();
+		}
+		catch (NamingException e)
+		{
+			e.printStackTrace();
+		}
+		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
