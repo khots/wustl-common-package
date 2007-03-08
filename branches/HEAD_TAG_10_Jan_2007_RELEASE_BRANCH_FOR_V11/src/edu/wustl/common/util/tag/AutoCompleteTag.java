@@ -266,7 +266,7 @@ public class AutoCompleteTag extends TagSupport
 	@SuppressWarnings("unchecked")
 	private String getAutocompleteHTMLForDynamicProperty() {
 	    String autoCompleteResult = "";
-	    
+	    String displayProperty = "display" + property;
 	    prepareCommonData();
 	
 		/**
@@ -282,9 +282,24 @@ public class AutoCompleteTag extends TagSupport
 			onChange += ";trimByAutoTagAndSetIdInForm(this);";
 		}
 		String name = "";
-		if(!initialValue.equals("0"))
+		if(initialValue.equals("0") || initialValue.toString().equalsIgnoreCase("undefined") || initialValue.equals(""))
 		{
-	     	name = (String)initialValue;
+			name = pageContext.getRequest().getParameter(displayProperty);
+	    	
+	    	 if(name == null || name.equals(""))
+	 	    {
+	    	  String[] title = (String[])
+	    	  pageContext.getRequest().getParameterValues(displayProperty);
+	    	  
+	    	  if (title != null && title.length > 0) { if (title[0] != null) {
+	    		  name = title[0]; } }
+	    	 
+	 	    } 
+		}
+		
+		if(name == null)
+		{
+			name = "";
 		}
 		String value = "";
 		if (optionsList instanceof List) { 
@@ -298,12 +313,13 @@ public class AutoCompleteTag extends TagSupport
 				{
 					name = nvb1.getName();
 					value = nvb1.getValue();
+					break;
 				}
 			}
 			
 	} 
 		  
-		String displayProperty = "display" + property;
+		
 	    String div = "divFor" + displayProperty; 
 	    autoCompleteResult += "<div id=\"" + div + "\" style=\"display: none;\" class=\"autocomplete\">";
 	    autoCompleteResult += "</div>";
