@@ -677,6 +677,7 @@ public class SqlGenerator implements ISqlGenerator
 				{
 					for (;nextIndex < noOfRules; nextIndex++)
 					{
+						nextOperand = expression.getOperand(nextIndex);
 						if (!(nextOperand.isSubExpressionOperand() && emptyExpressions.contains(nextOperand)))
 						{
 							break;
@@ -694,6 +695,7 @@ public class SqlGenerator implements ISqlGenerator
 								nextIndex);
 						int newNestingNumber = newConnector.getNestingNumber();
 						currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL, newNestingNumber);
+						buffer.append(" " + newConnector.getLogicalOperator());
 					}
 					i = nextIndex-1;
 				}
@@ -822,7 +824,10 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int noOfConditions = rule.size();
-
+		if (noOfConditions==0)
+		{
+			throw new SqlException("No conditions defined in the Rule!!!");
+		}
 		for (int i = 0; i < noOfConditions; i++) // Processing all conditions in Rule combining them with AND operator.
 		{
 			String condition = getSQL(rule.getCondition(i), rule.getContainingExpression());
