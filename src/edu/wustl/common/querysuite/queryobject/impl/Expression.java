@@ -256,7 +256,8 @@ public class Expression implements IExpression
 	{
 		if (rightOperandIndex == leftOperandIndex + 1)
 		{
-			if(leftOperandIndex == -1 || leftOperandIndex == logicalConnectors.size()) {
+			if(leftOperandIndex == -1 || leftOperandIndex == logicalConnectors.size()) 
+			{
 				return QueryObjectFactory.createLogicalConnector(LogicalOperator.Unknown, -1);
 			}
 			return logicalConnectors.get(leftOperandIndex);
@@ -554,5 +555,21 @@ public class Expression implements IExpression
 	private boolean isHavingSameClass(IExpression expression1, IExpression expression2)
 	{
 		return expression1.getConstraintEntity().equals(expression2.getConstraintEntity());
+	}
+	
+	/**
+	 * To check whether there are any rule present in the Expression.
+	 * @return true if there is atleast one rule present in the operand list of expression.
+	 */
+	public boolean containsRule()
+	{
+		for (int i=0;i<numberOfOperands();i++)
+		{
+			if (!getOperand(i).isSubExpressionOperand())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

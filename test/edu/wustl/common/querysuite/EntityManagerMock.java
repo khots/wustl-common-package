@@ -501,6 +501,11 @@ public class EntityManagerMock extends EntityManager
 			association = createAssociation(PARTICIPANT_NAME, COLLECTION_PROTOCOL_REGISTRATION_NAME, AssociationDirection.BI_DIRECTIONAL, "participant","collectionProtocolRegistrationCollection", null, "PARTICIPANT_ID");
 			associations.add(association);
 		}
+		else if (sourceEntityName.equals(PARTICIPANT_MEDICAL_ID_NAME) && sourceRoleName.equals("ParticipantMedicalIdentifier"))
+		{
+			AssociationInterface association = createAssociation(PARTICIPANT_MEDICAL_ID_NAME, SITE_NAME, AssociationDirection.SRC_DESTINATION, "ParticipantMedicalIdentifier","Site", "SITE_ID", null);
+			associations.add(association);
+		}
 		else if (sourceEntityName.equals(SPECIMEN_COLLECTION_GROUP_NAME) && sourceRoleName.equals("specimenCollectionGroup"))
 		{
 			AssociationInterface association = createAssociation(SPECIMEN_COLLECTION_GROUP_NAME, SPECIMEN_NAME, AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup","specimenCollection", null, "SPECIMEN_COLLECTION_GROUP_ID");

@@ -119,7 +119,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 //			e.printStackTrace();
-			assertTrue("Unexpected Expection!!!", false);
+			fail("Unexpected Expection!!!");
 		}
 	}
 
@@ -151,7 +151,7 @@ public class SqlGeneratorTestCase extends TestCase
 }
 		catch (Exception e)
 		{
-			assertTrue("Unexpected Expection!!!", false);
+			fail("Unexpected Expection!!!");
 		}
 	}
 
@@ -186,7 +186,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			assertTrue("Unexpected Expection!!!", false);
+			fail("Unexpected Expection!!!");
 		}
 	}
 
@@ -243,7 +243,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection!!!", false);
+			fail("Unexpected Expection!!!");
 		}
 	}
 
@@ -276,7 +276,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -298,7 +298,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -316,7 +316,7 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 		catch (Exception e)
 		{
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -348,10 +348,34 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
+	/**
+	 * To test the Query having empty expressions.
+	 *
+	 */
+	public void testSampleQueryWithEmptyExp1()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQueryWithEmptyExp1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//			System.out.println("testSampleQuery1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for From clause of the Expression !!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column32 ,ParticipantMedicalIdentif_5.IDENTIFIER Column33 ,Site_6.ACTIVITY_STATUS Column34 ,Site_6.EMAIL_ADDRESS Column35 ,Site_6.TYPE Column36 ,Site_6.NAME Column37 ,Site_6.IDENTIFIER Column38 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) left join catissue_site Site_6 on (ParticipantMedicalIdentif_5.SITE_ID=Site_6.IDENTIFIER) Where (Participant_1.LAST_NAME like 's%') And(((Specimen_4.TYPE='Fixed Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue') Or((Specimen_4.TYPE='Fresh Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue'))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
 	/**
 	 * To test the SQL for the sample query no. 2 in the "SampleQueriesWithMultipleSubQueryApproach.doc"
 	 * <pre>
@@ -378,7 +402,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -415,7 +439,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -453,7 +477,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -485,7 +509,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -517,7 +541,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 
@@ -560,7 +584,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 	/**
@@ -608,7 +632,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//			e.printStackTrace();
-			assertTrue("Unexpected Expection!!!", false);
+			fail("Unexpected Expection!!!");
 		}
 	}
 
@@ -662,7 +686,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//			e.printStackTrace();
-			assertTrue("Unexpected Expection!!!", false);
+			fail("Unexpected Expection!!!");
 		}
 	}
 	
@@ -696,7 +720,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 	
@@ -732,7 +756,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 	
@@ -767,7 +791,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 	
@@ -796,7 +820,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 	/**
@@ -820,7 +844,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 	/**
@@ -847,7 +871,7 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			assertTrue("Unexpected Expection, While Generating SQL for the Query!!!", false);
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 }
