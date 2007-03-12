@@ -438,7 +438,10 @@ public class SqlGenerator implements ISqlGenerator
 						// Many to many case.
 						//TODO handle it seperately
 						throw new RuntimeException(
-								"Many to many condition is not yet handled in sqlgenerator!!!");
+								"Many to many condition is not yet handled in sqlgenerator!!! " +
+								"Many to many association id"+ eavAssociation.getId()+" found between "+eavAssociation.getEntity().getName()+" and " 
+								+ eavAssociation.getTargetEntity().getName()
+								+" source key: "+constraintProperties.getSourceEntityKey()+" Target key: "+constraintProperties.getTargetEntityKey());
 					}
 					else
 					{
@@ -583,7 +586,10 @@ public class SqlGenerator implements ISqlGenerator
 						// Many to many case.
 						// TODO write logic for this.
 						throw new RuntimeException(
-								"Many to many condition is not yet handled in sqlgenerator!!!");
+								"Many to many condition is not yet handled in sqlgenerator!!! " +
+								"Many to many association id"+ eavAssociation.getId()+" found between "+eavAssociation.getEntity().getName()+" and " 
+								+ eavAssociation.getTargetEntity().getName()
+								+" source key: "+eavAssociation.getConstraintProperties().getSourceEntityKey()+" Target key: "+eavAssociation.getConstraintProperties().getTargetEntityKey());
 					}
 				}
 				pseudoAndSQL = "Select " + selectAttribute;
@@ -806,7 +812,10 @@ public class SqlGenerator implements ISqlGenerator
 					// Many to Many case.
 					//TODO
 					throw new RuntimeException(
-							"Many to many condition is not yet handled in sqlgenerator!!!");
+							"Many to many condition is not yet handled in sqlgenerator!!! " +
+							"Many to many association id"+ eavAssociation.getId()+" found between "+eavAssociation.getEntity().getName()+" and " 
+							+ eavAssociation.getTargetEntity().getName()
+							+" source key: "+eavAssociation.getConstraintProperties().getSourceEntityKey()+" Target key: "+eavAssociation.getConstraintProperties().getTargetEntityKey());
 				}
 			}
 			sql = joinAttribute + " = ANY(" + sql + ")";
