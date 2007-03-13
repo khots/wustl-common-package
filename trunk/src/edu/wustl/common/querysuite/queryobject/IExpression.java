@@ -167,5 +167,11 @@ public interface IExpression extends IBaseQueryObject
 	 * @return the no. of operands in the expression.
 	 */
 	int numberOfOperands();
+	
+	/**
+	 * This expression is in view or not 
+	 * @return true if it is in view
+	 */
+	boolean isInView();
 
 }

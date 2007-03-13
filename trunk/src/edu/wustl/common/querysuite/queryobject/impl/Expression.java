@@ -36,6 +36,8 @@ public class Expression implements IExpression
 	private IExpressionId expressionId;
 
 	private IConstraintEntity constraintEntity;
+	
+	private boolean isInView = true;
 
 	/**
 	 * 
@@ -572,4 +574,20 @@ public class Expression implements IExpression
 		}
 		return false;
 	}
+	
+	/**
+	 * This expression is in view or not 
+	 * @return true if it is in view
+	 */
+	public boolean isInView()
+	{
+		return isInView;
+	}
+
+	public void setInView(boolean isInView)
+	{
+		this.isInView = isInView;
+	}
+	
+	
 }
