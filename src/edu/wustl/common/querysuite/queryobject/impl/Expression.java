@@ -584,6 +584,11 @@ public class Expression implements IExpression
 		return isInView;
 	}
 
+	/**
+	 * To set the expression in view.
+	 * @param isInView true if this expression should be added in view.
+	 * @see edu.wustl.common.querysuite.queryobject.IExpression#setInView(boolean)
+	 */
 	public void setInView(boolean isInView)
 	{
 		this.isInView = isInView;
