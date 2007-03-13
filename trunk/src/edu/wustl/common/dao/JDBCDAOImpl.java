@@ -1,4 +1,4 @@
-/**
+									 /**
  * <p>Title: JDBCDAO Class>
  * <p>Description:	JDBCDAO is default implementation of AbstractDAO through JDBC.
  * Copyright:    Copyright (c) year
@@ -11,6 +11,7 @@ package edu.wustl.common.dao;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,6 +31,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.global.Constants;
@@ -534,12 +537,16 @@ public class JDBCDAOImpl implements JDBCDAO
 		ResultSetMetaData metaData = resultSet.getMetaData();
 		//Make a list of Date columns
 		List dateColumns = new ArrayList();
-		for (int i = 1; i < metaData.getColumnCount(); i++)
+		List numberColumns = new ArrayList();
+				
+		for (int i = 1; i <= metaData.getColumnCount(); i++)
 		{
 			String type = metaData.getColumnTypeName(i);
 
 			if (type.equals("DATE"))
 				dateColumns.add(new Integer(i));
+			if (type.equals("NUMBER"))
+				numberColumns.add(new Integer(i));
 		}
 		resultSet.close();
 		statement.close();
@@ -565,11 +572,21 @@ public class JDBCDAOImpl implements JDBCDAO
 			for (i = 0; i < columnValues.size(); i++)
 			{
 				Object obj = columnValues.get(i);
-				//if column value is ## and it is a date field, replace value with default value("00-00-0000")
+				/**
+				 * For Number -1 is used as MarkUp data For Date 1-1-9999 is used as markUp data.
+				 * Please refer bug 3576
+				 */
+
 				if (dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
 				{
-					obj = null;
-					stmt.setDate(i + 1, (java.sql.Date) obj);
+					java.util.Date date = null;
+					try {
+						date = Utility.parseDate("1-1-9999","mm-dd-yyyy");
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					Date sqlDate = new Date(date.getTime());
+					stmt.setDate(i + 1, sqlDate);
 				}
 				else
 				{
@@ -581,14 +598,22 @@ public class JDBCDAOImpl implements JDBCDAO
 					}
 					else
 					{
+						if (numberColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+						{
+							stmt.setObject(i + 1, new Integer(-1));
+						}
+						else
+						{
 						stmt.setObject(i + 1, obj);
 					}
 				}
+			}
 			}
 			stmt.executeUpdate();
 		}
 		catch (SQLException sqlExp)
 		{
+			sqlExp.printStackTrace();
 			throw new DAOException(sqlExp.getMessage(), sqlExp);
 		}
 		finally
