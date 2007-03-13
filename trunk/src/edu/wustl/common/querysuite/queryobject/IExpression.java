@@ -174,4 +174,9 @@ public interface IExpression extends IBaseQueryObject
 	 */
 	boolean isInView();
 
+	/**
+	 * To set the expression in view.
+	 * @param isInView true if this expression should be added in view.
+	 */
+	void setInView(boolean isInView);
 }
