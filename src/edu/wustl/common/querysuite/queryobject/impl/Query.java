@@ -24,6 +24,7 @@ public class Query implements IQuery
 	/**
 	 * @return the reference to the root noe of the output tree.
 	 * @see edu.wustl.common.querysuite.queryobject.IQuery#getRootOutputClass()
+	 * @deprecated This method is not required any more for output tree.
 	 */
 	public IOutputTreeNode getRootOutputClass()
 	{
@@ -56,6 +57,7 @@ public class Query implements IQuery
 	/**
 	 * @param root The reference to the root noe of the output tree.
 	 * @see edu.wustl.common.querysuite.queryobject.IQuery#setRootOutputClass(edu.wustl.common.querysuite.queryobject.IOutputTreeNode)
+	 * @deprecated This method is not required any more for output tree.
 	 */
 	public void setRootOutputClass(IOutputTreeNode root)
 	{

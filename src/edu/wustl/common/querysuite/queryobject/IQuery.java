@@ -29,12 +29,14 @@ public interface IQuery extends IBaseQueryObject
 	 * form a tree where the edges are associations.
 	 * @return the reference to the root noe of the output tree.
 	 * @see IOutputTreeNode
+	 * @deprecated This method is not required any more for output tree.
 	 */
 	IOutputTreeNode getRootOutputClass();
 
 	/**
 	 * To set the output tree for the Query result view.
 	 * @param root The reference to the root noe of the output tree.
+	 * @deprecated This method is not required any more for output tree.
 	 */
 	void setRootOutputClass(IOutputTreeNode root);
 }

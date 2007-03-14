@@ -31,6 +31,7 @@ public interface ISqlGenerator
 	 * This method will return map of DE attributes verses & their column names present in the select part of the SQL. 
 	 * These DE attributes will be attributes of the each node present in the Output tree.
 	 * @return map of DE attributes verses & their column names present in the select part of the SQL.
+	 * @deprecated This method will not required any more.
 	 */
 	Map<Long, Map<AttributeInterface,String>> getColumnMap();
 }
