@@ -148,9 +148,9 @@ public class AutoCompleteTag extends TagSupport
 			{
 				onChange = "trimByAutoTag(this)";
 			}
-			else
+			else 
 			{
-				onChange += ";trimByAutoTag(this)";
+				onChange = "trimByAutoTag(this);" + onChange;
 			}
 	    String div = "divFor" + property; 
 	    autoCompleteResult += "<div id=\"" + div + "\" style=\"display: none;\" class=\"autocomplete\">";
@@ -279,7 +279,7 @@ public class AutoCompleteTag extends TagSupport
 		}
 		else
 		{
-			onChange += ";trimByAutoTagAndSetIdInForm(this);";
+			onChange = "trimByAutoTagAndSetIdInForm(this);" + onChange;
 		}
 		String name = "";
 		if(initialValue.equals("0") || initialValue.toString().equalsIgnoreCase("undefined") || initialValue.equals(""))
