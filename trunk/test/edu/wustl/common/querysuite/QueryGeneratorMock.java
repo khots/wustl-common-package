@@ -22,7 +22,6 @@ import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
-import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
@@ -260,9 +259,9 @@ public class QueryGeneratorMock
 			joinGraph.putAssociation(participantExpression.getExpressionId(), pmExpression
 					.getExpressionId(), association);
 
-			// creating output tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-			query.setRootOutputClass(participantNode);
+//			// creating output tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//			query.setRootOutputClass(participantNode);
 
 		}
 		catch (Exception e)
@@ -386,10 +385,10 @@ public class QueryGeneratorMock
 			joinGraph.putAssociation(scgExpression.getExpressionId(), SpecimenExpression3
 					.getExpressionId(), iScgAndSpecimenAssociation);
 
-			// creating output tree.
-			IOutputTreeNode scgNode = QueryObjectFactory.createOutputTreeNode(createScgOutputEntity(scgEntity));
-			query.setRootOutputClass(scgNode);
-			scgNode.addChild(iScgAndSpecimenAssociation, createSpecimenOutputEntity(specimenEntity));
+//			// creating output tree.
+//			IOutputTreeNode scgNode = QueryObjectFactory.createOutputTreeNode(createScgOutputEntity(scgEntity));
+//			query.setRootOutputClass(scgNode);
+//			scgNode.addChild(iScgAndSpecimenAssociation, createSpecimenOutputEntity(specimenEntity));
 
 		}
 		catch (Exception e)
@@ -421,10 +420,10 @@ public class QueryGeneratorMock
 			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 			participantExpression.addOperand(createParticipantRule2(participantEntity));
-
-			// creating output tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-			query.setRootOutputClass(participantNode);
+//
+//			// creating output tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//			query.setRootOutputClass(participantNode);
 
 		}
 		catch (Exception e)
@@ -675,15 +674,15 @@ public class QueryGeneratorMock
 			specimenExpression2Rule2.addCondition(specimenExpression2Rule2Condition1);
 			specimenExpression2.addOperand(specimenExpression2Rule2);
 
-			// Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
+//			// Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
 
 		}
 		catch (Exception e)
@@ -883,15 +882,15 @@ public class QueryGeneratorMock
 			specimenExpression1Rule2.addCondition(specimenExpression1Rule2Condition1);
 			specimenExpression1.addOperand(orConnetor, specimenExpression1Rule2);
 
-			// Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
+//			// Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
 
 		}
 		catch (Exception e)
@@ -1089,15 +1088,15 @@ public class QueryGeneratorMock
 			tissueSpecimenExpression2Rule2.addCondition(tissueSpecimenExpression2Rule2Condition1);
 			tissueSpecimenExpression2.addOperand(orConnector, tissueSpecimenExpression2Rule2);
 
-			// Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			scgNode.addChild(iSpgAndMolecularSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
+//			// Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			scgNode.addChild(iSpgAndMolecularSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
 		}
 		catch (Exception e)
 		{
@@ -1305,15 +1304,15 @@ public class QueryGeneratorMock
 			scg2SpecimenExpression2Rule1.addCondition(scg2SpecimenExpression2Rule1Condition1);
 			scg2SpecimenExpression2.addOperand(scg2SpecimenExpression2Rule1);
 
-			// Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
+//			// Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
 		}
 		catch (Exception e)
 		{
@@ -1435,16 +1434,16 @@ public class QueryGeneratorMock
 			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
 			specimenExpression2.addOperand(specimenExpression2Rule1);
 
-			// Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			IOutputTreeNode  specimenNode = scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
-			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
+//			// Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			IOutputTreeNode  specimenNode = scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
+//			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
 
 
 		}
@@ -1608,16 +1607,16 @@ public class QueryGeneratorMock
 			specimenEvtExpression2Rule1.addCondition(specimenEvtExpression2Rule1Condition);
 			frozenEvtExpression2.addOperand(specimenEvtExpression2Rule1);	
 			
-			// Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			IOutputTreeNode  specimenNode = scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
-			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(fluidSpecimenEntity));
+//			// Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			IOutputTreeNode  specimenNode = scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(tissueSpecimenEntity));
+//			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(fluidSpecimenEntity));
 
 		}
 		catch (Exception e)
@@ -1818,16 +1817,16 @@ public class QueryGeneratorMock
 					specimenCharacteristicExpression2Rule1Values1);
 			specimenCharacteristicExpression2Rule1.addCondition(specimenCharacteristicExpression2Rule1Condition1);
 
-			//Creating output Tree.
-			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
-
-			query.setRootOutputClass(participantNode);
-
-			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
-
-			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
-			IOutputTreeNode  specimenNode = scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
-			specimenNode.addChild(iSpecimeAndSpecimeCharacteristicAssociation, createSpecimenCharacteristicOutputEntity(specimenCharacteristicEntity));
+//			//Creating output Tree.
+//			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
+//
+//			query.setRootOutputClass(participantNode);
+//
+//			IOutputTreeNode cprNode = participantNode.addChild(iParticipanCPRegAssociation, createCollProtoRegOutputEntity(cprEntity));
+//
+//			IOutputTreeNode scgNode = cprNode.addChild(iCprAndSpgAssociation, createScgOutputEntity(scgEntity));
+//			IOutputTreeNode  specimenNode = scgNode.addChild(iSpgAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
+//			specimenNode.addChild(iSpecimeAndSpecimeCharacteristicAssociation, createSpecimenCharacteristicOutputEntity(specimenCharacteristicEntity));
 
 		}
 		catch (Exception e)
@@ -1937,12 +1936,12 @@ public class QueryGeneratorMock
 			specimenExpression2.addOperand(orConnector,childSpecimenExpression.getExpressionId());
 			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
 
-			//Creating output Tree.
-			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
-
-			query.setRootOutputClass(specimenNode);
-
-			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
+//			//Creating output Tree.
+//			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
+//
+//			query.setRootOutputClass(specimenNode);
+//
+//			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
 
 		}
 		catch (Exception e)
@@ -2076,12 +2075,12 @@ public class QueryGeneratorMock
 			childSpecimenExpression.addOperand(orConnector,grandChildSpecimenExpression.getExpressionId());
 			joinGraph.putAssociation(childSpecimenExpression.getExpressionId(), grandChildSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
 
-			//Creating output Tree.
-			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
-
-			query.setRootOutputClass(specimenNode);
-
-			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
+//			//Creating output Tree.
+//			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
+//
+//			query.setRootOutputClass(specimenNode);
+//
+//			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
 		}
 		catch (Exception e)
 		{
@@ -2228,12 +2227,12 @@ public class QueryGeneratorMock
 			specimenExpression2.addParantheses(1,2);
 			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
 
-			//Creating output Tree.
-			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
-
-			query.setRootOutputClass(specimenNode);
-
-			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
+//			//Creating output Tree.
+//			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
+//
+//			query.setRootOutputClass(specimenNode);
+//
+//			specimenNode.addChild(iSpecimenAndSpecimeAssociation, createSpecimenOutputEntity(specimenEntity));
 		}
 		catch (Exception e)
 		{
@@ -2638,6 +2637,160 @@ public class QueryGeneratorMock
 			IConstraints constraints = query.getConstraints();
 			IExpression participantExpression = constraints.getExpression(constraints.getRootExpressionId());
 			participantExpression.addParantheses(2,3);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * 
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createSampleQuery1()
+	 * Defining Result view as:
+	 * <pre>
+	 * 		P:
+	 * 			SCG:  	
+	 * </pre>
+	 * @return The IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc" with few empty expressions.
+	 */
+	public static IQuery createSampleQuery1WithSelectView1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createSampleQuery1(); 
+			IConstraints constraints = query.getConstraints();
+			IExpressionId rootExpId = constraints.getRootExpressionId();
+			
+			IExpression participantExpression = constraints.getExpression(rootExpId);
+			IExpression collectionProtocolRegExpression = constraints.getExpression((IExpressionId)participantExpression.getOperand(1));
+			IExpression specimenCollectionGroupExpression = constraints.getExpression((IExpressionId)collectionProtocolRegExpression.getOperand(0));
+			IExpression specimenExpression1 = constraints.getExpression((IExpressionId)specimenCollectionGroupExpression.getOperand(0));
+			IExpression specimenExpression2 = constraints.getExpression((IExpressionId)specimenCollectionGroupExpression.getOperand(1));
+
+			// View Part
+			participantExpression.setInView(true);
+			collectionProtocolRegExpression.setInView(false);
+			specimenCollectionGroupExpression.setInView(true);
+			specimenExpression1.setInView(false);
+			specimenExpression2.setInView(false);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * 
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createSampleQuery1()
+	 * Defining Result view as:
+	 * <pre>
+	 * 		S:  	
+	 * </pre>
+	 * @return The IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc" with few empty expressions.
+	 */
+	public static IQuery createSampleQuery1WithSelectView2()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createSampleQuery1(); 
+			IConstraints constraints = query.getConstraints();
+			IExpressionId rootExpId = constraints.getRootExpressionId();
+			
+			IExpression participantExpression = constraints.getExpression(rootExpId);
+			IExpression collectionProtocolRegExpression = constraints.getExpression((IExpressionId)participantExpression.getOperand(1));
+			IExpression specimenCollectionGroupExpression = constraints.getExpression((IExpressionId)collectionProtocolRegExpression.getOperand(0));
+			IExpression specimenExpression1 = constraints.getExpression((IExpressionId)specimenCollectionGroupExpression.getOperand(0));
+			IExpression specimenExpression2 = constraints.getExpression((IExpressionId)specimenCollectionGroupExpression.getOperand(1));
+
+			// View Part
+			participantExpression.setInView(false);
+			collectionProtocolRegExpression.setInView(false);
+			specimenCollectionGroupExpression.setInView(false);
+			specimenExpression1.setInView(true);
+			specimenExpression2.setInView(true);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * 
+	 * @see edu.wustl.common.querysuite.QueryGeneratorMock#createSampleQuery1()
+	 * Adding Expression participant medical identifier under Participant node. The final Query is:
+	 * <pre>
+	 * 	P: LastNameStarts with 'S'<P>
+	 * 		PM: medicalRecordNumber equals 'M001'
+	 * 		AND
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Class equals "Tissue" AND Type equals "Fixed Tissue"
+	 *  					OR
+	 *  			S: Class equals "Tissue" AND Type equals "Fresh Tissue" 
+	 * </pre>
+	 * Setting PM, G & S node in output tree, Resulting into 2 output trees which are"
+	 * <pre>
+	 * 1. First tree:
+	 * 		G:
+	 * 			S:  	
+	 * 2. Second tree:
+	 * 		PM
+	 * </pre>
+	 * @return The IQuery Object representation for the sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc" with few empty expressions.
+	 */
+	public static IQuery createSampleQuery1WithSelectView3()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = createSampleQuery1(); 
+			IConstraints constraints = query.getConstraints();
+			IExpressionId rootExpId = constraints.getRootExpressionId();
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			
+			IExpression participantExpression = constraints.getExpression(rootExpId);
+			IExpression collectionProtocolRegExpression = constraints.getExpression((IExpressionId)participantExpression.getOperand(1));
+			IExpression specimenCollectionGroupExpression = constraints.getExpression((IExpressionId)collectionProtocolRegExpression.getOperand(0));
+			IExpression specimenExpression1 = constraints.getExpression((IExpressionId)specimenCollectionGroupExpression.getOperand(0));
+			IExpression specimenExpression2 = constraints.getExpression((IExpressionId)specimenCollectionGroupExpression.getOperand(1));
+
+			
+			// creating Participant medical Id Expression.
+			EntityInterface pmIdEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
+			IConstraintEntity pmIdConstraintEntity = QueryObjectFactory.createConstraintEntity(pmIdEntity);
+			IExpression pmExpression = constraints.addExpression(pmIdConstraintEntity);
+			participantExpression.addOperand(getAndConnector(), pmExpression.getExpressionId());
+			pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmIdEntity, pmExpression));
+
+			// Adding association to joingraph.
+			AssociationInterface specimenAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
+			IIntraModelAssociation association = QueryObjectFactory.createIntraModelAssociation(specimenAndSpecimeAssociation);
+			joinGraph.putAssociation(participantExpression.getExpressionId(), pmExpression
+					.getExpressionId(), association);
+			
+			// View Part
+			participantExpression.setInView(false);
+			collectionProtocolRegExpression.setInView(false);
+			specimenCollectionGroupExpression.setInView(true);
+			specimenExpression1.setInView(true);
+			specimenExpression2.setInView(true);
+			pmExpression.setInView(true);
 		}
 		catch (Exception e)
 		{

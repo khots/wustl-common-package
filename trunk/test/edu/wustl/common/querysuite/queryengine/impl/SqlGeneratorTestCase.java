@@ -6,9 +6,12 @@ package edu.wustl.common.querysuite.queryengine.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.Entity;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
@@ -21,6 +24,7 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
+import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -223,7 +227,7 @@ public class SqlGeneratorTestCase extends TestCase
 					"(Participant_1.ACTIVITY_STATUS='Active') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy'))) And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
 					SQL);
 			
-			String selectPart = generator.getSelectPart(query.getRootOutputClass());
+			String selectPart = generator.getSelectPart();
 			//			System.out.println(selectPart);
 			assertEquals(
 					"Incorrect SQL formed for Select clause of the Expression !!!",
@@ -1018,6 +1022,136 @@ public class SqlGeneratorTestCase extends TestCase
 		catch (Exception e)
 		{
 			fail("Unexpected Expection, While Generating SQL for the Query with Empty Expressions with Parenthesis!!!");
+		}
+	}
+	
+	/**
+	 * 
+	 * To Test the SQL for sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc".
+	 * <pre>
+	 *  P: LastNameStarts with 'S'
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Class equals "Tissue" AND Type equals "Fixed Tissue"
+	 *  					OR
+	 *  			S: Class equals "Tissue" AND Type equals "Fresh Tissue" 
+	 *  
+	 * Defining Result view as:
+	 * 	P:
+	 * 		G:
+	 * </pre>  	
+	 */
+	public void testSampleQuery1WithSelectView1()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery1WithSelectView1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//			System.out.println("testSampleQuery1WithSelectView1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query with output view!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column12 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column13 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column14 ,SpecimenCollectionGroup_3.NAME Column15 ,SpecimenCollectionGroup_3.IDENTIFIER Column16 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant_1.LAST_NAME like 's%') And(((Specimen_4.TYPE='Fixed Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue') Or((Specimen_4.TYPE='Fresh Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue'))",
+					sql);
+			
+			assertEquals(
+					"Incorrect number of output trees Formed while generating SQL !!!",
+					1,
+					generator.getOutputTreeMap().keySet().size());
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	/**
+	 * 
+	 * To Test the SQL for sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc".
+	 * <pre>
+	 *  P: LastNameStarts with 'S'
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Class equals "Tissue" AND Type equals "Fixed Tissue"
+	 *  					OR
+	 *  			S: Class equals "Tissue" AND Type equals "Fresh Tissue" 
+	 *  
+	 * Defining Result view as:
+	 * 	S:
+	 * </pre>  	
+	 */
+	public void testSampleQuery1WithSelectView2()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery1WithSelectView2();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//			System.out.println("testSampleQuery1WithSelectView2:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query with output view !!!",
+					"Select Specimen_4.TYPE Column0 ,Specimen_4.POSITION_DIMENSION_TWO Column1 ,Specimen_4.POSITION_DIMENSION_ONE Column2 ,Specimen_4.PATHOLOGICAL_STATUS Column3 ,Specimen_4.LINEAGE Column4 ,Specimen_4.LABEL Column5 ,Specimen_4.IDENTIFIER Column6 ,Specimen_4.COMMENTS Column7 ,Specimen_4.BARCODE Column8 ,Specimen_4.AVAILABLE Column9 ,Specimen_4.ACTIVITY_STATUS Column10 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant_1.LAST_NAME like 's%') And(((Specimen_4.TYPE='Fixed Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue') Or((Specimen_4.TYPE='Fresh Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue'))",
+					sql);
+
+			assertEquals(
+					"Incorrect number of output trees Formed while generating SQL !!!",
+					1,
+					generator.getOutputTreeMap().keySet().size());
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
+	/**
+	 * 
+	 * To Test the SQL for sample query no. 1 in the "SampleQueriesWithMultipleSubQueryApproach.doc".
+	 * <pre>
+	 * 	P: LastNameStarts with 'S'<P>
+	 * 		PM: medicalRecordNumber equals 'M001'
+	 * 		AND
+	 *  	C: ANY
+	 *  		G: ANY
+	 *  			S: Class equals "Tissue" AND Type equals "Fixed Tissue"
+	 *  					OR
+	 *  			S: Class equals "Tissue" AND Type equals "Fresh Tissue" 
+	 * </pre>
+	 * Setting PM, G & S node in output tree, Resulting into 2 output trees which are"
+	 * <pre>
+	 * 1. First tree:
+	 * 		G:
+	 * 			S:  	
+	 * 2. Second tree:
+	 * 		PM
+	 * </pre>
+	 */
+	public void testSampleQuery1WithSelectView3()
+	{
+		IQuery query = QueryGeneratorMock.createSampleQuery1WithSelectView3();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//			System.out.println("testSampleQuery1WithSelectView3:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query with output view !!!",
+					"Select SpecimenCollectionGroup_3.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_3.NAME Column3 ,SpecimenCollectionGroup_3.IDENTIFIER Column4 ,Specimen_4.TYPE Column5 ,Specimen_4.POSITION_DIMENSION_TWO Column6 ,Specimen_4.POSITION_DIMENSION_ONE Column7 ,Specimen_4.PATHOLOGICAL_STATUS Column8 ,Specimen_4.LINEAGE Column9 ,Specimen_4.LABEL Column10 ,Specimen_4.IDENTIFIER Column11 ,Specimen_4.COMMENTS Column12 ,Specimen_4.BARCODE Column13 ,Specimen_4.AVAILABLE Column14 ,Specimen_4.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_5.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) Where (Participant_1.LAST_NAME like 's%') And(((Specimen_4.TYPE='Fixed Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue') Or((Specimen_4.TYPE='Fresh Tissue') And Specimen_4.SPECIMEN_CLASS='Tissue')) And(ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER='M001')",
+					sql);
+
+			Map<OutputTreeDataNode, Map<Long, Map<AttributeInterface, String>>> outputTreeMap = generator.getOutputTreeMap();
+			
+			Set<OutputTreeDataNode> keySet = outputTreeMap.keySet();
+			assertEquals(
+					"Incorrect number of output trees Formed while generating SQL !!!",
+					2,
+					keySet.size());
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 }

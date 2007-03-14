@@ -30,6 +30,7 @@ import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
+import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
 import edu.wustl.common.util.logger.Logger;
 
@@ -233,6 +234,22 @@ public class QueryObjectProcessor
 		return map;
 	}
 
+	/**
+	 * To get map of all Children nodes along with their ids under given output tree node.
+	 * @param root The root noe of the output tree.
+	 * @return map of all Children nodes along with their ids under given output tree node.
+	 */
+	public static Map<Long, OutputTreeDataNode> getAllChildrenNodes(OutputTreeDataNode root)
+	{
+		Map<Long, OutputTreeDataNode> map = new HashMap<Long, OutputTreeDataNode>();
+		map.put(root.getId(), root);
+		List<OutputTreeDataNode> children = root.getChildren();
+		for (OutputTreeDataNode childNode : children)
+		{
+			map.putAll(getAllChildrenNodes(childNode));
+		}
+		return map;
+	}	
 	/**
 	 * To check whether the attribute is inherited attribute or not.
 	 * @param attribute The refrence to attribute
