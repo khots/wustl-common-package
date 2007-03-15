@@ -2799,4 +2799,329 @@ public class QueryGeneratorMock
 		}
 		return query;
 	}
+	
+	/**
+	 * To create Query for Many to many Association case.
+	 * <pre>
+	 *  S: Type equals "DNA"
+	 *  	Biohazard: type equals "Toxic"
+	 * </pre>
+	 * @return reference to query object.
+	 */
+	public static IQuery createSpecimenBioHazardQuery1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface biohazardEntity = enitytManager.getEntityByName(EntityManagerMock.BIOHAZARD_NAME);
+
+
+			// creating expression for specimen.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+			
+			List<String> specimenExpressionRule1Values = new ArrayList<String>();
+			specimenExpressionRule1Values.add("DNA");
+
+			ICondition specimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpressionRule1Values);
+			IRule specimenExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpressionRule1.addCondition(specimenExpressionRule1Condition1);
+			specimenExpression.addOperand(specimenExpressionRule1);
+			
+			// Creating Biohazard Expression.
+			IConstraintEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IExpression biohazardExpression = constraints.addExpression(biohazardConstraintEntity);
+			specimenExpression.addOperand(getAndConnector(),biohazardExpression.getExpressionId());
+			
+			// Adding association to joingraph.
+			AssociationInterface specimenAndBiohazardAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME, "specimenCollection"),
+					EntityManagerMock.BIOHAZARD_NAME);
+			IIntraModelAssociation association = QueryObjectFactory.createIntraModelAssociation(specimenAndBiohazardAssociation);
+			joinGraph.putAssociation(specimenExpression.getExpressionId(), biohazardExpression
+					.getExpressionId(), association);
+			
+			
+			List<String> biohazardExpressionRule1Values = new ArrayList<String>();
+			biohazardExpressionRule1Values.add("Toxic");
+
+			ICondition biohazardExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(biohazardEntity, "type"), RelationalOperator.Equals,
+					biohazardExpressionRule1Values);
+			IRule biohazardExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			biohazardExpressionRule1.addCondition(biohazardExpressionRule1Condition1);
+			biohazardExpression.addOperand(biohazardExpressionRule1);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		
+		return query;
+		
+	}
+	
+	/**
+	 * To create Query for Many to many Association & Pseudo And.
+	 * <pre>
+	 *  S: Type equals "DNA"
+	 *  	Biohazard: type equals "Toxic"
+	 *  	Pseudo AND
+	 *  	Biohazard: type equals "Radioactive"
+	 * </pre>
+	 * @return reference to query object.
+	 */	
+	public static IQuery createSpecimenBioHazardQuery2()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface biohazardEntity = enitytManager.getEntityByName(EntityManagerMock.BIOHAZARD_NAME);
+
+
+			// creating expression for specimen.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+			
+			List<String> specimenExpressionRule1Values = new ArrayList<String>();
+			specimenExpressionRule1Values.add("DNA");
+
+			ICondition specimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpressionRule1Values);
+			IRule specimenExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpressionRule1.addCondition(specimenExpressionRule1Condition1);
+			specimenExpression.addOperand(specimenExpressionRule1);
+			
+			// Creating Biohazard Expression.
+			IConstraintEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IExpression biohazardExpression1 = constraints.addExpression(biohazardConstraintEntity);
+			specimenExpression.addOperand(getAndConnector(),biohazardExpression1.getExpressionId());
+			
+			// Adding association to joingraph.
+			AssociationInterface specimenAndBiohazardAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME, "specimenCollection"),
+					EntityManagerMock.BIOHAZARD_NAME);
+			IIntraModelAssociation association = QueryObjectFactory.createIntraModelAssociation(specimenAndBiohazardAssociation);
+			joinGraph.putAssociation(specimenExpression.getExpressionId(), biohazardExpression1
+					.getExpressionId(), association);
+			
+			
+			List<String> biohazardExpression1Rule1Values = new ArrayList<String>();
+			biohazardExpression1Rule1Values.add("Toxic");
+
+			ICondition biohazardExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(biohazardEntity, "type"), RelationalOperator.Equals,
+					biohazardExpression1Rule1Values);
+			IRule biohazardExpression1Rule1 = QueryObjectFactory
+			.createRule(null);
+			biohazardExpression1Rule1.addCondition(biohazardExpression1Rule1Condition1);
+			biohazardExpression1.addOperand(biohazardExpression1Rule1);
+			
+			
+			// Creating Biohazard Expression.
+			IExpression biohazardExpression2 = constraints.addExpression(biohazardConstraintEntity);
+			specimenExpression.addOperand(getAndConnector(),biohazardExpression2.getExpressionId());
+			
+			// Adding association to joingraph.
+			joinGraph.putAssociation(specimenExpression.getExpressionId(), biohazardExpression2
+					.getExpressionId(), association);
+			
+			
+			List<String> biohazardExpression2Rule1Values = new ArrayList<String>();
+			biohazardExpression2Rule1Values.add("Radioactive");
+
+			ICondition biohazardExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(biohazardEntity, "type"), RelationalOperator.Equals,
+					biohazardExpression2Rule1Values);
+			IRule biohazardExpression2Rule1 = QueryObjectFactory
+			.createRule(null);
+			biohazardExpression2Rule1.addCondition(biohazardExpression2Rule1Condition1);
+			biohazardExpression2.addOperand(biohazardExpression2Rule1);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * To create Query for Many to many Association & Pseudo And.
+	 * <pre>
+	 * Biohazard: type equals "Toxic"
+	 *  	S: Type equals "DNA"
+	 *  		SP CHAR: tissueSite equals "skin"
+	 *  	Pseudo AND
+	 *  	S: Type equals "RNA"
+	 *  		SP CHAR: tissueSite equals "Spinal cord"
+	 *  	OR
+	 *  	S: Type equals "cDNA"
+	 * </pre>
+	 * @return reference to query object.
+	 */	
+	public static IQuery createSpecimenBioHazardQuery3()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+			EntityInterface biohazardEntity = enitytManager.getEntityByName(EntityManagerMock.BIOHAZARD_NAME);
+			EntityInterface specimenCharEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
+			
+			// Creating Biohazard Expression.
+			IConstraintEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IExpression biohazardExpression = constraints.addExpression(biohazardConstraintEntity);
+			
+			List<String> biohazardExpressionRule1Values = new ArrayList<String>();
+			biohazardExpressionRule1Values.add("Toxic");
+
+			ICondition biohazardExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(biohazardEntity, "type"), RelationalOperator.Equals,
+					biohazardExpressionRule1Values);
+			IRule biohazardExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			biohazardExpressionRule1.addCondition(biohazardExpressionRule1Condition1);
+			biohazardExpression.addOperand(biohazardExpressionRule1);
+			
+			// creating expression for specimen.
+			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+			biohazardExpression.addOperand(getAndConnector(),specimenExpression.getExpressionId());
+			
+			// Adding association to joingraph.
+			AssociationInterface biohazardAndSpecimenAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.BIOHAZARD_NAME, "biohazardCollection"),
+					EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation IBiohazardAndSpecimenAssociation = QueryObjectFactory.createIntraModelAssociation(biohazardAndSpecimenAssociation);
+			joinGraph.putAssociation(biohazardExpression.getExpressionId(),specimenExpression
+					.getExpressionId(), IBiohazardAndSpecimenAssociation);
+			
+			List<String> specimenExpressionRule1Values = new ArrayList<String>();
+			specimenExpressionRule1Values.add("DNA");
+
+			ICondition specimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpressionRule1Values);
+			IRule specimenExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpressionRule1.addCondition(specimenExpressionRule1Condition1);
+			specimenExpression.addOperand(specimenExpressionRule1);
+			
+			IConstraintEntity specimenCharConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenCharEntity);
+//			// creating expression for Specimen Characteristics.
+			IExpression specimenCharExpression1 = constraints.addExpression(specimenCharConstraintEntity);
+			specimenExpression.addOperand(getAndConnector(),specimenCharExpression1.getExpressionId());
+			// Adding association to joingraph.
+			AssociationInterface specimenAndSpecimenCharAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_NAME, ""),
+					EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
+			IIntraModelAssociation ISpecimenAndSpecimenCharAssociation = QueryObjectFactory.createIntraModelAssociation(specimenAndSpecimenCharAssociation);
+			joinGraph.putAssociation(specimenExpression.getExpressionId(),specimenCharExpression1
+					.getExpressionId(), ISpecimenAndSpecimenCharAssociation);
+			
+			List<String> specimenCharExpression1Rule1Values = new ArrayList<String>();
+			specimenCharExpression1Rule1Values.add("skin");
+
+			ICondition specimenCharExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenCharEntity, "tissueSite"), RelationalOperator.Equals,
+					specimenCharExpression1Rule1Values);
+			IRule specimenCharExpression1Rule1 = QueryObjectFactory
+			.createRule(null);
+			specimenCharExpression1Rule1.addCondition(specimenCharExpression1Rule1Condition1);
+			specimenCharExpression1.addOperand(specimenCharExpression1Rule1);
+			
+			
+			// creating expression2 for specimen.
+			IExpression specimenExpression2 = constraints.addExpression(specimenConstraintEntity);
+			biohazardExpression.addOperand(getAndConnector(),specimenExpression2.getExpressionId());
+			
+			// Adding association to joingraph.
+			joinGraph.putAssociation(biohazardExpression.getExpressionId(),specimenExpression2
+					.getExpressionId(), IBiohazardAndSpecimenAssociation);
+			
+			List<String> specimenExpression2Rule1Values = new ArrayList<String>();
+			specimenExpression2Rule1Values.add("RNA");
+
+			ICondition specimenExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression2Rule1Values);
+			IRule specimenExpression2Rule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpression2Rule1.addCondition(specimenExpression2Rule1Condition1);
+			specimenExpression2.addOperand(specimenExpression2Rule1);
+			
+			IExpression specimenCharExpression2 = constraints.addExpression(specimenCharConstraintEntity);
+			specimenExpression2.addOperand(getAndConnector(),specimenCharExpression2.getExpressionId());
+			// Adding association to joingraph.
+			joinGraph.putAssociation(specimenExpression2.getExpressionId(),specimenCharExpression2
+					.getExpressionId(), ISpecimenAndSpecimenCharAssociation);
+			
+			List<String> specimenCharExpression2Rule1Values = new ArrayList<String>();
+			specimenCharExpression2Rule1Values.add("Spinal cord");
+
+			ICondition specimenCharExpression2Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenCharEntity, "tissueSite"), RelationalOperator.Equals,
+					specimenCharExpression2Rule1Values);
+			IRule specimenCharExpression2Rule1 = QueryObjectFactory
+			.createRule(null);
+			specimenCharExpression2Rule1.addCondition(specimenCharExpression2Rule1Condition1);
+			specimenCharExpression2.addOperand(specimenCharExpression2Rule1);
+			
+			//creating expression for specimen.
+			IExpression specimenExpression3 = constraints.addExpression(specimenConstraintEntity);
+			biohazardExpression.addOperand(getOrConnector(),specimenExpression3.getExpressionId());
+			
+			// Adding association to joingraph.
+			joinGraph.putAssociation(biohazardExpression.getExpressionId(),specimenExpression3
+					.getExpressionId(), IBiohazardAndSpecimenAssociation);
+			
+			List<String> specimenExpression3Rule1Values = new ArrayList<String>();
+			specimenExpression3Rule1Values.add("cDNA");
+
+			ICondition specimenExpression3Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpression3Rule1Values);
+			IRule specimenExpression3Rule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpression3Rule1.addCondition(specimenExpression3Rule1Condition1);
+			specimenExpression3.addOperand(specimenExpression3Rule1);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		
+		return query;
+		
+	}
 }

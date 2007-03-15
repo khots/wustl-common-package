@@ -1154,4 +1154,94 @@ public class SqlGeneratorTestCase extends TestCase
 			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
+	//TODO Add Few More Positive & Negative testcases for Select View.
+	
+	/**
+	 * To test queries having many to many associations.
+	 * <pre>
+	 *  S: Type equals "DNA"
+	 *  	Biohazard: type equals "Toxic"
+	 * </pre>
+	 *
+	 */
+	public void testManyToManyQuery1()
+	{
+		IQuery query = QueryGeneratorMock.createSpecimenBioHazardQuery1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testManyToManyQuery1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query having Many to Many Associations!!!",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Biohazard_2.TYPE Column11 ,Biohazard_2.COMMENTS Column12 ,Biohazard_2.NAME Column13 ,Biohazard_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID) left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA') And(Biohazard_2.TYPE='Toxic')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query having Many to Many Associations!!!");
+		}
+	}
+	/**
+	 * To test queries having many to many associations & Pseudo And.
+	 * <pre>
+	 *  S: Type equals "DNA"
+	 *  	Biohazard: type equals "Toxic"
+	 *  	Pseudo AND
+	 *  	Biohazard: type equals "Radioactive"
+	 * </pre>
+	 */	
+	public void testManyToManyQuery2()
+	{
+		IQuery query = QueryGeneratorMock.createSpecimenBioHazardQuery2();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testManyToManyQuery2:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query having Many to Many Associations & Pseudo And!!!",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Biohazard_2.TYPE Column11 ,Biohazard_2.COMMENTS Column12 ,Biohazard_2.NAME Column13 ,Biohazard_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID) left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA') And(Specimen_1.IDENTIFIER = ANY(Select Specimen_1.IDENTIFIER From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID) left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) where Biohazard_2.TYPE='Toxic')) And(Specimen_1.IDENTIFIER = ANY(Select Specimen_1.IDENTIFIER From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID) left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) where Biohazard_2.TYPE='Radioactive'))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query having Many to Many Associations & Pseudo And!!!");
+		}
+	}
+	
+	/**
+	 * To test queries having many to many associations & Pseudo And.
+	 * <pre>
+	 * Biohazard: type equals "Toxic"
+	 *  	S: Type equals "DNA"
+	 *  		SP CHAR: tissueSite equals "skin"
+	 *  	Pseudo AND
+	 *  	S: Type equals "RNA"
+	 *  		SP CHAR: tissueSite equals "Spinal cord"
+	 *  	OR
+	 *  	S: Type equals "cDNA"
+	 * </pre>
+	 */	
+	public void testManyToManyQuery3()
+	{
+		IQuery query = QueryGeneratorMock.createSpecimenBioHazardQuery3();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testManyToManyQuery3:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query having Many to Many Associations & Pseudo And!!!",
+					"Select Biohazard_1.TYPE Column0 ,Biohazard_1.COMMENTS Column1 ,Biohazard_1.NAME Column2 ,Biohazard_1.IDENTIFIER Column3 ,Specimen_2.TYPE Column4 ,Specimen_2.POSITION_DIMENSION_TWO Column5 ,Specimen_2.POSITION_DIMENSION_ONE Column6 ,Specimen_2.PATHOLOGICAL_STATUS Column7 ,Specimen_2.LINEAGE Column8 ,Specimen_2.LABEL Column9 ,Specimen_2.IDENTIFIER Column10 ,Specimen_2.COMMENTS Column11 ,Specimen_2.BARCODE Column12 ,Specimen_2.AVAILABLE Column13 ,Specimen_2.ACTIVITY_STATUS Column14 ,SpecimenCharacteristics_3.TISSUE_SIDE Column15 ,SpecimenCharacteristics_3.TISSUE_SITE Column16 ,SpecimenCharacteristics_3.IDENTIFIER Column17 From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Biohazard_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) Where (Biohazard_1.TYPE='Toxic') And(Biohazard_1.IDENTIFIER = ANY(Select Biohazard_1.IDENTIFIER From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Biohazard_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) where (Specimen_2.TYPE='DNA') And(SpecimenCharacteristics_3.TISSUE_SITE='skin'))) And(Biohazard_1.IDENTIFIER = ANY(Select Biohazard_1.IDENTIFIER From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Biohazard_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) where (Specimen_2.TYPE='RNA') And(SpecimenCharacteristics_3.TISSUE_SITE='Spinal cord'))) Or(Specimen_2.TYPE='cDNA')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query having Many to Many Associations & Pseudo And!!!");
+		}
+	}
 }

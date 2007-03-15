@@ -58,6 +58,7 @@ public class EntityManagerMock extends EntityManager
 	public static String MOLECULAR_SPECIMEN_NAME = "edu.wustl.catissuecore.domain.MolecularSpecimen";
 	public static String TISSUE_SPECIMEN_NAME = "edu.wustl.catissuecore.domain.TissueSpecimen";
 	public static String FLUID_SPECIMEN_NAME = "edu.wustl.catissuecore.domain.FluidSpecimen";
+	public static String BIOHAZARD_NAME = "edu.wustl.catissuecore.domain.Biohazard";
 	
 	public static Long PARTICIPANT_ID = new Long(1);
 	public static Long PARTICIPANT_MEDICAL_ID = new Long(2);
@@ -80,6 +81,7 @@ public class EntityManagerMock extends EntityManager
 	public static Long CELL_SPE_REVIEW_EVT_ID = new Long(18);
 	public static Long REVIEW_EVT_PARAM_ID = new Long(19);
 	public static Long FLUID_SPECIMEN_ID = new Long(20);
+	public static Long BIOHAZARD_ID = new Long(21);
 
 	public static Set<String> specimenClasses = new HashSet<String>();
 	public static Set<String> eventClasses = new HashSet<String>();
@@ -506,6 +508,11 @@ public class EntityManagerMock extends EntityManager
 			AssociationInterface association = createAssociation(PARTICIPANT_MEDICAL_ID_NAME, SITE_NAME, AssociationDirection.SRC_DESTINATION, "ParticipantMedicalIdentifier","Site", "SITE_ID", null);
 			associations.add(association);
 		}
+		else if (sourceEntityName.equals(PARTICIPANT_MEDICAL_ID_NAME) && sourceRoleName.equals("participantMedicalIdentifierCollection"))
+		{
+			AssociationInterface association = createAssociation(PARTICIPANT_MEDICAL_ID_NAME, PARTICIPANT_NAME, AssociationDirection.BI_DIRECTIONAL, "participantMedicalIdentifierCollection","participant", "PARTICIPANT_ID", null);
+			associations.add(association);
+		}
 		else if (sourceEntityName.equals(SPECIMEN_COLLECTION_GROUP_NAME) && sourceRoleName.equals("specimenCollectionGroup"))
 		{
 			AssociationInterface association = createAssociation(SPECIMEN_COLLECTION_GROUP_NAME, SPECIMEN_NAME, AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup","specimenCollection", null, "SPECIMEN_COLLECTION_GROUP_ID");
@@ -534,9 +541,37 @@ public class EntityManagerMock extends EntityManager
 				associations.add(association);
 			}
 		}
+		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("specimenCollection"))
+		{
+			AssociationInterface association=null;
+
+			for (String specimenClass: specimenClasses)
+			{
+				association = createAssociation(specimenClass, BIOHAZARD_NAME, AssociationDirection.BI_DIRECTIONAL, "specimenCollection","biohazardCollection", "SPECIMEN_ID", "BIOHAZARD_ID");
+				association.getConstraintProperties().setName("CATISSUE_SPECIMEN_BIOHZ_REL");
+				associations.add(association);
+			}
+		}
+		else if (sourceEntityName.equals(BIOHAZARD_NAME)  && sourceRoleName.equals("biohazardCollection"))
+		{
+			AssociationInterface association=null;
+
+			for (String specimenClass: specimenClasses)
+			{
+				association = createAssociation(sourceEntityName, specimenClass, AssociationDirection.BI_DIRECTIONAL, "biohazardCollection", "specimenCollection", "BIOHAZARD_ID", "SPECIMEN_ID");
+				association.getConstraintProperties().setName("CATISSUE_SPECIMEN_BIOHZ_REL");
+				associations.add(association);
+			}
+		}
 		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals(""))
 		{
-			AssociationInterface association = createAssociation(sourceEntityName, SPECIMEN_CHARACTERISTIC_NAME, AssociationDirection.SRC_DESTINATION, "","specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID", null);
+			AssociationInterface association = null;
+			
+			for (String specimenClass: specimenClasses)
+			{
+				association = createAssociation(specimenClass, SPECIMEN_CHARACTERISTIC_NAME, AssociationDirection.SRC_DESTINATION, "","specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID", null);
+				associations.add(association);
+			}
 			associations.add(association);
 		}
 		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("specimen"))
@@ -557,7 +592,7 @@ public class EntityManagerMock extends EntityManager
 			AssociationInterface association = createAssociation(COLLECTION_PROTOCOL_REGISTRATION_NAME, COLLECTION_PROTOCOL_NAME, AssociationDirection.SRC_DESTINATION, "","collectionProtocol", "COLLECTION_PROTOCOL_ID",null);
 			associations.add(association);
 		}
-		if (sourceEntityName.equals(COLLECTION_PROTOCOL_NAME) && sourceRoleName.equals("collectionProtocol"))
+		else if (sourceEntityName.equals(COLLECTION_PROTOCOL_NAME) && sourceRoleName.equals("collectionProtocol"))
 		{
 			AssociationInterface association = createAssociation(COLLECTION_PROTOCOL_NAME, COLLECTION_PROTOCOL_EVT_NAME, AssociationDirection.BI_DIRECTIONAL, "collectionProtocol","collectionProtocolEventCollection", null, "COLLECTION_PROTOCOL_ID");
 			associations.add(association);
@@ -1191,13 +1226,17 @@ public class EntityManagerMock extends EntityManager
 		{
 			return createReceivedEventParametersEntity(name);
 		}
-		if (name.equalsIgnoreCase(SITE_NAME))
+		else if (name.equalsIgnoreCase(SITE_NAME))
 		{
 			return createSiteEntity(name);
 		}
-		if (name.equals(CELL_SPE_REVIEW_EVT_NAME))
+		else if (name.equals(CELL_SPE_REVIEW_EVT_NAME))
 		{
 			return createCellSpecimenReviewEventParametersEntity(name);
+		}
+		else if (name.equals(BIOHAZARD_NAME))
+		{
+			return createBiohazardEntity(name);
 		}
 		return null;
 	}
@@ -1422,6 +1461,28 @@ public class EntityManagerMock extends EntityManager
 		return e;
 	}
 
+	/*
+	 * @param name
+	 * Creates a specimen entity, sets attributes collection 
+	 * and table properties for the entity.
+	 */
+	private EntityInterface createBiohazardEntity(String name)
+	{
+		EntityInterface e = factory.createEntity();
+		e.setName(BIOHAZARD_NAME);
+		e.setCreatedDate(new Date());
+		e.setDescription("This is a specimen entity");
+		e.setId(BIOHAZARD_ID);
+		e.setLastUpdated(new Date());
+
+		((Entity)e).setAbstractAttributeCollection(getBioHazardAttributes(e));
+
+		TableProperties biohazardTableProperties = new TableProperties();
+		biohazardTableProperties.setName("CATISSUE_BIOHAZARD");
+		biohazardTableProperties.setId(BIOHAZARD_ID);
+		((Entity)e).setTableProperties(biohazardTableProperties);
+		return e;
+	}
 	/*
 	 * @param name
 	 * Creates a Molecular specimen entity, sets attributes collection 
@@ -2261,6 +2322,48 @@ public class EntityManagerMock extends EntityManager
 		return specimenAttributes;
 	}
 	
+	/*
+	 * Creates attributes for BioHazard entity,  
+	 * creates and sets a column property for each attribute and adds all  
+	 * the attributes to a collection.
+	 */
+	private ArrayList getBioHazardAttributes(EntityInterface entity)
+	{
+		ArrayList<AttributeInterface> bioHazardAttributes = new ArrayList<AttributeInterface>();
+
+		AttributeInterface att1 = factory.createLongAttribute();
+		att1.setName("id");
+		ColumnPropertiesInterface c1 = factory.createColumnProperties();
+		c1.setName("IDENTIFIER");
+		((Attribute)att1).setColumnProperties(c1);
+		att1.setIsPrimaryKey(new Boolean(true));
+
+		AttributeInterface att2 = factory.createStringAttribute();
+		att2.setName("name");
+		ColumnPropertiesInterface c2 = factory.createColumnProperties();
+		c2.setName("NAME");
+		((Attribute)att2).setColumnProperties(c2);
+
+		AttributeInterface att3 = factory.createStringAttribute();
+		att3.setName("comment");
+		ColumnPropertiesInterface c3 = factory.createColumnProperties();
+		c3.setName("COMMENTS");
+		((Attribute)att3).setColumnProperties(c3);
+
+		AttributeInterface att4 = factory.createStringAttribute();
+		att4.setName("type");
+		ColumnPropertiesInterface c4 = factory.createColumnProperties();
+		c4.setName("TYPE");
+		((Attribute)att4).setColumnProperties(c4);
+
+		bioHazardAttributes.add(0, att1);
+		bioHazardAttributes.add(1, att2);
+		bioHazardAttributes.add(2, att3);
+		bioHazardAttributes.add(3, att4);
+		setAttributeEntityReference(entity,bioHazardAttributes);
+		return bioHazardAttributes;
+	}
+
 	/*
 	 * Creates attributes for SpecimenCharacteristic entity,  
 	 * creates and sets a column property for each attribute and adds all  

@@ -382,46 +382,67 @@ public class SqlGenerator implements ISqlGenerator
 					EntityInterface rightEntity = eavAssociation.getTargetEntity();
 					String rightAlias = getAliasFor(childExpression, rightEntity);
 
-					buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
-							+ rightAlias + " on ");
+					EntityInterface leftEntity = eavAssociation.getEntity();
 
-					String leftAttribute = null;
-					String rightAttribute = null;
 
 					ConstraintPropertiesInterface constraintProperties = eavAssociation
 							.getConstraintProperties();
 					if (constraintProperties.getSourceEntityKey() != null
-							&& constraintProperties.getTargetEntityKey() != null)
+							&& constraintProperties.getTargetEntityKey() != null)// Many to Many Case
 					{
-						// Many to many case.
-						//TODO handle it seperately
-						throw new RuntimeException(
-								"Many to many condition is not yet handled in sqlgenerator!!! "
-								+ "Many to many association id"+ eavAssociation.getId()+" found between "+eavAssociation.getEntity().getName()+" and " 
-								+ eavAssociation.getTargetEntity().getName()
-								+" source key: "+constraintProperties.getSourceEntityKey()+" Target key: "+constraintProperties.getTargetEntityKey());
+
+						String leftAttribute = null;
+						String rightAttribute = null;
+
+						String middleTableName = constraintProperties.getName();
+						String middleTableAlias = getAliasForMiddleTable(childExpression, middleTableName);
+						
+						AttributeInterface primaryKey = getPrimaryKey(leftEntity);
+						leftAttribute = leftAlias + "."
+								+ primaryKey.getColumnProperties().getName();
+						
+						rightAttribute = middleTableAlias + "." + constraintProperties.getSourceEntityKey();
+						// Forming joing with middle table.
+						buffer.append(" left join " + middleTableName + " "
+								+ middleTableAlias + " on ");
+						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
+
+						// Forming join with child table.
+						leftAttribute = middleTableAlias + "." + constraintProperties.getTargetEntityKey();
+						primaryKey = getPrimaryKey(rightEntity);
+						rightAttribute = rightAlias + "."
+								+ primaryKey.getColumnProperties().getName();
+						
+						buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
+								+ rightAlias + " on ");
+						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
+
 					}
 					else
 					{
-						if (constraintProperties.getSourceEntityKey() != null)
+						String leftAttribute = null;
+						String rightAttribute = null;
+						if (constraintProperties.getSourceEntityKey() != null)// Many Side
 						{
 							leftAttribute = leftAlias + "."
 									+ constraintProperties.getSourceEntityKey();
-							AttributeInterface primaryKey = getPrimaryKey(childEntity);
+							AttributeInterface primaryKey = getPrimaryKey(rightEntity);
 							rightAttribute = rightAlias + "."
 									+ primaryKey.getColumnProperties().getName();
 						}
-						else
+						else // One Side
 						{
-							AttributeInterface primaryKey = getPrimaryKey(childEntity);
+							AttributeInterface primaryKey = getPrimaryKey(leftEntity);
 							leftAttribute = leftAlias + "."
 									+ primaryKey.getColumnProperties().getName();
 							rightAttribute = rightAlias + "."
 									+ constraintProperties.getTargetEntityKey();
 						}
+						buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
+								+ rightAlias + " on ");
+						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
 					}
 
-					buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
 
 					buffer.append(getParentHeirarchy(childExpression, childEntity, rightEntity));
 
@@ -431,6 +452,17 @@ public class SqlGenerator implements ISqlGenerator
 			}
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * To get the alias name for the Many to Many table.
+	 * @param childExpression The child Expression of the association. 
+	 * @param middleTableName The Many to Mant table name.
+	 * @return The String representing aliasName for the Many to Many table.
+	 */
+	private String getAliasForMiddleTable(IExpression childExpression, String middleTableName)
+	{
+		return getAliasForClassName("."+middleTableName) + "_" + aliasAppenderMap.get(childExpression.getExpressionId());
 	}
 
 	/**
@@ -528,33 +560,54 @@ public class SqlGenerator implements ISqlGenerator
 				String leftAlias = getAliasName(expression);
 				String selectAttribute = leftAlias + ".";
 
-				if (eavAssociation.getConstraintProperties().getTargetEntityKey() == null)
-				{
-					selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
+				ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
+				if (constraintProperties.getSourceEntityKey() != null
+						&& constraintProperties.getTargetEntityKey() != null)// Many to many case.
+				{				
+//Code to change the first table table in the inner sql. It will start inner SQL FROM part from Many to many table.
+//					String middleTableName = constraintProperties.getName();
+//					String middleTableAlias = getAliasForMiddleTable(expression, middleTableName);
+//					selectAttribute = middleTableAlias +"."+ constraintProperties.getSourceEntityKey();
+//					pseudoAndSQL = "Select " + selectAttribute;
+//					Set<Integer> processedAlias = new HashSet<Integer>();
+//					processedAlias.add(aliasAppenderMap.get(parentExpression.getExpressionId()));
+//					String fromPart = "From " + middleTableName + " " + middleTableAlias + " left join " + entity.getTableProperties().getName() + " "+ leftAlias + " on ";
+//					String leftAttribute = middleTableAlias + "." + constraintProperties.getTargetEntityKey();
+//					String rightAttribute = leftAlias + "."
+//							+ getPrimaryKey(entity).getColumnProperties().getName();
+//					fromPart+= "(" + leftAttribute + "=" + rightAttribute + ")";
+//					fromPart += processChildExpressions(leftAlias, processedAlias, expression.getExpressionId());
+//					pseudoAndSQL += " " +fromPart + " where ";
+//					String middleTableAlias = getAliasForMiddleTable(expression, constraintProperties.getName());
+//					selectAttribute = middleTableAlias +"."+ constraintProperties.getSourceEntityKey();
+					
+// This will start FROM part of SQL from the parent table.
+					selectAttribute = getAliasName(parentExpression) +"."+  getPrimaryKey(parentExpression.getConstraintEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
+					pseudoAndSQL = "Select " + selectAttribute;
+					Set<Integer> processedAlias = new HashSet<Integer>();
+					String fromPart = getFromPartSQL(parentExpression, leftAlias, processedAlias);
+					pseudoAndSQL += " " +fromPart + " where ";
+
 				}
 				else
 				{
-					if (eavAssociation.getConstraintProperties().getSourceEntityKey() == null)
+					if (constraintProperties.getTargetEntityKey() == null)
 					{
-						selectAttribute += eavAssociation.getConstraintProperties()
-								.getTargetEntityKey();
+						selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
 					}
 					else
 					{
-						// Many to many case.
-						// TODO write logic for this.
-						throw new RuntimeException(
-								"Many to many condition is not yet handled in sqlgenerator!!! "
-								+ "Many to many association id"+ eavAssociation.getId()+" found between "+eavAssociation.getEntity().getName()+" and " 
-								+ eavAssociation.getTargetEntity().getName()
-								+" source key: "+eavAssociation.getConstraintProperties().getSourceEntityKey()+" Target key: "+eavAssociation.getConstraintProperties().getTargetEntityKey());
+						selectAttribute += constraintProperties
+								.getTargetEntityKey();
 					}
+					pseudoAndSQL = "Select " + selectAttribute;
+					Set<Integer> processedAlias = new HashSet<Integer>();
+					processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
+					String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
+					pseudoAndSQL += " From " + tableName + " " + leftAlias + fromPart + " where ";
 				}
-				pseudoAndSQL = "Select " + selectAttribute;
-				Set<Integer> processedAlias = new HashSet<Integer>();
-				processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
-				String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
-				pseudoAndSQL += " From " + tableName + " " + leftAlias + fromPart + " where ";
+
+				
 			}
 
 		}
@@ -753,29 +806,28 @@ public class SqlGenerator implements ISqlGenerator
 			
 			String joinAttribute = getAliasName(expression) + ".";
 
-			if (eavAssociation.getConstraintProperties().getSourceEntityKey() == null)
+			ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
+			if (constraintProperties.getSourceEntityKey() != null
+					&& constraintProperties.getTargetEntityKey() != null)// Many to Many Case
 			{
 				joinAttribute += getPrimaryKey(
-						childExpression.getConstraintEntity().getDynamicExtensionsEntity())
+						expression.getConstraintEntity().getDynamicExtensionsEntity())
 						.getColumnProperties().getName();
 			}
 			else
 			{
-				if (eavAssociation.getConstraintProperties().getTargetEntityKey() == null)
+				if (constraintProperties.getSourceEntityKey() == null)
 				{
-					joinAttribute += eavAssociation.getConstraintProperties().getSourceEntityKey();
+					joinAttribute += getPrimaryKey(
+							expression.getConstraintEntity().getDynamicExtensionsEntity())
+							.getColumnProperties().getName();
 				}
 				else
 				{
-					// Many to Many case.
-					//TODO
-					throw new RuntimeException(
-							"Many to many condition is not yet handled in sqlgenerator!!! " 
-							+ "Many to many association id"+ eavAssociation.getId()+" found between "+eavAssociation.getEntity().getName()+" and " 
-							+ eavAssociation.getTargetEntity().getName()
-							+" source key: "+eavAssociation.getConstraintProperties().getSourceEntityKey()+" Target key: "+eavAssociation.getConstraintProperties().getTargetEntityKey());
+					joinAttribute += constraintProperties.getSourceEntityKey();
 				}
 			}
+			
 			sql = joinAttribute + " = ANY(" + sql + ")";
 		}
 		return sql;
