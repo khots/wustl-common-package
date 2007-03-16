@@ -99,4 +99,6 @@ public interface IJoinGraph extends IBaseQueryObject
 	 * @return children of given expressionId. 
 	 */
 	List<IExpressionId> getChildrenList(IExpressionId expressionId);
+	
+	List<IExpressionId> getAllRoots();
 }

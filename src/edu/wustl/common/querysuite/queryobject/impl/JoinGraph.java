@@ -239,4 +239,11 @@ public class JoinGraph implements IJoinGraph
 		}
 		return nodes;
 	}
+	
+	public List<IExpressionId> getAllRoots()
+	{
+		return graph.getUnreachableNodeList();
+	}
+	
+	
 }
