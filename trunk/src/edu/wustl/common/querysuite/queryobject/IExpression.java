@@ -173,6 +173,14 @@ public interface IExpression extends IBaseQueryObject
 	 * @return true if it is in view
 	 */
 	boolean isInView();
+	
+	/**
+	 * This expression is visible or not on DAG
+	 * @return
+	 */
+	boolean isVisible();
+	
+	void setVisible(boolean isVisible);
 
 	/**
 	 * To set the expression in view.

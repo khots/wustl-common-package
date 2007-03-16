@@ -37,7 +37,9 @@ public class Expression implements IExpression
 
 	private IConstraintEntity constraintEntity;
 	
-	private boolean isInView = true;
+	private boolean isInView = false;
+	
+	private boolean isVisible = true;
 
 	/**
 	 * 
@@ -592,6 +594,16 @@ public class Expression implements IExpression
 	public void setInView(boolean isInView)
 	{
 		this.isInView = isInView;
+	}
+
+	public boolean isVisible()
+	{
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible)
+	{
+		this.isVisible = isVisible;
 	}
 	
 	
