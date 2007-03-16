@@ -61,8 +61,13 @@ public class CommonPathFinder implements IPathFinder
 			try
 			{
 				dao.closeSession();
+				connection.close();
 			}
 			catch (DAOException e)
+			{
+				e.printStackTrace();
+			}
+			catch (SQLException e)
 			{
 				e.printStackTrace();
 			}
