@@ -5,6 +5,7 @@ package edu.wustl.common.querysuite;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -260,6 +261,8 @@ public class QueryGeneratorMock
 					.getExpressionId(), association);
 
 //			// creating output tree.
+			participantExpression.setInView(true);
+			pmExpression.setInView(true);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //			query.setRootOutputClass(participantNode);
 
@@ -386,6 +389,11 @@ public class QueryGeneratorMock
 					.getExpressionId(), iScgAndSpecimenAssociation);
 
 //			// creating output tree.
+			scgExpression.setInView(true);
+			SpecimenExpression1.setInView(true);
+			SpecimenExpression2.setInView(true);
+			SpecimenExpression3.setInView(true);
+			childSpecimenExpression.setInView(true);
 //			IOutputTreeNode scgNode = QueryObjectFactory.createOutputTreeNode(createScgOutputEntity(scgEntity));
 //			query.setRootOutputClass(scgNode);
 //			scgNode.addChild(iScgAndSpecimenAssociation, createSpecimenOutputEntity(specimenEntity));
@@ -422,6 +430,7 @@ public class QueryGeneratorMock
 			participantExpression.addOperand(createParticipantRule2(participantEntity));
 //
 //			// creating output tree.
+			participantExpression.setInView(true);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //			query.setRootOutputClass(participantNode);
 
@@ -675,6 +684,11 @@ public class QueryGeneratorMock
 			specimenExpression2.addOperand(specimenExpression2Rule2);
 
 //			// Creating output Tree.
+			participantExpression.setInView(true);
+			collectionProtocolRegExpression.setInView(true);
+			specimenCollectionGroupExpression.setInView(true);
+			specimenExpression1.setInView(true);
+			specimenExpression2.setInView(true);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -742,6 +756,7 @@ public class QueryGeneratorMock
 
 			joinGraph.putAssociation(pmExpression.getExpressionId(),siteExpression.getExpressionId(), ipmSiteAssociation);
 			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -883,6 +898,7 @@ public class QueryGeneratorMock
 			specimenExpression1.addOperand(orConnetor, specimenExpression1Rule2);
 
 //			// Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -1089,6 +1105,7 @@ public class QueryGeneratorMock
 			tissueSpecimenExpression2.addOperand(orConnector, tissueSpecimenExpression2Rule2);
 
 //			// Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -1106,6 +1123,21 @@ public class QueryGeneratorMock
 		return query;
 	}
 
+	/**
+	 * To set all Expressions in the view.
+	 * @param constraints The reference to constraints object.
+	 */
+	private static void setAllExpressionInView(IConstraints constraints)
+	{
+		Enumeration<IExpressionId>  expressions = constraints.getExpressionIds();
+		
+		while (expressions.hasMoreElements())
+		{
+			IExpressionId expId = expressions.nextElement();
+			IExpression expression = constraints.getExpression(expId);
+			expression.setInView(true);
+		}
+	}
 
 	/**
 	 * 
@@ -1305,6 +1337,7 @@ public class QueryGeneratorMock
 			scg2SpecimenExpression2.addOperand(scg2SpecimenExpression2Rule1);
 
 //			// Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -1435,6 +1468,7 @@ public class QueryGeneratorMock
 			specimenExpression2.addOperand(specimenExpression2Rule1);
 
 //			// Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -1608,6 +1642,7 @@ public class QueryGeneratorMock
 			frozenEvtExpression2.addOperand(specimenEvtExpression2Rule1);	
 			
 //			// Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -1818,6 +1853,7 @@ public class QueryGeneratorMock
 			specimenCharacteristicExpression2Rule1.addCondition(specimenCharacteristicExpression2Rule1Condition1);
 
 //			//Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode participantNode = QueryObjectFactory.createOutputTreeNode(createParticipantOutputEntity(participantEntity));
 //
 //			query.setRootOutputClass(participantNode);
@@ -1937,6 +1973,7 @@ public class QueryGeneratorMock
 			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
 
 //			//Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
 //
 //			query.setRootOutputClass(specimenNode);
@@ -2076,6 +2113,7 @@ public class QueryGeneratorMock
 			joinGraph.putAssociation(childSpecimenExpression.getExpressionId(), grandChildSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
 
 //			//Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
 //
 //			query.setRootOutputClass(specimenNode);
@@ -2228,6 +2266,7 @@ public class QueryGeneratorMock
 			joinGraph.putAssociation(specimenExpression2.getExpressionId(), childSpecimenExpression.getExpressionId(), iSpecimenAndSpecimeAssociation);
 
 //			//Creating output Tree.
+			setAllExpressionInView(constraints);
 //			IOutputTreeNode specimenNode = QueryObjectFactory.createOutputTreeNode(createSpecimenOutputEntity(specimenEntity));
 //
 //			query.setRootOutputClass(specimenNode);
@@ -2283,6 +2322,8 @@ public class QueryGeneratorMock
 					cpExpressionRule1Values2);
 			cpExpressionRule1.addCondition(cpExpressionRule1Condition2);
 			cpExpression.addOperand(cpExpressionRule1);
+			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -2324,6 +2365,8 @@ public class QueryGeneratorMock
 			IRule rule1 = QueryObjectFactory.createRule(null);
 			rule1.addCondition(rule1Condition1);
 			molecularSpecimenExpression.addOperand(rule1);
+			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -2378,6 +2421,8 @@ public class QueryGeneratorMock
 			rule1.addCondition(rule1Condition2);
 
 			expression.addOperand(rule1);
+			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -2514,6 +2559,8 @@ public class QueryGeneratorMock
 
 			joinGraph.putAssociation(participantExpression.getExpressionId(),
 					pmExpression3.getExpressionId(), iParticipanPMAssociation);
+			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -2862,6 +2909,8 @@ public class QueryGeneratorMock
 			.createRule(null);
 			biohazardExpressionRule1.addCondition(biohazardExpressionRule1Condition1);
 			biohazardExpression.addOperand(biohazardExpressionRule1);
+			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -2958,6 +3007,8 @@ public class QueryGeneratorMock
 			.createRule(null);
 			biohazardExpression2Rule1.addCondition(biohazardExpression2Rule1Condition1);
 			biohazardExpression2.addOperand(biohazardExpression2Rule1);
+			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
@@ -3114,6 +3165,7 @@ public class QueryGeneratorMock
 			specimenExpression3Rule1.addCondition(specimenExpression3Rule1Condition1);
 			specimenExpression3.addOperand(specimenExpression3Rule1);
 			
+			setAllExpressionInView(constraints);
 		}
 		catch (Exception e)
 		{
