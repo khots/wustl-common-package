@@ -273,7 +273,7 @@ public class OutputTreeNode implements IOutputTreeNode
 	@Override
 	public String toString()
 	{
-		return "[" + id +":" + outputEntity.toString() + "(" + (parentNode==null? "-" : parentNode.getId()) +")" +"]";
+		return "[" + id +":" + outputEntity.toString() + "(" + (parentNode==null? "-" : parentNode.getId()+"") +")" +"]";
 	}
 
 }
