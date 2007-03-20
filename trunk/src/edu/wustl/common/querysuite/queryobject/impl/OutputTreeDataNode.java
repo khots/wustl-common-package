@@ -174,6 +174,6 @@ public class OutputTreeDataNode
 	public String toString()
 	{
 		return "[" + id + ":" + outputEntity.toString() + "("
-				+ (parentNode == null ? "-" : parentNode.getId()) + ")" + "]";
+				+ (parentNode == null ? "-" : parentNode.getId()+"") + ")" + "]";
 	}
 }
