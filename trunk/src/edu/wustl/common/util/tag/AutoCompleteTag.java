@@ -148,17 +148,16 @@ public class AutoCompleteTag extends TagSupport
 			{
 				onChange = "trimByAutoTag(this)";
 			}
-			else
+			else 
 			{
-				onChange += ";trimByAutoTag(this)";
+				onChange = "trimByAutoTag(this);" + onChange;
 			}
 	    String div = "divFor" + property; 
 	    autoCompleteResult += "<div id=\"" + div + "\" style=\"display: none;\" class=\"autocomplete\">";
 	    autoCompleteResult += "</div>";
 	    autoCompleteResult += "<input type=\"text\" class=\"" + styleClass + "\" value=\"" + initialValue + "\"size=\"" + size + "\" id=\"" + property + "\" name=\"" + property + "\"" + "onmouseover=\"showTip(this.id)\" onmouseout=\"hideTip(this.id)\"";
-	    
-	   
-	    if (readOnly.toString().equalsIgnoreCase("true")) 
+	  	   
+	    if (readOnly.toString().equalsIgnoreCase("true"))   
 	    {
 			autoCompleteResult += "readonly";
 		} else 
@@ -167,9 +166,14 @@ public class AutoCompleteTag extends TagSupport
 		}
 	  
 	    autoCompleteResult += "/>";
-	    autoCompleteResult += "<script> var valuesInList = new Array();";
+	    String nameOfArrow = property + "arrow"; 
+	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
+	    autoCompleteResult += "<script> var valuesInList = new Array();"; 
 	    
-	 	
+	  /*  ("new Autocompleter.Combobox('name-field',
+	    		'lookup_auto_complete', 'name-arrow',
+	    	 	all_options,{partialChars:1, ignoreCase:true, fullSearch:true, frequency:0.1, 
+	    								 choices:6, defaultArray:default_options, tokens: ',' });")*/ 
 	     if (optionsList instanceof List) {
 			List nvbList = (List) optionsList;
 			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")) {
@@ -180,7 +184,7 @@ public class AutoCompleteTag extends TagSupport
 						autoCompleteResult += "valuesInList[" + i + "] = \""
 								+ nvb.getName() + "\";";
 					}
-						 autoCompleteResult += "new Autocompleter.Local(\"" + property + "\",\"" + div + "\",valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";				
+						 autoCompleteResult += "new Autocompleter.Combobox(\"" + property + "\",\"" + div + "\",\"" + nameOfArrow + "\"" + ",valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInList" + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";				
 				}
 		}
 	     
@@ -279,7 +283,7 @@ public class AutoCompleteTag extends TagSupport
 		}
 		else
 		{
-			onChange += ";trimByAutoTagAndSetIdInForm(this);";
+			onChange = "trimByAutoTagAndSetIdInForm(this);" + onChange;
 		}
 		String name = "";
 		if(initialValue.equals("0") || initialValue.toString().equalsIgnoreCase("undefined") || initialValue.equals(""))
@@ -339,6 +343,8 @@ public class AutoCompleteTag extends TagSupport
 		}
 	    
 	    autoCompleteResult += "/>";
+	    String nameOfArrow = property + "arrow";
+	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
 	    autoCompleteResult += "<input type=\"hidden\" id=\"" + property + "\" name=\"" + property + "\"value=\"" + value + "\"/>";
 	    autoCompleteResult += "<script> var valuesInListOf" + displayProperty  +  " = new Array();";
 	    autoCompleteResult += "var idsInListOf" + displayProperty  +  " = new Array();";
@@ -357,7 +363,8 @@ public class AutoCompleteTag extends TagSupport
 						/**
 						 *  Giving call to autocompleter constructor
 						 */
-						 autoCompleteResult += "new Autocompleter.Local(\"" + displayProperty + "\",\"" + div + "\",valuesInListOf" + displayProperty  +  ",  { tokens: new Array(), fullSearch: true, partialSearch: true,choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";				
+						 autoCompleteResult += "new Autocompleter.Combobox(\"" + displayProperty + "\",\"" + div + "\",\"" + nameOfArrow + "\"" + ",valuesInListOf" + displayProperty  +  ",  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInListOf" + displayProperty  + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";
+						 // autoCompleteResult += "new Autocompleter.Combobox(\"" + property + "\",\"" + div + "\",'nameofarrow',valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInList" + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";
 				}
 		}
 	     
