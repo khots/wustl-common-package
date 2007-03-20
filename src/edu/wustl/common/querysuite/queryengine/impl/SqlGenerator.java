@@ -2,6 +2,7 @@ package edu.wustl.common.querysuite.queryengine.impl;
 
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -120,21 +121,22 @@ public class SqlGenerator implements ISqlGenerator
 		//		IQuery queryClone = query;
 		constraints = queryClone.getConstraints();
 		QueryObjectProcessor.replaceMultipleParents(constraints);
-		try
+		if (containsCategrory(constraints))
 		{
-			if (containsCategrory(constraints))
+			Connection connection=null;
+			try
 			{
 				EntityInterface rootEntity = null;
 				EntityInterface rootDEEntity = constraints.getExpression(
 						constraints.getRootExpressionId()).getConstraintEntity()
 						.getDynamicExtensionsEntity();
 				boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(rootDEEntity);
-
+	
 				// This is temporary work around, This connection parameter will be reomoved in future.
 				InitialContext context = new InitialContext();
 				DataSource dataSource = (DataSource) context.lookup("java:/catissuecore");
-				Connection connection = dataSource.getConnection();
-
+				connection = dataSource.getConnection();
+	
 				if (isCategory)
 				{
 					Category category = new CategoryOperations().getCategoryByEntityId(rootDEEntity
@@ -148,11 +150,26 @@ public class SqlGenerator implements ISqlGenerator
 				}
 				new CategoryPreprocessor().processCategories(constraints, rootEntity, connection);
 			}
-		}
-		catch (Exception e)
-		{
-			Logger.out.error(e.getMessage(), e);
-			throw new SqlException("Error in preprocessing category!!!!", e);
+			catch (Exception e)
+			{
+				Logger.out.error(e.getMessage(), e);
+				throw new SqlException("Error in preprocessing category!!!!", e);
+			}
+			finally
+			{
+				if (connection != null) // Closing connection.
+				{
+					try
+					{
+						connection.close();
+					}
+					catch (SQLException e)
+					{
+						Logger.out.error(e.getMessage(), e);
+						throw new SqlException("Error in closing connection while preprocessing category!!!!", e);
+					}
+				}
+			}
 		}
 
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
