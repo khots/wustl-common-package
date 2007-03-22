@@ -1261,7 +1261,7 @@ public class SqlGenerator implements ISqlGenerator
 
 		EntityInterface parentEntity = entity.getParentEntity();
 
-		while (!attributeEntity.equals(entity))
+		while (parentEntity != null && !attributeEntity.equals(entity))
 		{
 			InheritanceStrategy type = entity.getInheritanceStrategy();
 
