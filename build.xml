@@ -32,6 +32,9 @@
 	<property name="pmd.report.dir" value="${pmd.dir}/reports"/>
 	<property name="pmd.report.html" value="${pmd.report.dir}/Common_Package_PMD_Report.html"/>
 	
+	<property name="metadatatest.dir" value="${base.dir}/metadataTestReport"/>	
+    <property name="metadatatest.report.dir" value="${metadatatest.dir}/Report"/>	
+	
 	<path id="app.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="*.jar"/>
@@ -383,6 +386,24 @@
 			<arg value="${databse.tableNames}"/>
 			<classpath>
 				<pathelement location="${junit.classes.dir}"/>
+				 <fileset dir="${lib.dir}">
+	                  <include name="*.jar"/>
+				 </fileset>
+			</classpath>
+			<classpath refid="app.classpath"/>
+		</java>
+	</target>
+	
+	<!-- Metadata Report Generation task -->
+	<target name="QueryMetadataTestReport" depends="compileTest">
+		<delete dir="${metadatatest.report.dir}"/>
+		<mkdir dir="${metadatatest.report.dir}"/>
+
+		<java classname="edu.wustl.common.querysuite.MetadataTestReportGenerator" fork="true">
+			<arg value="${metadatatest.report.dir}"/>
+			<classpath>
+				<pathelement location="${metadatatest.dir}"/>
+				<pathelement location="${target.dir}"/>
 				 <fileset dir="${lib.dir}">
 	                  <include name="*.jar"/>
 				 </fileset>
