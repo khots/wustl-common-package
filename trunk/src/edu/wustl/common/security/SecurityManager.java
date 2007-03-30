@@ -27,6 +27,7 @@ import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.SMTransactionException;
 import edu.wustl.common.util.Permissions;
+import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -461,6 +462,36 @@ public class SecurityManager implements Permissions {
 		}
 		return role;
 
+	}
+	
+	
+	public String getUserGroup(long userID) throws SMException {
+		Set groups;
+		UserProvisioningManager userProvisioningManager = null;
+		Iterator it;
+		Group group;
+		try {
+			userProvisioningManager = getUserProvisioningManager();
+			groups = userProvisioningManager.getGroups(String.valueOf(userID));
+			it = groups.iterator();
+			while (it.hasNext()) {
+				group = (Group) it.next();
+				if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) {
+					return Roles.ADMINISTRATOR;
+				} else if (group.getGroupName().equals(SUPERVISOR_GROUP)) {
+					return Roles.SUPERVISOR;
+				} else if (group.getGroupName().equals(TECHNICIAN_GROUP)) {
+					return Roles.TECHNICIAN;
+				} else if (group.getGroupName().equals(PUBLIC_GROUP)) {
+					return Roles.SCIENTIST;
+				}
+			}
+		} catch (CSException e) {
+			Logger.out.debug("Unable to get roles: Exception: "
+					+ e.getMessage());
+			throw new SMException(e.getMessage(), e);
+		}
+		return "";
 	}
 
 	/**
