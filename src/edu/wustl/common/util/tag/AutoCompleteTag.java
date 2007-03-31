@@ -123,7 +123,7 @@ public class AutoCompleteTag extends TagSupport
 			   readOnly = "false";
 			   dependsOn = "";
 			   size="300";
-			   disabled="false";
+			   disabled="false"; 
 
 			out.print(autocompleteHTMLStr);
 
@@ -170,13 +170,9 @@ public class AutoCompleteTag extends TagSupport
 	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
 	    autoCompleteResult += "<script> var valuesInList = new Array();"; 
 	    
-	  /*  ("new Autocompleter.Combobox('name-field',
-	    		'lookup_auto_complete', 'name-arrow',
-	    	 	all_options,{partialChars:1, ignoreCase:true, fullSearch:true, frequency:0.1, 
-	    								 choices:6, defaultArray:default_options, tokens: ',' });")*/ 
-	     if (optionsList instanceof List) {
+	    if (optionsList instanceof List) {
 			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")) {
+			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")&& !disabled.toString().equalsIgnoreCase("true")) {
 				
 		    			// TODO other than NVB
 						for (int i = 0; i < nvbList.size(); i++) {
@@ -313,7 +309,7 @@ public class AutoCompleteTag extends TagSupport
 			for(int i=0;i<nvbList.size();i++)
 			{
 				NameValueBean nvb1 = (NameValueBean) nvbList.get(i);
-				if(nvb1.getValue().equals(initialValue))
+				if(nvb1.getValue().equals(initialValue) || nvb1.getValue()!=null && nvb1.getValue().equals("00") && initialValue.equals("0"))
 				{
 					name = nvb1.getName();
 					value = nvb1.getValue();
@@ -351,7 +347,7 @@ public class AutoCompleteTag extends TagSupport
 	 	
 	     if (optionsList instanceof List) {
 			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")) {
+			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")&& !disabled.toString().equalsIgnoreCase("true")) {
 				
 		    			for (int i = 0; i < nvbList.size(); i++) {
 						NameValueBean nvb = (NameValueBean) nvbList.get(i);
