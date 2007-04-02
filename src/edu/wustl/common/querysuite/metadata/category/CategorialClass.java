@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 
 /**
@@ -26,7 +27,7 @@ public class CategorialClass implements Serializable
 	private Set<CategorialClass> children = new HashSet<CategorialClass>();
 	private CategorialClass parent;
 	private Long pathFromParentId;
-
+    private EntityInterface categorialClassEntity;
 	private IPath pathFromParent;
 	
 	/**
@@ -214,4 +215,20 @@ public class CategorialClass implements Serializable
 		categorialAttributeCollection.add(categorialAttribute);
 		categorialAttribute.setCategorialClass(this);
 	}
+
+
+    /**
+     * @return Returns the categorialClassEntity.
+     */
+    public EntityInterface getCategorialClassEntity() {
+        return categorialClassEntity;
+    }
+
+
+    /**
+     * @param categorialClassEntity The categorialClassEntity to set.
+     */
+    public void setCategorialClassEntity(EntityInterface categorialClassEntity) {
+        this.categorialClassEntity = categorialClassEntity;
+    }
 }
