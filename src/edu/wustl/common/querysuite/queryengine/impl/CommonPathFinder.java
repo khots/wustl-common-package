@@ -30,9 +30,9 @@ public class CommonPathFinder implements IPathFinder
 	/**
 	 * This method gets all the possible paths between two entities.
 	 */
-	public Map getAllPossiblePaths(List<EntityInterface> srcEntity, EntityInterface destEntity)
+	public List<IPath> getAllPossiblePaths(EntityInterface srcEntity, EntityInterface destEntity)
 	{
-		Map<EntityInterface, List<IPath>> pathsMap = null;
+		 List<IPath> pathsMap = null;
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		Connection connection = null;
 		try
