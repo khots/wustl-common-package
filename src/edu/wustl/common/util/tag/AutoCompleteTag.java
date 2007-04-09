@@ -172,7 +172,7 @@ public class AutoCompleteTag extends TagSupport
 	    
 	    if (optionsList instanceof List) {
 			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")&& !disabled.toString().equalsIgnoreCase("true")) {
+			if (nvbList != null && nvbList.size() > 0) {
 				
 		    			// TODO other than NVB
 						for (int i = 0; i < nvbList.size(); i++) {
@@ -347,7 +347,7 @@ public class AutoCompleteTag extends TagSupport
 	 	
 	     if (optionsList instanceof List) {
 			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0 && !readOnly.toString().equalsIgnoreCase("true")&& !disabled.toString().equalsIgnoreCase("true")) {
+			if (nvbList != null && nvbList.size() > 0) { 
 				
 		    			for (int i = 0; i < nvbList.size(); i++) {
 						NameValueBean nvb = (NameValueBean) nvbList.get(i);
