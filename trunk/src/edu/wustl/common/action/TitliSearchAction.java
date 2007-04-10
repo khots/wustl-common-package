@@ -52,7 +52,7 @@ public class TitliSearchAction extends Action
 
 			// set the result in the action form
 			titliSearchForm.setSortedResultMap(matchList.getSortedResultMap());
-			request.getSession().setAttribute(Constants.SORTED_RESULT_MAP,
+			request.getSession().setAttribute(Constants.TITLI_SORTED_RESULT_MAP,
 					matchList.getSortedResultMap());
 
 			titliSearchForm.setTimeTaken(matchList.getTimeTaken());
