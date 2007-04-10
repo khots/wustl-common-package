@@ -18,6 +18,9 @@ public class Constants
 	
 	public static final int HASH_PRIME = 7;
 	
+	//constants for TiTLi Search
+	public static final String SORTED_RESULT_MAP="sortedResultMap";
+	
 	// constants for passwordManager
 	
 	public static final String MINIMUM_PASSWORD_LENGTH = "minimumPasswordLength";
