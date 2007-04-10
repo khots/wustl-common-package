@@ -43,7 +43,7 @@ public class TitliFetchAction extends Action
 		TitliSearchForm titliSearchForm = (TitliSearchForm) form;
 
 		titliSearchForm.setSortedResultMap((SortedResultMapInterface) (request
-				.getSession().getAttribute(Constants.SORTED_RESULT_MAP)));
+				.getSession().getAttribute(Constants.TITLI_SORTED_RESULT_MAP)));
 
 		try
 		{

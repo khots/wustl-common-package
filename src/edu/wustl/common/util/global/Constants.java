@@ -19,7 +19,10 @@ public class Constants
 	public static final int HASH_PRIME = 7;
 	
 	//constants for TiTLi Search
-	public static final String SORTED_RESULT_MAP="sortedResultMap";
+	public static final String TITLI_SORTED_RESULT_MAP="sortedResultMap";
+	public static final String TITLI_INSERT_OPERATION="insert";
+	public static final String TITLI_UPDATE_OPERATION="update";
+	public static final String TITLI_DELETE_OPERATION="delete";
 	
 	// constants for passwordManager
 	

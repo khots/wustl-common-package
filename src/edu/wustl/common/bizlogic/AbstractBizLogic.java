@@ -9,10 +9,19 @@
  */
 package edu.wustl.common.bizlogic;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import titli.controller.RecordIdentifier;
+import titli.controller.interfaces.IndexRefresherInterface;
+import titli.controller.interfaces.TitliInterface;
+import titli.model.Titli;
+import titli.model.TitliException;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
@@ -130,6 +139,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        dao.openSession(null);
 	        delete(obj, dao);
 	        dao.commit();
+	        //refresh the index for titli search
+			refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
+			
 		}
 		catch(DAOException ex)
 		{
@@ -140,7 +152,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			try
 			{
-				dao.rollback();
+				dao.rollback();				
 			}
 			catch(DAOException daoEx)
 			{
@@ -191,8 +203,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 		    {
 		    	insert(obj, dao, sessionDataBean);
 		    }
-	        dao.commit();
-	        postInsert(obj, dao, sessionDataBean);
+	        dao.commit();	               
+	        // refresh the index for titli search
+			refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);			
+			postInsert(obj, dao, sessionDataBean);
+	        
 		}
 		catch(DAOException ex)
 		{
@@ -226,7 +241,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
     }
     
-    public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
+   public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
 	{
 		insert(obj,sessionDataBean,daoType, false);
 	}
@@ -252,7 +267,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        {
 	        	update(dao, currentObj, oldObj, sessionDataBean);
 	        }
-	        dao.commit();
+	        dao.commit();	        
+	        //refresh the index for titli search
+			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);			
 	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 		}
 		catch(DAOException ex)
@@ -265,7 +282,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			try
 			{
-				dao.rollback();
+				dao.rollback();				
 			}
 			catch(DAOException daoEx)
 			{
@@ -382,4 +399,48 @@ public abstract class AbstractBizLogic implements IBizLogic
     	}
     	return errMsg;
 	}
+	
+	
+	/**
+	 * refresh the titli search index to reflect the changes in the database
+	 * @param operation the operation to be performed : "insert", "update" or "delete"
+	 * @param obj the object correspondig to the record to be refreshed
+	 */
+	private void refreshTitliSearchIndex(String operation, Object obj) 
+	{
+		try
+		{ 
+			TitliInterface titli = Titli.getInstance();
+			
+			String dbName = (titli.getDatabases().keySet().toArray(new String[0]))[0]; 
+			String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
+			String id= ((AbstractDomainObject) obj).getId().toString();
+						
+			Map<String, String> uniqueKey = new HashMap<String, String>();
+			uniqueKey.put(Constants.IDENTIFIER, id);
+			
+			RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,	tableName, uniqueKey);
+		
+			IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
+			
+			if (operation != null && operation.equalsIgnoreCase(Constants.TITLI_INSERT_OPERATION)) 
+			{
+				indexRefresher.insert(recordIdentifier);
+			}
+			else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_UPDATE_OPERATION)) 
+			{
+				indexRefresher.update(recordIdentifier);
+			}
+			else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_DELETE_OPERATION)) 
+			{
+				indexRefresher.delete(recordIdentifier);
+			}
+		} 
+		catch (TitliException e) 
+		{
+			Logger.out	.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+		}
+		
+	}
+    
 }
