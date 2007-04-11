@@ -680,7 +680,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 */
 	public void delete(String tableName) throws DAOException
 	{
-		StringBuffer query;
+		StringBuffer query; 
 		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
 		{
 			Logger.out.debug("MYSQL*****************************");
@@ -690,7 +690,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		else
 		{
 			Logger.out.debug("ORACLE*****************************");
-			query = new StringBuffer("select tname from tab where tname='" + tableName + "'");
+			query = new StringBuffer("select tname from tab where upper(tname)=" + "upper('"+ tableName + "')");
 			try
 			{
 				Statement statement = connection.createStatement();
