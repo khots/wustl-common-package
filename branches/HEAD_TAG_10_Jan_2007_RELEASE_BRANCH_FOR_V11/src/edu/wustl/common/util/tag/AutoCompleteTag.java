@@ -180,9 +180,14 @@ public class AutoCompleteTag extends TagSupport
 						autoCompleteResult += "valuesInList[" + i + "] = \""
 								+ nvb.getName() + "\";";
 					}
-						 autoCompleteResult += "new Autocompleter.Combobox(\"" + property + "\",\"" + div + "\",\"" + nameOfArrow + "\"" + ",valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInList" + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";				
+									
 				}
+		
 		}
+	    
+	        if(property.equals(Constants.SPECIMEN_TYPE))
+			 autoCompleteResult += "var AutoC = ";
+			 autoCompleteResult += "new Autocompleter.Combobox(\"" + property + "\",\"" + div + "\",\"" + nameOfArrow + "\"" + ",valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInList" + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";
 	     
 	   autoCompleteResult += "</script>";	  
 	    
