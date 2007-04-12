@@ -26,6 +26,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class TitliSearchAction extends Action
 {
+	
 
 	/**
 	 * @param mapping the mapping
