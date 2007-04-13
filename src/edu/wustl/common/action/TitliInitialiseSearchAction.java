@@ -38,8 +38,7 @@ public class TitliInitialiseSearchAction extends Action
 	 * @return action forward
 	 * 
 	 */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+	public ActionForward execute(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response)
 	{
 		try
 		{
@@ -48,8 +47,7 @@ public class TitliInitialiseSearchAction extends Action
 		}
 		catch (TitliException e)
 		{
-			Logger.out.error("TitliException in InitialiseTitliSearchAction : "
-					+ e.getMessage(), e);
+			Logger.out.error("TitliException in InitialiseTitliSearchAction : "+ e.getMessage(), e);
 		}
 
 		TitliTableMapper.getInstance();

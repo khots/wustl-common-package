@@ -3,6 +3,8 @@
  */
 package edu.wustl.common.action;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +16,7 @@ import org.apache.struts.action.ActionMapping;
 import titli.controller.interfaces.SortedResultMapInterface;
 import titli.model.fetch.TitliFetchException;
 import edu.wustl.common.actionForm.TitliSearchForm;
+import edu.wustl.common.util.TitliResultGroup;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -33,8 +36,7 @@ public class TitliFetchAction extends Action
 	 * @return action forward
 	 * 
 	 */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+	public ActionForward execute(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response)
 	{
 		// set the request and session attributes required by DataView.jsp and
 		// forward
@@ -42,45 +44,59 @@ public class TitliFetchAction extends Action
 
 		TitliSearchForm titliSearchForm = (TitliSearchForm) form;
 
-		titliSearchForm.setSortedResultMap((SortedResultMapInterface) (request
-				.getSession().getAttribute(Constants.TITLI_SORTED_RESULT_MAP)));
-
+		titliSearchForm.setSortedResultMap((SortedResultMapInterface) (request	.getSession().getAttribute(Constants.TITLI_SORTED_RESULT_MAP)));
+		
+		TitliResultGroup resultGroup = titliSearchForm.getSelectedGroup();
+		
 		try
 		{
-			request.setAttribute(Constants.PAGEOF, titliSearchForm
-					.getSelectedGroup().getPageOf());
-		}
-		catch (Exception e)
-		{
-			Logger.out.error("Exception in TitliFetchAction : "
-					+ e.getMessage(), e);
-		}
-
-		try
-		{
-			request.setAttribute(Constants.SPREADSHEET_DATA_LIST, titliSearchForm
-					.getSelectedGroup().getDataList());
-			request.setAttribute(Constants.SPREADSHEET_COLUMN_LIST, titliSearchForm
-					.getSelectedGroup().getColumnList());
-			request.setAttribute(Constants.IDENTIFIER_FIELD_INDEX, titliSearchForm
-					.getSelectedGroup().getColumnList().indexOf(
-							Constants.IDENTIFIER));
+			//if there is only one record in the selected group, go directly to the edit page
+			if(resultGroup.getNativeGroup().getNumberOfMatches()==1)
+			{
+				String pageOf=resultGroup.getPageOf();
+				Map<String, String> uniqueKeys = resultGroup.getNativeGroup().getMatchList().get(0).getUniqueKeys();
+				
+				String id = uniqueKeys.get(Constants.IDENTIFIER);
+				
+				String path = Constants.SEARCH_OBJECT_ACTION + "?" + Constants.PAGEOF + "="
+									+ pageOf + "&" + Constants.OPERATION + "="
+									+ Constants.SEARCH + "&" + Constants.SYSTEM_IDENTIFIER + "="
+									+ id;
+	
+				return getActionForward(Constants.TITLI_SINGLE_RESULT, path);
+			}
+					
+			request.setAttribute(Constants.PAGEOF, titliSearchForm.getSelectedGroup().getPageOf());
+			request.setAttribute(Constants.SPREADSHEET_DATA_LIST, titliSearchForm.getSelectedGroup().getDataList());
+			request.setAttribute(Constants.SPREADSHEET_COLUMN_LIST, titliSearchForm.getSelectedGroup().getColumnList());
+			request.setAttribute(Constants.IDENTIFIER_FIELD_INDEX, titliSearchForm.getSelectedGroup().getColumnList().indexOf(Constants.IDENTIFIER));
 		}
 		catch (TitliFetchException e)
 		{
-			Logger.out.error("Exception in TitliFetchAction : "
-					+ e.getMessage(), e);
+			Logger.out.error("Exception in TitliFetchAction : "	+ e.getMessage(), e);
+		}
+		catch(Exception e)
+		{
+			Logger.out.error("Exception in TitliFetchAction : "	+ e.getMessage(), e);
 		}
 		
 		request.setAttribute(Constants.PAGE_NUMBER, 1);
 
-		request.getSession().setAttribute(
-				Constants.TOTAL_RESULTS,
-				titliSearchForm.getSelectedGroup().getNativeGroup()
-						.getNumberOfMatches());
+		request.getSession().setAttribute(Constants.TOTAL_RESULTS,	titliSearchForm.getSelectedGroup().getNativeGroup().getNumberOfMatches());
 		request.getSession().setAttribute(Constants.RESULTS_PER_PAGE, 10);
 
 		return mapping.findForward(Constants.SUCCESS);
 	}
+	
+	
+	private ActionForward getActionForward(String name, String path)
+	{
+		ActionForward actionForward = new ActionForward();
+		actionForward.setName(name);
+		actionForward.setPath(path);
+
+		return actionForward;
+	}
+
 
 }
