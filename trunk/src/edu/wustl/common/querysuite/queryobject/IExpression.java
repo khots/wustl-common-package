@@ -187,4 +187,10 @@ public interface IExpression extends IBaseQueryObject
 	 * @param isInView true if this expression should be added in view.
 	 */
 	void setInView(boolean isInView);
+	
+	/**
+	 * To check whether there are any rule present in the Expression.
+	 * @return true if there is atleast one rule present in the operand list of expression.
+	 */
+	public boolean containsRule();
 }
