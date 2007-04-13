@@ -138,8 +138,7 @@ public class TitliSearchForm extends ActionForm
 	 */
 	public TitliResultGroup getSelectedGroup()
 	{
-		ResultGroupInterface i = sortedResultMap.get(TitliTableMapper
-				.getInstance().getTable(selectedLabel));
+		ResultGroupInterface i = sortedResultMap.get(TitliTableMapper.getInstance().getTable(selectedLabel));
 
 		return new TitliResultGroup(i);
 
