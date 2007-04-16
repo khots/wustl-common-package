@@ -38,8 +38,7 @@ public class TitliFetchAction extends Action
 	 */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response)
 	{
-		// set the request and session attributes required by DataView.jsp and
-		// forward
+		// set the request and session attributes required by DataView.jsp and forward
 		// for that we need to fetch the selected group of records
 
 		TitliSearchForm titliSearchForm = (TitliSearchForm) form;

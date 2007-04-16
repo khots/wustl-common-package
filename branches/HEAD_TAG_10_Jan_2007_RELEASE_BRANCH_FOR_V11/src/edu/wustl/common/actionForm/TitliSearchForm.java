@@ -166,17 +166,14 @@ public class TitliSearchForm extends ActionForm
 		String requestSearchString = request.getParameter("searchString");
 
 		// searchString is null or empty
-		if (requestSearchString == null
-				|| requestSearchString.trim().equals(""))
+		if (requestSearchString == null|| requestSearchString.trim().equals(""))
 		{
 			errors.add("empty search string", new ActionError("  "));
 		}
 
-		if (requestSearchString.startsWith("*")
-				|| requestSearchString.startsWith("?"))
+		if (requestSearchString.startsWith("*")|| requestSearchString.startsWith("?"))
 		{
-			errors.add("search string starts with * or ? ", new ActionError(
-					"  "));
+			errors.add("search string starts with * or ? ", new ActionError(	"  "));
 		}
 
 		return errors;
