@@ -25,6 +25,8 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
+import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
+import edu.wustl.common.util.InheritanceUtilMock;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -54,6 +56,7 @@ public class SqlGeneratorTestCase extends TestCase
 		generator = new SqlGenerator();
 		super.setUp();
 		setDataBaseType(Constants.MYSQL_DATABASE);
+		InheritanceUtils.setInstance(new InheritanceUtilMock());
 	}
 
 	/**

@@ -55,6 +55,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
+import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
 import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
@@ -380,24 +381,29 @@ public class SqlGenerator implements ISqlGenerator
 			for (IExpressionId childExpressionId : children)
 			{
 				IExpression childExpression = constraints.getExpression(childExpressionId);
+				
+				IAssociation association = joinGraph.getAssociation(parentExpressionId,
+						childExpressionId);
+
+				AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
+						.getDynamicExtensionsAssociation();
+				
+				EntityInterface rightEntity = eavAssociation.getTargetEntity();
+				String rightAlias = getAliasFor(childExpression, rightEntity);
+				
 				if (!processedAlias.contains(aliasAppenderMap.get(childExpressionId)))
 				{
-					IAssociation association = joinGraph.getAssociation(parentExpressionId,
-							childExpressionId);
-
-					AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
-							.getDynamicExtensionsAssociation();
-
-					if (QueryObjectProcessor.isInheritedAassociation(eavAssociation))
+					if (InheritanceUtils.getInstance().isInherited(eavAssociation))
 					{
-						eavAssociation = QueryObjectProcessor.getActualAassociation(eavAssociation);
+						eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
+						rightEntity = eavAssociation.getTargetEntity();
+						
+						leftAlias = getAliasFor(constraints.getExpression(parentExpressionId), eavAssociation.getEntity());
+						rightAlias = getAliasFor(childExpression, eavAssociation.getTargetEntity());
 					}
 					
 					EntityInterface childEntity = childExpression.getConstraintEntity()
 							.getDynamicExtensionsEntity();
-
-					EntityInterface rightEntity = eavAssociation.getTargetEntity();
-					String rightAlias = getAliasFor(childExpression, rightEntity);
 
 					EntityInterface leftEntity = eavAssociation.getEntity();
 
@@ -462,12 +468,11 @@ public class SqlGenerator implements ISqlGenerator
 
 
 					buffer.append(getParentHeirarchy(childExpression, childEntity, rightEntity));
-
-					// append from part SQL for the next Expressions.
-					buffer.append(getFromPartSQL(childExpression, rightAlias, processedAlias));
 				}
+				// append from part SQL for the next Expressions.
+				buffer.append(getFromPartSQL(childExpression, rightAlias, processedAlias));
 			}
-		}
+		} 
 		return buffer.toString();
 	}
 
@@ -506,9 +511,10 @@ public class SqlGenerator implements ISqlGenerator
 				{
 					isReverse = true;
 				}
-				else if (entity.getInheritanceStrategy().equals(
+				
+				if (entity.getInheritanceStrategy().equals(
 						InheritanceStrategy.TABLE_PER_SUB_CLASS))
-				{
+				{ 
 					String leftEntityalias = getAliasFor(childExpression, entity);
 					String rightEntityalias = getAliasFor(childExpression, parent);
 					AttributeInterface primaryKey = getPrimaryKey(entity);
@@ -566,9 +572,9 @@ public class SqlGenerator implements ISqlGenerator
 			AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 					.getDynamicExtensionsAssociation();
 			
-			if (QueryObjectProcessor.isInheritedAassociation(eavAssociation))
+			if (InheritanceUtils.getInstance().isInherited(eavAssociation))
 			{
-				eavAssociation = QueryObjectProcessor.getActualAassociation(eavAssociation);
+				eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
 			}
 			
 			if (isPAND) // Adding Pseudo and condition in the where part.
@@ -816,9 +822,9 @@ public class SqlGenerator implements ISqlGenerator
 			AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
 					.getDynamicExtensionsAssociation();
 			
-			if (QueryObjectProcessor.isInheritedAassociation(eavAssociation))
+			if (InheritanceUtils.getInstance().isInherited(eavAssociation))
 			{
-				eavAssociation = QueryObjectProcessor.getActualAassociation(eavAssociation);
+				eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
 			}
 			
 			String joinAttribute = getAliasName(expression) + ".";
@@ -1223,9 +1229,9 @@ public class SqlGenerator implements ISqlGenerator
 		
 		AttributeInterface actualAttribute = attribute;
 		
-		if (QueryObjectProcessor.isInheritedAttribute(attribute))
+		if (InheritanceUtils.getInstance().isInherited(attribute))
 		{
-			actualAttribute = QueryObjectProcessor.getActualAttribute(attribute);
+			actualAttribute = InheritanceUtils.getInstance().getActualAttribute(attribute);
 		}
 		EntityInterface attributeEntity = actualAttribute.getEntity();
 		String aliasName = getAliasFor(expression, attributeEntity);
