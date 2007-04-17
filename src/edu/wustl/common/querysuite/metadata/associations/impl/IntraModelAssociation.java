@@ -64,14 +64,15 @@ public class IntraModelAssociation implements IIntraModelAssociation
 
 	/**
 	 * @return intramodel association wrapping de association that is reverse of this association.
-	 * @throws java.lang.IllegalArgumentException if this association is not bidirectional.
+	 * @throws java.lang.UnsupportedOperationException if this association is not bidirectional.
 	 * @author Srinath K.
 	 */
 	public IntraModelAssociation reverse()
 	{
 		if (!isBidirectional())
 		{
-			throw new IllegalArgumentException("Association ain't bidirectional... cannot reverse.");
+			throw new UnsupportedOperationException(
+					"Association ain't bidirectional... cannot reverse.");
 		}
 		EntityInterface origTgtEnt = getDynamicExtensionsAssociation().getTargetEntity();
 
@@ -117,7 +118,9 @@ public class IntraModelAssociation implements IIntraModelAssociation
 		if (obj != null && this.getClass() == obj.getClass())
 		{
 			IntraModelAssociation association = (IntraModelAssociation) obj;
-			if (this.dynamicExtensionsAssociation!=null && this.dynamicExtensionsAssociation.equals(association.dynamicExtensionsAssociation))
+			if (this.dynamicExtensionsAssociation != null
+					&& this.dynamicExtensionsAssociation
+							.equals(association.dynamicExtensionsAssociation))
 			{
 				return true;
 			}
@@ -134,12 +137,11 @@ public class IntraModelAssociation implements IIntraModelAssociation
 	public int hashCode()
 	{
 		int hash = 1;
-		if (dynamicExtensionsAssociation!=null)
+		if (dynamicExtensionsAssociation != null)
 		{
 			hash = hash * Constants.HASH_PRIME + dynamicExtensionsAssociation.hashCode();
 		}
 		return hash;
 	}
-	
-	
+
 }
