@@ -23,6 +23,9 @@ public class Constants
 	public static final String TITLI_INSERT_OPERATION="insert";
 	public static final String TITLI_UPDATE_OPERATION="update";
 	public static final String TITLI_DELETE_OPERATION="delete";
+	public static final String TITLI_SINGLE_RESULT="singleResult";
+	public static final String TITLI_FETCH_ACTION="/TitliFetch.do";
+	
 	
 	// constants for passwordManager
 	
