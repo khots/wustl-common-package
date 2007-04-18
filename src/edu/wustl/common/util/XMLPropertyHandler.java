@@ -122,8 +122,12 @@ public class XMLPropertyHandler
 					
 					if(isNameFound && subNodeName.equals("value"))
 					{
-						String pValue = (String) subchildNode.getFirstChild()
-								.getNodeValue();
+						//Check for null
+						String pValue="";
+						if(subchildNode!=null&&subchildNode.getFirstChild()!=null)
+						{
+							pValue = (String) subchildNode.getFirstChild().getNodeValue();
+						}
 						return pValue;
 					}
 				}
