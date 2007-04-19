@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 
@@ -27,9 +28,9 @@ public class CategorialClass implements Serializable
 	private Set<CategorialClass> children = new HashSet<CategorialClass>();
 	private CategorialClass parent;
 	private Long pathFromParentId;
-    private EntityInterface categorialClassEntity;
+	private EntityInterface categorialClassEntity;
 	private IPath pathFromParent;
-	
+
 	/**
 	 * @return the pathFromParent.
 	 */
@@ -38,7 +39,6 @@ public class CategorialClass implements Serializable
 		return pathFromParent;
 	}
 
-	
 	/**
 	 * @param pathFromParent the pathFromParent to set.
 	 */
@@ -165,13 +165,13 @@ public class CategorialClass implements Serializable
 		return parent;
 	}
 
-	public Long findSourceAttributeId(Long catAttrId)
+	public AttributeInterface findSourceAttribute(AttributeInterface categoryAttribute)
 	{
 		for (CategorialAttribute categorialAttribute : getCategorialAttributeCollection())
 		{
-			if (catAttrId.equals(categorialAttribute.getDeCategoryAttributeId()))
+			if (categoryAttribute.equals(categorialAttribute.getCategoryAttribute()))
 			{
-				return categorialAttribute.getDeSourceClassAttributeId();
+				return categorialAttribute.getSourceClassAttribute();
 			}
 		}
 		return null;
@@ -183,7 +183,7 @@ public class CategorialClass implements Serializable
 		child.setParent(this);
 		child.setPathFromParent(pathToChild);
 	}
-	
+
 	public void addChildCategorialClass(CategorialClass child)
 	{
 		children.add(child);
@@ -216,19 +216,19 @@ public class CategorialClass implements Serializable
 		categorialAttribute.setCategorialClass(this);
 	}
 
+	/**
+	 * @return Returns the categorialClassEntity.
+	 */
+	public EntityInterface getCategorialClassEntity()
+	{
+		return categorialClassEntity;
+	}
 
-    /**
-     * @return Returns the categorialClassEntity.
-     */
-    public EntityInterface getCategorialClassEntity() {
-        return categorialClassEntity;
-    }
-
-
-    /**
-     * @param categorialClassEntity The categorialClassEntity to set.
-     */
-    public void setCategorialClassEntity(EntityInterface categorialClassEntity) {
-        this.categorialClassEntity = categorialClassEntity;
-    }
+	/**
+	 * @param categorialClassEntity The categorialClassEntity to set.
+	 */
+	public void setCategorialClassEntity(EntityInterface categorialClassEntity)
+	{
+		this.categorialClassEntity = categorialClassEntity;
+	}
 }
