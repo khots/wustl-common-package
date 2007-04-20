@@ -283,7 +283,7 @@ public class Validator
         Logger.out.debug("option value: "+option);
     	if(option != null)
     	{
-    		if(option.trim().equals("-1") || option.equals(Constants.SELECT_OPTION))
+    		if(option.trim().equals("") || option.trim().equals("-1") || option.equals(Constants.SELECT_OPTION))
     			return false;
     		else
     			return true;
