@@ -134,7 +134,7 @@ public class AutoCompleteTag extends TagSupport
 		return SKIP_BODY;
 	}
 	
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	private String getAutocompleteHTML() {
 	    String autoCompleteResult = "";
 	    
@@ -194,7 +194,7 @@ public class AutoCompleteTag extends TagSupport
        return autoCompleteResult;
 	}
 	
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	private void prepareCommonData() {
 		if(initialValue == null || initialValue.equals(""))
 	    {
@@ -268,7 +268,7 @@ public class AutoCompleteTag extends TagSupport
 	 * @return String - containing HTML to be rendered
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	private String getAutocompleteHTMLForDynamicProperty() {
 	    String autoCompleteResult = "";
 	    String displayProperty = "display" + property;
