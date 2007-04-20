@@ -140,7 +140,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        delete(obj, dao);
 	        dao.commit();
 	        //refresh the index for titli search
-			refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
+			//refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
 		}
 		catch(DAOException ex)
 		{
@@ -204,7 +204,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		    }
 	        dao.commit();
 	        // refresh the index for titli search
-			refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+			//refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
 	        postInsert(obj, dao, sessionDataBean);
 		}
 		catch(DAOException ex)
@@ -265,7 +265,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        }
 	        dao.commit();
 	        //refresh the index for titli search
-			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
+			//refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
 	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 		}
 		catch(DAOException ex)
@@ -395,8 +395,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     	}
     	return errMsg;
 	}
-	
-	
+		
 	
 	/**
 	 * refresh the titli search index to reflect the changes in the database
