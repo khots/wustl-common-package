@@ -48,9 +48,9 @@ public class AutoCompleteTag extends TagSupport
 	private String styleClass = "formFieldSized15";
 
 	/**
-	 * Number of results to be shown
+	 * Number of results to be shown, set to 11 as for time dropdowns showing 11 values was more logical 
 	 */
-	private String numberOfResults = "10";
+	private String numberOfResults = "11";
 
 	/**
 	 * Trigger matching when user enters these number of characters
