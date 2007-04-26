@@ -236,6 +236,12 @@ public class Constants
 	public static final String SIMPLE_QUERY_MAP = "simpleQueryMap";
 	
 	public static final String IDENTIFIER_FIELD_INDEX = "identifierFieldIndex";
+	/*
+	 * Patch ID: SimpleSearchEdit_3 
+	 * Description: Constants required for this feature plus Delimeter used in the DHTML grid.
+	*/
+	public static final String HYPERLINK_COLUMN_MAP = "hyperlinkColumnMap";
+	public static final String DHTMLXGRID_DELIMETER = "|@|"; 
 	public static final String PAGEOF_SIMPLE_QUERY_INTERFACE = "pageOfSimpleQueryInterface";
 	public static final String SIMPLE_QUERY_ALIAS_NAME = "simpleQueryAliasName";
 	
