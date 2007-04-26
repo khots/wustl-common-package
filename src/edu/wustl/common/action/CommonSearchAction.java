@@ -13,6 +13,7 @@ package edu.wustl.common.action;
 
 import java.io.IOException;
 import java.rmi.ServerException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,8 +63,24 @@ public class CommonSearchAction extends Action
         /* Get the id whose information is to be searched */
         Long identifier = 	Long.valueOf(request.getParameter(Constants.SYSTEM_IDENTIFIER)); 
         if(identifier == null || identifier.longValue() == 0  )
-        	identifier = ((Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER)); 
-        
+        {
+        	identifier = ((Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER));
+        	//Deepti for futureSCG 
+        	//In case of CP based view when for any CPR there are no SCGs present then identifier will be null.
+        	if (identifier == null )
+        	{
+        		 String pageOf = (String)request.getAttribute(Constants.PAGEOF);
+                 if (pageOf == null)
+                 	pageOf = (String)request.getParameter(Constants.PAGEOF);
+                 target = pageOf;
+                 HashMap<String, Long> forwardToHashMap = new HashMap<String, Long>();
+                 forwardToHashMap.put("collectionProtocolId",new Long((String)request.getParameter("cpSearchCpId")));
+                 forwardToHashMap.put("participantId", new Long((String)request.getParameter("cpSearchParticipantId")));
+                 forwardToHashMap.put("COLLECTION_PROTOCOL_EVENT_ID", new Long((String)request.getParameter("COLLECTION_PROTOCOL_EVENT_ID")));
+                 request.setAttribute("forwardToHashMap", forwardToHashMap);
+                 return (mapping.findForward(target));
+        	}
+        }
         try
         {
             //Retrieves the information to be edited.
