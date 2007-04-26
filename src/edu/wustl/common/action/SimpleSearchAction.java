@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +31,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
+import edu.wustl.common.beans.QueryResultObjectData;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.bizlogic.SimpleQueryBizLogic;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
@@ -42,7 +42,6 @@ import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.SimpleQuery;
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.MapDataParser;
-import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -226,6 +225,16 @@ public class SimpleSearchAction extends BaseAction
 			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
 			list = query.execute(getSessionData(request), true, queryResultObjectDataMap, query
 					.hasConditionOnIdentifiedField());
+			/**
+			 * Name : Prafull_kadam
+			 * Reviewer: Aarti_Sharma
+			 * Patch ID: SimpleSearchEdit_1 
+			 * Description: User should be able to Edit the Objects searched from Simple search. 
+			 * For this Selected Colunms in the Query Results are shown as Heypelink, on clicking it user can edit that object.
+			 */
+			 // Creating & setting Hyperlink column map in request, which contains the information required for the Columns to be hyperlinked.
+			Map<Integer, QueryResultObjectData> hyperlinkColumnMap = simpleQueryBizLogic.getHyperlinkMap(queryResultObjectDataMap, query.getResultView());
+			request.setAttribute(Constants.HYPERLINK_COLUMN_MAP, hyperlinkColumnMap);
 		}
 		else
 		{
