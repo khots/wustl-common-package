@@ -495,6 +495,13 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return the Vector of DataElement objects for the select clause of the query.
 	 * @throws DAOException
 	 */
+    
+    /**
+     * Bug#3549
+     * Patch 1_2
+     * Description:modified query to order the result by ATTRIBUTE_ORDER column.
+     */
+    
 	public Vector getViewElements(List aliasNameList, List columnList, boolean OnlyDefaultAttribute)
 			throws DAOException
 	{
@@ -513,7 +520,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.TABLES_IN_PATH, "
 						+ " temp.DISPLAY_NAME, temp.ATTRIBUTE_TYPE "
 						+ " from CATISSUE_QUERY_TABLE_DATA tableData2 join "
-						+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, displayData.DISPLAY_NAME, "
+						+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, displayData.DISPLAY_NAME,displayData.ATTRIBUTE_ORDER, "
 						+ " relationData.TABLES_IN_PATH, columnData.ATTRIBUTE_TYPE "
 						+ " FROM CATISSUE_INTERFACE_COLUMN_DATA columnData, "
 						+ " CATISSUE_TABLE_RELATION relationData, "
@@ -527,7 +534,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 
 				String sql1 = " columnData.IDENTIFIER = displayData.COL_ID and "
 						+ " tableData.ALIAS_NAME = '" + aliasName + "') temp "
-						+ " on temp.TABLE_ID = tableData2.TABLE_ID";
+						+ " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
 				if (OnlyDefaultAttribute)
 					sql = sql + defaultViewCondition + sql1;
