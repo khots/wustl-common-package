@@ -2510,4 +2510,48 @@ public class SecurityManager implements Permissions {
 	public static void setSecurityDataPrefix(String securityDataPrefix) {
 		SecurityManager.securityDataPrefix = securityDataPrefix;
 	}
+	
+	/**
+	 * Name : Aarti Sharma
+     * Reviewer: Sachin Lale
+     * Bug ID: 4111
+     * Patch ID: 4111_2
+     * See also: 4111_1
+     * Description: This method checks user's privilege on identified data
+	 * @param userId User's Identifier
+	 * @return true if user has privilege on identified data else false
+	 * @throws SMException
+	 */
+	public boolean hasIdentifiedDataAccess(Long userId) throws SMException
+	{
+		boolean hasIdentifiedDataAccess = false;
+		try
+		{
+			//Get user's role
+			Role role = getUserRole(userId.longValue());
+			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
+			
+			//Get privileges the user has based on his role
+			Set privileges = userProvisioningManager.getPrivileges(String.valueOf(role.getId()));
+			Iterator privIterator = privileges.iterator();
+			Privilege privilege;
+			
+			// If user has Identified data access set hasIdentifiedDataAccess true
+			for(int i=0; i< privileges.size(); i++)
+			{
+				privilege = (Privilege) privIterator.next();
+				if(privilege.getName().equals(Permissions.IDENTIFIED_DATA_ACCESS))
+				{
+					hasIdentifiedDataAccess = true;
+					break;
+				}
+			}
+		}
+		catch (CSException e)
+		{
+			throw new SMException(e.getMessage(), e);
+		}
+		return hasIdentifiedDataAccess;
+		
+	}
 }
