@@ -366,12 +366,18 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
+    
+    /**
+     * Bug#3549
+     * Patch 1_1
+     * Description: modified query to order the result  by ATTRIBUTE_ORDER column.
+     */
 	public List getColumnNames(String value) throws DAOException, ClassNotFoundException
 	{
-		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.ATTRIBUTE_TYPE, temp.TABLES_IN_PATH, temp.DISPLAY_NAME "
+		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.ATTRIBUTE_TYPE, temp.TABLES_IN_PATH, temp.DISPLAY_NAME,temp.ATTRIBUTE_ORDER "
 				+ " from CATISSUE_QUERY_TABLE_DATA tableData2 join "
 				+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, columnData.ATTRIBUTE_TYPE, "
-				+ " displayData.DISPLAY_NAME, relationData.TABLES_IN_PATH "
+				+ " displayData.DISPLAY_NAME, displayData.ATTRIBUTE_ORDER , relationData.TABLES_IN_PATH "
 				+ " FROM CATISSUE_INTERFACE_COLUMN_DATA columnData, "
 				+ " CATISSUE_TABLE_RELATION relationData, "
 				+ " CATISSUE_QUERY_TABLE_DATA tableData, "
@@ -381,7 +387,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " relationData.RELATIONSHIP_ID = displayData.RELATIONSHIP_ID and "
 				+ " columnData.IDENTIFIER = displayData.COL_ID and "
 				+ " tableData.ALIAS_NAME = '"
-				+ value + "') temp " + " on temp.TABLE_ID = tableData2.TABLE_ID ";
+				+ value + "') temp " + " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
 		Logger.out.debug("SQL*****************************" + sql);
 
@@ -398,13 +404,13 @@ public class QueryBizLogic extends DefaultBizLogic
 		{
 			List rowList = (List) iterator.next();
 			String columnValue = (String) rowList.get(j++) + "." + (String) rowList.get(j++) + "."
-					+ (String) rowList.get(j++);
+					+ (String) rowList.get(j++);   
+            
 			String tablesInPath = (String) rowList.get(j++);
 			if ((tablesInPath != null) && ("".equals(tablesInPath) == false))
 			{
 				columnValue = columnValue + "." + tablesInPath;
 			}
-
 			String columnName = (String) rowList.get(j++);
 			NameValueBean nameValueBean = new NameValueBean();
 			nameValueBean.setName(columnName);
@@ -975,12 +981,19 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @param defaultViewAttributesOnly true if user wants only Default view attributes, else query created will return all column names for given aliasName.
 	 * @return The sql query.
 	 */
+     
+    /**
+     * Bug#3549
+     * Patch 1_2
+     * Description:modified query to order the result  by ATTRIBUTE_ORDER column.
+     */
+    
 	private String getQueryFor(String aliasName, boolean defaultViewAttributesOnly)
 	{
 		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME,  temp.DISPLAY_NAME, temp.TABLES_IN_PATH  "
 				+ " from CATISSUE_QUERY_TABLE_DATA tableData2 join "
 				+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, columnData.ATTRIBUTE_TYPE, "
-				+ " displayData.DISPLAY_NAME, relationData.TABLES_IN_PATH "
+				+ " displayData.DISPLAY_NAME,displayData.ATTRIBUTE_ORDER , relationData.TABLES_IN_PATH "
 				+ " FROM CATISSUE_INTERFACE_COLUMN_DATA columnData, "
 				+ " CATISSUE_TABLE_RELATION relationData, "
 				+ " CATISSUE_QUERY_TABLE_DATA tableData, "
@@ -993,7 +1006,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sqlConditionForDefaultView = " displayData.DEFAULT_VIEW_ATTRIBUTE = 1 and ";
 
 		String sql1 = " tableData.ALIAS_NAME = '" + aliasName + "') temp "
-				+ " on temp.TABLE_ID = tableData2.TABLE_ID ";
+				+ " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
 		if (defaultViewAttributesOnly)
 			sql = sql + sqlConditionForDefaultView + sql1;
