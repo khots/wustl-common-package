@@ -71,7 +71,7 @@ public class MetadataTestReportGenerator
 
 		for(EntityInterface entity: entities)
 		{
-			if (entity.getParentEntity()==null)
+//			if (entity.getParentEntity()==null)
 			{
 				IQuery query = createQuery(entity);
 				ISqlGenerator sqlGenerator = SqlGeneratorFactory.getInstance();
@@ -114,6 +114,7 @@ public class MetadataTestReportGenerator
 				{
 					associationFailureWriter.write("\nAssocation Id: "+ association.getId());
 					associationFailureWriter.write("\nSQLGenerator Exception: "+e.getMessage());
+					associationFailureCount++;
 				}
 			}
 		}
