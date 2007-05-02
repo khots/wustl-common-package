@@ -110,7 +110,7 @@ public class MapDataParser
             else if(type.equals(Boolean.class))
                 return new Boolean(str);
             else if(type.equals(Date.class))
-                return Utility.parseDate(str,Utility.datePattern(str));
+                return Utility.parseDate(str);
             else if(type.equals(Blob.class))
             {
                 File file = new File(str);

@@ -58,6 +58,12 @@ public class Utility
 			}
 			catch(Exception e)
 			{
+			/* Bug id: 4205
+			patch id: 4205_1*/  
+				if(pattern == null || pattern.equals(""))
+				{
+					pattern = Constants.DATE_PATTERN_MM_DD_YYYY;
+				}
 				throw new ParseException("Date '"+date+"' is not in format of "+pattern,0);
 			}
 		}
@@ -76,7 +82,7 @@ public class Utility
 	public static Date parseDate(String date) throws ParseException
 	{
 	    String pattern = datePattern(date);
-	    
+	    	   
 	    return parseDate(date, pattern);
 	}
 	
