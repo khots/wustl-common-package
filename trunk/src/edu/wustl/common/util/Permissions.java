@@ -6,7 +6,7 @@ package edu.wustl.common.util;
  * in the authorization database.
  * 
  * 
- * @author Brian Husted
+ * @author Aarti Sharma
  */
 public interface Permissions {
 
