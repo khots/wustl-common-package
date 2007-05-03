@@ -538,6 +538,16 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Make a list of Date columns
 		List dateColumns = new ArrayList();
 		List numberColumns = new ArrayList();
+		
+		 /** Name : Aarti Sharma
+		 * Reviewer: Prafull Kadam
+		 * Bug ID: 4126
+		 * Patch ID: 4126_1
+		 * See also: 4126_2
+		 * Desciption: Make a list of tinyint columns.
+		 * Tinyint datatype is used as a replacement for boolean in MySQL.
+		 */
+		List tinyIntColumns = new ArrayList();
 				
 		for (int i = 1; i <= metaData.getColumnCount(); i++)
 		{
@@ -546,6 +556,8 @@ public class JDBCDAOImpl implements JDBCDAO
 				dateColumns.add(new Integer(i));
 			if (type.equals("NUMBER"))
 				numberColumns.add(new Integer(i));
+			if (type.equals("TINYINT"))
+				tinyIntColumns.add(new Integer(i));
 		}
 
 		resultSet.close();
@@ -587,6 +599,27 @@ public class JDBCDAOImpl implements JDBCDAO
 					}
 					Date sqlDate = new Date(date.getTime());
 					stmt.setDate(i + 1, sqlDate);
+				}
+				 /** Name : Aarti Sharma
+				 * Reviewer:  Prafull Kadam
+				 * Bug ID: 4126
+				 * Patch ID: 4126_2
+				 * See also: 4126_1
+				 * Desciption: If the value of the column is true set 1 in the statement else set 0.
+				 * This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
+				 * If this is not done then all values will be set as 0 
+				 * irrespective of whether the value is true or false.
+				 */
+				else if (tinyIntColumns.contains(new Integer(i + 1)))
+				{
+					if(obj.equals("true") || obj.equals("TRUE"))
+					{
+						stmt.setObject(i+1, 1);
+					}
+					else
+					{
+						stmt.setObject(i+1, 0);
+					}
 				}
 				else
 				{
