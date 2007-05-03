@@ -234,7 +234,13 @@ public class SimpleSearchAction extends BaseAction
 			 */
 			 // Creating & setting Hyperlink column map in request, which contains the information required for the Columns to be hyperlinked.
 			Map<Integer, QueryResultObjectData> hyperlinkColumnMap = simpleQueryBizLogic.getHyperlinkMap(queryResultObjectDataMap, query.getResultView());
-			request.setAttribute(Constants.HYPERLINK_COLUMN_MAP, hyperlinkColumnMap);
+			/**
+			 * Name : Prafull_kadam
+			 * Patch ID: 4270_1
+			 * Description: edit mode through simple search fails if records per page dropdown is changed. 
+			 * 		Setting hyperlinkColumnMap in session instead of request, so that it will persiste when the records per page drop down changed or page number changed. In jsp same is retrived from session.
+			 */
+			session.setAttribute(Constants.HYPERLINK_COLUMN_MAP, hyperlinkColumnMap);
 		}
 		else
 		{
