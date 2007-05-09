@@ -333,10 +333,10 @@ public class AutoCompleteTag extends TagSupport
 	    if (readOnly.toString().equalsIgnoreCase("true")) 
 	    {
 			autoCompleteResult += "readonly";
-		} else 
-		{
-			autoCompleteResult += "onblur=\"" + onChange + "\"";
-		}
+		} 
+	    
+	    autoCompleteResult += " onblur=\"" + onChange + "\"";
+		
 	    
 	    if (disabled.toString().equalsIgnoreCase("true")) 
 	    {
