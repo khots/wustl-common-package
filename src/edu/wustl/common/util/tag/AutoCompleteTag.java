@@ -334,10 +334,8 @@ public class AutoCompleteTag extends TagSupport
 	    {
 			autoCompleteResult += "readonly";
 		} 
-	    
+
 	    autoCompleteResult += " onblur=\"" + onChange + "\"";
-		
-	    
 	    if (disabled.toString().equalsIgnoreCase("true")) 
 	    {
 			autoCompleteResult += "disabled=\"true\"";
