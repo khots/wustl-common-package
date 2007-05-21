@@ -5,7 +5,6 @@
 package edu.wustl.common.querysuite.metadata.associations;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 
 /**
  * @author prafull_kadam
@@ -24,5 +23,5 @@ public interface IIntraModelAssociation extends IAssociation
 	 * @return intramodel association wrapping de association that is reverse of this association.
 	 * @throws java.lang.IllegalArgumentException if this association is not bidirectional.
 	 */
-	public IntraModelAssociation reverse();
+	public IIntraModelAssociation reverse();
 }
