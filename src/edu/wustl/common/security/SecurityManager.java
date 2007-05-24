@@ -2050,30 +2050,51 @@ public class SecurityManager implements Permissions {
 			throw new SMException(
 					"Could not assign group role to protection group. One or more parameters are null");
 		}
-		Set protectionGroupRoleContextSet;
-		ProtectionGroupRoleContext protectionGroupRoleContext;
+		Set protectionGroupRoleContextSet = null;
+		ProtectionGroupRoleContext protectionGroupRoleContext = null;
 		Iterator it;
 		Set aggregatedRoles = new HashSet();
 		String[] roleIds = null;
 		Role role;
 		try {
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			protectionGroupRoleContextSet = userProvisioningManager
+			
+			/**
+			 * Name : Aarti Sharma
+		     * Reviewer: Sachin Lale
+		     * Bug ID: 4418
+		     * Description: CSM API getProtectionGroupRoleContextForGroup throws exception
+		     * CSObjectNotFoundException when called on oracle database thus leading to this problem.
+		     * Check is made for this exception now so that the method works for oracle as well.
+			 */
+			try
+			{
+				protectionGroupRoleContextSet = userProvisioningManager
 					.getProtectionGroupRoleContextForGroup(String
 							.valueOf(groupId));
+			}
+			catch (CSObjectNotFoundException e) {
+				Logger.out.debug("Could not find Role Context for the Group: "+
+						e.toString());
+			}
+			
+			if(protectionGroupRoleContext!=null)
+			{
 
-			it = protectionGroupRoleContextSet.iterator();
-			while (it.hasNext()) {
-				protectionGroupRoleContext = (ProtectionGroupRoleContext) it
-						.next();
-				if (protectionGroupRoleContext.getProtectionGroup()
-						.getProtectionGroupId().equals(
-								protectionGroup.getProtectionGroupId())) {
-					aggregatedRoles.addAll(protectionGroupRoleContext
-							.getRoles());
-
-					break;
+				it = protectionGroupRoleContextSet.iterator();
+				while (it.hasNext()) {
+					protectionGroupRoleContext = (ProtectionGroupRoleContext) it
+							.next();
+					if (protectionGroupRoleContext.getProtectionGroup()
+							.getProtectionGroupId().equals(
+									protectionGroup.getProtectionGroupId())) {
+						aggregatedRoles.addAll(protectionGroupRoleContext
+								.getRoles());
+	
+						break;
+					}
 				}
+					
 			}
 
 			// if the operation is assign, add the roles to be assigned.
