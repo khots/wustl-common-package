@@ -504,7 +504,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Logger.out.debug("Column value: " + value);
 		try
 		{
-			DateFormat formatter = new SimpleDateFormat("mm-dd-yyyy");
+			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
 			formatter.setLenient(false);
 			java.util.Date date = formatter.parse((String) value);
 			Timestamp t = new Timestamp(date.getTime());
