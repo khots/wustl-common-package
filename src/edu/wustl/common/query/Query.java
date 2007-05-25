@@ -658,13 +658,7 @@ public abstract class Query {
 	protected Relation getJoinRelationWithParent() {
 		Map JOIN_RELATION_MAP = new HashMap();
 		JOIN_RELATION_MAP.put(new Relation(Query.PARTICIPANT,Query.COLLECTION_PROTOCOL),new Relation(Query.PARTICIPANT,Query.COLLECTION_PROTOCOL_REGISTRATION));
-		/** Name : Aarti Sharma
-		 * Bug ID: 4366
-		 * Desciption: Specimen collection group should be joined with parent query's registartion and not collection
-		 * protocol event else it might lead to wrong results when there are more than one participants registered for
-		 * the same protocol
-		 */
-		JOIN_RELATION_MAP.put(new Relation(Query.COLLECTION_PROTOCOL,Query.SPECIMEN_COLLECTION_GROUP),new Relation(Query.COLLECTION_PROTOCOL_REGISTRATION,Query.SPECIMEN_COLLECTION_GROUP));
+		JOIN_RELATION_MAP.put(new Relation(Query.COLLECTION_PROTOCOL,Query.SPECIMEN_COLLECTION_GROUP),new Relation(Query.COLLECTION_PROTOCOL_EVENT,Query.SPECIMEN_COLLECTION_GROUP));
 		//START: Fix for Bug#1992
 		JOIN_RELATION_MAP.put(new Relation(Query.SPECIMEN_COLLECTION_GROUP,Query.SPECIMEN),new Relation(Query.SPECIMEN_COLLECTION_GROUP,Query.SPECIMEN));
 		//END: Fix for Bug#1992
