@@ -385,9 +385,9 @@ public class SqlGenerator implements ISqlGenerator
 				IAssociation association = joinGraph.getAssociation(parentExpressionId,
 						childExpressionId);
 
-				AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
+				AssociationInterface actualEavAssociation = ((IIntraModelAssociation) association)
 						.getDynamicExtensionsAssociation();
-				
+				AssociationInterface eavAssociation = actualEavAssociation;
 				EntityInterface rightEntity = eavAssociation.getTargetEntity();
 				String rightAlias = getAliasFor(childExpression, rightEntity);
 				
@@ -428,8 +428,18 @@ public class SqlGenerator implements ISqlGenerator
 						// Forming joing with middle table.
 						buffer.append(" left join " + middleTableName + " "
 								+ middleTableAlias + " on ");
-						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
+						buffer.append("(" + leftAttribute + "=" + rightAttribute);
 
+						/*
+						 * Adding descriminator column condition for the 1st parent node while forming FROM part left joins. 
+						 * This will be executed only once i.e. when only one node is processed. 
+						 */
+						if (processedAlias.size()==1)
+						{
+							buffer.append(getDescriminatorCondition(actualEavAssociation.getEntity(),leftAlias));
+						}
+						buffer.append(")");
+						
 						// Forming join with child table.
 						leftAttribute = middleTableAlias + "." + constraintProperties.getTargetEntityKey();
 						primaryKey = getPrimaryKey(rightEntity);
@@ -438,8 +448,12 @@ public class SqlGenerator implements ISqlGenerator
 						
 						buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
 								+ rightAlias + " on ");
-						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
-
+						buffer.append("(" + leftAttribute + "=" + rightAttribute);
+						
+						/*
+						 * Adding descriminator column condition for the child node while forming FROM part left joins. 
+						 */
+						buffer.append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(),rightAlias)+ ")");
 					}
 					else
 					{
@@ -463,7 +477,20 @@ public class SqlGenerator implements ISqlGenerator
 						}
 						buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
 								+ rightAlias + " on ");
-						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
+						buffer.append("(" + leftAttribute + "=" + rightAttribute);
+						
+						/*
+						 * Adding descriminator column condition for the 1st parent node while forming FROM part left joins. 
+						 * This will be executed only once i.e. when only one node is processed. 
+						 */
+						if (processedAlias.size()==1)
+						{
+							buffer.append(getDescriminatorCondition(actualEavAssociation.getEntity(),leftAlias));
+						}
+						/*
+						 * Adding descriminator column condition for the child node while forming FROM part left joins. 
+						 */
+						buffer.append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(),rightAlias)+ ")");
 					}
 
 
@@ -476,6 +503,38 @@ public class SqlGenerator implements ISqlGenerator
 		return buffer.toString();
 	}
 
+	/**
+	 * To get the SQL for the descriminator column condition for the given entity. 
+	 * It will return SQL for condition in format: " AND <DescriminatorColumnName> = '<DescriminatorColumnValue>'"  
+	 * @param entity The reference to the entity.
+	 * @param aliasName The alias Name assigned to that entity table in the SQL.
+	 * @return The String representing SQL for the descriminator column condition for the given entity, if inheritance strategy is TABLE_PER_HEIRARCHY. 
+	 * 		Returns empty String if there is no Descriminator column condition present for the Entity.
+	 * 		i.e. when either of following is true:
+	 * 		1. when entity is not derived entity.(Parent entity is null)
+	 * 		2. Inheritance strategy is not TABLE_PER_HEIRARCHY.
+	 */
+	private String getDescriminatorCondition(EntityInterface entity, String aliasName)
+	{
+		String sql="";
+		EntityInterface parentEntity = entity.getParentEntity();
+		// Checking whether the entity is derived or not.
+		if (parentEntity != null)
+		{
+			InheritanceStrategy inheritanceType = entity.getInheritanceStrategy();
+			if (inheritanceType.equals(InheritanceStrategy.TABLE_PER_HEIRARCHY))
+			{
+				String columnName = entity.getDiscriminatorColumn();
+				String columnValue = entity.getDiscriminatorValue();
+				//Assuming Discrimanator is of type String.
+				String condition = aliasName + "." + columnName + "='"
+						+ columnValue + "'";
+				sql = " " + LogicalOperator.And + " " + condition;
+			}
+		}
+		return sql;
+	}
+	
 	/**
 	 * To get the alias name for the Many to Many table.
 	 * @param childExpression The child Expression of the association. 
@@ -565,7 +624,8 @@ public class SqlGenerator implements ISqlGenerator
 		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
 
 		String pseudoAndSQL = null;
-		if (parentExpression != null)
+		
+		if (parentExpression != null) // This will be true only for Expression which is not root Expression of the Query.
 		{
 			IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(),
 					expression.getExpressionId());
@@ -637,27 +697,27 @@ public class SqlGenerator implements ISqlGenerator
 
 		buffer.append(processOperands(expression));
 
-		// Process Base classes of the Entity for joins.
-		EntityInterface parentEntity = entity.getParentEntity();
-		if (parentEntity != null)
+		/*
+		 * If the Query has only one Expression, which referes to an entity having inheritance strategy as TABLE_PER_HEIRARCHY,
+		 * then the Descriminator column condition needs to be added in the WHERE part of SQL as it can not be added in the FROM part of the query.
+		 * This can be identified by following checks 1. parentExpression is null & 2. expression have no child expression.
+		 */
+		if (parentExpression == null) // This will be true only for root Expression of the Query.
 		{
-			if (parentEntity != null)
-			{
-				InheritanceStrategy inheritanceType = entity.getInheritanceStrategy();
-				if (inheritanceType.equals(InheritanceStrategy.TABLE_PER_HEIRARCHY))
+			List<IExpressionId> childrenList = joinGraph.getChildrenList(expression.getExpressionId());
+			if (childrenList==null || childrenList.isEmpty())
+			{ 
+				/*
+				 * No Child Expressions present for the root node, so this is only Expression in the Query.
+				 * So check for the Inheritance strategy.
+				 * If its derived entity with inheritance strategy as TABLE_PER_HEIRARCHY, then append the descriminator condition SQL in buffer. 
+				 */
+				if (entity.getParentEntity()!=null && InheritanceStrategy.TABLE_PER_HEIRARCHY.equals(entity.getInheritanceStrategy()))
 				{
-					String columnName = entity.getDiscriminatorColumn();
-					String columnValue = entity.getDiscriminatorValue();
-					//Assuming Discrimanator is of type String.
-					String condition = getAliasName(expression) + "." + columnName + "='"
-							+ columnValue + "'";
-
-					if (!buffer.toString().trim().equals(""))
-					{
-						buffer.insert(0, "(");
-						buffer.append(")");
-					}
-					buffer.append(" " + LogicalOperator.And + " " + condition);
+					String descriminatorCondition = getDescriminatorCondition(entity, getAliasFor(expression, entity));
+					buffer.insert(0, "(");
+					buffer.append(")");
+					buffer.append(descriminatorCondition);
 				}
 			}
 		}
