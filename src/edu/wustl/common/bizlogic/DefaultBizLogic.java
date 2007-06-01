@@ -340,8 +340,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 					{
 						tmpObj = tmpBuffer.get(0);
 
-						Logger.out.debug("nameValueBean Name : : " + tmpObj);
-						Logger.out.debug("NameClass : : " + tmpObj.getClass().getName());
+						//Logger.out.debug("nameValueBean Name : : " + tmpObj);
+						//Logger.out.debug("NameClass : : " + tmpObj.getClass().getName());
 						nameValueBean.setName(tmpObj);
 					}
 					else
@@ -356,7 +356,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 							}
 						}
 
-						Logger.out.debug("nameValueBean Name : : " + nameBuff.toString());
+						//Logger.out.debug("nameValueBean Name : : " + nameBuff.toString());
 						nameValueBean.setName(nameBuff.toString());
 					}
 
