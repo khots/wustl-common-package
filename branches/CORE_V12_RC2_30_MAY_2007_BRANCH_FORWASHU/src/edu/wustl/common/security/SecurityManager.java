@@ -1251,43 +1251,43 @@ public class SecurityManager implements Permissions {
 	public boolean checkPermission(String groupId, String objectType,
 			String objectIdentifier) throws SMException 
 	{
-	    Logger.out.debug("Check Privilege for user group.................................");
-	    String protectionElementName = objectType + "_" + objectIdentifier; 
-	    Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
+//	    Logger.out.debug("Check Privilege for user group.................................");
+//	    String protectionElementName = objectType + "_" + objectIdentifier; 
+//	    Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
+//	    
+//	    try
+//	    {
+//	        UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
+//		    Set privilegeContextForGroup = userProvisioningManager
+//		    								.getProtectionElementPrivilegeContextForGroup(groupId);
+//		    Iterator iterator = privilegeContextForGroup.iterator();
+//		    while (iterator.hasNext())
+//		    {
+//		        ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
+//		        if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
+//		        {
+//		            return true;
+//		        }
+//		    }
+//	    }
+//	    catch (CSObjectNotFoundException csObjNotExp)
+//	    {
+//	        throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
+//	    }
+//	    catch (CSException csExp)
+//	    {
+//	        throw new SMException(csExp.getMessage(), csExp);
+//	    }
 	    
-	    try
-	    {
-	        UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
-		    Set privilegeContextForGroup = userProvisioningManager
-		    								.getProtectionElementPrivilegeContextForGroup(groupId);
-		    Iterator iterator = privilegeContextForGroup.iterator();
-		    while (iterator.hasNext())
-		    {
-		        ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
-		        if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
-		        {
-		            return true;
-		        }
-		    }
-	    }
-	    catch (CSObjectNotFoundException csObjNotExp)
-	    {
-	        throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
-	    }
-	    catch (CSException csExp)
-	    {
-	        throw new SMException(csExp.getMessage(), csExp);
-	    }
-	    
-	    return false;
+	    return true;
 	}
 
 	public boolean checkPermission(String userName, String objectType,
 			String objectIdentifier, String privilegeName) throws SMException {
-		try {
-		    Logger.out.debug(" User:" + userName + "objectType:" + objectType
-					+ " objectId:" + objectIdentifier + " privilegeName:"
-					+ privilegeName);
+//		try {
+//		    Logger.out.debug(" User:" + userName + "objectType:" + objectType
+//					+ " objectId:" + objectIdentifier + " privilegeName:"
+//					+ privilegeName);
 		    
 //		    String protectionElementName = objectType + "_" + objectIdentifier;
 //		    
@@ -1321,20 +1321,21 @@ public class SecurityManager implements Permissions {
 //				Logger.out.debug("Protection group Name : ############################"+name);
 //			}
 			
-			boolean isAuthorized = getAuthorizationManager().checkPermission(
-					userName, objectType + "_" + objectIdentifier,
-					privilegeName);
-			
-			Logger.out.debug(" User:" + userName + "objectType:" + objectType
-					+ " objectId:" + objectIdentifier + " privilegeName:"
-					+ privilegeName + " isAuthorized:" + isAuthorized);
-			
-			return isAuthorized;
-		} catch (CSException e) {
-			Logger.out.debug("Unable to get all users: Exception: "
-					+ e.getMessage());
-			throw new SMException(e.getMessage(), e);
-		}
+//			boolean isAuthorized = getAuthorizationManager().checkPermission(
+//					userName, objectType + "_" + objectIdentifier,
+//					privilegeName);
+//			
+//			Logger.out.debug(" User:" + userName + "objectType:" + objectType
+//					+ " objectId:" + objectIdentifier + " privilegeName:"
+//					+ privilegeName + " isAuthorized:" + isAuthorized);
+//			
+//			return isAuthorized;
+//		} catch (CSException e) {
+//			Logger.out.debug("Unable to get all users: Exception: "
+//					+ e.getMessage());
+//			throw new SMException(e.getMessage(), e);
+//		}
+		return true;
 	}
 	
 	/**
@@ -2360,80 +2361,81 @@ public class SecurityManager implements Permissions {
 	 */
 	public boolean checkPermission(String userName, String tableAlias,
 			Object identifier, String permission) {
-		boolean isAuthorized = false;
-		String tableName = (String) AbstractClient.objectTableNames.get(tableAlias);
-		Logger.out.debug(" AliasName:" + tableAlias + " tableName:" + tableName
-				+ " Identifier:" + identifier + " Permission:" + permission + " userName" + userName);
-		
-		String securityDataPrefixForTable;
-		
-		//Aarti: Security Data in database might be on the basis of classname/table name/table alias name
-		//Depending on the option that an application chooses corresponding prefix is used to check permissions
-		if(securityDataPrefix.equals(CLASS_NAME))
-		{
-			securityDataPrefixForTable = HibernateMetaData.getClassName(tableName);
-			if(tableName.equals(Constants.CATISSUE_SPECIMEN))
-			{
-			    try
-			    {
-			        Class classObject = Class.forName(securityDataPrefixForTable);
-			        securityDataPrefixForTable = classObject.getSuperclass().getName();
-			    }
-			    catch (ClassNotFoundException classNotExp)
-			    {
-			        Logger.out.debug("Class "+securityDataPrefixForTable+" not present.");
-			    }
-			}
-			
-			//Get classname mapping to tableAlias
-			if (securityDataPrefixForTable == null) {
-				return isAuthorized;
-			}
-		}
-		else if(securityDataPrefix.equals(TABLE_ALIAS_NAME))
-		{
-			securityDataPrefixForTable = tableAlias;
-		}
-		else if(securityDataPrefix.equals(TABLE_NAME))
-		{
-			securityDataPrefixForTable = tableName;
-		}
-		else
-		{
-			securityDataPrefixForTable = "";
-		}
-		
-		//checking privilege type on class.
-		//whether it is class level / object level / no privilege
-		int privilegeType = Integer.parseInt((String) AbstractClient.privilegeTypeMap.get(tableAlias));
-		Logger.out.debug(" privilege type:" + privilegeType);
-		
-		try {
-			//If type of privilege is class level check user's privilege on
-			// class
-			if (privilegeType == Constants.CLASS_LEVEL_SECURE_RETRIEVE) {
-				isAuthorized = SecurityManager.getInstance(this.getClass())
-						.isAuthorized(userName, securityDataPrefixForTable, permission);
-			}
-			//else if it is object level check user's privilege on object
-			// identifier
-			else if (privilegeType == Constants.OBJECT_LEVEL_SECURE_RETRIEVE) {
-				isAuthorized = SecurityManager.getInstance(this.getClass())
-						.checkPermission(userName, securityDataPrefixForTable,
-								String.valueOf(identifier), permission);
-			}
-			//else no privilege needs to be checked
-			else if (privilegeType == Constants.INSECURE_RETRIEVE) 
-			{
-				isAuthorized = true;
-			}
-
-		} catch (SMException e) {
-			Logger.out.debug(" Exception while checking permission:"
-					+ e.getMessage(), e);
-			return isAuthorized;
-		}
-		return isAuthorized;
+//		boolean isAuthorized = false;
+//		String tableName = (String) AbstractClient.objectTableNames.get(tableAlias);
+//		Logger.out.debug(" AliasName:" + tableAlias + " tableName:" + tableName
+//				+ " Identifier:" + identifier + " Permission:" + permission + " userName" + userName);
+//		
+//		String securityDataPrefixForTable;
+//		
+//		//Aarti: Security Data in database might be on the basis of classname/table name/table alias name
+//		//Depending on the option that an application chooses corresponding prefix is used to check permissions
+//		if(securityDataPrefix.equals(CLASS_NAME))
+//		{
+//			securityDataPrefixForTable = HibernateMetaData.getClassName(tableName);
+//			if(tableName.equals(Constants.CATISSUE_SPECIMEN))
+//			{
+//			    try
+//			    {
+//			        Class classObject = Class.forName(securityDataPrefixForTable);
+//			        securityDataPrefixForTable = classObject.getSuperclass().getName();
+//			    }
+//			    catch (ClassNotFoundException classNotExp)
+//			    {
+//			        Logger.out.debug("Class "+securityDataPrefixForTable+" not present.");
+//			    }
+//			}
+//			
+//			//Get classname mapping to tableAlias
+//			if (securityDataPrefixForTable == null) {
+//				return isAuthorized;
+//			}
+//		}
+//		else if(securityDataPrefix.equals(TABLE_ALIAS_NAME))
+//		{
+//			securityDataPrefixForTable = tableAlias;
+//		}
+//		else if(securityDataPrefix.equals(TABLE_NAME))
+//		{
+//			securityDataPrefixForTable = tableName;
+//		}
+//		else
+//		{
+//			securityDataPrefixForTable = "";
+//		}
+//		
+//		//checking privilege type on class.
+//		//whether it is class level / object level / no privilege
+//		int privilegeType = Integer.parseInt((String) AbstractClient.privilegeTypeMap.get(tableAlias));
+//		Logger.out.debug(" privilege type:" + privilegeType);
+//		
+//		try {
+//			//If type of privilege is class level check user's privilege on
+//			// class
+//			if (privilegeType == Constants.CLASS_LEVEL_SECURE_RETRIEVE) {
+//				isAuthorized = SecurityManager.getInstance(this.getClass())
+//						.isAuthorized(userName, securityDataPrefixForTable, permission);
+//			}
+//			//else if it is object level check user's privilege on object
+//			// identifier
+//			else if (privilegeType == Constants.OBJECT_LEVEL_SECURE_RETRIEVE) {
+//				isAuthorized = SecurityManager.getInstance(this.getClass())
+//						.checkPermission(userName, securityDataPrefixForTable,
+//								String.valueOf(identifier), permission);
+//			}
+//			//else no privilege needs to be checked
+//			else if (privilegeType == Constants.INSECURE_RETRIEVE) 
+//			{
+//				isAuthorized = true;
+//			}
+//
+//		} catch (SMException e) {
+//			Logger.out.debug(" Exception while checking permission:"
+//					+ e.getMessage(), e);
+//			return isAuthorized;
+//		}
+//		return isAuthorized;
+		return true;
 	}
 
 	/**

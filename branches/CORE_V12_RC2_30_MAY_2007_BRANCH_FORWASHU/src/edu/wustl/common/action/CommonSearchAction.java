@@ -53,7 +53,9 @@ public class CommonSearchAction extends Action
             HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServerException
     {
-        Logger.out.debug("*******In here************");
+        long st = System.currentTimeMillis();
+    	Logger.out.debug("*******In here************");
+        
         /** 
          * Represents whether the search operation was successful or not.
          */
@@ -78,6 +80,9 @@ public class CommonSearchAction extends Action
                  forwardToHashMap.put("participantId", new Long((String)request.getParameter("cpSearchParticipantId")));
                  forwardToHashMap.put("COLLECTION_PROTOCOL_EVENT_ID", new Long((String)request.getParameter("COLLECTION_PROTOCOL_EVENT_ID")));
                  request.setAttribute("forwardToHashMap", forwardToHashMap);
+                 long et = System.currentTimeMillis();
+                 Logger.out.info("Sachin1: " + ((et-st)/1000));
+                 
                  return (mapping.findForward(target));
         	}
         }
@@ -94,8 +99,11 @@ public class CommonSearchAction extends Action
                 	(AbstractDomainObjectFactory) MasterFactory
                 				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
             String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
+            long st1 = System.currentTimeMillis();
             list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
-            
+            long et1 = System.currentTimeMillis();
+            Logger.out.info("Sachin only for retrive: " + ((et1-st1)/1000));
+            Logger.out.info("Sachin forn start to ret: " + ((et1-st)/1000));
             if (list!=null && list.size() != 0)
             {
                 /* 
@@ -136,6 +144,8 @@ public class CommonSearchAction extends Action
             target = Constants.FAILURE;
             Logger.out.error(excp.getMessage());
         }
+        long et = System.currentTimeMillis();
+        Logger.out.info("Sachin2: " + ((et-st)/1000));
         return (mapping.findForward(target));
     }
 }
