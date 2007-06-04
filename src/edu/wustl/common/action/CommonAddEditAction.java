@@ -12,13 +12,14 @@ package edu.wustl.common.action;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Stack;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import net.sf.hibernate.Session;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
@@ -32,6 +33,7 @@ import org.apache.struts.action.ActionMessages;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.AddNewSessionDataBean;
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -45,6 +47,7 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.AbstractForwardToProcessor;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -238,22 +241,44 @@ public class CommonAddEditAction extends Action
                 
             	//If operation is edit, update the data in the database.
                 
-                List list = bizLogic.retrieve(objectName, Constants.SYSTEM_IDENTIFIER,
-										  new Long(abstractForm.getId()));
-                if (!list.isEmpty())
-                {
-                    List listOld = bizLogic.retrieve(objectName, Constants.SYSTEM_IDENTIFIER,
-							  new Long(abstractForm.getId()));
-
-                    AbstractDomainObject abstractDomainOld = (AbstractDomainObject) listOld.get(0);
+//                List list = bizLogic.retrieve(objectName, Constants.SYSTEM_IDENTIFIER,
+//										  new Long(abstractForm.getId()));
+//                if (!list.isEmpty())
+//                {
+//                	abstractDomain = (AbstractDomainObject) list.get(0);
+//                    abstractDomain.setAllValues(abstractForm);
+                	DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+                
+            	abstractDomain = defaultBizLogic.retrieveForUpdateMode(objectName, Constants.SYSTEM_IDENTIFIER,
+					  new Long(abstractForm.getId()), abstractForm);
+				if(abstractDomain!=null)
+				{
+//                	List listOld = bizLogic.retrieve(objectName, Constants.SYSTEM_IDENTIFIER,
+//							  new Long(abstractForm.getId()));
+//
+//                    AbstractDomainObject abstractDomainOld = (AbstractDomainObject) listOld.get(0);
                     
-                    
-                	abstractDomain = (AbstractDomainObject) list.get(0);
-                    abstractDomain.setAllValues(abstractForm);
-                    
-                    
+					Session sessionClean = DBUtil.getCleanSession();
+					AbstractDomainObject abstractDomainOld = null;
+					try
+					{
+						abstractDomainOld = (AbstractDomainObject) sessionClean.load(Class.forName(objectName), new Long(abstractForm.getId()));
+					}
+					catch(Exception ex)
+					{
+						ex.printStackTrace();
+					}
                     bizLogic.update(abstractDomain, abstractDomainOld, Constants.HIBERNATE_DAO, getSessionData(request));
-                                     
+                    
+                    try
+                    {
+                    	sessionClean.close();                     
+					}
+					catch(Exception ex)
+					{
+						ex.printStackTrace();
+					}
+					
                     // -- Direct to Main Menu if record is disabled
                     if((abstractForm.getActivityStatus() != null) &&
                             (Constants.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus())))

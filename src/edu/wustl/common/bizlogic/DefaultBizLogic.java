@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
@@ -27,6 +28,7 @@ import edu.wustl.common.dao.HibernateDAO;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
@@ -556,5 +558,93 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
 	{
 		dao.update(obj,null,false,false,false);
+	}
+	
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param colName Contains the field name.
+	 * @param colValue Contains the field value.
+	 */
+	public boolean retrieveForEditMode(String className, String colName, Object colValue, AbstractActionForm abstractForm) throws DAOException
+	{
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+
+		List list = null;
+
+		try
+		{
+			dao.openSession(null);
+
+			list = dao.retrieve(className, colName, colValue);
+			
+	        if (list!=null && list.size() != 0)
+	        {
+	            /* 
+	              If the record searched is present in the database,
+	              populate the formbean with the information retrieved.
+	             */
+	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
+	            abstractForm.setAllValues(abstractDomain);
+	            return true;
+	        }
+			//dao.commit();
+		}
+		catch (DAOException daoExp)
+		{
+			daoExp.printStackTrace();
+			//Logger.out.error(daoExp.getMessage(),daoExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+		return false;
+	}
+
+	
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param colName Contains the field name.
+	 * @param colValue Contains the field value.
+	 */
+	public AbstractDomainObject retrieveForUpdateMode(String className, String colName, Object colValue, AbstractActionForm abstractForm) throws DAOException
+	{
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+
+		List list = null;
+
+		try
+		{
+			dao.openSession(null);
+
+			list = dao.retrieve(className, colName, colValue);
+			
+	        if (list!=null && list.size() != 0)
+	        {
+	            /* 
+	              If the record searched is present in the database,
+	              populate the formbean with the information retrieved.
+	             */
+	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
+	        	abstractDomain.setAllValues(abstractForm);
+	            return abstractDomain;
+	        }
+			//dao.commit();
+		}
+		catch (DAOException daoExp)
+		{
+			daoExp.printStackTrace();
+			//Logger.out.error(daoExp.getMessage(),daoExp);
+		}
+		catch (AssignDataException daoExp)
+		{
+			daoExp.printStackTrace();
+			//Logger.out.error(daoExp.getMessage(),daoExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+		return null;
 	}
 }
