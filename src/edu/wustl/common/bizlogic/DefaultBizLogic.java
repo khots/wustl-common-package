@@ -647,4 +647,37 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return null;
 	}
+
+	/**
+	 * To retrieve the attribute value for the given source object name & Id.
+	 * @param sourceObjectName Source object in the Database. 
+	 * @param id Id of the object.
+	 * @param attributeName attribute name to be retrieved. 
+	 * @return The Attribute value corresponding to the SourceObjectName & id.
+	 * @throws DAOException
+	 * @see edu.wustl.common.bizlogic.IBizLogic#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
+	 */
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException 
+	{
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+
+		Object attribute = null;
+
+		try
+		{
+			dao.openSession(null);
+			attribute = dao.retrieveAttribute(sourceObjectName, id, attributeName);
+		}
+		catch (DAOException daoExp)
+		{
+			daoExp.printStackTrace();
+			Logger.out.error(daoExp.getMessage(), daoExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+		return attribute;
+	}
+	
 }

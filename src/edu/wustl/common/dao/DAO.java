@@ -102,4 +102,13 @@ public interface DAO
 	
 	public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
 	
+	/**
+	 * To retrieve the attribute value for the given source object name & Id.
+	 * @param sourceObjectName Source object in the Database. 
+	 * @param id Id of the object.
+	 * @param attributeName attribute name to be retrieved. 
+	 * @return The Attribute value corresponding to the SourceObjectName & id.
+	 * @throws DAOException
+	 */
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException;
 }
