@@ -818,5 +818,14 @@ public class JDBCDAOImpl implements JDBCDAO
 			boolean isAuditable) throws DAOException
 	{
 	}
+
+	/* (non-Javadoc)
+	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
+	 */
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	
 }
