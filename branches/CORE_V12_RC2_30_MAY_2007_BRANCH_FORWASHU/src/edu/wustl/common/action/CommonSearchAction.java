@@ -50,8 +50,7 @@ public class CommonSearchAction extends Action
             HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServerException
     {
-        long st = System.currentTimeMillis();
-    	Logger.out.debug("*******In here************");
+    	long startTime = System.currentTimeMillis();
         
         /** 
          * Represents whether the search operation was successful or not.
@@ -62,7 +61,8 @@ public class CommonSearchAction extends Action
         Long identifier = 	Long.valueOf(request.getParameter(Constants.SYSTEM_IDENTIFIER)); 
         if(identifier == null || identifier.longValue() == 0  )
         {
-        	identifier = ((Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER));
+        	identifier = (Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER);
+        	
         	//Deepti for futureSCG 
         	//In case of CP based view when for any CPR there are no SCGs present then identifier will be null.
         	if (identifier == null )
@@ -76,19 +76,16 @@ public class CommonSearchAction extends Action
                  forwardToHashMap.put("participantId", new Long((String)request.getParameter("cpSearchParticipantId")));
                  forwardToHashMap.put("COLLECTION_PROTOCOL_EVENT_ID", new Long((String)request.getParameter("COLLECTION_PROTOCOL_EVENT_ID")));
                  request.setAttribute("forwardToHashMap", forwardToHashMap);
-                 long et = System.currentTimeMillis();
-                 Logger.out.info("Sachin1: " + ((et-st)/1000));
                  
-                 return (mapping.findForward(target));
+                 return mapping.findForward(target);
         	}
         }
         
         target = openPageInEdit( form, identifier, request);
-        
-        
-        long et = System.currentTimeMillis();
-        Logger.out.info("Sachin2: " + ((et-st)/1000));
-        return (mapping.findForward(target));
+
+        long endTime = System.currentTimeMillis();        
+        Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+        return mapping.findForward(target);
     }
     
     
@@ -108,11 +105,8 @@ public class CommonSearchAction extends Action
 	        
 	        DefaultBizLogic bizLogic = new DefaultBizLogic();
 	        
-	        long st1 = System.currentTimeMillis();
 	        //List list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
 	        boolean isSuccess = bizLogic.retrieveForEditMode(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString(), abstractForm);
-	        long et1 = System.currentTimeMillis();
-	        Logger.out.info("Time to retrive for EDIT: " + ((et1-st1)/1000));
 	        
 	        //if (list!=null && list.size() != 0)
 	        if(isSuccess)

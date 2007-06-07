@@ -189,6 +189,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     
     private void insert(Object obj, SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly) throws UserNotAuthorizedException, BizLogicException
     {
+    	long startTime = System.currentTimeMillis();
     	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
@@ -198,7 +199,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        if(isInsertOnly)
 		    {
 	        	insert(obj,dao);	        	
-		    }else
+		    }
+	        else
 		    {
 		    	insert(obj, dao, sessionDataBean);
 		    }
@@ -236,21 +238,24 @@ public abstract class AbstractBizLogic implements IBizLogic
 				//TODO ERROR Handling
 				throw new BizLogicException();
 			}
+			long endTime = System.currentTimeMillis();		
+			Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
 		}
     }
     
     public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
 	{
-		insert(obj,sessionDataBean,daoType, false);
+		insert(obj, sessionDataBean, daoType, false);
 	}
     
     public final void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException
     {
-    	insert(obj,null,daoType,true);
+    	insert(obj, null, daoType, true);
     }
     
     private void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException, UserNotAuthorizedException
     {
+    	long startTime = System.currentTimeMillis();
     	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
@@ -300,6 +305,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 				//TODO ERROR Handling
 				throw new BizLogicException();
 			}
+			long endTime = System.currentTimeMillis();		
+			Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
 		}
     }
     
@@ -434,7 +441,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		} 
 		catch (TitliException e) 
 		{
-			Logger.out	.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+			Logger.out.error("Titli search index cound not be refreshed for opeartion "+operation, e);
 		}
 		
 	}
