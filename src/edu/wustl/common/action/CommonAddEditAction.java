@@ -69,6 +69,8 @@ public class CommonAddEditAction extends Action
             HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException
     {
+    	long startTime = System.currentTimeMillis();
+    	
         String target = null;
         AbstractDomainObject abstractDomain = null;
         
@@ -362,7 +364,7 @@ public class CommonAddEditAction extends Action
             String statusMessageKey = String.valueOf(abstractForm.getFormId() +
 					"."+String.valueOf(abstractForm.isAddOperation()));
             
-            request.setAttribute(Constants.STATUS_MESSAGE_KEY,statusMessageKey);
+            request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey);
         }
         catch (BizLogicException excp)
         {
@@ -376,43 +378,42 @@ public class CommonAddEditAction extends Action
         }
         catch (DAOException excp)
         {
-            target = new String(Constants.FAILURE);
-            Logger.out.debug("excp "+excp.getMessage());
+            target = Constants.FAILURE;
             Logger.out.error(excp.getMessage(), excp);
         }
         catch (UserNotAuthorizedException excp)
-        {
-            
+        {            
             ActionErrors errors = new ActionErrors();
-            SessionDataBean sessionDataBean =getSessionData(request);
-            String userName;
-        	if(sessionDataBean == null)
-        	{
-        	    userName = "";
-        	}
-        	else
+            SessionDataBean sessionDataBean = getSessionData(request);
+            String userName = "";
+        	
+            if(sessionDataBean != null)
         	{
         	    userName = sessionDataBean.getUserName();
         	}
-        	ActionError error = new ActionError("access.addedit.object.denied",userName,abstractDomain.getClass().getName());
-        	errors.add(ActionErrors.GLOBAL_ERROR,error);
-        	saveErrors(request,errors);
-        	target = new String(Constants.FAILURE);
-            Logger.out.debug("excp "+excp.getMessage());
+            
+        	ActionError error = new ActionError("access.addedit.object.denied", userName, abstractDomain.getClass().getName());
+        	errors.add(ActionErrors.GLOBAL_ERROR, error);
+        	saveErrors(request, errors);
+        	target = Constants.FAILURE;
             Logger.out.error(excp.getMessage(), excp);
         }
         catch (AssignDataException excp)
         {
-            target = new String(Constants.FAILURE);
-            Logger.out.debug("excp "+excp.getMessage());
+            target = Constants.FAILURE;
             Logger.out.error(excp.getMessage(), excp);
         }
         
         Logger.out.debug("target....................."+target); 
-        return (mapping.findForward(target));
+
+        long endTime = System.currentTimeMillis();        
+        Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+
+        return mapping.findForward(target);
     }
     
-    protected SessionDataBean getSessionData(HttpServletRequest request) {
+    protected SessionDataBean getSessionData(HttpServletRequest request) 
+    {
 		Object obj = request.getSession().getAttribute(Constants.SESSION_DATA);
 		 /**
 		  *  This if loop is specific to Password Security feature.
@@ -483,5 +484,4 @@ public class CommonAddEditAction extends Action
     		messages.add(ActionErrors.GLOBAL_MESSAGE,new ActionMessage("object." + addoredit + ".successOnly", displayName));
     	} 
     }
-    
 }

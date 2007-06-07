@@ -44,6 +44,8 @@ public abstract class BaseAction extends Action
 	public final ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
 			throws Exception
 	{
+		long startTime = System.currentTimeMillis();
+		
 		/**
 		 *  This flag based checking is specific to Password Security feature.
 		 */
@@ -70,7 +72,12 @@ public abstract class BaseAction extends Action
 		//Mandar 17-Apr-06 : 1667:- Application URL
 		Utility.setApplicationURL(request.getRequestURL().toString());
 
-		return executeAction(mapping, form, request, response);
+		ActionForward actionForward = executeAction(mapping, form, request, response);
+		
+		long endTime = System.currentTimeMillis();		
+		Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+		
+		return actionForward;
 	}
 
 	/**
