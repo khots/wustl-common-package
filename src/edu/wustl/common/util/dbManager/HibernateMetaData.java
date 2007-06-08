@@ -448,7 +448,7 @@ public class HibernateMetaData
 	 * @param domainObject
 	 * @return domain Object
 	 */
-	public static Object getProxyObject(Object domainObject)
+	public static Object getProxyObjectImpl(Object domainObject)
 	{
 		if (domainObject instanceof HibernateProxy)
 		{
