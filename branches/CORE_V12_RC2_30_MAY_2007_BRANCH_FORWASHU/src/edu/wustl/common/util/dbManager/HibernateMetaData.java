@@ -450,9 +450,12 @@ public class HibernateMetaData
 	 */
 	public static Object getProxyObject(Object domainObject)
 	{
-		HibernateProxy hp  = (HibernateProxy)domainObject;
-        Object obj = HibernateProxyHelper.getLazyInitializer(hp).getImplementation();
-        return obj;
+		if (domainObject instanceof HibernateProxy)
+		{
+			HibernateProxy hp  = (HibernateProxy)domainObject;
+			domainObject = HibernateProxyHelper.getLazyInitializer(hp).getImplementation();
+		}
+        return domainObject;
 	}
 	
 	//	Mandar:26-apr-06 end

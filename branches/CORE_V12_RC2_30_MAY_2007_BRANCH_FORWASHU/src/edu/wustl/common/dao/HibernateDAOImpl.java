@@ -34,6 +34,7 @@ import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -759,13 +760,26 @@ public class HibernateDAOImpl implements HibernateDAO
 		 */
 		if (Utility.isColumnNameContainsElements(attributeName))
 		{
-			attribute = new HashSet(result);
+			Collection collection = new HashSet();
+			attribute = collection;
+			for(int i=0;i<result.size();i++)
+			{
+				/**
+				 * Name: Prafull
+				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+				 */
+				collection.add(HibernateMetaData.getProxyObject(result.get(i)));
+			}
 		}
 		else
 		{
 			if (!result.isEmpty())
 			{
-				attribute = result.get(0);
+				/**
+				 * Name: Prafull
+				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+				 */
+				attribute = HibernateMetaData.getProxyObject(result.get(0));
 			}
 		}
 		
