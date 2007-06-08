@@ -768,7 +768,7 @@ public class HibernateDAOImpl implements HibernateDAO
 				 * Name: Prafull
 				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
 				 */
-				collection.add(HibernateMetaData.getProxyObject(result.get(i)));
+				collection.add(HibernateMetaData.getProxyObjectImpl(result.get(i)));
 			}
 		}
 		else
@@ -779,7 +779,7 @@ public class HibernateDAOImpl implements HibernateDAO
 				 * Name: Prafull
 				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
 				 */
-				attribute = HibernateMetaData.getProxyObject(result.get(0));
+				attribute = HibernateMetaData.getProxyObjectImpl(result.get(0));
 			}
 		}
 		
