@@ -54,7 +54,7 @@ public class OutputTreeDataNode
 	 */
 	public long getId()
 	{
-		return id;
+		return  id;
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class OutputTreeDataNode
 	 */
 	private void setId(long id)
 	{
-		this.id = id;
+		this.id = id ;
 	}
 
 	/**
@@ -176,4 +176,14 @@ public class OutputTreeDataNode
 		return "[" + id + ":" + outputEntity.toString() + "("
 				+ (parentNode == null ? "-" : parentNode.getId()+"") + ")" + "]";
 	}
+	/**
+	 * Returns a unique id for each node of each tree
+	 * @return String id
+	 */
+	public String getUniqueNodeId()
+	{
+		 String uniqueNodeId = this.treeNo+"_"+id;
+		 return uniqueNodeId;
+	}
+	
 }
