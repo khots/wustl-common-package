@@ -12,6 +12,7 @@ package edu.wustl.common.domain;
 import java.io.Serializable;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.actionForm.InstitutionForm;
 
 /**
@@ -94,7 +95,7 @@ public class Institution extends AbstractDomainObject implements Serializable
     /* (non-Javadoc)
      * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
      */
-    public void setAllValues(AbstractActionForm abstractForm)
+    public void setAllValues(IValueObject abstractForm)
     {
 		InstitutionForm instituteForm = (InstitutionForm)abstractForm;
 		

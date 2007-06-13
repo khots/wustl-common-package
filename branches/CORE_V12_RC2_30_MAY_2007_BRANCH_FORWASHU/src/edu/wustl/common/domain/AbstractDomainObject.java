@@ -12,7 +12,6 @@ package edu.wustl.common.domain;
 
 import java.io.Serializable;
 
-import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.exception.AssignDataException;
@@ -53,15 +52,12 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
         }
     }
     
-    public abstract void setAllValues(AbstractActionForm abstractForm) throws AssignDataException;
+  //  public abstract void setAllValues(AbstractActionForm abstractForm) throws AssignDataException;
     /**
      * Copies all values from the AbstractForm object
      * @param abstractForm The AbstractForm object
      */
-    public void setAllValues(IValueObject  valueObject) throws AssignDataException
-    {
-    	setAllValues((AbstractActionForm)valueObject);
-    }
+    public abstract void setAllValues(IValueObject  valueObject) throws AssignDataException;
     
     /**
 	 * Returns the unique system identifier assigned to the domain object.

@@ -575,15 +575,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.openSession(null);
 
-			Object object= dao.retrieve(className, identifier);
+			List list= dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
 			
-	        if (object!=null)
+	        if (list!=null&&!list.isEmpty())
 	        {
 	            /* 
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)object;
+	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
 	        	uiForm.setAllValues(abstractDomain);
 
 	            isSuccess = true;
@@ -622,15 +622,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.openSession(null);
 
-			Object object = dao.retrieve(className,identifier);
+			List list = dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
 			
-	        if (object!=null)
+			if (list!=null&&!list.isEmpty())
 	        {
 	            /* 
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	abstractDomain = (AbstractDomainObject)object;
+	        	abstractDomain = (AbstractDomainObject)list.get(0);
 	        	if( abstractDomain != null )
 	        	{
 	        		abstractDomain.setAllValues(uiForm);

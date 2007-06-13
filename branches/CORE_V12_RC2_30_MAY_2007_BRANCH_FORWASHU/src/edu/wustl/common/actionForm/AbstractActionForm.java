@@ -17,7 +17,6 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
@@ -167,7 +166,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
      * Copies all the values from the Object object.
      * @param obj The Object object.
      */
-    public abstract void setAllValues(AbstractDomainObject abstractDomain);
+    //public abstract void setAllValues(AbstractDomainObject abstractDomain);
     
     /**
      * Copies all the values from the Object object.
