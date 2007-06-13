@@ -251,7 +251,7 @@ public class CommonAddEditAction extends Action
 //                    abstractDomain.setAllValues(abstractForm);
                 	DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
                 
-            	abstractDomain = defaultBizLogic.retrieveForUpdateMode(objectName, Constants.SYSTEM_IDENTIFIER,
+            	abstractDomain = defaultBizLogic.populateDomainObject(objectName,
 					  new Long(abstractForm.getId()), abstractForm);
 				if(abstractDomain!=null)
 				{

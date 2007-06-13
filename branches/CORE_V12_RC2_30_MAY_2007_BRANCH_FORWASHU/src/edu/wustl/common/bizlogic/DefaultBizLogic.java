@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
@@ -565,7 +565,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param colName Contains the field name.
 	 * @param colValue Contains the field value.
 	 */
-	public boolean retrieveForEditMode(String className, String colName, Object colValue, AbstractActionForm abstractForm) throws DAOException
+	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm) throws DAOException
 	{
 		long startTime = System.currentTimeMillis();
 		boolean isSuccess = false;
@@ -575,16 +575,16 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.openSession(null);
 
-			List list = dao.retrieve(className, colName, colValue);
+			Object object= dao.retrieve(className, identifier);
 			
-	        if (list!=null && list.size() != 0)
+	        if (object!=null)
 	        {
 	            /* 
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
-	            abstractForm.setAllValues(abstractDomain);
+	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)object;
+	        	uiForm.setAllValues(abstractDomain);
 
 	            isSuccess = true;
 	        }
@@ -598,20 +598,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 			dao.closeSession();
 		}
 		
-		String nickName = "UNKNOWN";
+		String simpleClassName = Utility.parseClassName(className);
 		
-		try
-		{
-			nickName = Class.forName(className).getSimpleName();
-		}
-		catch (ClassNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			Logger.out.error(e.getMessage(), e);
-		}
 		long endTime = System.currentTimeMillis();
-		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - "+ nickName + " : " + (endTime - startTime));
+		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - "+ simpleClassName + " : " + (endTime - startTime));
 
 		return isSuccess;
 	}
@@ -622,7 +612,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param colName Contains the field name.
 	 * @param colValue Contains the field value.
 	 */
-	public AbstractDomainObject retrieveForUpdateMode(String className, String colName, Object colValue, AbstractActionForm abstractForm) throws DAOException
+	public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException
 	{
 		long startTime = System.currentTimeMillis();
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
@@ -632,18 +622,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.openSession(null);
 
-			List list = dao.retrieve(className, colName, colValue);
+			Object object = dao.retrieve(className,identifier);
 			
-	        if (list!=null && list.size() != 0)
+	        if (object!=null)
 	        {
 	            /* 
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	abstractDomain = (AbstractDomainObject)list.get(0);
+	        	abstractDomain = (AbstractDomainObject)object;
 	        	if( abstractDomain != null )
 	        	{
-	        		abstractDomain.setAllValues(abstractForm);
+	        		abstractDomain.setAllValues(uiForm);
 	        	}
 	        }
 			//dao.commit();
@@ -661,21 +651,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 			dao.closeSession();
 		}
 		
-		String nickName = "UNKNOWN";
-		
-		try
-		{
-			nickName = Class.forName(className).getSimpleName();
-		}
-		catch (ClassNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			Logger.out.error(e.getMessage(), e);
-		}
+		String simpleClassName = Utility.parseClassName(className);
 		
 		long endTime = System.currentTimeMillis();
-		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - "+	nickName +" : "+ (endTime - startTime));
+		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - "+	simpleClassName +" : "+ (endTime - startTime));
 
 		return abstractDomain;
 	}
