@@ -26,7 +26,7 @@ import edu.wustl.common.util.global.Validator;
  * AbstractForm class is the superclass of all the formbean classes.
  * @author gautam_shetty
  */
-public abstract class AbstractActionForm extends ActionForm
+public abstract class AbstractActionForm extends ActionForm implements IValueObject
 {
     
     /**
