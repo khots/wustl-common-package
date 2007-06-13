@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;

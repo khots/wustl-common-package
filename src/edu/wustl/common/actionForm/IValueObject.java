@@ -10,6 +10,6 @@ import edu.wustl.common.domain.AbstractDomainObject;
 public interface IValueObject 
 {
 	
-	public void setAllValues(AbstractDomainObject object);
+	public void setAllValues(AbstractDomainObject abstractDomain);
 
 }

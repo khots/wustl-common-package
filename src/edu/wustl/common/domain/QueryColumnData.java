@@ -9,7 +9,7 @@ package edu.wustl.common.domain;
 
 import java.io.Serializable;
 
-import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.exception.AssignDataException;
 
 /**
@@ -119,7 +119,7 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
     /* (non-Javadoc)
      * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
      */
-    public void setAllValues(AbstractActionForm abstractForm)
+    public void setAllValues(IValueObject abstractForm)
             throws AssignDataException
     {
         // TODO Auto-generated method stub
