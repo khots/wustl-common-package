@@ -8,8 +8,11 @@ package edu.wustl.common.bizlogic;
 
 import java.util.List;
 
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
+import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -90,4 +93,8 @@ public interface IBizLogic
 	 * @throws DAOException
 	 */
     public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException;
+    
+    public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)throws DAOException,BizLogicException;
+    
+    public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException;
 }
