@@ -10,6 +10,7 @@
 package edu.wustl.common.bizlogic;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import titli.controller.RecordIdentifier;
@@ -17,17 +18,20 @@ import titli.controller.interfaces.IndexRefresherInterface;
 import titli.controller.interfaces.TitliInterface;
 import titli.model.Titli;
 import titli.model.TitliException;
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
@@ -445,4 +449,137 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		
 	}
+	
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param colName Contains the field name.
+	 * @param colValue Contains the field value.
+	 */
+	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm) throws DAOException, BizLogicException
+	{
+		long startTime = System.currentTimeMillis();
+		boolean isSuccess = false;
+		
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		try
+		{
+			dao.openSession(null);
+
+			List list= dao.retrieve(className, Constants.SYSTEM_IDENTIFIER, identifier);
+			
+	        if (list!=null && !list.isEmpty())
+	        {
+	            /* 
+	              If the record searched is present in the database,
+	              populate the formbean with the information retrieved.
+	             */
+	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
+	        	
+	        	prePopulateUIBean(abstractDomain,  uiForm);
+	        	uiForm.setAllValues(abstractDomain);
+	        	postPopulateUIBean(abstractDomain, uiForm);
+	            isSuccess = true;
+	        }
+		}
+		catch (DAOException daoExp)
+		{
+			Logger.out.error(daoExp.getMessage(),daoExp);
+			String errMsg = daoExp.getMessage();
+			throw new BizLogicException(errMsg, daoExp);	
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException();
+			}
+		}
+		
+		String simpleClassName = Utility.parseClassName(className);
+		
+		long endTime = System.currentTimeMillis();
+		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - "+ simpleClassName + " : " + (endTime - startTime));
+
+		return isSuccess;
+	}
+	
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param colName Contains the field name.
+	 * @param colValue Contains the field value.
+	 */
+	public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException
+	{
+		long startTime = System.currentTimeMillis();
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		AbstractDomainObject abstractDomain = null;
+		
+		try
+		{
+			dao.openSession(null);
+
+			List list = dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
+			
+			if (list!=null&&!list.isEmpty())
+	        {
+	            /* 
+	              If the record searched is present in the database,
+	              populate the formbean with the information retrieved.
+	             */
+	        	abstractDomain = (AbstractDomainObject)list.get(0);
+	        	if( abstractDomain != null )
+	        	{
+	        		abstractDomain.setAllValues(uiForm);
+	        	}
+	        }
+			//dao.commit();
+		}
+		catch (DAOException daoExp)
+		{
+			Logger.out.error(daoExp.getMessage(),daoExp);
+			String errMsg=daoExp.getMessage();
+			throw new BizLogicException(errMsg, daoExp);
+		}
+		catch (AssignDataException daoExp)
+		{
+			Logger.out.error(daoExp.getMessage(),daoExp);
+			throw daoExp;
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException();
+			}
+		}
+		
+		String simpleClassName = Utility.parseClassName(className);
+		
+		long endTime = System.currentTimeMillis();
+		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - "+	simpleClassName +" : "+ (endTime - startTime));
+
+		return abstractDomain;
+	}
+	
+	/**
+	 * This method gets called before populateUIBean method. Any logic before updating uiForm can be included here.
+	 * @param domainObj object of type AbstractDomainObject
+	 * @param uiForm object of the class which implements IValueObject
+	 */
+	protected abstract void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
+	
+	/**
+	 * This method gets called after populateUIBean method. Any logic after populating  object uiForm can be included here.
+	 * @param domainObj object of type AbstractDomainObject
+	 * @param uiForm object of the class which implements IValueObject
+	 */
+	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
 }
