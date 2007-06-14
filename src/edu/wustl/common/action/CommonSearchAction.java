@@ -26,8 +26,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -102,9 +104,13 @@ public class CommonSearchAction extends Action
 	        AbstractDomainObjectFactory abstractDomainObjectFactory = (AbstractDomainObjectFactory) MasterFactory
 	            				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
 	        String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
-	        
-	        DefaultBizLogic bizLogic = new DefaultBizLogic();
-	        
+        
+	        /**
+	         * Name : Vijay Pande
+	         * Reviewer Name: Sachin Lale
+	         * Therefore instead od using default bizlogic appropriate bizlogic is retrieved.
+	         */
+	        IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties.getValue("app.bizLogicFactory"),	"getBizLogic", abstractForm.getFormId());
 	        //List list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
 	        boolean isSuccess = bizLogic.populateUIBean(objName,identifier,abstractForm);
 	        
@@ -139,11 +145,11 @@ public class CommonSearchAction extends Action
 	            target = new String(Constants.FAILURE);
 	        }
 	    }
-//	    catch (BizLogicException excp)
-//	    {
-//	        target = Constants.FAILURE;
-//	        Logger.out.error(excp.getMessage(), excp);
-//	    }
+	    catch (BizLogicException excp)
+	    {
+	        target = Constants.FAILURE;
+	        Logger.out.error(excp.getMessage(), excp);
+	    }
 	    catch (DAOException excp)
 	    {
 	        target = Constants.FAILURE;
