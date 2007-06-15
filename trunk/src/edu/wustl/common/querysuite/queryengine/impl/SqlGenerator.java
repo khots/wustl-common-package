@@ -71,18 +71,53 @@ import edu.wustl.common.util.logger.Logger;
 public class SqlGenerator implements ISqlGenerator
 {
 
+	/**
+	 * This map holds integer value that will be appended to each table alias in the sql. 
+	 */
 	Map<IExpressionId, Integer> aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+	
+	/**
+	 * This map holds the alias name generated for each fully Qualified className, where className id key & value is the aliasName generated for that className.
+	 */
 	Map<String, String> aliasNameMap = new HashMap<String, String>();
-	JoinGraph joinGraph;
+	
+	/**
+	 * reference to the joingraph object present in the query object.  
+	 */
+	private JoinGraph joinGraph;
+
+	/**
+	 * reference to the constraints object present in the query object.  
+	 */
 	IConstraints constraints;
 
 	public static final String COLUMN_NAME = "Column";
 
+	/**
+	 * This set will contain the expression ids of the empty expression. 
+	 * An expression is empty expression when it does not contain any Rule & its sub-expressions (also their subexpressions & so on) also does not contain any Rule
+	 */
 	private Set<IExpressionId> emptyExpressions;//Set of Empty Expressions.
 	
 	// Variables required for output tree.
+	/**
+	 * List of Roots of the output tree node.
+	 */
 	List<OutputTreeDataNode> rootOutputTreeNodeList;
+	
+	/**
+	 * This map is used in output tree creation logic.
+	 * It is map of alias appender verses the output tree node. 
+	 * This map is used to ensure that no duplicate output tree node is created for the expressions having same alias appender.
+	 */
 	Map<Integer, OutputTreeDataNode> outputTreeNodeMap ;
+	
+	/**
+	 * This map contains information about the tree node ids, attributes & their correspoiding column names in the generated SQL.
+	 * - Inner most map Map<AttributeInterface, String> contains mapping of attribute interface verses the column name in SQL.
+	 * - The outer map  Map<Long, Map<AttributeInterface, String>> contains mapping of treenode Id verses the map in above step. This map contains mapping required for one output tree.
+	 * - The List contains the mapping of all output trees that are formed by the query.
+	 */
 	List<Map<Long, Map<AttributeInterface, String>>> columnMapList;
 	private int treeNo; // this count represents number of output trees formed.
 
@@ -121,7 +156,44 @@ public class SqlGenerator implements ISqlGenerator
 		IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
 		//		IQuery queryClone = query;
 		constraints = queryClone.getConstraints();
+		
 		QueryObjectProcessor.replaceMultipleParents(constraints);
+		
+		processExpressionsWithCategories();
+
+		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
+		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
+
+		// Initializin map variables.
+		aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+		aliasNameMap = new HashMap<String, String>();
+		createAliasAppenderMap(rootExpression, 1, new Integer(1),
+				new HashMap<List<IAssociation>, IExpressionId>());
+
+		// Identifying empty Expressions.
+		emptyExpressions = new HashSet<IExpressionId>();
+		isEmptyExpression(rootExpression.getExpressionId());
+		
+		//Generating output tree.
+		createTree();
+		
+		//Creating SQL.
+		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
+		String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
+		String selectPart =  getSelectPart();
+		String sql = selectPart + " " + fromPart + " " + wherePart;
+
+		return sql;
+	}
+
+	/**
+	 * To handle Expressions constrained on Categories. 
+	 * If Query contains an Expression having Constraint Entity as Category, 
+	 * then that Expression is expanded in such a way that it will look as if it is constrained on Classes without changing Query criteria.
+	 * @throws SqlException if there is any error in processing category.
+	 */
+	private void processExpressionsWithCategories() throws SqlException
+	{
 		if (containsCategrory(constraints))
 		{
 			Connection connection=null;
@@ -137,8 +209,11 @@ public class SqlGenerator implements ISqlGenerator
 				InitialContext context = new InitialContext();
 				DataSource dataSource = (DataSource) context.lookup("java:/catissuecore");
 				connection = dataSource.getConnection();
-	
-				if (isCategory)
+				
+				/**
+				 * if the root entity itself is category, then get the root entity of the category & pass it to the processCategory() method.
+				 */
+				if (isCategory) 
 				{
 					Category category = new CategoryOperations().getCategoryByEntityId(rootDEEntity
 							.getId(), connection);
@@ -172,34 +247,6 @@ public class SqlGenerator implements ISqlGenerator
 				}
 			}
 		}
-
-		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
-		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
-
-		// Initializin map variables.
-		aliasAppenderMap = new HashMap<IExpressionId, Integer>();
-		aliasNameMap = new HashMap<String, String>();
-		createAliasAppenderMap(rootExpression, 1, new Integer(1),
-				new HashMap<List<IAssociation>, IExpressionId>());
-
-		// Identifying empty Expressions.
-		emptyExpressions = new HashSet<IExpressionId>();
-		isEmptyExpression(rootExpression.getExpressionId());
-		
-//		//Generating output tree.
-//		outPutNodeMap = new HashMap<Long, IExpressionId>();
-//		IOutputTreeNode root = createOuputTree();
-//		query.setRootOutputClass(root);
-		createTree();
-		
-		//Creating SQL.
-		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
-		String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
-//		String selectPart = getSelectPart(root);
-		String selectPart =  getSelectPart();
-		String sql = selectPart + " " + fromPart + " " + wherePart;
-
-		return sql;
 	}
 
 	/**
@@ -637,62 +684,11 @@ public class SqlGenerator implements ISqlGenerator
 				eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
 			}
 			
-			if (isPAND) // Adding Pseudo and condition in the where part.
+			if (isPAND) 
 			{
-				String tableName = entity.getTableProperties().getName() + " ";
-				String leftAlias = getAliasName(expression);
-				String selectAttribute = leftAlias + ".";
-
-				ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
-				if (constraintProperties.getSourceEntityKey() != null
-						&& constraintProperties.getTargetEntityKey() != null)// Many to many case.
-				{				
-//Code to change the first table table in the inner sql. It will start inner SQL FROM part from Many to many table.
-//					String middleTableName = constraintProperties.getName();
-//					String middleTableAlias = getAliasForMiddleTable(expression, middleTableName);
-//					selectAttribute = middleTableAlias +"."+ constraintProperties.getSourceEntityKey();
-//					pseudoAndSQL = "Select " + selectAttribute;
-//					Set<Integer> processedAlias = new HashSet<Integer>();
-//					processedAlias.add(aliasAppenderMap.get(parentExpression.getExpressionId()));
-//					String fromPart = "From " + middleTableName + " " + middleTableAlias + " left join " + entity.getTableProperties().getName() + " "+ leftAlias + " on ";
-//					String leftAttribute = middleTableAlias + "." + constraintProperties.getTargetEntityKey();
-//					String rightAttribute = leftAlias + "."
-//							+ getPrimaryKey(entity).getColumnProperties().getName();
-//					fromPart+= "(" + leftAttribute + "=" + rightAttribute + ")";
-//					fromPart += processChildExpressions(leftAlias, processedAlias, expression.getExpressionId());
-//					pseudoAndSQL += " " +fromPart + " where ";
-//					String middleTableAlias = getAliasForMiddleTable(expression, constraintProperties.getName());
-//					selectAttribute = middleTableAlias +"."+ constraintProperties.getSourceEntityKey();
-					
-// This will start FROM part of SQL from the parent table.
-					selectAttribute = getAliasName(parentExpression) +"."+  getPrimaryKey(parentExpression.getConstraintEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
-					pseudoAndSQL = "Select " + selectAttribute;
-					Set<Integer> processedAlias = new HashSet<Integer>();
-					String fromPart = getFromPartSQL(parentExpression, leftAlias, processedAlias);
-					pseudoAndSQL += " " +fromPart + " where ";
-
-				}
-				else
-				{
-					if (constraintProperties.getTargetEntityKey() == null)
-					{
-						selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
-					}
-					else
-					{
-						selectAttribute += constraintProperties
-								.getTargetEntityKey();
-					}
-					pseudoAndSQL = "Select " + selectAttribute;
-					Set<Integer> processedAlias = new HashSet<Integer>();
-					processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
-					String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
-					pseudoAndSQL += " From " + tableName + " " + leftAlias + fromPart + " where ";
-				}
-
-				
+				// Adding Pseudo and condition in the where part.
+				pseudoAndSQL = createPseudoAndCondition(expression, parentExpression, eavAssociation);
 			}
-
 		}
 
 		buffer.append(processOperands(expression));
@@ -727,6 +723,52 @@ public class SqlGenerator implements ISqlGenerator
 			buffer.insert(0, pseudoAndSQL);
 		}
 		return buffer.toString();
+	}
+
+	/**
+	 * To form the Pseudo-And condition for the expression.
+	 * @param expression The child Expression reference.
+	 * @param parentExpression The parent Expression.
+	 * @param eavAssociation The association between parent & child expression.
+	 * @return The Pseudo-And SQL condition.
+	 * @throws SqlException When there is problem in creating from part. problem can be like: no primary key found in entity for join.
+	 */
+	private String createPseudoAndCondition(IExpression expression, IExpression parentExpression, AssociationInterface eavAssociation) throws SqlException
+	{
+		String pseudoAndSQL;
+		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		String tableName = entity.getTableProperties().getName() + " ";
+		String leftAlias = getAliasName(expression);
+		String selectAttribute = leftAlias + ".";
+
+		ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
+		if (constraintProperties.getSourceEntityKey() != null
+				&& constraintProperties.getTargetEntityKey() != null)// Many to many case.
+		{				
+			// This will start FROM part of SQL from the parent table.
+			selectAttribute = getAliasName(parentExpression) +"."+  getPrimaryKey(parentExpression.getConstraintEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
+			pseudoAndSQL = "Select " + selectAttribute;
+			Set<Integer> processedAlias = new HashSet<Integer>();
+			String fromPart = getFromPartSQL(parentExpression, leftAlias, processedAlias);
+			pseudoAndSQL += " " +fromPart + " where ";
+		}
+		else
+		{
+			if (constraintProperties.getTargetEntityKey() == null)
+			{
+				selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
+			}
+			else
+			{
+				selectAttribute += constraintProperties.getTargetEntityKey();
+			}
+			pseudoAndSQL = "Select " + selectAttribute;
+			Set<Integer> processedAlias = new HashSet<Integer>();
+			processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
+			String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
+			pseudoAndSQL += " From " + tableName + " " + leftAlias + fromPart + " where ";
+		}
+		return pseudoAndSQL;
 	}
 
 	/**
@@ -1452,14 +1494,6 @@ public class SqlGenerator implements ISqlGenerator
 	}
 
 	/**
-	 * @return the aliasAppenderMap
-	 */
-	Map<IExpressionId, Integer> getAliasMap()
-	{
-		return aliasAppenderMap;
-	}
-
-	/**
 	 * This method will be used by Query Mock to set the join Graph externally. 
 	 * @param joinGraph the reference to joinGraph.
 	 */
@@ -1562,17 +1596,28 @@ public class SqlGenerator implements ISqlGenerator
 		for(IExpressionId child: children)
 		{
 			IExpression childExp = constraints.getExpression(child);
-			IOutputEntity childOutputEntity = getOutputEntity(childExp);
 			OutputTreeDataNode childNode=parentOutputTreeNode;
+			/**
+			 * Check whether chid node is in view or not.
+			 * if it is in view then create output tree node for it.
+			 * else look for their children node & create the output tree heirarchy if required.
+			 */
 			if (childExp.isInView())
 			{
+				IOutputEntity childOutputEntity = getOutputEntity(childExp);
 				Integer childAliasAppender = aliasAppenderMap.get(child);
+			
+				/**
+				 * Check whether output tree node for expression with the same alias already added or not.
+				 * if its not added then need to add it alias in the outputTreeNodeMap 
+				 */
 				childNode = outputTreeNodeMap.get(childAliasAppender);
-				if (childNode==null) //Check whether already added this node in the tree on not.
+				if (childNode==null) 
 				{
 					if (parentOutputTreeNode==null)
 					{
-						childNode =  new OutputTreeDataNode(childOutputEntity,child, treeNo++); // New root node for output tree found
+						// New root node for output tree found, so create root node & add it in the rootOutputTreeNodeList.
+						childNode =  new OutputTreeDataNode(childOutputEntity,child, treeNo++); 
 						rootOutputTreeNodeList.add(childNode);
 					}
 					else

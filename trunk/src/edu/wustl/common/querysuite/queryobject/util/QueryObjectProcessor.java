@@ -34,6 +34,22 @@ import edu.wustl.common.util.logger.Logger;
 public class QueryObjectProcessor
 {
 
+	// Following attributes will be used by replaceMultipleParent method. So that they need not to pass for each method called by that routine.
+	/**
+	 * holds constraints object of the Query that is currently being processed.
+	 */
+	private IConstraints constraints;   
+	
+	/**
+	 * holds joinGraph object of the Query that is currently being processed
+	 */
+	private JoinGraph joinGraph;
+	
+	/**
+	 * contains the expression ids of the expressions having more than one parent.
+	 */
+	private List<IExpressionId> idsToProcess;
+
 	/**
 	 * Default constructor, made it protected to keep its implemenation as singlton class.
 	 *
@@ -52,10 +68,6 @@ public class QueryObjectProcessor
 		return new QueryObjectProcessor().replaceMultipleParent(constraints);
 	}
 
-	// Following attributes will be used by replaceMultipleParent code.
-	IConstraints constraints;
-	JoinGraph joinGraph;
-	List<IExpressionId> idsToProcess;
 
 	/**
 	 * if there are any nodes with multiple parents, then it converts Expression graph to the tree. 
