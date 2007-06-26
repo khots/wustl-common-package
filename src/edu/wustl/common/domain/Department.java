@@ -11,6 +11,7 @@ package edu.wustl.common.domain;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.DepartmentForm;
+import edu.wustl.common.actionForm.IValueObject;
 /**
  * A department to which a User belongs to.
  *  * @hibernate.class table="CATISSUE_DEPARTMENT"
@@ -90,7 +91,7 @@ public class Department extends AbstractDomainObject implements java.io.Serializ
 	/* (non-Javadoc)
 	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
 	 */
-	public void setAllValues(AbstractActionForm abstractForm) 
+	public void setAllValues(IValueObject abstractForm) 
 	{
 		DepartmentForm departmentForm = (DepartmentForm)abstractForm;
 		

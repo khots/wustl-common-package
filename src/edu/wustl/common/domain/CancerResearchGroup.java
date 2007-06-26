@@ -13,6 +13,7 @@ import java.io.Serializable;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.CancerResearchGroupForm;
+import edu.wustl.common.actionForm.IValueObject;
 
 /**
  * A collection of scientist and/or clinician users with a common research objective related to biospecimen collection and utilization.
@@ -92,7 +93,7 @@ public class CancerResearchGroup extends AbstractDomainObject implements Seriali
     /* (non-Javadoc)
      * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
      */
-    public void setAllValues(AbstractActionForm abstractForm)
+    public void setAllValues(IValueObject abstractForm)
     {
     	CancerResearchGroupForm cancerResearchGroupForm = (CancerResearchGroupForm)abstractForm;
 		
