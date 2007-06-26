@@ -10,7 +10,7 @@
 
 package edu.wustl.common.domain;
 
-import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.actionForm.IValueObject;
 
 /**
  * A set of attributes that defines the physical location of a User or Site.
@@ -218,7 +218,7 @@ public class Address extends AbstractDomainObject implements java.io.Serializabl
     /* (non-Javadoc)
      * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
      */
-    public void setAllValues(AbstractActionForm abstractForm)
+    public void setAllValues(IValueObject abstractForm)
     {
 
     }

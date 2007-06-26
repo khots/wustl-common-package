@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
@@ -20,6 +19,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.DOMWriter;
 import org.xml.sax.InputSource;
 
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
@@ -183,6 +183,20 @@ public class DBUtil
 		finally
 		{
 			session.close();
+		}
+	}
+	
+	public static Session getCleanSession() throws BizLogicException
+	{
+		Session session = null;
+		try
+		{
+			session = m_sessionFactory.openSession();
+			return session;
+		}
+		catch (HibernateException e)
+		{
+			throw new BizLogicException(e);
 		}
 	}
 }
