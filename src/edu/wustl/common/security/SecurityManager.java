@@ -29,7 +29,6 @@ import edu.wustl.common.security.exceptions.SMTransactionException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.AuthenticationManager;
@@ -41,7 +40,6 @@ import gov.nih.nci.security.authorization.domainobjects.Application;
 import gov.nih.nci.security.authorization.domainobjects.Group;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionElementPrivilegeContext;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroupRoleContext;
 import gov.nih.nci.security.authorization.domainobjects.Role;
@@ -2051,32 +2049,49 @@ public class SecurityManager implements Permissions {
 			throw new SMException(
 					"Could not assign group role to protection group. One or more parameters are null");
 		}
-		Set protectionGroupRoleContextSet;
-		ProtectionGroupRoleContext protectionGroupRoleContext;
+		Set protectionGroupRoleContextSet =null;
+		ProtectionGroupRoleContext protectionGroupRoleContext =null;
 		Iterator it;
 		Set aggregatedRoles = new HashSet();
 		String[] roleIds = null;
 		Role role;
 		try {
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			protectionGroupRoleContextSet = userProvisioningManager
+			/**
+			 * Name : Aarti Sharma
+		     * Reviewer: Sachin Lale
+		     * Bug ID: 4418
+		     * Description: CSM API getProtectionGroupRoleContextForGroup throws exception
+		     * CSObjectNotFoundException when called on oracle database thus leading to this problem.
+		     * Check is made for this exception now so that the method works for oracle as well.
+			 */
+			try
+			{
+				protectionGroupRoleContextSet = userProvisioningManager
 					.getProtectionGroupRoleContextForGroup(String
 							.valueOf(groupId));
-
-			it = protectionGroupRoleContextSet.iterator();
-			while (it.hasNext()) {
-				protectionGroupRoleContext = (ProtectionGroupRoleContext) it
-						.next();
-				if (protectionGroupRoleContext.getProtectionGroup()
-						.getProtectionGroupId().equals(
-								protectionGroup.getProtectionGroupId())) {
-					aggregatedRoles.addAll(protectionGroupRoleContext
-							.getRoles());
-
-					break;
-				}
 			}
-
+			catch (CSObjectNotFoundException e) {
+				Logger.out.debug("Could not find Role Context for the Group: "+
+						e.toString());
+			}
+			if(protectionGroupRoleContextSet!=null)
+			{
+				it = protectionGroupRoleContextSet.iterator();
+				while (it.hasNext())
+				{
+					protectionGroupRoleContext = (ProtectionGroupRoleContext) it
+							.next();
+					if (protectionGroupRoleContext.getProtectionGroup()
+							.getProtectionGroupId().equals(
+									protectionGroup.getProtectionGroupId())) {
+						aggregatedRoles.addAll(protectionGroupRoleContext
+								.getRoles());
+	
+						break;
+					}
+				}
+			}		
 			// if the operation is assign, add the roles to be assigned.
 			if (assignOperation == Constants.PRIVILEGE_ASSIGN)
 			{
