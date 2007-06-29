@@ -200,8 +200,10 @@ public class SimpleSearchAction extends BaseAction
 		// List of results the query will return on execution.
 		List list = null;
 		int identifierIndex = 0;
-		if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE)
-				&& Constants.switchSecurity)
+		/**
+		 * Constants.SWITCHSECURIRY is removed from if statement
+		 */
+		if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE))
 		{
 
 			simpleQueryBizLogic.createQueryResultObjectData(fromTables, queryResultObjectDataMap,
@@ -226,21 +228,27 @@ public class SimpleSearchAction extends BaseAction
 			list = query.execute(getSessionData(request), true, queryResultObjectDataMap, query
 					.hasConditionOnIdentifiedField());
 			/**
-			 * Name : Prafull_kadam
-			 * Reviewer: Aarti_Sharma
-			 * Patch ID: SimpleSearchEdit_1 
-			 * Description: User should be able to Edit the Objects searched from Simple search. 
-			 * For this Selected Colunms in the Query Results are shown as Heypelink, on clicking it user can edit that object.
+			 * Added by Vijay. Check is added to decide hyperlink should be displayed or not, based on the variable isSecurityRequired of session dataBean
 			 */
-			 // Creating & setting Hyperlink column map in request, which contains the information required for the Columns to be hyperlinked.
-			Map<Integer, QueryResultObjectData> hyperlinkColumnMap = simpleQueryBizLogic.getHyperlinkMap(queryResultObjectDataMap, query.getResultView());
-			/**
-			 * Name : Prafull_kadam
-			 * Patch ID: 4270_1
-			 * Description: edit mode through simple search fails if records per page dropdown is changed. 
-			 * 		Setting hyperlinkColumnMap in session instead of request, so that it will persiste when the records per page drop down changed or page number changed. In jsp same is retrived from session.
-			 */
-			session.setAttribute(Constants.HYPERLINK_COLUMN_MAP, hyperlinkColumnMap);
+			if(!getSessionData(request).isSecurityRequired())
+			{
+				/**
+				 * Name : Prafull_kadam
+				 * Reviewer: Aarti_Sharma
+				 * Patch ID: SimpleSearchEdit_1 
+				 * Description: User should be able to Edit the Objects searched from Simple search. 
+				 * For this Selected Colunms in the Query Results are shown as Heypelink, on clicking it user can edit that object.
+				 */
+				 // Creating & setting Hyperlink column map in request, which contains the information required for the Columns to be hyperlinked.
+				Map<Integer, QueryResultObjectData> hyperlinkColumnMap = simpleQueryBizLogic.getHyperlinkMap(queryResultObjectDataMap, query.getResultView());
+				/**
+				 * Name : Prafull_kadam
+				 * Patch ID: 4270_1
+				 * Description: edit mode through simple search fails if records per page dropdown is changed. 
+				 * 		Setting hyperlinkColumnMap in session instead of request, so that it will persiste when the records per page drop down changed or page number changed. In jsp same is retrived from session.
+				 */
+				session.setAttribute(Constants.HYPERLINK_COLUMN_MAP, hyperlinkColumnMap);
+			}
 		}
 		else
 		{

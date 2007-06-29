@@ -451,8 +451,11 @@ public class JDBCDAOImpl implements JDBCDAO
 				//Aarti: Checking object level privileges on each record
 				if (Constants.switchSecurity && isSecureExecute)
 				{
-					SecurityManager.getInstance(this.getClass()).filterRow(sessionDataBean,
+					if(sessionDataBean!=null & sessionDataBean.isSecurityRequired())
+					{
+						SecurityManager.getInstance(this.getClass()).filterRow(sessionDataBean,
 							queryResultObjectDataMap, aList);
+					}
 				}
 
 				list.add(aList);
