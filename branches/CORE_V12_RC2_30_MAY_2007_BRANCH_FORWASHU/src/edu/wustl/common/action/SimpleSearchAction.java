@@ -1,5 +1,4 @@
 /**
- * <p>Title: SimpleSearchAction Class>
  * <p>Description:	SimpleSearchAction takes the conditions from the user, prepares, 
  * executes the query and shows the result in a spreadsheet view.</p>
  * Copyright:    Copyright (c) year
@@ -34,6 +33,8 @@ import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
 import edu.wustl.common.beans.QueryResultObjectData;
 import edu.wustl.common.bizlogic.QueryBizLogic;
 import edu.wustl.common.bizlogic.SimpleQueryBizLogic;
+import edu.wustl.common.dao.QuerySessionData;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.query.DataElement;
 import edu.wustl.common.query.Query;
@@ -42,6 +43,7 @@ import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.SimpleQuery;
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.MapDataParser;
+import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -190,6 +192,8 @@ public class SimpleSearchAction extends BaseAction
 		// and adds it in the simple conditions node collection.
 		simpleQueryBizLogic.addActivityStatusConditions(simpleConditionNodeCollection, fromTables);
 
+		simpleQueryBizLogic.createOrderByListInQuery(fromTables, query);
+		
 		// Sets the condition objects from user in the query object.
 		((SimpleQuery) query).addConditions(simpleConditionNodeCollection);
 
@@ -197,9 +201,28 @@ public class SimpleSearchAction extends BaseAction
             	ApplicationProperties.getValue("app.bizLogicFactory"),
 				"getBizLogic", Constants.QUERY_INTERFACE_ID);
     
-		// List of results the query will return on execution.
-		List list = null;
 		int identifierIndex = 0;
+		
+		/**
+		 * Name: Prafull
+		 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+		 * object of class QuerySessionData will be saved in session, which will contain the required information for query execution while navigating through query result pages.
+		 * Added PagenatedResultData object, to transfer the results from the query/jdbcDao execute method.
+		 */
+
+		int recordsPerPage; 
+		String recordsPerPageSessionValue = (String)session.getAttribute(Constants.RESULTS_PER_PAGE);
+		if (recordsPerPageSessionValue==null)
+		{
+				recordsPerPage = Integer.parseInt(XMLPropertyHandler.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
+				session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage+"");
+		}
+		else
+			recordsPerPage = new Integer(recordsPerPageSessionValue).intValue();
+		
+		PagenatedResultData pagenatedResultData=null;
+		boolean isSecureExecute;
+		boolean hasConditionOnIdentifiedField;
 		/**
 		 * Constants.SWITCHSECURIRY is removed from if statement
 		 */
@@ -225,8 +248,17 @@ public class SimpleSearchAction extends BaseAction
 			}
 			
 			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
-			list = query.execute(getSessionData(request), true, queryResultObjectDataMap, query
-					.hasConditionOnIdentifiedField());
+			isSecureExecute = true;
+			hasConditionOnIdentifiedField = query.hasConditionOnIdentifiedField();
+			
+			/**
+			 * Name: Prafull
+			 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+			 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+			 * 
+			 *  PagenatedResultData object will contain the query results  
+			 */
+			pagenatedResultData = query.execute(getSessionData(request), isSecureExecute, queryResultObjectDataMap, hasConditionOnIdentifiedField,0 ,recordsPerPage);
 			/**
 			 * Added by Vijay. Check is added to decide hyperlink should be displayed or not, based on the variable isSecurityRequired of session dataBean
 			 */
@@ -264,9 +296,22 @@ public class SimpleSearchAction extends BaseAction
 								new Integer(identifierIndex));
 			}
 			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
-			list = query.execute(getSessionData(request), false, null, false);
+			/**
+			 * Name: Prafull
+			 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+			 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+			 * 
+			 *  PagenatedResultData object will contain the query results  
+			 */
+
+			isSecureExecute = false;
+			hasConditionOnIdentifiedField = false;
+
+			pagenatedResultData = query.execute(getSessionData(request), false, null, false,0,recordsPerPage);
 		}
 
+		// List of results the query will return on execution.
+		List list = pagenatedResultData.getResult();
 		// If the result contains no data, show error message.
 		if (list.isEmpty())
 		{
@@ -310,6 +355,23 @@ public class SimpleSearchAction extends BaseAction
 			}
 			else
 			{
+				/**
+				 * Name: Prafull
+				 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+				 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+				 * 
+				 *  saving required query data in Session so that can be used later on while navigating through result pages using pagination.  
+				 */
+				QuerySessionData querySessionData = new QuerySessionData();
+				querySessionData.setSql(query.getString());
+				querySessionData.setQueryResultObjectDataMap(queryResultObjectDataMap);
+				querySessionData.setSecureExecute(isSecureExecute);
+				querySessionData.setHasConditionOnIdentifiedField(hasConditionOnIdentifiedField);
+				querySessionData.setRecordsPerPage(recordsPerPage);
+				querySessionData.setTotalNumberOfRecords(pagenatedResultData.getTotalRecords());
+				
+				session.setAttribute(Constants.QUERY_SESSION_DATA, querySessionData);
+				
 				// If results contain more than one result, show the spreadsheet
 				// view.
 				request.setAttribute(Constants.PAGEOF, simpleQueryInterfaceForm.getPageOf());

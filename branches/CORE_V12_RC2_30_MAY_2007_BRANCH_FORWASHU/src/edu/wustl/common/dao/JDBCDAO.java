@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.util.dbManager.DAOException;
 
 /** This interface defines methods which are specific to JDBC operations.*/
@@ -70,6 +71,21 @@ public interface JDBCDAO extends AbstractDAO
 	     */
 	  public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
 	    
+	 
+	/**
+	 * Executes the query & returns the results specified by the offset values i.e. startIndex & noOfRecords.
+	 * @param query The SQL String
+	 * @param sessionDataBean Session databeab reference
+	 * @param isSecureExecute 
+	 * @param hasConditionOnIdentifiedField
+	 * @param queryResultObjectDataMap
+	 * @param startIndex
+	 * @param noOfRecords
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws DAOException
+	 */
+	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws ClassNotFoundException, DAOException;
 	  
 	  public void insert(String tableName, List columnValues) throws DAOException,SQLException;
 	    

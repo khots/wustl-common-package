@@ -30,6 +30,8 @@ import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.dao.QuerySessionData;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.query.Client;
 import edu.wustl.common.query.DataElement;
 import edu.wustl.common.query.Operator;
@@ -63,9 +65,10 @@ public class QueryBizLogic extends DefaultBizLogic
 			+ "FIRST_TABLE_JOIN_COLUMN, SECOND_TABLE_JOIN_COLUMN "
 			+ "from CATISSUE_RELATED_TABLES_MAP";
 
-	private static final String GET_COLUMN_DATA = "select ALIAS_NAME,COLUMN_NAME from CATISSUE_INTERFACE_COLUMN_DATA columnData, "
-			+ "CATISSUE_QUERY_TABLE_DATA tableData where columnData.TABLE_ID = tableData.TABLE_ID  "
-			+ "and columnData.IDENTIFIER=";
+// Commenting this variable as its not used anywhere	
+//	private static final String GET_COLUMN_DATA = "select ALIAS_NAME,COLUMN_NAME from CATISSUE_INTERFACE_COLUMN_DATA columnData, "
+//			+ "CATISSUE_QUERY_TABLE_DATA tableData where columnData.TABLE_ID = tableData.TABLE_ID  "
+//			+ "and columnData.IDENTIFIER=";
 
 	private static final String GET_TABLE_ALIAS = "select ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA "
 			+ "where TABLE_ID=";
@@ -1279,5 +1282,40 @@ public class QueryBizLogic extends DefaultBizLogic
 		 + no + "','" + sqlQuery1 + "')";
 		 jdbcDAO.executeUpdate(sqlForQueryLog);*/
 
+	}
+	
+	/**
+	 * Method to execute the given SQL to get the query result.
+	 * @param sessionDataBean reference to SessionDataBean object
+	 * @param querySessionData
+	 * @param startIndex The Starting index of the result set.
+	 * @return The reference to PagenatedResultData, which contains the Query result information.
+	 * @throws DAOException
+	 */
+	public PagenatedResultData execute(SessionDataBean sessionDataBean, QuerySessionData querySessionData, int startIndex)
+			throws DAOException
+	{
+		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		try
+		{
+			dao.openSession(null);
+			edu.wustl.common.dao.queryExecutor.PagenatedResultData pagenatedResultData = dao.executeQuery(querySessionData.getSql(), sessionDataBean,
+					querySessionData.isSecureExecute(), querySessionData.isHasConditionOnIdentifiedField(), querySessionData.getQueryResultObjectDataMap(),
+					startIndex, querySessionData.getRecordsPerPage());
+
+			return pagenatedResultData;
+		}
+		catch (DAOException daoExp)
+		{
+			throw new DAOException(daoExp.getMessage(), daoExp);
+		}
+		catch (ClassNotFoundException classExp)
+		{
+			throw new DAOException(classExp.getMessage(), classExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
 	}
 }

@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +169,38 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		}
 	}
 
+	/**
+	 * TO create The Order by Attribute list & set it into the Query object.
+	 * @param fromTables The From tables present in the from part of the Query.
+	 * @param query The reference to the Query object.
+	 * @throws DAOException 
+	 */
+	public void createOrderByListInQuery(Set fromTables, Query query) throws DAOException
+	{
+		// getting main Query object present in the fromTables set & storing it in mainObjectsOfQuery.
+		Vector<String> mainObjectsOfQuery = QueryBizLogic.getMainObjectsOfQuery();
+		mainObjectsOfQuery.retainAll(fromTables);
+		
+		//getting related object aliases present in query, & removing mainObjectsOfQuery aliase from it, so that this set will contain only related object & not any main Query object.
+		Set<String> relatedObjectAliases = new HashSet<String>(fromTables);
+		relatedObjectAliases.removeAll(mainObjectsOfQuery);
+		
+		for (String aliasName: mainObjectsOfQuery)
+		{
+			query.addToOrderByAttributeList(new DataElement(aliasName,Constants.IDENTIFIER));
+			Vector<String> relatedTableAliases = QueryBizLogic.getRelatedTableAliases(aliasName);
+			relatedTableAliases.retainAll(relatedObjectAliases);
+			for (String relatedTableAlias :relatedTableAliases)
+			{
+				query.addToOrderByAttributeList(new DataElement(relatedTableAlias,Constants.IDENTIFIER));
+			}
+			relatedObjectAliases.removeAll(relatedTableAliases);
+		}
+		
+		if (!relatedObjectAliases.isEmpty())
+			throw new RuntimeException("Problem in creating Order by Attributes !!!!!");
+	}
+	
 	/**
 	 * Returns SimpleConditionsNode if the object named aliasName contains the activityStatus 
 	 * data member, else returns null.
