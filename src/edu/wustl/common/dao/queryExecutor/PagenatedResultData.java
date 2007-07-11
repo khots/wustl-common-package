@@ -1,8 +1,14 @@
 /**
- * 
+ * <p>Title: PagenatedResultData class</p>
+ * <p>Description:  PagenatedResultData class is a class which can hold the Query Results. </p>
+ * Copyright:    Copyright (c) year
+ * Company: Washington University, School of Medicine, St. Louis.
+ * @author prafull_kadam
+ * @version 1.00
+ * Created on July 11, 2007
  */
 
-package edu.wustl.common.dao;
+package edu.wustl.common.dao.queryExecutor;
 
 import java.util.List;
 
@@ -13,6 +19,7 @@ import java.util.List;
  */
 public class PagenatedResultData
 {
+
 	// Holds the Result or Subset of query result.
 	List result;
 	// Total number of records that will be returned by the query. result.siez() will be always less than or equal to totalRecords.
@@ -20,7 +27,7 @@ public class PagenatedResultData
 
 	/**
 	 * Constructor to instanciate object of this class.
-	 * It is not expected that it will be called from class other than JDBCDAOImpl, so not keeping it public.   
+	 * It is not expected that it will be called from class other than Query Executor clases, so not keeping it public.   
 	 * @param result The complete or Subset of query result.
 	 * @param totalRecords Total number of records that will be returned by the query
 	 */
