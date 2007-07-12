@@ -29,6 +29,7 @@ import edu.wustl.common.security.exceptions.SMTransactionException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -1251,39 +1252,45 @@ public class SecurityManager implements Permissions {
 	public boolean checkPermission(String groupId, String objectType,
 			String objectIdentifier) throws SMException 
 	{
-	    Logger.out.debug("Check Privilege for user group.................................");
-	    String protectionElementName = objectType + "_" + objectIdentifier; 
-	    Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
-	    
-	    try
-	    {
-	        UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
-		    Set privilegeContextForGroup = userProvisioningManager
-		    								.getProtectionElementPrivilegeContextForGroup(groupId);
-		    Iterator iterator = privilegeContextForGroup.iterator();
-		    while (iterator.hasNext())
+		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
+		    Logger.out.debug("Check Privilege for user group.................................");
+		    String protectionElementName = objectType + "_" + objectIdentifier; 
+		    Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
+		    
+		    try
 		    {
-		        ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
-		        if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
-		        {
-		            return true;
-		        }
+		        UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
+			    Set privilegeContextForGroup = userProvisioningManager
+			    								.getProtectionElementPrivilegeContextForGroup(groupId);
+			    Iterator iterator = privilegeContextForGroup.iterator();
+			    while (iterator.hasNext())
+			    {
+			        ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
+			        if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
+			        {
+			            return true;
+			        }
+			    }
 		    }
-	    }
-	    catch (CSObjectNotFoundException csObjNotExp)
-	    {
-	        throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
-	    }
-	    catch (CSException csExp)
-	    {
-	        throw new SMException(csExp.getMessage(), csExp);
-	    }
-	    
-	    return false;
+		    catch (CSObjectNotFoundException csObjNotExp)
+		    {
+		        throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
+		    }
+		    catch (CSException csExp)
+		    {
+		        throw new SMException(csExp.getMessage(), csExp);
+		    }
+		    return false;
+		}
+		return true;
 	}
 
 	public boolean checkPermission(String userName, String objectType,
-			String objectIdentifier, String privilegeName) throws SMException {
+			String objectIdentifier, String privilegeName) throws SMException 
+	{
+		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
 		try {
 		    Logger.out.debug(" User:" + userName + "objectType:" + objectType
 					+ " objectId:" + objectIdentifier + " privilegeName:"
@@ -1335,6 +1342,8 @@ public class SecurityManager implements Permissions {
 					+ e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
+	}
+		return true;
 	}
 	
 	/**
@@ -2380,7 +2389,10 @@ public class SecurityManager implements Permissions {
 	 * @return
 	 */
 	public boolean checkPermission(String userName, String tableAlias,
-			Object identifier, String permission) {
+			Object identifier, String permission) 
+	{
+		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
 		boolean isAuthorized = false;
 		String tableName = (String) AbstractClient.objectTableNames.get(tableAlias);
 		Logger.out.debug(" AliasName:" + tableAlias + " tableName:" + tableName
@@ -2455,6 +2467,8 @@ public class SecurityManager implements Permissions {
 			return isAuthorized;
 		}
 		return isAuthorized;
+		}
+		return true;
 	}
 
 	/**
