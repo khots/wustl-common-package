@@ -130,7 +130,7 @@ public abstract class AbstractQueryExecutor
 		 */
 		if (!getSublistOfResult)
 		{
-			noOfRecords = Integer.MAX_VALUE;
+			this.noOfRecords = Integer.MAX_VALUE;
 		}
 		
 		PagenatedResultData pagenatedResultData = null;
