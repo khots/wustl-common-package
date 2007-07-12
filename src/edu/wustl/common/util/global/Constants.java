@@ -260,6 +260,7 @@ public class Constants
 	
 	public static final String SPREADSHEET_DATA_LIST = "spreadsheetDataList";
 	public static final String SPREADSHEET_COLUMN_LIST = "spreadsheetColumnList";
+	public static final String QUERY_SESSION_DATA = "querySessionData";
 	
 	public static final String ACCESS_DENIED = "access_denied";
 	
@@ -417,7 +418,8 @@ public class Constants
 	public static final int START_PAGE = 1;
 	public static final int NUMBER_RESULTS_PER_PAGE = 5;
 	public static final String PAGE_NUMBER = "pageNum";
-	public static final String RESULTS_PER_PAGE = "numResultsPerPage"; 
+	public static final String RESULTS_PER_PAGE = "numResultsPerPage";
+	public static final String RECORDS_PER_PAGE_PROPERTY_NAME="resultView.noOfRecordsPerPage";
 	public static final String TOTAL_RESULTS = "totalResults";
 	public static final String PREVIOUS_PAGE = "prevpage";
 	public static final String NEXT_PAGE = "nextPage";

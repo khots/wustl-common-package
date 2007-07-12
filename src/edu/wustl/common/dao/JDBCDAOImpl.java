@@ -28,7 +28,8 @@ import java.util.Map;
 
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.security.SecurityManager;
+import edu.wustl.common.dao.queryExecutor.AbstractQueryExecutor;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -312,18 +313,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException
 	{
-		//Aarti: Security checks
-		if (Constants.switchSecurity && isSecureExecute)
-		{
-			if (sessionDataBean == null)
-			{
-				//Logger.out.debug("Session data is null");
-				return null;
-			}
-		}
-		List list = getQueryResultList(query, sessionDataBean, isSecureExecute, false,
-				queryResultObjectDataMap);
-		return list;
+		return executeQuery(query,sessionDataBean,isSecureExecute,false,queryResultObjectDataMap,-1,-1).getResult();
 	}
 
 	/**
@@ -340,6 +330,22 @@ public class JDBCDAOImpl implements JDBCDAO
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
 	{
+		/**
+		 * Name: Prafull
+		 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+		 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+		 *
+		 * Calling executeQuery method with StartIndex parameter as -1, so that it will return all records from result.
+		 */
+
+		return executeQuery(query,sessionDataBean,isSecureExecute,hasConditionOnIdentifiedField,queryResultObjectDataMap,-1,-1).getResult();
+	}
+
+	
+	/**
+	 * @see edu.wustl.common.dao.JDBCDAO#executeQuery(java.lang.String, edu.wustl.common.beans.SessionDataBean, boolean, boolean, java.util.Map, int, int)
+	 */
+	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws ClassNotFoundException, DAOException {
 		//Aarti: Security checks
 		if (Constants.switchSecurity && isSecureExecute)
 		{
@@ -349,9 +355,14 @@ public class JDBCDAOImpl implements JDBCDAO
 				return null;
 			}
 		}
-		List list = getQueryResultList(query, sessionDataBean, isSecureExecute,
-				hasConditionOnIdentifiedField, queryResultObjectDataMap);
-		return list;
+		/**
+		 * Name: Prafull
+		 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+		 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+		 */
+
+		return  getQueryResultList(query, sessionDataBean, isSecureExecute,
+				hasConditionOnIdentifiedField, queryResultObjectDataMap,startIndex,noOfRecords);
 	}
 
 	/**
@@ -363,125 +374,25 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @param isSecureExecute
 	 * @param hasConditionOnIdentifiedField
 	 * @param queryResultObjectDataMap
-	 * @param list
+	 * @param startIndex The offset value, from which the result will be returned. 
+	 * 		This will be used for pagination purpose, 
+	 * @param noOfRecords
 	 * @return
 	 * @throws DAOException
 	 */
-	private List getQueryResultList(String query, SessionDataBean sessionDataBean,
+	private PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap) throws DAOException
+			Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws DAOException
 	{
-		PreparedStatement stmt = null;
-		ResultSet resultSet = null;
-		List list;
+		/**
+		 * Name: Prafull
+		 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+		 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+		 *
+		 * Calling QueryExecutor method.
+		 */
+		return AbstractQueryExecutor.getInstance().getQueryResultList(query,connection, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
 
-		try
-		{
-			stmt = connection.prepareStatement(query);
-			resultSet = stmt.executeQuery();
-
-			list = new ArrayList();
-
-			ResultSetMetaData metaData = resultSet.getMetaData();
-			int columnCount = metaData.getColumnCount();
-
-			for (int i = 1; i <= columnCount; i++)
-			{
-				Logger.out.debug("Column " + i + " : " + metaData.getColumnClassName(i) + " "
-						+ metaData.getColumnName(i) + " " + metaData.getTableName(i));
-				//;
-			}
-
-			while (resultSet.next())
-			{
-				int i = 1;
-
-				List aList = new ArrayList();
-				while (i <= columnCount)
-				{
-
-					if (resultSet.getObject(i) != null)
-					{
-
-						Object valueObj = resultSet.getObject(i);
-						if (valueObj instanceof oracle.sql.CLOB)
-						{
-							aList.add(valueObj);
-						}
-						else
-						{
-							String value;
-							// Sri: Added check for date/time/timestamp since the
-							// default date format returned by toString was yyyy-dd-mm
-							// bug#463 
-							if (valueObj instanceof java.util.Date) // since all java.sql time 
-							//classes are derived from java.util.Date 
-							{
-								SimpleDateFormat formatter = new SimpleDateFormat(
-										Constants.DATE_PATTERN_MM_DD_YYYY);
-								value = formatter.format((java.util.Date) valueObj);
-							}
-							else
-							{
-								value = valueObj.toString();
-							}
-							aList.add(value);
-						}
-					}
-					else
-					{
-						aList.add("");
-					}
-					i++;
-				}
-
-				//Aarti: If query has condition on identified data then check user's permission
-				//on the record's identified data.
-				//If user does not have privilege don't add the record to results list
-				//bug#1413
-				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
-				{
-					boolean hasPrivilegeOnIdentifiedData = SecurityManager.getInstance(
-							this.getClass()).hasPrivilegeOnIdentifiedData(sessionDataBean,
-							queryResultObjectDataMap, aList);
-					if (!hasPrivilegeOnIdentifiedData)
-						continue;
-				}
-
-				//Aarti: Checking object level privileges on each record
-				if (Constants.switchSecurity && isSecureExecute)
-				{
-					SecurityManager.getInstance(this.getClass()).filterRow(sessionDataBean,
-							queryResultObjectDataMap, aList);
-				}
-
-				list.add(aList);
-			}
-		}
-		catch (SQLException sqlExp)
-		{
-			//throw new DAOException(sqlExp.getMessage(), sqlExp);
-			Logger.out.error(sqlExp.getMessage(), sqlExp);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
-		}
-		finally
-		{
-			try
-			{
-				if (stmt != null)
-					stmt.close();
-
-				if (resultSet != null)
-					resultSet.close();
-			}
-			catch (SQLException ex)
-			{
-				//throw new DAOException(ex.getMessage(), ex);
-				Logger.out.error(ex.getMessage(), ex);
-				throw new DAOException(Constants.GENERIC_DATABASE_ERROR, ex);
-			}
-		}
-		return list;
 	}
 
 	/**
@@ -531,7 +442,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	public void insert(String tableName, List columnValues) throws DAOException, SQLException
 	{
 		//Get metadate for temp table to set default values in date fields
-		String sql = "Select * from " + tableName;
+		String sql = "Select * from " + tableName + " where 1!=1";
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(sql.toString());
 		ResultSetMetaData metaData = resultSet.getMetaData();
