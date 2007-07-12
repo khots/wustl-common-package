@@ -1,6 +1,7 @@
 package edu.wustl.common.query;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import java.util.Vector;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -100,6 +102,11 @@ public abstract class Query {
 	private boolean isQueryOnChild = true;
 
 	/**
+	 * Order by Attribute List
+	 */
+	private List<DataElement> orderByAttributeList = new ArrayList<DataElement>();
+	
+	/**
 	 * Participant object constant
 	 */
 	public static final String PARTICIPANT = "Participant";
@@ -186,15 +193,36 @@ public abstract class Query {
 	public List execute(SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap, boolean hasConditionOnIdentifiedField)
 			throws DAOException, SQLException {
+		return execute(sessionDataBean,isSecureExecute,queryResultObjectDataMap,hasConditionOnIdentifiedField,-1,-1).getResult();
+	}
+
+	/**
+	 * This method executes the query string formed from getString method and
+	 * creates a temporary table.
+	 * @param isSecureExecute
+	 * @param queryResultObjectDataMap TODO
+	 * @param hasConditionOnIdentifiedField
+	 * @param startIndex 
+	 * @param totoalRecords
+	 * @param columnIdsMap
+	 * 
+	 * @return Returns PagenatedResultData which contains following information:
+	 * - sublist of the resultset depending upon startIndex & totoalRecords
+	 * - total number of records resulting from the query.
+	 * @throws SQLException
+	 */
+	public PagenatedResultData execute(SessionDataBean sessionDataBean,
+			boolean isSecureExecute, Map queryResultObjectDataMap, boolean hasConditionOnIdentifiedField, int startIndex, int totoalRecords)
+			throws DAOException, SQLException {
 		try {
 			JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			dao.openSession(null);
 			String sql =  getString();
 			Logger.out.debug("SQL************" + sql);
-			List list = dao.executeQuery(sql, sessionDataBean,
-					isSecureExecute,hasConditionOnIdentifiedField, queryResultObjectDataMap);
+			PagenatedResultData pagenatedResultData = dao.executeQuery(sql, sessionDataBean,
+					isSecureExecute,hasConditionOnIdentifiedField, queryResultObjectDataMap,startIndex,totoalRecords);
 			dao.closeSession();
-			return list;
+			return pagenatedResultData;
 		} catch (DAOException daoExp) {
 			throw new DAOException(daoExp.getMessage(), daoExp);
 		} catch (ClassNotFoundException classExp) {
@@ -267,7 +295,37 @@ public abstract class Query {
 		 * Forming WHERE part of the query
 		 */
 		query.append(this.getWhereQueryString(joinConditionString));
+		
+		/**
+		 * Name: Prafull
+		 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+		 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+		 * 
+		 *  Appending Order by clause to the SQL.  
+		 */
+		query.append(getOrderByClauseString());
+		
 		return query.toString();
+	}
+
+	/**
+	 * To form the Order By clause of the SQL.
+	 * @return The String representing Order By SQL for the query.
+	 * @throws SQLException
+	 */
+	private String getOrderByClauseString() throws SQLException
+	{
+		StringBuffer buffer = new StringBuffer();
+		if (orderByAttributeList.size()!=0)
+		{
+			buffer.append("\nORDER BY ");
+			buffer.append(orderByAttributeList.get(0).toSQLString(this.tableSufix));
+			for (int i = 1; i < orderByAttributeList.size(); i++)
+			{
+				buffer.append(","+orderByAttributeList.get(i).toSQLString(this.tableSufix));
+			}	
+		}
+		return buffer.toString();
 	}
 
 	/**
@@ -692,7 +750,6 @@ public abstract class Query {
 		fromString.append("\nFROM ");
 		Iterator it = set.iterator();
 		
-		Object tableAlias;
 		Table table;
 		String tableName;
 		while (it.hasNext()) {
@@ -755,12 +812,13 @@ public abstract class Query {
 		try {
 			JDBCDAO dao = (JDBCDAO)DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			dao.openSession(null);
-			String sqlString = "SELECT tableData2.ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA tableData2 "
-					+ "join (SELECT CHILD_TABLE_ID FROM CATISSUE_TABLE_RELATION relationData,"
-					+ "CATISSUE_QUERY_TABLE_DATA tableData "
-					+ "where relationData.PARENT_TABLE_ID = tableData.TABLE_ID and tableData.ALIAS_NAME = '"
-					+ aliasName
-					+ "') as relatedTables  on relatedTables.CHILD_TABLE_ID = tableData2.TABLE_ID";
+// Commenting this variable as its not used in code.			
+//			String sqlString = "SELECT tableData2.ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA tableData2 "
+//					+ "join (SELECT CHILD_TABLE_ID FROM CATISSUE_TABLE_RELATION relationData,"
+//					+ "CATISSUE_QUERY_TABLE_DATA tableData "
+//					+ "where relationData.PARENT_TABLE_ID = tableData.TABLE_ID and tableData.ALIAS_NAME = '"
+//					+ aliasName
+//					+ "') as relatedTables  on relatedTables.CHILD_TABLE_ID = tableData2.TABLE_ID";
 			list = dao.executeQuery(getString(), null, false, null);
 
 			Iterator iterator = list.iterator();
@@ -1049,8 +1107,6 @@ public abstract class Query {
 		DataElement dataElement;
 		String dataElementTableName;
 		String dataElementFieldName;
-		String tableAlias;
-		DataElement identifierDataElement;
 
 		for (int i = 0; i < resultView.size(); i++) {
 			dataElement = (DataElement) resultView.get(i);
@@ -1131,5 +1187,35 @@ public abstract class Query {
 	}
 	public void setQueryOnChild(boolean isQueryOnChild) {
 		this.isQueryOnChild = isQueryOnChild;
+	}
+
+	
+	
+	
+	/**
+	 * TO get the Order by Attribute list.
+	 * @return the orderByAttributeList
+	 */
+	public List<DataElement> getOrderByAttributeList()
+	{
+		return orderByAttributeList;
+	}
+
+	
+	/**
+	 * @param orderByAttributeList the orderByAttributeList to set
+	 */
+	public void setOrderByAttributeList(List<DataElement> orderByAttributeList)
+	{
+		this.orderByAttributeList = orderByAttributeList;
+	}
+	
+	/**
+	 * To add the given attribute in the orderByAttributeList.
+	 * @param attributeName The reference to the DataElement representing attribute to be added in the SQL.
+	 */
+	public void addToOrderByAttributeList(DataElement attributeName)
+	{
+		orderByAttributeList.add(attributeName);
 	}
 }

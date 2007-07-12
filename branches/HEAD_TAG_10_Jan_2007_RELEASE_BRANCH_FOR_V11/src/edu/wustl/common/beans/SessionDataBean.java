@@ -28,6 +28,7 @@ public class SessionDataBean
     private String userName=new String();
     private String ipAddress=new String();
     private Long userId = null;
+    private boolean securityRequired=new Boolean(false);
     
     /**
      * @return Returns the userName.
@@ -105,5 +106,21 @@ public class SessionDataBean
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+	}
+	/**
+	 * This method returns boolean value for securityRequired
+	 * @return
+	 */
+	public boolean isSecurityRequired() 
+	{
+		return securityRequired;
+	}
+	/**
+	 * This method sets the boolen value of securityRequired
+	 * @param securityRequired
+	 */
+	public void setSecurityRequired(boolean securityRequired) 
+	{
+		this.securityRequired = securityRequired;
 	}
 }
