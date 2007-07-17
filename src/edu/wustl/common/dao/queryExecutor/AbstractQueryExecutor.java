@@ -78,7 +78,6 @@ public abstract class AbstractQueryExecutor
 	 */
 	private static final String SELECT_CLAUSE = "SELECT";
 	private static final String FROM_CLAUSE = "FROM";
-	private static final String DISTINCT_CLAUSE = "DISTINCT ";
 
 	/**
 	 * Method to get the Query executor instance. 
@@ -182,12 +181,26 @@ public abstract class AbstractQueryExecutor
 		ResultSetMetaData metaData = resultSet.getMetaData();
 
 		int columnCount = metaData.getColumnCount();
-
+		
+		/**
+		 * Name: Prafull
+		 * Reviewer: Aarti
+		 * Bug: 4857,4865
+		 * Description: Changed Query modification logic for Oracle.
+		 * 
+		 * For oracle queries extra rownum is added in SELECT clause as last attribute in SELECT clause of query for paginated results, 
+		 * so no need to process that extra rownum column.
+		 * @see edu.wustl.common.dao.queryExecutor.AbstractQueryExecutor#putPageNumInSQL(java.lang.String,int,int)
+		 */
+		if (Variables.databaseName.equals(Constants.ORACLE_DATABASE) && getSublistOfResult)
+		{
+			columnCount--;
+		}
+		
 		for (int i = 1; i <= columnCount; i++)
 		{
 			Logger.out.debug("Column " + i + " : " + metaData.getColumnClassName(i) + " "
 					+ metaData.getColumnName(i) + " " + metaData.getTableName(i));
-			//;
 		}
 		int recordCount = 0;
 		List list = new ArrayList();
@@ -269,9 +282,9 @@ public abstract class AbstractQueryExecutor
 
 	/**
 	 * To modify the SQL, to get the required no. of records with the given offset from the query.
-	 * For query like "Select id, first_name from catissue_participant where id > 0" will be modifed as follows:
-	 * For Oracle: "Select id, first_name from (Select rownum rn, id, first_name from catissue_participant where id > 0) where rn between startIndex AND lastIndex"
-	 * For MySQL : "Select id, first_name from catissue_participant where id > 0 limit startIndex, noOfRecords"
+	 * For query like "Select id, first_name from catissue_participant where id > 0 order by id" will be modifed as follows:
+	 * For Oracle: "Select * from (Select qry.*, rownum rn From (Select rownum rn, id, first_name from catissue_participant where id > 0 order by id) qry where rownum <= lastindex) where rn > startIndex"
+	 * For MySQL : "Select id, first_name from catissue_participant where id > 0 order by id limit startIndex, noOfRecords"
 	 * @param sql The SQL to be executed on database
 	 * @param startIndex The offset, or the starting index. 
 	 * @param noOfRecords The totalnumber of records to fetch from the query.
@@ -288,47 +301,23 @@ public abstract class AbstractQueryExecutor
 		}
 		else
 		{
-			//Add rownum condition to the query, by forming inner query.
-			String upperCaseSQL = sql.toUpperCase();
-			int index = upperCaseSQL.indexOf(SELECT_CLAUSE) + SELECT_CLAUSE.length();
-			int fromIndex = upperCaseSQL.indexOf(FROM_CLAUSE);
-
-			String selectAttributes = sql.substring(index, fromIndex).trim();
-
-			// need to handle distinct clause, this clause will be added in outer query.
-			boolean addDistinctClause = false;
-			if (selectAttributes.startsWith(DISTINCT_CLAUSE))
-			{
-				selectAttributes = selectAttributes.substring(DISTINCT_CLAUSE.length());
-				selectAttributes.trim();
-				addDistinctClause = true;
-			}
-			String[] selectAttributeArray = selectAttributes.split(",");
-
-			StringBuffer outerQuerySelectAttributes = new StringBuffer(" ");
-
-			for (int i = 0; i < selectAttributeArray.length; i++)
-			{
-				String attribute[] = selectAttributeArray[i].trim().split(" ");
-				String attributeName = attribute[0];
-				if (attribute.length > 1)
-				{
-					attributeName = attribute[attribute.length - 1];
-				}
-				outerQuerySelectAttributes.append(attributeName).append(" ,");
-			}
-			int outerQuerySelectAttributesLength = outerQuerySelectAttributes.length();
-			outerQuerySelectAttributes.delete(outerQuerySelectAttributesLength - 2,
-					outerQuerySelectAttributesLength);
-			newSql.append(SELECT_CLAUSE).append(" ");
-
-			if (addDistinctClause)
-				newSql.append(DISTINCT_CLAUSE);
-
-			newSql.append(outerQuerySelectAttributes).append(" FROM (").append(SELECT_CLAUSE)
-					.append(" rownum rn, ").append(selectAttributes).append(" ").append(
-							sql.substring(fromIndex)).append(")").append(" WHERE rn BETWEEN ")
-					.append(startIndex).append(" AND ").append(startIndex + noOfRecords - 1);
+			/**
+			 * Name: Prafull
+			 * Reviewer: Aarti
+			 * Bug: 4857,4865
+			 * Description: Changed Query modification logic for Oracle.
+			 * 
+			 * forming new query, by using original query as inner query & adding rownum conditions in outer query.
+			 */
+			newSql.append(SELECT_CLAUSE).append(" * ").append(FROM_CLAUSE).append(" (").append(SELECT_CLAUSE)
+			.append(" qry.*, ROWNUM rn ").append(FROM_CLAUSE).append(" (").append(sql).append(") qry WHERE ROWNUM <= ")
+			.append(startIndex + noOfRecords).append(") WHERE rn > ")
+			.append(startIndex);
+// Another approach to form simillar query by putting both rownum conditions in the outer query.			
+//			newSql.append(SELECT_CLAUSE).append(" * ").append(FROM_CLAUSE).append(" (").append(SELECT_CLAUSE)
+//			.append(" qry.*, ROWNUM rn ").append(FROM_CLAUSE).append(" (").append(sql).append(") qry ) WHERE rn BETWEEN ")
+//			.append(startIndex+1).append(" AND ").append(startIndex + noOfRecords);;
+			
 		}
 		return newSql.toString();
 	}
