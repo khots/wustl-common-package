@@ -272,6 +272,11 @@ public class QueryObjectProcessor
 			addAllChildrenNodes(childNode,map);
 		}
 	}	
+	/**
+	 * It returns all the nodes present all tress in results. 
+	 * @param keys set of trees
+	 * @return Map of uniqueNodeId and tree node
+	 */
 	public static Map<String, OutputTreeDataNode> getAllChildrenNodes(Set<OutputTreeDataNode> keys)
 	{
 		Map<String, OutputTreeDataNode> map = new HashMap<String, OutputTreeDataNode>();
