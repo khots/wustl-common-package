@@ -484,4 +484,9 @@ public class Constants
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
+	public static final String QUERY_SQL = "querySQL";
+//	 Frame names in Query Module Results page.
+	public static final String GRID_DATA_VIEW_FRAME = "gridFrame";
+	public static final String TREE_VIEW_FRAME = "treeViewFrame";
+	
 }
