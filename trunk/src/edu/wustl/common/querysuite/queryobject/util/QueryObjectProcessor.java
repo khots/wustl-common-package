@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
@@ -256,5 +257,28 @@ public class QueryObjectProcessor
 			map.putAll(getAllChildrenNodes(childNode));
 		}
 		return map;
+	}
+	/**
+	 * To get map of all Children nodes along with their ids under given output tree node.
+	 * @param root The root noe of the output tree.
+	 * @return map of all Children nodes along with their ids under given output tree node.
+	 */
+	private static void addAllChildrenNodes(OutputTreeDataNode root,Map<String, OutputTreeDataNode> map)
+	{
+		map.put(root.getUniqueNodeId(), root);
+		List<OutputTreeDataNode> children = root.getChildren();
+		for (OutputTreeDataNode childNode : children)
+		{
+			addAllChildrenNodes(childNode,map);
+		}
 	}	
+	public static Map<String, OutputTreeDataNode> getAllChildrenNodes(Set<OutputTreeDataNode> keys)
+	{
+		Map<String, OutputTreeDataNode> map = new HashMap<String, OutputTreeDataNode>();
+		for(OutputTreeDataNode root:keys)
+		{
+			addAllChildrenNodes(root,map);
+		}
+		return map;
+	}
 }
