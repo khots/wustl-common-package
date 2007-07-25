@@ -89,7 +89,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	protected void delete(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
 	{
-		//dao.delete(obj);
+		dao.delete(obj);
 	}
 
 	/**
