@@ -55,6 +55,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
+import edu.wustl.common.querysuite.queryobject.impl.metadata.QueryOutputTreeAttributeMetadata;
 import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
 import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.util.Utility;
@@ -118,7 +119,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * - The outer map  Map<Long, Map<AttributeInterface, String>> contains mapping of treenode Id verses the map in above step. This map contains mapping required for one output tree.
 	 * - The List contains the mapping of all output trees that are formed by the query.
 	 */
-	List<Map<Long, Map<AttributeInterface, String>>> columnMapList;
+//	List<Map<Long, Map<AttributeInterface, String>>> columnMapList;
 	private int treeNo; // this count represents number of output trees formed.
 
 	/**
@@ -278,24 +279,24 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	public Map<Long, Map<AttributeInterface, String>> getColumnMap()
 	{
-		return columnMapList.get(0);
+		return null;//columnMapList.get(0);
 	}
 
-	/**
-	 * To get the Map of Output tree formed by SQL Generator for the given query, which contains information of tree & mapping of each treenode attribute to the SQL column name.
-	 * @return Map of output trees & column mapping. 
-	 */
-	public Map<OutputTreeDataNode,Map<Long, Map<AttributeInterface, String>>> getOutputTreeMap()
-	{
-		Map<OutputTreeDataNode,Map<Long, Map<AttributeInterface, String>>> map = new HashMap<OutputTreeDataNode, Map<Long,Map<AttributeInterface,String>>>();
-		
-		for (int i = 0; i < rootOutputTreeNodeList.size(); i++)
-		{
-			OutputTreeDataNode node = rootOutputTreeNodeList.get(i);
-			map.put(node, columnMapList.get(i));
-		}
-		return map;
-	}
+//	/**
+//	 * To get the Map of Output tree formed by SQL Generator for the given query, which contains information of tree & mapping of each treenode attribute to the SQL column name.
+//	 * @return Map of output trees & column mapping. 
+//	 */
+//	public Map<OutputTreeDataNode,Map<Long, Map<AttributeInterface, String>>> getOutputTreeMap()
+//	{
+//		Map<OutputTreeDataNode,Map<Long, Map<AttributeInterface, String>>> map = new HashMap<OutputTreeDataNode, Map<Long,Map<AttributeInterface,String>>>();
+//		
+//		for (int i = 0; i < rootOutputTreeNodeList.size(); i++)
+//		{
+//			OutputTreeDataNode node = rootOutputTreeNodeList.get(i);
+//			map.put(node, columnMapList.get(i));
+//		}
+//		return map;
+//	}
 	
 	/**
 	 * To get the select part of the SQL.
@@ -304,13 +305,11 @@ public class SqlGenerator implements ISqlGenerator
 	String getSelectPart()
 	{
 		selectIndex = 0;
-		columnMapList = new ArrayList<Map<Long,Map<AttributeInterface,String>>>();
+//		columnMapList = new ArrayList<Map<Long,Map<AttributeInterface,String>>>();
 		String selectAttribute = "Select ";
 		for(OutputTreeDataNode rootOutputTreeNode:rootOutputTreeNodeList)
 		{
-			Map<Long, Map<AttributeInterface, String>>  columnMap = new HashMap<Long, Map<AttributeInterface,String>>();
-			columnMapList.add(columnMap);
-			selectAttribute += getSelectAttributes(rootOutputTreeNode,columnMap);
+			selectAttribute += getSelectAttributes(rootOutputTreeNode);
 		}
 		if (selectAttribute.endsWith(" ,"))
 		{
@@ -323,17 +322,14 @@ public class SqlGenerator implements ISqlGenerator
 	/**
 	 * It will return the select part attributes for this node along with its child nodes.
 	 * @param treeNode the output tree node.
-	 * @param columnMap Column map for this Query output tree node.
 	 * @return  The select part attributes for this node along with its child nodes.
 	 */
-	private String getSelectAttributes(OutputTreeDataNode treeNode, Map<Long, Map<AttributeInterface, String>> columnMap)
+	private String getSelectAttributes(OutputTreeDataNode treeNode)
 	{
 		StringBuffer selectPart = new StringBuffer("");
 		IExpression expression = constraints.getExpression(treeNode.getExpressionId());
 
 		IOutputEntity outputEntity = treeNode.getOutputEntity();
-		Map<AttributeInterface, String> entityColumnMap = new HashMap<AttributeInterface, String>();
-		columnMap.put(treeNode.getId(), entityColumnMap);
 		List<AttributeInterface> attributes = outputEntity.getSelectedAttributes();
 		
 		for (AttributeInterface attribute : attributes)
@@ -341,13 +337,15 @@ public class SqlGenerator implements ISqlGenerator
 			selectPart.append(getSQL(attribute, expression));
 			String columnAliasName = COLUMN_NAME + selectIndex;
 			selectPart.append(" " + columnAliasName + " ,");
-			entityColumnMap.put(attribute, columnAliasName);
+			
+			treeNode.addAttribute(new QueryOutputTreeAttributeMetadata(attribute,columnAliasName));
+			
 			selectIndex++;
 		}
 		List<OutputTreeDataNode> children = treeNode.getChildren();
 		for (OutputTreeDataNode childTreeNode : children)
 		{
-			selectPart.append(getSelectAttributes(childTreeNode, columnMap));
+			selectPart.append(getSelectAttributes(childTreeNode));
 		}
 		return selectPart.toString();
 	}
@@ -1643,4 +1641,15 @@ public class SqlGenerator implements ISqlGenerator
 		outputEntity.getSelectedAttributes().addAll(entity.getAttributeCollection());
 		return outputEntity;
 	}
+
+	
+	/**
+	 * @return the rootOutputTreeNodeList
+	 */
+	public List<OutputTreeDataNode> getRootOutputTreeNodeList()
+	{
+		return rootOutputTreeNodeList;
+	}
+	
+	
 }
