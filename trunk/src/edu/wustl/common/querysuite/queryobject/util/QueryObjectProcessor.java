@@ -261,7 +261,7 @@ public class QueryObjectProcessor
 	/**
 	 * To get map of all Children nodes along with their ids under given output tree node.
 	 * @param root The root noe of the output tree.
-	 * @return map of all Children nodes along with their ids under given output tree node.
+	 * @param map of all Children nodes along with their ids under given output tree node.
 	 */
 	private static void addAllChildrenNodes(OutputTreeDataNode root,Map<String, OutputTreeDataNode> map)
 	{
@@ -278,6 +278,21 @@ public class QueryObjectProcessor
 	 * @return Map of uniqueNodeId and tree node
 	 */
 	public static Map<String, OutputTreeDataNode> getAllChildrenNodes(Set<OutputTreeDataNode> keys)
+	{
+		Map<String, OutputTreeDataNode> map = new HashMap<String, OutputTreeDataNode>();
+		for(OutputTreeDataNode root:keys)
+		{
+			addAllChildrenNodes(root,map);
+		}
+		return map;
+	}
+	
+	/**
+	 * It returns all the nodes present all tress in results. 
+	 * @param keys set of trees
+	 * @return Map of uniqueNodeId and tree node
+	 */
+	public static Map<String, OutputTreeDataNode> getAllChildrenNodes(List<OutputTreeDataNode> keys)
 	{
 		Map<String, OutputTreeDataNode> map = new HashMap<String, OutputTreeDataNode>();
 		for(OutputTreeDataNode root:keys)
