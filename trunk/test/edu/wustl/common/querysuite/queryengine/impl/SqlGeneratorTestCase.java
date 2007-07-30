@@ -6,12 +6,9 @@ package edu.wustl.common.querysuite.queryengine.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import junit.framework.TestCase;
 import edu.common.dynamicextensions.domain.Entity;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
@@ -24,7 +21,6 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
-import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
 import edu.wustl.common.util.InheritanceUtilMock;
 import edu.wustl.common.util.global.Constants;
@@ -1060,7 +1056,7 @@ public class SqlGeneratorTestCase extends TestCase
 			assertEquals(
 					"Incorrect number of output trees Formed while generating SQL !!!",
 					1,
-					generator.getOutputTreeMap().keySet().size());
+					generator.getRootOutputTreeNodeList().size());
 		}
 		catch (Exception e)
 		{
@@ -1099,7 +1095,7 @@ public class SqlGeneratorTestCase extends TestCase
 			assertEquals(
 					"Incorrect number of output trees Formed while generating SQL !!!",
 					1,
-					generator.getOutputTreeMap().keySet().size());
+					generator.getRootOutputTreeNodeList().size());
 		}
 		catch (Exception e)
 		{
@@ -1143,13 +1139,13 @@ public class SqlGeneratorTestCase extends TestCase
 					"Select SpecimenCollectionGroup_3.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_3.NAME Column3 ,SpecimenCollectionGroup_3.IDENTIFIER Column4 ,Specimen_4.TYPE Column5 ,Specimen_4.POSITION_DIMENSION_TWO Column6 ,Specimen_4.POSITION_DIMENSION_ONE Column7 ,Specimen_4.PATHOLOGICAL_STATUS Column8 ,Specimen_4.LINEAGE Column9 ,Specimen_4.LABEL Column10 ,Specimen_4.IDENTIFIER Column11 ,Specimen_4.COMMENTS Column12 ,Specimen_4.BARCODE Column13 ,Specimen_4.AVAILABLE Column14 ,Specimen_4.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_5.IDENTIFIER Column17 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID And Specimen_4.SPECIMEN_CLASS='Tissue') left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) Where (Participant_1.LAST_NAME like 's%') And((Specimen_4.TYPE='Fixed Tissue') Or(Specimen_4.TYPE='Fresh Tissue')) And(ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER='M001')",
 					sql);
 
-			Map<OutputTreeDataNode, Map<Long, Map<AttributeInterface, String>>> outputTreeMap = generator.getOutputTreeMap();
-			
-			Set<OutputTreeDataNode> keySet = outputTreeMap.keySet();
+//			Map<OutputTreeDataNode, Map<Long, Map<AttributeInterface, String>>> outputTreeMap = generator.getOutputTreeMap();
+//			
+//			Set<OutputTreeDataNode> keySet = outputTreeMap.keySet();
 			assertEquals(
 					"Incorrect number of output trees Formed while generating SQL !!!",
 					2,
-					keySet.size());
+					generator.getRootOutputTreeNodeList().size());
 		}
 		catch (Exception e)
 		{
