@@ -160,7 +160,7 @@ public class SqlGenerator implements ISqlGenerator
 		
 		QueryObjectProcessor.replaceMultipleParents(constraints);
 		
-		processExpressionsWithCategories();
+		processExpressionsWithCategories(queryClone);
 
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
 		IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
@@ -193,7 +193,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * then that Expression is expanded in such a way that it will look as if it is constrained on Classes without changing Query criteria.
 	 * @throws SqlException if there is any error in processing category.
 	 */
-	private void processExpressionsWithCategories() throws SqlException
+	private void processExpressionsWithCategories(IQuery query) throws SqlException
 	{
 		if (containsCategrory(constraints))
 		{
@@ -225,7 +225,7 @@ public class SqlGenerator implements ISqlGenerator
 				{
 					rootEntity = rootDEEntity;
 				}
-				new CategoryPreprocessor().processCategories(constraints, rootEntity, connection);
+				new CategoryPreprocessor().processCategories(query);
 			}
 			catch (Exception e)
 			{
