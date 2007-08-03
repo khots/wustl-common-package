@@ -16,6 +16,7 @@ import java.util.HashMap;
 public class Constants 
 {
 	
+	public static final int HASH_PRIME = 7;
 	
 	// constants for passwordManager
 	
@@ -474,4 +475,8 @@ public class Constants
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
+	
+	//Constants required for migrating to Hibernate 3
+	public static final int HIBERNATE3_DAO =3;
+	public static final int JDBC3_DAO =4;
 }

@@ -5,6 +5,7 @@
 package edu.wustl.common.querysuite.metadata.associations;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
 
 /**
  * @author prafull_kadam
@@ -49,5 +50,5 @@ public interface IInterModelAssociation extends IAssociation
 	/**
 	 * @return association with swapped source and target attributes, urls.
 	 */
-	public IInterModelAssociation reverse();
+	public InterModelAssociation reverse();
 }

@@ -363,7 +363,7 @@ public class DateTimeComponent extends TagSupport
 		
 		output = output + "<DIV id=slcalcod"+id+" style=\"Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
 		output = output + "<SCRIPT>";
-
+ 
 		if(displayTime.booleanValue())
 		{
 			output = output + "printTimeCalendar('"+id+"',"+day+","+month+","+year+","+hour+","+minutes+");";

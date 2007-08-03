@@ -9,6 +9,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
+import edu.wustl.cab2b.common.factory.caB2BFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -211,7 +212,7 @@ public abstract class QueryObjectFactory
 	public static IPathFinder getPathFinder()
 	{
 		String pathFinderClassName = ClientPropertyLoader.getPathFinderClassName();
-		IPathFinder pathFinder = (IPathFinder) CommonObjectFactory.getInstance().getObjectofClass(
+		IPathFinder pathFinder = (IPathFinder) caB2BFactory.getInstance().getObjectofClass(
 				pathFinderClassName);
 		return pathFinder;
 	}

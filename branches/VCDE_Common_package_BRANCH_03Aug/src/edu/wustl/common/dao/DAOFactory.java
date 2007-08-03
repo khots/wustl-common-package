@@ -59,10 +59,19 @@ public class DAOFactory
                 dao = new HibernateDAOImpl();
                 break;
 
+            case Constants.HIBERNATE3_DAO :
+                dao = new Hibernate3DAOImpl();
+                break;
+              
+            case Constants.JDBC3_DAO :
+                dao = new JDBC3DAOImpl();
+                break;
+                
             case Constants.JDBC_DAO :
                 dao = new JDBCDAOImpl();
             default :
                 break;
+            
         }
         return dao;
     }

@@ -1036,7 +1036,7 @@ public class QueryGeneratorMock
 			
 			AssociationInterface spgAndTissueSpecimeAssociation = getAssociationFrom(enitytManager
 					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
-					"specimenCollectionGroup"), EntityManagerMock.TISSUE_SPECIMEN_NAME);
+					"specimenCollectionGroup"), EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
 			IIntraModelAssociation iSpgAndTissueSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndTissueSpecimeAssociation);
 			
 			joinGraph.putAssociation(specimenCollectionGroupExpression1.getExpressionId(),

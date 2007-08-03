@@ -3,8 +3,6 @@ package edu.wustl.common.querysuite.metadata.category;
 
 import java.io.Serializable;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-
 /**
  * @version 1.0
  * @created 28-Dec-2006 2:01:13 AM
@@ -21,8 +19,7 @@ public class CategorialAttribute implements Serializable
 	private Long deCategoryAttributeId;
 	private Long deSourceClassAttributeId;
 	private CategorialClass categorialClass;
-    private AttributeInterface categoryAttribute;
-    private AttributeInterface sourceClassAttribute;
+
 	/**
 	 * @return Returns the categorialClass.
 	 * @hibernate.many-to-one column="CATEGORIAL_CLASS_ID"
@@ -102,33 +99,5 @@ public class CategorialAttribute implements Serializable
 	{
 
 	}
-
-    /**
-     * @return Returns the categoryAttribute.
-     */
-    public AttributeInterface getCategoryAttribute() {
-        return categoryAttribute;
-    }
-
-    /**
-     * @return Returns the sourceClassAttribute.
-     */
-    public AttributeInterface getSourceClassAttribute() {
-        return sourceClassAttribute;
-    }
-
-    /**
-     * @param categoryAttribute The categoryAttribute to set.
-     */
-    public void setCategoryAttribute(AttributeInterface categoryAttribute) {
-        this.categoryAttribute = categoryAttribute;
-    }
-
-    /**
-     * @param sourceClassAttribute The sourceClassAttribute to set.
-     */
-    public void setSourceClassAttribute(AttributeInterface sourceClassAttribute) {
-        this.sourceClassAttribute = sourceClassAttribute;
-    }
 
 }

@@ -7,6 +7,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
  * @created 12-Oct-2006 13.35.04 AM
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -115,11 +116,14 @@ public class Constraints implements IConstraints
 	{
 		Set<IConstraintEntity> constraintEntitySet = new HashSet<IConstraintEntity>();
 		Collection<IExpression> allExpressions = expressions.values();
-		for (IExpression expression : allExpressions)
+		for(IExpression expression: allExpressions)
 		{
 			constraintEntitySet.add(expression.getConstraintEntity());
 		}
 		return constraintEntitySet;
 	}
-
+	
+	
+	
+	
 }

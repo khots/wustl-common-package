@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
-
 /**
  * @version 1.0
  * @created 28-Dec-2006 2:01:13 AM
@@ -24,7 +22,7 @@ public class Category implements Serializable
 	private CategorialClass rootClass;
 	private Set<Category> subCategories = new HashSet<Category>();
 	private Category parentCategory;
-    private EntityInterface categoryEntity;
+
 	/**
 	 * @hibernate.property name="deEntityId" type="long" column="DE_ENTITY_ID"
 	 * @return Returns the deEntity.
@@ -125,18 +123,4 @@ public class Category implements Serializable
 	{
 		return subCategories;
 	}
-
-    /**
-     * @return Returns the categoryEntity.
-     */
-    public EntityInterface getCategoryEntity() {
-        return categoryEntity;
-    }
-
-    /**
-     * @param categoryEntity The categoryEntity to set.
-     */
-    public void setCategoryEntity(EntityInterface categoryEntity) {
-        this.categoryEntity = categoryEntity;
-    }
 }

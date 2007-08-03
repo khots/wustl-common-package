@@ -452,7 +452,7 @@ public class PasswordManager
     	String encodedPWD = encode(pwd);
     	System.out.println("encodedPWD "+encodedPWD);
     	
-        System.out.println(decode("4e41705731654f6c7263316f"));
+        System.out.println(decode("4c416f576765696c6e63316f326d3365"));
         
         //Mandar 08-May-06
         if(args.length > 1 )
