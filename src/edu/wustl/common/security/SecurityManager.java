@@ -27,7 +27,6 @@ import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.SMTransactionException;
 import edu.wustl.common.util.Permissions;
-import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -87,6 +86,8 @@ public class SecurityManager implements Permissions {
 
 	private static final String ADMINISTRATOR_ROLE = "1";
 
+	private static final String NON_ADMINISTRATOR_ROLE = "2";
+	
 	private static final String SUPERVISOR_ROLE = "2";
 
 	private static final String TECHNICIAN_ROLE = "3";
@@ -94,6 +95,8 @@ public class SecurityManager implements Permissions {
 	private static final String PUBLIC_ROLE = "7";
 
 	private static final String ADMINISTRATOR_GROUP = "ADMINISTRATOR_GROUP";
+	
+	private static final String NON_ADMINISTRATOR_GROUP= "NON_ADMINISTRATOR_GROUP";
 
 	private static final String SUPERVISOR_GROUP = "SUPERVISOR_GROUP";
 
@@ -102,6 +105,8 @@ public class SecurityManager implements Permissions {
 	private static final String PUBLIC_GROUP = "PUBLIC_GROUP";
 
 	private static final String ADMINISTRATOR_GROUP_ID = "1";
+	
+	private static final String NON_ADMINISTRATOR_GROUP_ID = "2";
 
 	private static final String SUPERVISOR_GROUP_ID = "2";
 
@@ -351,9 +356,10 @@ public class SecurityManager implements Permissions {
 		try {
 			userProvisioningManager = getUserProvisioningManager();
 			roles.add(userProvisioningManager.getRoleById(ADMINISTRATOR_ROLE));
-			roles.add(userProvisioningManager.getRoleById(SUPERVISOR_ROLE));
-			roles.add(userProvisioningManager.getRoleById(TECHNICIAN_ROLE));
-			roles.add(userProvisioningManager.getRoleById(PUBLIC_ROLE));
+			roles.add(userProvisioningManager.getRoleById(NON_ADMINISTRATOR_ROLE));
+//			roles.add(userProvisioningManager.getRoleById(SUPERVISOR_ROLE));
+//			roles.add(userProvisioningManager.getRoleById(TECHNICIAN_ROLE));
+//			roles.add(userProvisioningManager.getRoleById(PUBLIC_ROLE));
 		} catch (CSException e) {
 			Logger.out.debug("Unable to get roles: Exception: "
 					+ e.getMessage());
@@ -385,12 +391,14 @@ public class SecurityManager implements Permissions {
 			//Remove user from any other role if he is assigned some
 			userProvisioningManager.removeUserFromGroup(ADMINISTRATOR_ROLE,
 					String.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(SUPERVISOR_ROLE, String
+			userProvisioningManager.removeUserFromGroup(NON_ADMINISTRATOR_ROLE,
+					String.valueOf(user.getUserId()));
+			/*userProvisioningManager.removeUserFromGroup(SUPERVISOR_ROLE, String
 					.valueOf(user.getUserId()));
 			userProvisioningManager.removeUserFromGroup(TECHNICIAN_ROLE, String
 					.valueOf(user.getUserId()));
 			userProvisioningManager.removeUserFromGroup(PUBLIC_GROUP_ID, String
-					.valueOf(user.getUserId()));
+					.valueOf(user.getUserId()));*/
 
 			//Add user to corresponding group
 			groupId = getGroupIdForRole(roleID);
@@ -413,7 +421,12 @@ public class SecurityManager implements Permissions {
 		if (roleID.equals(ADMINISTRATOR_ROLE)) {
 			Logger.out.debug(" role corresponds to Administrator group");
 			return ADMINISTRATOR_GROUP_ID;
-		} else if (roleID.equals(SUPERVISOR_ROLE)) {
+		} 
+		else if (roleID.equals(NON_ADMINISTRATOR_ROLE)) {
+			Logger.out.debug(" role corresponds to Non Administrator group");
+			return NON_ADMINISTRATOR_GROUP_ID;
+		}
+		else if (roleID.equals(SUPERVISOR_ROLE)) {
 			Logger.out.debug(" role corresponds to Supervisor group");
 			return SUPERVISOR_GROUP_ID;
 		} else if (roleID.equals(TECHNICIAN_ROLE)) {
@@ -444,7 +457,12 @@ public class SecurityManager implements Permissions {
 					role = userProvisioningManager
 							.getRoleById(ADMINISTRATOR_ROLE);
 					return role;
-				} else if (group.getGroupName().equals(SUPERVISOR_GROUP)) {
+				}
+				else if (group.getGroupName().equals(NON_ADMINISTRATOR_GROUP)) {
+					role = userProvisioningManager.getRoleById(NON_ADMINISTRATOR_ROLE);
+					return role;
+				}
+				else if (group.getGroupName().equals(SUPERVISOR_GROUP)) {
 					role = userProvisioningManager.getRoleById(SUPERVISOR_ROLE);
 					return role;
 				} else if (group.getGroupName().equals(TECHNICIAN_GROUP)) {
@@ -462,57 +480,6 @@ public class SecurityManager implements Permissions {
 		}
 		return role;
 
-	}
-	/**
-     * Name : Virender Mehta
-     * Reviewer: Sachin Lale
-     * Bug ID: 3842
-     * Patch ID: 3842_2
-     * See also: 3842_1
-     * Description: This function will return the Role name(Administrator, Scientist, Technician, Supervisor )
-	 * @param userID
-	 * @return Role Name
-	 * @throws SMException
-	 */
-	public String getUserGroup(long userID) throws SMException
-	{
-		Set groups;
-		UserProvisioningManager userProvisioningManager = null;
-		Iterator it;
-		Group group;
-		try
-		{
-			userProvisioningManager = getUserProvisioningManager();
-			groups = userProvisioningManager.getGroups(String.valueOf(userID));
-			it = groups.iterator();
-			while (it.hasNext())
-			{
-				group = (Group) it.next();
-				if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) 
-				{
-					return Roles.ADMINISTRATOR;
-				}
-				else if (group.getGroupName().equals(SUPERVISOR_GROUP)) 
-				{
-					return Roles.SUPERVISOR;
-				}
-				else if (group.getGroupName().equals(TECHNICIAN_GROUP)) 
-				{
-					return Roles.TECHNICIAN;
-				}
-				else if (group.getGroupName().equals(PUBLIC_GROUP)) 
-				{
-					return Roles.SCIENTIST;
-				}
-			}
-		}
-		catch (CSException e) 
-		{
-			Logger.out.debug("Unable to get roles: Exception: "
-					+ e.getMessage());
-			throw new SMException(e.getMessage(), e);
-		}
-		return "";
 	}
 
 	/**

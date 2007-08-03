@@ -29,11 +29,4 @@ public interface IAssociation extends Serializable
 	 * @return the target entity.
 	 */
 	EntityInterface getTargetEntity();
-	
-	/**
-	 * Call only if isBidirectional is true.
-	 * @return an association which is the reverse of this association.
-	 * @throws UnsupportedOperationException if association is not bidirectional.
-	 */
-	IAssociation reverse();
 }

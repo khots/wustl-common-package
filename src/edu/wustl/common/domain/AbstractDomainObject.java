@@ -79,4 +79,12 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
     public String getMessageLabel() {
     	return getId().toString();
     }
+    /**
+     * Returns daoType to return HibernateDao 
+     * @return String
+     */
+	public int getDaoType()
+	{
+		return 0;
+	}
 }

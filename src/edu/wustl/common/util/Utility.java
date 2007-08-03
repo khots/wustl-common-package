@@ -92,7 +92,10 @@ public class Utility
     		result = mat.matches();
     		
     		if(result)
-    			dtSep  = Constants.DATE_SEPARATOR; 
+    		{
+    			dtSep  = Constants.DATE_SEPARATOR;
+    			datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+    		}
     		
     		// check for  / separator
     		if(!result)
@@ -102,15 +105,73 @@ public class Utility
         		result = mat.matches();
         		//System.out.println("is Valid Date Pattern : / : "+result);
         		if(result)
-        			dtSep  = Constants.DATE_SEPARATOR_SLASH; 
+        		{
+        			dtSep  = Constants.DATE_SEPARATOR_SLASH;
+        			datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+        		}
+    		}
+    		
+    		if(!result)
+    		{
+	    		re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
+	    		mat =re.matcher(strDate); 
+	    		result = mat.matches();
+    		
+	    		if(result)
+	    		{
+	    			dtSep  = Constants.DATE_SEPARATOR;
+	    			datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
+	    		}
+    		}
+    		
+    		// check for  / separator
+    		if(!result)
+    		{
+        		re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
+        		mat =re.matcher(strDate); 
+        		result = mat.matches();        		
+        		if(result)
+        		{
+        			dtSep  = Constants.DATE_SEPARATOR_SLASH;
+        			datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
+        		}
     		}
 		}
     	catch(Exception exp)
 		{
 			Logger.out.error("Utility.datePattern() : exp : " + exp);
 		}
-    	if(dtSep.trim().length()>0)
-    		datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+    	/*if(dtSep.trim().length()>0)
+    		datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";*/
+    	/*else
+    	{
+    		try
+    		{
+        		Pattern re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
+        		Matcher  mat =re.matcher(strDate); 
+        		result = mat.matches();
+        		
+        		if(result)
+        			dtSep  = Constants.DATE_SEPARATOR; 
+        		
+        		// check for  / separator
+        		if(!result)
+        		{
+            		re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
+            		mat =re.matcher(strDate); 
+            		result = mat.matches();
+            		//System.out.println("is Valid Date Pattern : / : "+result);
+            		if(result)
+            			dtSep  = Constants.DATE_SEPARATOR_SLASH; 
+        		}
+    		}
+        	catch(Exception exp)
+    		{
+    			Logger.out.error("Utility.datePattern() : exp : " + exp);
+    		}
+        	if(dtSep.trim().length()>0)
+        		datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
+    	}*/
     	
     	Logger.out.debug("datePattern returned : "+ datePattern  );
 		return datePattern; 
@@ -490,10 +551,10 @@ public class Utility
      * @return The String generated for the TD tag. Creates the selected menu or normal menu.
      */
     public static String setSelectedMenuItem(int selectedMenuID, int currentMenuID, String normalMenuClass , String selectedMenuClass , String menuHoverClass)
-    {
+    { 
     	String returnStr = "";
     	if(selectedMenuID == currentMenuID)
-    	{
+    	{ 
     		returnStr ="<td class=\"" + selectedMenuClass + "\" onmouseover=\"changeMenuStyle(this,\'" + selectedMenuClass + "\')\" onmouseout=\"changeMenuStyle(this,\'" + selectedMenuClass + "\')\">";
     	}
     	else

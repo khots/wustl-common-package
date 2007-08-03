@@ -1,5 +1,6 @@
 package edu.wustl.common.dao;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,13 @@ public interface JDBCDAO extends AbstractDAO
 	  public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException;
 	  
 	  public void executeUpdate(String sql) throws DAOException;
+	  /**
+	   * Returns the connection.
+	   * @return Connection Connection
+	   * @throws DAOException DAOException
+	   */
+	  public Connection getConnection() throws DAOException;
+	 
 		
 	    
 }

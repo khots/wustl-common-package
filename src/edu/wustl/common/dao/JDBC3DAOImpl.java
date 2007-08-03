@@ -33,7 +33,7 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
-import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.dbManager.Hibernate3DBUtil;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -42,7 +42,7 @@ import edu.wustl.common.util.logger.Logger;
  * Default implementation of AbstractDAO through JDBC.
  * @author gautam_shetty
  */
-public class JDBCDAOImpl implements JDBCDAO
+public class JDBC3DAOImpl implements JDBCDAO
 {
 
 	private Connection connection = null;
@@ -70,7 +70,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		try
 		{
 			//Creates a connection.
-			connection = DBUtil.getConnection();// getConnection(database, loginName, password);
+			connection = Hibernate3DBUtil.getConnection();// getConnection(database, loginName, password);
 		}
 		catch (Exception sqlExp)
 		{
@@ -90,7 +90,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		try
 		{
 			auditManager = null;
-			DBUtil.closeConnection();
+			Hibernate3DBUtil.closeConnection();
 			//        	if (connection != null && !connection.isClosed())
 			//        	    connection.close();
 		}

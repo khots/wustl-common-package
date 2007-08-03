@@ -3,9 +3,15 @@ package edu.wustl.common.util;
 /**
  * @author Kapil Kaveeshwar
  */
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+
+import net.sf.hibernate.Hibernate;
 
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.global.Constants;
@@ -100,6 +108,23 @@ public class MapDataParser
 				return new Integer(str);
 			else if(type.equals(Table.class))
 				return new Table(str,str);
+			else if(type.equals(Boolean.class))
+				return new Boolean(str);
+			else if(type.equals(Date.class))
+				return Utility.parseDate(str,Utility.datePattern(str));
+			else if(type.equals(Blob.class))
+			{
+				File file = new File(str);
+				DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+				
+		        byte[] buff = new byte[(int) file.length()];
+		        dis.readFully(buff);
+		        dis.close();
+		        return Hibernate.createBlob(buff);
+
+			}
+			
+				
 		}
 		return str;
 	}

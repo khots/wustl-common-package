@@ -567,7 +567,11 @@ public class EntityManagerMock extends EntityManager
 		{
 			AssociationInterface association = null;
 			
-			association = createAssociation(sourceEntityName, SPECIMEN_CHARACTERISTIC_NAME, AssociationDirection.SRC_DESTINATION, "","specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID", null);
+			for (String specimenClass: specimenClasses)
+			{
+				association = createAssociation(specimenClass, SPECIMEN_CHARACTERISTIC_NAME, AssociationDirection.SRC_DESTINATION, "","specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID", null);
+				associations.add(association);
+			}
 			associations.add(association);
 		}
 		else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("specimen"))
