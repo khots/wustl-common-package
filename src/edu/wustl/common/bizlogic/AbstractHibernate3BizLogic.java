@@ -21,7 +21,7 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
-import edu.wustl.common.util.dbManager.HibernateMetaData;
+import edu.wustl.common.util.dbManager.Hibernate3MetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -29,7 +29,7 @@ import edu.wustl.common.util.logger.Logger;
  * AbstractBizLogic is the base class of all the Biz Logic classes.
  * @author gautam_shetty
  */
-public abstract class AbstractBizLogic implements IBizLogic
+public abstract class AbstractHibernate3BizLogic implements IBizLogic
 {
 	/**
      * This method gets called before insert method. Any logic before inserting into database can be included here.
@@ -186,7 +186,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        preInsert(obj, dao, sessionDataBean);
 	        if(isInsertOnly)
 		    {
-	        	insert(obj,dao);
+	        	insert(obj,dao);	        	
 		    }else
 		    {
 		    	insert(obj, dao, sessionDataBean);
@@ -352,8 +352,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			return null;
 		}
-		String roottableName=HibernateMetaData.getRootTableName(obj.getClass());
-		String tableName=HibernateMetaData.getTableName(obj.getClass());
+		String roottableName=Hibernate3MetaData.getRootTableName(obj.getClass());
+		String tableName=Hibernate3MetaData.getTableName(obj.getClass());
     	try
     	{   				
     	    // Get ExceptionFormatter
