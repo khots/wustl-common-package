@@ -3,18 +3,23 @@ package edu.wustl.common.querysuite.queryengine.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
+import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -41,8 +46,8 @@ public class CommonPathFinder implements IPathFinder
 			InitialContext context = new InitialContext();
  			DataSource dataSource =  (DataSource) context.lookup("java:/catissuecore");
  			connection = dataSource.getConnection();
-			PathFinder pathFinder = (PathFinder) PathFinder.getInstance();
-			pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity, connection);
+			PathFinder pathFinder = (PathFinder) PathFinder.getInstance(connection);
+			pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity);
 		}
 		catch (DAOException e)
 		{
@@ -73,5 +78,29 @@ public class CommonPathFinder implements IPathFinder
 			}
 		}
 		return pathsMap;
+	}
+
+	public Set<ICuratedPath> autoConnect(Set<EntityInterface> arg0)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Set<ICuratedPath> getCuratedPaths(EntityInterface arg0, EntityInterface arg1)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long arg0)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<IInterModelAssociation> getInterModelAssociations(Long arg0)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
