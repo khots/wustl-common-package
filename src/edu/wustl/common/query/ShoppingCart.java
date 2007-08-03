@@ -9,11 +9,7 @@
  */
 package edu.wustl.common.query;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
 
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
@@ -71,33 +67,6 @@ public class ShoppingCart
 			if(returnObject != null)
 			{
 				throw new BizLogicException("Specimen " + returnObject +" already added to the Shopping Cart.");
-			}
-		}
-	}
-	//Added by Ashish
-	/**
-	 * @param specimenObjectList
-	 * @throws BizLogicException
-	 */
-	public void addToMyList(List specimenObjectList) throws BizLogicException
-	{
-		List duplicateObjList = new ArrayList();
-		if(specimenObjectList != null)
-		{
-			Iterator iter = specimenObjectList.iterator();
-			while(iter.hasNext())
-			{
-				AbstractDomainObject obj = (AbstractDomainObject)iter.next();
-				String key = String.valueOf(obj.getId());																																																
-				Object returnObject = cart.put(key,obj);
-				if(returnObject != null)
-				{
-					duplicateObjList.add(returnObject);
-				}				
-			}
-			if(duplicateObjList.size() > 0)
-			{
-				throw new BizLogicException("Specimen already added to the Shopping Cart.");
 			}
 		}
 	}

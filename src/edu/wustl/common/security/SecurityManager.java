@@ -463,30 +463,51 @@ public class SecurityManager implements Permissions {
 		return role;
 
 	}
-	
-	
-	public String getUserGroup(long userID) throws SMException {
+	/**
+     * Name : Virender Mehta
+     * Reviewer: Sachin Lale
+     * Bug ID: 3842
+     * Patch ID: 3842_2
+     * See also: 3842_1
+     * Description: This function will return the Role name(Administrator, Scientist, Technician, Supervisor )
+	 * @param userID
+	 * @return Role Name
+	 * @throws SMException
+	 */
+	public String getUserGroup(long userID) throws SMException
+	{
 		Set groups;
 		UserProvisioningManager userProvisioningManager = null;
 		Iterator it;
 		Group group;
-		try {
+		try
+		{
 			userProvisioningManager = getUserProvisioningManager();
 			groups = userProvisioningManager.getGroups(String.valueOf(userID));
 			it = groups.iterator();
-			while (it.hasNext()) {
+			while (it.hasNext())
+			{
 				group = (Group) it.next();
-				if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) {
+				if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) 
+				{
 					return Roles.ADMINISTRATOR;
-				} else if (group.getGroupName().equals(SUPERVISOR_GROUP)) {
+				}
+				else if (group.getGroupName().equals(SUPERVISOR_GROUP)) 
+				{
 					return Roles.SUPERVISOR;
-				} else if (group.getGroupName().equals(TECHNICIAN_GROUP)) {
+				}
+				else if (group.getGroupName().equals(TECHNICIAN_GROUP)) 
+				{
 					return Roles.TECHNICIAN;
-				} else if (group.getGroupName().equals(PUBLIC_GROUP)) {
+				}
+				else if (group.getGroupName().equals(PUBLIC_GROUP)) 
+				{
 					return Roles.SCIENTIST;
 				}
 			}
-		} catch (CSException e) {
+		}
+		catch (CSException e) 
+		{
 			Logger.out.debug("Unable to get roles: Exception: "
 					+ e.getMessage());
 			throw new SMException(e.getMessage(), e);

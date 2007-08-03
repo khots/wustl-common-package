@@ -16,16 +16,6 @@ import java.util.HashMap;
 public class Constants 
 {
 	
-	public static final int HASH_PRIME = 7;
-	
-	//constants for TiTLi Search
-	public static final String TITLI_SORTED_RESULT_MAP="sortedResultMap";
-	public static final String TITLI_INSERT_OPERATION="insert";
-	public static final String TITLI_UPDATE_OPERATION="update";
-	public static final String TITLI_DELETE_OPERATION="delete";
-	public static final String TITLI_SINGLE_RESULT="singleResult";
-	public static final String TITLI_FETCH_ACTION="/TitliFetch.do";
-	
 	
 	// constants for passwordManager
 	
@@ -484,5 +474,4 @@ public class Constants
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
-	public static final String QUERY_SQL = "querySQL";
 }

@@ -43,10 +43,6 @@ public class TreeNodeFactory
             case Constants.SPECIMEN_TREE_ID:
             	treeNode = new SpecimenTreeNode(null,Constants.SPECIMEN_TREE_ROOT_NAME);
             	break;
-            case Constants.EXPERIMETN_TREE_ID:
-            	treeNode = new ExperimentTreeNode(new Long(0),"My Experiments");
-            	((ExperimentTreeNode)treeNode).setExperimentGroup(true);
-            	break;
         }
         
         return treeNode;
