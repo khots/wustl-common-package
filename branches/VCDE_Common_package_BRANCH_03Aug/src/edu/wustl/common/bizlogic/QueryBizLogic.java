@@ -87,7 +87,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		JDBCDAO dao = null;
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC3_DAO);
 			dao.openSession(null);
 			list = dao.executeQuery(ALIAS_NAME_TABLE_NAME_MAP_QUERY, null, false, null);
 
@@ -136,7 +136,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		JDBCDAO dao = null;
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC3_DAO);
 			dao.openSession(null);
 			list = dao.executeQuery(ALIAS_NAME_PRIVILEGE_TYPE_MAP_QUERY, null, false, null);
 
@@ -188,7 +188,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		HashMap relationConditionsForRelatedTables = new HashMap();
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC3_DAO);
 			dao.openSession(null);
 			list = dao.executeQuery(GET_RELATION_DATA, null, false, null);
 
@@ -562,7 +562,7 @@ public class QueryBizLogic extends DefaultBizLogic
 	{
 		String prevValueDisplayName = null;
 
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC3_DAO);
 		jdbcDAO.openSession(null);
 		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"
 				+ tableName + "'";

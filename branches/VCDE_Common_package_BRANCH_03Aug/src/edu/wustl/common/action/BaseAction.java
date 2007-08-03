@@ -11,6 +11,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.MultipartRequestWrapper;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.UserNotAuthenticatedException;
@@ -48,7 +49,7 @@ public abstract class BaseAction extends Action
 		 *  This flag based checking is specific to Password Security feature.
 		 */
 		preExecute(mapping, form, request, response);
-
+ 
 		boolean flag = true;
 		if (request.getSession().getAttribute(Constants.TEMP_SESSION_DATA) != null && request.getParameter(Constants.ACCESS) != null)
 		{
@@ -67,9 +68,19 @@ public abstract class BaseAction extends Action
 		}
 		setRequestData(request);
 		setSelectedMenu(request);
-		//Mandar 17-Apr-06 : 1667:- Application URL
-		Utility.setApplicationURL(request.getRequestURL().toString());
-
+		
+		if(request instanceof MultipartRequestWrapper)
+		{	
+		//Vaishali 13th Feb 2007 --> for uploading the files
+			MultipartRequestWrapper req = (MultipartRequestWrapper) request;
+		Utility.setApplicationURL(req.getRequest().getRequestURL().toString());
+		}
+		else
+		{
+			//Mandar 17-Apr-06 : 1667:- Application URL
+			Utility.setApplicationURL(request.getRequestURL().toString());
+		}
+			
 		return executeAction(mapping, form, request, response);
 	}
 
@@ -241,7 +252,7 @@ public abstract class BaseAction extends Action
 	 */
 	protected ActionForward invokeMethod(String methodName, ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception
-	{
+	{ 
 		if (methodName.trim().length() > 0)
 		{
 			Method method = getMethod(methodName, this.getClass());

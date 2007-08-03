@@ -48,7 +48,7 @@ import edu.wustl.common.util.dbManager.DAOException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
+public class CDEBizLogic extends DefaultHibernate3Bizlogic implements TreeDataInterface
 {
     
     /**
