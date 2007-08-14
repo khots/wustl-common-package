@@ -17,6 +17,7 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
+import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
@@ -32,6 +33,7 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author prafull_kadam
@@ -52,10 +54,13 @@ public class MetadataTestReportGenerator
 
 	public static void main(String[] args) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException, MultipleRootsException, SqlException, HibernateException, SQLException, IOException
 	{
-		EntityManagerInterface entityManager = EntityManager.getInstance();
+		Logger.configure();
+		EntityCache entityCache = EntityCache.getInstance();
 		
+		EntityManagerInterface entityManager = EntityManager.getInstance();
 		Collection<EntityInterface> entities = entityManager.getAllEntities();
-		System.out.println("No Of entities:"+entities.size());
+		int totalNoOfEntities = entities.size();
+		System.out.println("No Of entities:"+totalNoOfEntities);
 		
 		connection = DBUtil.getConnection();
 		stmt = connection.createStatement();
@@ -69,8 +74,11 @@ public class MetadataTestReportGenerator
 		failureWriter = new BufferedWriter(new FileWriter(path + "/failedQueries_Report.txt"));
 		associationFailureWriter = new BufferedWriter(new FileWriter(path + "/AssociationQueries_Report.txt"));
 
+		int cnt = 1;
+		
 		for(EntityInterface entity: entities)
 		{
+			System.out.println("Processing Entity: "+ cnt++ +"/"+totalNoOfEntities);
 //			if (entity.getParentEntity()==null)
 			{
 				IQuery query = createQuery(entity);
@@ -114,6 +122,7 @@ public class MetadataTestReportGenerator
 				{
 					associationFailureWriter.write("\nAssocation Id: "+ association.getId());
 					associationFailureWriter.write("\nSQLGenerator Exception: "+e.getMessage());
+					e.printStackTrace();
 					associationFailureCount++;
 				}
 			}
@@ -247,7 +256,15 @@ public class MetadataTestReportGenerator
 			failureWriter.write("\n-----------------------");
 			failureWriter.write("\nEntityName: "+entity.getName());
 			failureWriter.write("\nSQL: "+ sql);
-			failureWriter.write("\nException: "+e.getMessage());
+			failureWriter.write("\nException: "+e.getMessage()+"\n");
+			
+			failureWriter.write("\nTable:"+entity.getName()+":"+entity.getTableProperties().getName());
+			Collection<AttributeInterface> attributes = entity.getAttributeCollection();
+			for (AttributeInterface attribute : attributes)
+			{
+				failureWriter.write("\n"+attribute.getName()+":"+ attribute.getColumnProperties().getName());
+			}
+			
 			failureCount++;
 		}
 	}

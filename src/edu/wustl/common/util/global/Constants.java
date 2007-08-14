@@ -491,4 +491,8 @@ public class Constants
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
 	public static final String ISCHECKPERMISSION="isToCheckCSMPermission";
+	
+	public static final int HASH_PRIME = 7;
+	public static final String QUERY_SQL = "querySQL";
+	
 }

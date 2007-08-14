@@ -10,27 +10,37 @@
  */
 package edu.wustl.common.util.logger;
 
-import java.util.ResourceBundle;
 
 public abstract class Logger
 {
 	public static org.apache.log4j.Logger out;
-	public static ResourceBundle resourcebundle;
-	public static void configure(String propertiesFile)
+	
+    /**
+     * Configures the logger with the properties of the specified category name in the log4j.xml file.
+     * The category should be present in the log4j.xml file in the JBOSS_HOME/server/default/conf folder.
+     * @param categoryName The category name. 
+     */
+    public static void configure(String categoryName)
 	{
 		if(out==null)
 		{
-//			out = org.apache.log4j.Logger.getLogger("");
-//			PropertyConfigurator.configure(propertiesFile);
-		    out=org.apache.log4j.Logger.getLogger("catissuecore.logger");
+		    out=org.apache.log4j.Logger.getLogger(categoryName);
 		}
-		
 	}
-	
-	
+    
+    /**
+     * Configures the logger properties from the log4j.properties file.
+     * The log4j.properties file should be present in the classpath for configuring.
+     */
+    public static void configure()
+    {
+        if (out == null)
+        {
+            out=org.apache.log4j.Logger.getLogger("");
+        }
+    }
+    
 	private Logger()
 	{
 	}
-	
-	
 }
