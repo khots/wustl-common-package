@@ -7,8 +7,15 @@
  */
 package edu.wustl.common.lookup;
 
-public class DefaultLookupResult
+import java.io.Serializable;
+
+public class DefaultLookupResult implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	Object object;
 	Double probablity;
 	
