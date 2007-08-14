@@ -99,15 +99,15 @@ public class EntityManagerMock extends EntityManager
 		eventClasses.add(CELL_SPE_REVIEW_EVT_NAME);
 	}
 
-	/**
-	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#findEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
-	 */
-	@Override
-	public Collection findEntity(EntityInterface arg0)
-	{
-		// TODO Auto-generated method stub
-		return super.findEntity(arg0);
-	}
+//	/**
+//	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#findEntity(edu.common.dynamicextensions.domaininterface.EntityInterface)
+//	 */
+//	@Override
+//	public Collection findEntity(EntityInterface arg0)
+//	{
+//		// TODO Auto-generated method stub
+//		return super.findEntity(arg0);
+//	}
 
 	/**
 	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getAllEntities()
@@ -1078,35 +1078,35 @@ public class EntityManagerMock extends EntityManager
 		return null;
 	}
 
-	/**
-	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeConceptCode(java.lang.String)
-	 */
-	@Override
-	public Collection getEntitiesByAttributeConceptCode(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		// TODO Auto-generated method stub
-		return super.getEntitiesByAttributeConceptCode(arg0);
-	}
+//	/**
+//	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeConceptCode(java.lang.String)
+//	 */
+//	@Override
+//	public Collection getEntitiesByAttributeConceptCode(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+//	{
+//		// TODO Auto-generated method stub
+//		return super.getEntitiesByAttributeConceptCode(arg0);
+//	}
 
-	/**
-	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeConceptName(java.lang.String)
-	 */
-	@Override
-	public Collection getEntitiesByAttributeConceptName(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		// TODO Auto-generated method stub
-		return super.getEntitiesByAttributeConceptName(arg0);
-	}
+//	/**
+//	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeConceptName(java.lang.String)
+//	 */
+//	@Override
+//	public Collection getEntitiesByAttributeConceptName(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+//	{
+//		// TODO Auto-generated method stub
+//		return super.getEntitiesByAttributeConceptName(arg0);
+//	}
 
-	/**
-	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeDescription(java.lang.String)
-	 */
-	@Override
-	public Collection getEntitiesByAttributeDescription(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		// TODO Auto-generated method stub
-		return super.getEntitiesByAttributeDescription(arg0);
-	}
+//	/**
+//	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeDescription(java.lang.String)
+//	 */
+//	@Override
+//	public Collection getEntitiesByAttributeDescription(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+//	{
+//		// TODO Auto-generated method stub
+//		return super.getEntitiesByAttributeDescription(arg0);
+//	}
 
 	/**
 	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeName(java.lang.String)
@@ -1128,25 +1128,25 @@ public class EntityManagerMock extends EntityManager
 		return super.getEntitiesByConceptCode(arg0);
 	}
 
-	/**
-	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByConceptName(java.lang.String)
-	 */
-	@Override
-	public Collection getEntitiesByConceptName(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		// TODO Auto-generated method stub
-		return super.getEntitiesByConceptName(arg0);
-	}
-
-	/**
-	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntityByDescription(java.lang.String)
-	 */
-	@Override
-	public Collection getEntityByDescription(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
-	{
-		// TODO Auto-generated method stub
-		return super.getEntityByDescription(arg0);
-	}
+//	/**
+//	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByConceptName(java.lang.String)
+//	 */
+//	@Override
+//	public Collection getEntitiesByConceptName(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+//	{
+//		// TODO Auto-generated method stub
+//		return super.getEntitiesByConceptName(arg0);
+//	}
+//
+//	/**
+//	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntityByDescription(java.lang.String)
+//	 */
+//	@Override
+//	public Collection getEntityByDescription(String arg0) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException
+//	{
+//		// TODO Auto-generated method stub
+//		return super.getEntityByDescription(arg0);
+//	}
 
 	/**
 	 * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntityByName(java.lang.String)
