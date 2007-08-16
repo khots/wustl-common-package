@@ -53,9 +53,10 @@ public class HibernateMetaData
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static List getSubClassList(String className) throws ClassNotFoundException
+	public static List getSubClassList(String className)// throws ClassNotFoundException
 	{
 		List list = new ArrayList();
+        try{
 		Class classObj = Class.forName(className);
 		Iterator it = cfg.getClassMapping(classObj).getDirectSubclasses();
 		while(it.hasNext())
@@ -66,6 +67,11 @@ public class HibernateMetaData
 			System.out.println("Name "+subClass.getName());
 			list.add(subClass.getName());
 		}
+        }catch(ClassNotFoundException e) 
+        {
+            System.out.println("Class Not found Excception !!");
+            e.printStackTrace();
+         }
 		return list;
 	}
 	
