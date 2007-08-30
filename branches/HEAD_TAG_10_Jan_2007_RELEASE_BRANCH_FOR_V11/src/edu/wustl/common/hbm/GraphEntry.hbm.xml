@@ -6,11 +6,12 @@
 
 <hibernate-mapping>
     <class
-        name="edu.wustl.common.domain.AuditEventDetails"
-        table="CATISSUE_AUDIT_EVENT_DETAILS"
+        name="edu.wustl.common.querysuite.queryobject.impl.GraphEntry"
+        table="QUERY_GRAPH_ENTRY"
         dynamic-update="false"
         dynamic-insert="false"
     >
+        <cache usage="read-write" />
 
         <id
             name="id"
@@ -20,50 +21,43 @@
             unsaved-value="null"
         >
             <generator class="native">
-                <param name="sequence">CATISSUE_AUDIT_EVENT_DET_SEQ</param>
+                <param name="sequence">GRAPH_ENTRY_SEQ</param>
             </generator>
         </id>
 
-        <property
-            name="elementName"
-            type="string"
-            update="true"
-            insert="true"
-            column="ELEMENT_NAME"
-            length="150"
-        />
-
-        <property
-            name="previousValue"
-            type="string"
-            update="true"
-            insert="true"
-            column="PREVIOUS_VALUE"
-            length="150"
-        />
-
-        <property
-            name="currentValue"
-            type="string"
-            update="true"
-            insert="true"
-            column="CURRENT_VALUE"
-            length="500"
-        />
-
         <many-to-one
-            name="auditEventLog"
-            class="edu.wustl.common.domain.AuditEventLog"
-            cascade="none"
+            name="association"
+            class="edu.wustl.common.querysuite.metadata.associations.impl.ModelAssociation"
+            cascade="all"
             outer-join="auto"
             update="true"
             insert="true"
-            column="AUDIT_EVENT_LOG_ID"
+            column="QUERY_MODEL_ASSOCIATION_ID"
+        />
+
+        <many-to-one
+            name="sourceExpressionId"
+            class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="SOURCE_EXPRESSIONID_ID"
+        />
+
+        <many-to-one
+            name="targetExpressionId"
+            class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="TARGET_EXPRESSIONID_ID"
         />
 
         <!--
             To add non XDoclet property mappings, create a file named
-                hibernate-properties-AuditEventDetails.xml
+                hibernate-properties-GraphEntry.xml
             containing the additional properties and place it in your merge dir.
         -->
 

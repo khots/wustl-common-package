@@ -41,13 +41,15 @@
             insert="true"
             column="PARENT_CATEGORY_ID"
         />
-        
+
         <many-to-one
             name="rootClass"
             class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
-            cascade="save-update"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
             column="ROOT_CATEGORIAL_CLASS_ID"
-            unique="true"
         />
 
         <set
@@ -55,7 +57,7 @@
             table="CATEGORY"
             lazy="false"
             inverse="false"
-            cascade="none"
+            cascade="save-update"
             sort="unsorted"
         >
 

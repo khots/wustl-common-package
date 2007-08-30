@@ -24,6 +24,16 @@
             </generator>
         </id>
 
+        <many-to-one
+            name="category"
+            class="edu.wustl.common.querysuite.metadata.category.Category"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="CATEGORY_ID"
+        />
+
         <property
             name="deEntityId"
             type="long"
@@ -37,7 +47,7 @@
             table="CATEGORIAL_ATTRIBUTE"
             lazy="false"
             inverse="false"
-            cascade="save-update"
+            cascade="none"
             sort="unsorted"
         >
 
@@ -55,7 +65,7 @@
             table="CATEGORIAL_CLASS"
             lazy="false"
             inverse="false"
-            cascade="save-update"
+            cascade="none"
             sort="unsorted"
         >
 
@@ -84,12 +94,6 @@
             update="true"
             insert="true"
             column="PARENT_CATEGORIAL_CLASS_ID"
-        />
-        
-        <one-to-one
-            name="category"
-            class="edu.wustl.common.querysuite.metadata.category.Category"
-			property-ref="rootClass"
         />
 
         <!--

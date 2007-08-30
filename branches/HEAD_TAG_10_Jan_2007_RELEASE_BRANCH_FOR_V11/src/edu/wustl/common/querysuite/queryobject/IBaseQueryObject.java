@@ -7,7 +7,10 @@ import java.io.Serializable;
  * @author prafull_kadam
  * @version 1.0
  */
-public interface IBaseQueryObject extends Serializable
-{
+public interface IBaseQueryObject extends Serializable {
 
+    Long getId();
+
+    void setId(Long id);
+    
 }

@@ -1,4 +1,3 @@
-
 package edu.wustl.common.querysuite.queryobject;
 
 /**
@@ -7,36 +6,40 @@ package edu.wustl.common.querysuite.queryobject;
  * @version 1.0
  * @updated 11-Oct-2006 02:57:13 PM
  */
-public interface IQuery extends IBaseQueryObject
-{
+public interface IQuery extends IBaseQueryObject {
+    /**
+     * @return the reference to constraints 
+     * @see IConstraints
+     */
+    IConstraints getConstraints();
 
-	/**
-	 * @return the reference to constraints 
-	 * @see IConstraints
-	 */
-	IConstraints getConstraints();
+    /**
+     * To set the constraints object.
+     * @param constraints the constraints to set.
+     */
+    void setConstraints(IConstraints constraints);
 
-	/**
-	 * To set the constraints object.
-	 * @param constraints the constraints to set.
-	 */
-	void setConstraints(IConstraints constraints);
+    /**
+     * This method returns the user defined name of the query. 
+     * @return name of the query
+     * 
+     * @hibernate.property name="queryName" column="QUERY_NAME" type="stirng" length="256" unique="true" 
+     */
+    public String getQueryName();
 
-	/**
-	 * All the attributes of all the classes are selected. Note that the "class"
-	 * here is IFunctionalClass, a cab2b specific user-desired subset of
-	 * attributes will be present in the IFunctionalClass. The output classes
-	 * form a tree where the edges are associations.
-	 * @return the reference to the root noe of the output tree.
-	 * @see IOutputTreeNode
-	 * @deprecated This method is not required any more for output tree.
-	 */
-	IOutputTreeNode getRootOutputClass();
+    /**
+     * This method sets the name of the query. This name must be unique as it will be used as an distinguisher by the user. 
+     * @param queryName the user defined name of the query
+     */
+    public void setQueryName(String queryName);
 
-	/**
-	 * To set the output tree for the Query result view.
-	 * @param root The reference to the root noe of the output tree.
-	 * @deprecated This method is not required any more for output tree.
-	 */
-	void setRootOutputClass(IOutputTreeNode root);
+    /**
+     * @return the description
+     */
+    public String getDescription();
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description);
 }
