@@ -12,24 +12,24 @@ import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
-import edu.wustl.common.querysuite.queryobject.impl.ConstraintEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.OutputEntity;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
+import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
 
 /**
@@ -179,9 +179,9 @@ public abstract class QueryObjectFactory
 	 * @return The reference to the ConstraintEntity object.
 	 * @deprecated Do not use this method, use method createConstraintEntity(EntityInterface)
 	 */
-	public static IConstraintEntity createConstrainedEntity(EntityInterface entityInterface)
+	public static IQueryEntity createConstrainedEntity(EntityInterface entityInterface)
 	{
-		return new ConstraintEntity(entityInterface);
+		return new QueryEntity(entityInterface);
 	}
 
 	/**
@@ -199,9 +199,9 @@ public abstract class QueryObjectFactory
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
 	 * @return The reference to the ConstraintEntity object.
 	 */
-	public static IConstraintEntity createConstraintEntity(EntityInterface entityInterface)
+	public static IQueryEntity createConstraintEntity(EntityInterface entityInterface)
 	{
-		return new ConstraintEntity(entityInterface);
+		return new QueryEntity(entityInterface);
 	}
 
 	/**

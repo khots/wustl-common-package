@@ -41,7 +41,7 @@ import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -202,7 +202,7 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				EntityInterface rootEntity = null;
 				EntityInterface rootDEEntity = constraints.getExpression(
-						constraints.getRootExpressionId()).getConstraintEntity()
+						constraints.getRootExpressionId()).getQueryEntity()
 						.getDynamicExtensionsEntity();
 				boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(rootDEEntity);
 	
@@ -257,8 +257,8 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	private boolean containsCategrory(IConstraints theConstraints)
 	{
-		Set<IConstraintEntity> constraintEntities = constraints.getConstraintEntities();
-		for (IConstraintEntity entity : constraintEntities)
+		Set<IQueryEntity> constraintEntities = constraints.getQueryEntities();
+		for (IQueryEntity entity : constraintEntities)
 		{
 			boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(entity
 					.getDynamicExtensionsEntity());
@@ -366,7 +366,7 @@ public class SqlGenerator implements ISqlGenerator
 		StringBuffer buffer = new StringBuffer("");
 		IExpressionId parentExpressionId = expression.getExpressionId();
 
-		EntityInterface leftEntity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
 		EntityInterface superClassEntity = leftEntity.getParentEntity();
 		if (processedAlias.isEmpty()) // this will be true only for root node.
 		{
@@ -447,7 +447,7 @@ public class SqlGenerator implements ISqlGenerator
 						rightAlias = getAliasFor(childExpression, eavAssociation.getTargetEntity());
 					}
 					
-					EntityInterface childEntity = childExpression.getConstraintEntity()
+					EntityInterface childEntity = childExpression.getQueryEntity()
 							.getDynamicExtensionsEntity();
 
 					EntityInterface leftEntity = eavAssociation.getEntity();
@@ -666,7 +666,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("");
 
-		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 
 		String pseudoAndSQL = null;
 		
@@ -734,7 +734,7 @@ public class SqlGenerator implements ISqlGenerator
 	private String createPseudoAndCondition(IExpression expression, IExpression parentExpression, AssociationInterface eavAssociation) throws SqlException
 	{
 		String pseudoAndSQL;
-		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 		String tableName = entity.getTableProperties().getName() + " ";
 		String leftAlias = getAliasName(expression);
 		String selectAttribute = leftAlias + ".";
@@ -744,7 +744,7 @@ public class SqlGenerator implements ISqlGenerator
 				&& constraintProperties.getTargetEntityKey() != null)// Many to many case.
 		{				
 			// This will start FROM part of SQL from the parent table.
-			selectAttribute = getAliasName(parentExpression) +"."+  getPrimaryKey(parentExpression.getConstraintEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
+			selectAttribute = getAliasName(parentExpression) +"."+  getPrimaryKey(parentExpression.getQueryEntity().getDynamicExtensionsEntity()).getColumnProperties().getName();
 			pseudoAndSQL = "Select " + selectAttribute;
 			Set<Integer> processedAlias = new HashSet<Integer>();
 			String fromPart = getFromPartSQL(parentExpression, leftAlias, processedAlias);
@@ -934,7 +934,7 @@ public class SqlGenerator implements ISqlGenerator
 					&& constraintProperties.getTargetEntityKey() != null)// Many to Many Case
 			{
 				joinAttribute += getPrimaryKey(
-						expression.getConstraintEntity().getDynamicExtensionsEntity())
+						expression.getQueryEntity().getDynamicExtensionsEntity())
 						.getColumnProperties().getName();
 			}
 			else
@@ -942,7 +942,7 @@ public class SqlGenerator implements ISqlGenerator
 				if (constraintProperties.getSourceEntityKey() == null)
 				{
 					joinAttribute += getPrimaryKey(
-							expression.getConstraintEntity().getDynamicExtensionsEntity())
+							expression.getQueryEntity().getDynamicExtensionsEntity())
 							.getColumnProperties().getName();
 				}
 				else
@@ -1350,7 +1350,7 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	String getAliasName(IExpression expression)
 	{
-		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 		return getAliasFor(expression, entity);
 	}
 
@@ -1362,7 +1362,7 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	private String getAliasFor(IExpression expression, EntityInterface attributeEntity)
 	{
-		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 		EntityInterface aliasEntity = entity;
 
 		EntityInterface parentEntity = entity.getParentEntity();
@@ -1636,7 +1636,7 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	private IOutputEntity getOutputEntity(IExpression expression)
 	{
-		EntityInterface entity = expression.getConstraintEntity().getDynamicExtensionsEntity();
+		EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 		IOutputEntity outputEntity = QueryObjectFactory.createOutputEntity(entity);
 		outputEntity.getSelectedAttributes().addAll(entity.getAttributeCollection());
 		return outputEntity;
