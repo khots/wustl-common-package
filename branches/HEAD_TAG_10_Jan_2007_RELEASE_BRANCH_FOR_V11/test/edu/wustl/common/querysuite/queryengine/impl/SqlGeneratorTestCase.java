@@ -14,7 +14,7 @@ import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -92,7 +92,7 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
 			
 			ICondition condition1 = QueryGeneratorMock.createParticipantCondition1(participantEntity);
@@ -135,7 +135,7 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
 		
 			IRule rule = QueryGeneratorMock.createParticipantRule1(participantEntity);
@@ -167,7 +167,7 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
 			generator.setJoinGraph(new JoinGraph());
 			String SQL = generator.getWherePartSQL(expression, null, false);
@@ -582,7 +582,7 @@ public class SqlGeneratorTestCase extends TestCase
 			EntityInterface cprEntity = entityManager
 					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
 			
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			
 			IExpression expressionOne = constraints.addExpression(cprConstraintEntity);
 			generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
@@ -631,7 +631,7 @@ public class SqlGeneratorTestCase extends TestCase
 			// Creating entity with name "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
 			EntityInterface cprEntity = entityManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
 	
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 	
 			IExpression expressionOne = constraints.addExpression(cprConstraintEntity);
 			generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
