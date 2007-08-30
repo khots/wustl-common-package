@@ -1,6 +1,8 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
+import java.util.List;
+
 /**
  * A list of operands, and the logical connectors (AND, OR), that together form a
  * logical expression<br> The connectors are identified by the position of the
@@ -36,7 +38,7 @@ public interface IExpression extends IBaseQueryObject
 	 * The constraintEntity of IRule is constructor param to impl class.
 	 * @return The reference to the constraintEntity associated with this expression.
 	 */
-	IConstraintEntity getConstraintEntity();
+	IQueryEntity getQueryEntity();
 
 	/**
 	 * To set the operand in the Expression at index position
@@ -192,5 +194,6 @@ public interface IExpression extends IBaseQueryObject
 	 * To check whether there are any rule present in the Expression.
 	 * @return true if there is atleast one rule present in the operand list of expression.
 	 */
-	public boolean containsRule();
+	boolean containsRule();
+    
 }

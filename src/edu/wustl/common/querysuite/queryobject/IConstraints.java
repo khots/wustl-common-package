@@ -49,7 +49,7 @@ public interface IConstraints extends IBaseQueryObject
 	 * @param constraintEntity the constraint Entity for which the new expr is created.
 	 * @return the newly created expression.
 	 */
-	IExpression addExpression(IConstraintEntity constraintEntity);
+	IExpression addExpression(IQueryEntity constraintEntity);
 
 	/**
 	 * @return the reference to joingraph.
@@ -66,5 +66,5 @@ public interface IConstraints extends IBaseQueryObject
 	 * TO get the Set of all ConstraintEntites present in the Constraints object.
 	 * @return Set of all Constraint Entities.
 	 */
-	Set<IConstraintEntity> getConstraintEntities();
+	Set<IQueryEntity> getQueryEntities();
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
-import edu.wustl.common.querysuite.queryobject.IBaseQueryObject;
+import edu.wustl.common.querysuite.queryobject.impl.BaseQueryObject;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -20,7 +20,7 @@ import edu.wustl.common.util.global.Constants;
  * @created 31-Oct-2006 12.46.04 PM
  */
 
-public class Graph<V, E> implements IBaseQueryObject
+public class Graph<V, E> extends BaseQueryObject
 {
 
 	private static final long serialVersionUID = 2744129191470144562L;
