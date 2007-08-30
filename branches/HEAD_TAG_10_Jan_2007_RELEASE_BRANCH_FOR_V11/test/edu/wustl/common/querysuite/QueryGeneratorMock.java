@@ -15,7 +15,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -190,7 +190,7 @@ public class QueryGeneratorMock
 	 * @param participant The Constraint Entity object for Paricipant
 	 * @return The Expression Object.
 	 */
-	public static IExpression creatParticipantExpression1(IConstraintEntity participant)
+	public static IExpression creatParticipantExpression1(IQueryEntity participant)
 	{
 		IExpression expression = new Expression(participant, 1);
 		expression.addOperand(createParticipantRule1(participant.getDynamicExtensionsEntity()));
@@ -206,7 +206,7 @@ public class QueryGeneratorMock
 	 * @param paricipantMedicalId The Constraint Entity object for Paricipant mdefical Identifier.
 	 * @return The Expression Object.
 	 */
-	public static IExpression creatParticipantExpression2(IConstraintEntity participant, IConstraintEntity paricipantMedicalId)
+	public static IExpression creatParticipantExpression2(IQueryEntity participant, IQueryEntity paricipantMedicalId)
 	{
 		IExpression expression = new Expression(participant, 1);
 		expression.addOperand(createParticipantRule3(participant.getDynamicExtensionsEntity()));
@@ -239,7 +239,7 @@ public class QueryGeneratorMock
 
 			// creating Participant Expression.
 			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 			participantExpression.addOperand(createParticipantRule2(participantEntity));
 
@@ -247,7 +247,7 @@ public class QueryGeneratorMock
 
 			// creating Participant medical Id Expression.
 			EntityInterface pmIdEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
-			IConstraintEntity pmIdConstraintEntity = QueryObjectFactory.createConstraintEntity(pmIdEntity);
+			IQueryEntity pmIdConstraintEntity = QueryObjectFactory.createConstraintEntity(pmIdEntity);
 			IExpression pmExpression = constraints.addExpression(pmIdConstraintEntity);
 			participantExpression.addOperand(andConnector, pmExpression.getExpressionId());
 			pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmIdEntity, pmExpression));
@@ -301,7 +301,7 @@ public class QueryGeneratorMock
 
 			// Creating SCG Expression.
 			EntityInterface scgEntity =  enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);;
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression scgExpression = constraints.addExpression(scgConstraintEntity);
 			IRule SCGRule = QueryObjectFactory.createRule(null);
 			List<String> values = new ArrayList<String>();
@@ -316,7 +316,7 @@ public class QueryGeneratorMock
 
 			// creating Specimen EXpression.
 			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression SpecimenExpression1 = constraints.addExpression(specimenConstraintEntity);
 			scgExpression.addOperand(orConnector, SpecimenExpression1.getExpressionId());
 
@@ -425,7 +425,7 @@ public class QueryGeneratorMock
 
 			//creating Participant Expression.
 			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 			participantExpression.addOperand(createParticipantRule2(participantEntity));
 //
@@ -480,7 +480,7 @@ public class QueryGeneratorMock
 	 * @return The Expression reference
 	 */
 	public static IExpression creatParticipantMedicalIdentifierExpression(
-			IConstraintEntity participantMedicalId)
+			IQueryEntity participantMedicalId)
 	{
 		IExpression expression = new Expression(participantMedicalId, 2);
 		IRule rule = createParticipantMedicalIdentifierRule1(participantMedicalId.getDynamicExtensionsEntity(), expression);
@@ -604,7 +604,7 @@ public class QueryGeneratorMock
 
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 			IRule participantRule = QueryObjectFactory.createRule(null);
@@ -615,7 +615,7 @@ public class QueryGeneratorMock
 			participantExpression.addOperand(participantRule);
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(andConnector, collectionProtocolRegExpression
 					.getExpressionId());
@@ -630,7 +630,7 @@ public class QueryGeneratorMock
 
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression.getExpressionId());
 			AssociationInterface cprAndSpgAssociation = getAssociationFrom(enitytManager
@@ -642,7 +642,7 @@ public class QueryGeneratorMock
 					specimenCollectionGroupExpression.getExpressionId(), iCprAndSpgAssociation);
 
 			//creating SpecimeExpression.
-			IConstraintEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
+			IQueryEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(tissueSpecimenConstraintEntity);
 
 			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
@@ -729,7 +729,7 @@ public class QueryGeneratorMock
 			EntityInterface pmEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
 
 			// creating expression for Participant Medical Id.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(pmEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(pmEntity);
 			IExpression pmExpression = constraints.addExpression(participantConstraintEntity);
 			constraints.getExpression(root).addOperand(getAndConnector(), pmExpression.getExpressionId());
 			
@@ -745,7 +745,7 @@ public class QueryGeneratorMock
 			EntityInterface siteEntity = enitytManager.getEntityByName(EntityManagerMock.SITE_NAME);
 
 			// creating expression for Site.
-			IConstraintEntity siteConstraintEntity = QueryObjectFactory.createConstraintEntity(siteEntity);
+			IQueryEntity siteConstraintEntity = QueryObjectFactory.createConstraintEntity(siteEntity);
 			IExpression siteExpression = constraints.addExpression(siteConstraintEntity);
 			pmExpression.addOperand(siteExpression.getExpressionId());
 			
@@ -802,11 +802,11 @@ public class QueryGeneratorMock
 			EntityInterface siteEntity = enitytManager.getEntityByName(EntityManagerMock.SITE_NAME);
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(collectionProtocolRegExpression.getExpressionId());
 
@@ -820,7 +820,7 @@ public class QueryGeneratorMock
 
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression1 = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression1
 					.getExpressionId());
@@ -834,7 +834,7 @@ public class QueryGeneratorMock
 					specimenCollectionGroupExpression1.getExpressionId(), iCprAndSpgAssociation);
 
 			//creating Site Expression.
-			IConstraintEntity siteConstraintEntity = QueryObjectFactory.createConstraintEntity(siteEntity);
+			IQueryEntity siteConstraintEntity = QueryObjectFactory.createConstraintEntity(siteEntity);
 			IExpression siteExpression1 = constraints.addExpression(siteConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(siteExpression1.getExpressionId());
 			AssociationInterface SpgAndSiteAssociation = getAssociationFrom(enitytManager
@@ -865,7 +865,7 @@ public class QueryGeneratorMock
 			siteExpression1.addOperand(orConnetor, siteExpression1Rule2);
 
 			//creating SpecimeExpression.
-			IConstraintEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
+			IQueryEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(tissueSpecimenConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(andConnector, specimenExpression1
 					.getExpressionId());
@@ -962,11 +962,11 @@ public class QueryGeneratorMock
 			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(collectionProtocolRegExpression.getExpressionId());
 
@@ -979,7 +979,7 @@ public class QueryGeneratorMock
 					collectionProtocolRegExpression.getExpressionId(), iParticipanCPRegAssociation);
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression1 = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression1
 					.getExpressionId());
@@ -1005,7 +1005,7 @@ public class QueryGeneratorMock
 			specimenCollectionGroupExpression1.addOperand(specimenCollectionGroupExpression1Rule1);
 
 			//creating Molecular SpecimeExpression.
-			IConstraintEntity moelcularSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(molecularSpecimenEntity);
+			IQueryEntity moelcularSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(molecularSpecimenEntity);
 			IExpression molecularSpecimenExpression1 = constraints.addExpression(moelcularSpecimenConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(andConnector, molecularSpecimenExpression1
 					.getExpressionId());
@@ -1029,7 +1029,7 @@ public class QueryGeneratorMock
 
 
 			// Creating TissueSpecimen exression1.
-			IConstraintEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
+			IQueryEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
 			IExpression tissueSpecimenExpression1 = constraints.addExpression(tissueSpecimenConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(orConnector, tissueSpecimenExpression1
 					.getExpressionId());
@@ -1185,11 +1185,11 @@ public class QueryGeneratorMock
 
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(collectionProtocolRegExpression.getExpressionId());
 
@@ -1203,7 +1203,7 @@ public class QueryGeneratorMock
 
 			// creating expression for SpecimenCollectionGroup1.
 //			creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression1 = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression1
 					.getExpressionId());
@@ -1229,7 +1229,7 @@ public class QueryGeneratorMock
 			specimenCollectionGroupExpression1.addOperand(specimenCollectionGroupExpression1Rule1);
 
 			//creating SpecimeExpression 1, under scg expression1.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression scg1SpecimenExpression1 = constraints.addExpression(specimenConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(andConnector, scg1SpecimenExpression1
 					.getExpressionId());
@@ -1390,12 +1390,12 @@ public class QueryGeneratorMock
 
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(collectionProtocolRegExpression.getExpressionId());
 
@@ -1408,7 +1408,7 @@ public class QueryGeneratorMock
 					collectionProtocolRegExpression.getExpressionId(), iParticipanCPRegAssociation);
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression1 = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression1
 					.getExpressionId());
@@ -1422,7 +1422,7 @@ public class QueryGeneratorMock
 					specimenCollectionGroupExpression1.getExpressionId(), iCprAndSpgAssociation);
 
 			//creating SpecimeExpression.
-			IConstraintEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
+			IQueryEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(tissueSpecimenConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(specimenExpression1
 					.getExpressionId());
@@ -1446,7 +1446,7 @@ public class QueryGeneratorMock
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
 			//			creating child SpecimeExpression.
-			IConstraintEntity fluideSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(fluidSpecimenEntity);
+			IQueryEntity fluideSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(fluidSpecimenEntity);
 			IExpression specimenExpression2 = constraints.addExpression(fluideSpecimenConstraintEntity);
 
 			specimenExpression1.addOperand(andConnector, specimenExpression2.getExpressionId());
@@ -1524,12 +1524,12 @@ public class QueryGeneratorMock
 			EntityInterface frozenEvtParamEntity = enitytManager.getEntityByName(EntityManagerMock.FROZEN_EVT_NAME);
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(collectionProtocolRegExpression.getExpressionId());
 
@@ -1542,7 +1542,7 @@ public class QueryGeneratorMock
 					collectionProtocolRegExpression.getExpressionId(), iParticipanCPRegAssociation);
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression1 = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression1
 					.getExpressionId());
@@ -1556,7 +1556,7 @@ public class QueryGeneratorMock
 					specimenCollectionGroupExpression1.getExpressionId(), iCprAndSpgAssociation);
 
 			//creating SpecimeExpression.
-			IConstraintEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
+			IQueryEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(tissueSpecimenConstraintEntity);
 			specimenCollectionGroupExpression1.addOperand(specimenExpression1
 					.getExpressionId());
@@ -1579,7 +1579,7 @@ public class QueryGeneratorMock
 			specimenExpression1.addOperand(specimenExpression1Rule1);
 
 			// Creating Frozen event parameter Expression
-			IConstraintEntity frozenEvtEntity = QueryObjectFactory.createConstraintEntity(frozenEvtParamEntity);
+			IQueryEntity frozenEvtEntity = QueryObjectFactory.createConstraintEntity(frozenEvtParamEntity);
 			IExpression frozenEvtExpression1 = constraints.addExpression(frozenEvtEntity);
 			specimenExpression1.addOperand(andConnector, frozenEvtExpression1.getExpressionId());
 			AssociationInterface tissueSpecimenAndEventtAssociation =  getAssociationFrom(enitytManager
@@ -1600,7 +1600,7 @@ public class QueryGeneratorMock
 			frozenEvtExpression1.addOperand(specimenEvtExpression1Rule1);	
 			
 			//creating child SpecimeExpression.
-			IConstraintEntity fluidSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(fluidSpecimenEntity);
+			IQueryEntity fluidSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(fluidSpecimenEntity);
 			IExpression specimenExpression2 = constraints.addExpression(fluidSpecimenConstraintEntity);
 
 			specimenExpression1.addOperand(andConnector, specimenExpression2.getExpressionId());
@@ -1724,11 +1724,11 @@ public class QueryGeneratorMock
 
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 
 			// creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(collectionProtocolRegExpression
 					.getExpressionId());
@@ -1743,7 +1743,7 @@ public class QueryGeneratorMock
 
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
 			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression.getExpressionId());
 			AssociationInterface cprAndSpgAssociation = getAssociationFrom(enitytManager
@@ -1755,7 +1755,7 @@ public class QueryGeneratorMock
 					specimenCollectionGroupExpression.getExpressionId(), iCprAndSpgAssociation);
 
 			//creating first SpecimeExpression.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
 
 			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
@@ -1786,7 +1786,7 @@ public class QueryGeneratorMock
 			specimenExpression1Rule1.addCondition(specimenExpression1Rule1Condition2);
 
 			//creating specimenCharacteristic Expression under first specimen Expression.
-			IConstraintEntity specimenCharacteristicConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenCharacteristicEntity);
+			IQueryEntity specimenCharacteristicConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenCharacteristicEntity);
 			IExpression specimenCharacteristicExpression1 = constraints.addExpression(specimenCharacteristicConstraintEntity);
 
 			specimenExpression1.addOperand(andConnector,specimenCharacteristicExpression1.getExpressionId());
@@ -1901,11 +1901,11 @@ public class QueryGeneratorMock
 
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
 
 			// creating first SpecimeExpression.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
 
 			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
@@ -2020,11 +2020,11 @@ public class QueryGeneratorMock
 
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
 
 			// creating first SpecimeExpression.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
 
 			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
@@ -2154,11 +2154,11 @@ public class QueryGeneratorMock
 
 
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
 			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
 
 			// creating first SpecimeExpression.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression1 = constraints.addExpression(specimenConstraintEntity);
 
 			specimenCollectionGroupExpression.addOperand(specimenExpression1.getExpressionId());
@@ -2302,7 +2302,7 @@ public class QueryGeneratorMock
 			EntityInterface collectionProtocolEntity = enitytManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_NAME);
 			
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity cpConstraintEntity = QueryObjectFactory.createConstraintEntity(collectionProtocolEntity);
+			IQueryEntity cpConstraintEntity = QueryObjectFactory.createConstraintEntity(collectionProtocolEntity);
 			IExpression cpExpression = constraints.addExpression(cpConstraintEntity);
 
 			
@@ -2352,7 +2352,7 @@ public class QueryGeneratorMock
 			EntityInterface molecularSpecimenEntity = enitytManager.getEntityByName(EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
 			
 			// creating expression for SpecimenCollectionGroup.
-			IConstraintEntity molecularSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(molecularSpecimenEntity);
+			IQueryEntity molecularSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(molecularSpecimenEntity);
 			IExpression molecularSpecimenExpression = constraints.addExpression(molecularSpecimenConstraintEntity);
 
 			
@@ -2397,7 +2397,7 @@ public class QueryGeneratorMock
 			EntityInterface cellSpecimenReviewParamEntity = enitytManager.getEntityByName(EntityManagerMock.CELL_SPE_REVIEW_EVT_NAME);
 			
 			// creating expression for cellSpecimenReviewParam.
-			IConstraintEntity cellSpecimenReviewParamConstraintEntity = QueryObjectFactory.createConstraintEntity(cellSpecimenReviewParamEntity);
+			IQueryEntity cellSpecimenReviewParamConstraintEntity = QueryObjectFactory.createConstraintEntity(cellSpecimenReviewParamEntity);
 			IExpression expression = constraints.addExpression(cellSpecimenReviewParamConstraintEntity);
 
 			
@@ -2482,7 +2482,7 @@ public class QueryGeneratorMock
 			EntityInterface pmEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
 
 			// creating expression for Participant.
-			IConstraintEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
 			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
 			
 			List<String> participantExpression1Rule2Values = new ArrayList<String>();
@@ -2496,7 +2496,7 @@ public class QueryGeneratorMock
 			
 			
 			//  creating expression for collection Protocol Registration
-			IConstraintEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
 			IExpression cprExpression1 = constraints.addExpression(cprConstraintEntity);
 			participantExpression.addOperand(getAndConnector(),cprExpression1.getExpressionId());
 
@@ -2518,7 +2518,7 @@ public class QueryGeneratorMock
 			cprExpression1.addOperand(cprExpression1Rule2);
 			
 			// creating empty expression for Participant Medical Id.
-			IConstraintEntity pmConstraintEntity = QueryObjectFactory.createConstraintEntity(pmEntity);
+			IQueryEntity pmConstraintEntity = QueryObjectFactory.createConstraintEntity(pmEntity);
 			IExpression pmExpression1 = constraints.addExpression(pmConstraintEntity);
 			participantExpression.addOperand(getAndConnector(), pmExpression1.getExpressionId());
 			
@@ -2818,7 +2818,7 @@ public class QueryGeneratorMock
 			
 			// creating Participant medical Id Expression.
 			EntityInterface pmIdEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_MEDICAL_ID_NAME);
-			IConstraintEntity pmIdConstraintEntity = QueryObjectFactory.createConstraintEntity(pmIdEntity);
+			IQueryEntity pmIdConstraintEntity = QueryObjectFactory.createConstraintEntity(pmIdEntity);
 			IExpression pmExpression = constraints.addExpression(pmIdConstraintEntity);
 			participantExpression.addOperand(getAndConnector(), pmExpression.getExpressionId());
 			pmExpression.addOperand(createParticipantMedicalIdentifierRule1(pmIdEntity, pmExpression));
@@ -2871,7 +2871,7 @@ public class QueryGeneratorMock
 
 
 			// creating expression for specimen.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
 			
 			List<String> specimenExpressionRule1Values = new ArrayList<String>();
@@ -2886,7 +2886,7 @@ public class QueryGeneratorMock
 			specimenExpression.addOperand(specimenExpressionRule1);
 			
 			// Creating Biohazard Expression.
-			IConstraintEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IQueryEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
 			IExpression biohazardExpression = constraints.addExpression(biohazardConstraintEntity);
 			specimenExpression.addOperand(getAndConnector(),biohazardExpression.getExpressionId());
 			
@@ -2948,7 +2948,7 @@ public class QueryGeneratorMock
 
 
 			// creating expression for specimen.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
 			
 			List<String> specimenExpressionRule1Values = new ArrayList<String>();
@@ -2963,7 +2963,7 @@ public class QueryGeneratorMock
 			specimenExpression.addOperand(specimenExpressionRule1);
 			
 			// Creating Biohazard Expression.
-			IConstraintEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IQueryEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
 			IExpression biohazardExpression1 = constraints.addExpression(biohazardConstraintEntity);
 			specimenExpression.addOperand(getAndConnector(),biohazardExpression1.getExpressionId());
 			
@@ -3048,7 +3048,7 @@ public class QueryGeneratorMock
 			EntityInterface specimenCharEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
 			
 			// Creating Biohazard Expression.
-			IConstraintEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IQueryEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
 			IExpression biohazardExpression = constraints.addExpression(biohazardConstraintEntity);
 			
 			List<String> biohazardExpressionRule1Values = new ArrayList<String>();
@@ -3063,7 +3063,7 @@ public class QueryGeneratorMock
 			biohazardExpression.addOperand(biohazardExpressionRule1);
 			
 			// creating expression for specimen.
-			IConstraintEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
 			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
 			biohazardExpression.addOperand(getAndConnector(),specimenExpression.getExpressionId());
 			
@@ -3086,7 +3086,7 @@ public class QueryGeneratorMock
 			specimenExpressionRule1.addCondition(specimenExpressionRule1Condition1);
 			specimenExpression.addOperand(specimenExpressionRule1);
 			
-			IConstraintEntity specimenCharConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenCharEntity);
+			IQueryEntity specimenCharConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenCharEntity);
 //			// creating expression for Specimen Characteristics.
 			IExpression specimenCharExpression1 = constraints.addExpression(specimenCharConstraintEntity);
 			specimenExpression.addOperand(getAndConnector(),specimenCharExpression1.getExpressionId());

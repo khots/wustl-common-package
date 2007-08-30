@@ -19,7 +19,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.databaseproperties.ColumnPropertiesInterface;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -138,7 +138,7 @@ public class GenericQueryGeneratorMock
 	 */
 	public static IExpression createExpression(EntityInterface entity)
 	{
-		IConstraintEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
+		IQueryEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
 
 		IExpression expression = new Expression(constraintEntity, 1);
 		expression.addOperand(createRule(constraintEntity.getDynamicExtensionsEntity(), "int"));

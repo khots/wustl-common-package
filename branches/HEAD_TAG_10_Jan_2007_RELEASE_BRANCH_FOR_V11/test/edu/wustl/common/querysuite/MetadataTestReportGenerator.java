@@ -26,7 +26,7 @@ import edu.wustl.common.querysuite.factory.SqlGeneratorFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConstraintEntity;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -141,10 +141,10 @@ public class MetadataTestReportGenerator
 		
 		IConstraints constraints = query.getConstraints();
 		
-		IConstraintEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
+		IQueryEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
 		IExpression expression = constraints.addExpression(constraintEntity);
 		expression.setInView(true);
-		IConstraintEntity childConstraintEntity = QueryObjectFactory.createConstraintEntity(associatedEntity);
+		IQueryEntity childConstraintEntity = QueryObjectFactory.createConstraintEntity(associatedEntity);
 		IExpression childExpression = constraints.addExpression(childConstraintEntity);
 		expression.addOperand(childExpression.getExpressionId());
 		childExpression.setInView(true);
@@ -202,7 +202,7 @@ public class MetadataTestReportGenerator
 		IQuery query = QueryObjectFactory.createQuery();
 		
 		IConstraints constraints = query.getConstraints();
-		IConstraintEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
+		IQueryEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
 		IExpression expression = constraints.addExpression(constraintEntity);
 		expression.setInView(true);
 		IRule rule = QueryObjectFactory.createRule();
