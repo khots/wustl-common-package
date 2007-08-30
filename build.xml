@@ -29,14 +29,14 @@
 	
 	<path id="xdoclet.classpath">
 		<path refid="app.classpath"/>
-        <pathelement location="${extra_lib.dir}/commons-net-1.2.2.jar"/>
+		<pathelement location="${extra_lib.dir}/commons-net-1.2.2.jar"/>
 		<pathelement location="${extra_lib.dir}/hibernate-tools.jar"/>
 		<pathelement location="${extra_lib.dir}/servlet-api.jar"/>
-		<pathelement location="${extra_lib.dir}/xdoclet-1.2.jar"/>
+		<pathelement location="${extra_lib.dir}/xdoclet-1.2.3.jar"/>
 		<pathelement location="${extra_lib.dir}/xdoclet-hibernate-module-1.2.jar"/>
 		<pathelement location="${extra_lib.dir}/xdoclet-xdoclet-module-1.2.jar"/>
 		<pathelement location="${extra_lib.dir}/xerces.jar"/>
-		<pathelement location="${extra_lib.dir}/xjavadoc-1.0.2.jar"/>
+		<pathelement location="${extra_lib.dir}/xjavadoc-1.1-j5-v4.jar"/>
 		<pathelement location="${extra_lib.dir}/xsdlib.jar"/>
 		<pathelement location="${test.dir}" />
 	</path>
@@ -200,7 +200,7 @@
 			<fileset dir="${src.dir}">
 				<include name="**/domain/*.java"/>
 				<include name="**/cde/*.java"/>
-				<include name="**/category/*.java"/>
+				<include name="**/category/*.java"/> 	
 			</fileset>
     		<hibernate version="2.0"/>
 		</hibernatedoclet>	
@@ -214,6 +214,10 @@
 	        <replacefilter token="role=" value="name="/>
 	        <replacefilter token="hibernate-mapping.dtd" value="hibernate-mapping-2.0.dtd"/>
 	    </replace>
+    	
+    	<delete>
+            <fileset dir="${hbm.dir}" includes="*.hbm.xml"/>
+        </delete>
 	    
 	    <copy todir="${hbm.dir}">
 	    	<fileset dir="${src.dir}/edu/wustl/common/domain">
@@ -222,17 +226,64 @@
 	    	<fileset dir="${src.dir}/edu/wustl/common/cde">
 	    		<include name="*.hbm.xml"/>
 	       	</fileset>
-	    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category">
-	    		<include name="*.hbm.xml"/>
-	       	</fileset>
 	    </copy>
     	
     	<delete>
             <fileset dir="${src.dir}/edu/wustl/common/domain" includes="*.hbm.xml"/>
     		<fileset dir="${src.dir}/edu/wustl/common/cde" includes="*.hbm.xml"/>
-	    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category" includes="*.hbm.xml"/>
         </delete>
     </target>
+	
+	<!-- Generate the hbm files from the XDoclet -->
+	    <target name="GenerateQueryHBM" description="Generates Hibernate class descriptor files.">
+	    	<!-- Define the hibernatedoclet task -->
+	    	<taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask">
+	    		<classpath refid="xdoclet.classpath"/>
+			</taskdef>
+			
+			<!-- Execute the hibernatedoclet task -->		
+			<hibernatedoclet destdir="${src.dir}" excludedtags="@version,@author,@todo"
+						     force="${generateforce}" mergedir="${src.dir}" verbose="false">
+				<fileset dir="${src.dir}">
+					<include name="**/querysuite/metadata/associations/impl/*.java"/>
+					<include name="**/querysuite/metadata/category/*.java"/>
+					<include name="**/querysuite/queryobject/impl/*.java"/>
+				</fileset>
+	    		<hibernate version="2.0"/>
+			</hibernatedoclet>	
+			
+			<!-- Upgrade grammar from Hibernate1 to Hibernate2 -->
+		    <replace dir="${src.dir}">
+		    	<include name="**/querysuite/metadata/associations/impl/*hbm.xml"/>
+		    	<include name="**/querysuite/metadata/category/*.java"/>
+		    	<include name="**/querysuite/queryobject/impl/*hbm.xml"/>
+		        <replacefilter token="readonly=" value="inverse="/>
+		        <replacefilter token="role=" value="name="/>
+		        <replacefilter token="hibernate-mapping.dtd" value="hibernate-mapping-2.0.dtd"/>
+		    </replace>
+	    	
+	    	<delete>
+	            <fileset dir="${hbm.dir}" includes="*.hbm.xml"/>
+	        </delete>
+		    
+		    <copy todir="${hbm.dir}">
+		    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/associations/impl">
+		    		<include name="*.hbm.xml"/>
+		       	</fileset>
+		    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category">
+		    		<include name="*.hbm.xml"/>
+		       	</fileset>
+		    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/queryobject/impl">
+		    		<include name="*.hbm.xml"/>
+		    	</fileset>
+		    </copy>
+	    	
+	    	<delete>
+	    		<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/category" includes="*.hbm.xml"/>
+		    	<fileset dir="${src.dir}/edu/wustl/common/querysuite/metadata/associations/impl" includes="*.hbm.xml"/>
+	    		<fileset dir="${src.dir}/edu/wustl/common/querysuite/queryobject/impl" includes="*.hbm.xml"/>
+	        </delete>
+	    </target>
 	
 	<target name="build_code_zip" depends="compile" >
 		<zip destfile="${build.dir}/commonpackage-src.zip">
@@ -263,11 +314,24 @@
     	<java classname="edu.wustl.common.util.dbManager.GenerateSchema">
     		<arg value="false"/>	
             <classpath>
-	            <pathelement location="${build.dir}/catissuecore.jar"/>
+            	<pathelement location="${build.dir}/catissuecore.jar"/>
+            	<pathelement location="${build.dir}/commonpackage.jar"/>
             	<fileset dir="${lib.dir}">
                   <include name="*.jar"/>
               	</fileset>
             </classpath>       
+      	</java>
+    </target>
+	
+	<target name="GenerateQuerySchema" depends="build_jar">
+    	<java classname="edu.wustl.common.util.dbManager.GenerateSchema">
+    		<arg value="false"/>	
+            <classpath>
+            	<pathelement location="${build.dir}/commonpackage.jar"/>
+            	<fileset dir="${lib.dir}">
+                  <include name="*.jar"/>
+              	</fileset>
+            </classpath>
       	</java>
     </target>
 	
