@@ -113,7 +113,7 @@ public class QueryObjectProcessor
 			IExpression parentExpression = constraints.getExpression(parentExpressionId);
 			int childIndex = parentExpression.indexOfOperand(expressionId);
 
-			IExpression newExpression = constraints.addExpression(expression.getConstraintEntity()); // creating new expression which will be copy of the given expression id.
+			IExpression newExpression = constraints.addExpression(expression.getQueryEntity()); // creating new expression which will be copy of the given expression id.
 			newExpression.setInView(expression.isInView());
 			IExpressionId newExpressionId = newExpression.getExpressionId();
 			parentExpression.setOperand(childIndex, newExpressionId); // pointing the parent expression to the new expression.
@@ -159,7 +159,7 @@ public class QueryObjectProcessor
 				{
 					// Create new Expression
 					IExpression newExpression = constraints.addExpression(oldExpression
-							.getConstraintEntity());
+							.getQueryEntity());
 					newExpression.setInView(oldExpression.isInView());
 					IExpressionId newExpressionId = newExpression.getExpressionId();
 					toExpression.addOperand(newExpressionId);

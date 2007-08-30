@@ -54,8 +54,8 @@ public class GenerateSchema
 			
 		Configuration cfg = new Configuration();
 		cfg.setProperties(p);
-		cfg.addDirectory(new File("./WEB-INF/src"));
-		new SchemaExport(cfg).setOutputFile("catissuecore.sql").create(isToPrintOnConsole, isToExecuteOnDB);
+		cfg.addDirectory(new File("./src"));
+		new SchemaExport(cfg).setOutputFile("query.sql").setDelimiter(";").create(isToPrintOnConsole, isToExecuteOnDB);
 //		if(isToExecuteOnDB)
 //			new GenerateUser();
 	}
