@@ -106,8 +106,7 @@ public class Category implements Serializable
 
 	/**
 	 * @return
-	 * @hibernate.many-to-one column="ROOT_CATEGORIAL_CLASS_ID" 
-	 * class="edu.wustl.common.querysuite.metadata.category.CategorialClass" constrained="true"
+	 * @hibernate.many-to-one column="ROOT_CATEGORIAL_CLASS_ID" cascade="save-update" unique="true" class="edu.wustl.common.querysuite.metadata.category.CategorialClass" constrained="true"
 	 */
 	public CategorialClass getRootClass()
 	{
@@ -116,8 +115,7 @@ public class Category implements Serializable
 
 	/**
 	 * @return
-	 * @hibernate.set name="subCategories" table="CATEGORY"
-	 * cascade="save-update" inverse="false" lazy="false"
+	 * @hibernate.set name="subCategories" table="CATEGORY" inverse="false" lazy="false"
 	 * @hibernate.collection-key column="PARENT_CATEGORY_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.querysuite.metadata.category.Category"
 	 */
