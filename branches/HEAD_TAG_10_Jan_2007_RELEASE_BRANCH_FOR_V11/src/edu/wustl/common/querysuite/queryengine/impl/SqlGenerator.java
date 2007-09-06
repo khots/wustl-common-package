@@ -695,8 +695,10 @@ public class SqlGenerator implements ISqlGenerator
 		 * If the Query has only one Expression, which referes to an entity having inheritance strategy as TABLE_PER_HEIRARCHY,
 		 * then the Descriminator column condition needs to be added in the WHERE part of SQL as it can not be added in the FROM part of the query.
 		 * This can be identified by following checks 1. parentExpression is null & 2. expression have no child expression.
+		 * 
+		 * If this expression is PseudoAnded then the same check should be made which will be add descriminatorCondition in the innersql of pseudoAnd query.
 		 */
-		if (parentExpression == null) // This will be true only for root Expression of the Query.
+		if (parentExpression == null || isPAND) // This will be true only for root Expression of the Query.
 		{
 			List<IExpressionId> childrenList = joinGraph.getChildrenList(expression.getExpressionId());
 			if (childrenList==null || childrenList.isEmpty())

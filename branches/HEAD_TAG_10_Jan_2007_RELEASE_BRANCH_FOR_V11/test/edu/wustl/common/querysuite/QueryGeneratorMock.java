@@ -2433,6 +2433,317 @@ public class QueryGeneratorMock
 	}
 	
 	/**
+	 * TO create Query with Inherited Entity, where Parent Expression's Entity  is Inherited Entity.
+	 * <pre>
+	 * 	MolecularSpecimen: type equals 'DNA'
+	 * 		SCHAR: Tissue Site Equals "PROSTATE GLAND"
+	 * </pre>
+	 * @return reference to Query Object
+	 */
+	public static IQuery createInheritanceQueryWithAssociation1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
+			EntityInterface specimenCharacteristicEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
+
+			
+			// creating expression for specimen.
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+			
+			List<String> specimenExpressionRule1Values = new ArrayList<String>();
+			specimenExpressionRule1Values.add("DNA");
+
+			ICondition specimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpressionRule1Values);
+			IRule specimenExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpressionRule1.addCondition(specimenExpressionRule1Condition1);
+			specimenExpression.addOperand(specimenExpressionRule1);
+			
+			// creating specimenCharacteristic Expression under first specimen Expression.
+			IQueryEntity specimenCharacteristicConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenCharacteristicEntity);
+			IExpression specimenCharacteristicExpression1 = constraints.addExpression(specimenCharacteristicConstraintEntity);
+
+			specimenExpression.addOperand(getAndConnector(),specimenCharacteristicExpression1.getExpressionId());
+			AssociationInterface specimeAndSpecimeCharacteristicAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.MOLECULAR_SPECIMEN_NAME,
+					""), EntityManagerMock.SPECIMEN_CHARACTERISTIC_NAME);
+			IIntraModelAssociation iSpecimeAndSpecimeCharacteristicAssociation = QueryObjectFactory.createIntraModelAssociation(specimeAndSpecimeCharacteristicAssociation);
+			joinGraph.putAssociation(specimenExpression.getExpressionId(),
+					specimenCharacteristicExpression1.getExpressionId(), iSpecimeAndSpecimeCharacteristicAssociation);
+
+			IRule specimenCharacteristicExpression1Rule1 = QueryObjectFactory.createRule(null);
+			specimenCharacteristicExpression1.addOperand(specimenCharacteristicExpression1Rule1);
+
+			List<String> specimenCharacteristicExpression1Rule1Values1 = new ArrayList<String>();
+			specimenCharacteristicExpression1Rule1Values1.add("Prostate Gland");
+			ICondition specimenCharacteristicExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenCharacteristicEntity, "tissueSite"), RelationalOperator.Equals,
+					specimenCharacteristicExpression1Rule1Values1);
+			specimenCharacteristicExpression1Rule1.addCondition(specimenCharacteristicExpression1Rule1Condition1);
+			
+			setAllExpressionInView(constraints);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		
+		return query;
+		
+	}
+	/**
+	 * TO create Query with Inherited Entity, where child Expression's Entity is Inherited Entity.
+	 * <pre>
+	 * SCG: clinicalStatus equals 'New Diagnosis'
+	 * 		MolecularSpecimen: type equals 'DNA'
+	 * </pre>
+	 * @return reference to Query Object
+	 */
+	public static IQuery createInheritanceQueryWithAssociation2()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			query.setConstraints(constraints);
+
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			EntityInterface molecularSpecimenEntity = enitytManager.getEntityByName(EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
+
+			// creating expression for SpecimenCollectionGroup.
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			List<String> scgExpressionRuleValues = new ArrayList<String>();
+			scgExpressionRuleValues.add("New Diagnosis");
+
+			ICondition scgExpressionRuleCondition = QueryObjectFactory
+			.createCondition(findAttribute(scgEntity, "clinicalStatus"), RelationalOperator.Equals,
+					scgExpressionRuleValues);
+			IRule scgExpressionRule = QueryObjectFactory
+			.createRule(null);
+			scgExpressionRule
+			.addCondition(scgExpressionRuleCondition);
+			specimenCollectionGroupExpression.addOperand(scgExpressionRule);
+
+			//creating SpecimeExpression.
+			IQueryEntity molecularSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(molecularSpecimenEntity);
+			IExpression molecularSpecimenExpression1 = constraints.addExpression(molecularSpecimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(getAndConnector(), molecularSpecimenExpression1.getExpressionId());
+			AssociationInterface spgAndMolecularSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					"specimenCollectionGroup"), EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
+			IIntraModelAssociation ispgAndMolecularSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndMolecularSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					molecularSpecimenExpression1.getExpressionId(), ispgAndMolecularSpecimeAssociation);
+
+			IRule molecularSpecimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			molecularSpecimenExpression1.addOperand(molecularSpecimenExpression1Rule1);
+
+			List<String> molecularSpecimenExpression1Rule1Values1 = new ArrayList<String>();
+			molecularSpecimenExpression1Rule1Values1.add("DNA");
+			ICondition molecularSpecimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(molecularSpecimenEntity.getParentEntity(), "type"), RelationalOperator.Equals,
+					molecularSpecimenExpression1Rule1Values1);
+
+			molecularSpecimenExpression1Rule1.addCondition(molecularSpecimenExpression1Rule1Condition1);
+
+			setAllExpressionInView(constraints);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * To create Query on Inherited object for Many to many Association case.
+	 * <pre>
+	 *  MolecularSpecimen: Type equals "DNA"
+	 *  	Biohazard: type equals "Toxic"
+	 * </pre>
+	 * @return reference to query object.
+	 */
+	public static IQuery createInheritanceQueryWithManyToMany()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
+			EntityInterface biohazardEntity = enitytManager.getEntityByName(EntityManagerMock.BIOHAZARD_NAME);
+
+
+			// creating expression for specimen.
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createConstraintEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+			
+			List<String> specimenExpressionRule1Values = new ArrayList<String>();
+			specimenExpressionRule1Values.add("DNA");
+
+			ICondition specimenExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(specimenEntity, "type"), RelationalOperator.Equals,
+					specimenExpressionRule1Values);
+			IRule specimenExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			specimenExpressionRule1.addCondition(specimenExpressionRule1Condition1);
+			specimenExpression.addOperand(specimenExpressionRule1);
+			
+			// Creating Biohazard Expression.
+			IQueryEntity biohazardConstraintEntity = QueryObjectFactory.createConstraintEntity(biohazardEntity);
+			IExpression biohazardExpression = constraints.addExpression(biohazardConstraintEntity);
+			specimenExpression.addOperand(getAndConnector(),biohazardExpression.getExpressionId());
+			
+			// Adding association to joingraph.
+			AssociationInterface specimenAndBiohazardAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.MOLECULAR_SPECIMEN_NAME, "specimenCollection"),
+					EntityManagerMock.BIOHAZARD_NAME);
+			IIntraModelAssociation association = QueryObjectFactory.createIntraModelAssociation(specimenAndBiohazardAssociation);
+			joinGraph.putAssociation(specimenExpression.getExpressionId(), biohazardExpression
+					.getExpressionId(), association);
+			
+			
+			List<String> biohazardExpressionRule1Values = new ArrayList<String>();
+			biohazardExpressionRule1Values.add("Toxic");
+
+			ICondition biohazardExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(biohazardEntity, "type"), RelationalOperator.Equals,
+					biohazardExpressionRule1Values);
+			IRule biohazardExpressionRule1 = QueryObjectFactory
+			.createRule(null);
+			biohazardExpressionRule1.addCondition(biohazardExpressionRule1Condition1);
+			biohazardExpression.addOperand(biohazardExpressionRule1);
+			
+			setAllExpressionInView(constraints);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
+	/**
+	 * TO create Pseudo-And Query with Inherited Entity.
+	 * <pre>
+	 * SCG: clinicalStatus equals 'New Diagnosis'
+	 * 		MolecularSpecimen: type equals 'DNA'
+	 * 		PseudoAnd
+	 * 		TissueSpecimen: type equals 'Fixed Tissue'
+	 * </pre>
+	 * @return reference to Query Object
+	 */
+	public static IQuery createInheritanceQueryWithPAND1()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			query.setConstraints(constraints);
+
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			EntityInterface molecularSpecimenEntity = enitytManager.getEntityByName(EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
+			EntityInterface tissueSpecimenEntity = enitytManager.getEntityByName(EntityManagerMock.TISSUE_SPECIMEN_NAME);
+			
+//			 creating expression for SpecimenCollectionGroup.
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createConstraintEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			List<String> scgExpressionRuleValues = new ArrayList<String>();
+			scgExpressionRuleValues.add("New Diagnosis");
+
+			ICondition scgExpressionRuleCondition = QueryObjectFactory
+			.createCondition(findAttribute(scgEntity, "clinicalStatus"), RelationalOperator.Equals,
+					scgExpressionRuleValues);
+			IRule scgExpressionRule = QueryObjectFactory
+			.createRule(null);
+			scgExpressionRule
+			.addCondition(scgExpressionRuleCondition);
+			specimenCollectionGroupExpression.addOperand(scgExpressionRule);
+			
+			
+//			creating first SpecimeExpression.
+			IQueryEntity molecularSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(molecularSpecimenEntity);
+			IExpression molecularSpecimenExpression1 = constraints.addExpression(molecularSpecimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(getAndConnector(), molecularSpecimenExpression1.getExpressionId());
+			AssociationInterface spgAndMolecularSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					"specimenCollectionGroup"), EntityManagerMock.MOLECULAR_SPECIMEN_NAME);
+			IIntraModelAssociation ispgAndMolecularSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndMolecularSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					molecularSpecimenExpression1.getExpressionId(), ispgAndMolecularSpecimeAssociation);
+
+			IRule molecularSpecimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			molecularSpecimenExpression1.addOperand(molecularSpecimenExpression1Rule1);
+
+			List<String> molecularSpecimenExpression1Rule1Values1 = new ArrayList<String>();
+			molecularSpecimenExpression1Rule1Values1.add("DNA");
+			ICondition molecularSpecimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(molecularSpecimenEntity.getParentEntity(), "type"), RelationalOperator.Equals,
+					molecularSpecimenExpression1Rule1Values1);
+
+			molecularSpecimenExpression1Rule1.addCondition(molecularSpecimenExpression1Rule1Condition1);
+			
+			
+//			creating second SpecimeExpression.
+			IQueryEntity tissueSpecimenConstraintEntity = QueryObjectFactory.createConstraintEntity(tissueSpecimenEntity);
+			IExpression tissueSpecimenExpression1 = constraints.addExpression(tissueSpecimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(getAndConnector(), tissueSpecimenExpression1.getExpressionId());
+			AssociationInterface spgAndTissueSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					"specimenCollectionGroup"), EntityManagerMock.TISSUE_SPECIMEN_NAME);
+			IIntraModelAssociation ispgAndTissueSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndTissueSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					tissueSpecimenExpression1.getExpressionId(), ispgAndTissueSpecimeAssociation);
+
+			IRule tissueSpecimenExpression1Rule1 = QueryObjectFactory.createRule(null);
+			tissueSpecimenExpression1.addOperand(tissueSpecimenExpression1Rule1);
+
+			List<String> tissueSpecimenExpression1Rule1Values1 = new ArrayList<String>();
+			tissueSpecimenExpression1Rule1Values1.add("Fixed Tissue");
+			ICondition tissueSpecimenExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
+					findAttribute(tissueSpecimenEntity.getParentEntity(), "type"), RelationalOperator.Equals,
+					tissueSpecimenExpression1Rule1Values1);
+
+			tissueSpecimenExpression1Rule1.addCondition(tissueSpecimenExpression1Rule1Condition1);
+			
+			setAllExpressionInView(constraints);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	/**
 	 * To instantiate Logical connector for OR operator.
 	 * @return reference to logical connector contining 'OR' logical operator.
 	 */
