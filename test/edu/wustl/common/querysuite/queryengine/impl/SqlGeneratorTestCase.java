@@ -1243,4 +1243,112 @@ public class SqlGeneratorTestCase extends TestCase
 			fail("Unexpected Expection, While Generating SQL for the Query having Many to Many Associations & Pseudo And!!!");
 		}
 	}
+	/**
+	 * TO Test Pseudo-And Query with Inherited Entity.
+	 * <pre>
+	 * SCG: clinicalStatus equals 'New Diagnosis'
+	 * 		MolecularSpecimen: type equals 'DNA'
+	 * 		PseudoAnd
+	 * 		TissueSpecimen: type equals 'Fixed Tissue'
+	 * </pre>
+	 */
+	public void testCreateInheritanceQueryWithPAND1()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQueryWithPAND1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testCreateInheritanceQueryWithPAND1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query having Inherited Entity & Pseudo And!!!",
+					"Select SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 ,Specimen_2.TYPE Column5 ,Specimen_2.POSITION_DIMENSION_TWO Column6 ,Specimen_2.POSITION_DIMENSION_ONE Column7 ,Specimen_2.PATHOLOGICAL_STATUS Column8 ,Specimen_2.LINEAGE Column9 ,Specimen_2.LABEL Column10 ,Specimen_2.IDENTIFIER Column11 ,Specimen_2.COMMENTS Column12 ,Specimen_2.BARCODE Column13 ,Specimen_2.AVAILABLE Column14 ,Specimen_2.ACTIVITY_STATUS Column15 ,Specimen_2.CONCENTRATION Column16 ,Specimen_3.TYPE Column17 ,Specimen_3.POSITION_DIMENSION_TWO Column18 ,Specimen_3.POSITION_DIMENSION_ONE Column19 ,Specimen_3.PATHOLOGICAL_STATUS Column20 ,Specimen_3.LINEAGE Column21 ,Specimen_3.LABEL Column22 ,Specimen_3.IDENTIFIER Column23 ,Specimen_3.COMMENTS Column24 ,Specimen_3.BARCODE Column25 ,Specimen_3.AVAILABLE Column26 ,Specimen_3.ACTIVITY_STATUS Column27 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID And Specimen_2.SPECIMEN_CLASS='Molecular') left join catissue_specimen Specimen_3 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_3.SPECIMEN_COLLECTION_GROUP_ID And Specimen_3.SPECIMEN_CLASS='Tissue') Where (SpecimenCollectionGroup_1.CLINICAL_STATUS='New Diagnosis') And(SpecimenCollectionGroup_1.IDENTIFIER = ANY(Select Specimen_2.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_2 where (Specimen_2.TYPE='DNA') And Specimen_2.SPECIMEN_CLASS='Molecular')) And(SpecimenCollectionGroup_1.IDENTIFIER = ANY(Select Specimen_3.SPECIMEN_COLLECTION_GROUP_ID From catissue_specimen  Specimen_3 where (Specimen_3.TYPE='Fixed Tissue') And Specimen_3.SPECIMEN_CLASS='Tissue'))",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query having Inherited Entity & Pseudo And!!!");
+		}
+	}
+	/**
+	 * TO Test Query with Inherited Entity, where Parent Expression's Entity  is Inherited Entity.
+	 * <pre>
+	 * 	MolecularSpecimen: type equals 'DNA'
+	 * 		SCHAR: Tissue Site Equals "PROSTATE GLAND"
+	 * </pre>
+	 */
+	public void testInheritanceQueryWithAssociation1()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQueryWithAssociation1();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testInheritanceQueryWithAssociation1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query On inherited entity having Many to Many Associations!!!",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Specimen_1.CONCENTRATION Column11 ,SpecimenCharacteristics_2.TISSUE_SIDE Column12 ,SpecimenCharacteristics_2.TISSUE_SITE Column13 ,SpecimenCharacteristics_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join catissue_specimen_char SpecimenCharacteristics_2 on (Specimen_1.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_2.IDENTIFIER And Specimen_1.SPECIMEN_CLASS='Molecular') Where (Specimen_1.TYPE='DNA') And(SpecimenCharacteristics_2.TISSUE_SITE='Prostate Gland')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query On inherited entity having Many to Many Associations!!!");
+		}
+	}
+	
+	/**
+	 * TO Test Query with Inherited Entity, where child Expression's Entity is Inherited Entity.
+	 * <pre>
+	 * SCG: clinicalStatus equals 'New Diagnosis'
+	 * 		MolecularSpecimen: type equals 'DNA'
+	 * </pre>
+	 */
+	public void testInheritanceQueryWithAssociation2()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQueryWithAssociation2();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testInheritanceQueryWithAssociation2:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query On inherited entity having One to Many Associations!!!",
+					"Select SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 ,Specimen_2.TYPE Column5 ,Specimen_2.POSITION_DIMENSION_TWO Column6 ,Specimen_2.POSITION_DIMENSION_ONE Column7 ,Specimen_2.PATHOLOGICAL_STATUS Column8 ,Specimen_2.LINEAGE Column9 ,Specimen_2.LABEL Column10 ,Specimen_2.IDENTIFIER Column11 ,Specimen_2.COMMENTS Column12 ,Specimen_2.BARCODE Column13 ,Specimen_2.AVAILABLE Column14 ,Specimen_2.ACTIVITY_STATUS Column15 ,Specimen_2.CONCENTRATION Column16 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID And Specimen_2.SPECIMEN_CLASS='Molecular') Where (SpecimenCollectionGroup_1.CLINICAL_STATUS='New Diagnosis') And(Specimen_2.TYPE='DNA')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query On inherited entity having One to Many Associations!!!");
+		}
+	}
+	/**
+	 * To test queries having many to many associations.
+	 * <pre>
+	 *  MolecularSpecimen: Type equals "DNA"
+	 *  	Biohazard: type equals "Toxic"
+	 * </pre>
+	 *
+	 */
+	public void testInheritanceQueryWithManyToMany()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQueryWithManyToMany();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			//System.out.println("testManyToManyQuery1:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for the Query having Many to Many Associations!!!",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Specimen_1.CONCENTRATION Column11 ,Biohazard_2.TYPE Column12 ,Biohazard_2.COMMENTS Column13 ,Biohazard_2.NAME Column14 ,Biohazard_2.IDENTIFIER Column15 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA') And(Biohazard_2.TYPE='Toxic')",
+					sql);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query having Many to Many Associations!!!");
+		}
+	}
 }

@@ -1,10 +1,11 @@
-/**
- * 
- */
-
 package edu.wustl.common.querysuite.queryobject.impl;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.util.global.Constants.InheritanceStrategy;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.Constants;
 
@@ -134,5 +135,60 @@ public class QueryEntity extends BaseQueryObject implements IQueryEntity {
     public String toString() {
         return entityInterface.getName();
     }
+    
+    
+    /**
+     * TO check whether the given query entity is having matching Entity. This is used to identify Pseudo-AND condition.
+     * Returns true if the two entities belongs to the same class heirarchy. i.e. class heirarchy having TABLE_PER_HEIRARCHY as inheritance strategy.
+     * @param queryEntity The QueryEntity to check.
+     * @return true if the two entities can be pseudoAnded.
+     */
+	public boolean isPseudoAndedEntity(IQueryEntity queryEntity) {
+		EntityInterface theEntityInterface = queryEntity.getDynamicExtensionsEntity();
+		if (entityInterface.equals(theEntityInterface)) {
+            return true;
+        }
+		//check for the Parent class heirarchy.
+		// It will check whether two entities belongs to the same Class heirarchy having TABLE_PER_HEIRARCHY as inheritance strategy.
+		EntityInterface parentEntity = entityInterface.getParentEntity();
+		EntityInterface theParentEntity = theEntityInterface.getParentEntity();
+		if (parentEntity != null && theParentEntity != null)
+		{
+			Set<EntityInterface> parentHeirarchy = getParentHeirarchy(entityInterface);
+			// retaining common parent entities
+			parentHeirarchy.retainAll(getParentHeirarchy(theEntityInterface));
+			
+			if (!parentHeirarchy.isEmpty())
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
 
+	/**
+	 * TO get the parent heirarchy of the given entity. The returned set will contains all the parent entities having TABLE_PER_HEIRARCHY as Inheritance strategy for their derived entity.
+	 * @param entityInterface The reference to Entity.
+	 * @return the set of Parent entities with inheritance strategy as TABLE_PER_HEIRARCHY.
+	 */
+	private Set<EntityInterface> getParentHeirarchy(EntityInterface entityInterface)
+	{
+		Set<EntityInterface> set = new HashSet<EntityInterface>();
+		// Iterating on parent heirarchy till the inheritance strategy is TABLE_PER_HEIRARCHY.
+		do{
+			set.add(entityInterface);
+			if (entityInterface.getInheritanceStrategy().equals(InheritanceStrategy.TABLE_PER_HEIRARCHY))
+			{
+				entityInterface = entityInterface.getParentEntity();
+			}
+			else
+			{
+				break;
+			}
+			
+		} while (entityInterface!=null);
+		
+		return set;
+	}
 }

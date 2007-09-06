@@ -1,5 +1,6 @@
 package edu.wustl.common.querysuite.queryobject.impl;
 
+
 /**
  * @author Mandar Shidhore
  * @version 1.0
@@ -11,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.util.global.Constants;
 
@@ -630,7 +631,7 @@ public class Expression extends BaseQueryObject implements IExpression {
      * @return true if both the expression have same ConstraintEntity.
      */
     private boolean isHavingSameClass(IExpression expression1, IExpression expression2) {
-        return expression1.getQueryEntity().equals(expression2.getQueryEntity());
+		return ((QueryEntity)expression1.getQueryEntity()).isPseudoAndedEntity(expression2.getQueryEntity());
     }
 
     /**
