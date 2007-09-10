@@ -255,6 +255,9 @@ public class JoinGraph extends BaseQueryObject implements IJoinGraph {
         		if (isMatching)
         		{
         			// matching path  found, so logic terminates here.....Their will be only one matching path.
+        			// Remove source & target ExprssionIds from path.
+        			rechablePath.remove(0);
+        			rechablePath.remove(rechablePath.size()-1);
         			return rechablePath;
         		}
         	}
