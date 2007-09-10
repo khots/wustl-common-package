@@ -17,6 +17,8 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
+import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
@@ -28,6 +30,8 @@ import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.OutputEntity;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeNode;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -84,18 +88,37 @@ public abstract class QueryObjectFactory
 	{
 		return new Condition(null, null, null);
 	}
-
-	//	public static IExpression createExpression(IFunctionalClass outputEntity,
-	//			List<IExpressionOperand> expressionOperands, List<ILogicalConnector> logicalConnectors,
-	//			IExpressionId expressionId)
-	//	{
-	//		return new Expression(outputEntity, expressionOperands, logicalConnectors, expressionId);
-	//	}
-	//
-	//	public static IExpression createExpression(IFunctionalClass outputEntity)
-	//	{
-	//		return new Expression(outputEntity, null, null, null);
-	//	}
+    
+    /**
+     * To create an empty Condition.
+     * @return The instance of the Condition class.
+     */
+    public static IParameterizedCondition createParameterizedCondition()
+    {
+        return new ParameterizedCondition();
+    }
+    
+    /**
+     * To create an ParameterizedCondition object out of Condition object.
+     * @return The instance of the ParameterizedCondition class.
+     */
+    public static IParameterizedCondition createParameterizedCondition(ICondition condition)
+    {
+        return new ParameterizedCondition(condition);
+    }
+    
+    /**
+     * To instanciate ParameterizedCondition object.
+     * @param attribute The reference to Dynamic Extension attribute on which condition to be created.
+     * @param relationalOperator The relational operator between attribute & values.
+     * @param values The List of String representing values of the condition.
+     * @return The instance of the Condition class.
+     */
+    public static IParameterizedCondition createParameterizedCondition(AttributeInterface attribute,
+            RelationalOperator relationalOperator, List<String> values, Integer index, String name)
+    {
+        return new ParameterizedCondition(attribute, relationalOperator, values, index, name);
+    }
 
 	/**
 	 * To instanciate Expression Id object.
@@ -106,12 +129,6 @@ public abstract class QueryObjectFactory
 	{
 		return new ExpressionId(id);
 	}
-
-	//	public static IExpressionList createExpressionList(List<IExpression> expressions)
-	//	{
-	////		return new ExpressionList(expressions);
-	//        return null;
-	//	}
 
 	/**
 	 * To instanciate Constraints class object.
@@ -160,6 +177,25 @@ public abstract class QueryObjectFactory
 	{
 		return new Query();
 	}
+    
+    /**
+     * To create empty ParameterizedQuery object.
+     * @return the reference to the ParameterizedQuery object.
+     */
+    public static IParameterizedQuery createParameterizedQuery()
+    {
+        return new ParameterizedQuery();
+    }
+    
+    /**
+     * To create ParameterizedQuery object out of Query object
+     * @param query
+     * @return the reference to the ParameterizedQuery object
+     */
+    public static IParameterizedQuery createParameterizedQuery(IQuery query)
+    {
+        return new ParameterizedQuery(query);
+    }
 
 	/**
 	 * Method to instantiate object of a class implementing IOutputTreeNode interface.

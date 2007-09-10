@@ -1,7 +1,6 @@
 
 package edu.wustl.common.querysuite.queryobject;
 
-import java.util.List;
 
 /**
  * A list of operands, and the logical connectors (AND, OR), that together form a
