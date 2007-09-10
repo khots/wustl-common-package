@@ -46,4 +46,11 @@ public interface IPath extends Serializable
 	 * @throws java.lang.IllegalArgumentException if the path is not bidirectional.
 	 */
 	IPath reverse();
+    
+    /**
+     * This method is for Flex UI. It returns the database identifier of Path.
+     * @return
+     */
+    // By Chandrakant on 10 Sep, 2007
+    long getPathId();
 }
