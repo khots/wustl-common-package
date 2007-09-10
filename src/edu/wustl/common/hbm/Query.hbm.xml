@@ -36,13 +36,29 @@
             unique="true"
         />
 
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-Query.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+        <joined-subclass
+            name="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery"
+            table="QUERY_PARAMETERIZED_QUERY"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
         <property
-            name="queryName"
+            name="name"
             type="string"
             update="true"
             insert="true"
             column="QUERY_NAME"
-            length="256"
+            length="255"
             unique="true"
         />
 
@@ -55,11 +71,7 @@
             length="1024"
         />
 
-        <!--
-            To add non XDoclet property mappings, create a file named
-                hibernate-properties-Query.xml
-            containing the additional properties and place it in your merge dir.
-        -->
+        </joined-subclass>
 
     </class>
 
