@@ -1,10 +1,12 @@
 /**
  * 
  */
-package edu.wustl.common.querysuite.queryobject.util;
+package edu.wustl.common.querysuite.bizLogic;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -23,7 +25,8 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
-import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -33,8 +36,11 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.GraphEntry;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
+import edu.wustl.common.querysuite.queryobject.util.ParameterizedConditionComparator;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
@@ -44,12 +50,12 @@ import edu.wustl.common.util.global.Constants;
  * @created Aug 30, 2007, 11:31:45 AM
  * @param <Q>
  */
-public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
+public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogic {
 
     /**
      * Default Constructor
      */
-    public QueryProcessor() {
+    public QueryBizLogic() {
 
     }
 
@@ -58,7 +64,7 @@ public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
      * @return
      */
     protected String getQueryClassName() {
-        return IQuery.class.getName();
+        return ParameterizedQuery.class.getName();
     }
 
     /**
@@ -95,22 +101,24 @@ public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
                 throw new RuntimeException("Problem in code; probably database schema");
             } else {
                 query = (Q) queryList.get(0);
-                postProcessQuery(query);
+
             }
         }
 
         return query;
     }
 
-    /**
-     * This method retreives all the query objects in the system.
-     * Returns all the categories availble in the system.
-     * @return List of all categories.
+    /* (non-Javadoc)
+     * @see edu.wustl.common.bizlogic.DefaultBizLogic#retrieve(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.Object[], java.lang.String)
      */
-    public List<Q> getAllQueries() {
+    @Override
+    public List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
+                         String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
+            throws DAOException {
         List<Q> queryList = null;
         try {
-            queryList = retrieve(getQueryClassName());
+            queryList = super.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
+                                       whereColumnValue, joinCondition);
             for (Q query : queryList) {
                 postProcessQuery(query);
             }
@@ -122,10 +130,26 @@ public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
     }
 
     /**
+     * This method retreives all the query objects in the system.
+     * Returns all the categories availble in the system.
+     * @return List of all categories.
+     */
+    public List<Q> getAllQueries() {
+        List<Q> queryList = null;
+        try {
+            queryList = (List<Q>) retrieve(getQueryClassName());
+        } catch (DAOException e) {
+            throw new RuntimeException("Unable to Process object, Exception:" + e.getMessage());
+        }
+
+        return queryList;
+    }
+
+    /**
      * This method processes the query object after retreival.
      * @param query
      */
-    protected void postProcessQuery(Q query) {
+    public void postProcessQuery(Q query) {
         Constraints constraints = (Constraints) query.getConstraints();
         constraints.contemporizeExpressionsWithExpressionList();
 
@@ -138,6 +162,44 @@ public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
 
         JoinGraph joinGraph = (JoinGraph) constraints.getJoinGraph();
         postProcessJoinGraph(joinGraph, constraints.getExpressionIds());
+        if (query instanceof ParameterizedQuery) {
+            postProcessParameterizedQuery((ParameterizedQuery) query);
+        }
+    }
+
+    /**
+     * This method processes the parameterized query object after retreival.
+     * @param query
+     */
+    private void postProcessParameterizedQuery(ParameterizedQuery parameterizedQuery) {
+        List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
+
+        Constraints constraints = (Constraints) parameterizedQuery.getConstraints();
+        Enumeration<IExpressionId> enumeration = constraints.getExpressionIds();
+        while (enumeration.hasMoreElements()) {
+            IExpressionId expressionId = enumeration.nextElement();
+            Expression expression = (Expression) constraints.getExpression(expressionId);
+            List<IExpressionOperand> expressionOperands = expression.getExpressionOperands();
+            for (IExpressionOperand expressionOperand : expressionOperands) {
+                if (expressionOperand instanceof Rule) {
+                    Rule rule = (Rule) expressionOperand;
+
+                    List<ICondition> conditions = rule.getConditions();
+                    if (!conditions.isEmpty()) {
+                        for (ICondition condition : conditions) {
+                            if (condition instanceof IParameterizedCondition) {
+                                parameterizedConditionList.add((IParameterizedCondition) condition);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!parameterizedConditionList.isEmpty()) {
+            Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
+            parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
+        }
     }
 
     /**
@@ -260,7 +322,7 @@ public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
      * This method processes the Query object before persisting it.
      * @param query
      */
-    protected void preProcessQuery(Q query) {
+    public void preProcessQuery(Q query) {
         Constraints constraints = (Constraints) query.getConstraints();
         constraints.contemporizeExpressionListWithExpressions();
 
@@ -278,6 +340,48 @@ public class QueryProcessor<Q extends IQuery> extends DefaultBizLogic {
         for (GraphEntry graphEntry : graphEntryCollection) {
             IAssociation association = graphEntry.getAssociation();
             preProcessAssociation(association);
+        }
+
+        if (query instanceof ParameterizedQuery) {
+            preProcessParameterizedQuery((ParameterizedQuery) query);
+        }
+    }
+
+    /**
+     * This method processes the parameterized query object before saving.
+     * @param query
+     */
+    private void preProcessParameterizedQuery(ParameterizedQuery parameterizedQuery) {
+        int index = 0;
+        List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
+
+        Constraints constraints = (Constraints) parameterizedQuery.getConstraints();
+        Enumeration<IExpressionId> enumeration = constraints.getExpressionIds();
+        while (enumeration.hasMoreElements()) {
+            IExpressionId expressionId = enumeration.nextElement();
+            Expression expression = (Expression) constraints.getExpression(expressionId);
+            List<IExpressionOperand> expressionOperands = expression.getExpressionOperands();
+            for (IExpressionOperand expressionOperand : expressionOperands) {
+                if (expressionOperand instanceof Rule) {
+                    Rule rule = (Rule) expressionOperand;
+
+                    List<ICondition> conditions = rule.getConditions();
+                    if (!conditions.isEmpty()) {
+                        for (ICondition condition : conditions) {
+                            if (condition instanceof ParameterizedCondition) {
+                                ParameterizedCondition parameterizedCondition = (ParameterizedCondition) condition;
+                                
+                                parameterizedCondition.setIndex(index++);
+                                parameterizedConditionList.add(parameterizedCondition);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!parameterizedConditionList.isEmpty()) {
+            Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
+            parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
         }
     }
 

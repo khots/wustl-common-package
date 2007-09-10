@@ -186,28 +186,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List retrieve(String sourceObjectName, String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
-
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
-
-		List list = null;
-
-		try
-		{
-			dao.openSession(null);
-
-			list = dao.retrieve(sourceObjectName, null, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
-			dao.commit();
-		}
-		catch (DAOException daoExp)
-		{
-			daoExp.printStackTrace();
-			//Logger.out.error(daoExp.getMessage(),daoExp);
-		}
-		finally
-		{
-			dao.closeSession();
-		}
-		return list;
+		return retrieve(sourceObjectName,null, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
 	}
 
 	/**

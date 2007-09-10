@@ -21,10 +21,6 @@ public class Query extends BaseQueryObject implements IQuery {
 
     private IOutputTreeNode root;
 
-    private String queryName;
-
-    private String description;
-
     /**
      * Default Constructor
      */
@@ -62,40 +58,6 @@ public class Query extends BaseQueryObject implements IQuery {
      */
     public void setConstraints(IConstraints constraints) {
         this.constraints = constraints;
-    }
-
-    /**
-     * This method returns the user defined name of the query. 
-     * @return name of the query
-     * 
-     * @hibernate.property name="queryName" column="QUERY_NAME" type="string" length="256" unique="true" 
-     */
-    public String getQueryName() {
-        return queryName;
-    }
-
-    /**
-     * This method sets the name of the query. This name must be unique as it will be used as an distinguisher by the user. 
-     * @param queryName the user defined name of the query
-     */
-    public void setQueryName(String queryName) {
-        this.queryName = queryName;
-    }
-
-    /**
-     * @return the description
-     * 
-     * @hibernate.property name="description" column="DESCRIPTION" type="string" length="1024"
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**

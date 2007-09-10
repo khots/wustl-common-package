@@ -11,12 +11,10 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 public interface IQueryEntity extends IBaseQueryObject
 {
 
-	/**
+    /**
 	 * 
 	 * @return The Dynamic Extension Entity reference corresponding to the QueryEntity.
 	 */
 	EntityInterface getDynamicExtensionsEntity();
-    
-    void setDynamicExtensionsEntity(EntityInterface DynamicExtensionsEntity);
 
 }
