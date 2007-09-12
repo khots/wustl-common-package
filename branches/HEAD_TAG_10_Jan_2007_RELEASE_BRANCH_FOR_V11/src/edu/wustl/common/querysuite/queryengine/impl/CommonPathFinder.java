@@ -4,9 +4,10 @@ package edu.wustl.common.querysuite.queryengine.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -19,6 +20,8 @@ import edu.wustl.cab2b.server.path.PathFinder;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
+import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -31,7 +34,7 @@ import edu.wustl.common.util.global.Constants;
  */
 public class CommonPathFinder implements IPathFinder
 {
-	
+	private PathFinder pathFinder=null;
 	/**
 	 * This method gets all the possible paths between two entities.
 	 */
@@ -46,7 +49,7 @@ public class CommonPathFinder implements IPathFinder
 			InitialContext context = new InitialContext();
  			DataSource dataSource =  (DataSource) context.lookup("java:/catissuecore");
  			connection = dataSource.getConnection();
-			PathFinder pathFinder = (PathFinder) PathFinder.getInstance(connection);
+ 			pathFinder = (PathFinder) PathFinder.getInstance(connection);
 			pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity);
 		}
 		catch (DAOException e)
@@ -80,27 +83,32 @@ public class CommonPathFinder implements IPathFinder
 		return pathsMap;
 	}
 
+	public IPath getPathForAssociations(List<IIntraModelAssociation> intraModelAssociationList) {
+		IPath path = pathFinder.getPathForAssociations(intraModelAssociationList);
+		return path;
+	}
 	public Set<ICuratedPath> autoConnect(Set<EntityInterface> arg0)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<ICuratedPath>();
 	}
+
 
 	public Set<ICuratedPath> getCuratedPaths(EntityInterface arg0, EntityInterface arg1)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<ICuratedPath>();
 	}
+
 
 	public Collection<AssociationInterface> getIncomingIntramodelAssociations(Long arg0)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new Vector<AssociationInterface>();
 	}
+
 
 	public List<IInterModelAssociation> getInterModelAssociations(Long arg0)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new Vector<IInterModelAssociation>();
 	}
+
+	
 }
