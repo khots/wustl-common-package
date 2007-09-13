@@ -1437,6 +1437,10 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				aliasName = aliasName.substring(0, ALIAS_NAME_LENGTH);
 			}
+			
+//			aliasName = aliasName.replaceAll(Constants.REGEX_EXPRESION, Constants.REPLACEMENT);
+			aliasName = Utility.removeSpecialCharactersFromString(aliasName);
+			System.out.println("aliasName : "+aliasName);
 			// get unique aliasName for the given class.
 			int count = 1;
 			String theAliasName = aliasName;
@@ -1652,6 +1656,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		return rootOutputTreeNodeList;
 	}
+	
 	
 	
 }
