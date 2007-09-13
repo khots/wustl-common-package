@@ -88,7 +88,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      * @throws RemoteException EBJ specific Exception
      */
     public Q getQueryById(Long queryId) {
-        List queryList = null;
+        List<Q> queryList = null;
         try {
             queryList = retrieve(getQueryClassName(), "id", queryId);
         } catch (DAOException e) {
@@ -112,7 +112,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      * @see edu.wustl.common.bizlogic.DefaultBizLogic#retrieve(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.Object[], java.lang.String)
      */
     @Override
-    public List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
+    public List<Q> retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
                          String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
             throws DAOException {
         List<Q> queryList = null;
@@ -195,7 +195,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
                 }
             }
         }
-        
+
         if (!parameterizedConditionList.isEmpty()) {
             Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
             parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
@@ -212,7 +212,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
 
         List<IExpressionOperand> expressionOperands = expression.getExpressionOperands();
         for (IExpressionOperand expressionOperand : expressionOperands) {
-            if (expressionOperand instanceof Rule) {
+            if (!expressionOperand.isSubExpressionOperand()) {
                 Rule rule = (Rule) expressionOperand;
                 postProcessRule(rule);
             }
@@ -370,7 +370,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
                         for (ICondition condition : conditions) {
                             if (condition instanceof ParameterizedCondition) {
                                 ParameterizedCondition parameterizedCondition = (ParameterizedCondition) condition;
-                                
+
                                 parameterizedCondition.setIndex(index++);
                                 parameterizedConditionList.add(parameterizedCondition);
                             }
@@ -395,7 +395,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
 
         List<IExpressionOperand> expressionOperands = expression.getExpressionOperands();
         for (IExpressionOperand expressionOperand : expressionOperands) {
-            if (expressionOperand instanceof Rule) {
+            if (!expressionOperand.isSubExpressionOperand()) {
                 Rule rule = (Rule) expressionOperand;
                 preProcessRule(rule);
             }
