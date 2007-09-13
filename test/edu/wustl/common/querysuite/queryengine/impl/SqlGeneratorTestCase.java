@@ -23,6 +23,7 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
 import edu.wustl.common.util.InheritanceUtilMock;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -1349,6 +1350,50 @@ public class SqlGeneratorTestCase extends TestCase
 		{
 			e.printStackTrace();
 			fail("Unexpected Expection, While Generating SQL for the Query having Many to Many Associations!!!");
+		}
+	}
+	
+	/**
+	 * To test special characters and white spaces are removed properly from the given string.
+	 *
+	 */
+	public void testRemoveSpecialCharactersFromString()
+	{
+		try
+		{
+			String testStr = "test space str";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertEquals("Unable to remove space from string","testspacestr", testStr);
+			
+			testStr = "test.str";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertEquals("Unable to remove dot from string","teststr", testStr);
+			
+			testStr = "test & str ,";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertEquals("Unable to remove & and , from string","teststr", testStr);
+			
+			testStr = "(teststr)";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertEquals("Unable to remove () from string","teststr", testStr);
+			
+			testStr = "teststr,test,str,1";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertFalse("Unable to remove , from string", testStr.contains(","));
+			
+			testStr = "teststr1-teststr2-teststr3";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertFalse("Unable to remove - from string", testStr.contains("-"));
+			
+			testStr = "1teststr";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertEquals("String starting with a number is valide case.","1teststr", testStr);
+						
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Exception, While removing special characters from the string");
 		}
 	}
 }

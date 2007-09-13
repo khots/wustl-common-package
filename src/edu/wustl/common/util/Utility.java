@@ -659,4 +659,16 @@ public class Utility
 			sortTreeVector(child.getChildNodes());
 		}
 	}
+	
+	/**
+	 * Remove special characters and white space from a string.Added for Bug#5142 
+	 * @param str string.
+	 * @return String after removing special characters.
+	 */
+	public static String removeSpecialCharactersFromString(String str)
+	{
+		String regexExpression = "[: \\+\\*/()?\\^&!~@%#$.,-=]";
+		str = str.replaceAll(regexExpression, "");
+		return str;
+	}
 }
