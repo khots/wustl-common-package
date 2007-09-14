@@ -79,6 +79,7 @@
 				<include name="**/*.xml" />
 				<include name="**/*.hbm.xml" />
 				<include name="**/*.ser" />
+				<exclude name="**/cab2b.properties"/>
 			</fileset>
 			<fileset dir="${test.dir}">
 				<include name="**/*.properties" />
@@ -305,7 +306,6 @@
 				<exclude name="**/JoinGraphTestCase*" />
 			</fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
-			<fileset dir="${base.dir}" includes="**/dbutil.properties" />
 		</jar>
 
 		<antcall target="build_code_zip" />
