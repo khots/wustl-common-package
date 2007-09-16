@@ -24,6 +24,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -670,5 +671,84 @@ public class Utility
 		String regexExpression = "[: \\+\\*/()?\\^&!~@%#$.,-=]";
 		str = str.replaceAll(regexExpression, "");
 		return str;
+	}
+	/**
+	 * Returns the label for objects name. It compares ascii value of each char for lower or upper case and then forms a capitalized lebel. 
+	 * eg firstName is converted to First Name
+	 * @param objectName name of the attribute
+	 * @return capitalized label
+	 */
+	static public String getDisplayLabel(String objectName)
+	{
+		String attrLabel = "";
+		boolean isPreviousLetterLowerCase = false;
+		int len = objectName.length();
+		for (int i = 0; i < len; i++)
+		{
+			char attrChar = objectName.charAt(i);
+			int asciiValue = attrChar;
+			if (i == 0)
+			{
+				if (asciiValue >= 65 && asciiValue <= 90)
+				{
+					attrLabel = attrLabel + attrChar;
+				} 
+				else
+				{
+					int capitalAsciiValue = asciiValue - 32;
+					attrLabel = attrLabel + (char) capitalAsciiValue;
+				}
+			}
+			else
+			{
+				if (asciiValue >= 65 && asciiValue <= 90)
+				{
+					attrLabel = attrLabel + " " + attrChar;
+					for (int k = i + 1; k < len; k++)
+					{
+						attrChar = objectName.charAt(k);
+						asciiValue = attrChar;
+						if (asciiValue >= 65 && asciiValue <= 90)
+						{
+							if (isPreviousLetterLowerCase)
+							{
+								attrLabel = attrLabel + " " + attrChar;
+								isPreviousLetterLowerCase = false;
+							}
+							else
+							{
+								attrLabel = attrLabel + attrChar;
+							}
+							i++;
+						}
+						else
+						{
+							isPreviousLetterLowerCase = true;
+							attrLabel = attrLabel + attrChar;
+							i++;
+						}
+					}
+				}
+				else
+				{
+					attrLabel = attrLabel + attrChar;
+				}
+			}
+		}
+		return attrLabel;
+	}
+	/**
+	 * Forms display name for attribute as className : attribute name
+	 * @param attribute AttributeInterface
+	 * @return columnDisplayName
+	 */
+	public static String getDisplayNameForColumn(AttributeInterface attribute)
+	{
+		String columnDisplayName = "";
+		String className = parseClassName(attribute.getEntity().getName());
+		className = getDisplayLabel(className);
+		String attributeLabel = getDisplayLabel(attribute.getName());
+		columnDisplayName = className +" : " + attributeLabel ;
+		return columnDisplayName;
 	}
 }
