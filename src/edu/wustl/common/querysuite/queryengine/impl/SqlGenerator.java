@@ -337,8 +337,9 @@ public class SqlGenerator implements ISqlGenerator
 			selectPart.append(getSQL(attribute, expression));
 			String columnAliasName = COLUMN_NAME + selectIndex;
 			selectPart.append(" " + columnAliasName + " ,");
-			
-			treeNode.addAttribute(new QueryOutputTreeAttributeMetadata(attribute,columnAliasName));
+			//code to get displayname. & pass it to the Constructor along with treeNode.
+			String displayNameForColumn = Utility.getDisplayNameForColumn(attribute);
+			treeNode.addAttribute(new QueryOutputTreeAttributeMetadata(attribute,columnAliasName, treeNode, displayNameForColumn));
 			
 			selectIndex++;
 		}
