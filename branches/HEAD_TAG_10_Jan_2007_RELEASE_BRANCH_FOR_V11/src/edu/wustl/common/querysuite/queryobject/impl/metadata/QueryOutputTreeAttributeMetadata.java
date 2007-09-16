@@ -5,6 +5,7 @@
 package edu.wustl.common.querysuite.queryobject.impl.metadata;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 
 /**
  * @author prafull_kadam
@@ -23,15 +24,22 @@ public class QueryOutputTreeAttributeMetadata
 	 */
 	private String columnName;
 
+	private String displayName;
+	private OutputTreeDataNode treeDataNode;
+	
 	/**
 	 * Constructor to instanciate this object.
 	 * @param attribute The reference to the DE attribute.
 	 * @param columnName The name of the column for the attribute passed in the temporary table.
+	 * @param treeDataNode TODO
+	 * @param displayName TODO
 	 */
-	public QueryOutputTreeAttributeMetadata(AttributeInterface attribute, String columnName)
+	public QueryOutputTreeAttributeMetadata(AttributeInterface attribute, String columnName, OutputTreeDataNode treeDataNode, String displayName)
 	{
 		this.attribute = attribute;
 		this.columnName = columnName;
+		this.treeDataNode = treeDataNode;
+		this.displayName = displayName;
 	}
 
 	/**
@@ -50,5 +58,27 @@ public class QueryOutputTreeAttributeMetadata
 	public String getColumnName()
 	{
 		return columnName;
+	}
+
+	/**
+	 * @return the displayName
+	 */
+	public String getDisplayName()
+	{
+		return displayName;
+	}
+
+	/**
+	 * @return the treeDataNode
+	 */
+	public OutputTreeDataNode getTreeDataNode()
+	{
+		return treeDataNode;
+	}
+	
+	public String getUniqueId()
+	{   
+		String id = this.getTreeDataNode().getUniqueNodeId() + ":" + this.attribute.getId(); //TODO
+		return id;
 	}
 }
