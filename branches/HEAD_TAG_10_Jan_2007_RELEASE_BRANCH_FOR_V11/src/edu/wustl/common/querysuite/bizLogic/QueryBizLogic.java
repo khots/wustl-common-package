@@ -16,7 +16,9 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.dao.DAO;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
@@ -41,6 +43,7 @@ import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
 import edu.wustl.common.querysuite.queryobject.util.ParameterizedConditionComparator;
+import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 
@@ -59,6 +62,27 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
 
     }
 
+    /* 
+     * @see edu.wustl.common.bizlogic.DefaultBizLogic#insert(java.lang.Object, edu.wustl.common.dao.DAO)
+     */
+    @Override
+    protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException {
+        Q query = (Q) obj;
+        preProcessQuery(query);
+        super.insert(obj, dao);
+    }
+
+    /* 
+     * @see edu.wustl.common.bizlogic.DefaultBizLogic#insert(java.lang.Object, edu.wustl.common.dao.DAO, edu.wustl.common.beans.SessionDataBean)
+     */
+    @Override
+    protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException,
+            UserNotAuthorizedException {
+        Q query = (Q) obj;
+        preProcessQuery(query);
+        super.insert(obj, dao, sessionDataBean);
+    }
+
     /**
      * This method returns the name of the name of the class.
      * @return
@@ -74,25 +98,47 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      */
     public final void saveQuery(Q query) throws RemoteException {
         try {
-            preProcessQuery(query);
             insert(query, Constants.HIBERNATE_DAO);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to Process object, Exception:" + e.getMessage());
+            throw new RuntimeException("Unable to save object, Exception:" + e.getMessage());
         }
     }
 
+    /* 
+     * @see edu.wustl.common.bizlogic.DefaultBizLogic#retrieve(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.Object[], java.lang.String)
+     */
+    @Override
+    public List<Q> retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
+                            String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
+            throws DAOException {
+
+        List<Q> queryList = null;
+
+        queryList = super.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
+                                   whereColumnValue, joinCondition);
+        try {
+            for (Q query : queryList) {
+                postProcessQuery(query);
+            }
+        } catch (Exception exception) {
+            throw new RuntimeException("Unable to process object, Exception:" + exception.getMessage());
+        }
+
+        return queryList;
+    }
+
     /**
-     * This method retreives the query object given its identifier.
+     * This method retrieves the query object given its identifier.
      * @param categoryId Id of the category
      * @return The Category for given id.
      * @throws RemoteException EBJ specific Exception
      */
-    public Q getQueryById(Long queryId) {
+    public Q getQueryById(Long queryId) throws RemoteException {
         List<Q> queryList = null;
         try {
             queryList = retrieve(getQueryClassName(), "id", queryId);
         } catch (DAOException e) {
-            throw new RuntimeException("Unable to Process object, Exception:" + e.getMessage());
+            throw new RuntimeException("Unable to retreive object, Exception:" + e.getMessage());
         }
 
         Q query = null;
@@ -101,45 +147,23 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
                 throw new RuntimeException("Problem in code; probably database schema");
             } else {
                 query = (Q) queryList.get(0);
-
             }
         }
 
         return query;
     }
 
-    /* (non-Javadoc)
-     * @see edu.wustl.common.bizlogic.DefaultBizLogic#retrieve(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.Object[], java.lang.String)
-     */
-    @Override
-    public List<Q> retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
-                         String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
-            throws DAOException {
-        List<Q> queryList = null;
-        try {
-            queryList = super.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
-                                       whereColumnValue, joinCondition);
-            for (Q query : queryList) {
-                postProcessQuery(query);
-            }
-        } catch (DAOException e) {
-            throw new RuntimeException("Unable to Process object, Exception:" + e.getMessage());
-        }
-
-        return queryList;
-    }
-
     /**
-     * This method retreives all the query objects in the system.
-     * Returns all the categories availble in the system.
+     * This method retrieves all the query objects in the system.
+     * Returns all the categories available in the system.
      * @return List of all categories.
      */
-    public List<Q> getAllQueries() {
+    public List<Q> getAllQueries() throws RemoteException {
         List<Q> queryList = null;
         try {
             queryList = (List<Q>) retrieve(getQueryClassName());
         } catch (DAOException e) {
-            throw new RuntimeException("Unable to Process object, Exception:" + e.getMessage());
+            throw new RuntimeException("Unable to retreive object, Exception:" + e.getMessage());
         }
 
         return queryList;
