@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+	
+	<query name="getParameterizedQueriesDetails">
+		select new edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery (query.id, query.name, query.description)
+			from edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery query
+	</query>
+
+</hibernate-mapping>
