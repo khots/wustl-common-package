@@ -20,7 +20,7 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 public class ParameterizedQuery extends Query implements IParameterizedQuery {
     private static final long serialVersionUID = 1L;
 
-    private List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();;
+    private List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
 
     private String name;
 
@@ -32,7 +32,19 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
     public ParameterizedQuery() {
 
     }
-    
+
+    /**
+     * Parameterized Constructor. This constructor will be used by Hibernate internally.
+     * @param id
+     * @param name
+     * @param description
+     */
+    public ParameterizedQuery(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
     /**
      * Parameterized Constructor
      * @param query
