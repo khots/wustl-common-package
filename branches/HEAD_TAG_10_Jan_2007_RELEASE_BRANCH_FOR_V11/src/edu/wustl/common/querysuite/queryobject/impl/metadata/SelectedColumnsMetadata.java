@@ -1,5 +1,6 @@
 package edu.wustl.common.querysuite.queryobject.impl.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -26,10 +27,6 @@ public class SelectedColumnsMetadata
 	 */
 	private List<NameValueBean> selectedColumnNameValueBeanList;
 	/**
-	 * @return the list of attributes selected
-	 */
-	private List<AttributeInterface> attributeList;
-	/**
 	 * Returns true/false Whether view is defined.
 	 */
 	private boolean isDefinedView;
@@ -54,13 +51,19 @@ public class SelectedColumnsMetadata
 
 	public List<AttributeInterface> getAttributeList()
 	{
+		List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
+		if (selectedAttributeMetaDataList!=null)
+		{
+			for (QueryOutputTreeAttributeMetadata metadata: selectedAttributeMetaDataList)
+				attributeList.add(metadata.getAttribute());
+		}
 		return attributeList;
 	}
 	
-	public void setAttributeList(List<AttributeInterface> attributeList)
-	{
-		this.attributeList = attributeList;
-	}
+//	public void setAttributeList(List<AttributeInterface> attributeList)
+//	{
+//		this.attributeList = attributeList;
+//	}
 	public OutputTreeDataNode getCurrentSelectedObject()
 	{
 		return currentSelectedObject;
