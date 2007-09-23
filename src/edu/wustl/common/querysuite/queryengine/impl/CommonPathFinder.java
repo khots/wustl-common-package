@@ -34,13 +34,10 @@ import edu.wustl.common.util.global.Constants;
  */
 public class CommonPathFinder implements IPathFinder
 {
-	private PathFinder pathFinder=null;
-	/**
-	 * This method gets all the possible paths between two entities.
-	 */
-	public List<IPath> getAllPossiblePaths(EntityInterface srcEntity, EntityInterface destEntity)
+	
+	private PathFinder getPathFinderInstance()
 	{
-		 List<IPath> pathsMap = null;
+		PathFinder pathFinder=null;
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		Connection connection = null;
 		try
@@ -50,7 +47,7 @@ public class CommonPathFinder implements IPathFinder
  			DataSource dataSource =  (DataSource) context.lookup("java:/catissuecore");
  			connection = dataSource.getConnection();
  			pathFinder = (PathFinder) PathFinder.getInstance(connection);
-			pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity);
+ 		
 		}
 		catch (DAOException e)
 		{
@@ -80,11 +77,27 @@ public class CommonPathFinder implements IPathFinder
 				e.printStackTrace();
 			}
 		}
-		return pathsMap;
+		return pathFinder;
+	}
+	
+	/**
+	 * This method gets all the possible paths between two entities.
+	 */
+	public List<IPath> getAllPossiblePaths(EntityInterface srcEntity, EntityInterface destEntity)
+	{
+		 List<IPath> pathsMap = null;
+		 PathFinder pathFinder=null;
+		 pathFinder = (PathFinder) getPathFinderInstance();
+		 pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity);
+		 return pathsMap;
 	}
 
-	public IPath getPathForAssociations(List<IIntraModelAssociation> intraModelAssociationList) {
-		IPath path = pathFinder.getPathForAssociations(intraModelAssociationList);
+	public IPath getPathForAssociations(List<IIntraModelAssociation> intraModelAssociationList) 
+	{
+		PathFinder pathFinder=null;
+		IPath path = null;
+		pathFinder = (PathFinder)getPathFinderInstance();
+ 		path = pathFinder.getPathForAssociations(intraModelAssociationList);
 		return path;
 	}
 	public Set<ICuratedPath> autoConnect(Set<EntityInterface> arg0)
