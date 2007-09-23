@@ -86,7 +86,7 @@ public class Constraints extends BaseQueryObject implements IConstraints {
         if (!expressions.isEmpty()) {
             expressionCollection.clear();
         }
-        
+
         for (IExpression expression : expressions.values()) {
             expressionCollection.add(expression);
         }
@@ -103,6 +103,11 @@ public class Constraints extends BaseQueryObject implements IConstraints {
 
         for (IExpression expression : expressionCollection) {
             expressions.put(expression.getExpressionId(), expression);
+
+            int expressionId = expression.getExpressionId().getInt();
+            if (expressionId > currentExpressionId) {
+                currentExpressionId = expressionId;
+            }
         }
     }
 
@@ -197,4 +202,5 @@ public class Constraints extends BaseQueryObject implements IConstraints {
         }
         return constraintEntitySet;
     }
+
 }
