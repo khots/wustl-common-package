@@ -1,3 +1,6 @@
+/**
+ * TODO Correct all the mock object. All parameters of the query are not set properly. Null pointer exception will occur.
+ */
 package edu.wustl.common.querysuite.queryobject;
 
 import java.util.ArrayList;
@@ -267,7 +270,7 @@ public class QueryObjectTestCase extends TestCase {
     }
 
     /**
-     * To test saving of Expression having a ConstraintEntity object and two Rules that are commected by LogicalConnector. 
+     * To test saving of Expression having a ConstraintEntity object and two Rules that are connected by LogicalConnector. 
      */
     public void testSaveExpressionWith2RulesAndConstraintEntity() {
         // Condition 1
