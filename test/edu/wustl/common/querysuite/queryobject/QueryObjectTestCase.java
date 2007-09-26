@@ -386,8 +386,7 @@ public class QueryObjectTestCase extends TestCase {
         QueryBizLogic<IParameterizedQuery> queryBizLogic = new QueryBizLogic<IParameterizedQuery>();
 
         IParameterizedQuery parameterizedQuery = QueryGeneratorMock.createSpecimenBioHazardQuery4();
-        queryBizLogic.preProcessQuery(parameterizedQuery);
-
+        
         try {
             defaultBizLogic.insert(parameterizedQuery, Constants.HIBERNATE_DAO);
 
