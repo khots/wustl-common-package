@@ -4,8 +4,13 @@
 package edu.wustl.common.querysuite.queryobject.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -21,6 +26,8 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
     private static final long serialVersionUID = 1L;
 
     private List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
+
+    //private Map<IExpressionId, List<Long>> attributesInView = new HashMap<IExpressionId, List<Long>>();
 
     private String name;
 
@@ -51,7 +58,6 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
      */
     public ParameterizedQuery(IQuery query) {
         this.setConstraints(query.getConstraints());
-        this.setRootOutputClass(((Query) query).getRootOutputClass());
     }
 
     /**
@@ -62,7 +68,6 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
      */
     public ParameterizedQuery(IQuery query, String name, String description) {
         this.setConstraints(query.getConstraints());
-        this.setRootOutputClass(((Query) query).getRootOutputClass());
         this.name = name;
         this.description = description;
     }
@@ -154,5 +159,48 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
         }
         return isRemoved;
     }
+
+/*    *//**
+     * @return the attributesInView
+     *//*
+    public Map<IExpressionId, List<Long>> getAttributesInView() {
+        return attributesInView;
+    }
+
+    *//**
+     * @param attributesInView the attributesInView to set
+     * 
+     * @hibernate.map name="attributesInView" cascade="all-delete-orphan" inverse="false" lazy="false"
+     * @hibernate.collection-key column="PARAMETERIZED_QUERY_ID"
+     * @hibernate.collection-index column="EXPRESSION_ID" type="edu.wustl.common.querysuite.queryobject.impl.ExpressionId"
+     * @hibernate.collection-element column="ATTRIBUTE_ID" type="long" length="30"
+     * @hibernate.cache usage="read-write"
+     *//*
+    public void setAttributesInView(Map<IExpressionId, List<Long>> attributesInView) {
+        this.attributesInView = attributesInView;
+    }
+
+    public void addAttributeInView(IExpressionId expressionId, AttributeInterface attribute) {
+        Set<IExpressionId> keySet = attributesInView.keySet();
+        if (keySet.contains(expressionId)) {
+            List<Long> attributeIdList = attributesInView.get(expressionId);
+            attributeIdList.add(attribute.getId());
+        } else {
+            List<Long> attributeIdList = new ArrayList<Long>();
+            attributeIdList.add(attribute.getId());
+
+            attributesInView.put(expressionId, attributeIdList);
+        }
+    }
+
+    public void removeAttributeFromView(IExpressionId expressionId, AttributeInterface attribute) {
+        Set<IExpressionId> keySet = attributesInView.keySet();
+        if (keySet.contains(expressionId)) {
+            List<Long> attributeIdList = attributesInView.get(expressionId);
+            if (attributeIdList.contains(attribute.getId())) {
+                attributeIdList.remove(attribute.getId());
+            }
+        }
+    }*/
 
 }
