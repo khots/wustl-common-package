@@ -1,7 +1,6 @@
 package edu.wustl.common.querysuite.queryobject.impl;
 
 import edu.wustl.common.querysuite.queryobject.IConstraints;
-import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
 /**
@@ -18,8 +17,6 @@ public class Query extends BaseQueryObject implements IQuery {
     private static final long serialVersionUID = -9105109010866749580L;
 
     private IConstraints constraints;
-
-    private IOutputTreeNode root;
 
     /**
      * Default Constructor
@@ -58,24 +55,6 @@ public class Query extends BaseQueryObject implements IQuery {
      */
     public void setConstraints(IConstraints constraints) {
         this.constraints = constraints;
-    }
-
-    /**
-     * @return the reference to the root noe of the output tree.
-     * @see edu.wustl.common.querysuite.queryobject.IQuery#getRootOutputClass()
-     * @deprecated This method is not required any more for output tree.
-     */
-    public IOutputTreeNode getRootOutputClass() {
-        return root;
-    }
-
-    /**
-     * @param root The reference to the root noe of the output tree.
-     * @see edu.wustl.common.querysuite.queryobject.IQuery#setRootOutputClass(edu.wustl.common.querysuite.queryobject.IOutputTreeNode)
-     * @deprecated This method is not required any more for output tree.
-     */
-    public void setRootOutputClass(IOutputTreeNode root) {
-        this.root = root;
     }
 
 }
