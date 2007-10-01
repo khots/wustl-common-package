@@ -364,7 +364,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param tablename
 	 * @param listOfSubElement
 	 */
-	private void auditDisabledObjects(DAO dao, String tablename, List listOfSubElement)
+	protected void auditDisabledObjects(DAO dao, String tablename, List listOfSubElement)
 	{
 		Iterator iterator = listOfSubElement.iterator();
 		Collection auditEventLogsCollection = new HashSet();
