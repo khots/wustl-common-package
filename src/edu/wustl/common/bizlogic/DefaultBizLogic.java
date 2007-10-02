@@ -160,7 +160,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			dao.openSession(null);
 
 			list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
-			dao.commit();
+			//dao.commit();
 		}
 		catch (DAOException daoExp)
 		{
