@@ -7,20 +7,20 @@ package edu.wustl.common.querysuite;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import edu.common.dynamicextensions.domain.Attribute;
 import edu.common.dynamicextensions.domain.DomainObjectFactory;
 import edu.common.dynamicextensions.domain.Entity;
 import edu.common.dynamicextensions.domain.databaseproperties.TableProperties;
+import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.databaseproperties.ColumnPropertiesInterface;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IExpression;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
@@ -62,12 +62,12 @@ public class GenericQueryGeneratorMock
 
 	/**
 	 * TO create attribute list, which contains all types of attributes.
-	 * @param entity the entity to which all attribues belongs.
+	 * @param entity the entity to which all attributes belongs.
 	 * @return list of attributes.
 	 */
-	public static ArrayList getAttributes(EntityInterface entity)
+	public static ArrayList<AbstractAttributeInterface> getAttributes(EntityInterface entity)
 	{
-		ArrayList<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+		ArrayList<AbstractAttributeInterface> attributes = new ArrayList<AbstractAttributeInterface>();
 
 		AttributeInterface att1 = factory.createIntegerAttribute();
 		att1.setName("long");
@@ -138,16 +138,16 @@ public class GenericQueryGeneratorMock
 	 */
 	public static IExpression createExpression(EntityInterface entity)
 	{
-		IQueryEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
+		IQueryEntity queryEntity = QueryObjectFactory.createQueryEntity(entity);
 
-		IExpression expression = new Expression(constraintEntity, 1);
-		expression.addOperand(createRule(constraintEntity.getDynamicExtensionsEntity(), "int"));
+		IExpression expression = new Expression(queryEntity, 1);
+		expression.addOperand(createRule(queryEntity.getDynamicExtensionsEntity(), "int"));
 		return expression;
 	}
 
 	/**
 	 * Create Rule for given Participant as : name in (1,2,3,4)
-	 * @param entity The Dynamic Extension Entity Paricipant
+	 * @param entity The Dynamic Extension Entity Participant
 	 * @return The Rule Object.
 	 */
 	public static IRule createRule(EntityInterface entity, String name)
@@ -178,18 +178,17 @@ public class GenericQueryGeneratorMock
 
 	/**
 	 * To search attribute in the Entity.
-	 * @param entity The Dynamic Extension Entity Paricipant.
+	 * @param entity The Dynamic Extension Entity Participant.
 	 * @param attributeName The name of the attribute to search. 
-	 * @return The corresponding attibute.
+	 * @return The corresponding attribute.
 	 */
 	public static AttributeInterface findAttribute(EntityInterface entity, String attributeName)
 	{
-		Collection attributes = entity.getAbstractAttributeCollection();
-		for (Iterator iter = attributes.iterator(); iter.hasNext();)
+		Collection<AbstractAttributeInterface> attributes = entity.getAbstractAttributeCollection();
+		for (AbstractAttributeInterface attribute: attributes)
 		{
-			AttributeInterface attribute = (AttributeInterface) iter.next();
 			if (attribute.getName().equals(attributeName))
-				return attribute;
+				return (AttributeInterface)attribute;
 		}
 		return null;
 	}
