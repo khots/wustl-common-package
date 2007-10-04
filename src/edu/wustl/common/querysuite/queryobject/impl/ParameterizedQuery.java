@@ -4,13 +4,8 @@
 package edu.wustl.common.querysuite.queryobject.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -27,7 +22,7 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
 
     private List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
 
-    //private Map<IExpressionId, List<Long>> attributesInView = new HashMap<IExpressionId, List<Long>>();
+    private List<OutputAttribute> outputAttributeList = new ArrayList<OutputAttribute>();
 
     private String name;
 
@@ -160,47 +155,54 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
         return isRemoved;
     }
 
-/*    *//**
-     * @return the attributesInView
-     *//*
-    public Map<IExpressionId, List<Long>> getAttributesInView() {
-        return attributesInView;
-    }
-
-    *//**
-     * @param attributesInView the attributesInView to set
+    /**
+     * @return the outputAttributeList
      * 
-     * @hibernate.map name="attributesInView" cascade="all-delete-orphan" inverse="false" lazy="false"
+     * @hibernate.list name="outputAttributeList" table="OUTPUT_ATTRIBUTES" cascade="all-delete-orphan" inverse="false" lazy="false"
      * @hibernate.collection-key column="PARAMETERIZED_QUERY_ID"
-     * @hibernate.collection-index column="EXPRESSION_ID" type="edu.wustl.common.querysuite.queryobject.impl.ExpressionId"
-     * @hibernate.collection-element column="ATTRIBUTE_ID" type="long" length="30"
+     * @hibernate.collection-index column="POSITION" type="int"
+     * @hibernate.collection-one-to-many class="edu.wustl.common.querysuite.queryobject.impl.OutputAttribute"
      * @hibernate.cache usage="read-write"
-     *//*
-    public void setAttributesInView(Map<IExpressionId, List<Long>> attributesInView) {
-        this.attributesInView = attributesInView;
+     */
+    public List<OutputAttribute> getOutputAttributeList() {
+        return outputAttributeList;
     }
 
-    public void addAttributeInView(IExpressionId expressionId, AttributeInterface attribute) {
-        Set<IExpressionId> keySet = attributesInView.keySet();
-        if (keySet.contains(expressionId)) {
-            List<Long> attributeIdList = attributesInView.get(expressionId);
-            attributeIdList.add(attribute.getId());
-        } else {
-            List<Long> attributeIdList = new ArrayList<Long>();
-            attributeIdList.add(attribute.getId());
-
-            attributesInView.put(expressionId, attributeIdList);
-        }
+    /**
+     * @param outputAttributeList the outputAttributeList to set
+     */
+    public void setOutputAttributeList(List<OutputAttribute> outputAttributeList) {
+        this.outputAttributeList = outputAttributeList;
     }
 
-    public void removeAttributeFromView(IExpressionId expressionId, AttributeInterface attribute) {
-        Set<IExpressionId> keySet = attributesInView.keySet();
-        if (keySet.contains(expressionId)) {
-            List<Long> attributeIdList = attributesInView.get(expressionId);
-            if (attributeIdList.contains(attribute.getId())) {
-                attributeIdList.remove(attribute.getId());
-            }
+    /**
+     * This method adds a given OutputAttribute into the OutputAtributeList.
+     * @param outputAttribute
+     * @return
+     */
+    public boolean addOutputAttribute(OutputAttribute outputAttribute) {
+        boolean isAdded = false;
+        if (!outputAttributeList.contains(outputAttribute)) {
+            outputAttributeList.add(outputAttribute);
+            isAdded = true;
         }
-    }*/
+
+        return isAdded;
+    }
+
+    /**
+     * This method removes a given OutputAttribute from the OutputAtributeList
+     * @param outputAttribute
+     * @return
+     */
+    public boolean removeOutputAttribute(OutputAttribute outputAttribute) {
+        boolean isRemovevd = false;
+        if (outputAttributeList.contains(outputAttribute)) {
+            outputAttributeList.remove(outputAttribute);
+            isRemovevd = true;
+        }
+
+        return isRemovevd;
+    }
 
 }
