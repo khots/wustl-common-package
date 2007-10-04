@@ -93,8 +93,8 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
-			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
+			IQueryEntity participantQueryEntity = QueryObjectFactory.createQueryEntity(participantEntity);
+			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantQueryEntity);
 			
 			ICondition condition1 = QueryGeneratorMock.createParticipantCondition1(participantEntity);
 			assertEquals("Participant_0.ACTIVITY_STATUS='Active'", generator.getSQL(condition1,
@@ -136,8 +136,8 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
-			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
+			IQueryEntity participantQueryEntity = QueryObjectFactory.createQueryEntity(participantEntity);
+			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantQueryEntity);
 		
 			IRule rule = QueryGeneratorMock.createParticipantRule1(participantEntity);
 			expression.addOperand(rule);
@@ -168,8 +168,8 @@ public class SqlGeneratorTestCase extends TestCase
 		try
 		{
 			EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
-			IQueryEntity participantConstraintEntity = QueryObjectFactory.createConstraintEntity(participantEntity);
-			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantConstraintEntity);
+			IQueryEntity participantQueryEntity = QueryObjectFactory.createQueryEntity(participantEntity);
+			IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantQueryEntity);
 			generator.setJoinGraph(new JoinGraph());
 			String SQL = generator.getWherePartSQL(expression, null, false);
 			//			System.out.println("testParticpiantExpression:"+ SQL);
@@ -583,9 +583,9 @@ public class SqlGeneratorTestCase extends TestCase
 			EntityInterface cprEntity = entityManager
 					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
 			
-			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprQueryEntity = QueryObjectFactory.createQueryEntity(cprEntity);
 			
-			IExpression expressionOne = constraints.addExpression(cprConstraintEntity);
+			IExpression expressionOne = constraints.addExpression(cprQueryEntity);
 			generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
 			String aliasNameExpected1 = generator.getAliasName(expressionOne);
 			//			System.out.println(aliasNameExpected1);
@@ -596,7 +596,7 @@ public class SqlGeneratorTestCase extends TestCase
 
 			// Creating another entity with name "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
 			// because of different ExpressionId the alias will different.
-			IExpression expressionTwo = constraints.addExpression(cprConstraintEntity);
+			IExpression expressionTwo = constraints.addExpression(cprQueryEntity);
 			generator.aliasAppenderMap.put(expressionTwo.getExpressionId(), new Integer(2));
 			String aliasNameExpected2 = generator.getAliasName(expressionTwo);
 			//			System.out.println(aliasNameExpected2);
@@ -632,9 +632,9 @@ public class SqlGeneratorTestCase extends TestCase
 			// Creating entity with name "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
 			EntityInterface cprEntity = entityManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
 	
-			IQueryEntity cprConstraintEntity = QueryObjectFactory.createConstraintEntity(cprEntity);
+			IQueryEntity cprQueryEntity = QueryObjectFactory.createQueryEntity(cprEntity);
 	
-			IExpression expressionOne = constraints.addExpression(cprConstraintEntity);
+			IExpression expressionOne = constraints.addExpression(cprQueryEntity);
 			generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
 			String aliasNameExpected1 = generator.getAliasName(expressionOne);
 			//			System.out.println(aliasNameExpected1);
@@ -648,9 +648,9 @@ public class SqlGeneratorTestCase extends TestCase
 			Entity entityThree = (Entity) enitytManager
 					.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
 			entityThree.setName("CA" + entityThree.getName());
-			cprConstraintEntity = QueryObjectFactory.createConstraintEntity(entityThree);
+			cprQueryEntity = QueryObjectFactory.createQueryEntity(entityThree);
 			
-			IExpression expressionThree = constraints.addExpression(cprConstraintEntity);
+			IExpression expressionThree = constraints.addExpression(cprQueryEntity);
 			generator.aliasAppenderMap.put(expressionThree.getExpressionId(), new Integer(1));
 			String aliasNameExpected2 = generator.getAliasName(expressionThree);
 			//			System.out.println(aliasNameExpected2);
