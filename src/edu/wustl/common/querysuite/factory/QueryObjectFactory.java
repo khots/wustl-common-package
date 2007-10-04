@@ -45,7 +45,7 @@ public abstract class QueryObjectFactory
 {
 
 	/**
-	 * To instanciate Logical connector.
+	 * To instantiate Logical connector.
 	 * @param logicalOperator The Logical operator that connector will hold.  
 	 * @return The instance of LogicalConnector class.
 	 */
@@ -56,7 +56,7 @@ public abstract class QueryObjectFactory
 
 	/**
 	 * 
-	 * To instanciate Logical connector.
+	 * To instantiate Logical connector.
 	 * @param logicalOperator The Logical operator that connector will hold.  
 	 * @param nestingNumber The nesting number, that represents no. of parantheses sorrounding this connector.
 	 * @return The instance of LogicalConnector class.
@@ -68,7 +68,7 @@ public abstract class QueryObjectFactory
 	}
 
 	/**
-	 * To instanciate Condition object.
+	 * To instantiate Condition object.
 	 * @param attribute The reference to Dynamic Extension attribute on which condition to be created.
 	 * @param relationalOperator The relational operator between attribute & values.
 	 * @param values The List of String representing values of the condition.
@@ -108,7 +108,7 @@ public abstract class QueryObjectFactory
     }
     
     /**
-     * To instanciate ParameterizedCondition object.
+     * To instantiate ParameterizedCondition object.
      * @param attribute The reference to Dynamic Extension attribute on which condition to be created.
      * @param relationalOperator The relational operator between attribute & values.
      * @param values The List of String representing values of the condition.
@@ -121,7 +121,7 @@ public abstract class QueryObjectFactory
     }
 
 	/**
-	 * To instanciate Expression Id object.
+	 * To instantiate Expression Id object.
 	 * @param id The id to set.
 	 * @return The reference to the ExpressionId object.
 	 */
@@ -131,7 +131,7 @@ public abstract class QueryObjectFactory
 	}
 
 	/**
-	 * To instanciate Constraints class object.
+	 * To instantiate Constraints class object.
 	 * @return The object of Constraints Class.
 	 */
 	public static IConstraints createConstraints()
@@ -140,7 +140,7 @@ public abstract class QueryObjectFactory
 	}
 
 	/**
-	 * To instanciate object of Rule class, with the given condition list.
+	 * To instantiate object of Rule class, with the given condition list.
 	 * @param conditions The list of Conditions to set.
 	 * @return The object of class Rule.
 	 */
@@ -150,7 +150,7 @@ public abstract class QueryObjectFactory
 	}
 
 	/**
-	 * To instanciate object of Rule class, with no conditions. 
+	 * To instantiate object of Rule class, with no conditions. 
 	 * @return The object of class Rule.
 	 */
 	public static IRule createRule()
@@ -159,7 +159,7 @@ public abstract class QueryObjectFactory
 	}
 
 	/**
-	 * To instanciate object of IntraModelAssociation class.
+	 * To instantiate object of IntraModelAssociation class.
 	 * @param association The reference to the dynamic Extension associated with this object.
 	 * @return The object of class IntraModelAssociation.
 	 */
@@ -196,32 +196,9 @@ public abstract class QueryObjectFactory
     {
         return new ParameterizedQuery(query);
     }
-
-	/**
-	 * Method to instantiate object of a class implementing IOutputTreeNode interface.
-	 * This method will be called only once to instanciate the Root node object. Further to instantiate child objects call addChild method present in IOutputTreeNode.
-	 * @param outputEntity The reference to output Entity, that this tree node will represent.
-	 * @return The reference to OutputTreeNode treenode object.
-	 * @see edu.wustl.common.querysuite.queryobject.IOutputTreeNode#addChild(edu.wustl.common.querysuite.queryobject.IAssociation, edu.wustl.common.querysuite.queryobject.IOutputEntity)
-	 */
-	public static IOutputTreeNode createOutputTreeNode(IOutputEntity outputEntity)
-	{
-		return new OutputTreeNode(outputEntity);
-	}
-
-	/**
-	 * To instanciate object of class implementing IConstraintEntity interface.
-	 * @param entityInterface The Dynamic Extension entity reference associated with this object. 
-	 * @return The reference to the ConstraintEntity object.
-	 * @deprecated Do not use this method, use method createConstraintEntity(EntityInterface)
-	 */
-	public static IQueryEntity createConstrainedEntity(EntityInterface entityInterface)
-	{
-		return new QueryEntity(entityInterface);
-	}
-
-	/**
-	 * To instanciate object of class implementing  IOutputEntity interface.
+    
+    /**
+	 * To instantiate object of class implementing IOutputEntity interface.
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
 	 * @return The reference to the OutputEntity object.
 	 */
@@ -231,11 +208,11 @@ public abstract class QueryObjectFactory
 	}
 
 	/**
-	 * To instanciate object of class implementing  IConstraintEntity interface.
+	 * To instantiate object of class implementing  IConstraintEntity interface.
 	 * @param entityInterface The Dynamic Extension entity reference associated with this object.
 	 * @return The reference to the ConstraintEntity object.
 	 */
-	public static IQueryEntity createConstraintEntity(EntityInterface entityInterface)
+	public static IQueryEntity createQueryEntity(EntityInterface entityInterface)
 	{
 		return new QueryEntity(entityInterface);
 	}
