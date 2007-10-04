@@ -38,6 +38,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.GraphEntry;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.OutputAttribute;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
@@ -121,8 +122,8 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
     public List<Q> retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
                             String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
             throws DAOException {
-        List<Q> queryList = super.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
-                                   whereColumnValue, joinCondition);
+        List<Q> queryList = super.retrieve(sourceObjectName, selectColumnName, whereColumnName,
+                                           whereColumnCondition, whereColumnValue, joinCondition);
         try {
             for (Q query : queryList) {
                 postProcessQuery(query);
@@ -231,6 +232,15 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
             Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
             parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
         }
+
+        List<OutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
+        for (OutputAttribute outputAttribute : outputAttributeList) {
+            Long attributeId = outputAttribute.getAttributeId();
+            AbstractEntityCache abstractEntityCache = EntityCache.getCache();
+            AttributeInterface attribute = abstractEntityCache.getAttributeById(attributeId);
+            outputAttribute.setAttribute(attribute);
+        }
+
     }
 
     /**
@@ -381,10 +391,16 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
                 }
             }
         }
-        
+
         if (!parameterizedConditionList.isEmpty()) {
             Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
             parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
+        }
+
+        List<OutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
+        for (OutputAttribute outputAttribute : outputAttributeList) {
+            AttributeInterface attribute = outputAttribute.getAttribute();
+            outputAttribute.setAttributeId(attribute.getId());
         }
     }
 
