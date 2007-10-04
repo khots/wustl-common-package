@@ -71,6 +71,31 @@
             length="1024"
         />
 
+        <list
+            name="outputAttributeList"
+            table="OUTPUT_ATTRIBUTES"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+        >
+            <cache 
+                usage="read-write" 
+             />
+
+              <key
+                  column="PARAMETERIZED_QUERY_ID"
+              />
+
+              <index
+                  column="POSITION"
+                  type="int"
+              />
+
+              <one-to-many
+                  class="edu.wustl.common.querysuite.queryobject.impl.OutputAttribute"
+              />
+        </list>
+
         </joined-subclass>
 
     </class>
