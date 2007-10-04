@@ -17,7 +17,6 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.entitymanager.EntityManagerInterface;
 import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
-import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
@@ -26,10 +25,10 @@ import edu.wustl.common.querysuite.factory.SqlGeneratorFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.util.dbManager.DBUtil;
@@ -55,7 +54,6 @@ public class MetadataTestReportGenerator
 	public static void main(String[] args) throws DynamicExtensionsSystemException, DynamicExtensionsApplicationException, MultipleRootsException, SqlException, HibernateException, SQLException, IOException
 	{
 		Logger.configure();
-		EntityCache entityCache = EntityCache.getInstance();
 		
 		EntityManagerInterface entityManager = EntityManager.getInstance();
 		Collection<EntityInterface> entities = entityManager.getAllEntities();
@@ -141,10 +139,10 @@ public class MetadataTestReportGenerator
 		
 		IConstraints constraints = query.getConstraints();
 		
-		IQueryEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
-		IExpression expression = constraints.addExpression(constraintEntity);
+		IQueryEntity queryEntity = QueryObjectFactory.createQueryEntity(entity);
+		IExpression expression = constraints.addExpression(queryEntity);
 		expression.setInView(true);
-		IQueryEntity childConstraintEntity = QueryObjectFactory.createConstraintEntity(associatedEntity);
+		IQueryEntity childConstraintEntity = QueryObjectFactory.createQueryEntity(associatedEntity);
 		IExpression childExpression = constraints.addExpression(childConstraintEntity);
 		expression.addOperand(childExpression.getExpressionId());
 		childExpression.setInView(true);
@@ -202,8 +200,8 @@ public class MetadataTestReportGenerator
 		IQuery query = QueryObjectFactory.createQuery();
 		
 		IConstraints constraints = query.getConstraints();
-		IQueryEntity constraintEntity = QueryObjectFactory.createConstraintEntity(entity);
-		IExpression expression = constraints.addExpression(constraintEntity);
+		IQueryEntity queryEntity = QueryObjectFactory.createQueryEntity(entity);
+		IExpression expression = constraints.addExpression(queryEntity);
 		expression.setInView(true);
 		IRule rule = QueryObjectFactory.createRule();
 		expression.addOperand(rule);
