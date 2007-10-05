@@ -60,6 +60,37 @@ public class QueryUtility {
 
         return expressionIdConditionCollectionMap;
     }
+    
+    /**
+     * This method returns all the selected Condition for a given query.  
+     * @param query
+     * @return Map of ExpressionId -> Collection of Condition
+     */
+    public static Map<IExpressionId, Collection<ICondition>> getAllSelectedConditions(IQuery query) {
+        Map<IExpressionId, Collection<ICondition>> expressionIdConditionCollectionMap = null;
+        if (query != null) {
+            expressionIdConditionCollectionMap = new HashMap<IExpressionId, Collection<ICondition>>();
+            
+            IConstraints constraints = query.getConstraints();
+            Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
+            while (expressionIds.hasMoreElements()) {
+                IExpressionId expressionId = expressionIds.nextElement();
+
+                IExpression expression = constraints.getExpression(expressionId);
+                for (int index = 0; index < expression.numberOfOperands(); index++) {
+                    IExpressionOperand expressionOperand = expression.getOperand(index);
+                    if (!expressionOperand.isSubExpressionOperand()) {
+                        IRule rule = (IRule) expressionOperand;
+                        Collection<ICondition> conditionList = rule.getConditions();
+
+                        expressionIdConditionCollectionMap.put(expression.getExpressionId(), conditionList);
+                    }
+                }
+            }
+        }
+
+        return expressionIdConditionCollectionMap;
+    }
 
     /**
      * This method returns all the attributes of the expressions involved in a given query.
