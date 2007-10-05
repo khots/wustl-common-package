@@ -17,15 +17,11 @@ import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.client.ui.query.IPathFinder;
 import edu.wustl.cab2b.server.path.PathFinder;
-import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
-import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.path.ICuratedPath;
 import edu.wustl.common.querysuite.metadata.path.IPath;
-import edu.wustl.common.util.dbManager.DAOException;
-import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is used to find all the possible paths between two entities.
@@ -38,43 +34,32 @@ public class CommonPathFinder implements IPathFinder
 	private PathFinder getPathFinderInstance()
 	{
 		PathFinder pathFinder=null;
-		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		Connection connection = null;
 		try
 		{
-			dao.openSession(null);
 			InitialContext context = new InitialContext();
  			DataSource dataSource =  (DataSource) context.lookup("java:/catissuecore");
  			connection = dataSource.getConnection();
- 			pathFinder = (PathFinder) PathFinder.getInstance(connection);
- 		
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
+ 			pathFinder = PathFinder.getInstance(connection);
 		}
 		catch (NamingException e)
 		{
-			e.printStackTrace();
+			Logger.out.error("CommonPathFinder:",e);
 		}
 		catch (SQLException e)
 		{
-			e.printStackTrace();
+			Logger.out.error("CommonPathFinder:",e);
 		}
 		finally
 		{
 			try
 			{
-				dao.closeSession();
-				connection.close();
-			}
-			catch (DAOException e)
-			{
-				e.printStackTrace();
+				if (connection!=null)
+					connection.close();
 			}
 			catch (SQLException e)
 			{
-				e.printStackTrace();
+				Logger.out.error("CommonPathFinder:",e);
 			}
 		}
 		return pathFinder;
@@ -85,21 +70,16 @@ public class CommonPathFinder implements IPathFinder
 	 */
 	public List<IPath> getAllPossiblePaths(EntityInterface srcEntity, EntityInterface destEntity)
 	{
-		 List<IPath> pathsMap = null;
-		 PathFinder pathFinder=null;
-		 pathFinder = (PathFinder) getPathFinderInstance();
-		 pathsMap = pathFinder.getAllPossiblePaths(srcEntity, destEntity);
-		 return pathsMap;
+		 PathFinder pathFinder= getPathFinderInstance();
+		 return pathFinder.getAllPossiblePaths(srcEntity, destEntity);
 	}
 
 	public IPath getPathForAssociations(List<IIntraModelAssociation> intraModelAssociationList) 
 	{
-		PathFinder pathFinder=null;
-		IPath path = null;
-		pathFinder = (PathFinder)getPathFinderInstance();
- 		path = pathFinder.getPathForAssociations(intraModelAssociationList);
-		return path;
+		PathFinder pathFinder = getPathFinderInstance();
+		return  pathFinder.getPathForAssociations(intraModelAssociationList);
 	}
+	
 	public Set<ICuratedPath> autoConnect(Set<EntityInterface> arg0)
 	{
 		return new HashSet<ICuratedPath>();
@@ -122,6 +102,4 @@ public class CommonPathFinder implements IPathFinder
 	{
 		return new Vector<IInterModelAssociation>();
 	}
-
-	
 }
