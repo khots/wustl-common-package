@@ -30,42 +30,6 @@ public class QueryUtility {
      * @param query
      * @return Map of ExpressionId -> Collection of Condition
      */
-    public static Map<IExpressionId, Map<AttributeInterface, ICondition>> getSelectedConditions(IQuery query) {
-        HashMap<IExpressionId, Map<AttributeInterface, ICondition>> expressionIdConditionCollectionMap = null;
-        if (query != null) {
-            expressionIdConditionCollectionMap = new HashMap<IExpressionId, Map<AttributeInterface, ICondition>>();
-
-            IConstraints constraints = query.getConstraints();
-            Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
-            while (expressionIds.hasMoreElements()) {
-                IExpressionId expressionId = expressionIds.nextElement();
-                IExpression expression = constraints.getExpression(expressionId);
-
-                for (int index = 0; index < expression.numberOfOperands(); index++) {
-                    IExpressionOperand expressionOperand = expression.getOperand(index);
-                    if (!expressionOperand.isSubExpressionOperand()) {
-                        IRule rule = (IRule) expressionOperand;
-
-                        Map<AttributeInterface, ICondition> attributeConditionMap = new HashMap<AttributeInterface, ICondition>();
-                        Collection<ICondition> conditionList = rule.getConditions();
-                        for (ICondition condition : conditionList) {
-                            attributeConditionMap.put(condition.getAttribute(), condition);
-                        }
-
-                        expressionIdConditionCollectionMap.put(expression.getExpressionId(), attributeConditionMap);
-                    }
-                }
-            }
-        }
-
-        return expressionIdConditionCollectionMap;
-    }
-    
-    /**
-     * This method returns all the selected Condition for a given query.  
-     * @param query
-     * @return Map of ExpressionId -> Collection of Condition
-     */
     public static Map<IExpressionId, Collection<ICondition>> getAllSelectedConditions(IQuery query) {
         Map<IExpressionId, Collection<ICondition>> expressionIdConditionCollectionMap = null;
         if (query != null) {
