@@ -15,8 +15,8 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IOutputAttribute;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
-import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -28,8 +28,8 @@ import edu.wustl.common.querysuite.queryobject.impl.Condition;
 import edu.wustl.common.querysuite.queryobject.impl.Constraints;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
+import edu.wustl.common.querysuite.queryobject.impl.OutputAttribute;
 import edu.wustl.common.querysuite.queryobject.impl.OutputEntity;
-import edu.wustl.common.querysuite.queryobject.impl.OutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
@@ -228,4 +228,15 @@ public abstract class QueryObjectFactory
 				pathFinderClassName);
 		return pathFinder;
 	}
+	
+	/**
+	 * This method instantiate object of class implementing IOutputAttribute interface.
+	 * @param expressionId 
+	 * @param attribute
+	 * @return
+	 */
+	public static IOutputAttribute createOutputAttribute(IExpressionId expressionId, AttributeInterface attribute)
+    {
+        return new OutputAttribute(expressionId, attribute);
+    }
 }

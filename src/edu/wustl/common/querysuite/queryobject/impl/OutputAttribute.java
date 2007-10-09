@@ -5,6 +5,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IOutputAttribute;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -14,7 +15,7 @@ import edu.wustl.common.util.global.Constants;
  * @hibernate.class table="QUERY_OUTPUT_ATTRIBUTE"
  * @hibernate.cache usage="read-write"
  */
-public class OutputAttribute extends BaseQueryObject {
+public class OutputAttribute extends BaseQueryObject implements IOutputAttribute {
     private static final long serialVersionUID = 1L;
 
     private IExpressionId expressionId;
