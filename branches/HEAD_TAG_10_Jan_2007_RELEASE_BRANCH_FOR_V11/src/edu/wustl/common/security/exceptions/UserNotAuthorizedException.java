@@ -13,7 +13,7 @@ package edu.wustl.common.security.exceptions;
  *@author Aarti Sharma
  *@version 1.0
  */
-public class UserNotAuthorizedException extends Exception
+public class UserNotAuthorizedException extends SMException
 {
 	
 	public UserNotAuthorizedException() {
