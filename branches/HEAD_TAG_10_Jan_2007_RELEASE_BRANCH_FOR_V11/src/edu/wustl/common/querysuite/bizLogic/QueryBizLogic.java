@@ -4,9 +4,7 @@
 package edu.wustl.common.querysuite.bizLogic;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -27,7 +25,7 @@ import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
-import edu.wustl.common.querysuite.queryobject.IParameterizedCondition;
+import edu.wustl.common.querysuite.queryobject.IOutputAttribute;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
@@ -39,11 +37,9 @@ import edu.wustl.common.querysuite.queryobject.impl.GraphEntry;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
 import edu.wustl.common.querysuite.queryobject.impl.OutputAttribute;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedCondition;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
-import edu.wustl.common.querysuite.queryobject.util.ParameterizedConditionComparator;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -204,41 +200,14 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      * @param query
      */
     private void postProcessParameterizedQuery(ParameterizedQuery parameterizedQuery) {
-        List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
-
-        Constraints constraints = (Constraints) parameterizedQuery.getConstraints();
-        Enumeration<IExpressionId> enumeration = constraints.getExpressionIds();
-        while (enumeration.hasMoreElements()) {
-            IExpressionId expressionId = enumeration.nextElement();
-            Expression expression = (Expression) constraints.getExpression(expressionId);
-            List<IExpressionOperand> expressionOperands = expression.getExpressionOperands();
-            for (IExpressionOperand expressionOperand : expressionOperands) {
-                if (expressionOperand instanceof Rule) {
-                    Rule rule = (Rule) expressionOperand;
-
-                    List<ICondition> conditions = rule.getConditions();
-                    if (!conditions.isEmpty()) {
-                        for (ICondition condition : conditions) {
-                            if (condition instanceof IParameterizedCondition) {
-                                parameterizedConditionList.add((IParameterizedCondition) condition);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!parameterizedConditionList.isEmpty()) {
-            Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
-            parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
-        }
-
-        List<OutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
-        for (OutputAttribute outputAttribute : outputAttributeList) {
-            Long attributeId = outputAttribute.getAttributeId();
+        List<IOutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
+        for (IOutputAttribute outputAttribute : outputAttributeList) {
+            OutputAttribute opAttribute = (OutputAttribute) outputAttribute;
             AbstractEntityCache abstractEntityCache = EntityCache.getCache();
+
+            Long attributeId = opAttribute.getAttributeId();
             AttributeInterface attribute = abstractEntityCache.getAttributeById(attributeId);
-            outputAttribute.setAttribute(attribute);
+            opAttribute.setAttribute(attribute);
         }
 
     }
@@ -364,43 +333,10 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      * @param query
      */
     private void preProcessParameterizedQuery(ParameterizedQuery parameterizedQuery) {
-        int index = 0;
-        List<IParameterizedCondition> parameterizedConditionList = new ArrayList<IParameterizedCondition>();
-
-        Constraints constraints = (Constraints) parameterizedQuery.getConstraints();
-        Enumeration<IExpressionId> enumeration = constraints.getExpressionIds();
-        while (enumeration.hasMoreElements()) {
-            IExpressionId expressionId = enumeration.nextElement();
-            Expression expression = (Expression) constraints.getExpression(expressionId);
-            List<IExpressionOperand> expressionOperands = expression.getExpressionOperands();
-            for (IExpressionOperand expressionOperand : expressionOperands) {
-                if (expressionOperand instanceof Rule) {
-                    Rule rule = (Rule) expressionOperand;
-
-                    List<ICondition> conditions = rule.getConditions();
-                    if (!conditions.isEmpty()) {
-                        for (ICondition condition : conditions) {
-                            if (condition instanceof ParameterizedCondition) {
-                                ParameterizedCondition parameterizedCondition = (ParameterizedCondition) condition;
-
-                                parameterizedCondition.setIndex(index++);
-                                parameterizedConditionList.add(parameterizedCondition);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!parameterizedConditionList.isEmpty()) {
-            Collections.sort(parameterizedConditionList, new ParameterizedConditionComparator());
-            parameterizedQuery.setParameterizedConditions(parameterizedConditionList);
-        }
-
-        List<OutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
-        for (OutputAttribute outputAttribute : outputAttributeList) {
+        List<IOutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
+        for (IOutputAttribute outputAttribute : outputAttributeList) {
             AttributeInterface attribute = outputAttribute.getAttribute();
-            outputAttribute.setAttributeId(attribute.getId());
+            ((OutputAttribute) outputAttribute).setAttributeId(attribute.getId());
         }
     }
 
