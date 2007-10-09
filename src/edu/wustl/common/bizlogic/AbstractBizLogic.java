@@ -377,8 +377,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			return null;
 		}
-		String roottableName=HibernateMetaData.getRootTableName(obj.getClass());
-		String tableName=HibernateMetaData.getTableName(obj.getClass());
+		String roottableName = null;
+		String tableName = null;
     	try
     	{   				
     	    // Get ExceptionFormatter
@@ -386,6 +386,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			// call for Formating Message
 			if(ef!=null)
 			{
+				roottableName=HibernateMetaData.getRootTableName(obj.getClass());
+				tableName=HibernateMetaData.getTableName(obj.getClass());
 				Object[] arguments = {roottableName,DBUtil.currentSession().connection(),tableName};
 				errMsg = ef.formatMessage(ex,arguments);
 			}
