@@ -235,7 +235,10 @@ public class CommonAddEditAction extends Action
 	           		target = forwardTo;
 	           		//return (mapping.findForward(forwardTo));
 	           }
-	               Logger.out.debug("Target in CommonAddEditAction===> "+ target); 
+	           Logger.out.debug("Target in CommonAddEditAction===> "+ target);
+	          
+	           //Sets the domain object value in PrintMap for Label Printing
+	           request.setAttribute("forwardToPrintMap",generateForwardToPrintMap(abstractForm, abstractDomain));
             }
             else
             {
@@ -352,14 +355,15 @@ public class CommonAddEditAction extends Action
                 	errors.add(ActionErrors.GLOBAL_ERROR,error);
                 	saveErrors(request,errors);
                 }
-
+				 //Sets the domain object value in PrintMap for Label Printing
+				 request.setAttribute("forwardToPrintMap",generateForwardToPrintMap(abstractForm, abstractDomain) );
             }
             
             if (messages != null)
             {
                 saveMessages(request,messages);
             }
-            
+           
             //Status message key.
             String statusMessageKey = String.valueOf(abstractForm.getFormId() +
 					"."+String.valueOf(abstractForm.isAddOperation()));
@@ -451,6 +455,24 @@ public class CommonAddEditAction extends Action
         forwardToHashMap = (HashMap)forwardToProcessor.populateForwardToData(abstractForm,abstractDomain);
 
         return forwardToHashMap;
+    }
+    /**
+     * This method generates HashMap of data required to be forwarded if Form is submitted for Print request
+     * @param abstractForm	Form submitted
+     * @param abstractDomain	DomainObject Added/Edited
+     * @return	HashMap of data required to be forwarded
+     */
+    private HashMap generateForwardToPrintMap(AbstractActionForm abstractForm, AbstractDomainObject abstractDomain)throws BizLogicException
+    {
+        HashMap forwardToPrintMap = null;
+        AbstractForwardToProcessor forwardToProcessor=AbstractForwardToFactory.getForwardToProcessor(
+				ApplicationProperties.getValue("app.forwardToFactory"),
+				"getForwardToPrintProcessor");
+    
+        //Populating HashMap of the data required to be forwarded on next page
+        forwardToPrintMap = (HashMap)forwardToProcessor.populateForwardToData(abstractForm,abstractDomain);
+
+        return forwardToPrintMap;
     }
     
     /**
