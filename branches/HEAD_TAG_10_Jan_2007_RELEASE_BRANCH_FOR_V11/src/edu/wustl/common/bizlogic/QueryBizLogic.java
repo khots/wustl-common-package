@@ -1034,8 +1034,10 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDAO.openSession(null);
+		/*String sql = "select count(*) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='" + specimanType
+				+ "'";*/
 		String sql = "select count(*) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='" + specimanType
-				+ "'";
+				+ "' and IS_COLL_PROT_REQ=0 and COLLECTION_STATUS='Collected'";
 		List list = jdbcDAO.executeQuery(sql, null, false, null);
 		jdbcDAO.closeSession();
 
@@ -1088,7 +1090,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDAO.openSession(null);
 		//        String sql = "select count(*) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='"+specimanType+"'";
 		String sql = "select type,count(*) from catissue_specimen where specimen_class='"
-				+ specimenType + "' group by type order by type";
+				+ specimenType + "' and IS_COLL_PROT_REQ=0 and COLLECTION_STATUS='Collected' group by type order by type";
 		List list = jdbcDAO.executeQuery(sql, null, false, null);
 		jdbcDAO.closeSession();
 
@@ -1116,7 +1118,8 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDAO.openSession(null);
-		String sql = "select count(*) from CATISSUE_SPECIMEN";
+		//String sql = "select count(*) from CATISSUE_SPECIMEN";
+		String sql = "select count(*) from CATISSUE_SPECIMEN where IS_COLL_PROT_REQ=0 and COLLECTION_STATUS='Collected'";
 		List list = jdbcDAO.executeQuery(sql, null, false, null);
 		jdbcDAO.closeSession();
 
