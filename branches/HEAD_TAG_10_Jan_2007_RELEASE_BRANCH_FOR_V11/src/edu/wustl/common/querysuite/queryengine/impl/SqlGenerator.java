@@ -41,13 +41,13 @@ import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -367,37 +367,13 @@ public class SqlGenerator implements ISqlGenerator
 		StringBuffer buffer = new StringBuffer("");
 		IExpressionId parentExpressionId = expression.getExpressionId();
 
-		EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
-		EntityInterface superClassEntity = leftEntity.getParentEntity();
 		if (processedAlias.isEmpty()) // this will be true only for root node.
 		{
+			EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
 			leftAlias = getAliasName(expression);
 			buffer.append("From " + leftEntity.getTableProperties().getName() + " " + leftAlias);
 
-			//processing Parent class heirarchy.
-			if (superClassEntity != null)
-			{
-				EntityInterface theLeftEntity = leftEntity;
-				while (superClassEntity != null)
-				{
-					InheritanceStrategy inheritanceType = theLeftEntity.getInheritanceStrategy();
-					if (InheritanceStrategy.TABLE_PER_SUB_CLASS.equals(inheritanceType)) // only need to handle this type of inheritance here.
-					{
-						AttributeInterface primaryKey = getPrimaryKey(theLeftEntity);
-						String primaryKeyColumnName = primaryKey.getColumnProperties().getName();
-						String subClassAlias = getAliasFor(expression, theLeftEntity);
-						String superClassAlias = getAliasFor(expression, superClassEntity);
-						buffer.append(" left join "
-								+ superClassEntity.getTableProperties().getName() + " "
-								+ superClassAlias + " on ");
-						String leftAttribute = subClassAlias + "." + primaryKeyColumnName;
-						String rightAttribute = superClassAlias + "." + primaryKeyColumnName;
-						buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
-					}
-					theLeftEntity = superClassEntity;
-					superClassEntity = superClassEntity.getParentEntity();
-				}
-			}
+			createFromPartForDerivedEntity(expression, buffer);
 		}
 
 		Integer parentExpressionAliasAppender = aliasAppenderMap.get(parentExpressionId);
@@ -406,6 +382,42 @@ public class SqlGenerator implements ISqlGenerator
 		// Processing children
 		buffer.append(processChildExpressions(leftAlias, processedAlias, parentExpressionId));
 		return buffer.toString();
+	}
+
+	/**
+	 * To create From path for the deirved entity.
+	 * @param expression the reference to expression.
+	 * @param buffer The buffer to which the Output will be appended.
+	 * @throws SqlException
+	 */
+	private void createFromPartForDerivedEntity(IExpression expression, StringBuffer buffer) throws SqlException
+	{
+		EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
+		EntityInterface superClassEntity = leftEntity.getParentEntity();
+		//processing Parent class heirarchy.
+		if (superClassEntity != null)
+		{
+			EntityInterface theLeftEntity = leftEntity;
+			while (superClassEntity != null)
+			{
+				InheritanceStrategy inheritanceType = theLeftEntity.getInheritanceStrategy();
+				if (InheritanceStrategy.TABLE_PER_SUB_CLASS.equals(inheritanceType)) // only need to handle this type of inheritance here.
+				{
+					AttributeInterface primaryKey = getPrimaryKey(theLeftEntity);
+					String primaryKeyColumnName = primaryKey.getColumnProperties().getName();
+					String subClassAlias = getAliasFor(expression, theLeftEntity);
+					String superClassAlias = getAliasFor(expression, superClassEntity);
+					buffer.append(" left join "
+							+ superClassEntity.getTableProperties().getName() + " "
+							+ superClassAlias + " on ");
+					String leftAttribute = subClassAlias + "." + primaryKeyColumnName;
+					String rightAttribute = superClassAlias + "." + primaryKeyColumnName;
+					buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
+				}
+				theLeftEntity = superClassEntity;
+				superClassEntity = superClassEntity.getParentEntity();
+			}
+		}
 	}
 
 	/**
@@ -767,7 +779,11 @@ public class SqlGenerator implements ISqlGenerator
 			Set<Integer> processedAlias = new HashSet<Integer>();
 			processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
 			String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
-			pseudoAndSQL += " From " + tableName + " " + leftAlias + fromPart + " where ";
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(" From ").append(tableName).append(" ").append(leftAlias);
+			createFromPartForDerivedEntity(expression, buffer);
+			buffer.append(fromPart).append(" where ");
+			pseudoAndSQL += buffer.toString();
 		}
 		return pseudoAndSQL;
 	}
@@ -1441,7 +1457,6 @@ public class SqlGenerator implements ISqlGenerator
 			
 //			aliasName = aliasName.replaceAll(Constants.REGEX_EXPRESION, Constants.REPLACEMENT);
 			aliasName = Utility.removeSpecialCharactersFromString(aliasName);
-			System.out.println("aliasName : "+aliasName);
 			// get unique aliasName for the given class.
 			int count = 1;
 			String theAliasName = aliasName;
