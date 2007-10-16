@@ -108,7 +108,8 @@ public class QueryNodeLocator
 		{
 			positionMap = new HashMap<IExpressionId, Position>();
 			Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
-			int y = maxX/2;
+			int yIncrement = X_OFFSET*6;
+			int y = yIncrement;
 			int x = X_OFFSET;
 			while (expressionIds.hasMoreElements())
 			{
@@ -117,7 +118,8 @@ public class QueryNodeLocator
 				if (expression.isVisible())
 				{
 					positionMap.put(expressionId, new Position(x,y));
-					x+=WIDTH_OF_NODE;
+					x+=WIDTH_OF_NODE/2;
+					y+=yIncrement;
 				}
 			}
 		}
