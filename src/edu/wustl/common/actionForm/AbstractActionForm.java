@@ -17,7 +17,6 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
@@ -26,7 +25,7 @@ import edu.wustl.common.util.global.Validator;
  * AbstractForm class is the superclass of all the formbean classes.
  * @author gautam_shetty
  */
-public abstract class AbstractActionForm extends ActionForm
+public abstract class AbstractActionForm extends ActionForm implements IValueObject
 {
     
     /**
@@ -167,7 +166,7 @@ public abstract class AbstractActionForm extends ActionForm
      * Copies all the values from the Object object.
      * @param obj The Object object.
      */
-    public abstract void setAllValues(AbstractDomainObject abstractDomain);
+    //public abstract void setAllValues(AbstractDomainObject abstractDomain);
     
     /**
      * Copies all the values from the Object object.

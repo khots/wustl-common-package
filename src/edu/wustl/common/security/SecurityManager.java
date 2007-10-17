@@ -27,7 +27,9 @@ import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.SMTransactionException;
 import edu.wustl.common.util.Permissions;
+import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -461,6 +463,57 @@ public class SecurityManager implements Permissions {
 		}
 		return role;
 
+	}
+	/**
+     * Name : Virender Mehta
+     * Reviewer: Sachin Lale
+     * Bug ID: 3842
+     * Patch ID: 3842_2
+     * See also: 3842_1
+     * Description: This function will return the Role name(Administrator, Scientist, Technician, Supervisor )
+	 * @param userID
+	 * @return Role Name
+	 * @throws SMException
+	 */
+	public String getUserGroup(long userID) throws SMException
+	{
+		Set groups;
+		UserProvisioningManager userProvisioningManager = null;
+		Iterator it;
+		Group group;
+		try
+		{
+			userProvisioningManager = getUserProvisioningManager();
+			groups = userProvisioningManager.getGroups(String.valueOf(userID));
+			it = groups.iterator();
+			while (it.hasNext())
+			{
+				group = (Group) it.next();
+				if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) 
+				{
+					return Roles.ADMINISTRATOR;
+				}
+				else if (group.getGroupName().equals(SUPERVISOR_GROUP)) 
+				{
+					return Roles.SUPERVISOR;
+				}
+				else if (group.getGroupName().equals(TECHNICIAN_GROUP)) 
+				{
+					return Roles.TECHNICIAN;
+				}
+				else if (group.getGroupName().equals(PUBLIC_GROUP)) 
+				{
+					return Roles.SCIENTIST;
+				}
+			}
+		}
+		catch (CSException e) 
+		{
+			Logger.out.debug("Unable to get roles: Exception: "
+					+ e.getMessage());
+			throw new SMException(e.getMessage(), e);
+		}
+		return "";
 	}
 
 	/**
@@ -1199,39 +1252,45 @@ public class SecurityManager implements Permissions {
 	public boolean checkPermission(String groupId, String objectType,
 			String objectIdentifier) throws SMException 
 	{
-	    Logger.out.debug("Check Privilege for user group.................................");
-	    String protectionElementName = objectType + "_" + objectIdentifier; 
-	    Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
-	    
-	    try
-	    {
-	        UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
-		    Set privilegeContextForGroup = userProvisioningManager
-		    								.getProtectionElementPrivilegeContextForGroup(groupId);
-		    Iterator iterator = privilegeContextForGroup.iterator();
-		    while (iterator.hasNext())
+		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
+		    Logger.out.debug("Check Privilege for user group.................................");
+		    String protectionElementName = objectType + "_" + objectIdentifier; 
+		    Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
+		    
+		    try
 		    {
-		        ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
-		        if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
-		        {
-		            return true;
-		        }
+		        UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
+			    Set privilegeContextForGroup = userProvisioningManager
+			    								.getProtectionElementPrivilegeContextForGroup(groupId);
+			    Iterator iterator = privilegeContextForGroup.iterator();
+			    while (iterator.hasNext())
+			    {
+			        ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
+			        if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
+			        {
+			            return true;
+			        }
+			    }
 		    }
-	    }
-	    catch (CSObjectNotFoundException csObjNotExp)
-	    {
-	        throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
-	    }
-	    catch (CSException csExp)
-	    {
-	        throw new SMException(csExp.getMessage(), csExp);
-	    }
-	    
-	    return false;
+		    catch (CSObjectNotFoundException csObjNotExp)
+		    {
+		        throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
+		    }
+		    catch (CSException csExp)
+		    {
+		        throw new SMException(csExp.getMessage(), csExp);
+		    }
+		    return false;
+		}
+		return true;
 	}
 
 	public boolean checkPermission(String userName, String objectType,
-			String objectIdentifier, String privilegeName) throws SMException {
+			String objectIdentifier, String privilegeName) throws SMException 
+	{
+		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
 		try {
 		    Logger.out.debug(" User:" + userName + "objectType:" + objectType
 					+ " objectId:" + objectIdentifier + " privilegeName:"
@@ -1283,6 +1342,8 @@ public class SecurityManager implements Permissions {
 					+ e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
+	}
+		return true;
 	}
 	
 	/**
@@ -1998,30 +2059,51 @@ public class SecurityManager implements Permissions {
 			throw new SMException(
 					"Could not assign group role to protection group. One or more parameters are null");
 		}
-		Set protectionGroupRoleContextSet;
-		ProtectionGroupRoleContext protectionGroupRoleContext;
+		Set protectionGroupRoleContextSet = null;
+		ProtectionGroupRoleContext protectionGroupRoleContext = null;
 		Iterator it;
 		Set aggregatedRoles = new HashSet();
 		String[] roleIds = null;
 		Role role;
 		try {
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			protectionGroupRoleContextSet = userProvisioningManager
+			
+			/**
+			 * Name : Aarti Sharma
+		     * Reviewer: Sachin Lale
+		     * Bug ID: 4418
+		     * Description: CSM API getProtectionGroupRoleContextForGroup throws exception
+		     * CSObjectNotFoundException when called on oracle database thus leading to this problem.
+		     * Check is made for this exception now so that the method works for oracle as well.
+			 */
+			try
+			{
+				protectionGroupRoleContextSet = userProvisioningManager
 					.getProtectionGroupRoleContextForGroup(String
 							.valueOf(groupId));
+			}
+			catch (CSObjectNotFoundException e) {
+				Logger.out.debug("Could not find Role Context for the Group: "+
+						e.toString());
+			}
+			
+			if(protectionGroupRoleContext!=null)
+			{
 
-			it = protectionGroupRoleContextSet.iterator();
-			while (it.hasNext()) {
-				protectionGroupRoleContext = (ProtectionGroupRoleContext) it
-						.next();
-				if (protectionGroupRoleContext.getProtectionGroup()
-						.getProtectionGroupId().equals(
-								protectionGroup.getProtectionGroupId())) {
-					aggregatedRoles.addAll(protectionGroupRoleContext
-							.getRoles());
-
-					break;
+				it = protectionGroupRoleContextSet.iterator();
+				while (it.hasNext()) {
+					protectionGroupRoleContext = (ProtectionGroupRoleContext) it
+							.next();
+					if (protectionGroupRoleContext.getProtectionGroup()
+							.getProtectionGroupId().equals(
+									protectionGroup.getProtectionGroupId())) {
+						aggregatedRoles.addAll(protectionGroupRoleContext
+								.getRoles());
+	
+						break;
+					}
 				}
+					
 			}
 
 			// if the operation is assign, add the roles to be assigned.
@@ -2307,7 +2389,10 @@ public class SecurityManager implements Permissions {
 	 * @return
 	 */
 	public boolean checkPermission(String userName, String tableAlias,
-			Object identifier, String permission) {
+			Object identifier, String permission) 
+	{
+		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
 		boolean isAuthorized = false;
 		String tableName = (String) AbstractClient.objectTableNames.get(tableAlias);
 		Logger.out.debug(" AliasName:" + tableAlias + " tableName:" + tableName
@@ -2382,6 +2467,8 @@ public class SecurityManager implements Permissions {
 			return isAuthorized;
 		}
 		return isAuthorized;
+		}
+		return true;
 	}
 
 	/**
@@ -2457,5 +2544,49 @@ public class SecurityManager implements Permissions {
 	}
 	public static void setSecurityDataPrefix(String securityDataPrefix) {
 		SecurityManager.securityDataPrefix = securityDataPrefix;
+	}
+	
+	/**
+	 * Name : Aarti Sharma
+     * Reviewer: Sachin Lale
+     * Bug ID: 4111
+     * Patch ID: 4111_2
+     * See also: 4111_1
+     * Description: This method checks user's privilege on identified data
+	 * @param userId User's Identifier
+	 * @return true if user has privilege on identified data else false
+	 * @throws SMException
+	 */
+	public boolean hasIdentifiedDataAccess(Long userId) throws SMException
+	{
+		boolean hasIdentifiedDataAccess = false;
+		try
+		{
+			//Get user's role
+			Role role = getUserRole(userId.longValue());
+			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
+			
+			//Get privileges the user has based on his role
+			Set privileges = userProvisioningManager.getPrivileges(String.valueOf(role.getId()));
+			Iterator privIterator = privileges.iterator();
+			Privilege privilege;
+			
+			// If user has Identified data access set hasIdentifiedDataAccess true
+			for(int i=0; i< privileges.size(); i++)
+			{
+				privilege = (Privilege) privIterator.next();
+				if(privilege.getName().equals(Permissions.IDENTIFIED_DATA_ACCESS))
+				{
+					hasIdentifiedDataAccess = true;
+					break;
+				}
+			}
+		}
+		catch (CSException e)
+		{
+			throw new SMException(e.getMessage(), e);
+		}
+		return hasIdentifiedDataAccess;
+		
 	}
 }

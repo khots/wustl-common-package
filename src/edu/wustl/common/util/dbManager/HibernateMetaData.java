@@ -18,6 +18,8 @@ import net.sf.hibernate.mapping.PersistentClass;
 import net.sf.hibernate.mapping.Property;
 import net.sf.hibernate.mapping.Subclass;
 import net.sf.hibernate.mapping.Table;
+import net.sf.hibernate.proxy.HibernateProxy;
+import net.sf.hibernate.proxy.HibernateProxyHelper;
 
 import org.apache.log4j.PropertyConfigurator;
 
@@ -441,8 +443,22 @@ public class HibernateMetaData
 	} // getColumnWidth
 
 
-	//	Mandar:26-apr-06 end
+	/**
+	 * This method will return domain object from proxy Object 
+	 * @param domainObject
+	 * @return domain Object
+	 */
+	public static Object getProxyObjectImpl(Object domainObject)
+	{
+		if (domainObject instanceof HibernateProxy)
+		{
+			HibernateProxy hp  = (HibernateProxy)domainObject;
+			domainObject = HibernateProxyHelper.getLazyInitializer(hp).getImplementation();
+		}
+        return domainObject;
+	}
 	
+	//	Mandar:26-apr-06 end
 	
 	public static void main(String[] args) throws Exception
 	{

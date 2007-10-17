@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
@@ -340,8 +341,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 					{
 						tmpObj = tmpBuffer.get(0);
 
-						Logger.out.debug("nameValueBean Name : : " + tmpObj);
-						Logger.out.debug("NameClass : : " + tmpObj.getClass().getName());
+						//Logger.out.debug("nameValueBean Name : : " + tmpObj);
+						//Logger.out.debug("NameClass : : " + tmpObj.getClass().getName());
 						nameValueBean.setName(tmpObj);
 					}
 					else
@@ -356,7 +357,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 							}
 						}
 
-						Logger.out.debug("nameValueBean Name : : " + nameBuff.toString());
+						//Logger.out.debug("nameValueBean Name : : " + nameBuff.toString());
 						nameValueBean.setName(nameBuff.toString());
 					}
 
@@ -556,5 +557,59 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
 	{
 		dao.update(obj,null,false,false,false);
+	}
+
+
+	/**
+	 * To retrieve the attribute value for the given source object name & Id.
+	 * @param sourceObjectName Source object in the Database. 
+	 * @param id Id of the object.
+	 * @param attributeName attribute name to be retrieved. 
+	 * @return The Attribute value corresponding to the SourceObjectName & id.
+	 * @throws DAOException
+	 * @see edu.wustl.common.bizlogic.IBizLogic#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
+	 */
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException 
+	{
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+
+		Object attribute = null;
+
+		try
+		{
+			dao.openSession(null);
+			attribute = dao.retrieveAttribute(sourceObjectName, id, attributeName);
+		}
+		catch (DAOException daoExp)
+		{
+			daoExp.printStackTrace();
+			Logger.out.error(daoExp.getMessage(), daoExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+		return attribute;
+	}
+	
+	/**
+	 * This method gets called before populateUIBean method. Any logic before updating uiForm can be included here.
+	 * @param domainObj object of type AbstractDomainObject
+	 * @param uiForm object of the class which implements IValueObject
+	 */
+	protected void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException
+	{
+		
+	}
+	
+	
+	/**
+	 * This method gets called after populateUIBean method. Any logic after populating  object uiForm can be included here.
+	 * @param domainObj object of type AbstractDomainObject
+	 * @param uiForm object of the class which implements IValueObject
+	 */
+	protected void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)throws BizLogicException
+	{
+		
 	}
 }

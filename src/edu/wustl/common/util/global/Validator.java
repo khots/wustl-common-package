@@ -283,7 +283,7 @@ public class Validator
         Logger.out.debug("option value: "+option);
     	if(option != null)
     	{
-    		if(option.trim().equals("-1") || option.equals(Constants.SELECT_OPTION))
+    		if(option.trim().equals("") || option.trim().equals("-1") || option.equals(Constants.SELECT_OPTION))
     			return false;
     		else
     			return true;
@@ -299,7 +299,7 @@ public class Validator
     	try
 		{
     		
-    		Pattern re = Pattern.compile("^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3}(\\.[a-z]{2})?|[a-z]{2}(\\.[a-z]{2})?)$", Pattern.CASE_INSENSITIVE);
+    		Pattern re = Pattern.compile("^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$", Pattern.CASE_INSENSITIVE);
     		Matcher  mat =re.matcher(emailAddress); 
     		result = mat.matches();
 		}

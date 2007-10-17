@@ -16,6 +16,14 @@ import java.util.HashMap;
 public class Constants 
 {
 	
+	//	constants for TiTLi Search
+	public static final String TITLI_SORTED_RESULT_MAP="sortedResultMap";
+	public static final String TITLI_INSERT_OPERATION="insert";
+	public static final String TITLI_UPDATE_OPERATION="update";
+	public static final String TITLI_DELETE_OPERATION="delete";
+	public static final String TITLI_SINGLE_RESULT="singleResult";
+	public static final String TITLI_FETCH_ACTION="/TitliFetch.do";
+	
 	
 	// constants for passwordManager
 	
@@ -228,6 +236,12 @@ public class Constants
 	public static final String SIMPLE_QUERY_MAP = "simpleQueryMap";
 	
 	public static final String IDENTIFIER_FIELD_INDEX = "identifierFieldIndex";
+	/*
+	 * Patch ID: SimpleSearchEdit_3 
+	 * Description: Constants required for this feature plus Delimeter used in the DHTML grid.
+	*/
+	public static final String HYPERLINK_COLUMN_MAP = "hyperlinkColumnMap";
+	public static final String DHTMLXGRID_DELIMETER = "|@|"; 
 	public static final String PAGEOF_SIMPLE_QUERY_INTERFACE = "pageOfSimpleQueryInterface";
 	public static final String SIMPLE_QUERY_ALIAS_NAME = "simpleQueryAliasName";
 	
@@ -246,6 +260,7 @@ public class Constants
 	
 	public static final String SPREADSHEET_DATA_LIST = "spreadsheetDataList";
 	public static final String SPREADSHEET_COLUMN_LIST = "spreadsheetColumnList";
+	public static final String QUERY_SESSION_DATA = "querySessionData";
 	
 	public static final String ACCESS_DENIED = "access_denied";
 	
@@ -403,7 +418,8 @@ public class Constants
 	public static final int START_PAGE = 1;
 	public static final int NUMBER_RESULTS_PER_PAGE = 5;
 	public static final String PAGE_NUMBER = "pageNum";
-	public static final String RESULTS_PER_PAGE = "numResultsPerPage"; 
+	public static final String RESULTS_PER_PAGE = "numResultsPerPage";
+	public static final String RECORDS_PER_PAGE_PROPERTY_NAME="resultView.noOfRecordsPerPage";
 	public static final String TOTAL_RESULTS = "totalResults";
 	public static final String PREVIOUS_PAGE = "prevpage";
 	public static final String NEXT_PAGE = "nextPage";
@@ -474,4 +490,5 @@ public class Constants
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
+	public static final String ISCHECKPERMISSION="isToCheckCSMPermission";
 }

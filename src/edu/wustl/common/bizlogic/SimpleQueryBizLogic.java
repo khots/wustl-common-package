@@ -12,6 +12,8 @@ package edu.wustl.common.bizlogic;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +170,38 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
+	 * TO create The Order by Attribute list & set it into the Query object.
+	 * @param fromTables The From tables present in the from part of the Query.
+	 * @param query The reference to the Query object.
+	 * @throws DAOException 
+	 */
+	public void createOrderByListInQuery(Set fromTables, Query query) throws DAOException
+	{
+		// getting main Query object present in the fromTables set & storing it in mainObjectsOfQuery.
+		Vector<String> mainObjectsOfQuery = QueryBizLogic.getMainObjectsOfQuery();
+		mainObjectsOfQuery.retainAll(fromTables);
+		
+		//getting related object aliases present in query, & removing mainObjectsOfQuery aliase from it, so that this set will contain only related object & not any main Query object.
+		Set<String> relatedObjectAliases = new HashSet<String>(fromTables);
+		relatedObjectAliases.removeAll(mainObjectsOfQuery);
+		
+		for (String aliasName: mainObjectsOfQuery)
+		{
+			query.addToOrderByAttributeList(new DataElement(aliasName,Constants.IDENTIFIER));
+			Vector<String> relatedTableAliases = QueryBizLogic.getRelatedTableAliases(aliasName);
+			relatedTableAliases.retainAll(relatedObjectAliases);
+			for (String relatedTableAlias :relatedTableAliases)
+			{
+				query.addToOrderByAttributeList(new DataElement(relatedTableAlias,Constants.IDENTIFIER));
+			}
+			relatedObjectAliases.removeAll(relatedTableAliases);
+		}
+		
+		if (!relatedObjectAliases.isEmpty())
+			throw new RuntimeException("Problem in creating Order by Attributes !!!!!");
+	}
+	
+	/**
 	 * Returns SimpleConditionsNode if the object named aliasName contains the activityStatus 
 	 * data member, else returns null.
 	 * @param aliasName The alias name of the object.
@@ -260,7 +294,6 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		for (int i = 0; i < selectedColumnsList.length; i++)
 		{
 			StringTokenizer st = new StringTokenizer(selectedColumnsList[i], ".");
-			DataElement dataElement = new DataElement();
 			while (st.hasMoreTokens())
 			{
 				st.nextToken();
@@ -362,7 +395,6 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				String childTableAliasName =  st.nextToken();
 				String columnName = st.nextToken();
 				String fieldType = st.nextToken();
-				String tablePath = null;
 				
 				table.setTableName(childTableAliasName);				
 				dataElement.setTable(table);
@@ -429,7 +461,6 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 			Logger.out.debug("tableDisplayName in getviewelements:" + tableDisplayName);
 			Logger.out.debug("list.size()************************" + list.size());
 			Iterator iterator = list.iterator();
-			int i = 0;
 			while (iterator.hasNext())
 			{
 				List rowList = (List) iterator.next();								
@@ -456,11 +487,9 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		List forFromSet = new ArrayList();
 
 		Iterator iterator = selectDataElements.iterator();
-		QueryBizLogic bizLogic = new QueryBizLogic();//(QueryBizLogic)BizLogicFactory.getBizLogic(Constants.SIMPLE_QUERY_INTERFACE_ID);
 		while (iterator.hasNext())
 		{
 			DataElement dataElement = (DataElement) iterator.next();
-			String fieldName = dataElement.getField();
 			StringTokenizer stringToken = new StringTokenizer(dataElement.getField(), ".");
 			dataElement.setField(stringToken.nextToken());
 
@@ -499,6 +528,13 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return the Vector of DataElement objects for the select clause of the query.
 	 * @throws DAOException
 	 */
+    
+    /**
+     * Bug#3549
+     * Patch 1_2
+     * Description:modified query to order the result by ATTRIBUTE_ORDER column.
+     */
+    
 	public Vector getViewElements(List aliasNameList, List columnList, boolean OnlyDefaultAttribute)
 			throws DAOException
 	{
@@ -517,7 +553,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.TABLES_IN_PATH, "
 						+ " temp.DISPLAY_NAME, temp.ATTRIBUTE_TYPE "
 						+ " from CATISSUE_QUERY_TABLE_DATA tableData2 join "
-						+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, displayData.DISPLAY_NAME, "
+						+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, displayData.DISPLAY_NAME,displayData.ATTRIBUTE_ORDER, "
 						+ " relationData.TABLES_IN_PATH, columnData.ATTRIBUTE_TYPE "
 						+ " FROM CATISSUE_INTERFACE_COLUMN_DATA columnData, "
 						+ " CATISSUE_TABLE_RELATION relationData, "
@@ -531,7 +567,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 
 				String sql1 = " columnData.IDENTIFIER = displayData.COL_ID and "
 						+ " tableData.ALIAS_NAME = '" + aliasName + "') temp "
-						+ " on temp.TABLE_ID = tableData2.TABLE_ID";
+						+ " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
 				if (OnlyDefaultAttribute)
 					sql = sql + defaultViewCondition + sql1;
@@ -552,9 +588,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				}
 				Logger.out.debug("tableDisplayName in getviewelements:" + tableDisplayName);
 				Logger.out.debug("list.size()************************" + list.size());
-				String[] columnNames = new String[list.size()];
 				Iterator iterator = list.iterator();
-				int i = 0;
 				while (iterator.hasNext())
 				{
 					List rowList = (List) iterator.next();
@@ -639,8 +673,6 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 */
 	public List addObjectIdentifierColumnsToQuery(Map queryResultObjectDataMap, Query query)
 	{
-		DataElement identifierDataElement;
-
 		List columnNames = new ArrayList();
 		Set keySet = queryResultObjectDataMap.keySet();
 		Iterator keyIterator = keySet.iterator();
@@ -736,6 +768,102 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		}
 	}
 
+	
+	/**
+	 * To get the Map representing the Index of the column to be hyperlinked verses the QueryResultObjectData, which containes information about the Id column & alias name of the object associated with that column.
+	 * @param queryResultsObjectDataMap The Map of alias name verses QueryResultObjectData, Contains information of the different objects present in Query like, alias Name, index of the id in the query results etc.
+	 * @return the map of columns to be hyperlinked.
+	 * @throws DAOException if any db related error occures.
+	 * 
+	 * Patch ID: SimpleSearchEdit_2 
+	 * Description: Method to get the Map which contains information about which columns to be Hyperlinked.
+	 */
+	public Map<Integer, QueryResultObjectData> getHyperlinkMap(Map<String,QueryResultObjectData> queryResultsObjectDataMap, Vector<DataElement> resultView) throws DAOException
+	{
+		Map<Integer, QueryResultObjectData> map = new HashMap<Integer, QueryResultObjectData>();
+		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+
+		try 
+		{
+			dao.openSession(null);
+			
+			for(String aliasName: queryResultsObjectDataMap.keySet())
+			{
+				//SQL to get information regarding which column to be hyperlined for the given table alias.
+				String columnIdSQL = "Select col.COLUMN_NAME, coltable.alias_name From CATISSUE_INTERFACE_COLUMN_DATA col, CATISSUE_QUERY_TABLE_DATA maintable, CATISSUE_QUERY_TABLE_DATA coltable, CATISSUE_QUERY_EDITLINK_COLS linkcol "
+					+ " where maintable.TABLE_ID = linkcol.TABLE_ID "
+					+ " and linkcol.col_id = col.IDENTIFIER "
+					+ " and coltable.TABLE_ID = col.TABLE_ID"
+					+ " and maintable.ALIAS_NAME = '" + aliasName +"' ";
+				
+				List<List<String>> list = dao.executeQuery(columnIdSQL, null, false, null);
+				for (List<String> row: list)
+				{
+					String columnName = row.get(0);
+					String actualTableAliasName = row.get(1);
+					int index = getIndex(resultView, actualTableAliasName, columnName);
+					/**
+					 * if index value is -1 then ignore that column, as that column is not present in the Result view.
+					 */
+					if (index!=-1) 
+					{
+						// This column is present in the view.
+						boolean attributeFound = true; 
+						QueryResultObjectData queryResultObjectData = queryResultsObjectDataMap.get(actualTableAliasName);
+						if (queryResultObjectData==null) // this attribute belongs to the one of the dependent object.
+						{
+							attributeFound = false;
+							for(String theAliasName: queryResultsObjectDataMap.keySet())
+							{
+								queryResultObjectData = queryResultsObjectDataMap.get(theAliasName);
+								if (queryResultObjectData.getDependentObjectAliases().contains(actualTableAliasName))
+								{
+									//The dependent object containing the required attribute found!!!!!
+									attributeFound = true;
+									break; 
+								}
+								
+							}
+						}
+						if (attributeFound)
+						{
+							map.put(index, queryResultObjectData);
+						}
+					}
+				}
+			}
+
+			return map;
+		} 
+		catch (ClassNotFoundException classExp) 
+		{
+			throw new DAOException(classExp.getMessage(), classExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+	}
+	/**
+	 * TO get the index of the dataelement in the result view for given alias & columnName
+	 * @param resultView the vector of data elements
+	 * @param alias The alias name to search. 
+	 * @param columnName the name of the column to search.
+	 * @return -1 if no such data element exists in the resultview else return the index of it.
+	 */
+	private int getIndex(Vector<DataElement> resultView, String alias, String columnName)
+	{
+		for (int index = 0; index < resultView.size(); index++)
+		{
+			DataElement element = resultView.get(index);
+			if (alias.equals(element.getTable().getTableName()) && columnName.equals(element.getField()))
+			{
+				return index;
+			}
+		}
+		return -1;
+	}
+	
 	private void addInListIfNotPresent(List list, String string)
 	{
 		if (list.contains(string) == false)

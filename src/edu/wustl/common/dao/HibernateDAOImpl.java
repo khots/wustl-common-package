@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -474,7 +476,7 @@ public class HibernateDAOImpl implements HibernateDAO
                 //---------------------------------
                 for (int i = 0; i < selectColumnName.length; i++)
                 {
-                    sqlBuff.append(className + "." + selectColumnName[i]);
+                    sqlBuff.append(Utility.createAttributeNameForHQL(className, selectColumnName[i]));
                     if (i != selectColumnName.length - 1)
                     {
                         sqlBuff.append(", ");
@@ -732,5 +734,56 @@ public class HibernateDAOImpl implements HibernateDAO
     	
 		return null;
     }
+
+    /**
+	 * To retrieve the attribute value for the given source object name & Id.
+	 * @param sourceObjectName Source object in the Database. 
+	 * @param id Id of the object.
+	 * @param attributeName attribute name to be retrieved. 
+	 * @return The Attribute value corresponding to the SourceObjectName & id.
+	 * @throws DAOException
+	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
+	 */
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException 
+	{
+		String[] selectColumnNames = {attributeName};
+		String[] whereColumnName = {Constants.SYSTEM_IDENTIFIER}; 
+		String[] whereColumnCondition = {"="};
+		Object[] whereColumnValue = {id};
+		
+		List result = retrieve(sourceObjectName, selectColumnNames, whereColumnName, whereColumnCondition, whereColumnValue, null);
+		
+		Object attribute = null;
+		
+		/*
+		 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+		 */
+		if (Utility.isColumnNameContainsElements(attributeName))
+		{
+			Collection collection = new HashSet();
+			attribute = collection;
+			for(int i=0;i<result.size();i++)
+			{
+				/**
+				 * Name: Prafull
+				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+				 */
+				collection.add(HibernateMetaData.getProxyObjectImpl(result.get(i)));
+			}
+		}
+		else
+		{
+			if (!result.isEmpty())
+			{
+				/**
+				 * Name: Prafull
+				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+				 */
+				attribute = HibernateMetaData.getProxyObjectImpl(result.get(0));
+			}
+		}
+		
+		return attribute;	
+	}
     
 }

@@ -8,8 +8,11 @@ package edu.wustl.common.bizlogic;
 
 import java.util.List;
 
+import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
+import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -80,4 +83,18 @@ public interface IBizLogic
     public abstract List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,Long objIDArr[])throws DAOException;
 
     public void setPrivilege(int daoType,String privilegeName, Class objectType, Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException;
+    
+    /**
+	 * To retrieve the attribute value for the given source object name & Id.
+	 * @param sourceObjectName Source object in the Database. 
+	 * @param id Id of the object.
+	 * @param attributeName attribute name to be retrieved. 
+	 * @return The Attribute value corresponding to the SourceObjectName & id.
+	 * @throws DAOException
+	 */
+    public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException;
+    
+    public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)throws DAOException,BizLogicException;
+    
+    public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException;
 }

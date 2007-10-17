@@ -58,6 +58,12 @@ public class Utility
 			}
 			catch(Exception e)
 			{
+			/* Bug id: 4205
+			patch id: 4205_1*/  
+				if(pattern == null || pattern.equals(""))
+				{
+					pattern = Constants.DATE_PATTERN_MM_DD_YYYY;
+				}
 				throw new ParseException("Date '"+date+"' is not in format of "+pattern,0);
 			}
 		}
@@ -76,7 +82,7 @@ public class Utility
 	public static Date parseDate(String date) throws ParseException
 	{
 	    String pattern = datePattern(date);
-	    
+	    	   
 	    return parseDate(date, pattern);
 	}
 	
@@ -92,7 +98,10 @@ public class Utility
     		result = mat.matches();
     		
     		if(result)
+            {
     			dtSep  = Constants.DATE_SEPARATOR; 
+                datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+            }
     		
     		// check for  / separator
     		if(!result)
@@ -102,7 +111,64 @@ public class Utility
         		result = mat.matches();
         		//System.out.println("is Valid Date Pattern : / : "+result);
         		if(result)
+                {
         			dtSep  = Constants.DATE_SEPARATOR_SLASH; 
+                    datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+                }
+            }
+            
+            if(!result)
+            {
+                re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
+                mat =re.matcher(strDate); 
+                result = mat.matches();
+            
+                if(result)
+                {
+                    dtSep  = Constants.DATE_SEPARATOR;
+                    datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
+                }
+            }
+            
+            // check for  / separator
+            if(!result)
+            {
+                re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
+                mat =re.matcher(strDate); 
+                result = mat.matches();             
+                if(result)
+                {
+                    dtSep  = Constants.DATE_SEPARATOR_SLASH;
+                    datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
+                }
+            }
+        }
+        catch(Exception exp)
+        {
+            Logger.out.error("Utility.datePattern() : exp : " + exp);
+        }
+        /*if(dtSep.trim().length()>0)
+            datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";*/
+        /*else
+        {
+            try
+            {
+                Pattern re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
+                Matcher  mat =re.matcher(strDate); 
+                result = mat.matches();
+                
+                if(result)
+                    dtSep  = Constants.DATE_SEPARATOR; 
+                
+                // check for  / separator
+                if(!result)
+                {
+                    re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
+                    mat =re.matcher(strDate); 
+                    result = mat.matches();
+                    //System.out.println("is Valid Date Pattern : / : "+result);
+                    if(result)
+                        dtSep  = Constants.DATE_SEPARATOR_SLASH; 
     		}
 		}
     	catch(Exception exp)
@@ -110,7 +176,8 @@ public class Utility
 			Logger.out.error("Utility.datePattern() : exp : " + exp);
 		}
     	if(dtSep.trim().length()>0)
-    		datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+                datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
+        }*/
     	
     	Logger.out.debug("datePattern returned : "+ datePattern  );
 		return datePattern; 
@@ -334,6 +401,44 @@ public class Utility
         }
     }
     
+    /**
+     * Constants that will appear in HQL for retreiving Attributes of the Collection data type.
+     */
+    private static final String ELEMENTS = "elements";
+    
+    /**
+     * To Create the attribute name for HQL select part.
+     * If the  selectColumnName is in format "elements(<attributeName>)" then it will return String as "elments(<className>.<AttributeName>)" 
+     * else it will return String in format "<className>.<AttributeName>"
+     * @param className The className
+     * @param selectColumnName The select column name passed to form HQL. either in format "elements(<attributeName>)" or "<AttributeName>"
+     * @return The Select column name for the HQL.
+     */
+    public static String createAttributeNameForHQL(String className, String selectColumnName) 
+    {
+		String attribute;
+		// Check whether the select Column start with "elements" & ends with ")" or not
+		if (isColumnNameContainsElements(selectColumnName))
+		{
+			int startIndex = selectColumnName.indexOf("(")+1;
+			attribute =  selectColumnName.substring(0,startIndex) + className + "." + selectColumnName.substring(startIndex);
+		}
+		else
+		{	
+			attribute =  className + "." + selectColumnName;
+		}
+		return attribute;
+	}
+	/**
+	 * Check whether the select Column start with "elements" & ends with ")" or not
+	 * @param columnName The columnName
+	 * @return true if the select Column start with "elements" & ends with ")" or not
+	 */
+	public static boolean isColumnNameContainsElements(String columnName) 
+	{
+		columnName = columnName.toLowerCase().trim();
+		return columnName.startsWith(ELEMENTS) && columnName.endsWith(")");
+	}
     /**
      * Returns name of FormBean specified in struts-config.xml for passed Object of FormBean
      * @param obj - FormBean object 

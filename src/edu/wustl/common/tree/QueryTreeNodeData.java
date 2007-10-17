@@ -36,6 +36,8 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
     
     private String combinedParentObjectName;
     
+    private String toolTipText;
+    
     /**
      * Initializes an empty node.
      */
@@ -47,6 +49,7 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
         parentObjectName = null;
         combinedParentIdentifier = null;
 		combinedParentObjectName = null;
+		toolTipText = null;
     }
 
    
@@ -206,5 +209,15 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
 			nodeName = nodeName  + ":" + this.identifier;
 		
 		return nodeName;
+	}
+
+
+	public String getToolTipText() {
+		return toolTipText;
+	}
+
+
+	public void setToolTipText(String toolTipText) {
+		this.toolTipText = toolTipText;
 	}
 }

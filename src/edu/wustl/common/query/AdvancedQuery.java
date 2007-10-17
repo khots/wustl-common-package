@@ -13,6 +13,15 @@ package edu.wustl.common.query;
  */
 public class AdvancedQuery extends Query {
     
+	/**
+	 * Name: Prafull
+	 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+	 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+	 * 
+	 * For Advance Query the Order by clause will be added in following order given by array.  
+	 */
+	public static String[] QUERY_ORDERBY_SEQUENCE = {PARTICIPANT,COLLECTION_PROTOCOL, COLLECTION_PROTOCOL_REGISTRATION, SPECIMEN_COLLECTION_GROUP, SPECIMEN};
+	
     /**
      * Constructs a AdvancedQuery object
      * @param queryStartObject - Start object for the query
