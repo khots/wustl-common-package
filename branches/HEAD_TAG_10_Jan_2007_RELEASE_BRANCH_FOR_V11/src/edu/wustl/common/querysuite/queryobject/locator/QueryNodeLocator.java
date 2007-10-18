@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.querysuite.QueryGeneratorMock;
+import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
@@ -185,7 +185,8 @@ public class QueryNodeLocator
 	 */
 	public static void main(String[] args)
 	{
-		IQuery query = QueryGeneratorMock.createSampleQuery4();
+//		IQuery query = QueryGeneratorMock.createSampleQuery4();
+		IQuery query = QueryObjectFactory.createQuery();
 		setViewForAll(query);
 		IConstraints constraints2 = query.getConstraints();
 		Map<IExpressionId, Position> positionMap2 = new QueryNodeLocator(500,query).getPositionMap();
