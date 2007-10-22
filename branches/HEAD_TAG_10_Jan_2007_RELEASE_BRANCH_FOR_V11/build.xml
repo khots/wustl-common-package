@@ -325,7 +325,7 @@
 	</target>
 
 	<target name="GenerateQuerySchemaMySQL">
-		<taskdef name="schemaexport" classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
+		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
 			<classpath>
 				<pathelement location="${build.dir}/commonpackage.jar" />
 				<fileset dir="${lib.dir}">
@@ -343,7 +343,7 @@
 	</target>
 	
 	<target name="GenerateQuerySchemaOracle">
-		<taskdef name="schemaexport" classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask">
+		<taskdef name="schemaexport" classname="org.hibernate.tool.hbm2ddl.SchemaExportTask">
 			<classpath>
 				<pathelement location="${build.dir}/commonpackage.jar" />
 				<fileset dir="${lib.dir}">

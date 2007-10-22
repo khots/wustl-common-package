@@ -24,12 +24,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Transaction;
-
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 /**
  * @author aarti_sharma
@@ -226,10 +226,11 @@ public class AuthorizationDAOImpl extends
 
 			for (int i = 0; i < protectionElementIds.length; i++) {
 				ProtectionGroupProtectionElement intersection = new ProtectionGroupProtectionElement();
-
-				List list =  s.find("from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement" +
-						" where protectionGroupProtectionElement.protectionElement.protectionElementId="+protectionElementIds[i]+
-						" and protectionGroupProtectionElement.protectionGroup.protectionGroupId="+protectionGroupId);
+				String query = "from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement" +
+				" where protectionGroupProtectionElement.protectionElement.protectionElementId="+protectionElementIds[i]+
+				" and protectionGroupProtectionElement.protectionGroup.protectionGroupId="+protectionGroupId ;	
+				Query queryObj =  s.createQuery(query);
+				List list = queryObj.list();
 				if(list!=null && list.size()>0)
 					this.removeObject(list.get(0));
 				

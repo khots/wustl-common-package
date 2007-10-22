@@ -6,7 +6,7 @@
  */
 package edu.wustl.common.security;
 
-import net.sf.hibernate.SessionFactory;
+import org.hibernate.SessionFactory;
 import edu.wustl.common.security.dao.AuthorizationDAOImpl;
 import gov.nih.nci.security.system.ApplicationSessionFactory;
 

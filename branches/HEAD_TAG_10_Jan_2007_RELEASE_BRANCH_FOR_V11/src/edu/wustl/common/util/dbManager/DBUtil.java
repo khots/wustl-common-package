@@ -8,15 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.cfg.Configuration;
-import net.sf.hibernate.util.XMLHelper;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.util.XMLHelper;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.DOMWriter;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
 import edu.wustl.common.exception.BizLogicException;
@@ -40,6 +41,9 @@ public class DBUtil
 	//ThreadLocal to hold the Session for the current executing thread. 
 	private static final ThreadLocal threadLocal = new ThreadLocal();
 	//Initialize the session Factory in the Static block.
+	//Initialize the session Factory in the Static block.
+	private static EntityResolver entityResolver=XMLHelper.DEFAULT_DTD_RESOLVER;
+	
 	static
 	{
 		try
@@ -52,21 +56,26 @@ public class DBUtil
 			p.load(inputStream);
 			inputStream.close();
 
-			String configurationFileNames = p.getProperty("hibernate.configuration.files");
+			String configurationFileNames = p.getProperty("hibernate3.configuration.files");
 
-			String[] fileNames = configurationFileNames.split(",");
+			String[] fileNames = null;
+			if(configurationFileNames!=null)
+			{
+				fileNames = configurationFileNames.split(",");
+			}
 
 			// if no configuraiton file found, get the default one.
-			if (fileNames.length == 0) {
+			if (fileNames==null) 
+			{
 				fileNames = new String[] {"hibernate.cfg.xml"};
 			}
-			
             //get all configuration files 
 			for (int i = 0; i < fileNames.length; i++)
 			{
 				String fileName = fileNames[i];
 				fileName = fileName.trim();
-				addConfigurationFile(fileName, cfg);
+				System.out.println(fileName+": fileName");
+				addConfigurationFile(fileName, cfg,entityResolver);
 			}
 
 			m_sessionFactory = cfg.buildSessionFactory();
@@ -87,15 +96,17 @@ public class DBUtil
 	 * @param fileName name of the file that needs to be added
 	 * @param cfg Configuration to which this file is added.
 	 */
-	private static void addConfigurationFile(String fileName, Configuration cfg)
+	private static void addConfigurationFile(String fileName, Configuration cfg, EntityResolver entityResolver)
 	{
 
 		try
 		{
+			System.out.println(fileName+": fileName");
 			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(fileName);
 			List errors = new ArrayList();
 			//hibernate api to read configuration file and convert it to Document(dom4j) object.
-			Document document = XMLHelper.createSAXReader(fileName, errors).read(
+			XMLHelper xmlHelper = new XMLHelper();
+			Document document = xmlHelper.createSAXReader(fileName, errors, entityResolver).read(
 					new InputSource(inputStream));
 			//convert to w3c Document object.
 			DOMWriter writer = new DOMWriter();
