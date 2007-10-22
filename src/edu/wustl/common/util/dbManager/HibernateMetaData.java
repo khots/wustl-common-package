@@ -11,18 +11,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.hibernate.cfg.Configuration;
-import net.sf.hibernate.mapping.Collection;
-import net.sf.hibernate.mapping.Column;
-import net.sf.hibernate.mapping.PersistentClass;
-import net.sf.hibernate.mapping.Property;
-import net.sf.hibernate.mapping.Subclass;
-import net.sf.hibernate.mapping.Table;
-import net.sf.hibernate.proxy.HibernateProxy;
-import net.sf.hibernate.proxy.HibernateProxyHelper;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.mapping.Collection;
+import org.hibernate.mapping.Column;
+import org.hibernate.mapping.ManyToOne;
+import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.Property;
+import org.hibernate.mapping.Subclass;
+import org.hibernate.mapping.Table;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.HibernateProxyHelper;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -53,25 +55,21 @@ public class HibernateMetaData
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static List getSubClassList(String className)// throws ClassNotFoundException
+	public static List getSubClassList(String className) throws ClassNotFoundException
 	{
 		List list = new ArrayList();
-        try{
 		Class classObj = Class.forName(className);
-		Iterator it = cfg.getClassMapping(classObj).getDirectSubclasses();
+		PersistentClass classobj1 = cfg.getClassMapping(classObj.getName());
+		Iterator it  =classobj1.getDirectSubclasses();
+		//Iterator it = cfg.getClassMapping(classObj).getDirectSubclasses();
 		while(it.hasNext())
 		{
 			Subclass subClass = (Subclass)it.next();
 			
 			System.out.println(subClass.getClass().getName());
-			System.out.println("Name "+subClass.getName());
-			list.add(subClass.getName());
+			//System.out.println("Name "+subClass.getName());
+			list.add(subClass.getNodeName());
 		}
-        }catch(ClassNotFoundException e) 
-        {
-            System.out.println("Class Not found Excception !!");
-            e.printStackTrace();
-         }
 		return list;
 	}
 	
@@ -84,7 +82,7 @@ public class HibernateMetaData
 	public static Class getSuperClass(Object  obj)
 	{
 		Class objClass = obj.getClass();
-		PersistentClass persistentClass = cfg.getClassMapping(objClass);
+		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		PersistentClass superClass = persistentClass.getSuperclass();
 		return superClass.getClass();
 	}
@@ -101,10 +99,10 @@ public class HibernateMetaData
 		Package objPackage = objClass.getPackage();
 		Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
 		
-		PersistentClass persistentClass = cfg.getClassMapping(objClass);
+		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass()!=null) {
 	
-			Logger.out.debug(objPackage.getName()+" "+persistentClass.getName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
+			Logger.out.debug(objPackage.getName()+" "+persistentClass.getNodeName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 					);
 			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 					.equals(objPackage.getName()));
@@ -122,7 +120,7 @@ public class HibernateMetaData
 	
 	public static String getTableName(Class classObj)
 	{
-		Table tbl = cfg.getClassMapping(classObj).getTable();
+		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
@@ -130,7 +128,7 @@ public class HibernateMetaData
 	}
 	public static String getRootTableName(Class classObj)
 	{
-		Table tbl = cfg.getClassMapping(classObj).getRootTable();
+		Table tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
@@ -145,7 +143,7 @@ public class HibernateMetaData
 			persistentClass = (PersistentClass) it.next();
 			if(tableName.equalsIgnoreCase(persistentClass.getTable().getName()))
 			{
-				return persistentClass.getName();
+				return persistentClass.getNodeName();
 			}
 		}
 		
@@ -155,7 +153,7 @@ public class HibernateMetaData
 	public static String getColumnName(Class classObj, String attributeName)
 	{
 		//Logger.out.debug("classObj, String attributeName "+classObj+" "+attributeName);
-		Iterator it = cfg.getClassMapping(classObj).getPropertyClosureIterator();
+		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
 		while(it.hasNext())
 		{
 			Property property = (Property)it.next();
@@ -177,7 +175,7 @@ public class HibernateMetaData
 		}
 		
 		
-		Property property = cfg.getClassMapping(classObj).getIdentifierProperty();
+		Property property = cfg.getClassMapping(classObj.getName()).getIdentifierProperty();
 		//Logger.out.debug("property.getName() "+property.getName());
 		if(property.getName().equals(attributeName))
 		{
@@ -212,7 +210,7 @@ public class HibernateMetaData
 	}
 	public static void getDATA(Class classObj)
 	{
-		net.sf.hibernate.mapping.Collection coll = cfg.getCollectionMapping("edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
+		org.hibernate.mapping.Collection coll = cfg.getCollectionMapping("edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
 		//System.out.println(map);
 		
 		System.out.println(coll.getCollectionTable().getName());
@@ -223,7 +221,7 @@ public class HibernateMetaData
 		
 		while(it.hasNext())
 		{
-			//net.sf.hibernate.mapping.Set set = (net.sf.hibernate.mapping.Set)it.next();
+			//org.hibernate.mapping.Set set = (org.hibernate.mapping.Set)it.next();
 			System.out.println(it.next());
 			
 		}
@@ -246,7 +244,7 @@ public class HibernateMetaData
 			{
 				Collection col=(Collection)itr1.next();
 				
-				if(col.getElement().getClass().getName().equals("net.sf.hibernate.mapping.ManyToOne"))
+				if(col.getElement().getClass().getName().equals(ManyToOne.class.getName()))
 				{
 					saveRelations(col,"ManyToMany");
 				}
@@ -270,7 +268,7 @@ public class HibernateMetaData
 	 */
 	private static void saveRelations(Collection col,String rel_type) throws Exception
 	{
-		String className=col.getOwnerClass().getName();
+		String className=col.getOwner().getClassName();
 		String relatedClassName=col.getElement().getType().getName();
 		String roleAttribute=col.getRole();
 		String relationType=rel_type;
@@ -282,7 +280,7 @@ public class HibernateMetaData
 											relationTable,keyId,roleId);
 		mappings.add(hmc);
 		
-		List list1=HibernateMetaData.getSubClassList(col.getOwnerClass().getName());
+		List list1=HibernateMetaData.getSubClassList(col.getOwner().getClassName());
 		for(int i=0;i<list1.size();i++)
 		{
 			hmc=new ClassRelationshipData(list1.get(i).toString(),relatedClassName,roleAttribute,relationType,
@@ -392,7 +390,7 @@ public class HibernateMetaData
 	 */
 	public static String getKeyId(String attributeName)
 	{
-		net.sf.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
+		org.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
 		Iterator keyIt = col1.getKey().getColumnIterator();
 		while (keyIt.hasNext()) 
 		{
@@ -410,7 +408,7 @@ public class HibernateMetaData
 	 */
 	public static String getRoleKeyId(String attributeName)
 	{
-		net.sf.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
+		org.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
 		Iterator colIt = col1.getElement().getColumnIterator();
 		while (colIt.hasNext()) 
 		{
@@ -429,7 +427,7 @@ public class HibernateMetaData
 	 */
 	public static int getColumnWidth(Class classObj, String attributeName)
 	{
-		Iterator it = cfg.getClassMapping(classObj).getPropertyClosureIterator();
+		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
 		while(it.hasNext())
 		{
 			Property property = (Property)it.next();
@@ -459,7 +457,9 @@ public class HibernateMetaData
 		if (domainObject instanceof HibernateProxy)
 		{
 			HibernateProxy hp  = (HibernateProxy)domainObject;
-			domainObject = HibernateProxyHelper.getLazyInitializer(hp).getImplementation();
+			Object obj = hp.getHibernateLazyInitializer().getImplementation();
+			System.out.println(obj+" : obj");
+			return (AbstractDomainObject)obj;
 		}
         return domainObject;
 	}

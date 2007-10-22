@@ -18,10 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.Transaction;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;

@@ -6,9 +6,9 @@ package edu.wustl.common.util.dbManager;
 import java.util.Collection;
 import java.util.List;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author chetan_patil

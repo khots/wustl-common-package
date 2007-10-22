@@ -11,8 +11,8 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.exception.ConstraintViolationException;
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import net.sf.hibernate.Hibernate;
+import org.hibernate.Hibernate;
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
