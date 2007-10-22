@@ -94,6 +94,20 @@ public class CategorialAttribute implements Serializable
 		this.id = id;
 	}
 
+    /**
+     * 
+     * @return CategorialAttribute
+     */
+    public CategorialAttribute  copy()  
+    {
+        CategorialAttribute newCategorialAttribute = new CategorialAttribute();  
+        newCategorialAttribute.setDeCategoryAttributeId(this.deCategoryAttributeId);
+        newCategorialAttribute.setDeSourceClassAttributeId(this.deSourceClassAttributeId);
+        newCategorialAttribute.setCategoryAttribute(this.categoryAttribute);
+        newCategorialAttribute.setSourceClassAttribute(this.sourceClassAttribute);
+        return newCategorialAttribute;
+       
+    }
 	/**
 	 * Default Constructor.
 	 * Required for hibernate.
