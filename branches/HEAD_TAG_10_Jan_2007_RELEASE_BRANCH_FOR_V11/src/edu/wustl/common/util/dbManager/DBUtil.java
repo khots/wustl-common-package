@@ -56,7 +56,7 @@ public class DBUtil
 			p.load(inputStream);
 			inputStream.close();
 
-			String configurationFileNames = p.getProperty("hibernate3.configuration.files");
+			String configurationFileNames = p.getProperty("hibernate.configuration.files");
 
 			String[] fileNames = null;
 			if(configurationFileNames!=null)
@@ -101,7 +101,6 @@ public class DBUtil
 
 		try
 		{
-			System.out.println(fileName+": fileName");
 			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(fileName);
 			List errors = new ArrayList();
 			//hibernate api to read configuration file and convert it to Document(dom4j) object.
