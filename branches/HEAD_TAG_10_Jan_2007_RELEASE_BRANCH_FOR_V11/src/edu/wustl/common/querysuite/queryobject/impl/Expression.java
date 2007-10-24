@@ -308,7 +308,7 @@ public class Expression extends BaseQueryObject implements IExpression {
         expressionOperands.add(index, operand);
         setContainingExpressionForRule(operand);
         logicalConnectors.add(index - 1, logicalConnector);
-        if (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() > ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber()) {
+        if (index>0 && (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() > ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber())) {
             ((LogicalConnector) logicalConnectors.get(index - 1)).setNestingNumber(((LogicalConnector) logicalConnectors.get(index)).getNestingNumber());
         }
     }
@@ -323,7 +323,7 @@ public class Expression extends BaseQueryObject implements IExpression {
         expressionOperands.add(index, operand);
         setContainingExpressionForRule(operand);
         logicalConnectors.add(index, logicalConnector);
-        if (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() < ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber()) {
+        if (index > 0 && (((LogicalConnector) logicalConnectors.get(index)).getNestingNumber() < ((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber())) {
             ((LogicalConnector) logicalConnectors.get(index)).setNestingNumber(((LogicalConnector) logicalConnectors.get(index - 1)).getNestingNumber());
         }
     }
