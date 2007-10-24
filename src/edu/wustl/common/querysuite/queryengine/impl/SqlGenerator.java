@@ -41,13 +41,14 @@ import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -366,7 +367,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("");
 		IExpressionId parentExpressionId = expression.getExpressionId();
-
+		
 		if (processedAlias.isEmpty()) // this will be true only for root node.
 		{
 			EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
@@ -798,8 +799,20 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int currentNestingCounter = 0;// holds current nesting number count i.e. no of opening Braces that needs to be closed.
+		boolean isRulePresent = expression.containsRule();
+		//Changes made  for adding new rule in expression which do not have rule provided 
+		//that expression contains Activity status attribute 
+		if(!isRulePresent)
+		{
+			if(getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity())!=null)
+			{
+				IRule rule  = QueryObjectFactory.createRule();
+				ILogicalConnector logicalConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
+				expression.addOperand(0, rule, logicalConnector);
+			}
+		}
+
 		int noOfRules = expression.numberOfOperands();
-		
 		for (int i = 0; i < noOfRules; i++)
 		{
 			IExpressionOperand operand = expression.getOperand(i);
@@ -974,7 +987,23 @@ public class SqlGenerator implements ISqlGenerator
 		}
 		return sql;
 	}
-
+	/**
+	 * Check for activity status present in entity.
+	 * @param entityInterfaceObj The Entity for which we required to check if activity status present.
+	 * @return Reference to the AttributeInterface if activityStatus attribute present in the entity, else null.
+	 */
+	private AttributeInterface getActivityStatusAttribute(EntityInterface entityInterfaceObj) {
+		Collection<AttributeInterface> attributes = entityInterfaceObj.getAttributeCollection();
+		
+		 for (AttributeInterface attribute: attributes)
+			{
+				if (attribute.getName().equals(Constants.ACTIVITY_STATUS))
+				{
+					return attribute;
+				}
+			}
+		return null;
+	}
 	/**
 	 * To get the SQL representation of the Rule.
 	 * @param rule The reference to Rule.
@@ -984,6 +1013,18 @@ public class SqlGenerator implements ISqlGenerator
 	String getSQL(IRule rule) throws SqlException
 	{
 		StringBuffer buffer = new StringBuffer("");
+		
+		IExpression expression =  rule.getContainingExpression();
+		AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity());
+			
+		if(attributeObj!=null)
+	 	{
+	 		List<String> values = new ArrayList<String>();
+			values.add(Constants.ACTIVITY_STATUS_DISABLED);
+			ICondition condition = QueryObjectFactory.createCondition(attributeObj,RelationalOperator.NotEquals, values);
+	 		rule.addCondition(condition);
+	 	}
+		
 		int noOfConditions = rule.size();
 		if (noOfConditions==0)
 		{
