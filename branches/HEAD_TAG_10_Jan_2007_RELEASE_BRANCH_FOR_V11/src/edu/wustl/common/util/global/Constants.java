@@ -494,5 +494,6 @@ public class Constants
 	
 	public static final int HASH_PRIME = 7;
 	public static final String QUERY_SQL = "querySQL";
-	
+
+	public static final String PRIVILEGE_TAG_NAME = "privilege";
 }
