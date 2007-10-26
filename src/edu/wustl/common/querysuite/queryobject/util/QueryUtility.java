@@ -27,29 +27,6 @@ import edu.wustl.common.querysuite.queryobject.IRule;
  */
 public class QueryUtility {
 
-	/**
-	 * To check whether there is condition on identifier field or not.
-	 * @param query the reference to the Query Object.
-	 * @return true if there is any condition on the Identified attribute, else returns false.
-	 */
-	public static boolean isConditionOnIdentifiedField(IQuery query)
-	{
-		Map<IExpressionId, Collection<ICondition>> allSelectedConditions = getAllSelectedConditions(query);
-		Collection<Collection<ICondition>> values = allSelectedConditions.values();
-		Boolean trueValue = new Boolean(true);
-		for (Collection<ICondition> conditions: values)
-		{
-			for (ICondition condition: conditions)
-			{
-				Boolean isConditionOnIdentifiedAttribute = condition.getAttribute().getIsIdentified();
-				
-				if (trueValue.equals(isConditionOnIdentifiedAttribute))
-					return true;
-			}
-		}
-		return false;
-	}
-	
     /**
      * This method returns all the selected Condition for a given query.  
      * @param query
