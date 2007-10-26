@@ -145,7 +145,33 @@ public class SqlGenerator implements ISqlGenerator
 		Logger.out.debug("Finished SqlGenerator.generateSQL()...SQL:" + sql);
 		return sql;
 	}
-
+	/**
+	 * Changes made  for adding new rule in expression which do not have rule provided 
+	 * that expression contains Activity status attribute.
+	 * @param expressionId Root Expression Id 
+	 */
+	private void addactivityStatusToEmptExpr(IExpressionId expressionId)
+	{
+	
+		List<IExpressionId> operandList = joinGraph.getChildrenList(expressionId);
+		for(IExpressionId subExpression: operandList)
+		{
+			if(subExpression.isSubExpressionOperand())
+			{
+				addactivityStatusToEmptExpr(subExpression);
+			}
+		}
+		Expression expression= (Expression)constraints.getExpression(expressionId);
+		if(!expression.containsRule())
+		{
+			if(getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity())!=null)
+			{
+				IRule rule  = QueryObjectFactory.createRule();
+				ILogicalConnector logicalConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
+				expression.addOperand(0, rule, logicalConnector);
+			}
+		}
+	}
 	/**
 	 * To initialize map the variables. & build the SQL for the Given Query Object.  
 	 * @param query the IQuery reference.
@@ -171,7 +197,8 @@ public class SqlGenerator implements ISqlGenerator
 		aliasNameMap = new HashMap<String, String>();
 		createAliasAppenderMap(rootExpression, 1, new Integer(1),
 				new HashMap<List<IAssociation>, IExpressionId>());
-
+		
+		addactivityStatusToEmptExpr(rootExpression.getExpressionId());
 		// Identifying empty Expressions.
 		emptyExpressions = new HashSet<IExpressionId>();
 		isEmptyExpression(rootExpression.getExpressionId());
@@ -799,19 +826,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int currentNestingCounter = 0;// holds current nesting number count i.e. no of opening Braces that needs to be closed.
-		boolean isRulePresent = expression.containsRule();
-		//Changes made  for adding new rule in expression which do not have rule provided 
-		//that expression contains Activity status attribute 
-		if(!isRulePresent)
-		{
-			if(getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity())!=null)
-			{
-				IRule rule  = QueryObjectFactory.createRule();
-				ILogicalConnector logicalConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And);
-				expression.addOperand(0, rule, logicalConnector);
-			}
-		}
-
+	
 		int noOfRules = expression.numberOfOperands();
 		for (int i = 0; i < noOfRules; i++)
 		{
