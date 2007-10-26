@@ -869,7 +869,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//System.out.println("testSampleQuery1WithEmptyExp:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for From clause of the Expression !!!",
-					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column32 ,ParticipantMedicalIdentif_5.IDENTIFIER Column33 ,Site_6.ACTIVITY_STATUS Column34 ,Site_6.EMAIL_ADDRESS Column35 ,Site_6.TYPE Column36 ,Site_6.NAME Column37 ,Site_6.IDENTIFIER Column38 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID And Specimen_4.SPECIMEN_CLASS='Tissue') left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) left join catissue_site Site_6 on (ParticipantMedicalIdentif_5.SITE_ID=Site_6.IDENTIFIER) Where (Participant_1.LAST_NAME like 's%' And Participant_1.ACTIVITY_STATUS!='Disabled') And((CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And((SpecimenCollectionGroup_3.ACTIVITY_STATUS!='Disabled') And(Specimen_4.TYPE='Fixed Tissue' And Specimen_4.ACTIVITY_STATUS!='Disabled') Or(Specimen_4.TYPE='Fresh Tissue' And Specimen_4.ACTIVITY_STATUS!='Disabled')))",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,SpecimenCollectionGroup_3.ACTIVITY_STATUS Column16 ,SpecimenCollectionGroup_3.CLINICAL_STATUS Column17 ,SpecimenCollectionGroup_3.CLINICAL_DIAGNOSIS Column18 ,SpecimenCollectionGroup_3.NAME Column19 ,SpecimenCollectionGroup_3.IDENTIFIER Column20 ,Specimen_4.TYPE Column21 ,Specimen_4.POSITION_DIMENSION_TWO Column22 ,Specimen_4.POSITION_DIMENSION_ONE Column23 ,Specimen_4.PATHOLOGICAL_STATUS Column24 ,Specimen_4.LINEAGE Column25 ,Specimen_4.LABEL Column26 ,Specimen_4.IDENTIFIER Column27 ,Specimen_4.COMMENTS Column28 ,Specimen_4.BARCODE Column29 ,Specimen_4.AVAILABLE Column30 ,Specimen_4.ACTIVITY_STATUS Column31 ,ParticipantMedicalIdentif_5.MEDICAL_RECORD_NUMBER Column32 ,ParticipantMedicalIdentif_5.IDENTIFIER Column33 ,Site_6.ACTIVITY_STATUS Column34 ,Site_6.EMAIL_ADDRESS Column35 ,Site_6.TYPE Column36 ,Site_6.NAME Column37 ,Site_6.IDENTIFIER Column38 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID And Specimen_4.SPECIMEN_CLASS='Tissue') left join catissue_part_medical_id ParticipantMedicalIdentif_5 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_5.PARTICIPANT_ID) left join catissue_site Site_6 on (ParticipantMedicalIdentif_5.SITE_ID=Site_6.IDENTIFIER) Where (Participant_1.LAST_NAME like 's%' And Participant_1.ACTIVITY_STATUS!='Disabled') And((CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And((SpecimenCollectionGroup_3.ACTIVITY_STATUS!='Disabled') And(Specimen_4.TYPE='Fixed Tissue' And Specimen_4.ACTIVITY_STATUS!='Disabled') Or(Specimen_4.TYPE='Fresh Tissue' And Specimen_4.ACTIVITY_STATUS!='Disabled'))) And(Site_6.ACTIVITY_STATUS!='Disabled')",
 					sql);
 		}
 		catch (Exception e)
@@ -1394,6 +1394,63 @@ public class SqlGeneratorTestCase extends TestCase
 		{
 			e.printStackTrace();
 			fail("Unexpected Exception, While removing special characters from the string");
+		}
+	}
+	/**
+	 * To check query containing empty root expression 
+	 *
+	 */
+	public void testEmptyRootExpression()
+	{
+		IQuery query = QueryGeneratorMock.emptyRootExpression();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			System.out.println("SQL ss:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query with output view!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,Specimen_4.TYPE Column12 ,Specimen_4.POSITION_DIMENSION_TWO Column13 ,Specimen_4.POSITION_DIMENSION_ONE Column14 ,Specimen_4.PATHOLOGICAL_STATUS Column15 ,Specimen_4.LINEAGE Column16 ,Specimen_4.LABEL Column17 ,Specimen_4.IDENTIFIER Column18 ,Specimen_4.COMMENTS Column19 ,Specimen_4.BARCODE Column20 ,Specimen_4.AVAILABLE Column21 ,Specimen_4.ACTIVITY_STATUS Column22 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant_1.ACTIVITY_STATUS!='Disabled') And((CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And((SpecimenCollectionGroup_3.ACTIVITY_STATUS!='Disabled') And(Specimen_4.IDENTIFIER is NOT NULL And Specimen_4.ACTIVITY_STATUS!='Disabled')))",
+					sql);
+			
+			assertEquals(
+					"Incorrect number of output trees Formed while generating SQL !!!",
+					1,
+					generator.getRootOutputTreeNodeList().size());
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
+	/**
+	 * To check query containing empty child expression 
+	 *
+	 */
+	public void testEmptyChildExpression()
+	{
+		IQuery query = QueryGeneratorMock.emptyChildExpression();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+			System.out.println("SQL ss:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query with output view!!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,Specimen_4.TYPE Column12 ,Specimen_4.POSITION_DIMENSION_TWO Column13 ,Specimen_4.POSITION_DIMENSION_ONE Column14 ,Specimen_4.PATHOLOGICAL_STATUS Column15 ,Specimen_4.LINEAGE Column16 ,Specimen_4.LABEL Column17 ,Specimen_4.IDENTIFIER Column18 ,Specimen_4.COMMENTS Column19 ,Specimen_4.BARCODE Column20 ,Specimen_4.AVAILABLE Column21 ,Specimen_4.ACTIVITY_STATUS Column22 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_specimen_coll_group SpecimenCollectionGroup_3 on (CollectionProtocolRegistr_2.IDENTIFIER=SpecimenCollectionGroup_3.COLLECTION_PROTOCOL_REG_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_3.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) Where (Participant_1.LAST_NAME like 'last%' And Participant_1.ACTIVITY_STATUS!='Disabled') And((CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And((SpecimenCollectionGroup_3.ACTIVITY_STATUS!='Disabled') And(Specimen_4.ACTIVITY_STATUS!='Disabled')))",
+					sql);
+			
+			assertEquals(
+					"Incorrect number of output trees Formed while generating SQL !!!",
+					1,
+					generator.getRootOutputTreeNodeList().size());
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
 		}
 	}
 }

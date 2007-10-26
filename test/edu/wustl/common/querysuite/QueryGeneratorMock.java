@@ -39,7 +39,182 @@ public class QueryGeneratorMock
 {
 
 	static EntityManagerMock enitytManager = new EntityManagerMock();
+	
+	/**
+	 * Creates query with empty child expression.
+	 * @return
+	 */	
+	public static IQuery emptyChildExpression()
+	{
+		IQuery query = null;
 
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			ILogicalConnector andConnector = QueryObjectFactory
+			.createLogicalConnector(LogicalOperator.And);
+
+
+			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			EntityInterface cprEntity = enitytManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+
+
+			// creating expression for Participant.
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createQueryEntity(participantEntity);
+			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
+
+			IRule participantRule = QueryObjectFactory.createRule(null);
+			List<String> participantValues = new ArrayList<String>();
+			participantValues.add("last");
+			ICondition ParticipantCondition = QueryObjectFactory.createCondition(findAttribute(participantEntity, "lastName"), RelationalOperator.StartsWith, participantValues);
+			participantRule.addCondition(ParticipantCondition);
+			participantExpression.addOperand(participantRule);
+
+			// creating expression for collection Protocol Registration
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createQueryEntity(cprEntity);
+			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
+			participantExpression.addOperand(andConnector, collectionProtocolRegExpression
+					.getExpressionId());
+
+			AssociationInterface participanCPRegAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			IIntraModelAssociation iParticipanCPRegAssociation = QueryObjectFactory.createIntraModelAssociation(participanCPRegAssociation);
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					collectionProtocolRegExpression.getExpressionId(), iParticipanCPRegAssociation);
+
+
+			// creating expression for SpecimenCollectionGroup.
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createQueryEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression.getExpressionId());
+			AssociationInterface cprAndSpgAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME,
+					"collectionProtocolRegistration"),
+					EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			IIntraModelAssociation iCprAndSpgAssociation = QueryObjectFactory.createIntraModelAssociation(cprAndSpgAssociation);
+			joinGraph.putAssociation(collectionProtocolRegExpression.getExpressionId(),
+					specimenCollectionGroupExpression.getExpressionId(), iCprAndSpgAssociation);
+
+			//creating SpecimeExpression.
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createQueryEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(specimenExpression.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					"specimenCollectionGroup"), EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpgAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression.getExpressionId(), iSpgAndSpecimeAssociation);
+//			// Creating output Tree.
+			participantExpression.setInView(true);
+			collectionProtocolRegExpression.setInView(false);
+			specimenCollectionGroupExpression.setInView(false);
+			specimenExpression.setInView(true);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	/**
+	 * Creates query with empty root expression
+	 * @return
+	 */
+	public static IQuery emptyRootExpression()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			IJoinGraph joinGraph = constraints.getJoinGraph();
+			
+			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			EntityInterface cprEntity = enitytManager.getEntityByName(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			EntityInterface scgEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			EntityInterface specimenEntity = enitytManager.getEntityByName(EntityManagerMock.SPECIMEN_NAME);
+
+
+			// creating expression for Participant.
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createQueryEntity(participantEntity);
+			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
+
+			// creating expression for collection Protocol Registration
+			IQueryEntity cprConstraintEntity = QueryObjectFactory.createQueryEntity(cprEntity);
+			IExpression collectionProtocolRegExpression = constraints.addExpression(cprConstraintEntity);
+			participantExpression.addOperand(collectionProtocolRegExpression
+					.getExpressionId());
+
+			AssociationInterface participanCPRegAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "participant"),
+					EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME);
+			IIntraModelAssociation iParticipanCPRegAssociation = QueryObjectFactory.createIntraModelAssociation(participanCPRegAssociation);
+
+			joinGraph.putAssociation(participantExpression.getExpressionId(),
+					collectionProtocolRegExpression.getExpressionId(), iParticipanCPRegAssociation);
+
+
+			// creating expression for SpecimenCollectionGroup.
+			IQueryEntity scgConstraintEntity = QueryObjectFactory.createQueryEntity(scgEntity);
+			IExpression specimenCollectionGroupExpression = constraints.addExpression(scgConstraintEntity);
+			collectionProtocolRegExpression.addOperand(specimenCollectionGroupExpression.getExpressionId());
+			AssociationInterface cprAndSpgAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME,
+					"collectionProtocolRegistration"),
+					EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME);
+			IIntraModelAssociation iCprAndSpgAssociation = QueryObjectFactory.createIntraModelAssociation(cprAndSpgAssociation);
+			joinGraph.putAssociation(collectionProtocolRegExpression.getExpressionId(),
+					specimenCollectionGroupExpression.getExpressionId(), iCprAndSpgAssociation);
+
+			//creating SpecimeExpression.
+			IQueryEntity specimenConstraintEntity = QueryObjectFactory.createQueryEntity(specimenEntity);
+			IExpression specimenExpression = constraints.addExpression(specimenConstraintEntity);
+
+			specimenCollectionGroupExpression.addOperand(specimenExpression.getExpressionId());
+			AssociationInterface spgAndSpecimeAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME,
+					"specimenCollectionGroup"), EntityManagerMock.SPECIMEN_NAME);
+			IIntraModelAssociation iSpgAndSpecimeAssociation = QueryObjectFactory.createIntraModelAssociation(spgAndSpecimeAssociation);
+			joinGraph.putAssociation(specimenCollectionGroupExpression.getExpressionId(),
+					specimenExpression.getExpressionId(), iSpgAndSpecimeAssociation);
+
+			ICondition condition = QueryObjectFactory.createCondition(findAttribute(specimenEntity, "id"), RelationalOperator.IsNotNull, null);
+			List<ICondition> conditionList = new ArrayList<ICondition>();
+			conditionList.add(condition);
+			IRule rule = QueryObjectFactory.createRule(conditionList);
+			specimenExpression.addOperand(rule);
+			
+			
+//			// Creating output Tree.
+			participantExpression.setInView(true);
+			collectionProtocolRegExpression.setInView(false);
+			specimenCollectionGroupExpression.setInView(false);
+			specimenExpression.setInView(true);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+	
 	/**
 	 * Create Condition for given Participant Entity: activityStatus = 'Active'
 	 * @param participantEntity the Dynamic Extension entity for participant. 
