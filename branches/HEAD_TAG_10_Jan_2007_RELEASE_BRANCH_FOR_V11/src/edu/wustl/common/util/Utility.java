@@ -668,7 +668,7 @@ public class Utility
 	 */
 	public static String removeSpecialCharactersFromString(String str)
 	{
-		String regexExpression = "[: \\+\\*/()?\\^&!~@%#$.,-=]";
+		String regexExpression = "[\\p{Punct}\\s]";
 		str = str.replaceAll(regexExpression, "");
 		return str;
 	}

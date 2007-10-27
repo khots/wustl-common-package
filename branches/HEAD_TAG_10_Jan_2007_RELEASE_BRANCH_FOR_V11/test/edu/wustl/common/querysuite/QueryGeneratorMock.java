@@ -3825,4 +3825,85 @@ public class QueryGeneratorMock
         return parameterizedQuery;
 
     }
+    
+    public static IQuery createInheritanceQueryLevel4()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			EntityInterface entity = enitytManager.getEntityByName(EntityManagerMock.DE_LEVEL4_INHERITANCE);
+			
+			IQueryEntity constraintEntity = QueryObjectFactory.createQueryEntity(entity);
+			IExpression expression = constraints.addExpression(constraintEntity);
+
+			IRule rule = QueryObjectFactory.createRule(null);
+			List<String> values = new ArrayList<String>();
+			values.add("s");
+			ICondition condition = QueryObjectFactory.createCondition(findAttribute(entity, "level4"), RelationalOperator.StartsWith, values);
+			rule.addCondition(condition);
+			expression.addOperand(rule);
+			expression.setInView(true);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
+
+    public static IQuery createInheritanceQueryLevel4StaticToDE()
+	{
+		IQuery query = null;
+
+		try
+		{
+			query = QueryObjectFactory.createQuery();;
+			IConstraints constraints = QueryObjectFactory.createConstraints();
+			query.setConstraints(constraints);
+
+			EntityInterface participantEntity = enitytManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
+			EntityInterface entity = enitytManager.getEntityByName(EntityManagerMock.DE_LEVEL4_INHERITANCE);
+			
+//			 creating expression for Participant.
+			IQueryEntity participantConstraintEntity = QueryObjectFactory.createQueryEntity(participantEntity);
+			IExpression participantExpression = constraints.addExpression(participantConstraintEntity);
+			
+			
+			
+			IQueryEntity constraintEntity = QueryObjectFactory.createQueryEntity(entity);
+			IExpression expression = constraints.addExpression(constraintEntity);
+			participantExpression.addOperand(expression.getExpressionId());
+
+			IRule rule = QueryObjectFactory.createRule(null);
+			List<String> values = new ArrayList<String>();
+			values.add("s");
+			ICondition condition = QueryObjectFactory.createCondition(findAttribute(entity, "level4"), RelationalOperator.StartsWith, values);
+			rule.addCondition(condition);
+			expression.addOperand(rule);
+			
+
+			AssociationInterface participanDEAssociation = getAssociationFrom(enitytManager
+					.getAssociation(EntityManagerMock.PARTICIPANT_NAME, "annotation"),
+					EntityManagerMock.DE_LEVEL4_INHERITANCE);
+			IIntraModelAssociation iParticipanDEAssociation = QueryObjectFactory.createIntraModelAssociation(participanDEAssociation);
+
+			constraints.getJoinGraph().putAssociation(participantExpression.getExpressionId(),
+					expression.getExpressionId(), iParticipanDEAssociation);
+			
+			participantExpression.setInView(true);
+			expression.setInView(true);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		return query;
+	}
 }

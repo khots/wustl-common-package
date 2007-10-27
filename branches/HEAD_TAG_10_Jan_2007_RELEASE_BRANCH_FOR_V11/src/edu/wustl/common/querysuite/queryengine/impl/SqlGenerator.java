@@ -680,7 +680,9 @@ public class SqlGenerator implements ISqlGenerator
 								+ leftEntityalias + " on ";
 						sql += "(" + rightAttributeColumn + "=" + leftAttributeColumn + ")";
 					}
-					joinSqlList.add(0, sql);
+//					joinSqlList.add(0, sql);
+					joinSqlList.add(sql);
+
 				}
 				entity = parent;
 				parent = parent.getParentEntity();

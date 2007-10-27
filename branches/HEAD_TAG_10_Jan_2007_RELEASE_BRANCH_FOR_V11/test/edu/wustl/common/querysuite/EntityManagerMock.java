@@ -78,6 +78,11 @@ public class EntityManagerMock extends EntityManager {
     public static String FLUID_SPECIMEN_NAME = "edu.wustl.catissuecore.domain.FluidSpecimen";
 
     public static String BIOHAZARD_NAME = "edu.wustl.catissuecore.domain.Biohazard";
+    
+    public static String DE_LEVEL1_INHERITANCE = "Level1DE";
+    public static String DE_LEVEL2_INHERITANCE = "Level2DE";
+    public static String DE_LEVEL3_INHERITANCE = "Level3DE";
+    public static String DE_LEVEL4_INHERITANCE = "Level4DE";
 
     public static Long PARTICIPANT_ID = new Long(1);
 
@@ -120,6 +125,12 @@ public class EntityManagerMock extends EntityManager {
     public static Long FLUID_SPECIMEN_ID = new Long(20);
 
     public static Long BIOHAZARD_ID = new Long(21);
+
+    public static Long DE_LEVEL1_INHERITANCE_ID = new Long(22);
+    public static Long DE_LEVEL2_INHERITANCE_ID = new Long(23);
+    public static Long DE_LEVEL3_INHERITANCE_ID = new Long(24);
+    public static Long DE_LEVEL4_INHERITANCE_ID = new Long(25);
+    
 
     public static Set<String> specimenClasses = new HashSet<String>();
 
@@ -183,6 +194,13 @@ public class EntityManagerMock extends EntityManager {
             association = createAssociation(PARTICIPANT_NAME, COLLECTION_PROTOCOL_REGISTRATION_NAME,
                                             AssociationDirection.BI_DIRECTIONAL, "participant",
                                             "collectionProtocolRegistrationCollection", null, "PARTICIPANT_ID");
+            associations.add(association);
+        } else if (sourceEntityName.equals(PARTICIPANT_NAME)
+                && sourceRoleName.equals("annotation")) {
+            AssociationInterface association = createAssociation(PARTICIPANT_NAME, DE_LEVEL4_INHERITANCE,
+                                                                 AssociationDirection.SRC_DESTINATION,
+                                                                 "annotation", "participant",
+                                                                 null, "PARTICIPANT_ID");
             associations.add(association);
         } else if (sourceEntityName.equals(PARTICIPANT_MEDICAL_ID_NAME)
                 && sourceRoleName.equals("ParticipantMedicalIdentifier")) {
@@ -802,7 +820,16 @@ public class EntityManagerMock extends EntityManager {
             return createCellSpecimenReviewEventParametersEntity(name);
         } else if (name.equals(BIOHAZARD_NAME)) {
             return createBiohazardEntity(name);
+        }else if (name.equals(DE_LEVEL4_INHERITANCE)) {
+        	return createDE4LevelEntity(name);
+        }else if (name.equals(DE_LEVEL3_INHERITANCE)) {
+        	return createDE3LevelEntity(name);
+        }else if (name.equals(DE_LEVEL2_INHERITANCE)) {
+        	return createDE2LevelEntity(name);
+        }else if (name.equals(DE_LEVEL1_INHERITANCE)) {
+        	return createDE1LevelEntity(name);
         }
+        
         return null;
     }
 
@@ -1038,7 +1065,94 @@ public class EntityManagerMock extends EntityManager {
         ((Entity) e).setTableProperties(biohazardTableProperties);
         return e;
     }
+    
+    private EntityInterface createDE1LevelEntity(String name) {
+        EntityInterface e = factory.createEntity();
+        e.setName(DE_LEVEL1_INHERITANCE);
+        e.setCreatedDate(new Date());
+        e.setDescription("This is a DE Annotation");
+        e.setId(DE_LEVEL1_INHERITANCE_ID);
+        e.setLastUpdated(new Date());
 
+        ((Entity) e).setAbstractAttributeCollection(getDE1LevelAttributes(e));
+
+        TableProperties tableProperties = new TableProperties();
+        tableProperties.setName("DE_LEVEL1");
+        tableProperties.setId(DE_LEVEL1_INHERITANCE_ID);
+        ((Entity) e).setTableProperties(tableProperties);
+        return e;
+    }
+    
+    private EntityInterface createDE2LevelEntity(String name) {
+        EntityInterface e = factory.createEntity();
+        e.setName(DE_LEVEL2_INHERITANCE);
+        e.setCreatedDate(new Date());
+        e.setDescription("This is a DE Annotation");
+        e.setId(DE_LEVEL2_INHERITANCE_ID);
+        e.setLastUpdated(new Date());
+
+        ((Entity) e).setAbstractAttributeCollection(getDE2LevelAttributes(e));
+
+        TableProperties tableProperties = new TableProperties();
+        tableProperties.setName("DE_LEVEL2");
+        tableProperties.setId(DE_LEVEL2_INHERITANCE_ID);
+        ((Entity) e).setTableProperties(tableProperties);
+        
+        EntityInterface parent = createDE1LevelEntity(DE_LEVEL1_INHERITANCE);
+        e.setParentEntity(parent);
+        e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
+        e.getAbstractAttributeCollection().addAll(getDE1LevelAttributes(e));
+        return e;
+    }
+   
+    private EntityInterface createDE3LevelEntity(String name) {
+        EntityInterface e = factory.createEntity();
+        e.setName(DE_LEVEL3_INHERITANCE);
+        e.setCreatedDate(new Date());
+        e.setDescription("This is a DE Annotation");
+        e.setId(DE_LEVEL3_INHERITANCE_ID);
+        e.setLastUpdated(new Date());
+
+        ((Entity) e).setAbstractAttributeCollection(getDE3LevelAttributes(e));
+
+        TableProperties tableProperties = new TableProperties();
+        tableProperties.setName("DE_LEVEL3");
+        tableProperties.setId(DE_LEVEL3_INHERITANCE_ID);
+        ((Entity) e).setTableProperties(tableProperties);
+        
+        EntityInterface parent = createDE2LevelEntity(DE_LEVEL2_INHERITANCE);
+        e.setParentEntity(parent);
+        e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
+        e.getAbstractAttributeCollection().addAll(getDE2LevelAttributes(e));
+        e.getAbstractAttributeCollection().addAll(getDE1LevelAttributes(e));
+
+        return e;
+    }
+    
+    private EntityInterface createDE4LevelEntity(String name) {
+        EntityInterface e = factory.createEntity();
+        e.setName(DE_LEVEL4_INHERITANCE);
+        e.setCreatedDate(new Date());
+        e.setDescription("This is a DE Annotation");
+        e.setId(DE_LEVEL4_INHERITANCE_ID);
+        e.setLastUpdated(new Date());
+
+        ((Entity) e).setAbstractAttributeCollection(getDE4LevelAttributes(e));
+
+        TableProperties tableProperties = new TableProperties();
+        tableProperties.setName("DE_LEVEL4");
+        tableProperties.setId(DE_LEVEL4_INHERITANCE_ID);
+        ((Entity) e).setTableProperties(tableProperties);
+        
+        EntityInterface parent = createDE3LevelEntity(DE_LEVEL3_INHERITANCE);
+        e.setParentEntity(parent);
+        e.setInheritanceStrategy(InheritanceStrategy.TABLE_PER_SUB_CLASS);
+        e.getAbstractAttributeCollection().addAll(getDE3LevelAttributes(e));
+        e.getAbstractAttributeCollection().addAll(getDE2LevelAttributes(e));
+        e.getAbstractAttributeCollection().addAll(getDE1LevelAttributes(e));
+        return e;
+    }
+    
     /*
      * @param name
      * Creates a Molecular specimen entity, sets attributes collection 
@@ -1863,7 +1977,77 @@ public class EntityManagerMock extends EntityManager {
         setAttributeEntityReference(entity, specimenAttributes);
         return specimenAttributes;
     }
+    
+    private ArrayList getDE4LevelAttributes(EntityInterface entity) {
+        ArrayList<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
 
+        AttributeInterface att1 = factory.createStringAttribute();
+        att1.setName("level4");
+        ColumnPropertiesInterface c2 = factory.createColumnProperties();
+        c2.setName("LEVEL4");
+        ((Attribute) att1).setColumnProperties(c2);
+        
+        attributes.add(att1);
+
+        setAttributeId(attributes);
+        setAttributeEntityReference(entity, attributes);
+        return attributes;
+    }
+    private ArrayList getDE3LevelAttributes(EntityInterface entity) {
+        ArrayList<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+
+        AttributeInterface att1 = factory.createStringAttribute();
+        att1.setName("level3");
+        ColumnPropertiesInterface c2 = factory.createColumnProperties();
+        c2.setName("LEVEL3");
+        ((Attribute) att1).setColumnProperties(c2);
+        
+        attributes.add(att1);
+
+        setAttributeId(attributes);
+        setAttributeEntityReference(entity, attributes);
+        return attributes;
+    }
+    private ArrayList getDE2LevelAttributes(EntityInterface entity) {
+        ArrayList<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+
+        AttributeInterface att1 = factory.createStringAttribute();
+        att1.setName("level2");
+        ColumnPropertiesInterface c2 = factory.createColumnProperties();
+        c2.setName("LEVEL2");
+        ((Attribute) att1).setColumnProperties(c2);
+        
+        attributes.add(att1);
+
+        setAttributeId(attributes);
+        setAttributeEntityReference(entity, attributes);
+        return attributes;
+    }
+    
+   
+    private ArrayList getDE1LevelAttributes(EntityInterface entity) {
+        ArrayList<AttributeInterface> attributes = new ArrayList<AttributeInterface>();
+
+        AttributeInterface att1 = factory.createLongAttribute();
+        att1.setName("id");
+        ColumnPropertiesInterface c1 = factory.createColumnProperties();
+        c1.setName("IDENTIFIER");
+        ((Attribute) att1).setColumnProperties(c1);
+        att1.setIsPrimaryKey(new Boolean(true));
+        
+        AttributeInterface att2 = factory.createStringAttribute();
+        att2.setName("level1");
+        ColumnPropertiesInterface c2 = factory.createColumnProperties();
+        c2.setName("LEVEL1");
+        ((Attribute) att2).setColumnProperties(c2);
+        
+        attributes.add(att1);
+        attributes.add(att2);
+        
+        setAttributeId(attributes);
+        setAttributeEntityReference(entity, attributes);
+        return attributes;
+    }
     /*
      * Creates attributes for BioHazard entity,  
      * creates and sets a column property for each attribute and adds all  
