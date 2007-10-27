@@ -828,6 +828,53 @@ public class SqlGeneratorTestCase extends TestCase
 		}
 	}
 	/**
+	 * TO test query for the TABLE_PER_SUBCLASS with multilevel inheritance. 
+	 */
+	public void testCreateInheritanceQueryLevel4()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQueryLevel4();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testCreateInheritanceQueryLevel4:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select Level1DE_1.LEVEL1 Column0 ,Level1DE_1.IDENTIFIER Column1 ,Level2DE_1.LEVEL2 Column2 ,Level3DE_1.LEVEL3 Column3 ,Level4DE_1.LEVEL4 Column4 From DE_LEVEL4 Level4DE_1 left join DE_LEVEL3 Level3DE_1 on (Level4DE_1.IDENTIFIER=Level3DE_1.IDENTIFIER) left join DE_LEVEL2 Level2DE_1 on (Level3DE_1.IDENTIFIER=Level2DE_1.IDENTIFIER) left join DE_LEVEL1 Level1DE_1 on (Level2DE_1.IDENTIFIER=Level1DE_1.IDENTIFIER) Where Level4DE_1.LEVEL4 like 's%'",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	
+	/**
+	 *TO test query for the TABLE_PER_SUBCLASS with multilevel inheritance.
+	 */
+	public void testCreateInheritanceQueryLevel4StaticToDE()
+	{
+		IQuery query = QueryGeneratorMock.createInheritanceQueryLevel4StaticToDE();
+		String sql;
+		try
+		{
+			sql = generator.generateSQL(query);
+//			System.out.println("testCreateInheritanceQueryLevel4StaticToDE:"+sql);
+			assertEquals(
+					"Incorrect SQL formed for Query !!!",
+					"Select Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,Level1DE_2.LEVEL1 Column12 ,Level1DE_2.IDENTIFIER Column13 ,Level2DE_2.LEVEL2 Column14 ,Level3DE_2.LEVEL3 Column15 ,Level4DE_2.LEVEL4 Column16 From catissue_participant Participant_1 left join DE_LEVEL4 Level4DE_2 on (Participant_1.IDENTIFIER=Level4DE_2.PARTICIPANT_ID) left join DE_LEVEL3 Level3DE_2 on (Level4DE_2.IDENTIFIER=Level3DE_2.IDENTIFIER) left join DE_LEVEL2 Level2DE_2 on (Level3DE_2.IDENTIFIER=Level2DE_2.IDENTIFIER) left join DE_LEVEL1 Level1DE_2 on (Level2DE_2.IDENTIFIER=Level1DE_2.IDENTIFIER) Where (Participant_1.ACTIVITY_STATUS!='Disabled') And(Level4DE_2.LEVEL4 like 's%')",
+					sql);
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail("Unexpected Expection, While Generating SQL for the Query!!!");
+		}
+	}
+	/**
 	 * TO create query for the TABLE_PER_HEIRARCHY inheritance strategy with multilevel inheritance.
 	 * Query for Cell Specimen Review event parameter class as: srp.viableCellPercentage > 50 and srp.comments contains 'xyz'
 	 * Here,
@@ -1174,7 +1221,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//System.out.println("testManyToManyQuery1:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for the Query having Many to Many Associations!!!",
-					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Biohazard_2.TYPE Column11 ,Biohazard_2.COMMENTS Column12 ,Biohazard_2.NAME Column13 ,Biohazard_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA' And Specimen_1.ACTIVITY_STATUS!='Disabled') And(Biohazard_2.TYPE='Toxic')",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Biohazard_2.TYPE Column11 ,Biohazard_2.COMMENTS Column12 ,Biohazard_2.NAME Column13 ,Biohazard_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Specimen_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA' And Specimen_1.ACTIVITY_STATUS!='Disabled') And(Biohazard_2.TYPE='Toxic')",
 					sql);
 		}
 		catch (Exception e)
@@ -1202,7 +1249,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//System.out.println("testManyToManyQuery2:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for the Query having Many to Many Associations & Pseudo And!!!",
-					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Biohazard_2.TYPE Column11 ,Biohazard_2.COMMENTS Column12 ,Biohazard_2.NAME Column13 ,Biohazard_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA' And Specimen_1.ACTIVITY_STATUS!='Disabled') And(Specimen_1.IDENTIFIER = ANY(Select Specimen_1.IDENTIFIER From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) where Biohazard_2.TYPE='Toxic')) And(Specimen_1.IDENTIFIER = ANY(Select Specimen_1.IDENTIFIER From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) where Biohazard_2.TYPE='Radioactive'))",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Biohazard_2.TYPE Column11 ,Biohazard_2.COMMENTS Column12 ,Biohazard_2.NAME Column13 ,Biohazard_2.IDENTIFIER Column14 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Specimen_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA' And Specimen_1.ACTIVITY_STATUS!='Disabled') And(Specimen_1.IDENTIFIER = ANY(Select Specimen_1.IDENTIFIER From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Specimen_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) where Biohazard_2.TYPE='Toxic')) And(Specimen_1.IDENTIFIER = ANY(Select Specimen_1.IDENTIFIER From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Specimen_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) where Biohazard_2.TYPE='Radioactive'))",
 					sql);
 		}
 		catch (Exception e)
@@ -1235,7 +1282,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//System.out.println("testManyToManyQuery3:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for the Query having Many to Many Associations & Pseudo And!!!",
-					"Select Biohazard_1.TYPE Column0 ,Biohazard_1.COMMENTS Column1 ,Biohazard_1.NAME Column2 ,Biohazard_1.IDENTIFIER Column3 ,Specimen_2.TYPE Column4 ,Specimen_2.POSITION_DIMENSION_TWO Column5 ,Specimen_2.POSITION_DIMENSION_ONE Column6 ,Specimen_2.PATHOLOGICAL_STATUS Column7 ,Specimen_2.LINEAGE Column8 ,Specimen_2.LABEL Column9 ,Specimen_2.IDENTIFIER Column10 ,Specimen_2.COMMENTS Column11 ,Specimen_2.BARCODE Column12 ,Specimen_2.AVAILABLE Column13 ,Specimen_2.ACTIVITY_STATUS Column14 ,SpecimenCharacteristics_3.TISSUE_SIDE Column15 ,SpecimenCharacteristics_3.TISSUE_SITE Column16 ,SpecimenCharacteristics_3.IDENTIFIER Column17 From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Biohazard_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) Where (Biohazard_1.TYPE='Toxic') And(Biohazard_1.IDENTIFIER = ANY(Select Biohazard_1.IDENTIFIER From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Biohazard_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) where (Specimen_2.TYPE='DNA' And Specimen_2.ACTIVITY_STATUS!='Disabled') And(SpecimenCharacteristics_3.TISSUE_SITE='skin'))) And(Biohazard_1.IDENTIFIER = ANY(Select Biohazard_1.IDENTIFIER From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Biohazard_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) where (Specimen_2.TYPE='RNA' And Specimen_2.ACTIVITY_STATUS!='Disabled') And(SpecimenCharacteristics_3.TISSUE_SITE='Spinal cord'))) Or(Specimen_2.TYPE='cDNA' And Specimen_2.ACTIVITY_STATUS!='Disabled')",
+					"Select Biohazard_1.TYPE Column0 ,Biohazard_1.COMMENTS Column1 ,Biohazard_1.NAME Column2 ,Biohazard_1.IDENTIFIER Column3 ,Specimen_2.TYPE Column4 ,Specimen_2.POSITION_DIMENSION_TWO Column5 ,Specimen_2.POSITION_DIMENSION_ONE Column6 ,Specimen_2.PATHOLOGICAL_STATUS Column7 ,Specimen_2.LINEAGE Column8 ,Specimen_2.LABEL Column9 ,Specimen_2.IDENTIFIER Column10 ,Specimen_2.COMMENTS Column11 ,Specimen_2.BARCODE Column12 ,Specimen_2.AVAILABLE Column13 ,Specimen_2.ACTIVITY_STATUS Column14 ,SpecimenCharacteristics_3.TISSUE_SIDE Column15 ,SpecimenCharacteristics_3.TISSUE_SITE Column16 ,SpecimenCharacteristics_3.IDENTIFIER Column17 From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Biohazard_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) Where (Biohazard_1.TYPE='Toxic') And(Biohazard_1.IDENTIFIER = ANY(Select Biohazard_1.IDENTIFIER From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Biohazard_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) where (Specimen_2.TYPE='DNA' And Specimen_2.ACTIVITY_STATUS!='Disabled') And(SpecimenCharacteristics_3.TISSUE_SITE='skin'))) And(Biohazard_1.IDENTIFIER = ANY(Select Biohazard_1.IDENTIFIER From CATISSUE_BIOHAZARD Biohazard_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Biohazard_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID) left join catissue_specimen Specimen_2 on (CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID=Specimen_2.IDENTIFIER) left join catissue_specimen_char SpecimenCharacteristics_3 on (Specimen_2.SPECIMEN_CHARACTERISTICS_ID=SpecimenCharacteristics_3.IDENTIFIER) where (Specimen_2.TYPE='RNA' And Specimen_2.ACTIVITY_STATUS!='Disabled') And(SpecimenCharacteristics_3.TISSUE_SITE='Spinal cord'))) Or(Specimen_2.TYPE='cDNA' And Specimen_2.ACTIVITY_STATUS!='Disabled')",
 					sql);
 		}
 		catch (Exception e)
@@ -1343,7 +1390,7 @@ public class SqlGeneratorTestCase extends TestCase
 			//System.out.println("testManyToManyQuery1:"+sql);
 			assertEquals(
 					"Incorrect SQL formed for the Query having Many to Many Associations!!!",
-					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Specimen_1.CONCENTRATION Column11 ,Biohazard_2.TYPE Column12 ,Biohazard_2.COMMENTS Column13 ,Biohazard_2.NAME Column14 ,Biohazard_2.IDENTIFIER Column15 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUE_SPECIMEN_BIOHZ_R_2 on (Specimen_1.IDENTIFIER=CATISSUE_SPECIMEN_BIOHZ_R_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUE_SPECIMEN_BIOHZ_R_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA' And Specimen_1.ACTIVITY_STATUS!='Disabled') And(Biohazard_2.TYPE='Toxic')",
+					"Select Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,Specimen_1.CONCENTRATION Column11 ,Biohazard_2.TYPE Column12 ,Biohazard_2.COMMENTS Column13 ,Biohazard_2.NAME Column14 ,Biohazard_2.IDENTIFIER Column15 From catissue_specimen Specimen_1 left join CATISSUE_SPECIMEN_BIOHZ_REL CATISSUESPECIMENBIOHZR_2 on (Specimen_1.IDENTIFIER=CATISSUESPECIMENBIOHZR_2.SPECIMEN_ID And Specimen_1.SPECIMEN_CLASS='Fluid') left join CATISSUE_BIOHAZARD Biohazard_2 on (CATISSUESPECIMENBIOHZR_2.BIOHAZARD_ID=Biohazard_2.IDENTIFIER) Where (Specimen_1.TYPE='DNA' And Specimen_1.ACTIVITY_STATUS!='Disabled') And(Biohazard_2.TYPE='Toxic')",
 					sql);
 		}
 		catch (Exception e)
@@ -1389,6 +1436,9 @@ public class SqlGeneratorTestCase extends TestCase
 			testStr = Utility.removeSpecialCharactersFromString(testStr);
 			assertEquals("String starting with a number is valide case.","1teststr", testStr);
 						
+			testStr = "1test_str";
+			testStr = Utility.removeSpecialCharactersFromString(testStr);
+			assertEquals("String starting with a number is valide case.","1teststr", testStr);
 		}
 		catch (Exception e)
 		{
