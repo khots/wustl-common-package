@@ -851,8 +851,6 @@ public class SecurityManager implements Permissions {
 		Iterator it;
 
 		try {
-			Logger.out
-					.debug("************** Inserting authorization Data ***************");
 
 			/**
 			 * Create protection elements corresponding to all protection
@@ -864,8 +862,11 @@ public class SecurityManager implements Permissions {
 			 * Create user group role protection group and their mappings if
 			 * required
 			 */
-			createUserGroupRoleProtectionGroup(authorizationData,
+			if (authorizationData != null)
+			{
+				createUserGroupRoleProtectionGroup(authorizationData,
 					protectionElements);
+			}
 			
 			/**
 			 * Assigning protection elements to dynamic groups
@@ -1068,101 +1069,107 @@ public class SecurityManager implements Permissions {
 			Set protectionObjects) throws CSException {
 		ProtectionElement protectionElement;
 		Set protectionElements = new HashSet();
-		ProtectionGroup protectionGroup;
-		List list;
 		AbstractDomainObject protectionObject;
-		String[] staticGroups;
-		Set protectionGroups = null;
 		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
 		Iterator it;
+		
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
+		
 		if (protectionObjects != null) {
 			for (it = protectionObjects.iterator(); it.hasNext();) {
 				protectionElement = new ProtectionElement();
 				protectionObject = (AbstractDomainObject) it.next();
 				protectionElement.setObjectId(protectionObject.getObjectId());
-
-				try {
-
-					/**
-					 * In case protection element already exists
-					 */
-					try {
-						protectionElement = userProvisioningManager
-								.getProtectionElement(protectionElement
-										.getObjectId());
-						Logger.out.debug(" Protection Element: "
-								+ protectionElement.getObjectId()
-								+ " already exists");
-					}
-					/**
-					 * If protection element does not exist already
-					 */
-					catch (CSObjectNotFoundException csex) {
-						protectionElement
-								.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
-						protectionElement
-								.setProtectionElementDescription(protectionObject
-										.getClass().getName()
-										+ " object");
-						protectionElement
-								.setProtectionElementName(protectionObject.getObjectId());
-						/**
-						 * Adding protection elements to static groups they
-						 * should be added to
-						 */
-						staticGroups = (String[]) Constants.STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES
-								.get(protectionObject.getClass().getName());
-
-						if (staticGroups != null) {
-							protectionGroups = new HashSet();
-							for (int i = 0; i < staticGroups.length; i++) {
-								Logger.out.debug(" group name " + i + " "
-										+ staticGroups[i]);
-								protectionGroup = new ProtectionGroup();
-								protectionGroup
-										.setProtectionGroupName(staticGroups[i]);
-								protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
-										protectionGroup);
-								try {
-									list = getObjects(protectionGroupSearchCriteria);
-									protectionGroup = (ProtectionGroup) list
-											.get(0);
-									Logger.out.debug(" From Database: "
-											+ protectionGroup.toString());
-									protectionGroups.add(protectionGroup);
-								} catch (SMException sme) {
-									Logger.out.error(
-											"Error occured while retrieving "
-													+ staticGroups[i]
-													+ "  From Database: ", sme);
-								}
-
-							}
-							protectionElement
-									.setProtectionGroups(protectionGroups);
-						}
-
-						userProvisioningManager
-								.createProtectionElement(protectionElement);
-
-						Logger.out.debug("Protection element created: "
-								+ protectionElement.toString());
-						Logger.out
-								.debug("Protection element added to groups : "
-										+ protectionGroups);
-					}
-
-					protectionElements.add(protectionElement);
-				} catch (CSTransactionException ex) {
-					Logger.out.error(
-							"Error occured while creating Potection Element "
-									+ protectionElement
-											.getProtectionElementName(), ex);
-				}
+	
+				populateProtectionElement(
+						protectionElement, protectionObject, userProvisioningManager);
+				protectionElements.add(protectionElement);
 			}
 		}
 		return protectionElements;
+	}
+
+	/**
+	 * @param protectionElement
+	 * @param protectionObject
+	 * @return
+	 * @throws CSException
+	 */
+	private void populateProtectionElement(
+			ProtectionElement protectionElement,
+			AbstractDomainObject protectionObject, 
+			UserProvisioningManager userProvisioningManager) throws CSException {
+		try
+		{
+			protectionElement
+					.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
+			protectionElement
+					.setProtectionElementDescription(protectionObject
+							.getClass().getName()
+							+ " object");
+			protectionElement
+					.setProtectionElementName(protectionObject.getObjectId());
+			/**
+			 * Adding protection elements to static groups they
+			 * should be added to
+			 */
+			String [] staticGroups = (String[]) Constants.STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES
+					.get(protectionObject.getClass().getName());
+	
+			 setProtectGroups(protectionElement,
+					staticGroups);
+	
+			 userProvisioningManager
+				.createProtectionElement(protectionElement);
+
+		} catch (CSTransactionException ex) {
+			Logger.out.warn(
+					ex.getMessage() + "Error occured while creating Potection Element "
+							+ protectionElement.getProtectionElementName());
+		}
+
+	}
+
+	/**
+	 * @param protectionElement
+	 * @param staticGroups
+	 * @param protectionGroups
+	 * @return
+	 * @throws CSException
+	 */
+	private void setProtectGroups(ProtectionElement protectionElement,
+			String[] staticGroups) throws CSException {
+		ProtectionGroup protectionGroup;
+		Set protectionGroups = null;
+		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
+		if (staticGroups != null) {
+			protectionGroups = new HashSet();
+			for (int i = 0; i < staticGroups.length; i++) {
+				Logger.out.debug(" group name " + i + " "
+						+ staticGroups[i]);
+				protectionGroup = new ProtectionGroup();
+				protectionGroup
+						.setProtectionGroupName(staticGroups[i]);
+				protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
+						protectionGroup);
+				try {
+					List list = getObjects(protectionGroupSearchCriteria);
+					protectionGroup = (ProtectionGroup) list
+							.get(0);
+					Logger.out.debug(" From Database: "
+							+ protectionGroup.toString());
+					protectionGroups.add(protectionGroup);
+				} catch (SMException sme) {
+					Logger.out.warn(
+							"Error occured while retrieving "
+									+ staticGroups[i]
+									+ "  From Database: ");
+				}
+
+			}
+			protectionElement
+					.setProtectionGroups(protectionGroups);
+		}
 	}
 
 	/**
