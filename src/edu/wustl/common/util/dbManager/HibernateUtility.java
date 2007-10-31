@@ -17,26 +17,33 @@ import org.hibernate.Session;
 public class HibernateUtility {
     public static final String GET_PARAMETERIZED_QUERIES_DETAILS = "getParameterizedQueriesDetails";
 
-    public static Collection executeHQL(String queryName, List<Object> values) throws HibernateException {
-        Session session = DBUtil.currentSession();
-        Query query = session.getNamedQuery(queryName);
+    public static Collection executeHQL(String queryName, List<Object> values) throws HibernateException{
+    	try
+    	{
+    		Session session = DBUtil.currentSession();
+            Query query = session.getNamedQuery(queryName);
 
-        if (values != null) {
-            for (int counter = 0; counter < values.size(); counter++) {
-                Object value = values.get(counter);
-                String objectType = value.getClass().getName();
-                String onlyClassName = objectType.substring(objectType.lastIndexOf(".") + 1, objectType.length());
-                if (onlyClassName.equals("String")) {
-                    query.setString(counter, (String) value);
-                } else if (onlyClassName.equals("Integer")) {
-                    query.setInteger(counter, Integer.parseInt(value.toString()));
-                } else if (onlyClassName.equals("Long")) {
-                    query.setLong(counter, Long.parseLong(value.toString()));
+            if (values != null) {
+                for (int counter = 0; counter < values.size(); counter++) {
+                    Object value = values.get(counter);
+                    String objectType = value.getClass().getName();
+                    String onlyClassName = objectType.substring(objectType.lastIndexOf(".") + 1, objectType.length());
+                    if (onlyClassName.equals("String")) {
+                        query.setString(counter, (String) value);
+                    } else if (onlyClassName.equals("Integer")) {
+                        query.setInteger(counter, Integer.parseInt(value.toString()));
+                    } else if (onlyClassName.equals("Long")) {
+                        query.setLong(counter, Long.parseLong(value.toString()));
+                    }
+                    
                 }
             }
-        }
-
-        return query.list();
+            return query.list();
+	    }
+		finally
+		{
+			DBUtil.closeSession();
+		}
     }
 
     public static Collection executeHQL(String queryName) throws HibernateException {
