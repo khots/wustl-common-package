@@ -3,7 +3,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping auto-import="false">
+<hibernate-mapping auto-import="false"  default-lazy="false">
     <class
         name="edu.wustl.common.querysuite.queryobject.impl.ExpressionOperand"
         table="QUERY_EXPRESSION_OPERAND"
