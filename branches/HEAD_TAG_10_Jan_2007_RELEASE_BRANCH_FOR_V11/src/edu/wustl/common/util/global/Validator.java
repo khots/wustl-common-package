@@ -229,7 +229,7 @@ public class Validator
         {
             double dblValue = Double.parseDouble(dblString);
 
-            if (dblValue <= 0  || Double.isNaN(dblValue)) 
+            if (dblValue < 0  || Double.isNaN(dblValue)) 
             {
                 return false;
             }
