@@ -41,14 +41,14 @@ import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
+import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
@@ -100,6 +100,8 @@ public class SqlGenerator implements ISqlGenerator
 	 * An expression is empty expression when it does not contain any Rule & its sub-expressions (also their subexpressions & so on) also does not contain any Rule
 	 */
 	private Set<IExpressionId> emptyExpressions;//Set of Empty Expressions.
+	
+	private Set<IExpression> pAndExpressions;//Set of Empty Expressions.
 	
 	// Variables required for output tree.
 	/**
@@ -203,16 +205,60 @@ public class SqlGenerator implements ISqlGenerator
 		emptyExpressions = new HashSet<IExpressionId>();
 		isEmptyExpression(rootExpression.getExpressionId());
 		
+		pAndExpressions = new HashSet<IExpression>();
+		
 		//Generating output tree.
 		createTree();
 		
 		//Creating SQL.
-		String wherePart = "Where " + getWherePartSQL(rootExpression, null, false);
+		String wherePart = getCompleteWherePart(rootExpression);
+		
 		String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
 		String selectPart =  getSelectPart();
 		String sql = selectPart + " " + fromPart + " " + wherePart;
 
 		return sql;
+	}
+	/**
+	 * Returns complete where part including PAND conditions.
+	 * @param rootExpression
+	 * @return
+	 * @throws SqlException
+	 */
+	private String getCompleteWherePart(IExpression rootExpression) throws SqlException {
+		
+		String wherePart =  getWherePartSQL(rootExpression, null, false);
+		
+		//Adding extra where condition for PAND to check activity status disabled
+		StringBuffer extraWherePAnd = new StringBuffer();
+		
+		for(IExpression expression:pAndExpressions)
+		{
+			AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity());
+			if(attributeObj!=null)
+		 	{
+		 		ICondition condition = createActivityStatusCondition(attributeObj);
+				String whereCond = getSQL(condition, expression);
+				
+				extraWherePAnd.append("(" ).append(whereCond).append(")").append(LogicalOperator.And).append(" ");
+				
+		 	}
+			//expression.getQueryEntity()
+		}
+		wherePart = "Where " +extraWherePAnd.toString()+wherePart;
+		return wherePart;
+	}
+
+	/**
+	 * Creates condition ActivitiStatus!='disabled'
+	 * @param attributeObj
+	 * @return
+	 */
+	private ICondition createActivityStatusCondition(AttributeInterface attributeObj) {
+		List<String> values = new ArrayList<String>();
+		values.add(Constants.ACTIVITY_STATUS_DISABLED);
+		ICondition condition = QueryObjectFactory.createCondition(attributeObj,RelationalOperator.NotEquals, values);
+		return condition;
 	}
 
 	/**
@@ -948,6 +994,23 @@ public class SqlGenerator implements ISqlGenerator
 		}
 		return string;
 	}
+	/**
+	 * Adds an pseudo anded expression & all its child expressions to  pAndExpressions set.
+	 * @param expression pAnd expression
+	 */
+	private void addpAndExpression(IExpression expression)
+	{
+		IExpressionId expressionId = expression.getExpressionId();
+		List<IExpressionId> childList = joinGraph.getChildrenList(expressionId);
+		pAndExpressions.add(expression);	
+		
+		for (IExpressionId newExpId: childList)
+		{
+			IExpression exp = constraints.getExpression(newExpId);
+			addpAndExpression(exp);
+		}
+
+	}
 	
 	/**
 	 * To Proceess sub Expression.
@@ -966,6 +1029,11 @@ public class SqlGenerator implements ISqlGenerator
 		String sql = getWherePartSQL(childExpression, expression, isPAND);
 		if (isPAND)
 		{
+			//Set.add(childExpression);
+			if (!pAndExpressions.contains(childExpression))
+			{
+				addpAndExpression(childExpression);
+			}
 			IAssociation association = joinGraph.getAssociation(expression.getExpressionId(),
 					childExpression.getExpressionId());
 			AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
@@ -1036,9 +1104,7 @@ public class SqlGenerator implements ISqlGenerator
 			
 		if(attributeObj!=null)
 	 	{
-	 		List<String> values = new ArrayList<String>();
-			values.add(Constants.ACTIVITY_STATUS_DISABLED);
-			ICondition condition = QueryObjectFactory.createCondition(attributeObj,RelationalOperator.NotEquals, values);
+	 		ICondition condition = createActivityStatusCondition(attributeObj);
 	 		rule.addCondition(condition);
 	 	}
 		
