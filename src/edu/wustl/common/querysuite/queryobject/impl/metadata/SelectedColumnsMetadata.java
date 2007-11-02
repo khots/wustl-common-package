@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.querysuite.queryobject.IOutputAttribute;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 
 /**
@@ -30,6 +31,10 @@ public class SelectedColumnsMetadata
 	 * Returns true/false Whether view is defined.
 	 */
 	private boolean isDefinedView;
+	/**
+	 * List of output attribute objects.
+	 */
+	private List<IOutputAttribute> selectedOutputAttributeList;
 	
 	/**
 	 * 
@@ -102,5 +107,19 @@ public class SelectedColumnsMetadata
 	public void setSelectedAttributeMetaDataList(List<QueryOutputTreeAttributeMetadata> selectedAttributeMetaDataList)
 	{
 		this.selectedAttributeMetaDataList = selectedAttributeMetaDataList;
+	}
+	/**
+	 * @return the selectedOutputAttributeList
+	 */
+	public List<IOutputAttribute> getSelectedOutputAttributeList()
+	{
+		return selectedOutputAttributeList;
+	}
+	/**
+	 * @param selectedOutputAttributeList the selectedOutputAttributeList to set
+	 */
+	public void setSelectedOutputAttributeList(List<IOutputAttribute> selectedOutputAttributeList)
+	{
+		this.selectedOutputAttributeList = selectedOutputAttributeList;
 	}
 }
