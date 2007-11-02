@@ -32,7 +32,6 @@
             update="true"
             insert="true"
             column="EXPRESSIONID_ID"
-            unique="true"
         />
 
         <property

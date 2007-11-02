@@ -42,7 +42,7 @@ public class OutputAttribute extends BaseQueryObject implements IOutputAttribute
     /**
      * @return the expressionId
      * 
-     * @hibernate.many-to-one column="EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" unique="true" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="all" lazy="false"
      */
     public IExpressionId getExpressionId() {
         return expressionId;
