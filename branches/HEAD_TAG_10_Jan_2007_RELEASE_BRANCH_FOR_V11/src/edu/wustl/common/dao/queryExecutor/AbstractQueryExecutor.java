@@ -17,6 +17,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -113,7 +114,7 @@ public abstract class AbstractQueryExecutor
 			SessionDataBean sessionDataBean, boolean isSecureExecute,
 			boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex,
 			int noOfRecords) throws DAOException
-	{
+	{          
 		this.query = query;
 		this.connection = connection;
 		this.sessionDataBean = sessionDataBean;
@@ -177,8 +178,20 @@ public abstract class AbstractQueryExecutor
 	 * @throws SQLException
 	 */
 	protected List getListFromResultSet() throws SQLException
-	{
+	{        
 		ResultSetMetaData metaData = resultSet.getMetaData();
+		boolean isLongKeyOfMap = false;
+		if(queryResultObjectDataMap!=null && !queryResultObjectDataMap.isEmpty())
+		{
+			Iterator mapIterator = queryResultObjectDataMap.keySet().iterator();
+			while(mapIterator.hasNext())
+			{
+				if (mapIterator.next() instanceof Long)
+				{
+					isLongKeyOfMap = true;					
+				}
+			}
+		}
 
 		int columnCount = metaData.getColumnCount();
 		
@@ -249,7 +262,9 @@ public abstract class AbstractQueryExecutor
 					aList.add("");
 				}
 				i++;
-			}
+			}   
+			if(!isLongKeyOfMap && queryResultObjectDataMap!=null)
+			{
 			//Aarti: If query has condition on identified data then check user's permission
 			//on the record's identified data.
 			//If user does not have privilege don't add the record to results list
@@ -270,6 +285,25 @@ public abstract class AbstractQueryExecutor
 				{
 					SecurityManager.getInstance(this.getClass()).filterRow(sessionDataBean,
 							queryResultObjectDataMap, aList);
+				}
+			}
+			}else
+			{
+				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
+				{
+					boolean hasPrivilegeOnIdentifiedData = SecurityManager.getInstance(this.getClass())
+							.hasPrivilegeOnIdentifiedDataNew(sessionDataBean, queryResultObjectDataMap, aList);
+					if (!hasPrivilegeOnIdentifiedData)
+						continue;
+				}
+
+				//Aarti: Checking object level privileges on each record
+				if (Constants.switchSecurity && isSecureExecute)
+				{ 
+					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
+					{
+						SecurityManager.getInstance(this.getClass()).filterResultRow(sessionDataBean, queryResultObjectDataMap, aList);
+					}
 				}
 			}
 
