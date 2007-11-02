@@ -496,4 +496,5 @@ public class Constants
 	public static final String QUERY_SQL = "querySQL";
 
 	public static final String PRIVILEGE_TAG_NAME = "privilege";
+	public static String CATISSUE_SPECIMEN_CLASS_NAME = "edu.wustl.catissuecore.domain.Specimen";
 }
