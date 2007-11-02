@@ -221,7 +221,7 @@ public class SimpleSearchAction extends BaseAction
 			recordsPerPage = new Integer(recordsPerPageSessionValue).intValue();
 		
 		PagenatedResultData pagenatedResultData=null;
-		boolean isSecureExecute;
+		boolean isSecureExecute = getSessionData(request).isSecurityRequired();
 		boolean hasConditionOnIdentifiedField;
 		/**
 		 * Constants.SWITCHSECURIRY is removed from if statement
@@ -248,7 +248,6 @@ public class SimpleSearchAction extends BaseAction
 			}
 			
 			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
-			isSecureExecute = true;
 			hasConditionOnIdentifiedField = query.hasConditionOnIdentifiedField();
 			
 			/**
@@ -262,7 +261,7 @@ public class SimpleSearchAction extends BaseAction
 			/**
 			 * Added by Vijay. Check is added to decide hyperlink should be displayed or not, based on the variable isSecurityRequired of session dataBean
 			 */
-			if(!getSessionData(request).isSecurityRequired())
+			if(!isSecureExecute)
 			{
 				/**
 				 * Name : Prafull_kadam
