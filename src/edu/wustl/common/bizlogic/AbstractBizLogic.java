@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import titli.controller.Name;
 import titli.controller.RecordIdentifier;
 import titli.controller.interfaces.IndexRefresherInterface;
 import titli.controller.interfaces.TitliInterface;
@@ -37,13 +38,13 @@ import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
-
+  
 /**
  * AbstractBizLogic is the base class of all the Biz Logic classes.
  * @author gautam_shetty
  */
 public abstract class AbstractBizLogic implements IBizLogic
-{
+{                              
 	/**
      * This method gets called before insert method. Any logic before inserting into database can be included here.
      * @param obj The object to be inserted.
@@ -144,7 +145,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        delete(obj, dao);
 	        dao.commit();
 	        //refresh the index for titli search
-			//refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
+			refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
 		}
 		catch(DAOException ex)
 		{
@@ -210,7 +211,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		    }
 	        dao.commit();
 	        // refresh the index for titli search
-			//refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+			refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
 	        postInsert(obj, dao, sessionDataBean);
 		}
 		catch(DAOException ex)
@@ -256,9 +257,9 @@ public abstract class AbstractBizLogic implements IBizLogic
     {
     	insert(obj, null, daoType, true);
     }
-    
+  
     private void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException, UserNotAuthorizedException
-    {
+    {                     
     	long startTime = System.currentTimeMillis();
     	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
@@ -272,10 +273,10 @@ public abstract class AbstractBizLogic implements IBizLogic
                 update(dao, currentObj);
 	        }else{
 	        	update(dao, currentObj, oldObj, sessionDataBean);
-	        }
+	        }  
 	        dao.commit();
 	        //refresh the index for titli search
-			//refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
+			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
 	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 		}
 		catch(DAOException ex)
@@ -411,25 +412,27 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 		
 	
+
 	/**
 	 * refresh the titli search index to reflect the changes in the database
 	 * @param operation the operation to be performed : "insert", "update" or "delete"
 	 * @param obj the object correspondig to the record to be refreshed
 	 */
 	private void refreshTitliSearchIndex(String operation, Object obj) 
-	{
+	{            
 		try
 		{ 
 			TitliInterface titli = Titli.getInstance();
-			
-			String dbName = (titli.getDatabases().keySet().toArray(new String[0]))[0]; 
+			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0]; 
 			String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
+			System.out.println("tableName: "+tableName);
 			String id= ((AbstractDomainObject) obj).getId().toString();
+			System.out.println("id: "+id);
 						
-			Map<String, String> uniqueKey = new HashMap<String, String>();
-			uniqueKey.put(Constants.IDENTIFIER, id);
+			Map<Name, String> uniqueKey = new HashMap<Name, String>();
+			uniqueKey.put(new Name(Constants.IDENTIFIER), id);
 			
-			RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,	tableName, uniqueKey);
+			RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,	new Name(tableName), uniqueKey);
 		
 			IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
 			
@@ -438,7 +441,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				indexRefresher.insert(recordIdentifier);
 			}
 			else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_UPDATE_OPERATION)) 
-			{
+			{   
 				indexRefresher.update(recordIdentifier);
 			}
 			else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_DELETE_OPERATION)) 
