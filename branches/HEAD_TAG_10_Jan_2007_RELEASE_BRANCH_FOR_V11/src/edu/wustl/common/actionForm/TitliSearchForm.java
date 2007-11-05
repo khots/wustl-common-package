@@ -13,10 +13,12 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
+import titli.controller.Name;
 import titli.controller.interfaces.ResultGroupInterface;
 import titli.controller.interfaces.SortedResultMapInterface;
 import edu.wustl.common.util.TitliResultGroup;
 import edu.wustl.common.util.TitliTableMapper;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This Class encapsulates all the request parameters passed from Tilti Search
@@ -28,14 +30,14 @@ import edu.wustl.common.util.TitliTableMapper;
 public class TitliSearchForm extends ActionForm
 {
 	private String searchString;
-
-	private double timeTaken;
-
-	private long numberOfMatches;
-
+	
+	private String displaySearchString;
+	
+	private String displayStats;
+	
 	private SortedResultMapInterface sortedResultMap;
 
-	private Map<String, TitliResultGroup> titliResultMap;
+	private Map<Name, TitliResultGroup> titliResultMap;
 
 	private String selectedLabel;
 
@@ -89,7 +91,7 @@ public class TitliSearchForm extends ActionForm
 	{
 		this.sortedResultMap = sortedResultMap;
 
-		titliResultMap = new LinkedHashMap<String, TitliResultGroup>();
+		titliResultMap = new LinkedHashMap<Name, TitliResultGroup>();
 
 		for (ResultGroupInterface i : sortedResultMap.values())
 		{
@@ -99,47 +101,23 @@ public class TitliSearchForm extends ActionForm
 	}
 
 	/**
-	 * @return the numberOfMatches
-	 */
-	public long getNumberOfMatches()
-	{
-		return numberOfMatches;
-	}
-
-	/**
-	 * @param numberOfMatches
-	 *            the numberOfMatches to set
-	 */
-	public void setNumberOfMatches(long numberOfMatches)
-	{
-		this.numberOfMatches = numberOfMatches;
-	}
-
-	/**
-	 * @return the timeTaken
-	 */
-	public double getTimeTaken()
-	{
-		return timeTaken;
-	}
-
-	/**
-	 * @param timeTaken
-	 *            the timeTaken to set
-	 */
-	public void setTimeTaken(double timeTaken)
-	{
-		this.timeTaken = timeTaken;
-	}
-
-	/**
 	 * 
 	 * @return the result group corresponding to the selected label
 	 */
 	public TitliResultGroup getSelectedGroup()
 	{
-		ResultGroupInterface i = sortedResultMap.get(TitliTableMapper.getInstance().getTable(selectedLabel));
-
+		ResultGroupInterface i=null;
+		try
+		{
+			i = sortedResultMap.get(TitliTableMapper.getInstance().getTable(selectedLabel));
+			
+		}
+		catch(Exception e)
+		{
+			Logger.out.error("Exception in TitliSearchForm : "+ e.getMessage(), e);
+			
+		}
+		
 		return new TitliResultGroup(i);
 
 	}
@@ -147,7 +125,7 @@ public class TitliSearchForm extends ActionForm
 	/**
 	 * @return the titliResultMap
 	 */
-	public Map<String, TitliResultGroup> getTitliResultMap()
+	public Map<Name, TitliResultGroup> getTitliResultMap()
 	{
 		return titliResultMap;
 	}
@@ -178,6 +156,37 @@ public class TitliSearchForm extends ActionForm
 
 		return errors;
 
+	}
+
+	/**
+	 * @return the displaysearchString
+	 */
+	public String getDisplaySearchString()
+	{
+		return displaySearchString;
+	}
+
+	/**
+	 * @param displaysearchString the displaysearchString to set
+	 */
+	public void setDisplaySearchString(String displaySearchString)
+	{
+		this.displaySearchString = displaySearchString;
+	}
+	/**
+	 * @return the displayStats
+	 */
+	public String getDisplayStats()
+	{
+		return displayStats;
+	}
+
+	/**
+	 * @param displayStats the displayStats to set
+	 */
+	public void setDisplayStats(String displayStats)
+	{
+		this.displayStats = displayStats;
 	}
 
 }
