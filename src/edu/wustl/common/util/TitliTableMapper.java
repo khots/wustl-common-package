@@ -3,6 +3,8 @@
  */
 package edu.wustl.common.util;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,6 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import titli.controller.Name;
 
 /**
  * This class reads the mapping  xml file and gets the tree into the memory
@@ -44,6 +48,19 @@ public final class TitliTableMapper
 	private TitliTableMapper()
 	{
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("titli-table-mapping.xml");
+		
+		/*
+		InputStream in=null;
+		try
+		{
+			in = new FileInputStream("E:/juber/workspace/catissuecore/WEB-INF/src/titli-table-mapping.xml");
+		}
+		catch (FileNotFoundException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+		
 		DocumentBuilder builder = null;
 		
 		try
@@ -95,9 +112,9 @@ public final class TitliTableMapper
 	 * @return the table name
 	 * @throws Exception if problems occur
 	 */
-	public String getLabel(String tableName) throws Exception
+	public String getLabel(Name tableName) throws Exception
 	{
-		String label=tableName;
+		String label=tableName.toString();
 		
 		Element root = null;
 		root = document.getDocumentElement();
@@ -116,7 +133,7 @@ public final class TitliTableMapper
 		{
 			Element element = (Element)(nodeList.item(i));
 			
-			if(element.getAttribute("table").equals(tableName))
+			if(new Name(element.getAttribute("table")).equals(tableName))
 			{
 				label= element.getAttribute("label");
 				break;
@@ -164,9 +181,9 @@ public final class TitliTableMapper
 	 * @param label the label
 	 * @return the table name
 	 */
-	public String getTable(String label)
+	public Name getTable(String label)
 	{
-		String table =null;
+		Name table =null;
 		
 		Element root = document.getDocumentElement();
 		
@@ -180,7 +197,7 @@ public final class TitliTableMapper
 			
 			if(element.getAttribute("label").equals(label))
 			{
-				table = element.getAttribute("table");
+				table = new Name(element.getAttribute("table"));
 				break;
 			}
 			
@@ -205,7 +222,7 @@ public final class TitliTableMapper
 		TitliTableMapper tableMapper = TitliTableMapper.getInstance();
 		
 		//System.out.println(mapper.getPageOf("Cancer Research Group"));
-		System.out.println(mapper.getLabel("catissue_institution"));
+		System.out.println(mapper.getLabel(new Name("catissue_institution")));
 		System.out.println(mapper.getTable("Specimen Collection Group"));
 		
 	}

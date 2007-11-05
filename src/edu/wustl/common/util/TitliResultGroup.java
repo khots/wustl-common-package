@@ -4,9 +4,13 @@
 package edu.wustl.common.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import edu.wustl.common.util.global.Constants;
+
+import titli.controller.Name;
 import titli.controller.interfaces.ColumnInterface;
 import titli.controller.interfaces.MatchInterface;
 import titli.controller.interfaces.MatchListInterface;
@@ -28,6 +32,7 @@ public class TitliResultGroup
 	private String label;
 	private List<String> columnList;
 	private List<List<String>> dataList;
+	private Iterator<MatchInterface> it;
 	
 	
 	/**
@@ -93,9 +98,9 @@ public class TitliResultGroup
 			TableInterface table=null;
 			table = group.getMatchList().get(0).fetch().getTable();
 			
-			for(String column : table.getColumns().keySet())
+			for(Name column : table.getColumns().keySet())
 			{
-				columnList.add(column);
+				columnList.add(column.toString());
 			}
 			
 		}
@@ -143,20 +148,84 @@ public class TitliResultGroup
 	}
 	
 	
+	/**
+	 * get the data list for next n records
+	 * this method was spcifically added for the pagination requirement 
+	 * that only the rercords required to display the current page should be fetched  
+	 * @param n number of records
+	 * @return the data list for next n records
+	 * @throws TitliFetchException if problems occur
+	 */
+	public List<List<String>> getNext(int n) throws TitliFetchException 
+	{
+		List<List<String>> data = new ArrayList<List<String>>();
+		
+		if(it==null)
+		{
+			it = group.getMatchList().iterator(); 
+		}
+		
+		for(int i=0; i<n; i++)
+		{
+			if(!it.hasNext())
+			{
+				return data;
+			}
+			
+			MatchInterface match = it.next();
+			
+			List<String> dataRow = new ArrayList<String>();
+			
+			Map<ColumnInterface, String> columns=null;
+			
+			columns = match.fetch().getColumnMap();
+			
+			
+			//populate the data row
+			for(String value : columns.values())
+			{
+				dataRow.add(value);
+			}
+			
+			//add the row to the data list
+			dataList.add(dataRow);
+		}
+		
+		return data;
+	}
+	
+	/**
+	 * tells whether there are any more records to be fetched
+	 * used in conjunction with getNext()
+	 *  
+	 * @return true if there are any more records to be fetched, otherwise false
+	 */
+	public boolean hasMore()
+	{
+		if(it==null)
+		{
+			it = group.getMatchList().iterator(); 
+		}
+		
+		return it.hasNext();
+		
+	}
+	
+	
 	//	working well
 	/**
 	 * @param args command line arguments
-	 * @throws TitliFetchException if problems occur
+	 * @throws Exception if problems occur
 	 * 
 	 */
-	public static void main(String[] args) throws TitliFetchException
+	public static void main(String[] args) throws Exception
 	{
 		MatchListInterface matches=null;
 		
 		try
 		{
 			TitliInterface titli = Titli.getInstance();
-			
+			//titli.index();
 			matches = titli.search("m*");
 		}
 		catch (TitliException e) 
@@ -167,11 +236,13 @@ public class TitliResultGroup
 		
 		
 			
-		TitliResultGroup group = new TitliResultGroup(matches.getSortedResultMap().get("catissue_permissible_value"));
+		TitliResultGroup group = new TitliResultGroup(matches.getSortedResultMap().get(new Name("catissue_institution")));
 		
 		
-		System.out.println(group.getColumnList());
+		System.out.println(group.getColumnList().indexOf(Constants.IDENTIFIER));
 		System.out.println(group.getDataList());
+		System.out.println(group.getNativeGroup().getNumberOfMatches());
+		//System.out.println(group.getPageOf());
 	}
 	
 
