@@ -122,6 +122,10 @@ public class ParameterizedQuery extends Query implements IParameterizedQuery {
      * @param outputAttributeList the outputAttributeList to set
      */
     public void setOutputAttributeList(List<IOutputAttribute> outputAttributeList) {
+    	if (outputAttributeList==null)
+    	{
+    		outputAttributeList = new ArrayList<IOutputAttribute>();
+    	}
         this.outputAttributeList = outputAttributeList;
     }
 
