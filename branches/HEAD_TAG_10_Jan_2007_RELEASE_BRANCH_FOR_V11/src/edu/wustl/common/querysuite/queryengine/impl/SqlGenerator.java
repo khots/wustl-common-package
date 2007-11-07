@@ -521,8 +521,8 @@ public class SqlGenerator implements ISqlGenerator
 						.getDynamicExtensionsAssociation();
 				AssociationInterface eavAssociation = actualEavAssociation;
 				EntityInterface rightEntity = eavAssociation.getTargetEntity();
-				String rightAlias = getAliasFor(childExpression, rightEntity);
-				
+				String actualRightAlias = getAliasFor(childExpression, rightEntity);
+				String rightAlias = actualRightAlias; 
 				if (!processedAlias.contains(aliasAppenderMap.get(childExpressionId)))
 				{
 					if (InheritanceUtils.getInstance().isInherited(eavAssociation))
@@ -629,7 +629,7 @@ public class SqlGenerator implements ISqlGenerator
 					buffer.append(getParentHeirarchy(childExpression, childEntity, rightEntity));
 				}
 				// append from part SQL for the next Expressions.
-				buffer.append(getFromPartSQL(childExpression, rightAlias, processedAlias));
+				buffer.append(getFromPartSQL(childExpression, actualRightAlias, processedAlias));
 			}
 		} 
 		return buffer.toString();
