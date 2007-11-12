@@ -45,7 +45,14 @@ public class PagenationTag extends TagSupport
         {
         	m_showNext = true;
             JspWriter out = pageContext.getOut();
-            out.println("<table class=\"dataTableWhiteLabel\" border=0 bordercolor=#666699 width=100%>");
+            if (getPageName().equals("SpreadsheetView.do"))
+            {
+            	out.println("<table class=\"dataTableWithoutBorder\" border=0 bordercolor=#666699 width=98%>");
+            }
+            else
+            {
+            	out.println("<table class=\"dataTableWhiteLabel\" border=0 bordercolor=#666699 width=98%>");
+            }
 
             if (pageNum > numLinks)
             {
