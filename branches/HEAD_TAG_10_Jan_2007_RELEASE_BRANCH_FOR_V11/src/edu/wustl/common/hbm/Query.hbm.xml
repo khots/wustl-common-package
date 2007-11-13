@@ -72,7 +72,7 @@
 
         <list
             name="outputAttributeList"
-            table="OUTPUT_ATTRIBUTES"
+            table="QUERY_OUTPUT_ATTRIBUTE"
             lazy="false"
             inverse="false"
             cascade="all-delete-orphan"
