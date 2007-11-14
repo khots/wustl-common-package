@@ -35,43 +35,44 @@ public class Utility
 	 */
 	public static PrivilegeType getPrivilegeType(EntityInterface entity)
 	{    
-		if(entity.getName().equals("edu.wustl.catissuecore.domain.Participant"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Specimen"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup.IdentifiedSurgicalPathologyReport"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.pathology.DeidentifiedSurgicalPathologyReport"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.StorageContainer"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.CollectionProtocol"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Site"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.DistributionProtocol"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.User"))
-			return PrivilegeType.ObjectLevel;
-		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Distribution"))
-			return PrivilegeType.ObjectLevel;
-		
-		else
-			return PrivilegeType.ClassLevel;
-//		Collection<TaggedValueInterface> taggedValueCollection = entity.getTaggedValueCollection();
-//		for (TaggedValueInterface tag : taggedValueCollection)
-//		{
-//			if (Constants.PRIVILEGE_TAG_NAME.equals(tag.getKey()))
-//			{
-//				return PrivilegeType.getPrivilegeType(Integer.parseInt(tag.getValue()));
-//			}
-//		}
+//		if(entity.getName().equals("edu.wustl.catissuecore.domain.Participant"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Specimen"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup.IdentifiedSurgicalPathologyReport"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.pathology.DeidentifiedSurgicalPathologyReport"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.StorageContainer"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.CollectionProtocol"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Site"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.DistributionProtocol"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.User"))
+//			return PrivilegeType.ObjectLevel;
+//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Distribution"))
+//			return PrivilegeType.ObjectLevel;
+//		
+//		else
+//			return PrivilegeType.ClassLevel; 
+		Collection<TaggedValueInterface> taggedValueCollection = entity.getTaggedValueCollection();
+		for (TaggedValueInterface tag : taggedValueCollection)
+		{  
+			if (Constants.PRIVILEGE_TAG_NAME.equals(tag.getKey()))
+			{
+				return PrivilegeType.getPrivilegeType(Integer.parseInt(tag.getValue()));
+			}
+		}
+		return PrivilegeType.ClassLevel;
 	}
 
 	/**
@@ -89,7 +90,7 @@ public class Utility
 		{
 			for (ICondition condition : conditions)
 			{
-				Boolean isConditionOnIdentifiedAttribute = isIdentified(condition.getAttribute());
+				Boolean isConditionOnIdentifiedAttribute = condition.getAttribute().getIsIdentified();
 
 				if (trueValue.equals(isConditionOnIdentifiedAttribute))
 				{
