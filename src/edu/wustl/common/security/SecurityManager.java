@@ -2707,7 +2707,7 @@ public class SecurityManager implements Permissions {
 	 */
 	public boolean hasPrivilegeOnIdentifiedDataNew(SessionDataBean sessionDataBean, Map<String,QueryResultObjectDataBean> queryResultObjectDataMap,
 			List aList)
-	{
+	{ 
 		// boolean that indicates whether user has privilege on identified data
 		boolean hasPrivilegeOnIdentifiedData = true;
 		String entityName = "";
@@ -2786,52 +2786,55 @@ public class SecurityManager implements Permissions {
 	 */
 	public void filterResultRow(SessionDataBean sessionDataBean,
 			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList)
-	 {     
+	 {
 		boolean isAuthorisedUser = true;
 		boolean hasPrivilegeOnIdentifiedData = true;
-
-		Set keySet = queryResultObjectDataMap.keySet();
-
-		for (Object key : keySet)
+		if (queryResultObjectDataMap != null)
 		{
-			QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap.get(key);
-			String entityName = "";
-			if (!queryResultObjectDataBean.isMainEntity())
-			{
-				entityName = queryResultObjectDataBean.getMainEntity().getName();
-			}
-			else
-				entityName = queryResultObjectDataBean.getEntity().getName();
+			Set keySet = queryResultObjectDataMap.keySet();
 
-			//Check if user has read privilege on perticular object or not.
-			if(!(queryResultObjectDataBean.getMainEntityIdentifierColumnId()==-1))
+			for (Object key : keySet)
 			{
-			isAuthorisedUser = checkPermission(sessionDataBean.getUserName(),
-					entityName, aList
-							.get(queryResultObjectDataBean.getMainEntityIdentifierColumnId()),
-					Permissions.READ_DENIED, queryResultObjectDataBean.getPrivilegeType());
-
-			isAuthorisedUser = !isAuthorisedUser;
-			//If user is authorized to read data then check for identified data access.
-			if (isAuthorisedUser)
-			{
-				hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean.getUserName(),
-						entityName, aList
-								.get(queryResultObjectDataBean.getMainEntityIdentifierColumnId()),
-						Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean.getPrivilegeType());
-
-				//If user is not authorized to see identified data then replace identified column values by ##
-				if (!hasPrivilegeOnIdentifiedData)
+				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
+						.get(key);
+				String entityName = "";
+				if (!queryResultObjectDataBean.isMainEntity())
 				{
-					removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, true);
+					entityName = queryResultObjectDataBean.getMainEntity().getName();
+				}
+				else
+					entityName = queryResultObjectDataBean.getEntity().getName();
+
+				//Check if user has read privilege on perticular object or not.
+				if (!(queryResultObjectDataBean.getMainEntityIdentifierColumnId() == -1))
+				{
+					isAuthorisedUser = checkPermission(sessionDataBean.getUserName(), entityName,
+							aList.get(queryResultObjectDataBean.getMainEntityIdentifierColumnId()),
+							Permissions.READ_DENIED, queryResultObjectDataBean.getPrivilegeType());
+
+					isAuthorisedUser = !isAuthorisedUser;
+					//If user is authorized to read data then check for identified data access.
+					if (isAuthorisedUser)
+					{
+						hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean
+								.getUserName(), entityName, aList.get(queryResultObjectDataBean
+								.getMainEntityIdentifierColumnId()),
+								Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
+										.getPrivilegeType());
+
+						//If user is not authorized to see identified data then replace identified column values by ##
+						if (!hasPrivilegeOnIdentifiedData)
+						{
+							removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, true);
+						}
+					}
+					//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
+					else
+					{
+						removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, false);
+					}
 				}
 			}
-			//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
-			else
-			{
-				removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, false);
-			}
-		}
 		}
 	}
 	
