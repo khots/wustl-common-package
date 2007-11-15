@@ -495,7 +495,7 @@ public class Constants
 	public static final int HASH_PRIME = 7;
 	public static final String QUERY_SQL = "querySQL";
 
-	public static final String PRIVILEGE_TAG_NAME = "privilege";
+	public static final String PRIVILEGE_TAG_NAME = "PRIVILEGE_ID";
 	public static String CATISSUE_SPECIMEN_CLASS_NAME = "edu.wustl.catissuecore.domain.Specimen";
 	
 	//changes for titli
