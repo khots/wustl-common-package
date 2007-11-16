@@ -5,6 +5,7 @@
 package edu.wustl.common.querysuite.queryobject.impl.metadata;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 
 /**
@@ -78,7 +79,7 @@ public class QueryOutputTreeAttributeMetadata
 	
 	public String getUniqueId()
 	{   
-		String id = this.getTreeDataNode().getExpressionId()+ ":" + this.attribute.getId(); //TODO
+		String id = this.getTreeDataNode().getExpressionId()+ Constants.EXPRESSION_ID_SEPARATOR + this.attribute.getId(); //TODO
 		return id;
 	}
 }

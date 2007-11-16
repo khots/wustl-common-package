@@ -500,4 +500,6 @@ public class Constants
 	
 	//changes for titli
 	public static final String TABLE_TABLE_NAME_COLUMN = "TABLE_NAME";
+	
+	public static final String EXPRESSION_ID_SEPARATOR = ":";
 }
