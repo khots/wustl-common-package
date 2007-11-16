@@ -78,7 +78,7 @@ public class QueryOutputTreeAttributeMetadata
 	
 	public String getUniqueId()
 	{   
-		String id = this.getTreeDataNode().getUniqueNodeId() + ":" + this.attribute.getId(); //TODO
+		String id = this.getTreeDataNode().getExpressionId()+ ":" + this.attribute.getId(); //TODO
 		return id;
 	}
 }
