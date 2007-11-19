@@ -58,7 +58,7 @@ public class GraphEntry extends BaseQueryObject {
     /**
      * @return the association
      * 
-     * @hibernate.many-to-one column="QUERY_MODEL_ASSOCIATION_ID" class="edu.wustl.common.querysuite.metadata.associations.impl.ModelAssociation" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="QUERY_MODEL_ASSOCIATION_ID" class="edu.wustl.common.querysuite.metadata.associations.impl.ModelAssociation" cascade="save-update" lazy="false"
      */
     public IAssociation getAssociation() {
         return association;
