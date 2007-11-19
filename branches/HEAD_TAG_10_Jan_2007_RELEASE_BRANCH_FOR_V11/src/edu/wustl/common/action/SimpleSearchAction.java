@@ -261,7 +261,7 @@ public class SimpleSearchAction extends BaseAction
 			/**
 			 * Added by Vijay. Check is added to decide hyperlink should be displayed or not, based on the variable isSecurityRequired of session dataBean
 			 */
-			if(!isSecureExecute)
+			//if(!isSecureExecute)
 			{
 				/**
 				 * Name : Prafull_kadam
