@@ -17,6 +17,7 @@ import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.dao.DAO;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
@@ -66,29 +67,15 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
     protected void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException,
             UserNotAuthorizedException {
         Q query = (Q) obj;
-        Constraints constraints = (Constraints) query.getConstraints();
-        constraints.contemporizeExpressionListWithExpressions();
-
-        Enumeration<IExpressionId> enumeration = constraints.getExpressionIds();
-        while (enumeration.hasMoreElements()) {
-            IExpressionId expressionId = enumeration.nextElement();
-            Expression expression = (Expression) constraints.getExpression(expressionId);
-            preProcessExpression(expression);
-        }
-
-        JoinGraph joinGraph = (JoinGraph) constraints.getJoinGraph();
-        joinGraph.contemporizeGraphEntryCollectionWithJoinGraph();
-
-        Collection<GraphEntry> graphEntryCollection = joinGraph.getGraphEntryCollection();
-        for (GraphEntry graphEntry : graphEntryCollection) {
-            IAssociation association = graphEntry.getAssociation();
-            preProcessAssociation(association);
-        }
-
-        if (query instanceof ParameterizedQuery) {
-            preProcessParameterizedQuery((ParameterizedQuery) query);
-        }
+        preProcessQuery(query);
     }
+    
+    protected void preUpdate(DAO dao, Object currentObj, Object oldObj, SessionDataBean sessionDataBean) throws BizLogicException,
+	UserNotAuthorizedException
+	{
+    	Q query = (Q) currentObj;
+        preProcessQuery(query);
+	}
 
     /**
      * This method returns the name of the name of the class.
@@ -107,7 +94,20 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
         try {
             insert(query, Constants.HIBERNATE_DAO);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to save object, Exception:" + e.getMessage());
+            throw new RuntimeException("Unable to save query, Exception:" + e.getMessage());
+        }
+    }
+    
+    /**
+     * This method persists the Query object
+     * @param query
+     * @throws RemoteException
+     */
+    public final void updateQuery(Q query) throws RemoteException {
+        try {
+            update(query, Constants.HIBERNATE_DAO);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to update query, Exception:" + e.getMessage());
         }
     }
 
@@ -177,7 +177,7 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      * This method processes the query object after retreival.
      * @param query
      */
-    public void postProcessQuery(Q query) {
+    protected void postProcessQuery(Q query) {
         Constraints constraints = (Constraints) query.getConstraints();
         constraints.contemporizeExpressionsWithExpressionList();
 
@@ -325,6 +325,35 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
             Long deAssociationId = intraModelAssociation.getDynamicExtensionsAssociationId();
             AssociationInterface deAssociation = abstractEntityCache.getAssociationById(deAssociationId);
             intraModelAssociation.setDynamicExtensionsAssociation(deAssociation);
+        }
+    }
+    
+    /**
+     * 
+     * @param query
+     */
+    protected void preProcessQuery(Q query) {
+        Constraints constraints = (Constraints) query.getConstraints();
+        constraints.contemporizeExpressionListWithExpressions();
+
+        Enumeration<IExpressionId> enumeration = constraints.getExpressionIds();
+        while (enumeration.hasMoreElements()) {
+            IExpressionId expressionId = enumeration.nextElement();
+            Expression expression = (Expression) constraints.getExpression(expressionId);
+            preProcessExpression(expression);
+        }
+
+        JoinGraph joinGraph = (JoinGraph) constraints.getJoinGraph();
+        joinGraph.contemporizeGraphEntryCollectionWithJoinGraph();
+
+        Collection<GraphEntry> graphEntryCollection = joinGraph.getGraphEntryCollection();
+        for (GraphEntry graphEntry : graphEntryCollection) {
+            IAssociation association = graphEntry.getAssociation();
+            preProcessAssociation(association);
+        }
+
+        if (query instanceof ParameterizedQuery) {
+            preProcessParameterizedQuery((ParameterizedQuery) query);
         }
     }
 
