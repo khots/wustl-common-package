@@ -83,9 +83,7 @@ public class Constraints extends BaseQueryObject implements IConstraints {
      * This method is used during pre-processing query before persisting it.
      */
     public void contemporizeExpressionListWithExpressions() {
-        if (!expressions.isEmpty()) {
-            expressionCollection.clear();
-        }
+        expressionCollection.clear();
 
         for (IExpression expression : expressions.values()) {
             expressionCollection.add(expression);
@@ -97,9 +95,7 @@ public class Constraints extends BaseQueryObject implements IConstraints {
      * This method is used during post-processing query after retrieving it.
      */
     public void contemporizeExpressionsWithExpressionList() {
-        if (!expressionCollection.isEmpty()) {
-            expressions.clear();
-        }
+       expressions.clear();
 
         for (IExpression expression : expressionCollection) {
             expressions.put(expression.getExpressionId(), expression);
