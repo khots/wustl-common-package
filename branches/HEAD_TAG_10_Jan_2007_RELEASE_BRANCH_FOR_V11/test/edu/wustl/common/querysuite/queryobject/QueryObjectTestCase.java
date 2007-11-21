@@ -397,20 +397,4 @@ public class QueryObjectTestCase extends TestCase {
         }
     }
 
-    /**
-     * To test saving of Query
-     */
-    public void testRetrieveParameterizedQuery() {
-        try {
-            IParameterizedQuery savedparameterizedQuery = (IParameterizedQuery) (queryBizLogic.retrieve(
-                                                                                                        ParameterizedQuery.class.getName(),
-                                                                                                        "id", 1L)).get(0);
-            queryBizLogic.postProcessQuery(savedparameterizedQuery);
-
-            assertTrue(savedparameterizedQuery != null);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
-
 }
