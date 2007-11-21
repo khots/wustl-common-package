@@ -68,7 +68,7 @@ public class HibernateMetaData
 			
 			System.out.println(subClass.getClass().getName());
 			//System.out.println("Name "+subClass.getName());
-			list.add(subClass.getNodeName());
+			list.add(subClass.getClassName());
 		}
 		return list;
 	}
@@ -102,7 +102,7 @@ public class HibernateMetaData
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass()!=null) {
 	
-			Logger.out.debug(objPackage.getName()+" "+persistentClass.getNodeName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
+			Logger.out.debug(objPackage.getName()+" "+persistentClass.getClassName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 					);
 			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 					.equals(objPackage.getName()));
@@ -143,7 +143,7 @@ public class HibernateMetaData
 			persistentClass = (PersistentClass) it.next();
 			if(tableName.equalsIgnoreCase(persistentClass.getTable().getName()))
 			{
-				return persistentClass.getNodeName();
+				return persistentClass.getClassName();
 			}
 		}
 		
