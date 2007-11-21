@@ -139,7 +139,7 @@ public class HibernateMetaData
 			persistentClass = (PersistentClass) it.next();
 			if(tableName.equalsIgnoreCase(persistentClass.getTable().getName()))
 			{
-				return persistentClass.getNodeName();
+				return persistentClass.getClassName();
 			}
 		}
 		
