@@ -39,15 +39,15 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class HibernateMetaData
 {
-	private static Configuration cfg; 
+	private static Configuration cfg;
 	private static HashSet mappings=new HashSet();
 	public static void initHibernateMetaData(Configuration configuration)
 	{
 		cfg = configuration;
 //		This function finds all the relations and keeps in mappings set.
-		findRelations();		
+		findRelations();
 	}
-	
+
 	/**
 	 * This method returns the list of subclasses of the className
 	 * @author aarti_sharma
@@ -65,14 +65,14 @@ public class HibernateMetaData
 		while(it.hasNext())
 		{
 			Subclass subClass = (Subclass)it.next();
-			
+
 			System.out.println(subClass.getClass().getName());
 			//System.out.println("Name "+subClass.getName());
 			list.add(subClass.getClassName());
 		}
 		return list;
 	}
-	
+
 	/**
 	 * This method returns the super class of the obj passed
 	 * @author aarti_sharma
@@ -86,7 +86,7 @@ public class HibernateMetaData
 		PersistentClass superClass = persistentClass.getSuperclass();
 		return superClass.getClass();
 	}
-	
+
 	/**
 	 * This method returns the supermost class
 	 * of the class passed that is in the same package as class
@@ -98,10 +98,10 @@ public class HibernateMetaData
 		Class objClass = obj.getClass();
 		Package objPackage = objClass.getPackage();
 		Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
-		
+
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass()!=null) {
-	
+
 			Logger.out.debug(objPackage.getName()+" "+persistentClass.getClassName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 					);
 			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
@@ -116,15 +116,15 @@ public class HibernateMetaData
 		}
 		return persistentClass.getMappedClass();
 	}
-	
-	
+
+
 	public static String getTableName(Class classObj)
 	{
 		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
-		
+
 	}
 	public static String getRootTableName(Class classObj)
 	{
@@ -132,7 +132,7 @@ public class HibernateMetaData
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
-		
+
 	}
 	public static  String getClassName(String tableName)
 	{
@@ -146,10 +146,10 @@ public class HibernateMetaData
 				return persistentClass.getClassName();
 			}
 		}
-		
+
 		return "";
 	}
-	
+
 	public static String getColumnName(Class classObj, String attributeName)
 	{
 		//Logger.out.debug("classObj, String attributeName "+classObj+" "+attributeName);
@@ -157,7 +157,7 @@ public class HibernateMetaData
 		while(it.hasNext())
 		{
 			Property property = (Property)it.next();
-			
+
 			//Logger.out.debug("property.getName() "+property.getName());
 			//System.out.println();
 			//System.out.print("property.getName() "+property.getName()+" ");
@@ -173,8 +173,8 @@ public class HibernateMetaData
 				}
 			}
 		}
-		
-		
+
+
 		Property property = cfg.getClassMapping(classObj.getName()).getIdentifierProperty();
 		//Logger.out.debug("property.getName() "+property.getName());
 		if(property.getName().equals(attributeName))
@@ -187,7 +187,7 @@ public class HibernateMetaData
 				//System.out.println(col.getName());
 			}
 		}
-		
+
 		return "";
 	}
 	public static String getDataBaseName()
@@ -212,38 +212,38 @@ public class HibernateMetaData
 	{
 		org.hibernate.mapping.Collection coll = cfg.getCollectionMapping("edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
 		//System.out.println(map);
-		
+
 		System.out.println(coll.getCollectionTable().getName());
 		System.out.println(coll.getTable().getName());
 		//System.out.println();
-		
+
 		Iterator it = coll.getColumnIterator();
-		
+
 		while(it.hasNext())
 		{
 			//org.hibernate.mapping.Set set = (org.hibernate.mapping.Set)it.next();
 			System.out.println(it.next());
-			
+
 		}
 	}
-	
+
 	/**
 	 * This Function finds all the relations in i.e Many-To-Many and One-To-Many
 	 * All the relations are kept in HashMap where key is formed as table1@table2@table_name@attributeName
 	 * and value is Many-To-Many or One-To-Many
-	 * 
+	 *
 	 * @return Map
 	 */
 	private static void findRelations()
 	{
-		try 
+		try
 		{
 			Iterator itr1=cfg.getCollectionMappings();
-			
+
 			while(itr1.hasNext())
 			{
 				Collection col=(Collection)itr1.next();
-				
+
 				if(col.getElement().getClass().getName().equals(ManyToOne.class.getName()))
 				{
 					saveRelations(col,"ManyToMany");
@@ -253,14 +253,15 @@ public class HibernateMetaData
 					saveRelations(col,"OneToMany");
 				}
 			}
-		} 
-		catch (Exception e) 
-		{
-			Logger.out.info("Error occured in fildAllRelations Function:"+e);
 		}
-		
+		catch (Exception e)
+		{
+			//This line is commented because logger when not initialized properly throws NullPointerException
+			//Logger.out.info("Error occured in fildAllRelations Function:"+e);
+		}
+
 	}
-	
+
 	/**This function saves the relation data in HashSet.
 	 * @param col this is the collection which contains all data
 	 * @param rel_type this is Many-To-Many ot Many-To-One
@@ -275,11 +276,11 @@ public class HibernateMetaData
 		String relationTable=col.getElement().getTable().getName();
 		String keyId=getKeyId(roleAttribute);
 		String roleId=getRoleKeyId(roleAttribute);
-		
+
 		ClassRelationshipData hmc=new ClassRelationshipData(className,relatedClassName,roleAttribute,relationType,
 											relationTable,keyId,roleId);
 		mappings.add(hmc);
-		
+
 		List list1=HibernateMetaData.getSubClassList(col.getOwner().getClassName());
 		for(int i=0;i<list1.size();i++)
 		{
@@ -287,7 +288,7 @@ public class HibernateMetaData
 					relationTable,keyId,roleId);
 			mappings.add(hmc);
 		}
-		
+
 		List list2=HibernateMetaData.getSubClassList(col.getElement().getType().getName());
 		for(int i=0;i<list2.size();i++)
 		{
@@ -296,10 +297,10 @@ public class HibernateMetaData
 			mappings.add(hmc);
 		}
 	}
-	
-	
-	/** This function checks weather relation is Many-Many 
-	 * 
+
+
+	/** This function checks weather relation is Many-Many
+	 *
 	 * @param classObj1
 	 * @param classObj2
 	 * @return true is relation is Many-Many otherwise false
@@ -308,7 +309,7 @@ public class HibernateMetaData
 	{
 		ClassRelationshipData crd=new ClassRelationshipData(classObj1.getName(),classObj2.getName(),roleAttributeName);
 		Iterator itr=mappings.iterator();
-		
+
 		while(itr.hasNext())
 		{
 			ClassRelationshipData crd1=(ClassRelationshipData)itr.next();
@@ -323,20 +324,20 @@ public class HibernateMetaData
 	public static ClassRelationshipData getClassRelationshipData(Class classObj1,Class classObj2, String roleAttributeName)
 	{
 		ClassRelationshipData crd=new ClassRelationshipData(classObj1.getName(),classObj2.getName(),roleAttributeName);
-		
+
 		Iterator itr=mappings.iterator();
-		
+
 		while(itr.hasNext())
 		{
 			ClassRelationshipData crd1=(ClassRelationshipData)itr.next();
 			if(crd1.equals(crd))
 			{
 				return crd1;
-				
+
 			}
 		}
 		return null;
-		
+
 	}
 	/**This function returns the RoleClass for given attName
 	 * @param attName
@@ -345,21 +346,21 @@ public class HibernateMetaData
 	public static Class getRoleClass(String attName)
 	{
 		Iterator itr=mappings.iterator();
-		
+
 		while(itr.hasNext())
 		{
 			ClassRelationshipData crd=(ClassRelationshipData)itr.next();
 			if(crd.getRoleAttribute().indexOf(attName)!=-1)
 			{
 				return Utility.getClassObject(crd.getRelatedClassName());
-				
+
 			}
 		}
 		return null;
 	}
-	
+
 	/** This function returns the attributeName related to classObj1 and classObj2
-	 * 
+	 *
 	 * @param classObj1
 	 * @param classObj2
 	 * @return attName
@@ -379,38 +380,38 @@ public class HibernateMetaData
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
-	 * This function gets the key Id 
+	 * This function gets the key Id
 	 * from hibernate mappings and returns the value
 	 * @param attributeName
 	 * @return key Id
-	 * 
+	 *
 	 */
 	public static String getKeyId(String attributeName)
 	{
 		org.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
 		Iterator keyIt = col1.getKey().getColumnIterator();
-		while (keyIt.hasNext()) 
+		while (keyIt.hasNext())
 		{
 			Column col = (Column) keyIt.next();
 			return(col.getName());
 		}
-	
+
 		return "";
 	}
 	/** This function returns the role Id
 	 * from hibernate mapping and returns the value
-	 * @param attributeName 
+	 * @param attributeName
 	 * @return roleKeyId
-	 * 
+	 *
 	 */
 	public static String getRoleKeyId(String attributeName)
 	{
 		org.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
 		Iterator colIt = col1.getElement().getColumnIterator();
-		while (colIt.hasNext()) 
+		while (colIt.hasNext())
 		{
 			Column col = (Column) colIt.next();
 			return(col.getName());
@@ -421,7 +422,7 @@ public class HibernateMetaData
 	//Mandar:26-apr-06 start
 //	Mandar : 26-Apr-06 : 872 : Column width
 	/**
-	 * @param classObj Name of the class. 
+	 * @param classObj Name of the class.
 	 * @param attributeName Name of the attribute.
 	 * @return The width of the column. Returns width of the column or zero.
 	 */
@@ -431,7 +432,7 @@ public class HibernateMetaData
 		while(it.hasNext())
 		{
 			Property property = (Property)it.next();
-			
+
 			if(property!=null && property.getName().equals(attributeName))
 			{
 				Iterator colIt = property.getColumnIterator();
@@ -448,7 +449,7 @@ public class HibernateMetaData
 
 
 	/**
-	 * This method will return domain object from proxy Object 
+	 * This method will return domain object from proxy Object
 	 * @param domainObject
 	 * @return domain Object
 	 */
@@ -463,19 +464,19 @@ public class HibernateMetaData
 		}
         return domainObject;
 	}
-	
+
 	//	Mandar:26-apr-06 end
-	
+
 	public static void main(String[] args) throws Exception
 	{
 		Variables.applicationHome = System.getProperty("user.dir");
 		Logger.out = org.apache.log4j.Logger.getLogger("");
 		PropertyConfigurator.configure(Variables.applicationHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
-		
+
 		Logger.out.debug("here");
-		
+
 		DBUtil.currentSession();
 		System.out.println(mappings.size());
-		
+
 	}
 }
