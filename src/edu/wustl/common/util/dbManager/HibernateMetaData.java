@@ -45,7 +45,8 @@ public class HibernateMetaData
 	{
 		cfg = configuration;
 //		This function finds all the relations and keeps in mappings set.
-		findRelations();
+		//This Function is commented because it is unused code.
+		//findRelations();
 	}
 
 	/**
@@ -58,7 +59,9 @@ public class HibernateMetaData
 	public static List getSubClassList(String className) throws ClassNotFoundException
 	{
 		List list = new ArrayList();
+		//System.out.println("className :::"+ className);
 		Class classObj = Class.forName(className);
+		//System.out.println("classObj :::"+ classObj);
 		PersistentClass classobj1 = cfg.getClassMapping(classObj.getName());
 		Iterator it  =classobj1.getDirectSubclasses();
 		//Iterator it = cfg.getClassMapping(classObj).getDirectSubclasses();
