@@ -37,10 +37,19 @@ public class Query extends BaseQueryObject implements IQuery {
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_5
+	 * See also: 1-7 
+	 * Description : Making cascade all-delete-orphan from cascade all
+	 */
+    
+    /**
      * @return the reference to constraints.
      * @see edu.wustl.common.querysuite.queryobject.IQuery#getConstraints()
      * 
-     * @hibernate.many-to-one column="QUERY_CONSTRAINTS_ID" class="edu.wustl.common.querysuite.queryobject.impl.Constraints" unique="true" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="QUERY_CONSTRAINTS_ID" class="edu.wustl.common.querysuite.queryobject.impl.Constraints" unique="true" cascade="all-delete-orphan" lazy="false"
      */
     public IConstraints getConstraints() {
         if (constraints == null) {

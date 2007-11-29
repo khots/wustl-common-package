@@ -40,9 +40,18 @@ public class OutputAttribute extends BaseQueryObject implements IOutputAttribute
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_3
+	 * See also: 1-7 
+	 * Description : Making cascade none from cascade all
+	 */
+    
+    /**
      * @return the expressionId
      * 
-     * @hibernate.many-to-one column="EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="none" lazy="false"
      */
     public IExpressionId getExpressionId() {
         return expressionId;

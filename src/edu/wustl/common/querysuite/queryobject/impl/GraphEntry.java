@@ -54,7 +54,7 @@ public class GraphEntry extends BaseQueryObject {
     public Long getId() {
         return id;
     }
-
+    
     /**
      * @return the association
      * 
@@ -72,9 +72,17 @@ public class GraphEntry extends BaseQueryObject {
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_1
+	 * See also: 1-7 
+	 * Description : Making cascade save-update from cascade all
+	 */
+    /**
      * @return the sourceExpressionId
      * 
-     * @hibernate.many-to-one column="SOURCE_EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="SOURCE_EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="save-update" lazy="false"
      */
     public IExpressionId getSourceExpressionId() {
         return sourceExpressionId;
@@ -88,9 +96,18 @@ public class GraphEntry extends BaseQueryObject {
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_2
+	 * See also: 1-7 
+	 * Description : Making cascade save-update from cascade all
+	 */
+    
+    /**
      * @return the targetExpressionId
      * 
-     * @hibernate.many-to-one column="TARGET_EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="TARGET_EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" cascade="save-update" lazy="false"
      */
     public IExpressionId getTargetExpressionId() {
         return targetExpressionId;

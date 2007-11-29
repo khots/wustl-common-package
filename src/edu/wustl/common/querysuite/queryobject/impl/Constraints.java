@@ -108,11 +108,20 @@ public class Constraints extends BaseQueryObject implements IConstraints {
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_4
+	 * See also: 1-7 
+	 * Description : Making cascade all-delete-orphan from cascade all
+	 */
+    
+    /**
      * This method returns the JoinGraph of this Constraint
      * @return the reference to joingraph.
      * @see edu.wustl.common.querysuite.queryobject.IConstraints#getJoinGraph()
      * 
-     * @hibernate.many-to-one column="QUERY_JOIN_GRAPH_ID" unique="true" class="edu.wustl.common.querysuite.queryobject.impl.JoinGraph" cascade="all" lazy="false"
+     * @hibernate.many-to-one column="QUERY_JOIN_GRAPH_ID" unique="true" class="edu.wustl.common.querysuite.queryobject.impl.JoinGraph" cascade="all-delete-orphan" lazy="false"
      */
     public IJoinGraph getJoinGraph() {
         return joinGraph;
