@@ -147,11 +147,20 @@ public class Expression extends BaseQueryObject implements IExpression {
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_6
+	 * See also: 1-7 
+	 * Description : Making cascade all-delete-orphan from cascade save-update
+	 */
+    
+    /**
      * This method returns the ExpressionId of this Expression
      * @return the Expression Id of this Expression.
      * @see edu.wustl.common.querysuite.queryobject.IExpression#getExpressionId()
      * 
-     * @hibernate.many-to-one column="QUERY_EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" unique="true" cascade="save-update" lazy="false" 
+     * @hibernate.many-to-one column="QUERY_EXPRESSIONID_ID" class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId" unique="true" cascade="all-delete-orphan" lazy="false" 
      */
     public IExpressionId getExpressionId() {
         return expressionId;
@@ -166,11 +175,20 @@ public class Expression extends BaseQueryObject implements IExpression {
     }
 
     /**
+	 * Name: Abhishek Mehta
+	 * Reviewer Name : Deepti 
+	 * Bug ID: 5661
+	 * Patch ID: 5661_7
+	 * See also: 1-7 
+	 * Description : Making cascade all-delete-orphan from cascade save-update
+	 */
+    
+    /**
      * This method returns the constraint entity associcated with this Expression
      * @return The Constraint Entity reference associated with this Expression.
      * @see edu.wustl.common.querysuite.queryobject.IExpression#getQueryEntity()
      * 
-     * @hibernate.many-to-one column="QUERY_QUERY_ENTITY_ID" class="edu.wustl.common.querysuite.queryobject.impl.QueryEntity" cascade="save-update" lazy="false" not-null="true"
+     * @hibernate.many-to-one column="QUERY_QUERY_ENTITY_ID" class="edu.wustl.common.querysuite.queryobject.impl.QueryEntity" cascade="all-delete-orphan" lazy="false" not-null="true"
      */
     public IQueryEntity getQueryEntity() {
         return queryEntity;

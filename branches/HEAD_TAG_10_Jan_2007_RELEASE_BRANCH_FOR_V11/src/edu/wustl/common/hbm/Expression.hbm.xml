@@ -73,7 +73,7 @@
         <many-to-one
             name="expressionId"
             class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId"
-            cascade="save-update"
+            cascade="all-delete-orphan"
             outer-join="auto"
             update="true"
             insert="true"
@@ -84,7 +84,7 @@
         <many-to-one
             name="queryEntity"
             class="edu.wustl.common.querysuite.queryobject.impl.QueryEntity"
-            cascade="save-update"
+            cascade="all-delete-orphan"
             outer-join="auto"
             update="true"
             insert="true"

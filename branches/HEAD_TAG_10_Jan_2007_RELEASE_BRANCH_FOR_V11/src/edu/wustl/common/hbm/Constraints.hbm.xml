@@ -47,7 +47,7 @@
         <many-to-one
             name="joinGraph"
             class="edu.wustl.common.querysuite.queryobject.impl.JoinGraph"
-            cascade="all"
+            cascade="all-delete-orphan"
             outer-join="auto"
             update="true"
             insert="true"
