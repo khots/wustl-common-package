@@ -928,7 +928,7 @@ public class SecurityManager implements Permissions {
 	 * @param protectionElements
 	 * @throws CSException
 	 * @throws SMException
-	 */
+	 */ 
 	private void createUserGroupRoleProtectionGroup(Vector authorizationData,
 			Set protectionElements) throws CSException, SMException {
 		ProtectionElement protectionElement;
@@ -2631,8 +2631,8 @@ public class SecurityManager implements Permissions {
 			//Supriya: Security Data in database might be on the basis of classname/table name/table alias name
 			//Depending on the option that an application chooses corresponding prefix is used to check permissions
 			if (securityDataPrefix.equals(CLASS_NAME))
-			{
-				if (entityClassName.equals(Constants.CATISSUE_SPECIMEN_CLASS_NAME))
+			{ 
+				if (entityClassName.equals(Constants.CATISSUE_SPECIMEN_CLASS_NAME) || entityClassName.equals(Constants.CATISSUE_IDENTIFIED_REPORT_CLASS_NAME) || entityClassName.equals(Constants.CATISSUE_DEIDENTIFIED_REPORT_CLASS_NAME))
 				{
 					try
 					{
@@ -2786,7 +2786,7 @@ public class SecurityManager implements Permissions {
 	 */
 	public void filterResultRow(SessionDataBean sessionDataBean,
 			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList)
-	 {
+	 { 
 		boolean isAuthorisedUser = true;
 		boolean hasPrivilegeOnIdentifiedData = true;
 		if (queryResultObjectDataMap != null)
