@@ -497,6 +497,8 @@ public class Constants
 
 	public static final String PRIVILEGE_TAG_NAME = "PRIVILEGE_ID";
 	public static String CATISSUE_SPECIMEN_CLASS_NAME = "edu.wustl.catissuecore.domain.Specimen";
+	public static String CATISSUE_IDENTIFIED_REPORT_CLASS_NAME = "edu.wustl.catissuecore.domain.pathology.DeidentifiedSurgicalPathologyReport";
+	public static String CATISSUE_DEIDENTIFIED_REPORT_CLASS_NAME = "edu.wustl.catissuecore.domain.pathology.IdentifiedSurgicalPathologyReport";
 	
 	//changes for titli
 	public static final String TABLE_TABLE_NAME_COLUMN = "TABLE_NAME";
