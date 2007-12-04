@@ -15,12 +15,15 @@ import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
+import edu.wustl.common.security.exceptions.PasswordEncryptionException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.security.util.StringEncrypter;
+import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
 
 
 
@@ -78,7 +81,59 @@ public class PasswordManager
 		}
     	return passwordBuff.toString();
     }
-    
+
+	private static StringEncrypter stringEncrypter = null;
+	/**
+	 * TO get the instance of StringEncrypter class.
+	 * @return The Object reference of StringEncrypter class.
+	 * @throws EncryptionException
+	 */
+	private static StringEncrypter getEncrypter() throws EncryptionException
+	{
+		if (stringEncrypter==null)
+		{
+			stringEncrypter = new StringEncrypter();
+		}
+		return stringEncrypter;
+	}
+	
+	/**
+	 * TO get Encrypted password for the given password.
+	 * @param password The password to be encrypted.
+	 * @return The Encrypted password for the given password.
+	 * @throws PasswordEncryptionException 
+	 */
+	public static String encrypt(String password) throws PasswordEncryptionException
+	{
+		try
+		{
+			return getEncrypter().encrypt(password);
+		}
+		catch (EncryptionException e)
+		{
+			throw new PasswordEncryptionException(e.getMessage(), e);
+		}
+	}
+	
+
+	/**
+	 * TO get Decrypted password for the given password.
+	 * @param password The password to be Decrypted.
+	 * @return The Decrypted password for the given password.
+	 * @throws PasswordEncryptionException 
+	 */
+	public static String decrypt(String password) throws PasswordEncryptionException
+	{
+		try
+		{
+			return getEncrypter().decrypt(password);
+		}
+		catch (EncryptionException e)
+		{
+			throw new PasswordEncryptionException(e.getMessage(), e);
+		}
+	}
+	@Deprecated 
     public static String encode(String input)
     {
 
@@ -120,7 +175,8 @@ public class PasswordManager
         }
         return null;
     }
-    
+	
+	@Deprecated 
     public static String decode(String s)
     {
         try
@@ -446,20 +502,20 @@ public class PasswordManager
     	return errMsg;
     	
     }
-    public static void main(String[] args)
+    public static void main(String[] args) throws PasswordEncryptionException
     {
-    	String pwd = "forgot";
-    	String encodedPWD = encode(pwd);
-    	System.out.println("encodedPWD "+encodedPWD);
+    	String pwd = "admin";
+    	String encodedPWD = encrypt(pwd);
+    	System.out.println("encodedPWD:"+encodedPWD+":");
     	
-        System.out.println(decode("4e41705731654f6c7263316f"));
-        
+        System.out.println(decrypt("vGEbT0/97YA="));
+        System.out.println("old decoding:"+decode("614164576d65696c6e63"));
         //Mandar 08-May-06
         if(args.length > 1 )
     	{
     		String filename = args[0];
     		String password = args[1];
-    		encodedPWD = encode(password);
+    		encodedPWD = encrypt(password);
     		System.out.println("Filename : "+filename + " : password : "+password+" : encoded"+encodedPWD ); 
     		writeToFile(filename,encodedPWD  );
     	}

@@ -11,6 +11,7 @@ import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement;
+import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.security.exceptions.CSObjectNotFoundException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
@@ -50,8 +51,9 @@ public class AuthorizationDAOImpl extends
 	/**
 	 * @param sf
 	 * @param applicationContextName
+	 * @throws CSConfigurationException 
 	 */
-	public AuthorizationDAOImpl(SessionFactory sf, String applicationContextName) {
+	public AuthorizationDAOImpl(SessionFactory sf, String applicationContextName) throws CSConfigurationException {
 		super(sf, applicationContextName);
 		this.sf = sf;
 		
