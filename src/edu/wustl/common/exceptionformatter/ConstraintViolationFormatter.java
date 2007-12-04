@@ -156,12 +156,37 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 	            String message = cEX.getMessage();
 	            Logger.out.debug("message :"+message);
 	            int startIndex = message.indexOf("[");
-	            int endIndex = message.indexOf("]"); 
+	            
+	        	/**
+	    		 * Name : kalpana thakur
+	    		 * Reviewer Name : Vaishali
+	    		 * Bug ID: 4926
+	    		 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
+	            */
+	            
+	            int endIndex = message.indexOf("#");
+	            if(endIndex == -1)
+	            {
+	            	endIndex = message.indexOf("]");
+	            }
 	            String className = message.substring((startIndex+1),endIndex);
 	            Logger.out.debug("ClassName: "+className);
 	            Class classObj = Class.forName(className);
 	            // get table name from class 
 	            tableName = HibernateMetaData.getRootTableName(classObj);
+	            
+	            /**
+	    		 * Name : kalpana thakur
+	    		 * Reviewer Name : Vaishali
+	    		 * Bug ID: 6034
+	    		 * Description:To retrive the appropriate tablename checking the SQL"
+	            */
+	            
+	            if(!(cEX.getSQL().contains(tableName)))
+	            {
+	            	 tableName = HibernateMetaData.getTableName(classObj);
+	            }
+	    
 	     }
 		 catch(Exception e)
 		 {
