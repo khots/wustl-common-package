@@ -147,11 +147,12 @@ public abstract class AbstractQueryExecutor
 			Logger.out.debug("Query Execution on MySQL Completed...");
 			try
 			{
+				if (resultSet != null)
+					resultSet.close();
+
 				if (stmt != null)
 					stmt.close();
 
-				if (resultSet != null)
-					resultSet.close();
 			}
 			catch (SQLException ex)
 			{
