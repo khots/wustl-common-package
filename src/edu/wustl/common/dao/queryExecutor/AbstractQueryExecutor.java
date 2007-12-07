@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -137,22 +138,25 @@ public abstract class AbstractQueryExecutor
 		try
 		{
 			pagenatedResultData = createStatemtentAndExecuteQuery();
+			Logger.out.debug("Query Execution on MySQL Completed...");
 		}
 		catch (SQLException sqlExp)
 		{
 			Logger.out.error(sqlExp.getMessage(), sqlExp);
 			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
 		}
+		
 		finally
-		{
-			Logger.out.debug("Query Execution on MySQL Completed...");
+		{			
 			try
 			{
+				
+				if (resultSet != null)
+					resultSet.close();
+
 				if (stmt != null)
 					stmt.close();
 
-				if (resultSet != null)
-					resultSet.close();
 			}
 			catch (SQLException ex)
 			{
@@ -179,7 +183,8 @@ public abstract class AbstractQueryExecutor
 	 */
 	protected List getListFromResultSet() throws SQLException
 	{        
-		ResultSetMetaData metaData = resultSet.getMetaData();
+ 		ResultSetMetaData metaData = resultSet.getMetaData();
+		
 		boolean isLongKeyOfMap = false;
 		if(queryResultObjectDataMap!=null && !queryResultObjectDataMap.isEmpty())
 		{
@@ -210,11 +215,6 @@ public abstract class AbstractQueryExecutor
 			columnCount--;
 		}
 		
-		for (int i = 1; i <= columnCount; i++)
-		{
-			Logger.out.debug("Column " + i + " : " + metaData.getColumnClassName(i) + " "
-					+ metaData.getColumnName(i) + " " + metaData.getTableName(i));
-		}
 		int recordCount = 0;
 		List list = new ArrayList();
 		
@@ -226,6 +226,7 @@ public abstract class AbstractQueryExecutor
 			int i = 1;
 
 			List aList = new ArrayList();
+			
 			while (i <= columnCount)
 			{
 
@@ -233,6 +234,10 @@ public abstract class AbstractQueryExecutor
 				{
 
 					Object valueObj = resultSet.getObject(i);
+					
+					//Abhijit: Why used instanceof? 
+					// why not metaData.getColumnType(i) == Types.CLOB ??
+					
 					if (valueObj instanceof oracle.sql.CLOB)
 					{
 						aList.add(valueObj);
