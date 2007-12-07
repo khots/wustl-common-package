@@ -351,11 +351,6 @@ public class SimpleSearchAction extends BaseAction
 						+ rowList.get(identifierIndex);
 
 				
-				if(simpleQueryInterfaceForm.getPageOf().equals("pageOfCollectionProtocol"))
-				{
-					path = "/RetrieveCollectionProtocol.do?"+ Constants.SYSTEM_IDENTIFIER + "="
-					+ rowList.get(identifierIndex);
-				}
 				return getActionForward(Constants.SIMPLE_QUERY_SINGLE_RESULT, path);
 			}
 			else
