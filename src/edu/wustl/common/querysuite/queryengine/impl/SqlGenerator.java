@@ -229,20 +229,27 @@ public class SqlGenerator implements ISqlGenerator
 		
 		String wherePart =  getWherePartSQL(rootExpression, null, false);
 		
-		//Adding extra where condition for PAND to check activity status disabled
+		//Adding extra where condition for PAND to check activity status value as disabled or null
 		StringBuffer extraWherePAnd = new StringBuffer();
 		
+		Set<Integer> expressionIDs = new HashSet<Integer>(); // set to hold values of aliasAppender, so that duplicate condition should not get added in Query.
 		for(IExpression expression:pAndExpressions)
 		{
-			AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity());
-			if(attributeObj!=null)
-		 	{
-		 		ICondition condition = createActivityStatusCondition(attributeObj);
-				String whereCond = getSQL(condition, expression);
-				
-				extraWherePAnd.append("(" ).append(whereCond).append(")").append(LogicalOperator.And).append(" ");
-				
-		 	}
+			if (expressionIDs.add(aliasAppenderMap.get(expression.getExpressionId())))
+			{
+				AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity());
+				if(attributeObj!=null)
+			 	{
+					//creating activityStatus is null condition, this is required in case of Pseudo-Anded expressions.
+					ICondition condition = QueryObjectFactory.createCondition(attributeObj,RelationalOperator.IsNull, null);
+					extraWherePAnd.append("(" ).append(getSQL(condition, expression)).append(" OR ");
+					
+					// creating activityStatus != disabled condition.
+					condition = createActivityStatusCondition(attributeObj);
+					extraWherePAnd.append(getSQL(condition, expression));
+					extraWherePAnd.append(")").append(LogicalOperator.And).append(" ");
+			 	}
+			}
 			//expression.getQueryEntity()
 		}
 		wherePart = "Where " +extraWherePAnd.toString()+wherePart;
