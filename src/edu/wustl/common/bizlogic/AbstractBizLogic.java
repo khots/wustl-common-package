@@ -23,7 +23,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
@@ -421,7 +421,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			
 			String dbName = (titli.getDatabases().keySet().toArray(new String[0]))[0]; 
 			String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
-			String id= ((AbstractDomainObject) obj).getId().toString();
+			String id= ((IDomainObject) obj).getId().toString();
 						
 			Map<String, String> uniqueKey = new HashMap<String, String>();
 			uniqueKey.put(Constants.IDENTIFIER, id);
@@ -473,7 +473,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
+	        	IDomainObject abstractDomain = (IDomainObject)list.get(0);
 	        	
 	        	prePopulateUIBean(abstractDomain,  uiForm);
 	        	uiForm.setAllValues(abstractDomain);
@@ -512,11 +512,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param colName Contains the field name.
 	 * @param colValue Contains the field value.
 	 */
-	public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException
+	public IDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException
 	{
 		long startTime = System.currentTimeMillis();
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
-		AbstractDomainObject abstractDomain = null;
+		IDomainObject abstractDomain = null;
 		
 		try
 		{
@@ -530,7 +530,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	abstractDomain = (AbstractDomainObject)list.get(0);
+	        	abstractDomain = (IDomainObject)list.get(0);
 	        	if( abstractDomain != null )
 	        	{
 	        		abstractDomain.setAllValues(uiForm);
@@ -574,12 +574,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected abstract void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
+	protected abstract void prePopulateUIBean(IDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
 	
 	/**
 	 * This method gets called after populateUIBean method. Any logic after populating  object uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
+	protected abstract void postPopulateUIBean(IDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
 }

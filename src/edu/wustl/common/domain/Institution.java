@@ -19,7 +19,7 @@ import edu.wustl.common.actionForm.InstitutionForm;
  * An institution to which a user belongs to.
  * @hibernate.class table="CATISSUE_INSTITUTION"
  */
-public class Institution extends AbstractDomainObject implements Serializable
+public class Institution extends CommonAbstractDomainObject implements Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 	

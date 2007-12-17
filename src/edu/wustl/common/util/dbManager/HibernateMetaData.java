@@ -22,7 +22,7 @@ import org.hibernate.mapping.Subclass;
 import org.hibernate.mapping.Table;
 import org.hibernate.proxy.HibernateProxy;
 
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -455,7 +455,7 @@ public class HibernateMetaData
 			HibernateProxy hp  = (HibernateProxy)domainObject;
 			Object obj = hp.getHibernateLazyInitializer().getImplementation();
 			System.out.println(obj+" : obj");
-			return (AbstractDomainObject)obj;
+			return (IDomainObject)obj;
 		}
         return domainObject;
 	}

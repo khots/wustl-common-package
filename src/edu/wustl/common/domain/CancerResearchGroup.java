@@ -19,7 +19,7 @@ import edu.wustl.common.actionForm.IValueObject;
  * A collection of scientist and/or clinician users with a common research objective related to biospecimen collection and utilization.
  * @hibernate.class table="CATISSUE_CANCER_RESEARCH_GROUP"
  */
-public class CancerResearchGroup extends AbstractDomainObject implements Serializable
+public class CancerResearchGroup extends CommonAbstractDomainObject implements Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 

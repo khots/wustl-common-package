@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.domain.Institution;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -48,7 +48,7 @@ public class InstitutionForm extends AbstractActionForm
      * This function Copies the data from an institute object to a InstitutionForm object.
      * @param institute An Institute object containing the information about the institute.  
      */
-    public void setAllValues(AbstractDomainObject abstractDomain)
+    public void setAllValues(IDomainObject abstractDomain)
     {
         Institution institute = (Institution) abstractDomain;
         this.id = institute.getId().longValue();

@@ -22,7 +22,7 @@ import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.QueryResultObjectData;
 import edu.wustl.common.beans.SecurityDataBean;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.SMTransactionException;
@@ -1072,7 +1072,7 @@ public class SecurityManager implements Permissions {
 		Set protectionElements = new HashSet();
 		ProtectionGroup protectionGroup;
 		List list;
-		AbstractDomainObject protectionObject;
+		IDomainObject protectionObject;
 		String[] staticGroups;
 		Set protectionGroups = null;
 		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
@@ -1081,7 +1081,7 @@ public class SecurityManager implements Permissions {
 		if (protectionObjects != null) {
 			for (it = protectionObjects.iterator(); it.hasNext();) {
 				protectionElement = new ProtectionElement();
-				protectionObject = (AbstractDomainObject) it.next();
+				protectionObject = (IDomainObject) it.next();
 				protectionElement.setObjectId(protectionObject.getObjectId());
 
 				try {
@@ -1357,7 +1357,7 @@ public class SecurityManager implements Permissions {
 	 * @return @throws
 	 *         SMException
 	 */
-	public String getProtectionGroupByName(AbstractDomainObject obj,
+	public String getProtectionGroupByName(IDomainObject obj,
 			String nameConsistingOf) throws SMException {
 		Set protectionGroups;
 		Iterator it;
@@ -1400,7 +1400,7 @@ public class SecurityManager implements Permissions {
 	 * @return @throws
 	 *         SMException
 	 */
-	public String[] getProtectionGroupByName(AbstractDomainObject obj
+	public String[] getProtectionGroupByName(IDomainObject obj
 			) throws SMException {
 		Set protectionGroups;
 		Iterator it;

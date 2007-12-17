@@ -16,7 +16,7 @@ import edu.wustl.common.exception.AssignDataException;
  * @author gautam_shetty
  * @hibernate.class table="CATISSUE_INTERFACE_COLUMN_DATA"
  */
-public class QueryColumnData extends AbstractDomainObject implements Serializable
+public class QueryColumnData extends CommonAbstractDomainObject implements Serializable
 {
     private long identifier;
 

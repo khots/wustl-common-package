@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.domain.User;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -587,7 +587,7 @@ public class UserForm extends AbstractActionForm
      * Copies the data from an AbstractDomain object to a UserForm object.
      * @param user An AbstractDomain object.  
      */
-    public void setAllValues(AbstractDomainObject abstractDomain)
+    public void setAllValues(IDomainObject abstractDomain)
     {
         if (Constants.PAGEOF_CHANGE_PASSWORD.equals(pageOf) == false)
         {

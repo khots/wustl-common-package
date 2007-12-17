@@ -17,7 +17,7 @@ import edu.wustl.common.actionForm.IValueObject;
  * @hibernate.class table="CATISSUE_ADDRESS"
  * @author Mandar Deshmukh
  */
-public class Address extends AbstractDomainObject implements java.io.Serializable
+public class Address extends CommonAbstractDomainObject implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 

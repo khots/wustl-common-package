@@ -11,7 +11,7 @@ package edu.wustl.common.query;
 
 import java.util.Hashtable;
 
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 
 /**
@@ -57,7 +57,7 @@ public class ShoppingCart
      * Adds an object to the cart.
      * @param obj an object to be added to the cart.
      */
-	public void add(AbstractDomainObject obj) throws BizLogicException
+	public void add(IDomainObject obj) throws BizLogicException
 	{
 		if(obj != null)
 		{

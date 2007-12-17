@@ -18,7 +18,7 @@ import java.util.Vector;
 import edu.wustl.common.beans.SecurityDataBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.domain.User;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
@@ -151,7 +151,7 @@ public class ApproveUserBizLogic extends DefaultBizLogic
      * elements returned by this class should be added to.
      * @return
      */
-    private Vector getAuthorizationData(AbstractDomainObject obj) throws SMException
+    private Vector getAuthorizationData(IDomainObject obj) throws SMException
     {
         Logger.out.debug("--------------- In here ---------------");
         Vector authorizationData = new Vector();

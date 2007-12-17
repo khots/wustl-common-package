@@ -17,8 +17,8 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.Department;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
@@ -48,7 +48,7 @@ public class DepartmentForm extends AbstractActionForm
      * Copies the data from an AbstractDomain object to a DepartmentForm object.
      * @param Department An AbstractDomain object.  
      */
-    public void setAllValues(AbstractDomainObject abstractDomain)
+    public void setAllValues(IDomainObject abstractDomain)
     {
         Department department = (Department)abstractDomain;
         this.id = department.getId().longValue();

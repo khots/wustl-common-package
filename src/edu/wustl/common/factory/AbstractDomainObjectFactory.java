@@ -11,7 +11,7 @@
 package edu.wustl.common.factory;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 
 /**
@@ -27,7 +27,7 @@ public abstract class AbstractDomainObjectFactory
      * @param form Form bean object.
      * @return an AbstractDomain object copy of the form bean object.
      */
-    public abstract AbstractDomainObject getDomainObject(int FORM_TYPE,AbstractActionForm form) throws AssignDataException;
+    public abstract IDomainObject getDomainObject(int FORM_TYPE,AbstractActionForm form) throws AssignDataException;
     
     /**
      * Returns the fully qualified name of the class according to the form bean type.

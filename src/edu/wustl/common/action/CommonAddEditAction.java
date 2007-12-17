@@ -36,7 +36,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.bizlogic.QueryBizLogic;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
@@ -72,7 +72,7 @@ public class CommonAddEditAction extends Action
     	long startTime = System.currentTimeMillis();
     	
         String target = null;
-        AbstractDomainObject abstractDomain = null;
+        IDomainObject abstractDomain = null;
         
         try
         {
@@ -207,7 +207,7 @@ public class CommonAddEditAction extends Action
                             
                             ActionErrors errors = new ActionErrors();
                         	ActionError error = new ActionError("errors.item.unknown",
-                        	        				AbstractDomainObject.parseClassName(objectName));
+                        	        				Utility.parseClassName(objectName));
                         	errors.add(ActionErrors.GLOBAL_ERROR,error);
                         	saveErrors(request,errors);
         	            }
@@ -261,10 +261,10 @@ public class CommonAddEditAction extends Action
 //                    AbstractDomainObject abstractDomainOld = (AbstractDomainObject) listOld.get(0);
                     
 					Session sessionClean = DBUtil.getCleanSession();
-					AbstractDomainObject abstractDomainOld = null;
+					IDomainObject abstractDomainOld = null;
 					try
 					{
-						abstractDomainOld = (AbstractDomainObject) sessionClean.load(Class.forName(objectName), new Long(abstractForm.getId()));
+						abstractDomainOld = (IDomainObject) sessionClean.load(Class.forName(objectName), new Long(abstractForm.getId()));
 					}
 					catch(Exception ex)
 					{
@@ -348,7 +348,7 @@ public class CommonAddEditAction extends Action
                     
                     ActionErrors errors = new ActionErrors();
                 	ActionError error = new ActionError("errors.item.unknown",
-                	        				AbstractDomainObject.parseClassName(objectName));
+                			Utility.parseClassName(objectName));
                 	errors.add(ActionErrors.GLOBAL_ERROR,error);
                 	saveErrors(request,errors);
                 }
@@ -437,7 +437,7 @@ public class CommonAddEditAction extends Action
      * @param abstractDomain	DomainObject Added/Edited
      * @return	HashMap of data required to be forwarded
      */
-    private HashMap generateForwardToHashMap(AbstractActionForm abstractForm, AbstractDomainObject abstractDomain)throws BizLogicException
+    private HashMap generateForwardToHashMap(AbstractActionForm abstractForm, IDomainObject abstractDomain)throws BizLogicException
     {
         HashMap forwardToHashMap;
         //getting instance of ForwardToProcessor
@@ -461,7 +461,7 @@ public class CommonAddEditAction extends Action
      * @param queryBizLogic QueryBizLogic
      * @param objectName String
      */
-    private void addMessage(ActionMessages messages, AbstractDomainObject abstractDomain, String addoredit, QueryBizLogic queryBizLogic, String objectName) {
+    private void addMessage(ActionMessages messages, IDomainObject abstractDomain, String addoredit, QueryBizLogic queryBizLogic, String objectName) {
     	String message = abstractDomain.getMessageLabel();
     	Validator validator = new Validator();
     	boolean isEmpty = validator.isEmpty(message);
@@ -472,7 +472,7 @@ public class CommonAddEditAction extends Action
 		} 
     	catch(Exception excp)
 		{
-    		displayName = AbstractDomainObject.parseClassName(objectName);
+    		displayName = Utility.parseClassName(objectName);
     		Logger.out.error(excp.getMessage(), excp);
 		}
     	

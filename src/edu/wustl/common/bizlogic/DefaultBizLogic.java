@@ -25,9 +25,9 @@ import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
@@ -486,7 +486,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Iterator iterator = objectCollection.iterator();
 		while (iterator.hasNext())
 		{
-			AbstractDomainObject abstractDomainObject = (AbstractDomainObject) iterator.next();
+			IDomainObject abstractDomainObject = (IDomainObject) iterator.next();
 			if (abstractDomainObject.getId().equals(id))
 			{
 				return abstractDomainObject;
@@ -513,7 +513,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param errorName Dispaly Name of the Element
 	 * @throws DAOException
 	 */
-	protected void checkStatus(DAO dao, AbstractDomainObject ado, String errorName) throws DAOException
+	protected void checkStatus(DAO dao, IDomainObject ado, String errorName) throws DAOException
 	{
 		if (ado != null)
 		{
@@ -597,7 +597,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException
+	protected void prePopulateUIBean(IDomainObject domainObj, IValueObject uiForm) throws BizLogicException
 	{
 		
 	}
@@ -608,7 +608,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)throws BizLogicException
+	protected void postPopulateUIBean(IDomainObject domainObj, IValueObject uiForm)throws BizLogicException
 	{
 		
 	}
