@@ -25,7 +25,7 @@ import org.hibernate.Transaction;
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
@@ -308,7 +308,7 @@ public class HibernateDAOImpl implements HibernateDAO
             {
                 if (null != sessionDataBean)
                 {
-                    if(!(obj instanceof AbstractDomainObject)||!hasObjectLevelPrivilege)
+                    if(!(obj instanceof IDomainObject)||!hasObjectLevelPrivilege)
                     {
                     isAuthorized = SecurityManager.getInstance(this.getClass())
                             .isAuthorized(sessionDataBean.getUserName(),
@@ -320,7 +320,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     {
                         isAuthorized = SecurityManager.getInstance(this.getClass())
                         .isAuthorized(sessionDataBean.getUserName(),
-                                obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
+                                obj.getClass().getName()+"_"+((IDomainObject)obj).getId(),
                                 Permissions.UPDATE);
                         Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
                     }
@@ -328,7 +328,7 @@ public class HibernateDAOImpl implements HibernateDAO
                 else
                 {
                     isAuthorized = false;
-                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId()+" "+isAuthorized);
+                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((IDomainObject)obj).getId()+" "+isAuthorized);
                 }
             }
             

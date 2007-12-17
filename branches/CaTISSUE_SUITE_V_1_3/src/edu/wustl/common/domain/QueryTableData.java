@@ -16,7 +16,7 @@ import edu.wustl.common.exception.AssignDataException;
  * @hibernate.class table="CATISSUE_QUERY_TABLE_DATA"
  * @author gautam_shetty
  */
-public class QueryTableData extends AbstractDomainObject implements Serializable
+public class QueryTableData extends CommonAbstractDomainObject implements Serializable
 {
     private long identifier;
 

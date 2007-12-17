@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import edu.wustl.common.dao.DAO;
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -293,7 +293,7 @@ public class AuditManager
 		while(prevColIterator.hasNext())
 		{
 			Set auditEventDetailsCollection = new HashSet();
-			AbstractDomainObject prev=(AbstractDomainObject)prevColIterator.next();
+			IDomainObject prev=(IDomainObject)prevColIterator.next();
 			
 			AuditEventDetails auditEventDetails1=setAuditEventDetails(null,keyId,
 					Utility.toString(currentObj.getId()),null);

@@ -244,8 +244,8 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 
 			Class superClass = classObject.getSuperclass();
 			if ((activityStatusCondition == null)
-					&& (superClass.getName().equals(
-							"edu.wustl.common.domain.AbstractDomainObject") == false))
+					&& (superClass.getName().equals("edu.wustl.common.domain.AbstractDomainObject") == false) && 
+					 (superClass.getName().equals("edu.wustl.catissuecore.domain.AbstractDomainObject") == false))
 			{
 				String superClassAliasName = getAliasName(superClass);
 				activityStatusCondition = getActivityStatusCondition(superClassAliasName,superClass.getName());

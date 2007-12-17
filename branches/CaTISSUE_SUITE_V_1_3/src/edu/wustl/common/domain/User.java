@@ -28,7 +28,7 @@ import edu.wustl.common.util.logger.Logger;
  * processing, or utilization.
  * @hibernate.class table="CATISSUE_USER"
  */
-public class User extends AbstractDomainObject implements Serializable
+public class User extends CommonAbstractDomainObject implements Serializable
 {
 
     /**

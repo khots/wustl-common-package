@@ -9,7 +9,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Validator;
 
@@ -122,7 +122,7 @@ public class LoginForm extends AbstractActionForm
         /* (non-Javadoc)
          * @see edu.wustl.common.actionForm.AbstractActionForm#setAllValues(edu.wustl.common.domain.AbstractDomainObject)
          */
-        public void setAllValues(AbstractDomainObject abstractDomain)
+        public void setAllValues(IDomainObject abstractDomain)
         {
             // TODO Auto-generated method stub
 

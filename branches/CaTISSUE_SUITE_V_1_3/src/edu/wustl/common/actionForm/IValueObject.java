@@ -1,6 +1,6 @@
 package edu.wustl.common.actionForm;
 
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 
 /**
  * This provides the interface / API to set values of domain object to form object 
@@ -10,6 +10,6 @@ import edu.wustl.common.domain.AbstractDomainObject;
 public interface IValueObject 
 {
 	
-	public void setAllValues(AbstractDomainObject abstractDomain);
+	public void setAllValues(IDomainObject abstractDomain);
 
 }

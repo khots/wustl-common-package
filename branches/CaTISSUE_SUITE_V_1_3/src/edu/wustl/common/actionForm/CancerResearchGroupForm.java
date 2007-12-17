@@ -16,8 +16,8 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.CancerResearchGroup;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
@@ -48,7 +48,7 @@ public class CancerResearchGroupForm extends AbstractActionForm
      * Copies the data from an AbstractDomain object to a CancerResearchGroupForm object.
      * @param CancerResearchGroup An AbstractDomain object.  
      */
-    public void setAllValues(AbstractDomainObject abstractDomain)
+    public void setAllValues(IDomainObject abstractDomain)
     {
         CancerResearchGroup cancerResearchGroup = (CancerResearchGroup)abstractDomain;
         this.id = cancerResearchGroup.getId().longValue();

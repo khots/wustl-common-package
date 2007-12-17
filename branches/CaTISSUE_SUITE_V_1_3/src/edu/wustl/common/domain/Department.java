@@ -16,7 +16,7 @@ import edu.wustl.common.actionForm.IValueObject;
  * A department to which a User belongs to.
  *  * @hibernate.class table="CATISSUE_DEPARTMENT"
  */
-public class Department extends AbstractDomainObject implements java.io.Serializable
+public class Department extends CommonAbstractDomainObject implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 

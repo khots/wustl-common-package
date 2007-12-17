@@ -27,11 +27,12 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.IBizLogic;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.CommonAbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.MasterFactory;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -140,7 +141,7 @@ public class CommonSearchAction extends Action
 	              display an Error message.
 	             */
 	            ActionErrors errors = new ActionErrors();
-	            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.unknown", AbstractDomainObject.parseClassName(objName)));
+	            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.unknown", Utility.parseClassName(objName)));
 	            saveErrors(request,errors);
 	            target = new String(Constants.FAILURE);
 	        }

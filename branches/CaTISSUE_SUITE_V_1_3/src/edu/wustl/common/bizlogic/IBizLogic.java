@@ -11,7 +11,7 @@ import java.util.List;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
-import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.SMException;
@@ -96,5 +96,5 @@ public interface IBizLogic
     
     public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)throws DAOException,BizLogicException;
     
-    public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException;
+    public IDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException;
 }
