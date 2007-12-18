@@ -4,9 +4,12 @@
 
 package edu.wustl.common.querysuite.queryobject.util;
 
+import java.util.Collection;
+
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.server.util.InheritanceUtil;
 
 /**
@@ -65,7 +68,22 @@ public class InheritanceUtils implements InheritanceUtilsInterface
 	 */
 	public AttributeInterface getActualAttribute(AttributeInterface attribute)
 	{
-		return InheritanceUtil.getActualAttribute(attribute);
+		EntityInterface parentEntity = attribute.getEntity().getParentEntity();
+		while (parentEntity!=null)
+		{
+			Collection<AttributeInterface> attributeCollection = parentEntity.getAttributeCollection();
+			for (AttributeInterface att:attributeCollection)
+			{
+				if (att.getName().equals(attribute.getName()))
+				{
+					attribute = att;
+					break;
+				}
+			}
+			parentEntity = parentEntity.getParentEntity();
+		}
+		return attribute;
+//		return InheritanceUtil.getActualAttribute(attribute);
 	}
 
 	/**

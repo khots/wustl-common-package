@@ -107,7 +107,7 @@ public class QueryUtility {
      */
     public static Map<IExpressionId, Collection<AttributeInterface>> getAllAttributes(IQuery query) {
         Map<IExpressionId, Collection<AttributeInterface>> expressionIdAttributeCollectionMap = null;
-        if (query != null) {
+        if (query != null) { 
             expressionIdAttributeCollectionMap = new HashMap<IExpressionId, Collection<AttributeInterface>>();
 
             IConstraints constraints = query.getConstraints();
@@ -118,8 +118,7 @@ public class QueryUtility {
                 IExpression expression = constraints.getExpression(expressionId);
                 IQueryEntity queryEntity = expression.getQueryEntity();
                 EntityInterface deEntity = queryEntity.getDynamicExtensionsEntity();
-                Collection<AttributeInterface> attributeCollection = deEntity.getAttributeCollection();
-
+                Collection<AttributeInterface> attributeCollection = deEntity.getEntityAttributesForQuery();
                 expressionIdAttributeCollectionMap.put(expression.getExpressionId(), attributeCollection);
             }
         }
