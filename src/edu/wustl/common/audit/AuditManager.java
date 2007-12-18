@@ -11,9 +11,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import edu.wustl.common.dao.DAO;
-import edu.wustl.common.domain.AuditEvent;
-import edu.wustl.common.domain.AuditEventDetails;
-import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.catissuecore.domain.AuditEvent;
+import edu.wustl.catissuecore.domain.AuditEventDetails;
+import edu.wustl.catissuecore.domain.AuditEventLog;
 import edu.wustl.common.domain.IDomainObject;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
