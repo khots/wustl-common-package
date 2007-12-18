@@ -182,7 +182,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws SqlException When there is error in the passed IQuery object.
 	 */
 	String buildQuery(IQuery query) throws MultipleRootsException, SqlException
-	{
+	{ 
 		IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
 		//		IQuery queryClone = query;
 		constraints = queryClone.getConstraints();
@@ -1085,7 +1085,7 @@ public class SqlGenerator implements ISqlGenerator
 	 * @return Reference to the AttributeInterface if activityStatus attribute present in the entity, else null.
 	 */
 	private AttributeInterface getActivityStatusAttribute(EntityInterface entityInterfaceObj) {
-		Collection<AttributeInterface> attributes = entityInterfaceObj.getAttributeCollection();
+		Collection<AttributeInterface> attributes = entityInterfaceObj.getEntityAttributesForQuery();
 		
 		 for (AttributeInterface attribute: attributes)
 			{
@@ -1661,7 +1661,7 @@ public class SqlGenerator implements ISqlGenerator
 	 */
 	private AttributeInterface getPrimaryKey(EntityInterface entity) throws SqlException
 	{
-		Collection<AttributeInterface> attributes = entity.getAttributeCollection();
+		Collection<AttributeInterface> attributes = entity.getEntityAttributesForQuery();
 		for (AttributeInterface attribute : attributes)
 		{
 			if (attribute.getIsPrimaryKey() || attribute.getName().equals("id"))
@@ -1791,7 +1791,7 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 		IOutputEntity outputEntity = QueryObjectFactory.createOutputEntity(entity);
-		outputEntity.getSelectedAttributes().addAll(entity.getAttributeCollection());
+		outputEntity.getSelectedAttributes().addAll(entity.getEntityAttributesForQuery());
 		return outputEntity;
 	}
 
