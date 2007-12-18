@@ -76,6 +76,23 @@
               />
         </set>
 
+		<set
+            name="auditEventQueryLogCollection"
+            table="CATISSUE_AUDIT_EVENT_QUERY_LOG"
+            lazy="false"
+            inverse="false"
+            cascade="none"
+            sort="unsorted"
+        >
+
+              <key
+                  column="AUDIT_EVENT_ID"
+              />
+
+              <one-to-many
+                  class="edu.wustl.catissuecore.domain.AuditEventQueryLog"
+              />
+        </set>
         <!--
             To add non XDoclet property mappings, create a file named
                 hibernate-properties-AuditEvent.xml

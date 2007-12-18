@@ -41,6 +41,7 @@ public class AuditEvent implements java.io.Serializable
 	
 	protected Collection auditEventLogCollection = new HashSet();
 	
+	protected Collection auditEventQueryLogCollection = new HashSet();
 	/**
      * Returns System generated unique id.
      * @return System generated unique id.
@@ -152,5 +153,17 @@ public class AuditEvent implements java.io.Serializable
 	public void setAuditEventLogCollection(Collection auditEventLogCollection)
 	{
 		this.auditEventLogCollection = auditEventLogCollection;
+	}
+
+	
+	public Collection getAuditEventQueryLogCollection()
+	{
+		return auditEventQueryLogCollection;
+	}
+
+	
+	public void setAuditEventQueryLogCollection(Collection auditEventQueryLogCollection)
+	{
+		this.auditEventQueryLogCollection = auditEventQueryLogCollection;
 	}
 }

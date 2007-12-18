@@ -1261,6 +1261,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				
 
 			}
+			jdbcDAO.commit();
 		}
 		catch(IOException e)
 		{
