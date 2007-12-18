@@ -238,7 +238,7 @@ public class QueryGeneratorMock
 	 */
 	private static AttributeInterface findAttribute(EntityInterface entity, String attributeName)
 	{
-		Collection<AttributeInterface> attributes = entity.getAttributeCollection();
+		Collection<AttributeInterface> attributes = entity.getEntityAttributesForQuery();
 		for (AttributeInterface attribute: attributes)
 		{
 			if (attribute.getName().equals(attributeName))
