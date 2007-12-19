@@ -4,11 +4,13 @@ package edu.wustl.catissuecore.domain;
 import java.util.Collection;
 import java.util.HashSet;
 
+import edu.wustl.common.actionForm.IValueObject;
+
 
 /**
  * @hibernate.class table="CATISSUE_AUDIT_EVENT_LOG"
  **/
-public class AuditEventLog implements java.io.Serializable
+public class AuditEventLog extends AbstractDomainObject implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 
@@ -109,4 +111,9 @@ public class AuditEventLog implements java.io.Serializable
 	{
 		return id+" "+ objectIdentifier+" "+ObjectName+" "+eventType+" \n "+auditEventDetailsCollcetion;
 	}
+	
+	public void setAllValues(IValueObject abstractForm)
+    {
+
+    }
 }

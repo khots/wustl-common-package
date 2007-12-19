@@ -1,11 +1,13 @@
 
 package edu.wustl.catissuecore.domain;
 
+import edu.wustl.common.actionForm.IValueObject;
+
 
 /**
  * @hibernate.class table="CATISSUE_AUDIT_EVENT_DETAILS"
  **/
-public class AuditEventDetails implements java.io.Serializable
+public class AuditEventDetails extends AbstractDomainObject implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1234567890L;
 
@@ -128,4 +130,9 @@ public class AuditEventDetails implements java.io.Serializable
 //		}
 		return false;
 	}
+	
+	public void setAllValues(IValueObject abstractForm)
+    {
+
+    }
 }

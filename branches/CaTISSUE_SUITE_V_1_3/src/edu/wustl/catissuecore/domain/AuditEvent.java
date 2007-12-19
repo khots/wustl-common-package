@@ -6,10 +6,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
+import edu.wustl.common.actionForm.IValueObject;
+import edu.wustl.common.domain.IDomainObject;
+
 /**
  * @hibernate.class table="CATISSUE_AUDIT_EVENT"
  **/
-public class AuditEvent implements java.io.Serializable
+public class AuditEvent extends AbstractDomainObject implements java.io.Serializable
 {
     
     private static final long serialVersionUID = 1234567890L;
@@ -166,4 +169,9 @@ public class AuditEvent implements java.io.Serializable
 	{
 		this.auditEventQueryLogCollection = auditEventQueryLogCollection;
 	}
+
+	public void setAllValues(IValueObject abstractForm)
+    {
+
+    }
 }
