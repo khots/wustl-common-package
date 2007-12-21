@@ -45,7 +45,7 @@ public class PagenationTag extends TagSupport
         {
         	m_showNext = true;
             JspWriter out = pageContext.getOut();
-            if (getPageName().equals("SpreadsheetView.do"))
+            if (getPageName().equals("SpreadsheetView.do"))  //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp) 
             {
             	out.println("<table class=\"dataTableWithoutBorder\" border=0 bordercolor=#666699 width=98%>");
             }
@@ -140,7 +140,10 @@ public class PagenationTag extends TagSupport
             }
 
 //            System.out.println("resultLowRange = "+resultLowRange+" resultHighRange "+resultHighRange+" pageNum = "+pageNum);
-            out.println("<tr> <td class = \"formtextbg\" align=\"CENTER\">"+name+"</td>");
+            if (!getPageName().equals("SpreadsheetView.do"))  //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp) 
+            {
+            	out.println("<tr> <td class = \"formtextbg\" align=\"CENTER\">"+name+"</td>");
+            }
             
             if (showPageSizeCombo)
             {
@@ -165,14 +168,14 @@ public class PagenationTag extends TagSupport
             	}
             	
             	
-            	out.println("<td><select name=\"recordPerPage\" size=\"1\" onChange=\"javascript:changeRecordPerPage("+(m_pageLinkStart)+",this,'"+pageName+"')\""+
-            			" >" + options + "</select> Records Per Page<td>");
+            	out.println("<td>Records Per Page <select name=\"recordPerPage\" size=\"1\" onChange=\"javascript:changeRecordPerPage("+(m_pageLinkStart)+",this,'"+pageName+"')\""+
+            			" >" + options + "</select> <td>");  
             	
             }
             //Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. Checking for zero records.
             if(totalResults > 0)
             {
-            out.println("<td  align = \"CENTER\" class = \"formtextbg\">Showing Results "
+            out.println("<td  align = \"CENTER\" class = \"formtextbg\">"
                             + resultLowRange
                             + " - "
                             + resultHighRange
@@ -193,7 +196,7 @@ public class PagenationTag extends TagSupport
             if ((m_pageLinkEnd) > numLinks)
             {
                 out.print("<td align=\"CENTER\"><a href=\"javascript:send("+(m_pageLinkStart -1)+","+numResultsPerPage+",'"+prevPage+"','"+pageName+"')"
-                                    + "\"> &gt;&gt;PREV  </a></td>");
+                                    + "\"> &lt;&lt;  </a></td>");
             }
             else
             {
@@ -218,7 +221,7 @@ public class PagenationTag extends TagSupport
             if (m_showNext == true)
             {
                 out.print("<td align=\"CENTER\"><a href=\"javascript:send("+i+","+numResultsPerPage+",'"+prevPage+"','"+pageName+"')"
-                                +"\"> NEXT>>  </a> </td>");
+                                +"\"> >>  </a> </td>");
             }
             else
             {
