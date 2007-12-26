@@ -939,21 +939,23 @@ public class SecurityManager implements Permissions {
 		String[] roleIds = null;
 		List list;
 		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-		Group group = new Group();
+		Group group;
 		GroupSearchCriteria groupSearchCriteria;
 		Set userGroup;
 		User user;
 		Iterator it;
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-		groupSearchCriteria = new GroupSearchCriteria(group);
-
+		
 		if (authorizationData != null) {
 			Logger.out.debug(" UserGroupRoleProtectionGroup Size:"
 					+ authorizationData.size());
 			for (int i = 0; i < authorizationData.size(); i++) {
 				Logger.out.debug(" authorizationData:" + i + " "
 						+ authorizationData.get(i).toString());
+				group = new Group();
+				
 				try {
+					
 					userGroupRoleProtectionGroupBean = (SecurityDataBean) authorizationData
 							.get(i);
 
