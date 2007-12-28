@@ -88,14 +88,23 @@ public interface JDBCDAO extends AbstractDAO
 	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws ClassNotFoundException, DAOException;
 	  
 	  public void insert(String tableName, List columnValues) throws DAOException,SQLException;
+	  
+	 /**
+	 * @param tableName Name of the table in which record to be inserted
+	 * @param columnValues column data
+	 * @param columnNames (optional)column names- if not not provided, all coumn names of the table are added to the list of column names
+	 * @throws DAOException
+	 * @throws SQLException
+	 */
+	public void insert(String tableName, List columnValues, List<String>... columnNames) throws DAOException, SQLException;
 	    
 	  /**
 	     * Creates a table with the name and columns specified.
 	     * @param tableName Name of the table to create.
 	     * @param columnNames Columns in the table.
 	     * @throws DAOException
-	     */
-	  public void create(String tableName, String[] columnNames) throws DAOException;
+	     */		
+	 public void create(String tableName, String[] columnNames) throws DAOException;
 	  
 	  /**
 	     * Deletes the specified table
