@@ -435,11 +435,22 @@ public class JDBCDAOImpl implements JDBCDAO
 		return null;
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * @see edu.wustl.common.dao.AbstractDAO#insert(java.lang.Object)
+	
+	/* (non-Javadoc)
+	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
 	 */
-	public void insert(String tableName, List columnValues) throws DAOException, SQLException
+	public void insert(String tableName, List columnValues) throws DAOException, SQLException{
+		insert(tableName,columnValues,null);
+	}
+	
+	/**
+	 * @param tableName
+	 * @param columnValues
+	 * @param columnNames
+	 * @throws DAOException
+	 * @throws SQLException
+	 */
+	public void insert(String tableName, List columnValues, List<String>... columnNames) throws DAOException, SQLException
 	{
 		//Get metadate for temp table to set default values in date fields
 		String sql = "Select * from " + tableName + " where 1!=1";
@@ -449,6 +460,21 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Make a list of Date columns
 		List dateColumns = new ArrayList();
 		List numberColumns = new ArrayList();
+		
+		//added by Kunal
+		List<String> columnNames_t;
+		if(columnNames!=null && columnNames.length > 0){
+			columnNames_t = columnNames[0];			
+		}
+		else
+		{
+			columnNames_t = new ArrayList<String>();
+			for (int i = 1; i <= metaData.getColumnCount(); i++)
+			{
+				columnNames_t.add(metaData.getColumnName(i));
+			}
+		}
+		 
 		
 		 /** Name : Aarti Sharma
 		 * Reviewer: Prafull Kadam
@@ -469,11 +495,28 @@ public class JDBCDAOImpl implements JDBCDAO
 				numberColumns.add(new Integer(i));
 			if (type.equals("TINYINT"))
 				tinyIntColumns.add(new Integer(i));
+			
 		}
 
 		resultSet.close();
 		statement.close();
-		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
+		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + "(");
+		
+		Iterator<String> columnIterator = columnNames_t.iterator();
+		while(columnIterator.hasNext()){
+			query.append(columnIterator.next());
+			if(columnIterator.hasNext()){
+				query.append(",");
+			}else{
+				query.append(") values(");
+			}
+		}
+		
+		
+		
+		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
+		//Changed implementation with column names
+		
 		int i;
 
 		Iterator it = columnValues.iterator();
@@ -573,7 +616,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			}
 		}
 	}
-
+	
 	/**
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.AbstractDAO#update(java.lang.Object, SessionDataBean, boolean, boolean, boolean)
