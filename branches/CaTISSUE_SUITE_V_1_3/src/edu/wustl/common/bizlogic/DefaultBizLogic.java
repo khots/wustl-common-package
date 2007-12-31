@@ -25,6 +25,7 @@ import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
+import edu.wustl.catissuecore.domain.AbstractDomainObject;
 import edu.wustl.catissuecore.domain.AuditEventDetails;
 import edu.wustl.catissuecore.domain.AuditEventLog;
 import edu.wustl.common.domain.IDomainObject;
@@ -513,15 +514,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param errorName Dispaly Name of the Element
 	 * @throws DAOException
 	 */
-	protected void checkStatus(DAO dao, IDomainObject ado, String errorName) throws DAOException
+	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName) throws DAOException
 	{
 		if (ado != null)
 		{
-			Long identifier = ado.getId();
+			Long identifier = ((IDomainObject)ado).getId();
 			if (identifier != null)
 			{
 				String className = ado.getClass().getName();
-				String activityStatus = getActivityStatus(dao, className, identifier);
+				String activityStatus = ado.getActivityStatus();
+				if(activityStatus==null)
+				{
+					activityStatus = getActivityStatus(dao, className, identifier);
+				}
 				if (activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
 				{
 					throw new DAOException(errorName + " " + ApplicationProperties.getValue("error.object.closed"));
