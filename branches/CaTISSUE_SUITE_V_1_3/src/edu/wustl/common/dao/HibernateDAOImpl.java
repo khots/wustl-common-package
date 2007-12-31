@@ -656,7 +656,7 @@ public class HibernateDAOImpl implements HibernateDAO
         catch (Exception exp)
         {
             Logger.out.error(exp.getMessage(), exp);
-            throw new DAOException("Logical Erroe in retrieve method "
+            throw new DAOException("Logical Error in retrieve method "
                     + exp.getMessage(), exp);
         }
         return list;
