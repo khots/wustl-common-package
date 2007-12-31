@@ -18,6 +18,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -436,8 +437,11 @@ public class JDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
+	 * kalpana :bug #6341
+	 * Reviewer :prafull
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.AbstractDAO#insert(java.lang.Object)
+	 * In this function we converting the objects to it's specific type before insertion  
 	 */
 	public void insert(String tableName, List columnValues) throws DAOException, SQLException
 	{
@@ -446,35 +450,10 @@ public class JDBCDAOImpl implements JDBCDAO
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(sql.toString());
 		ResultSetMetaData metaData = resultSet.getMetaData();
-		//Make a list of Date columns
-		List dateColumns = new ArrayList();
-		List numberColumns = new ArrayList();
-		
-		 /** Name : Aarti Sharma
-		 * Reviewer: Prafull Kadam
-		 * Bug ID: 4126
-		 * Patch ID: 4126_1
-		 * See also: 4126_2
-		 * Desciption: Make a list of tinyint columns.
-		 * Tinyint datatype is used as a replacement for boolean in MySQL.
-		 */
-		List tinyIntColumns = new ArrayList();
-				
-		for (int i = 1; i <= metaData.getColumnCount(); i++)
-		{
-			String type = metaData.getColumnTypeName(i);
-			if (type.equals("DATE"))
-				dateColumns.add(new Integer(i));
-			if (type.equals("NUMBER"))
-				numberColumns.add(new Integer(i));
-			if (type.equals("TINYINT"))
-				tinyIntColumns.add(new Integer(i));
-		}
-
 		resultSet.close();
 		statement.close();
 		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
-		int i;
+		int cnt;
 
 		Iterator it = columnValues.iterator();
 		while (it.hasNext())
@@ -489,69 +468,89 @@ public class JDBCDAOImpl implements JDBCDAO
 		}
 
 		PreparedStatement stmt = null;
+		/**
+		 * For Number -1 is used as MarkUp data For Date 1-1-9999 is used as markUp data.
+		 * "##" is checked to differentiate between identified and deidentified data. 
+		 * */
 		try
 		{
 			stmt = connection.prepareStatement(query.toString());
-			for (i = 0; i < columnValues.size(); i++)
+			for (cnt = 1; cnt <= columnValues.size(); cnt++)
 			{
-				Object obj = columnValues.get(i);
-				/**
-				 * For Number -1 is used as MarkUp data For Date 1-1-9999 is used as markUp data.
-				 * Please refer bug 3576
-				 */
-
-				if (dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+				Object obj = columnValues.get(cnt - 1);
+				String objString = obj.toString();
+				switch (metaData.getColumnType(cnt))
 				{
-					java.util.Date date = null;
-					try {
-						date = Utility.parseDate("1-1-9999","mm-dd-yyyy");
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-					Date sqlDate = new Date(date.getTime());
-					stmt.setDate(i + 1, sqlDate);
-				}
-				 /** Name : Aarti Sharma
-				 * Reviewer:  Prafull Kadam
-				 * Bug ID: 4126
-				 * Patch ID: 4126_2
-				 * See also: 4126_1
-				 * Desciption: If the value of the column is true set 1 in the statement else set 0.
-				 * This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-				 * If this is not done then all values will be set as 0 
-				 * irrespective of whether the value is true or false.
-				 */
-				else if (tinyIntColumns.contains(new Integer(i + 1)))
-				{
-					if(obj.equals("true") || obj.equals("TRUE"))
-					{
-						stmt.setObject(i+1, 1);
-					}
-					else
-					{
-						stmt.setObject(i+1, 0);
-					}
-				}
-				else
-				{
-					Timestamp date = isColumnValueDate(obj);
-					if (date != null)
-					{
-						stmt.setObject(i + 1, date);
-						//Logger.out.debug("t.toString(): " + "---" + date);
-					}
-					else
-					{
-						if (numberColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+					case Types.DATE :
+						String dateStr = null;
+						if (objString.equals("##"))
 						{
-							stmt.setObject(i + 1, new Integer(-1));
+							dateStr = "1-1-9999";
 						}
 						else
 						{
-						  stmt.setObject(i + 1, obj);
+							dateStr = objString;
 						}
-					}
+						try
+						{
+							java.util.Date date = Utility.parseDate(dateStr, "mm-dd-yyyy");
+							if (date==null)
+								obj = null;
+							else
+								obj = new Date(date.getTime());
+							
+						}
+						catch (ParseException e)
+						{
+							e.printStackTrace();
+						}
+						break;
+
+					case Types.BOOLEAN :
+					case Types.BIT :
+					case Types.TINYINT :
+						if (obj.equals("true") || obj.equals("TRUE"))
+						{
+							obj = 1;
+						}
+						else
+						{
+							obj = 0;
+						}
+						break;
+
+					case Types.BIGINT :
+					case Types.INTEGER :
+						if (objString.equals("##"))
+						{
+							obj = new Integer(-1);
+						}
+						else
+						{
+							if (objString.trim().equals(""))
+								obj = null;
+							else
+								obj=Integer.parseInt(objString);
+						}
+						break;
+						
+					case Types.DOUBLE :
+						if (objString.equals("##"))
+						{
+							obj = new Double(0);
+						}
+						else
+						{
+							if (objString.trim().equals(""))
+								obj = null;
+							else
+								obj=Double.parseDouble(objString);
+						}
+						break;
+					default :
+						break;
 				}
+				stmt.setObject(cnt, obj);
 			}
 			stmt.executeUpdate();
 		}
