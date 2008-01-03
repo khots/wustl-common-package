@@ -5,8 +5,8 @@
 
 <hibernate-mapping default-lazy="false">
     <class
-        name="edu.wustl.common.querysuite.metadata.category.CategorialAttribute"
-        table="CATEGORIAL_ATTRIBUTE"
+        name="edu.wustl.common.querysuite.metadata.category.AbstractCategorialAttribute"
+        table="ABSTRACT_CATEGORIAL_ATTRIBUTE"
         dynamic-update="false"
         dynamic-insert="false"
     >
@@ -19,13 +19,13 @@
             unsaved-value="null"
         >
             <generator class="native">
-                <param name="sequence">CATEGORIAL_ATTRIBUTE_SEQ</param>
+                <param name="sequence">ABSTRACT_CATEGORIAL_ATTRIBUTE_SEQ</param>
             </generator>
         </id>
 
         <many-to-one
             name="categorialClass"
-            class="edu.wustl.common.querysuite.metadata.category.CategorialClass"
+            class="edu.wustl.common.querysuite.metadata.category.AbstractCategorialClass"
             cascade="none"
             outer-join="auto"
             update="true"
@@ -34,26 +34,41 @@
         />
 
         <property
-            name="deCategoryAttributeId"
-            type="long"
-            update="true"
-            insert="true"
-            column="DE_CATEGORY_ATTRIBUTE_ID"
-        />
-
-        <property
             name="deSourceClassAttributeId"
             type="long"
             update="true"
             insert="true"
             column="DE_SOURCE_CLASS_ATTRIBUTE_ID"
+            length="30"
         />
 
         <!--
             To add non XDoclet property mappings, create a file named
-                hibernate-properties-CategorialAttribute.xml
+                hibernate-properties-AbstractCategorialAttribute.xml
             containing the additional properties and place it in your merge dir.
         -->
+
+        
+        <joined-subclass
+            name="edu.wustl.common.querysuite.metadata.category.CategorialAttribute"
+            table="CATEGORIAL_ATTRIBUTE"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="ID"
+        />
+
+        <property
+            name="deCategoryAttributeId"
+            type="long"
+            update="true"
+            insert="true"
+            column="DE_CATEGORY_ATTRIBUTE_ID"
+            length="30"
+        />
+
+        </joined-subclass>
 
     </class>
 
