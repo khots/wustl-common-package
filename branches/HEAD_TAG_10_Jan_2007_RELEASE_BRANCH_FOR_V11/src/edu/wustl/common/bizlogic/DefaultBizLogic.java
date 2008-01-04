@@ -492,15 +492,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param errorName Dispaly Name of the Element
 	 * @throws DAOException
 	 */
-	protected void checkStatus(DAO dao, AbstractDomainObject ado, String errorName) throws DAOException
+	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName) throws DAOException
 	{
 		if (ado != null)
 		{
-			Long identifier = ado.getId();
+			Long identifier = ((AbstractDomainObject)ado).getId();
 			if (identifier != null)
 			{
 				String className = ado.getClass().getName();
-				String activityStatus = getActivityStatus(dao, className, identifier);
+				String activityStatus = ado.getActivityStatus();
+				if(activityStatus==null)
+				{
+					activityStatus = getActivityStatus(dao, className, identifier);
+				}
 				if (activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
 				{
 					throw new DAOException(errorName + " " + ApplicationProperties.getValue("error.object.closed"));
