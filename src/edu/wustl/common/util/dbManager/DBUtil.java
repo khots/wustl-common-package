@@ -1,4 +1,3 @@
-
 package edu.wustl.common.util.dbManager;
 
 import java.io.InputStream;
@@ -8,15 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.DOMWriter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.util.XMLHelper;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.DOMWriter;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -34,7 +32,6 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class DBUtil
 {
-
 	//A factory for DB Session which provides the Connection for client. 
 	private static SessionFactory m_sessionFactory;
 
@@ -42,8 +39,8 @@ public class DBUtil
 	private static final ThreadLocal threadLocal = new ThreadLocal();
 	//Initialize the session Factory in the Static block.
 	//Initialize the session Factory in the Static block.
-	private static EntityResolver entityResolver=XMLHelper.DEFAULT_DTD_RESOLVER;
-	
+	private static EntityResolver entityResolver = XMLHelper.DEFAULT_DTD_RESOLVER;
+
 	static
 	{
 		try
@@ -59,23 +56,23 @@ public class DBUtil
 			String configurationFileNames = p.getProperty("hibernate.configuration.files");
 
 			String[] fileNames = null;
-			if(configurationFileNames!=null)
+			if (configurationFileNames != null)
 			{
 				fileNames = configurationFileNames.split(",");
 			}
 
 			// if no configuraiton file found, get the default one.
-			if (fileNames==null) 
+			if (fileNames == null)
 			{
-				fileNames = new String[] {"hibernate.cfg.xml"};
+				fileNames = new String[]{"hibernate.cfg.xml"};
 			}
-            //get all configuration files 
+			//get all configuration files 
 			for (int i = 0; i < fileNames.length; i++)
 			{
 				String fileName = fileNames[i];
 				fileName = fileName.trim();
-				System.out.println(fileName+": fileName");
-				addConfigurationFile(fileName, cfg,entityResolver);
+				System.out.println(fileName + ": fileName");
+				addConfigurationFile(fileName, cfg, entityResolver);
 			}
 
 			m_sessionFactory = cfg.buildSessionFactory();
@@ -85,9 +82,8 @@ public class DBUtil
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
 			Logger.out.debug("Exception: " + ex.getMessage(), ex);
-			throw new RuntimeException(ex.getMessage());
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -96,9 +92,9 @@ public class DBUtil
 	 * @param fileName name of the file that needs to be added
 	 * @param cfg Configuration to which this file is added.
 	 */
-	private static void addConfigurationFile(String fileName, Configuration cfg, EntityResolver entityResolver)
+	private static void addConfigurationFile(String fileName, Configuration cfg,
+			EntityResolver entityResolver)
 	{
-
 		try
 		{
 			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(fileName);
@@ -115,11 +111,11 @@ public class DBUtil
 		}
 		catch (DocumentException e)
 		{
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 		catch (HibernateException e)
 		{
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -186,16 +182,12 @@ public class DBUtil
 			session = m_sessionFactory.openSession();
 			return session.load(objectClass, identifier);
 		}
-		catch (HibernateException e)
-		{
-			throw e;
-		}
 		finally
 		{
 			session.close();
 		}
 	}
-	
+
 	public static Session getCleanSession() throws BizLogicException
 	{
 		Session session = null;
