@@ -7,6 +7,11 @@ alter table CATEGORIAL_ATTRIBUTE drop foreign key FK31F77B5634ED55B7;
 alter table CATEGORIAL_CLASS drop foreign key FK9651EF32F94A5493;
 alter table CATEGORY drop foreign key FK31A8ACFEA2330820;
 alter table CATEGORY drop foreign key FK31A8ACFEC88316F9;
+alter table CATISSUE_AUDIT_EVENT_DETAILS drop foreign key FK5C07745DC62F96A4;
+alter table CATISSUE_AUDIT_EVENT_LOG drop foreign key FK8BB672DFE2182003;
+alter table CATISSUE_INTERFACE_COLUMN_DATA drop foreign key FK9C900851F98C179C;
+alter table CATISSUE_PERMISSIBLE_VALUE drop foreign key FK57DDCE11F55618;
+alter table CATISSUE_PERMISSIBLE_VALUE drop foreign key FK57DDCE1C6D9C7E1;
 alter table QUERY drop foreign key FK49D20A84B0F861E;
 alter table QUERY_CONDITION drop foreign key FKACCE6242DCE1896;
 alter table QUERY_CONDITION_VALUES drop foreign key FK9997379D4D1598FE;
@@ -32,10 +37,16 @@ alter table QUERY_RULE drop foreign key FK14A6503362E3EDC7;
 drop table if exists ABSTRACT_CATEGORIAL_ATTRIBUTE;
 drop table if exists ABSTRACT_CATEGORIAL_CLASS;
 drop table if exists ABSTRACT_CATEGORY;
-
 drop table if exists CATEGORIAL_ATTRIBUTE;
 drop table if exists CATEGORIAL_CLASS;
 drop table if exists CATEGORY;
+drop table if exists CATISSUE_AUDIT_EVENT;
+drop table if exists CATISSUE_AUDIT_EVENT_DETAILS;
+drop table if exists CATISSUE_AUDIT_EVENT_LOG;
+drop table if exists CATISSUE_CDE;
+drop table if exists CATISSUE_INTERFACE_COLUMN_DATA;
+drop table if exists CATISSUE_PERMISSIBLE_VALUE;
+drop table if exists CATISSUE_QUERY_TABLE_DATA;
 drop table if exists QUERY;
 drop table if exists QUERY_CONDITION;
 drop table if exists QUERY_CONDITION_VALUES;
@@ -89,7 +100,61 @@ create table CATEGORY (
    ROOT_CLASS_ID bigint unique,
    primary key (ID)
 );
-
+create table CATISSUE_AUDIT_EVENT (
+   IDENTIFIER bigint not null auto_increment,
+   EVENT_TIMESTAMP datetime,
+   USER_ID bigint,
+   COMMENTS text,
+   IP_ADDRESS varchar(20),
+   primary key (IDENTIFIER)
+);
+create table CATISSUE_AUDIT_EVENT_DETAILS (
+   IDENTIFIER bigint not null auto_increment,
+   ELEMENT_NAME varchar(150),
+   PREVIOUS_VALUE varchar(150),
+   CURRENT_VALUE text,
+   AUDIT_EVENT_LOG_ID bigint,
+   primary key (IDENTIFIER)
+);
+create table CATISSUE_AUDIT_EVENT_LOG (
+   IDENTIFIER bigint not null auto_increment,
+   OBJECT_IDENTIFIER bigint,
+   OBJECT_NAME varchar(50),
+   EVENT_TYPE varchar(50),
+   AUDIT_EVENT_ID bigint,
+   primary key (IDENTIFIER)
+);
+create table CATISSUE_CDE (
+   PUBLIC_ID varchar(30) not null,
+   LONG_NAME varchar(200),
+   DEFINITION text,
+   VERSION varchar(50),
+   LAST_UPDATED datetime,
+   primary key (PUBLIC_ID)
+);
+create table CATISSUE_INTERFACE_COLUMN_DATA (
+   IDENTIFIER bigint not null auto_increment,
+   TABLE_ID bigint,
+   COLUMN_NAME varchar(50),
+   DISPLAY_NAME varchar(50),
+   primary key (IDENTIFIER)
+);
+create table CATISSUE_PERMISSIBLE_VALUE (
+   IDENTIFIER bigint not null auto_increment,
+   CONCEPT_CODE varchar(20),
+   DEFINITION text,
+   PARENT_IDENTIFIER bigint,
+   VALUE varchar(100),
+   PUBLIC_ID varchar(30),
+   primary key (IDENTIFIER)
+);
+create table CATISSUE_QUERY_TABLE_DATA (
+   TABLE_ID bigint not null auto_increment,
+   DISPLAY_NAME varchar(50),
+   TABLE_NAME varchar(50),
+   ALIAS_NAME varchar(50),
+   primary key (TABLE_ID)
+);
 create table QUERY (
    IDENTIFIER bigint not null auto_increment,
    QUERY_CONSTRAINTS_ID bigint unique,
@@ -210,6 +275,11 @@ alter table CATEGORIAL_ATTRIBUTE add index FK31F77B5634ED55B7 (ID), add constrai
 alter table CATEGORIAL_CLASS add index FK9651EF32F94A5493 (ID), add constraint FK9651EF32F94A5493 foreign key (ID) references ABSTRACT_CATEGORIAL_CLASS (IDENTIFIER);
 alter table CATEGORY add index FK31A8ACFEA2330820 (ID), add constraint FK31A8ACFEA2330820 foreign key (ID) references ABSTRACT_CATEGORY (ID);
 alter table CATEGORY add index FK31A8ACFEC88316F9 (ROOT_CLASS_ID), add constraint FK31A8ACFEC88316F9 foreign key (ROOT_CLASS_ID) references CATEGORIAL_CLASS (ID);
+alter table CATISSUE_AUDIT_EVENT_DETAILS add index FK5C07745DC62F96A4 (AUDIT_EVENT_LOG_ID), add constraint FK5C07745DC62F96A4 foreign key (AUDIT_EVENT_LOG_ID) references CATISSUE_AUDIT_EVENT_LOG (IDENTIFIER);
+alter table CATISSUE_AUDIT_EVENT_LOG add index FK8BB672DFE2182003 (AUDIT_EVENT_ID), add constraint FK8BB672DFE2182003 foreign key (AUDIT_EVENT_ID) references CATISSUE_AUDIT_EVENT (IDENTIFIER);
+alter table CATISSUE_INTERFACE_COLUMN_DATA add index FK9C900851F98C179C (TABLE_ID), add constraint FK9C900851F98C179C foreign key (TABLE_ID) references CATISSUE_QUERY_TABLE_DATA (TABLE_ID);
+alter table CATISSUE_PERMISSIBLE_VALUE add index FK57DDCE11F55618 (PARENT_IDENTIFIER), add constraint FK57DDCE11F55618 foreign key (PARENT_IDENTIFIER) references CATISSUE_PERMISSIBLE_VALUE (IDENTIFIER);
+alter table CATISSUE_PERMISSIBLE_VALUE add index FK57DDCE1C6D9C7E1 (PUBLIC_ID), add constraint FK57DDCE1C6D9C7E1 foreign key (PUBLIC_ID) references CATISSUE_CDE (PUBLIC_ID);
 alter table QUERY add index FK49D20A84B0F861E (QUERY_CONSTRAINTS_ID), add constraint FK49D20A84B0F861E foreign key (QUERY_CONSTRAINTS_ID) references QUERY_CONSTRAINTS (IDENTIFIER);
 alter table QUERY_CONDITION add index FKACCE6242DCE1896 (QUERY_RULE_ID), add constraint FKACCE6242DCE1896 foreign key (QUERY_RULE_ID) references QUERY_RULE (IDENTIFIER);
 alter table QUERY_CONDITION_VALUES add index FK9997379D4D1598FE (QUERY_CONDITION_ID), add constraint FK9997379D4D1598FE foreign key (QUERY_CONDITION_ID) references QUERY_CONDITION (IDENTIFIER);
