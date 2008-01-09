@@ -2622,49 +2622,21 @@ public class SecurityManager implements Permissions {
 	 */
 	public boolean checkPermission(String userName, String entityClassName,
 			Object identifier, String permission,PrivilegeType privilegeType)
-	{ 
+	{   
 		if (Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
 		{
 			boolean isAuthorized = false;
-			Logger.out.debug(" Entity class name:" + entityClassName + " tableName:"
+			Logger.out.debug("Entity class name:" + entityClassName + " tableName:"
 					+ entityClassName + " Identifier:" + identifier + " Permission:" + permission
 					+ " userName" + userName);
 
 			//Supriya: Security Data in database might be on the basis of classname/table name/table alias name
 			//Depending on the option that an application chooses corresponding prefix is used to check permissions
-			if (securityDataPrefix.equals(CLASS_NAME))
+			if (!(securityDataPrefix.equals(CLASS_NAME) || securityDataPrefix.equals(TABLE_ALIAS_NAME) ||securityDataPrefix.equals(TABLE_NAME)))
 			{ 
-				if (entityClassName.equals(Constants.CATISSUE_SPECIMEN_CLASS_NAME) || entityClassName.equals(Constants.CATISSUE_IDENTIFIED_REPORT_CLASS_NAME) || entityClassName.equals(Constants.CATISSUE_DEIDENTIFIED_REPORT_CLASS_NAME))
-				{
-					try
-					{
-						Class classObject = Class.forName(entityClassName);
-						entityClassName = classObject.getSuperclass().getName();
-					}
-					catch (ClassNotFoundException classNotExp)
-					{
-						Logger.out.debug("Class " + entityClassName + " not present.");
-					}
-				}
-				if (entityClassName == null)
-				{
-					return isAuthorized;
-				}
-			}
-			else if (securityDataPrefix.equals(TABLE_ALIAS_NAME))
-			{
-				entityClassName = entityClassName;
-			}
-			else if (securityDataPrefix.equals(TABLE_NAME))
-			{
-				entityClassName = entityClassName;
-			}
-			else
-			{
 				entityClassName = "";
 			}
-
-			try
+     		try
 			{
 				//If type of privilege is class level check user's privilege on
 				// class
@@ -2808,38 +2780,40 @@ public class SecurityManager implements Permissions {
 					entityName = queryResultObjectDataBean.getEntity().getName();
 
 				//Check if user has read privilege on perticular object or not.
-				if (!(queryResultObjectDataBean.getMainEntityIdentifierColumnId() == -1))
+				if (!(queryResultObjectDataBean.getMainEntityIdentifierColumnId() == -1)
+						&& (queryResultObjectDataBean.isReadDeniedObject()))
 				{
 					isAuthorisedUser = checkPermission(sessionDataBean.getUserName(), entityName,
 							aList.get(queryResultObjectDataBean.getMainEntityIdentifierColumnId()),
 							Permissions.READ_DENIED, queryResultObjectDataBean.getPrivilegeType());
 
 					isAuthorisedUser = !isAuthorisedUser;
-					//If user is authorized to read data then check for identified data access.
-					if (isAuthorisedUser)
-					{
-						hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean
-								.getUserName(), entityName, aList.get(queryResultObjectDataBean
-								.getMainEntityIdentifierColumnId()),
-								Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
-										.getPrivilegeType());
+				}
+				//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
+				else if (!isAuthorisedUser)
+				{
+					removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, false);
+				}
 
-						//If user is not authorized to see identified data then replace identified column values by ##
-						if (!hasPrivilegeOnIdentifiedData)
-						{
-							removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, true);
-						}
-					}
-					//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
-					else
+				//If user is authorized to read data then check for identified data access.
+				if (isAuthorisedUser && queryResultObjectDataBean.isHasAssociatedIdentifiedData())
+				{
+					hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean.getUserName(),
+							entityName, aList.get(queryResultObjectDataBean
+									.getMainEntityIdentifierColumnId()),
+							Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
+									.getPrivilegeType());
+
+					//If user is not authorized to see identified data then replace identified column values by ##
+					if (!hasPrivilegeOnIdentifiedData)
 					{
-						removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, false);
+						removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, true);
 					}
 				}
 			}
 		}
 	}
-	
+
 //	public static void main(String[] args)
 //	{		
 //		try
