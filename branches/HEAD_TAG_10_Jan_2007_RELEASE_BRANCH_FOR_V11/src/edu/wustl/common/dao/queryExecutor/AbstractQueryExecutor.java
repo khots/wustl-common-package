@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.querysuite.security.utility.CsmCache;
+import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -182,7 +184,7 @@ public abstract class AbstractQueryExecutor
 	 * @throws SQLException
 	 */
 	protected List getListFromResultSet() throws SQLException
-	{        
+	{           
  		ResultSetMetaData metaData = resultSet.getMetaData();
 		
 		boolean isLongKeyOfMap = false;
@@ -193,7 +195,8 @@ public abstract class AbstractQueryExecutor
 			{
 				if (mapIterator.next() instanceof Long)
 				{
-					isLongKeyOfMap = true;					
+					isLongKeyOfMap = true;	
+					break;
 				}
 			}
 		}
@@ -217,6 +220,9 @@ public abstract class AbstractQueryExecutor
 		
 		int recordCount = 0;
 		List list = new ArrayList();
+		 
+		CsmCacheManager cacheManager = new CsmCacheManager(connection);
+		CsmCache cache = cacheManager.getNewCsmCacheObject();
 		
 		/**
 		 * noOfRecords will hold value = Integer.MAX_VALUE when All records are expected from result. 
@@ -306,8 +312,10 @@ public abstract class AbstractQueryExecutor
 				if (Constants.switchSecurity && isSecureExecute)
 				{ 
 					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
-					{
-						SecurityManager.getInstance(this.getClass()).filterResultRow(sessionDataBean, queryResultObjectDataMap, aList);
+					{ 
+						//SecurityManager.getInstance(this.getClass()).filterReasultRow1(sessionDataBean, queryResultObjectDataMap, aList,cache);
+						//Supriya :call filterRow of method of csm cache manager changed for csm-query performance issue. 
+						cacheManager.filterRow(sessionDataBean, queryResultObjectDataMap, aList,cache );
 					}
 				}
 			}
