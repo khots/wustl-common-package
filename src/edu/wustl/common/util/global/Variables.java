@@ -6,6 +6,9 @@
  */
 package edu.wustl.common.util.global;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author ajay_sharma
  *
@@ -35,4 +38,6 @@ public class Variables
 	public static String strTodateFunction = new String();
 	public static String dateTostrFunction = new String();
 	public static String catissueURL=new String();
+	
+	 public static Map<String,String> entityCPSqlMap = new HashMap<String, String>();
 }
