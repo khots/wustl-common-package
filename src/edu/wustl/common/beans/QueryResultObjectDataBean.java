@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author supriya_dankh
  * A class that will have information related CSM for every entity in query.Such as Entity name ,if this entity is 
- * main entity(for which CSM data is inserted in CSM tables) if not a main entity then which is main entity etc..   
+ * main entity(for which CSM data is inserted in CSM tables) if not a main entity ,then which is main entity etc..   
  */
 public class QueryResultObjectDataBean 
 {
@@ -37,7 +37,7 @@ public class QueryResultObjectDataBean
 	private PrivilegeType privilegeType;
 	
 	//If this entity has associated Identified data or not.
-	private boolean hasAssociatedIdentifiedData = false;
+	private boolean hasAssociatedIdentifiedData ;
 	
 	//List of index  of identified data columns.
 	private Vector<Integer> IdentifiedDataColumnIds = new Vector<Integer>();
@@ -48,11 +48,11 @@ public class QueryResultObjectDataBean
 	//If this entity is main entity or not.
 	private boolean isMainEntity = false;
 	
-	//List of association between entity and it's main entity.
-	private List<AssociationInterface> associationList = new ArrayList<AssociationInterface>();
-	
 	//Map of index of identifier columns of all main entities that are present in query.
 	private Map<EntityInterface,Integer> entityIdIndexMap = new HashMap<EntityInterface, Integer>();
+	
+	//A boolean variable that will state if read denied could be possible on a object or not.
+	private boolean isReadDeniedObject = false;
 	
 	/**
 	 * Returns entity.
@@ -198,24 +198,7 @@ public class QueryResultObjectDataBean
 		this.objectColumnIds = objectColumnIds;
 	}
 
-	/**
-	 * Get List of association between entity and it's main entity.
-	 * @return associationList.
-	 */
-	public List<AssociationInterface> getAssociationList()
-	{
-		return associationList;
-	}
 
-	/**
-	 * Set List of association between entity and it's main entity.
-	 * @param associationList
-	 */
-	public void setAssociationList(List<AssociationInterface> associationList)
-	{
-		this.associationList = associationList;
-	}
-	
 	/**
 	 * Get privilege type.
 	 * @return privilegeType.
@@ -245,5 +228,19 @@ public class QueryResultObjectDataBean
 	{
 		this.entityIdIndexMap = entityIdIndexMap;
 	}
+
+	
+	public boolean isReadDeniedObject()
+	{
+		return isReadDeniedObject;
+	}
+
+	
+	public void setReadDeniedObject(boolean isReadDeniedObject)
+	{
+		this.isReadDeniedObject = isReadDeniedObject;
+	}
+	
+	
 	
 }
