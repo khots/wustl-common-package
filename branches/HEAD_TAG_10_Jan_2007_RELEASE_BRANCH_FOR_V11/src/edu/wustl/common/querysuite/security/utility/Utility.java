@@ -35,35 +35,6 @@ public class Utility
 	 */
 	public static PrivilegeType getPrivilegeType(EntityInterface entity)
 	{    
-//		if(entity.getName().equals("edu.wustl.catissuecore.domain.Participant"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Specimen"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup.IdentifiedSurgicalPathologyReport"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.pathology.DeidentifiedSurgicalPathologyReport"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.StorageContainer"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.CollectionProtocol"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Site"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.DistributionProtocol"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.User"))
-//			return PrivilegeType.ObjectLevel;
-//		else if(entity.getName().equals("edu.wustl.catissuecore.domain.Distribution"))
-//			return PrivilegeType.ObjectLevel;
-//		
-//		else
-//			return PrivilegeType.ClassLevel; 
 		Collection<TaggedValueInterface> taggedValueCollection = entity.getTaggedValueCollection();
 		for (TaggedValueInterface tag : taggedValueCollection)
 		{  
@@ -101,51 +72,5 @@ public class Utility
 		return false;
 	}
 	
-	public static boolean isIdentified(AttributeInterface attribute)
-	{  
-		if(attribute.getEntity().getName().equals("edu.wustl.catissuecore.domain.Participant"))
-		{
-			if(attribute.getName().equals("firstName") || attribute.getName().equals("lastName") ||attribute.getName().equals("middleName")||attribute.getName().equals("birthDate")||attribute.getName().equals("socialSecurityNumber"))
-			 return true;
-		}
-		else if(attribute.getEntity().getName().equals("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
-		{
-			if(attribute.getName().equals("medicalRecordNumber"))
-				return true;
-		}
-		else if (attribute.getEntity().getName().equals("edu.wustl.catissuecore.domain.CollectionProtocolRegistration"))
-		{
-			if(attribute.getName().equals("registrationDate"))
-				return true;
-		}
-		else if(attribute.getEntity().getName().equals("edu.wustl.catissuecore.domain.SpecimenCollectionGroup"))
-		{ 
-			if(attribute.getName().equals("surgicalPathologyNumber"))
-				return true;
-		}
-			
-		return false;
-	}
-	
-	public static List<AssociationInterface> getContainmentAssociations(EntityInterface entity)
-	{
-		List<AssociationInterface> associationList = new ArrayList<AssociationInterface>();
-		if(entity.getName().equals("edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier"))
-		{
-			for(AssociationInterface ass : entity.getAssociationCollection())
-			{
-				if(ass.getTargetEntity().getName().equals("edu.wustl.catissuecore.domain.Participant"))
-				  associationList.add(ass);
-			}
-		}
-		if(entity.getName().equals("edu.wustl.catissuecore.domain.pathology.TextContent"))
-		{
-			for(AssociationInterface ass : entity.getAssociationCollection())
-			{
-				if(ass.getTargetEntity().getName().equals("edu.wustl.catissuecore.domain.pathology.SurgicalPathologyReport"))
-				  associationList.add(ass);
-			}
-		}
-		return associationList;
-	}
+
 }
