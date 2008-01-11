@@ -236,6 +236,9 @@ public class QueryMetadataUtil {
 				+ nextIdOfDBProperties + ",'PARENT_CP_ID',null,"
 				+ nextIdOfAbstractMetadata + ")";
 		executeInsertSQL(sql);
+		sql = "insert into association values("
+			+ nextIDintraModelAssociation + ",2)";
+		executeInsertSQL(sql);
 		sql = "insert into intra_model_association values("
 				+ nextIDintraModelAssociation + "," + nextIdOfAbstractMetadata + ")";
 		executeInsertSQL(sql);
