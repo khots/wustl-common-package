@@ -27,7 +27,7 @@
         <many-to-one
             name="expressionId"
             class="edu.wustl.common.querysuite.queryobject.impl.ExpressionId"
-            cascade="none"
+            cascade="save-update,persist"
             outer-join="auto"
             update="true"
             insert="true"
