@@ -14,13 +14,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.beans.QueryResultObjectDataBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.querysuite.security.PrivilegeType;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.Permissions;
-import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -233,27 +231,13 @@ public class CsmCacheManager
 	 */
 	private String getEntityName(QueryResultObjectDataBean queryResultObjectDataBean)
 	{
-		String entityName; 
-		EntityInterface dynamicExtensionsEntity =null;
+		String entityName;
 		if (!queryResultObjectDataBean.isMainEntity())
 		{
-			dynamicExtensionsEntity = queryResultObjectDataBean.getMainEntity();
 			entityName = queryResultObjectDataBean.getMainEntity().getName();
 		}
 		else
-		{
-			dynamicExtensionsEntity = queryResultObjectDataBean.getEntity();
 			entityName = queryResultObjectDataBean.getEntity().getName();
-		}
-		
-		
-		boolean presentInArray = Utility.isPresentInArray(entityName,
-				Constants.INHERITED_ENTITY_NAMES); 
-		
-		if (presentInArray && dynamicExtensionsEntity.getParentEntity() != null)
-		{
-			entityName = dynamicExtensionsEntity.getParentEntity().getName();
-		}
 		return entityName;
 	}
 
