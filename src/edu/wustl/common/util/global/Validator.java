@@ -166,20 +166,19 @@ public class Validator
     public boolean isPositiveNumeric(String numString, int positiveCheck)
     {
        Logger.out.debug(" numString:"+numString);
-       Long longValue = convertToLong(numString);
-       Logger.out.debug(" longValue:"+longValue);
-       if(longValue!=null)
+       Double value = convertToNumber(numString);
+       if(value!=null)
        {
            if(positiveCheck >0 )
            {
-	            if (longValue.longValue() <= 0)
+	            if (value.longValue() <= 0)
 	            {
 	                return false;
 	            }
            }
            else if(positiveCheck == 0 )
            {
-	            if (longValue.longValue() < 0)
+	            if (value.longValue() < 0)
 	            {
 	                return false;
 	            }
@@ -215,7 +214,20 @@ public class Validator
         }
     }
     
-
+    public Double convertToNumber(String numString)
+    {
+    	Double value = null;
+        try
+        {
+            value = new Double(numString);
+            return value;
+        }
+        catch(NumberFormatException exp)
+        {
+        	Logger.out.error("NumberFormatException:" + exp.getMessage());
+            return value;
+        }
+    }
     
     /**
      * Checks the given String for double value.
