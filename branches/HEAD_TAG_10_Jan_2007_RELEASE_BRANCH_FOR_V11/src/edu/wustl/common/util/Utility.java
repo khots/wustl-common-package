@@ -751,4 +751,17 @@ public class Utility
 		columnDisplayName = className +" : " + attributeLabel ;
 		return columnDisplayName;
 	}
+	
+	public static boolean isPresentInArray(String objectName,String[] stringArray)
+	{
+		for (int i = 0; i < stringArray.length; i++)
+		{
+			String name = stringArray[i];
+			if (objectName.equalsIgnoreCase(name))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
