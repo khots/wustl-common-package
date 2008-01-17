@@ -491,6 +491,15 @@ public class Constants
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
 	public static final String ISCHECKPERMISSION="isToCheckCSMPermission";
+	public static final String[] INHERITED_ENTITY_NAMES = {
+		"edu.wustl.catissuecore.domain.FluidSpecimen",
+		"edu.wustl.catissuecore.domain.MolecularSpecimen",
+		"edu.wustl.catissuecore.domain.TissueSpecimen",
+		"edu.wustl.catissuecore.domain.CellSpecimen",
+		//IDENTIFIED_SURGICAL_PATHALOGY_REPORT_CLASS_NAME,
+		//DEIDENTIFIED_SURGICAL_PATHALOGY_REPORT_CLASS_NAME,
+		};
+
 	
 	public static final int HASH_PRIME = 7;
 	public static final String QUERY_SQL = "querySQL";
