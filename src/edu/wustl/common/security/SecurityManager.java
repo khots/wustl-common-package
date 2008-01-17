@@ -1057,6 +1057,7 @@ public class SecurityManager implements Permissions {
 									+ protectionGroup.getProtectionGroupId()
 									+ " " + String.valueOf(group.getGroupId())
 									+ " " + roleIds, ex);
+					throw new SMException (ex.getMessage(),ex);
 				}
 			}
 		}
