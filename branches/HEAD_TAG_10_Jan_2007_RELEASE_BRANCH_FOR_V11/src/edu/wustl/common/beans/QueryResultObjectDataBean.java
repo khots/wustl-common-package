@@ -45,14 +45,13 @@ public class QueryResultObjectDataBean
 	//List of index  of object data columns.
 	private Vector<Integer> objectColumnIds = new Vector<Integer>();
 	
-	//If this entity is main entity or not.
-	private boolean isMainEntity = false;
-	
 	//Map of index of identifier columns of all main entities that are present in query.
 	private Map<EntityInterface,Integer> entityIdIndexMap = new HashMap<EntityInterface, Integer>();
 	
 	//A boolean variable that will state if read denied could be possible on a object or not.
 	private boolean isReadDeniedObject = false;
+	
+	private String csmEntityName ;
 	
 	/**
 	 * Returns entity.
@@ -70,6 +69,7 @@ public class QueryResultObjectDataBean
 	public void setEntity(EntityInterface entity)
 	{
 		this.entity = entity;
+		this.csmEntityName = entity.getName();
 	}
 
 	/**
@@ -88,6 +88,7 @@ public class QueryResultObjectDataBean
 	public void setMainEntity(EntityInterface mainEntity)
 	{
 		this.mainEntity = mainEntity;
+		this.csmEntityName = mainEntity.getName();
 	}
 
 	/**
@@ -96,16 +97,7 @@ public class QueryResultObjectDataBean
 	 */
 	public boolean isMainEntity()
 	{
-		return isMainEntity;
-	}
-
-	/**
-	 * Set if this particular entity is main entity or not.
-	 * @param isMainEntity
-	 */
-	public void setMainEntity(boolean isMainEntity)
-	{
-		this.isMainEntity = isMainEntity;
+		return mainEntity==null;
 	}
 
 	/**
@@ -239,6 +231,18 @@ public class QueryResultObjectDataBean
 	public void setReadDeniedObject(boolean isReadDeniedObject)
 	{
 		this.isReadDeniedObject = isReadDeniedObject;
+	}
+
+	
+	public String getCsmEntityName()
+	{
+		return csmEntityName;
+	}
+
+	
+	public void setCsmEntityName(String csmEntityName)
+	{
+		this.csmEntityName = csmEntityName;
 	}
 	
 	
