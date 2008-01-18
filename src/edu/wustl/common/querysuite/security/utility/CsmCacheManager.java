@@ -69,7 +69,7 @@ public class CsmCacheManager
 			{
 				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
 						.get(key);
-				String entityName = getEntityName(queryResultObjectDataBean);
+				String entityName = queryResultObjectDataBean.getCsmEntityName();
 				int mainEntityId = -1;
 				if(queryResultObjectDataBean
 						.getMainEntityIdentifierColumnId()!=-1)
@@ -81,7 +81,7 @@ public class CsmCacheManager
 				List<Boolean> readPrivilegeList = new ArrayList<Boolean>();
 				List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
 
-				//Check if user has read privilege on perticular object or not.
+				//Check if user has read privilege on particular object or not.
 				if ((mainEntityId != -1) && (queryResultObjectDataBean.isReadDeniedObject()))
 				{
 					List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
@@ -223,24 +223,7 @@ public class CsmCacheManager
 			isAuthorisedUser = cache.isReadDenied(cpId);
 		return isAuthorisedUser;
 	}
-
-	/**
-	 * This method will return entity name depending up on if entity is main entity or dependent entity. 
-	 * @param queryResultObjectDataBean
-	 * @return
-	 */
-	private String getEntityName(QueryResultObjectDataBean queryResultObjectDataBean)
-	{
-		String entityName;
-		if (!queryResultObjectDataBean.isMainEntity())
-		{
-			entityName = queryResultObjectDataBean.getMainEntity().getName();
-		}
-		else
-			entityName = queryResultObjectDataBean.getEntity().getName();
-		return entityName;
-	}
-
+	
 	/**
 	 * This method will fire a query on catissue database to get CP ids related to a entity Id passed to this method.
 	 * @param sessionDataBean
