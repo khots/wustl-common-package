@@ -62,7 +62,7 @@ public class CsmCacheManager
 		Boolean isAuthorisedUser = true;
 		Boolean hasPrivilegeOnIdentifiedData = true;
 		if (queryResultObjectDataMap != null)
-		{
+		{ 
 			Set keySet = queryResultObjectDataMap.keySet();
 
 			for (Object key : keySet)
@@ -78,43 +78,47 @@ public class CsmCacheManager
 						.getMainEntityIdentifierColumnId()));
 				}
 				
-				List<Boolean> readPrivilegeList = new ArrayList<Boolean>();
-				List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
-
 				//Check if user has read privilege on particular object or not.
 				if ((mainEntityId != -1) && (queryResultObjectDataBean.isReadDeniedObject()))
 				{
 					List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
 							entityName, mainEntityId);
-
-					for (int i = 0; i < cpIdsList.size(); i++)
+					if(cpIdsList.size()==0)//if this object is not associated to any CP then user will not have identified privilege on it.
+						hasPrivilegeOnIdentifiedData = false;
+					else
 					{
-						List<String> cpIdList = cpIdsList.get(i);
-						Long cpId = cpIdList.get(0) != null ? Long.parseLong(cpIdList.get(0)) : -1;
-						entityName = Constants.CP_CLASS_NAME;
-						queryResultObjectDataBean.setPrivilegeType(PrivilegeType.ObjectLevel);
+						List<Boolean> readPrivilegeList = new ArrayList<Boolean>();
+						List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
 
-						isAuthorisedUser = checkReadDenied(sessionDataBean, cache,
-								queryResultObjectDataBean, entityName, cpId);
-						
-						readPrivilegeList.add(isAuthorisedUser);
- 
-						//If user is authorized to read data then check for identified data access.
-						if (isAuthorisedUser
-								&& queryResultObjectDataBean.getIdentifiedDataColumnIds().size()!=0)
+						for (int i = 0; i < cpIdsList.size(); i++)
 						{
-							hasPrivilegeOnIdentifiedData = checkIdentifiedDataAccess(
-									sessionDataBean, cache, queryResultObjectDataBean, entityName,
-									cpId);
+							List<String> cpIdList = cpIdsList.get(i);
+							Long cpId = cpIdList.get(0) != null ? Long.parseLong(cpIdList.get(0)) : -1;
+							entityName = Constants.CP_CLASS_NAME;
+							queryResultObjectDataBean.setPrivilegeType(PrivilegeType.ObjectLevel);
+	
+							isAuthorisedUser = checkReadDenied(sessionDataBean, cache,
+									queryResultObjectDataBean, entityName, cpId);
 							
-							IdentifiedPrivilegeList.add(hasPrivilegeOnIdentifiedData);
+							readPrivilegeList.add(isAuthorisedUser);
+	 
+							//If user is authorized to read data then check for identified data access.
+							if (isAuthorisedUser
+									&& queryResultObjectDataBean.getIdentifiedDataColumnIds().size()!=0)
+							{
+								hasPrivilegeOnIdentifiedData = checkIdentifiedDataAccess(
+										sessionDataBean, cache, queryResultObjectDataBean, entityName,
+										cpId);
+								
+								IdentifiedPrivilegeList.add(hasPrivilegeOnIdentifiedData);
+							}
+	
 						}
-
+					   isAuthorisedUser = isAuthorizedUser(readPrivilegeList);
+					   hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList);
 					}
-
 				}
-				isAuthorisedUser = isAuthorizedUser(readPrivilegeList);
-				hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList);
+				
 				
 				//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
 				removeUnauthorizedData(aList, isAuthorisedUser, hasPrivilegeOnIdentifiedData,
