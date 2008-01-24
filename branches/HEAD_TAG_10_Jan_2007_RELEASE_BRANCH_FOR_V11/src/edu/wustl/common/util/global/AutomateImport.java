@@ -334,7 +334,7 @@ public class AutomateImport
         	{
         		sb.append(" DATE 'YYYY-MM-DD'");
         	}
-        	if(!"HIDDEN".equals(rsMetaData.getColumnName(i)))
+        	if(!("HIDDEN".equals(rsMetaData.getColumnName(i))) && !("FORMAT".equals(rsMetaData.getColumnName(i))))
         	{
 	        	sb.append(" NULLIF ");
 	        	sb.append(rsMetaData.getColumnName(i));
