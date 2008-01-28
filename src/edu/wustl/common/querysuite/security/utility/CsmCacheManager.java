@@ -291,11 +291,13 @@ public class CsmCacheManager
 	 * @throws SQLException 
 	 */
 	private List<List<String>> executeQuery(SessionDataBean sessionDataBean, String sql) throws DAOException, ClassNotFoundException, SQLException
-	{  
+	{    
 		List<List<String>> aList = new ArrayList<List<String>>();
-		Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+		Statement stmt = null;
+		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 				ResultSet.CONCUR_READ_ONLY);
-		ResultSet resultSet = stmt.executeQuery(sql);
+		ResultSet resultSet = null;
+		resultSet = stmt.executeQuery(sql);
 		ResultSetMetaData metaData = resultSet.getMetaData();
 		int columnCount = metaData.getColumnCount();
 		
@@ -310,6 +312,10 @@ public class CsmCacheManager
 			}
 			aList.add(entityIdsList);
 		}
+		if(resultSet!=null)
+		  resultSet.close();
+		if(stmt!=null)
+		  stmt.close();
 		return aList;
 		
 	}
