@@ -76,8 +76,8 @@ public class ExportReport
 					String tempStr = (String) rowItr.next();
 					if (tempStr == null)
 						tempStr = "";
-					if (tempStr.indexOf(',') > 0)
-						tempStr = "\"" + tempStr + "\"";
+					tempStr = tempStr.replaceAll("\"", "'");
+					tempStr = "\"" + tempStr + "\"";
 					String data = tempStr + delimiter;
 					temp.write(data);
 				}
