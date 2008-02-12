@@ -217,9 +217,9 @@ public class AutomateImport
         {
         	System.out.println("Loding File : " + filename + " to table : " + tableName);
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            String query = "LOAD DATA INFILE '"+filename+ "' INTO TABLE "+tableName+" FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n';";
+            String query = "LOAD DATA LOCAL INFILE '"+filename+ "' INTO TABLE "+tableName+" FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n';";
             stmt.execute(query);
-        }
+       	}     
         finally
         {
             stmt = null;
