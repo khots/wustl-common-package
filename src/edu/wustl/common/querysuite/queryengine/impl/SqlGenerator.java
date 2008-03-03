@@ -696,7 +696,7 @@ public class SqlGenerator implements ISqlGenerator
 	private String getParentHeirarchy(IExpression childExpression, EntityInterface childEntity,
 			EntityInterface alreadyAddedEntity) throws SqlException
 	{
-		String combinedJoinPart = "";
+		StringBuffer combinedJoinPart = new StringBuffer();
 		if (childEntity.getParentEntity() != null) //Joining Parent & child classes of the entity.
 		{
 			EntityInterface entity = childEntity;
@@ -723,13 +723,13 @@ public class SqlGenerator implements ISqlGenerator
 					String sql = null;
 					if (isReverse)
 					{
-						sql = " left join " + parent.getTableProperties().getName() + " "
+						sql = " inner join " + parent.getTableProperties().getName() + " "
 								+ rightEntityalias + " on ";
 						sql += "(" + leftAttributeColumn + "=" + rightAttributeColumn + ")";
 					}
 					else
 					{
-						sql = " left join " + entity.getTableProperties().getName() + " "
+						sql = " inner join " + entity.getTableProperties().getName() + " "
 								+ leftEntityalias + " on ";
 						sql += "(" + rightAttributeColumn + "=" + leftAttributeColumn + ")";
 					}
@@ -743,10 +743,11 @@ public class SqlGenerator implements ISqlGenerator
 
 			for (String joinSql : joinSqlList)
 			{
-				combinedJoinPart += joinSql;
+				combinedJoinPart.insert(0, joinSql);
 			}
+
 		}
-		return combinedJoinPart;
+		return combinedJoinPart.toString();
 	}
 
 	/**
