@@ -1134,7 +1134,7 @@ public class SecurityManager implements Permissions {
 			Logger.out.warn(
 					ex.getMessage() + "Error occured while creating Potection Element "
 							+ protectionElement.getProtectionElementName());
-//			throw new CSException (ex.getMessage(),ex);
+			throw new CSException (ex.getMessage(),ex);
 		}
 
 	}
