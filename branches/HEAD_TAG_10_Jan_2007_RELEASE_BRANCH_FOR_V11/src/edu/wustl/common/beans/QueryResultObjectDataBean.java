@@ -53,6 +53,12 @@ public class QueryResultObjectDataBean
 	
 	private String csmEntityName ;
 	
+	// A boolean variable that will state if the entity contains any attribute of data type : file.
+	private boolean isClobeType;
+	
+	// this map will have the key as the index of the file type attribute and value as its metadata
+	private Map<Integer, ?extends Object> fileTypeAtrributeIndexMetadataMap = new HashMap<Integer, Object>();
+	
 	/**
 	 * Returns entity.
 	 * @return EntityInterface.
@@ -245,6 +251,39 @@ public class QueryResultObjectDataBean
 		this.csmEntityName = csmEntityName;
 	}
 	
-	
+	/**
+	 * returns true if atleast one attribute is of 'file' type
+	 * @return value of isClobeType
+	 */
+	public boolean isClobeType() {
+		return isClobeType;
+	}
+
+	/**
+	 * sets clob type true if atleast one attribute is of 'file' type
+	 * @param isClobeType - true if atleast one attribute is of 'file' type
+	 */
+	public void setClobeType(boolean isClobeType) {
+		this.isClobeType = isClobeType;
+	}
+
+	/**
+	 * 
+	 * @return map will have the key as the index of the 'file' 
+	 * type attribute and value as its metadata
+	 */
+	public Map<Integer, ? extends Object> getFileTypeAtrributeIndexMetadataMap() {
+		return fileTypeAtrributeIndexMetadataMap;
+	}
+
+	/**
+	 * sets the map
+	 * @param fileTypeAtrributeIndexMetadataMap
+	 */
+	public void setFileTypeAtrributeIndexMetadataMap(
+			Map<Integer, ? extends Object> fileTypeAtrributeIndexMetadataMap) {
+		this.fileTypeAtrributeIndexMetadataMap = fileTypeAtrributeIndexMetadataMap;
+	}
+
 	
 }
