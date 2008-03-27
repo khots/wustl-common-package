@@ -384,7 +384,7 @@ public class SimpleSearchAction extends BaseAction
 				request.setAttribute(Constants.SPREADSHEET_COLUMN_LIST, columnNames);
 			}
 		}
-
+		session.setAttribute(Constants.IS_SIMPLE_SEARCH, Constants.TRUE);
 		return mapping.findForward(target);
 	}
 
