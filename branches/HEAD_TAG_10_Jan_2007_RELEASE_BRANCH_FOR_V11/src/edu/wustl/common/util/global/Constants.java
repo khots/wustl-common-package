@@ -503,4 +503,5 @@ public class Constants
 	public static final String EXPRESSION_ID_SEPARATOR = ":";
 	
 	public static final String 	CP_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";
+	public static final String EXPORT_FILE_NAME_START = "Report_Content_";
 }
