@@ -254,7 +254,7 @@ public class Constants
 	public static final String SEARCH_OBJECT_ACTION = "/SearchObject.do";
 	
 	public static final String SEARCH = "search";
-	
+	public static final String IS_SIMPLE_SEARCH = "isSimpleSearch";
 	// SimpleSearchAction
 	public static final String SIMPLE_QUERY_SINGLE_RESULT = "singleResult";
 	
