@@ -44,8 +44,8 @@ public class ExportReport
 	public ExportReport(String fileName) throws IOException
 	{
 		temp = new BufferedWriter(new FileWriter(fileName));
-		this.fileName = fileName.substring(0,fileName.lastIndexOf("\""));
-		cvsFileWriter = new BufferedWriter(new FileWriter(this.fileName));
+		/*this.fileName = fileName.substring(0,fileName.lastIndexOf("\""));
+		cvsFileWriter = new BufferedWriter(new FileWriter(this.fileName));*/
 	}
 	/**
 	 * This method creates the file according to delimeter specified, without any indentation
@@ -228,8 +228,14 @@ public class ExportReport
 	 */
 	public void closeFile() throws IOException
 	{
-		//temp.close();
-		cvsFileWriter.close();
+		if (temp != null)
+		{
+			temp.close();
+		}
+		if (cvsFileWriter != null)
+		{
+			cvsFileWriter.close();
+		}
 	}
 
 
@@ -278,6 +284,7 @@ public class ExportReport
 				temp.write(newLine);
 			}
 		}
+		closeFile();
 	}
 	/**
 	 * Creates a zip file , contains a csv and other txt files
