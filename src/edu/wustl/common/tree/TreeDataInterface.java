@@ -23,5 +23,6 @@ import edu.wustl.common.util.dbManager.DAOException;
 public interface TreeDataInterface
 {
     public abstract Vector getTreeViewData() throws DAOException;
+    public abstract Vector getSiteWithDummyContainer() throws DAOException;
     public abstract Vector getTreeViewData(SessionDataBean sessionData,Map map,List list) throws DAOException,ClassNotFoundException;
 }

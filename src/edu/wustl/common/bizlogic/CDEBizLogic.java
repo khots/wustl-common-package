@@ -192,4 +192,10 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 
 		return null;
 	}
+
+	public Vector getSiteWithDummyContainer() throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
