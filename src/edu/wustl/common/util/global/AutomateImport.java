@@ -1,11 +1,12 @@
 package edu.wustl.common.util.global;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -55,7 +56,7 @@ public class AutomateImport
 	 * 			- folder path for CAModelCTLs files required in case of oracle
 	 * 			- oracle.tns.name required in case of oracle 
 	 */
-	public static void main(String[] args) 
+	public static void main(String[] args) throws Exception
     {
 		Connection connection=null;
 		try
@@ -117,7 +118,7 @@ public class AutomateImport
 			}
 		}catch(Exception e)
 		{
-			e.printStackTrace();
+			throw e;
 		}
 		finally
 		{
@@ -125,6 +126,7 @@ public class AutomateImport
 				try
 				{
 					connection.close();
+					connection = null;
 				}
 				catch (SQLException e)
 				{
@@ -277,11 +279,23 @@ public class AutomateImport
      * @param fileName
      * @throws IOException
      */
-    private void importDataOracle(String fileName) throws IOException
+    private void importDataOracle(String fileName) throws Exception
     {
     	String cmd="sqlldr "+DATABASE_USERNAME+"/"+DATABASE_PASSWORD+"@"+ORACLE_TNS_NAME+" control="+fileName;
+    	System.out.println("Running script: " + cmd);
     	Runtime rt = Runtime.getRuntime();
     	Process proc = rt.exec(cmd);
+		 // any error message?
+        StreamGobbler errorGobbler = new 
+            StreamGobbler(proc.getErrorStream());            
+        
+        // any output?
+        StreamGobbler outputGobbler = new 
+            StreamGobbler(proc.getInputStream());
+
+    	
+    	proc.waitFor();
+    	
     	System.out.println("Executing control file : " + fileName);
     }
     /**
@@ -322,28 +336,74 @@ public class AutomateImport
     private String getColumnName(Connection connection,String tableName)throws SQLException 
     {
     	String query = "select * from "+tableName+" where 1=2";
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-    	StringBuffer sb = new StringBuffer();
-        sb.append("(");
-        ResultSetMetaData rsMetaData = rs.getMetaData();
-        int numberOfColumns = rsMetaData.getColumnCount();
-        for (int i = 1; i < numberOfColumns + 1; i++) {
-        	sb.append(rsMetaData.getColumnName(i));
-        	if(Types.DATE == rsMetaData.getColumnType(i) || Types.TIMESTAMP == rsMetaData.getColumnType(i))
-        	{
-        		sb.append(" DATE 'YYYY-MM-DD'");
-        	}
-        	if(!("HIDDEN".equals(rsMetaData.getColumnName(i))) && !("FORMAT".equals(rsMetaData.getColumnName(i))))
-        	{
-	        	sb.append(" NULLIF ");
+    	Statement stmt =null;
+    	ResultSet rs = null;
+    	try
+    	{
+	        stmt = connection.createStatement();
+	        rs = stmt.executeQuery(query);
+	    	StringBuffer sb = new StringBuffer();
+	        sb.append("(");
+	        ResultSetMetaData rsMetaData = rs.getMetaData();
+	        int numberOfColumns = rsMetaData.getColumnCount();
+	        for (int i = 1; i < numberOfColumns + 1; i++) {
 	        	sb.append(rsMetaData.getColumnName(i));
-	        	sb.append("='\\\\N'");
-        	}
-          if(i<numberOfColumns)
-     		 sb.append(",");
-        }
-        sb.append(")");
-        return sb.toString();
+	        	if(Types.DATE == rsMetaData.getColumnType(i) || Types.TIMESTAMP == rsMetaData.getColumnType(i))
+	        	{
+	        		sb.append(" DATE 'YYYY-MM-DD'");
+	        	}
+	        	if(!("HIDDEN".equals(rsMetaData.getColumnName(i))) && !("FORMAT".equals(rsMetaData.getColumnName(i))))
+	        	{
+		        	sb.append(" NULLIF ");
+		        	sb.append(rsMetaData.getColumnName(i));
+		        	sb.append("='\\\\N'");
+	        	}
+	          if(i<numberOfColumns)
+	     		 sb.append(",");
+	        }
+	        sb.append(")");
+	       
+	        return sb.toString();
+    	}
+	    catch(SQLException exception){
+	    	throw exception;
+	    } 
+	    finally
+	    {
+	    	if (stmt != null)
+	    	{
+	    		stmt.close();
+	    	}
+	    	if(rs != null)
+	    	{
+	    		rs.close();
+	    	}
+	    		
+	    }
     }
  }
+class StreamGobbler extends Thread
+{
+    InputStream is;
+    
+    StreamGobbler(InputStream is)
+    {
+        this.is = is;
+    }
+    
+    public void run()
+    {
+        try
+        {
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line=null;
+            while ( (line = br.readLine()) != null)
+                System.out.println(line);    
+            } catch (IOException ioe)
+              {
+                ioe.printStackTrace();  
+              }
+    }
+
+}
