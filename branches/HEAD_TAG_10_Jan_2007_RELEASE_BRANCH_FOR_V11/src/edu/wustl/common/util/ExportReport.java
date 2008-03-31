@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -139,6 +140,7 @@ public class ExportReport
 			String newLine = System.getProperty(("line.separator")); 
 			List list = executeQuery(sql);
 			CLOB clob=null;
+			BufferedReader br ;
 			if (!list.isEmpty())
 			{
 				Iterator iterator = list.iterator();
@@ -147,15 +149,21 @@ public class ExportReport
 					List columnList = (List) iterator.next();
 					if (!columnList.isEmpty())
 					{
-						clob = (CLOB)columnList.get(1);
+						if(columnList.get(1) instanceof CLOB) {
+							clob = (CLOB)columnList.get(1);	
+							br = new BufferedReader(clob.getCharacterStream());
+						}
+						else
+						{
+							String data = (String)columnList.get(1);
+							br = new BufferedReader(new StringReader(data));
+						}
 						String mainEntityId = (String)columnList.get(0); 
 						String dataFileName = path +Constants.EXPORT_FILE_NAME_START +mainEntityId+ ".txt";
 						File outFile = new File(dataFileName); 
 						FileWriter out = new FileWriter(outFile);
 						StringBuffer strOut = new StringBuffer();
 						String aux;
-						BufferedReader br = new BufferedReader(clob.getCharacterStream());
-
 						while ((aux=br.readLine())!=null)
 						{
 							strOut.append(aux);
