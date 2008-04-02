@@ -25,6 +25,7 @@ import edu.common.dynamicextensions.domaininterface.BooleanTypeInformationInterf
 import edu.common.dynamicextensions.domaininterface.DateTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.DoubleTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.common.dynamicextensions.domaininterface.FileTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.LongTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
@@ -1245,7 +1246,8 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		RelationalOperator operator = condition.getRelationalOperator();
 
-		if (!(condition.getAttribute().getAttributeTypeInformation() instanceof StringTypeInformationInterface))
+		if (!(condition.getAttribute().getAttributeTypeInformation() instanceof StringTypeInformationInterface || 
+				condition.getAttribute().getAttributeTypeInformation() instanceof FileTypeInformationInterface))
 		{
 			throw new SqlException("Incorrect data type found for Operator '" + operator
 					+ "' for condition:" + condition);
