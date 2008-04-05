@@ -884,8 +884,8 @@ public class SecurityManager implements Permissions {
 		} catch (CSException e) {
 			Logger.out.fatal("The Security Service encountered "
 					+ "a fatal exception.", e);
-			throw new SMException(
-					"The Security Service encountered a fatal exception.", e);
+//			throw new SMException(
+//					"The Security Service encountered a fatal exception.", e);
 		}
 
 	}
