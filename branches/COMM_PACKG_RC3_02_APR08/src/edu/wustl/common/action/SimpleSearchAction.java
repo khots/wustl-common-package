@@ -385,6 +385,8 @@ public class SimpleSearchAction extends BaseAction
 			}
 		}
 		session.setAttribute(Constants.IS_SIMPLE_SEARCH, Constants.TRUE);
+		session.removeAttribute(Constants.ENTITY_IDS_MAP);
+		session.removeAttribute(Constants.EXPORT_DATA_LIST);
 		return mapping.findForward(target);
 	}
 
