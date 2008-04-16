@@ -687,47 +687,47 @@ public class Utility
 		{
 			char attrChar = objectName.charAt(i);
 			int asciiValue = attrChar;
-			if (i == 0)
+			if (asciiValue >= 65 && asciiValue <= 90)
 			{
-				if (asciiValue >= 65 && asciiValue <= 90)
+				if(i==0)
 				{
-					attrLabel = attrLabel + attrChar;
-				} 
+					attrLabel = attrLabel + "" + attrChar;
+				}
 				else
 				{
-					int capitalAsciiValue = asciiValue - 32;
-					attrLabel = attrLabel + (char) capitalAsciiValue;
+					attrLabel = attrLabel + " " + attrChar;
+				}
+				for (int k = i + 1; k < len; k++)
+				{
+					attrChar = objectName.charAt(k);
+					asciiValue = attrChar;
+					if (asciiValue >= 65 && asciiValue <= 90)
+					{
+						if (isPreviousLetterLowerCase)
+						{
+							attrLabel = attrLabel + " " + attrChar;
+							isPreviousLetterLowerCase = false;
+						}
+						else
+						{
+							attrLabel = attrLabel + attrChar;
+						}
+						i++;
+					}
+					else
+					{
+						isPreviousLetterLowerCase = true;
+						attrLabel = attrLabel + attrChar;
+						i++;
+					}
 				}
 			}
 			else
 			{
-				if (asciiValue >= 65 && asciiValue <= 90)
+				if(i==0)
 				{
-					attrLabel = attrLabel + " " + attrChar;
-					for (int k = i + 1; k < len; k++)
-					{
-						attrChar = objectName.charAt(k);
-						asciiValue = attrChar;
-						if (asciiValue >= 65 && asciiValue <= 90)
-						{
-							if (isPreviousLetterLowerCase)
-							{
-								attrLabel = attrLabel + " " + attrChar;
-								isPreviousLetterLowerCase = false;
-							}
-							else
-							{
-								attrLabel = attrLabel + attrChar;
-							}
-							i++;
-						}
-						else
-						{
-							isPreviousLetterLowerCase = true;
-							attrLabel = attrLabel + attrChar;
-							i++;
-						}
-					}
+					int capitalAsciiValue = asciiValue - 32;
+					attrLabel = attrLabel + (char) capitalAsciiValue;
 				}
 				else
 				{
