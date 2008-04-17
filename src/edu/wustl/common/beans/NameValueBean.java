@@ -21,8 +21,13 @@ package edu.wustl.common.beans;
 
 public class NameValueBean implements Comparable
 {
-	private Object name = new Object();
-	private Object value = new Object();
+	private Object name; 
+	private Object value;
+	/*
+	 * we are using this field to improve performance
+	 */
+	private String nameLowerCase;
+	
 	//Relevence counter field is for sorting according to relevance
 	private Long relevanceCounter;
 
@@ -34,6 +39,12 @@ public class NameValueBean implements Comparable
 	public NameValueBean(Object name, Object value)
 	{
 		this.name = name;
+		
+		if(this.name instanceof String)
+		{
+			this.nameLowerCase = ((String)this.name).toLowerCase();
+		}
+		
 		this.value = value;
 	}
 
@@ -41,6 +52,12 @@ public class NameValueBean implements Comparable
 	public NameValueBean(Object name, Object value,Long relevanceCounter)
 	{
 		this.name = name;
+		
+		if(this.name instanceof String)
+		{
+			this.nameLowerCase = ((String)this.name).toLowerCase();
+		}
+		
 		this.value = value;
 		this.relevanceCounter = relevanceCounter;
 	}
@@ -59,6 +76,12 @@ public class NameValueBean implements Comparable
 	public void setName(Object name)
 	{
 		this.name = name;
+		
+		if(this.name instanceof String)
+		{
+			this.nameLowerCase = ((String)this.name).toLowerCase();
+		}
+		
 	}
 
 	/**
@@ -108,9 +131,9 @@ public class NameValueBean implements Comparable
 		if (obj instanceof NameValueBean)
 		{
 			NameValueBean nameValueBean = (NameValueBean) obj;
-			if (nameValueBean.name instanceof String)
+			if (nameValueBean.name instanceof String && name instanceof String)
 			{
-				return name.toString().toLowerCase().compareTo(nameValueBean.getName().toString().toLowerCase());
+				return nameLowerCase.compareTo(nameValueBean.nameLowerCase);
 			}
 			else
 			{
