@@ -87,14 +87,6 @@ public class ApproveUserBizLogic extends DefaultBizLogic
             dao.audit(user.getAddress(), oldUser.getAddress(),sessionDataBean,true);
             dao.audit(obj, oldObj,sessionDataBean,true);
             
-            if (Constants.ACTIVITY_STATUS_ACTIVE.equals(user.getActivityStatus()))
-            {
-                Set protectionObjects=new HashSet();
-                protectionObjects.add(user);
-                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
-                    		getAuthorizationData(user), protectionObjects, null);
-            }
-            
             EmailHandler emailHandler = new EmailHandler(); 
             
             //If user is approved send approval and login details emails to the user and administrator.
