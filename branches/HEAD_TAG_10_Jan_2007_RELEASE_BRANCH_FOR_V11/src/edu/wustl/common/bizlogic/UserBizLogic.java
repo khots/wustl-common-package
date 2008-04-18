@@ -266,7 +266,7 @@ public class UserBizLogic extends DefaultBizLogic
             // Modify the csm user.
             SecurityManager.getInstance(UserBizLogic.class).modifyUser(csmUser);
             
-	        dao.update(user, sessionDataBean, true, true, true);
+	        dao.update(user, sessionDataBean, true, true, false);
 	        
 	        //Audit of user.
             dao.audit(obj, oldObj,sessionDataBean,true);
