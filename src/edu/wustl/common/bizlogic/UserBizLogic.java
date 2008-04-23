@@ -115,14 +115,23 @@ public class UserBizLogic extends DefaultBizLogic
             dao.insert(user.getAddress(), sessionDataBean, true, false);
             dao.insert(user, sessionDataBean, true, false);
             
+            Set protectionObjects = new HashSet();
+            protectionObjects.add(user);
+            
             EmailHandler emailHandler = new EmailHandler();
             // Send the user registration email to user and the administrator.
             if (Constants.PAGEOF_SIGNUP.equals(user.getPageOf()))
             {
-            	emailHandler.sendUserSignUpEmail(user);
+            	SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
+            			null, protectionObjects, null);
+                
+                emailHandler.sendUserSignUpEmail(user);
             }
             else// Send the user creation email to user and the administrator.
             {
+                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
+                		getAuthorizationData(user), protectionObjects, null);
+
                 emailHandler.sendApprovalEmail(user);
             }
         }
@@ -266,11 +275,18 @@ public class UserBizLogic extends DefaultBizLogic
             // Modify the csm user.
             SecurityManager.getInstance(UserBizLogic.class).modifyUser(csmUser);
             
-	        dao.update(user, sessionDataBean, true, true, false);
+	        dao.update(user, sessionDataBean, true, true, true);
 	        
 	        //Audit of user.
             dao.audit(obj, oldObj,sessionDataBean,true);
             
+            if (Constants.ACTIVITY_STATUS_ACTIVE.equals(user.getActivityStatus()))
+            {
+                Set protectionObjects=new HashSet();
+                protectionObjects.add(user);
+                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
+                		getAuthorizationData(user), protectionObjects, null);
+            }
         }
         catch (SMException e)
         {
