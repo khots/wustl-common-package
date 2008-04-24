@@ -3,14 +3,12 @@
  */
 package edu.wustl.common.beans;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.security.PrivilegeType;
-import java.util.List;
 
 
 /**

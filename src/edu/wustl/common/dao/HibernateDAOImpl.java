@@ -22,6 +22,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;
@@ -29,7 +30,6 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeCacheManager;
-import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Permissions;
@@ -39,7 +39,6 @@ import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
-import gov.nih.nci.security.exceptions.CSException;
 
 /**
  * Default implemention of AbstractDAO through Hibernate ORM tool.

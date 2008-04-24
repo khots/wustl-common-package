@@ -8,7 +8,6 @@
 
 package edu.wustl.common.cde.xml.impl;
 
-import edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl.Unmarshaller;
 
 public class XMLCDECACHEImpl
     extends edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl

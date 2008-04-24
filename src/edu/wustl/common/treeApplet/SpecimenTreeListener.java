@@ -1,14 +1,5 @@
 package edu.wustl.common.treeApplet;
 
-import java.applet.Applet;
-import java.applet.AppletContext;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JTree;
-import javax.swing.event.MouseInputListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import netscape.javascript.JSObject;
 import edu.wustl.common.tree.SpecimenTreeNode;
 import edu.wustl.common.util.global.Constants;
 

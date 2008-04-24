@@ -8,15 +8,14 @@
 
 package edu.wustl.common.tree;
 
-import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.Component;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import edu.wustl.common.tree.StorageContainerTreeNode;
-import edu.wustl.common.treeApplet.SpecimenTreeListener;
+
 import edu.wustl.common.util.global.Constants;
 
 

@@ -12,7 +12,6 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeCacheManager;
-import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
