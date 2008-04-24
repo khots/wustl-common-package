@@ -292,11 +292,11 @@ public class AutomateImport
         // any output?
         StreamGobbler outputGobbler = new 
             StreamGobbler(proc.getInputStream());
-
-    	
+        errorGobbler.start();
+        outputGobbler.start();
     	proc.waitFor();
-    	
-    	System.out.println("Executing control file : " + fileName);
+        
+    	System.out.println("Executed control file : " + fileName);
     }
     /**
      * This method will create control file for SQL loader.
@@ -316,6 +316,8 @@ public class AutomateImport
 		}
     	BufferedWriter bw=new BufferedWriter(new FileWriter(new File(ctlFileName)));
     	String value = "LOAD DATA INFILE '"+csvFileName+"' "
+    					+ "\nBADFILE '/sample.bad'"
+    					+ "\nDISCARDFILE '/sample.dsc'"
     					+"\nAPPEND "
     	 				+"\nINTO TABLE "+tableName+" "
     	 				+"\nFIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'\n" ;
@@ -323,6 +325,7 @@ public class AutomateImport
         bw.write(value+columnName);
         bw.flush();
         bw.close();
+        System.out.println(value);
         System.out.println("Exporting table data : " + tableName + " to file : " + ctlFileName);
     }
 
@@ -398,6 +401,7 @@ class StreamGobbler extends Thread
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             String line=null;
+
             while ( (line = br.readLine()) != null)
                 System.out.println(line);    
             } catch (IOException ioe)
