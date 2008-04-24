@@ -216,12 +216,12 @@ public class HibernateDAOImpl implements HibernateDAO
                     String userName = sessionDataBean.getUserName();
                     if(userName != null)
                     {
-                		// @Ravindra : to get privilegeCache through 
+                		// To get privilegeCache through 
                 		// Singleton instance of PrivilegeCacheManager, requires User LoginName                    	
                     	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
                 		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(userName);
                     	
-            			// @Ravindra : Call to SecurityManager.isAuthorized bypassed &
+            			// Call to SecurityManager.isAuthorized bypassed &
             			// instead, call redirected to privilegeCache.hasPrivilege                		
                 		isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.CREATE);
                 		
@@ -314,7 +314,7 @@ public class HibernateDAOImpl implements HibernateDAO
     {
     	String userName = sessionDataBean.getUserName();
     	
-		// @Ravindra : to get privilegeCache through 
+		// To get privilegeCache through 
 		// Singleton instance of PrivilegeCacheManager, requires User LoginName    	
     	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
 		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(userName);
@@ -328,7 +328,7 @@ public class HibernateDAOImpl implements HibernateDAO
                 {
                     if(!(obj instanceof AbstractDomainObject)||!hasObjectLevelPrivilege)
                     {
-            		 // @Ravindra : Call to SecurityManager.isAuthorized bypassed &
+            		 // Call to SecurityManager.isAuthorized bypassed &
             		 // instead, call redirected to privilegeCache.hasPrivilege                    	
                       isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.UPDATE);	
                     	
@@ -340,7 +340,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     }
                     else
                     {
-            		  // @Ravindra : Call to SecurityManager.isAuthorized bypassed &
+            		  // Call to SecurityManager.isAuthorized bypassed &
             		  // instead, call redirected to privilegeCache.hasPrivilege                    	
                     	isAuthorized = privilegeCache.hasPrivilege(obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(), Permissions.UPDATE);
                     	
