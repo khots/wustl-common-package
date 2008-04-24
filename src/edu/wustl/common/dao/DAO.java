@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbManager.DAOException;
 
@@ -111,4 +112,17 @@ public interface DAO
 	 * @throws DAOException
 	 */
 	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException;
+
+	/**
+	 * Retrieves attribute value for given class name and identifier.
+	 * @param objClass source Class object
+	 * @param id identifer of the source object
+	 * @param attributeName attribute to be retrieved
+	 * @return
+	 * @throws DAOException
+	 */
+	public Object retrieveAttribute(Class<AbstractDomainObject> objClass,Long id,
+			String attributeName)
+			throws DAOException;
+
 }

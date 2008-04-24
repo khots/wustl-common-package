@@ -30,6 +30,7 @@ import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.queryExecutor.AbstractQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -773,6 +774,14 @@ public class JDBCDAOImpl implements JDBCDAO
 	{
 	}
 
+    /* (non-Javadoc)
+     * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
+     */
+    public Object retrieveAttribute(Class<AbstractDomainObject> objClass,Long id,
+			String attributeName)
+			throws DAOException{
+    	return retrieveAttribute(objClass.getName(),id,attributeName);
+    }
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
 	 */

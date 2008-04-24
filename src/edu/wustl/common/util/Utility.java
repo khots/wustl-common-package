@@ -375,7 +375,7 @@ public class Utility
     /**
      * Constants that will appear in HQL for retreiving Attributes of the Collection data type.
      */
-    private static final String ELEMENTS = "elements";
+    public static final String ELEMENTS = "elements";
     
     /**
      * To Create the attribute name for HQL select part.
