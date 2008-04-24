@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,10 @@ import edu.wustl.common.util.logger.Logger;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
+ */
+/**
+ * @author abhijit_naik
+ *
  */
 public class Utility
 {
@@ -87,101 +92,66 @@ public class Utility
 	    return parseDate(date, pattern);
 	}
 	
+	/**
+	 * This function use to define possible regular expressions and seperators.
+	 * And returns date pattern of a given date.
+	 * @param strDate date whoes pattern need to be created.
+	 * @return date pattern.
+	 */
 	public static String datePattern(String strDate)
 	{
-		String datePattern = "";
-		String dtSep  = "";
-		boolean result = true;
-    	try
+		HashMap<String, String> datePatternMap = new HashMap<String, String>();
+		datePatternMap.put("[0-9]{2} [0-9]{2} [0-9]{4}", "dd mm yyyy");
+		datePatternMap.put("[0-9]{4} [0-9]{2} [0-9]{2}", "yyyy mm dd");
+		String[] dtSep  = {Constants.DATE_SEPARATOR,Constants.DATE_SEPARATOR_SLASH};
+
+		return checkDatePattern(datePatternMap, strDate,dtSep);
+	}
+
+	/**
+	 * This function is used to identify the date pattern of a given date.
+	 * @param datePatternMap Map of regular expressions need to be checked 
+	 * against the date value. It's key will be a regular expression and value
+	 * will be the date pattern represented by the regular expression. 
+	 * @param strDate	Date vaule whoes pattern to be identified.
+	 * @param seperator	An array of all possible seperators in the given date value.
+	 * @return The date pattern of the date value. Returns empty string if not able 
+	 * to find pattern of the date value.
+	 */
+	//TODO:Abhijit: Need to throw exception if fails to find date pattern.
+	//TODO:Abhijit: Remove hardcoded string and define constants.
+	private static String checkDatePattern(Map<String, String> datePatternMap, 
+			String strDate, String[] seperator)
+	{
+		String datePattern= "" ;
+		if(datePatternMap == null)
 		{
-    		Pattern re = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
-    		Matcher  mat =re.matcher(strDate); 
-    		result = mat.matches();
-    		
-    		if(result)
-            {
-    			dtSep  = Constants.DATE_SEPARATOR; 
-                datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
-            }
-    		
-    		// check for  / separator
-    		if(!result)
-    		{
-        		re = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
-        		mat =re.matcher(strDate); 
-        		result = mat.matches();
-        		//System.out.println("is Valid Date Pattern : / : "+result);
-        		if(result)
-                {
-        			dtSep  = Constants.DATE_SEPARATOR_SLASH; 
-                    datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
-                }
-            }
-            
-            if(!result)
-            {
-                re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
-                mat =re.matcher(strDate); 
-                result = mat.matches();
-            
-                if(result)
-                {
-                    dtSep  = Constants.DATE_SEPARATOR;
-                    datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
-                }
-            }
-            
-            // check for  / separator
-            if(!result)
-            {
-                re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
-                mat =re.matcher(strDate); 
-                result = mat.matches();             
-                if(result)
-                {
-                    dtSep  = Constants.DATE_SEPARATOR_SLASH;
-                    datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
-                }
-            }
-        }
-        catch(Exception exp)
-        {
-            Logger.out.error("Utility.datePattern() : exp : " + exp);
-        }
-        /*if(dtSep.trim().length()>0)
-            datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";*/
-        /*else
-        {
-            try
-            {
-                Pattern re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
-                Matcher  mat =re.matcher(strDate); 
-                result = mat.matches();
-                
-                if(result)
-                    dtSep  = Constants.DATE_SEPARATOR; 
-                
-                // check for  / separator
-                if(!result)
-                {
-                    re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
-                    mat =re.matcher(strDate); 
-                    result = mat.matches();
-                    //System.out.println("is Valid Date Pattern : / : "+result);
-                    if(result)
-                        dtSep  = Constants.DATE_SEPARATOR_SLASH; 
-    		}
+			return datePattern;
 		}
-    	catch(Exception exp)
+		Iterator<String> patternIterator = datePatternMap.keySet().iterator();
+		
+		while (patternIterator.hasNext())
 		{
-			Logger.out.error("Utility.datePattern() : exp : " + exp);
+			String regExpression = patternIterator.next();
+			datePattern = datePatternMap.get(regExpression);
+
+			for(int sepCnt=0; sepCnt<seperator.length;sepCnt++)
+			{	
+				String expression = regExpression.replace(" ", seperator[sepCnt]);
+				Pattern re = Pattern.compile(expression, 
+										Pattern.CASE_INSENSITIVE);
+				Matcher  mat =re.matcher(strDate); 
+				
+				if (mat.matches())
+				{ 
+					
+	                return  datePattern.replace(" ", seperator[sepCnt]);
+				}
+			}			
 		}
-    	if(dtSep.trim().length()>0)
-                datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
-        }*/
-    	
-    	Logger.out.debug("datePattern returned : "+ datePattern  );
-		return datePattern; 
+		
+		Logger.out.warn("No valid pattern found! Returning default pattern");
+		return "";
 	}
 	
 	public static String createAccessorMethodName(String attr,boolean isSetter)
@@ -523,7 +493,7 @@ public class Utility
 		if(obj == null)
 			return value;
 		else
-		{	Integer intObj = (Integer)obj;
+		{	Integer intObj = new Integer(obj.toString());
 			value=intObj.intValue() ;
 			return value;
 		}
