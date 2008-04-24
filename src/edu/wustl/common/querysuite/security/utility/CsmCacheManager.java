@@ -17,6 +17,8 @@ import java.util.Vector;
 import edu.wustl.common.beans.QueryResultObjectDataBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.querysuite.security.PrivilegeType;
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeCacheManager;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -273,8 +275,17 @@ public class CsmCacheManager
 	private Boolean checkPermission(SessionDataBean sessionDataBean, String entityName, Long entityId,
 			String permission, PrivilegeType privilegeType)
 	{
-		Boolean isAuthorisedUser = SecurityManager.getInstance(this.getClass()).checkPermission(
-				sessionDataBean.getUserName(), entityName, entityId, permission, privilegeType);
+		// @Ravindra : to get privilegeCache through 
+		// Singleton instance of PrivilegeCacheManager, requires User LoginName		
+		PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(sessionDataBean.getUserName());
+		
+		// @Ravindra : Call to SecurityManager.checkPermission bypassed &
+		// instead, call redirected to privilegeCache.hasPrivilege		
+		Boolean isAuthorisedUser = privilegeCache.hasPrivilege(entityName+"_"+entityId, permission);
+		
+//		Boolean isAuthorisedUser = SecurityManager.getInstance(this.getClass()).checkPermission(
+//				sessionDataBean.getUserName(), entityName, entityId, permission, privilegeType);
 
 		if (permission.equals(Permissions.READ_DENIED))
 			isAuthorisedUser = !isAuthorisedUser;
