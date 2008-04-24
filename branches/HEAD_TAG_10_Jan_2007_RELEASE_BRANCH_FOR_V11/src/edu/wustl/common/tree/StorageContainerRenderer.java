@@ -14,7 +14,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import edu.wustl.common.tree.StorageContainerTreeNode;
 import edu.wustl.common.util.global.Constants;
 
 

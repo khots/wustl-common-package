@@ -9,7 +9,6 @@ import javax.swing.event.MouseInputListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import netscape.javascript.JSObject;
-import edu.wustl.common.tree.SpecimenTreeNode;
 import edu.wustl.common.util.global.Constants;
 
 public abstract class AppletTreeListener implements MouseInputListener 

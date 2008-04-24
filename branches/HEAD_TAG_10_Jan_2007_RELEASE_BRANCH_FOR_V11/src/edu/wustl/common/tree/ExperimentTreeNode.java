@@ -2,8 +2,6 @@ package edu.wustl.common.tree;
 
 import java.util.Date;
 
-import edu.wustl.common.tree.TreeNodeImpl;
-
 /**
  * A tree node to represent an experiment and an experiment group
  * in a hierarchical view using tree data structure.

@@ -22,7 +22,6 @@ import titli.model.Titli;
 import titli.model.TitliException;
 import edu.wustl.common.actionForm.TitliSearchForm;
 import edu.wustl.common.util.TitliTableMapper;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 

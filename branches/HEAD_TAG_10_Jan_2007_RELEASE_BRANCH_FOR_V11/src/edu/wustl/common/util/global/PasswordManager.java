@@ -8,22 +8,21 @@
  */ 
 package edu.wustl.common.util.global;
 
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
+import edu.wustl.common.security.exceptions.PasswordEncryptionException;
+import edu.wustl.common.util.XMLPropertyHandler;
+import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.security.util.StringEncrypter;
+import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 import java.util.Random;
 
 import javax.servlet.http.HttpSession;
-
-import edu.wustl.common.security.exceptions.PasswordEncryptionException;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
-import edu.wustl.common.bizlogic.IBizLogic;
-import edu.wustl.common.util.XMLPropertyHandler;
-import edu.wustl.common.util.logger.Logger;
-import gov.nih.nci.security.util.StringEncrypter;
-import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
 
 
 

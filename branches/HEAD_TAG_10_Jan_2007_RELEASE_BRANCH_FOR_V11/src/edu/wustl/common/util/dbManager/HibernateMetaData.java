@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.Collection;
 import org.hibernate.mapping.Column;
@@ -20,9 +21,6 @@ import org.hibernate.mapping.Property;
 import org.hibernate.mapping.Subclass;
 import org.hibernate.mapping.Table;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.HibernateProxyHelper;
-
-import org.apache.log4j.PropertyConfigurator;
 
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.util.Utility;

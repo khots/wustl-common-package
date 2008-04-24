@@ -17,7 +17,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.wustl.common.bizlogic.QueryBizLogic;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;

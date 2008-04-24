@@ -19,7 +19,6 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.querysuite.security.PrivilegeType;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeCacheManager;
-import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
