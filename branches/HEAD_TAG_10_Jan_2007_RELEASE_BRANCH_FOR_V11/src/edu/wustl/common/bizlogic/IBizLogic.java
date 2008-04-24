@@ -93,7 +93,17 @@ public interface IBizLogic
 	 * @throws DAOException
 	 */
     public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException;
-    
+
+	/**
+	 * This is a wrapper function to retrieves attribute  for given class 
+	 * name and identifier using dao.retrieveAttribute().
+	 * @param objClass source Class object
+	 * @param id identifer of the source object
+	 * @param attributeName attribute to be retrieved
+	 * @return
+	 * @throws DAOException
+	 */
+    public Object retrieveAttribute(Class objClass, Long id, String attributeName) throws DAOException;
     public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)throws DAOException,BizLogicException;
     
     public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException;

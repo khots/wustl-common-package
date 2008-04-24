@@ -599,79 +599,6 @@ public class HibernateDAOImpl implements HibernateDAO
             
             list = query.list();
             
-//          Added by Aarti 
-            //--------------------------------
-            
-//            if(sourceObjectName.equals(Site.class.getName()))
-//            {
-//                boolean isAuthorized;
-//                Object[] objects = null;
-//                Object[] newObjects = null;
-//                Long id;
-//                Site site;
-//                
-//                if (selectColumnName != null && selectColumnName.length > 0)
-//                {
-//                    if(list != null)
-//                    {
-//                        for(int i=0; i<list.size();)
-//                        {
-//                            objects = (Object[]) list.get(i);
-//                            
-//                            if(objects != null)
-//                            {
-//                                newObjects = new Object[objects.length-1];
-//                                id = (Long) objects[0];
-//                                isAuthorized = SecurityManager.getInstance(this.getClass())
-//                                .isAuthorized("sharma.aarti@gmail.com",
-//                                        sourceObjectName+"_"+id,
-//                                        Permissions.USE);
-//                                Logger.out.debug(" User's Authorization to update "+sourceObjectName+"_"+id+" "+isAuthorized);
-//                                list.remove(i);
-//                                if(isAuthorized)
-//                                {
-//                                    for(int x = 1;x<objects.length;x++ )
-//                                    {
-//                                        newObjects[x-1] = objects[x];
-//                                    }
-//                                    list.add(i,newObjects);
-//                                    i++;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                else
-//                {
-//                    if(list != null)
-//                    {
-//                        for(int i=0; i<list.size();)
-//                        {
-//                            site = (Site) list.get(i);
-//                            if(site !=null)
-//                            {
-//                                isAuthorized = SecurityManager.getInstance(this.getClass())
-//                                .isAuthorized("sharma.aarti@gmail.com",
-//                                        sourceObjectName+"_"+site.getId(),
-//                                        Permissions.USE);
-//                                Logger.out.debug(" User's Authorization to update "+sourceObjectName+"_"+site.getId()+" "+isAuthorized);
-//                                
-//                                if(isAuthorized)
-//                                {
-//                                    i++;
-//                                }
-//                                else
-//                                {
-//                                    list.remove(i);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-            //---------------------------------
-            
-            //Logger.out.debug(" String : " + sqlBuff.toString());
         }
         catch (HibernateException hibExp)
         {
@@ -761,6 +688,31 @@ public class HibernateDAOImpl implements HibernateDAO
 		return null;
     }
 
+    public Object retrieveAttribute(Class<AbstractDomainObject> objClass,Long id,
+    								String attributeName)
+    								throws DAOException{
+    	
+    	String objClassName =objClass.getName();
+    	String simpleName =objClass.getSimpleName();
+    	attributeName= Utility.createAttributeNameForHQL(simpleName,attributeName);    	
+		
+    	StringBuffer queryStringBuffer = new StringBuffer();
+		queryStringBuffer.append("Select ").append(simpleName)
+						.append(".").append(attributeName)
+						.append(" from ")
+						.append(objClassName).append(" ").append(simpleName)
+						.append(" where ")
+						.append(simpleName).append(".").append(Constants.SYSTEM_IDENTIFIER)
+						.append("=").append(id);
+		try
+		{
+			return session.createQuery(queryStringBuffer.toString()).list();
+		}
+		catch(HibernateException exception)
+		{
+			throw new DAOException(exception.getMessage(),exception);
+		}
+    }
     /**
 	 * To retrieve the attribute value for the given source object name & Id.
 	 * @param sourceObjectName Source object in the Database. 
@@ -769,6 +721,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @return The Attribute value corresponding to the SourceObjectName & id.
 	 * @throws DAOException
 	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
+	 * @deprecated This function is deprecated use retrieveAttribute(Class className,Long id, String attributeName)
 	 */
 	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException 
 	{
@@ -778,7 +731,6 @@ public class HibernateDAOImpl implements HibernateDAO
 		Object[] whereColumnValue = {id};
 		
 		List result = retrieve(sourceObjectName, selectColumnNames, whereColumnName, whereColumnCondition, whereColumnValue, null);
-		
 		Object attribute = null;
 		
 		/*
