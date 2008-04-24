@@ -10,7 +10,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeCacheManager;
 import edu.wustl.common.security.SecurityManager;
+import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -76,8 +79,26 @@ public abstract class SecureAction extends BaseAction
      */
     protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
     {
-        return SecurityManager.getInstance(this.getClass())
-                .isAuthorizedToExecuteAction(getUserLoginName(request),getObjectIdForSecureMethodAccess(request));
+    	Long startTimeToGetPrivilegeCache = System.currentTimeMillis();
+    	
+		// @Ravindra : to get privilegeCache through 
+		// Singleton instance of PrivilegeCacheManager, requires User LoginName		
+    	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(getUserLoginName(request));
+		Long endTimeToGetPrivilegeCache = System.currentTimeMillis();
+		Long timeToGetPrivilegeCache = endTimeToGetPrivilegeCache - startTimeToGetPrivilegeCache;
+		
+		Long startTimeToCheckPrivilege = System.currentTimeMillis();
+		// @Ravindra : Call to SecurityManager.isAuthorizedToExecuteAction bypassed &
+		// instead, call redirected to privilegeCache.hasPrivilege		
+		boolean isAuthorized = privilegeCache.hasPrivilege(getObjectIdForSecureMethodAccess(request), Permissions.EXECUTE);
+		Long endTimeToCheckPrivilege = System.currentTimeMillis();	
+		Long timeToCheckPrivilege = endTimeToCheckPrivilege - startTimeToCheckPrivilege;
+		
+		return isAuthorized;
+		
+       // return SecurityManager.getInstance(this.getClass())
+         //       .isAuthorizedToExecuteAction(getUserLoginName(request),getObjectIdForSecureMethodAccess(request));
     }
     
     /**

@@ -27,6 +27,8 @@ import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AuditException;
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeCacheManager;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -37,6 +39,7 @@ import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.security.exceptions.CSException;
 
 /**
  * Default implemention of AbstractDAO through Hibernate ORM tool.
@@ -213,10 +216,19 @@ public class HibernateDAOImpl implements HibernateDAO
                     String userName = sessionDataBean.getUserName();
                     if(userName != null)
                     {
-	                    isAuthorized = SecurityManager.getInstance(this.getClass())
-	                            .isAuthorized(userName,
-	                                    obj.getClass().getName(),
-	                                    Permissions.CREATE);
+                		// @Ravindra : to get privilegeCache through 
+                		// Singleton instance of PrivilegeCacheManager, requires User LoginName                    	
+                    	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
+                		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(userName);
+                    	
+            			// @Ravindra : Call to SecurityManager.isAuthorized bypassed &
+            			// instead, call redirected to privilegeCache.hasPrivilege                		
+                		isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.CREATE);
+                		
+//                    	isAuthorized = SecurityManager.getInstance(this.getClass())
+//						        .isAuthorized(userName,
+//						                obj.getClass().getName(),
+//						                Permissions.CREATE);
                     }
                     else
                     {
@@ -300,7 +312,13 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
     {
-       
+    	String userName = sessionDataBean.getUserName();
+    	
+		// @Ravindra : to get privilegeCache through 
+		// Singleton instance of PrivilegeCacheManager, requires User LoginName    	
+    	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(userName);
+		
     	boolean isAuthorized = true;
         try
         {
@@ -310,18 +328,26 @@ public class HibernateDAOImpl implements HibernateDAO
                 {
                     if(!(obj instanceof AbstractDomainObject)||!hasObjectLevelPrivilege)
                     {
-                    isAuthorized = SecurityManager.getInstance(this.getClass())
-                            .isAuthorized(sessionDataBean.getUserName(),
-                                    obj.getClass().getName(),
-                                    Permissions.UPDATE);
+            		 // @Ravindra : Call to SecurityManager.isAuthorized bypassed &
+            		 // instead, call redirected to privilegeCache.hasPrivilege                    	
+                      isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.UPDATE);	
+                    	
+//                    isAuthorized = SecurityManager.getInstance(this.getClass())
+//					        .isAuthorized(sessionDataBean.getUserName(),
+//					                obj.getClass().getName(),
+//					                Permissions.UPDATE);
                     Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
                     }
                     else
                     {
-                        isAuthorized = SecurityManager.getInstance(this.getClass())
-                        .isAuthorized(sessionDataBean.getUserName(),
-                                obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
-                                Permissions.UPDATE);
+            		  // @Ravindra : Call to SecurityManager.isAuthorized bypassed &
+            		  // instead, call redirected to privilegeCache.hasPrivilege                    	
+                    	isAuthorized = privilegeCache.hasPrivilege(obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(), Permissions.UPDATE);
+                    	
+//                        isAuthorized = SecurityManager.getInstance(this.getClass())
+//						.isAuthorized(sessionDataBean.getUserName(),
+//						        obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
+//						        Permissions.UPDATE);
                         Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
                     }
                 }
