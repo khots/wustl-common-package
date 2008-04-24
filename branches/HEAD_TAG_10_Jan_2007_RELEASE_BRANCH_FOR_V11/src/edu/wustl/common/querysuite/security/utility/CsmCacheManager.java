@@ -275,12 +275,12 @@ public class CsmCacheManager
 	private Boolean checkPermission(SessionDataBean sessionDataBean, String entityName, Long entityId,
 			String permission, PrivilegeType privilegeType)
 	{
-		// @Ravindra : to get privilegeCache through 
+		// To get privilegeCache through 
 		// Singleton instance of PrivilegeCacheManager, requires User LoginName		
 		PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
 		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(sessionDataBean.getUserName());
 		
-		// @Ravindra : Call to SecurityManager.checkPermission bypassed &
+		// Call to SecurityManager.checkPermission bypassed &
 		// instead, call redirected to privilegeCache.hasPrivilege		
 		Boolean isAuthorisedUser = privilegeCache.hasPrivilege(entityName+"_"+entityId, permission);
 		

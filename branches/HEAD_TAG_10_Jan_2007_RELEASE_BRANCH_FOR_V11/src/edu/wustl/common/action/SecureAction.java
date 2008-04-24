@@ -81,7 +81,7 @@ public abstract class SecureAction extends BaseAction
     {
     	Long startTimeToGetPrivilegeCache = System.currentTimeMillis();
     	
-		// @Ravindra : to get privilegeCache through 
+		// To get privilegeCache through 
 		// Singleton instance of PrivilegeCacheManager, requires User LoginName		
     	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
 		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(getUserLoginName(request));
@@ -89,7 +89,7 @@ public abstract class SecureAction extends BaseAction
 		Long timeToGetPrivilegeCache = endTimeToGetPrivilegeCache - startTimeToGetPrivilegeCache;
 		
 		Long startTimeToCheckPrivilege = System.currentTimeMillis();
-		// @Ravindra : Call to SecurityManager.isAuthorizedToExecuteAction bypassed &
+		// Call to SecurityManager.isAuthorizedToExecuteAction bypassed &
 		// instead, call redirected to privilegeCache.hasPrivilege		
 		boolean isAuthorized = privilegeCache.hasPrivilege(getObjectIdForSecureMethodAccess(request), Permissions.EXECUTE);
 		Long endTimeToCheckPrivilege = System.currentTimeMillis();	
