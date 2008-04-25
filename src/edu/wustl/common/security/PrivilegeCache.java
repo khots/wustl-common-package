@@ -210,7 +210,7 @@ public class PrivilegeCache
 	 */
 	public boolean hasPrivilege(AbstractDomainObject aDObject, String privilegeName)
 	{
-		BitSet bitSet = privilegeMap.get(aDObject.getId().toString());
+		BitSet bitSet = privilegeMap.get(aDObject.getObjectId());
 
 		return bitSet.get(getBitNumber(privilegeName));
 	}
@@ -245,7 +245,7 @@ public class PrivilegeCache
 
 	public void updatePrivilege(AbstractDomainObject aDObject, String privilegeName, boolean value)
 	{
-		BitSet bitSet = privilegeMap.get(aDObject.getId().toString());
+		BitSet bitSet = privilegeMap.get(aDObject.getObjectId());
 
 		bitSet.set(getBitNumber(privilegeName), value);
 	}
