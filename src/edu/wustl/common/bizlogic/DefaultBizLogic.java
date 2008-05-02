@@ -29,6 +29,8 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeCacheManager;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -616,4 +618,29 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		
 	}
+	
+	
+	/**
+	 * This method is called from LoginAction (after successful User Login)
+	 * & here, privilegeCache object gets created for logged user 
+	 * & this object is stored in Cache through PrivilegeCacheManager 
+	 * 
+	 * @throws Exception 
+	 * @author ravindra_jain
+	 */
+	public void cachePrivileges(String loginName) throws Exception
+	{
+		// storing PrivilegeCache for the user in session
+		// A privilegeCache object is created for a user during Login & 
+		// this cache contains the Classes, objects,... & corresponding Privileges
+		// which user has on these classes, objects, etc.
+		// All later Security checks are done through the cache & no call to the database is made
+		PrivilegeCache privilegeCache = new PrivilegeCache(loginName);
+		
+		// To add privilegeCache to
+		// Singleton instance of PrivilegeCacheManager, requires User LoginName & privilegeCache object	
+		PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
+		privilegeCacheManager.addPrivlegeCache(loginName,privilegeCache);
+	}
+	
 }
