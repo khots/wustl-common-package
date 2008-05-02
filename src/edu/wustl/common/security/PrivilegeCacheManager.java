@@ -6,6 +6,7 @@
 
 package edu.wustl.common.security;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +56,22 @@ public class PrivilegeCacheManager
 	 * 
 	 * @param loginName
 	 * @return
+	 * @throws Exception 
 	 */
 	public PrivilegeCache getPrivilegeCache(String loginName)
 	{
-		return privilegeCaches.get(loginName);
+		PrivilegeCache privilegeCache = privilegeCaches.get(loginName);
+		if(privilegeCache == null)
+		{
+			try {
+				privilegeCache = new PrivilegeCache(loginName);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 privilegeCaches.put(loginName, privilegeCache);
+		}
+		return privilegeCache;
 	}
 
 
@@ -74,7 +87,7 @@ public class PrivilegeCacheManager
 	{
 		List<PrivilegeCache> listOfPrivilegeCaches = new Vector<PrivilegeCache>();
 
-		Set<User> users = SecurityManager.getInstance(LoginAction.class).
+		Set<User> users = SecurityManager.getInstance(this.getClass()).
 		getUserProvisioningManager().getUsers(groupName);
 
 		for(User user : users)
@@ -90,7 +103,18 @@ public class PrivilegeCacheManager
 		return listOfPrivilegeCaches;
 	}
 
-
+	/**
+	 * To get all PrivilegeCache objects 
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public Collection<PrivilegeCache> getPrivilegeCaches() throws Exception
+	{
+		return privilegeCaches.values();
+	}
+	
+	
 	/**
 	 *  to add the PrivilegeCache object to the Map of PrivilegeCaches
 	 * 
