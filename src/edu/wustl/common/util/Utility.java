@@ -30,7 +30,11 @@ import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
-
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeCacheManager;
+import edu.wustl.common.security.SecurityManager;
+import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
+import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 
 /**
  * @author kapil_kaveeshwar
@@ -752,5 +756,42 @@ public class Utility
 		return columnDisplayName;
 	}
 	
-	
+	/**
+	 * This Utility method is called dynamically as soon as a 
+	 * Site or CollectionProtocol object gets created through the UI
+	 * & adds detials regarding that object to the PrivilegeCaches of
+	 * appropriate users in Session
+	 * 
+	 * @param objectId
+	 */
+	public static void addObjectToPrivilegeCaches(String objectId)
+	{
+		PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
+		SecurityManager securityManager = SecurityManager.getInstance(Utility.class);
+		try 
+		{
+			Collection<PrivilegeCache> listOfPrivilegeCaches = privilegeCacheManager.getPrivilegeCaches();
+
+			ProtectionElement protectionElement = securityManager.getUserProvisioningManager().getProtectionElement(objectId);
+
+			Collection<ProtectionElement> protectionElements = new Vector<ProtectionElement>();
+			protectionElements.add(protectionElement);
+
+			for(PrivilegeCache privilegeCache : listOfPrivilegeCaches)
+			{
+				Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection = securityManager.
+				getUserProvisioningManager().getPrivilegeMap(privilegeCache.getLoginName(), protectionElements);
+
+				if(objectPrivilegeMapCollection.size()>0)
+				{
+					privilegeCache.addObject(objectId, objectPrivilegeMapCollection.iterator().next().getPrivileges());
+				}
+			}
+		} 
+		
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+	}
 }
