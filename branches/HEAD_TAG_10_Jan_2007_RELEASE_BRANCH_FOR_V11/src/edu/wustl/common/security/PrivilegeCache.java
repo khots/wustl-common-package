@@ -112,7 +112,7 @@ public class PrivilegeCache
 					protectionElement.setObjectId(temp);
 					ProtectionElementSearchCriteria protectionElementSearchCriteria = new ProtectionElementSearchCriteria(protectionElement);
 					List list = securityManager.getUserProvisioningManager().getObjects(protectionElementSearchCriteria);
-					int size = list.size();
+
 					if(list.size()>0)
 					{
 						Collection objectPrivilegeMap = securityManager.getUserProvisioningManager().getPrivilegeMap(loginName, list);
@@ -327,4 +327,20 @@ public class PrivilegeCache
 		}
 		return 0;
 	}
+	
+	public String getLoginName()
+	{
+		return loginName;
+	}
+	
+	public void addObject(String objectId, Collection<Privilege> privileges)
+	{
+		BitSet bitSet = new BitSet(10);
+
+		for(Privilege privilege : privileges)
+		{
+			bitSet.set(getBitNumber(privilege.getName()));
+		}
+		privilegeMap.put(objectId, bitSet);
+	}	
 }
