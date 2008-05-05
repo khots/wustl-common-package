@@ -30,8 +30,7 @@ import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeCacheManager;
-import edu.wustl.common.security.SecurityManager;
+import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -452,13 +451,42 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Logger.out.debug(" privilegeName:" + privilegeName + " objectType:" + objectType + " objectIds:"
 				+ edu.wustl.common.util.Utility.getArrayString(objectIds) + " userId:" + userId + " roleId:" + roleId + " assignToUser:"
 				+ assignToUser);
+		
+		edu.wustl.common.security.PrivilegeUtility privilegeUtility = new edu.wustl.common.security.PrivilegeUtility();
+		
+		// To get privilegeCache through 
+		// Singleton instance of PrivilegeManager, requires User LoginName
+		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+				
 		if (assignToUser)
 		{
-			SecurityManager.getInstance(this.getClass()).assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
+//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
+				
+			try 
+			{
+				String userName = privilegeUtility.getUserById(userId.toString()).getLoginName();
+				PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
+				privilegeCache.updateUserPrivilege(privilegeName, objectType, objectIds, userId, assignOperation);
+			} 
+			catch (Exception e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else
 		{
-			SecurityManager.getInstance(this.getClass()).assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
+//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
+			
+			try 
+			{
+				privilegeManager.updateGroupPrivilege(privilegeName, objectType, objectIds, roleId, assignOperation);
+			} 
+			catch (Exception e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -623,7 +651,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	/**
 	 * This method is called from LoginAction (after successful User Login)
 	 * & here, privilegeCache object gets created for logged user 
-	 * & this object is stored in Cache through PrivilegeCacheManager 
+	 * & this object is stored in Cache through PrivilegeManager 
 	 * 
 	 * @throws Exception 
 	 * @author ravindra_jain
@@ -638,9 +666,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 		PrivilegeCache privilegeCache = new PrivilegeCache(loginName);
 		
 		// To add privilegeCache to
-		// Singleton instance of PrivilegeCacheManager, requires User LoginName & privilegeCache object	
-		PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
-		privilegeCacheManager.addPrivlegeCache(loginName,privilegeCache);
+		// Singleton instance of PrivilegeManager, requires User LoginName & privilegeCache object	
+		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+		privilegeManager.addPrivlegeCache(loginName,privilegeCache);
 	}
 	
 }
