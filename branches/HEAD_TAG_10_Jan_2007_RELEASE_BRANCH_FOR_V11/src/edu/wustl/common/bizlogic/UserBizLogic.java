@@ -29,6 +29,7 @@ import edu.wustl.common.domain.CancerResearchGroup;
 import edu.wustl.common.domain.Department;
 import edu.wustl.common.domain.Institution;
 import edu.wustl.common.domain.User;
+import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
@@ -119,18 +120,27 @@ public class UserBizLogic extends DefaultBizLogic
             protectionObjects.add(user);
             
             EmailHandler emailHandler = new EmailHandler();
+            
+            PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+
             // Send the user registration email to user and the administrator.
             if (Constants.PAGEOF_SIGNUP.equals(user.getPageOf()))
             {
-            	SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
-            			null, protectionObjects, null);
+//            	SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
+//            			null, protectionObjects, null);
+            	
+            	privilegeManager.insertAuthorizationData(null, 
+        				protectionObjects, null, user.getObjectId());
                 
                 emailHandler.sendUserSignUpEmail(user);
             }
             else// Send the user creation email to user and the administrator.
             {
-                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
-                		getAuthorizationData(user), protectionObjects, null);
+//                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
+//                		getAuthorizationData(user), protectionObjects, null);
+            	
+            	privilegeManager.insertAuthorizationData(getAuthorizationData(user), 
+        				protectionObjects, null, user.getObjectId());
 
                 emailHandler.sendApprovalEmail(user);
             }
@@ -284,8 +294,13 @@ public class UserBizLogic extends DefaultBizLogic
             {
                 Set protectionObjects=new HashSet();
                 protectionObjects.add(user);
-                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
-                		getAuthorizationData(user), protectionObjects, null);
+//                SecurityManager.getInstance(this.getClass()).insertAuthorizationData(
+//                		getAuthorizationData(user), protectionObjects, null);
+                
+                PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+
+        		privilegeManager.insertAuthorizationData(getAuthorizationData(user), 
+        				protectionObjects, null, user.getObjectId());
             }
         }
         catch (SMException e)
