@@ -29,7 +29,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeCacheManager;
+import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Permissions;
@@ -216,9 +216,9 @@ public class HibernateDAOImpl implements HibernateDAO
                     if(userName != null)
                     {
                 		// To get privilegeCache through 
-                		// Singleton instance of PrivilegeCacheManager, requires User LoginName                    	
-                    	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
-                		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(userName);
+                		// Singleton instance of PrivilegeManager, requires User LoginName                    	
+                    	PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+                		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
                     	
             			// Call to SecurityManager.isAuthorized bypassed &
             			// instead, call redirected to privilegeCache.hasPrivilege                		
@@ -314,9 +314,9 @@ public class HibernateDAOImpl implements HibernateDAO
     	String userName = sessionDataBean.getUserName();
     	
 		// To get privilegeCache through 
-		// Singleton instance of PrivilegeCacheManager, requires User LoginName    	
-    	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(userName);
+		// Singleton instance of PrivilegeManager, requires User LoginName    	
+    	PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
 		
     	boolean isAuthorized = true;
         try

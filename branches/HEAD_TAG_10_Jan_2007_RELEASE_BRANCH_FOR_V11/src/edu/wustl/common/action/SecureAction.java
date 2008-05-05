@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeCacheManager;
+import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -81,9 +81,9 @@ public abstract class SecureAction extends BaseAction
     	Long startTimeToGetPrivilegeCache = System.currentTimeMillis();
     	
 		// To get privilegeCache through 
-		// Singleton instance of PrivilegeCacheManager, requires User LoginName		
-    	PrivilegeCacheManager privilegeCacheManager = PrivilegeCacheManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeCacheManager.getPrivilegeCache(getUserLoginName(request));
+		// Singleton instance of PrivilegeManager, requires User LoginName		
+    	PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(getUserLoginName(request));
 		Long endTimeToGetPrivilegeCache = System.currentTimeMillis();
 		Long timeToGetPrivilegeCache = endTimeToGetPrivilegeCache - startTimeToGetPrivilegeCache;
 		
