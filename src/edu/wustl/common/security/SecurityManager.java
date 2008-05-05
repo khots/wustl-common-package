@@ -195,7 +195,7 @@ public class SecurityManager implements Permissions {
 		return userProvisioningManager;
 	}
 
-	public Application getApplication(String applicationName)
+	/*public Application getApplication(String applicationName)
 	throws CSException {
 		Application application = new Application();
 		application.setApplicationName(applicationName);
@@ -204,7 +204,7 @@ public class SecurityManager implements Permissions {
 		application = (Application) getUserProvisioningManager().getObjects(
 				applicationSearchCriteria).get(0);
 		return application;
-	}
+	}*/
 
 	/**
 	 * Returns true or false depending on the person gets authenticated or not.
@@ -606,7 +606,7 @@ public class SecurityManager implements Permissions {
 	 * @return @throws
 	 *         CSException
 	 */
-	public boolean isAuthorizedToExecuteAction(String loginName, String objectId)
+	/*public boolean isAuthorizedToExecuteAction(String loginName, String objectId)
 	throws Exception {
 		Logger.out.debug("Login Name: " + loginName);
 		User user = getUser(loginName);
@@ -629,7 +629,7 @@ public class SecurityManager implements Permissions {
 
 		return isAuthorized;
 
-	}
+	}*/
 
 	//    /**
 	//     * Returns the object id of the protection element that represents
@@ -846,7 +846,7 @@ public class SecurityManager implements Permissions {
 	 *            Array of dynamic group names
 	 * @throws SMException
 	 */
-	public void insertAuthorizationData(Vector authorizationData,
+	/*public void insertAuthorizationData(Vector authorizationData,
 			Set protectionObjects, String[] dynamicGroups) throws SMException {
 
 		Set protectionElements;
@@ -855,25 +855,25 @@ public class SecurityManager implements Permissions {
 
 		try {
 
-			/**
+			*//**
 			 * Create protection elements corresponding to all protection
 			 * objects
-			 */
+			 *//*
 			protectionElements = createProtectionElementsFromProtectionObjects(protectionObjects);
 
-			/**
+			*//**
 			 * Create user group role protection group and their mappings if
 			 * required
-			 */
+			 *//*
 			if (authorizationData != null)
 			{
 				createUserGroupRoleProtectionGroup(authorizationData,
 						protectionElements);
 			}
 
-			/**
+			*//**
 			 * Assigning protection elements to dynamic groups
-			 */
+			 *//*
 			assignProtectionElementsToGroups(protectionElements, dynamicGroups);
 
 			Logger.out
@@ -886,7 +886,7 @@ public class SecurityManager implements Permissions {
 					"The Security Service encountered a fatal exception.", e);
 		}
 
-	}
+	}*/
 
 	/**
 	 * This method assigns Protection Elements passed to the Protection group
@@ -896,7 +896,7 @@ public class SecurityManager implements Permissions {
 	 * @param groups
 	 * @throws CSException
 	 */
-	private void assignProtectionElementsToGroups(Set protectionElements,
+	/*private void assignProtectionElementsToGroups(Set protectionElements,
 			String[] groups) {
 		ProtectionElement protectionElement;
 		Iterator it;
@@ -909,7 +909,7 @@ public class SecurityManager implements Permissions {
 			}
 		}
 	}
-
+*/
 	/**
 	 * This method creates user group, role, protection group mappings in
 	 * database for the passed authorizationData. It also adds protection
@@ -927,7 +927,7 @@ public class SecurityManager implements Permissions {
 	 * @throws CSException
 	 * @throws SMException
 	 */ 
-	private void createUserGroupRoleProtectionGroup(Vector authorizationData,
+	/*private void createUserGroupRoleProtectionGroup(Vector authorizationData,
 			Set protectionElements) throws CSException, SMException {
 		ProtectionElement protectionElement;
 		ProtectionGroup protectionGroup = null;
@@ -962,17 +962,17 @@ public class SecurityManager implements Permissions {
 					group.setGroupName(userGroupRoleProtectionGroupBean
 							.getGroupName());
 					groupSearchCriteria = new GroupSearchCriteria(group);
-					/**
+					*//**
 					 * If group already exists
-					 */
+					 *//*
 					try {
 						list = getObjects(groupSearchCriteria);
 						Logger.out.debug("User group " + group.getGroupName()
 								+ " already exists");
 					}
-					/**
+					*//**
 					 * If group does not exist already
-					 */
+					 *//*
 					catch (SMException ex) {
 						Logger.out.debug("User group " + group.getGroupName()
 								+ " does not exist");
@@ -986,9 +986,9 @@ public class SecurityManager implements Permissions {
 					}
 					group = (Group) list.get(0);
 
-					/**
+					*//**
 					 * Assigning group to users in userGroup
-					 */
+					 *//*
 					userGroup = userGroupRoleProtectionGroupBean.getGroup();
 					for (it = userGroup.iterator(); it.hasNext();) {
 						user = (User) it.next();
@@ -1009,10 +1009,10 @@ public class SecurityManager implements Permissions {
 							.getProtectionGroupName());
 					protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
 							protectionGroup);
-					/**
+					*//**
 					 * If Protection group already exists add protection
 					 * elements to the group
-					 */
+					 *//*
 					try {
 						list = getObjects(protectionGroupSearchCriteria);
 						protectionGroup = (ProtectionGroup) list.get(0);
@@ -1020,10 +1020,10 @@ public class SecurityManager implements Permissions {
 								+ protectionGroup.toString());
 
 					}
-					/**
+					*//**
 					 * If the protection group does not already exist create the
 					 * protection group and add protection elements to it.
-					 */
+					 *//*
 					catch (SMException sme) {
 						protectionGroup
 						.setProtectionElements(protectionElements);
@@ -1059,7 +1059,7 @@ public class SecurityManager implements Permissions {
 				}
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * This method creates protection elements from the protection objects
@@ -1071,7 +1071,7 @@ public class SecurityManager implements Permissions {
 	 * @return @throws
 	 *         CSException
 	 */
-	private Set createProtectionElementsFromProtectionObjects(
+	/*private Set createProtectionElementsFromProtectionObjects(
 			Set protectionObjects) throws CSException {
 		ProtectionElement protectionElement;
 		Set protectionElements = new HashSet();
@@ -1093,7 +1093,7 @@ public class SecurityManager implements Permissions {
 			}
 		}
 		return protectionElements;
-	}
+	}*/
 
 	/**
 	 * @param protectionElement
@@ -1101,7 +1101,7 @@ public class SecurityManager implements Permissions {
 	 * @return
 	 * @throws CSException
 	 */
-	private void populateProtectionElement(
+	/*private void populateProtectionElement(
 			ProtectionElement protectionElement,
 			AbstractDomainObject protectionObject, 
 			UserProvisioningManager userProvisioningManager) throws CSException {
@@ -1115,10 +1115,10 @@ public class SecurityManager implements Permissions {
 					+ " object");
 			protectionElement
 			.setProtectionElementName(protectionObject.getObjectId());
-			/**
+			*//**
 			 * Adding protection elements to static groups they
 			 * should be added to
-			 */
+			 *//*
 			String [] staticGroups = (String[]) Constants.STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES
 			.get(protectionObject.getClass().getName());
 
@@ -1135,7 +1135,7 @@ public class SecurityManager implements Permissions {
 			throw new CSException (ex.getMessage(),ex);
 		}
 
-	}
+	}*/
 
 	/**
 	 * @param protectionElement
@@ -1144,7 +1144,7 @@ public class SecurityManager implements Permissions {
 	 * @return
 	 * @throws CSException
 	 */
-	private void setProtectGroups(ProtectionElement protectionElement,
+	/*private void setProtectGroups(ProtectionElement protectionElement,
 			String[] staticGroups) throws CSException {
 		ProtectionGroup protectionGroup;
 		Set protectionGroups = null;
@@ -1177,7 +1177,7 @@ public class SecurityManager implements Permissions {
 			protectionElement
 			.setProtectionGroups(protectionGroups);
 		}
-	}
+	}*/
 
 	/**
 	 * @param protectionObject
@@ -1202,7 +1202,7 @@ public class SecurityManager implements Permissions {
 	 * @param i
 	 * @throws CSException
 	 */
-	private void assignProtectionElementToGroup(
+	/*private void assignProtectionElementToGroup(
 			ProtectionElement protectionElement, String GroupsName)
 
 	{
@@ -1224,7 +1224,7 @@ public class SecurityManager implements Permissions {
 					+ protectionElement
 					.getProtectionElementName());
 		}
-	}
+	}*/
 
 	public boolean isAuthorized(String userName, String objectId,
 			String privilegeName) throws SMException {
@@ -1242,7 +1242,7 @@ public class SecurityManager implements Permissions {
 		}
 	}
 
-	public boolean isAuthorized(String userName, String objectId,
+	/*public boolean isAuthorized(String userName, String objectId,
 			String attributeName, String privilegeName) throws SMException {
 		try {
 			return getAuthorizationManager().checkPermission(userName,
@@ -1252,7 +1252,7 @@ public class SecurityManager implements Permissions {
 					+ e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
-	}
+	}*/
 
 	/**
 	 * Checks whether the user group of id (groupid) has permission 
@@ -1636,7 +1636,7 @@ public class SecurityManager implements Permissions {
 	 * @param userId
 	 * @throws SMException
 	 */
-	public void assignPrivilegeToUser(String privilegeName, Class objectType,
+	/*public void assignPrivilegeToUser(String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, boolean assignOperation) throws SMException 
 			{
 		Logger.out.debug("In assignPrivilegeToUser...");
@@ -1730,7 +1730,7 @@ public class SecurityManager implements Permissions {
 				throw new SMException(csex);
 			}
 		}
-			}
+			}*/
 
 	/**
 	 * This method returns protection group corresponding to the naem passed. In
@@ -1742,7 +1742,7 @@ public class SecurityManager implements Permissions {
 	 * @throws CSTransactionException
 	 * @throws SMException
 	 */
-	private ProtectionGroup getProtectionGroup(String protectionGroupName)
+	/*private ProtectionGroup getProtectionGroup(String protectionGroupName)
 	throws CSException, CSTransactionException, SMException {
 		Logger.out.debug(" protectionGroupName:" + protectionGroupName);
 		if (protectionGroupName == null) {
@@ -1774,7 +1774,7 @@ public class SecurityManager implements Permissions {
 				+ protectionGroup.getProtectionGroupName() + " is "
 				+ protectionGroup.getProtectionGroupId());
 		return protectionGroup;
-	}
+	}*/
 
 	/**
 	 * This method returns role corresponding to the rolename passed
@@ -1785,7 +1785,7 @@ public class SecurityManager implements Permissions {
 	 *         CSException
 	 * @throws SMException
 	 */
-	private Role getRole(String roleName) throws CSException, SMException {
+	/*private Role getRole(String roleName) throws CSException, SMException {
 		Logger.out.debug(" roleName:" + roleName);
 		if (roleName == null) {
 			Logger.out.debug("Rolename passed is null");
@@ -1809,7 +1809,7 @@ public class SecurityManager implements Permissions {
 		Logger.out.debug(" RoleId of role " + role.getName() + " is "
 				+ role.getId());
 		return role;
-	}
+	}*/
 
 	/**
 	 * This method assigns privilege by privilegeName to the user group
@@ -1821,7 +1821,7 @@ public class SecurityManager implements Permissions {
 	 * @param roleId
 	 * @throws SMException
 	 */
-	public void assignPrivilegeToGroup(String privilegeName, Class objectType,
+	/*public void assignPrivilegeToGroup(String privilegeName, Class objectType,
 			Long[] objectIds, String roleId, boolean assignOperation) throws SMException {
 
 		Logger.out.debug("privilegeName:" + privilegeName + " objectType:"
@@ -1930,7 +1930,7 @@ public class SecurityManager implements Permissions {
 			}
 		}
 
-	}
+	}*/
 
 	/**
 	 * This method assigns additional protection Elements identified by
@@ -1941,7 +1941,7 @@ public class SecurityManager implements Permissions {
 	 * @param objectIds
 	 * @throws SMException
 	 */
-	public void assignProtectionElements(String protectionGroupName,
+	/*public void assignProtectionElements(String protectionGroupName,
 			Class objectType, Long[] objectIds) throws SMException {
 		try {
 			Logger.out.debug("Protection Group Name:" + protectionGroupName
@@ -1975,7 +1975,7 @@ public class SecurityManager implements Permissions {
 					"Could not assign Protection elements to protection group",
 					csex);
 		}
-	}
+	}*/
 
 	/**
 	 * This method assigns user identified by userId, roles identified by roles
@@ -1986,7 +1986,7 @@ public class SecurityManager implements Permissions {
 	 * @param protectionGroup
 	 * @throws SMException
 	 */
-	public void assignUserRoleToProtectionGroup(Long userId, Set roles,
+	/*public void assignUserRoleToProtectionGroup(Long userId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException {
 		Logger.out.debug("userId:" + userId + " roles:" + roles
 				+ " protectionGroup:" + protectionGroup);
@@ -2050,7 +2050,7 @@ public class SecurityManager implements Permissions {
 			throw new SMException(
 					"Could not assign user role to protection group", csex);
 		}
-	}
+	}*/
 
 	/**
 	 * This method assigns user group identified by groupId, roles identified by
@@ -2061,7 +2061,7 @@ public class SecurityManager implements Permissions {
 	 * @param protectionGroup
 	 * @throws SMException
 	 */
-	public void assignGroupRoleToProtectionGroup(Long groupId, Set roles,
+	/*public void assignGroupRoleToProtectionGroup(Long groupId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException {
 		Logger.out.debug("userId:" + groupId + " roles:" + roles
 				+ " protectionGroup:"
@@ -2082,14 +2082,14 @@ public class SecurityManager implements Permissions {
 		try {
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 
-			/**
+			*//**
 			 * Name : Aarti Sharma
 			 * Reviewer: Sachin Lale
 			 * Bug ID: 4418
 			 * Description: CSM API getProtectionGroupRoleContextForGroup throws exception
 			 * CSObjectNotFoundException when called on oracle database thus leading to this problem.
 			 * Check is made for this exception now so that the method works for oracle as well.
-			 */
+			 *//*
 			try
 			{
 				protectionGroupRoleContextSet = userProvisioningManager
@@ -2150,9 +2150,9 @@ public class SecurityManager implements Permissions {
 			throw new SMException(
 					"Could not assign user role to protection group", csex);
 		}
-	}
+	}*/
 
-	private Set removeRoles(Set fromSet, Set toSet)
+	/*private Set removeRoles(Set fromSet, Set toSet)
 	{
 		Set differnceRoles = new HashSet();
 		Iterator fromSetiterator = fromSet.iterator();
@@ -2173,7 +2173,7 @@ public class SecurityManager implements Permissions {
 		}
 
 		return differnceRoles;
-	}
+	}*/
 
 	/**
 	 * @param protectionGroupName
@@ -2181,7 +2181,7 @@ public class SecurityManager implements Permissions {
 	 * @param objectIds
 	 * @throws SMException
 	 */
-	private void deAssignProtectionElements(String protectionGroupName,
+	/*private void deAssignProtectionElements(String protectionGroupName,
 			Class objectType, Long[] objectIds) throws SMException {
 		try {
 			Logger.out.debug("Protection Group Name:" + protectionGroupName
@@ -2218,7 +2218,7 @@ public class SecurityManager implements Permissions {
 					"Could not deassign Protection elements to protection group",
 					csex);
 		}
-	}
+	}*/
 
 	/**
 	 * @param sessionDataBean
