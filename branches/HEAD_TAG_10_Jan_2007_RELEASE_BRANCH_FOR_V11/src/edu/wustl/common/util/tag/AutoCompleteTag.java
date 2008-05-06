@@ -167,7 +167,7 @@ public class AutoCompleteTag extends TagSupport
 	  
 	    autoCompleteResult += "/>";
 	    String nameOfArrow = property + "arrow"; 
-	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
+	    autoCompleteResult += "&nbsp;<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
 	    autoCompleteResult += "<script> var valuesInList = new Array();"; 
 	    
 	    if (optionsList instanceof List) {
@@ -343,7 +343,7 @@ public class AutoCompleteTag extends TagSupport
 	    
 	    autoCompleteResult += "/>";
 	    String nameOfArrow = property + "arrow";
-	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
+	    autoCompleteResult += "&nbsp;<image id='" + nameOfArrow + "' src='images/autocompleter.gif'/>";
 	    autoCompleteResult += "<input type=\"hidden\" id=\"" + property + "\" name=\"" + property + "\"value=\"" + value + "\"/>";
 	    autoCompleteResult += "<script> var valuesInListOf" + displayProperty  +  " = new Array();";
 	    autoCompleteResult += "var idsInListOf" + displayProperty  +  " = new Array();";
