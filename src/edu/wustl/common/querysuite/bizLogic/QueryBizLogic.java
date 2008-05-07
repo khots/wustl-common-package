@@ -200,11 +200,12 @@ public class QueryBizLogic<Q extends IParameterizedQuery> extends DefaultBizLogi
      * @param query
      */
     private void postProcessParameterizedQuery(ParameterizedQuery parameterizedQuery) {
+    	AbstractEntityCache abstractEntityCache = EntityCache.getCache();
+    	
         List<IOutputAttribute> outputAttributeList = parameterizedQuery.getOutputAttributeList();
         for (IOutputAttribute outputAttribute : outputAttributeList) {
             OutputAttribute opAttribute = (OutputAttribute) outputAttribute;
-            AbstractEntityCache abstractEntityCache = EntityCache.getCache();
-
+            
             Long attributeId = opAttribute.getAttributeId();
             AttributeInterface attribute = abstractEntityCache.getAttributeById(attributeId);
             opAttribute.setAttribute(attribute);
