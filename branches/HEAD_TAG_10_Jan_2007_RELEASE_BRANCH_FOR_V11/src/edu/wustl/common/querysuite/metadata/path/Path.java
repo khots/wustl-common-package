@@ -2,16 +2,23 @@
 package edu.wustl.common.querysuite.metadata.path;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import edu.common.dynamicextensions.domain.DynamicExtensionBaseDomainObject;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.associations.IInterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.InterModelAssociation;
 import edu.wustl.common.querysuite.metadata.associations.impl.IntraModelAssociation;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Chandrakant Talele
+ * @version 1.0
+ * @created 20-Mar-2008 2:08:13 PM
+ * @hibernate.class table="PATH"
+ * @hibernate.cache usage="read-write"
  */
 public class Path implements IPath
 {
@@ -24,6 +31,17 @@ public class Path implements IPath
 	private EntityInterface sourceEntity;
 	private EntityInterface targetEntity;
 	private List<IAssociation> intermediateAssociations;
+	private long sourceEntityId;
+	private long targetEntityId;
+	private String intermediatePaths;
+
+	/**
+	 * 
+	 */
+	public Path()
+	{
+
+	}
 
 	public Path(EntityInterface sourceEntity, EntityInterface targetEntity,
 			List<IAssociation> intermediateAssociations)
@@ -44,6 +62,63 @@ public class Path implements IPath
 		this.sourceEntity = sourceEntity;
 		this.targetEntity = targetEntity;
 		this.intermediateAssociations = intermediateAssociations;
+	}
+
+	/**
+	 * @return the sourceEntityId
+	 */
+	public long getSourceEntityId()
+	{
+		return sourceEntityId;
+	}
+
+	/** @hibernate.property name="sourceEntityId" column="FIRST_ENTITY_ID" type="long"
+	 * length="30" unsaved-value="null" update="true"  insert="true" length="30"
+	 * 
+	*/
+	public void setSourceEntityId(long sourceEntityId)
+	{
+		this.sourceEntityId = sourceEntityId;
+	}
+
+	/**
+	 * @return the targetEntityId
+	 * @hibernate.property name="targetEntityId" column="LAST_ENTITY_ID" type="long"
+	 * length="30" unsaved-value="null" update="true"  insert="true" length="30"
+	 * 
+	*/
+
+	public long getTargetEntityId()
+	{
+		return targetEntityId;
+	}
+
+	/**
+	 * @param targetEntityId the targetEntityId to set
+	 */
+	public void setTargetEntityId(long targetEntityId)
+	{
+		this.targetEntityId = targetEntityId;
+	}
+
+	/**
+	 * @return the intermediatePaths
+	 * @hibernate.property name="intermediatePaths" column="INTERMEDIATE_PATH" 
+	 *  update="true"  insert="true" length="150"
+	 * 
+	 */
+
+	public String getIntermediatePaths()
+	{
+		return intermediatePaths;
+	}
+
+	/**
+	 * @param intermediatePaths the intermediatePaths to set
+	 */
+	public void setIntermediatePaths(String intermediatePaths)
+	{
+		this.intermediatePaths = intermediatePaths;
 	}
 
 	public EntityInterface getSourceEntity()
@@ -127,6 +202,27 @@ public class Path implements IPath
 		this.targetEntity = targetEntity;
 	}
 
+	/**
+	 * 
+	 * @return Returns the curated_path_Id.
+	 * 
+	 * @hibernate.id name="pathId" column="PATH_ID" type="long" length="30" unsaved-value="null" generator-class="native"
+	 * @hibernate.generator-param name="sequence" value="PATH_SEQ"
+	 */
+
+	public long getPathId()
+	{
+		return pathId;
+	}
+
+	/**
+	 * @param pathId the pathId to set.
+	 */
+	public void setPathId(long pathId)
+	{
+		this.pathId = pathId;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -140,21 +236,39 @@ public class Path implements IPath
 		return buff.toString();
 	}
 
-	
-	/**
-	 * @return the pathId.
-	 */
-	public long getPathId()
+	@Override
+	public int hashCode()
 	{
-		return pathId;
+		int hash = 1;
+		if (sourceEntity != null && targetEntity != null && intermediatePaths != null
+				&& intermediateAssociations != null && !intermediateAssociations.isEmpty())
+		{
+			hash = hash * Constants.HASH_PRIME + sourceEntity.hashCode() + targetEntity.hashCode()
+					+ intermediatePaths.hashCode();
+			for (IAssociation association : intermediateAssociations)
+			{
+				hash += association.hashCode();
+			}
+		}
+
+		return hash;
 	}
 
-	
-	/**
-	 * @param pathId the pathId to set.
-	 */
-	public void setPathId(long pathId)
+	@Override
+	public boolean equals(Object obj)
 	{
-		this.pathId = pathId;
+		boolean equals = false;
+		if (this == obj)
+		{
+			equals = true;
+		}
+
+		if (!equals && obj instanceof Path)
+		{
+			Path path = (Path) obj;
+			if (pathId == path.getPathId())
+				equals = true;
+		}
+		return equals;
 	}
 }

@@ -5,21 +5,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Chandrakant Talele
+ * @version 1.0
+ * @created 20-Mar-2008 2:08:13 PM
+ * @hibernate.class table="CURATED_PATH"
+ * @hibernate.cache usage="read-write"
  */
 public class CuratedPath implements ICuratedPath
 {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4723486424420197283L;
 	private long curatedPathId;
 	private Set<IPath> paths;
 	private Set<EntityInterface> entitySet;
 	private boolean selected;
+	private String entityIds;
 
 	/**
 	 * @param curatedPathId
@@ -39,13 +42,24 @@ public class CuratedPath implements ICuratedPath
 		this.paths = new HashSet<IPath>();
 	}
 
-	public void addPath(Path path)
+	/**
+	 * Default constructor for used by hibernate
+	 */
+	public CuratedPath()
+	{
+
+	}
+
+	public void addPath(IPath path)
 	{
 		paths.add(path);
 	}
 
 	/**
-	 * @return Returns the curatedPathId.
+	 * @return Returns the curated_path_Id.
+	 * 
+	 * @hibernate.id name="curatedPathId" column="CURATED_PATH_ID" type="long" length="30" unsaved-value="null" generator-class="native"
+	 * @hibernate.generator-param name="sequence" value="CURATED_PATH_SEQ"
 	 */
 	public long getCuratedPathId()
 	{
@@ -53,8 +67,25 @@ public class CuratedPath implements ICuratedPath
 	}
 
 	/**
-	 * @return Returns the entitySet.
+	 * @return the entityIds
+	 *
+	 * @hibernate.property name="entityIds" column="ENTITY_IDS" update="true"  insert="true" length="30"
+	 * 
 	 */
+
+	public String getEntityIds()
+	{
+		return entityIds;
+	}
+
+	/**
+	 * @param entityIds the entityIds to set
+	 */
+	public void setEntityIds(String entityIds)
+	{
+		this.entityIds = entityIds;
+	}
+
 	public Set<EntityInterface> getEntitySet()
 	{
 		return entitySet;
@@ -62,6 +93,8 @@ public class CuratedPath implements ICuratedPath
 
 	/**
 	 * @return Returns the isSelected.
+	 * @hibernate.property name="selected" column="SELECTED" type="boolean" unsaved-value="false"  update="true"  insert="true"
+	 * 
 	 */
 	public boolean isSelected()
 	{
@@ -69,7 +102,10 @@ public class CuratedPath implements ICuratedPath
 	}
 
 	/**
-	 * @return Returns the paths.
+	 * @hibernate.set name="paths" cascade="none" lazy="false" inverse="false" table="CURATED_PATH_TO_PATH"
+	 * @hibernate.collection-key column="CURATED_PATH_ID" 
+	 * @hibernate.collection-many-to-many class="edu.wustl.common.querysuite.metadata.path.Path" column="PATH_ID"
+	 * @hibernate.cache usage="read-write"
 	 */
 	public Set<IPath> getPaths()
 	{
@@ -106,6 +142,62 @@ public class CuratedPath implements ICuratedPath
 	public void setPaths(Set<IPath> paths)
 	{
 		this.paths = paths;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 1;
+		if (!paths.isEmpty() && !entitySet.isEmpty())
+		{
+			hash = hash * Constants.HASH_PRIME;
+			for (IPath path : paths)
+			{
+				hash += path.hashCode();
+			}
+			for (EntityInterface entity : entitySet)
+			{
+				hash += entity.hashCode();
+			}
+		}
+
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		boolean equals = false;
+		if (this == obj)
+		{
+			equals = true;
+		}
+
+		if (!equals && obj instanceof CuratedPath)
+		{
+			CuratedPath curatedPath = (CuratedPath) obj;
+			if (!paths.isEmpty() && paths.equals(curatedPath.getPaths()) && !entitySet.isEmpty()
+					&& entitySet.equals(curatedPath.getEntitySet()))
+			{
+				equals = true;
+			}
+		}
+		return equals;
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder string = new StringBuilder();
+		for (IPath path : paths)
+		{
+			string.append(path.getPathId() + " ");
+		}
+		for (EntityInterface entity : entitySet)
+		{
+			string.append(entity.getId() + " ");
+		}
+		return "[" + string.toString() + "]";
 	}
 
 }
