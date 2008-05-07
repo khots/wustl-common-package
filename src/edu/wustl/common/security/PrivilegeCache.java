@@ -77,7 +77,7 @@ public class PrivilegeCache
 	 * 
 	 * @throws Exception
 	 */
-	public void initialize() throws Exception
+	private void initialize() throws Exception
 	{
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 		String userId = privilegeUtility.getUser(loginName).getUserId().toString(); 
@@ -162,7 +162,7 @@ public class PrivilegeCache
 	 * 
 	 * @param objectPrivilegeMapCollection
 	 */
-	public void populatePrivileges(Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection)
+	private void populatePrivileges(Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection)
 	{
 		// To populate the permissionMap
 		for (ObjectPrivilegeMap objectPrivilegeMap : objectPrivilegeMapCollection)
