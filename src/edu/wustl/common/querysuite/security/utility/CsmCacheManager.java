@@ -24,6 +24,7 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.security.authorization.domainobjects.Privilege;
 
 
 /**
@@ -55,7 +56,6 @@ public class CsmCacheManager
 	 * @param queryResultObjectDataMap
 	 * @param aList
 	 * @param cache
-	 * @return isAuthorized user or not.
 	 */
 	public void filterRow(SessionDataBean sessionDataBean,
 			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList ,CsmCache cache)
@@ -96,8 +96,6 @@ public class CsmCacheManager
 							List<String> cpIdList = cpIdsList.get(i);
 							Long cpId = cpIdList.get(0) != null ? Long.parseLong(cpIdList.get(0)) : -1;
 							entityName = Constants.CP_CLASS_NAME;
-							queryResultObjectDataBean.setPrivilegeType(PrivilegeType.ObjectLevel);
-	
 							isAuthorisedUser = checkReadDenied(sessionDataBean, cache,
 									queryResultObjectDataBean, entityName, cpId);
 							
@@ -115,8 +113,8 @@ public class CsmCacheManager
 							}
 	
 						}
-					   isAuthorisedUser = isAuthorizedUser(readPrivilegeList);
-					   hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList);
+					   isAuthorisedUser = isAuthorizedUser(readPrivilegeList,true);
+					   hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList,false);
 					}
 				}
 				
@@ -128,22 +126,100 @@ public class CsmCacheManager
 		}
 
 	}
+	
+	/**
+	 * Checks if the user has privilege on identified data
+	 * @param sessionDataBean
+	 * @param queryResultObjectDataMap
+	 * @param aList
+	 * @param cache
+	 * @return <CODE>true</CODE> user has privilege on identified data, 
+      * <CODE>false</CODE> otherwise
+	 */
+	public boolean hasPrivilegeOnIdentifiedData(SessionDataBean sessionDataBean,
+			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList ,CsmCache cache)
+	{
+		Boolean hasPrivilegeOnIdentifiedData = true;
+		if (queryResultObjectDataMap != null)
+		{ 
+			Set keySet = queryResultObjectDataMap.keySet();
+
+			for (Object key : keySet)
+			{
+				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
+						.get(key);
+				String entityName = queryResultObjectDataBean.getCsmEntityName();
+				int mainEntityId = -1;
+				if(queryResultObjectDataBean
+						.getMainEntityIdentifierColumnId()!=-1)
+				{
+					mainEntityId = Integer.parseInt((String)aList.get(queryResultObjectDataBean
+						.getMainEntityIdentifierColumnId()));
+				}
+				
+				//Check if user has identified data access on particular object or not.
+				if (mainEntityId != -1)
+				{
+					List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
+							entityName, mainEntityId);
+					if(cpIdsList.size()==0)//if this object is not associated to any CP then user will not have identified privilege on it.
+						hasPrivilegeOnIdentifiedData = false;
+					else
+					{
+						List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
+
+						for (int i = 0; i < cpIdsList.size(); i++)
+						{
+							List<String> cpIdList = cpIdsList.get(i);
+							Long cpId = cpIdList.get(0) != null ? Long.parseLong(cpIdList.get(0)) : -1;
+							entityName = Constants.CP_CLASS_NAME;
+							hasPrivilegeOnIdentifiedData = checkIdentifiedDataAccess(
+									sessionDataBean, cache, queryResultObjectDataBean, entityName,
+									cpId);
+							
+							IdentifiedPrivilegeList.add(hasPrivilegeOnIdentifiedData);
+						}
+						
+						hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList,false);
+					}
+					
+				}
+			}
+		}
+		return hasPrivilegeOnIdentifiedData;
+	}
 
 	/**
-	 * If a object say participant-1 is registered to CP-1, CP-2 this method will check what are privileges of an 
-	 * user on both CPs and,will return isAuthoried false if user is not having privilege on any one CP else true.
-	 * @param PrivilegeList List of privileges that a object id is having for every CP to which this object is registered. 
-	 * @return isAuthorized user or not.
+	 * If a object say participant-1 is registered to CP-1, CP-2 this method will check what are privileges of the 
+	 * user on both CPs and will return true if user is having privilege on any one CP.
+	 * @param PrivilegeList List of privileges that a object id is having for every CP to which this object is registered.
+	 * @param isReadDenied 
+	 * @return <CODE>true</CODE> User is authorized, 
+      * <CODE>false</CODE> otherwise
 	 */
-	private Boolean isAuthorizedUser(List<Boolean> PrivilegeList)
+	private Boolean isAuthorizedUser(List<Boolean> PrivilegeList, boolean isReadDenied)
 	{
-		for (int i = 0; i < PrivilegeList.size(); i++)
+		if(isReadDenied)
 		{
-			Boolean isAuthorized = PrivilegeList.get(i);
-			if(!(isAuthorized))
-				return isAuthorized;
+			for (int i = 0; i < PrivilegeList.size(); i++)
+			{
+				Boolean isAuthorized = PrivilegeList.get(i);
+				if(!(isAuthorized))
+					return isAuthorized;
+			}
+			return true;
+			
 		}
-		return true;
+		else
+		{
+			for (int i = 0; i < PrivilegeList.size(); i++)
+			{
+				Boolean isAuthorized = PrivilegeList.get(i);
+				if(isAuthorized)
+					return true;
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -190,8 +266,8 @@ public class CsmCacheManager
 		{
 			hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean,
 					entityName, entityId,
-					Permissions.IDENTIFIED_DATA_ACCESS,
-					queryResultObjectDataBean.getPrivilegeType());
+					Permissions.IDENTIFIED_DATA_ACCESS
+					);
 
 			cache.addNewObjectInIdentifiedDataAccsessMap(entityId,
 					hasPrivilegeOnIdentifiedData);
@@ -219,8 +295,7 @@ public class CsmCacheManager
 		{
 
 			isAuthorisedUser = checkPermission(sessionDataBean, entityName, cpId,
-					Permissions.READ_DENIED, queryResultObjectDataBean
-							.getPrivilegeType());
+					Permissions.READ_DENIED);
 			cache.addNewObjectInReadPrivilegeMap(cpId, isAuthorisedUser);
 			System.out.println("Read Denied");
 		}
@@ -272,7 +347,7 @@ public class CsmCacheManager
 	 * @param privilegeType
 	 */
 	private Boolean checkPermission(SessionDataBean sessionDataBean, String entityName, Long entityId,
-			String permission, PrivilegeType privilegeType)
+			String permission)
 	{
 		// To get privilegeCache through 
 		// Singleton instance of PrivilegeManager, requires User LoginName		
@@ -283,9 +358,6 @@ public class CsmCacheManager
 		// instead, call redirected to privilegeCache.hasPrivilege		
 		Boolean isAuthorisedUser = privilegeCache.hasPrivilege(entityName+"_"+entityId, permission);
 		
-//		Boolean isAuthorisedUser = SecurityManager.getInstance(this.getClass()).checkPermission(
-//				sessionDataBean.getUserName(), entityName, entityId, permission, privilegeType);
-
 		if (permission.equals(Permissions.READ_DENIED))
 			isAuthorisedUser = !isAuthorisedUser;
 		return isAuthorisedUser;
@@ -364,5 +436,7 @@ public class CsmCacheManager
 			}
 		}
 	}
+	
+	
 	
 }
