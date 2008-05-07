@@ -1263,7 +1263,7 @@ public class SecurityManager implements Permissions {
 	 * @return Returns true if the user group has permission over the object, else returns false.
 	 * @throws SMException
 	 */
-	public boolean checkPermission(String groupId, String objectType,
+	/*public boolean checkPermission(String groupId, String objectType,
 			String objectIdentifier) throws SMException 
 			{
 		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
@@ -1298,7 +1298,7 @@ public class SecurityManager implements Permissions {
 			return false;
 		}
 		return true;
-			}
+			}*/
 
 	public boolean checkPermission(String userName, String objectType,
 			String objectIdentifier, String privilegeName) throws SMException 
@@ -2758,7 +2758,7 @@ public class SecurityManager implements Permissions {
 	 * @param queryResultObjectDataMap
 	 * @param aList
 	 */
-	public void filterResultRow(SessionDataBean sessionDataBean,
+	/*public void filterResultRow(SessionDataBean sessionDataBean,
 			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList)
 	{ 
 		boolean isAuthorisedUser = true;
@@ -2812,7 +2812,7 @@ public class SecurityManager implements Permissions {
 				}
 			}
 		}
-	}
+	}*/
 
 //	public static void main(String[] args)
 //	{		
