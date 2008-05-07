@@ -301,8 +301,7 @@ public abstract class AbstractQueryExecutor
 			{
 				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
 				{
-					boolean hasPrivilegeOnIdentifiedData = SecurityManager.getInstance(this.getClass())
-							.hasPrivilegeOnIdentifiedDataNew(sessionDataBean, queryResultObjectDataMap, aList);
+					boolean hasPrivilegeOnIdentifiedData =cacheManager.hasPrivilegeOnIdentifiedData(sessionDataBean, queryResultObjectDataMap, aList,cache);
 					if (!hasPrivilegeOnIdentifiedData)
 						continue;
 				}
@@ -312,7 +311,6 @@ public abstract class AbstractQueryExecutor
 				{ 
 					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
 					{ 
-						//SecurityManager.getInstance(this.getClass()).filterReasultRow1(sessionDataBean, queryResultObjectDataMap, aList,cache);
 						//Supriya :call filterRow of method of csm cache manager changed for csm-query performance issue. 
 						cacheManager.filterRow(sessionDataBean, queryResultObjectDataMap, aList,cache );
 					}
