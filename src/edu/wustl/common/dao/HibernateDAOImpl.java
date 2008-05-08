@@ -210,6 +210,7 @@ public class HibernateDAOImpl implements HibernateDAO
         {
             if (isSecureInsert)
             {
+            	isAuthorized = false;
                 if (null != sessionDataBean)
                 {
                     String userName = sessionDataBean.getUserName();
@@ -229,17 +230,8 @@ public class HibernateDAOImpl implements HibernateDAO
 //						                obj.getClass().getName(),
 //						                Permissions.CREATE);
                     }
-                    else
-                    {
-                        isAuthorized = false;
-                    }
-                }
-                else
-                {
-                    isAuthorized = false;
                 }
             }
-            //Logger.out.debug(" User's Authorization to insert "+obj.getClass()+" , "+isAuthorized);
             
             if(isAuthorized)
             {
@@ -311,13 +303,6 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
     {
-    	String userName = sessionDataBean.getUserName();
-    	
-		// To get privilegeCache through 
-		// Singleton instance of PrivilegeManager, requires User LoginName    	
-    	PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
-		
     	boolean isAuthorized = true;
         try
         {
@@ -325,35 +310,12 @@ public class HibernateDAOImpl implements HibernateDAO
             {
                 if (null != sessionDataBean)
                 {
-                    if(!(obj instanceof AbstractDomainObject)||!hasObjectLevelPrivilege)
-                    {
-            		 // Call to SecurityManager.isAuthorized bypassed &
-            		 // instead, call redirected to privilegeCache.hasPrivilege                    	
-                      isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.UPDATE);	
-                    	
-//                    isAuthorized = SecurityManager.getInstance(this.getClass())
-//					        .isAuthorized(sessionDataBean.getUserName(),
-//					                obj.getClass().getName(),
-//					                Permissions.UPDATE);
-                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
-                    }
-                    else
-                    {
-            		  // Call to SecurityManager.isAuthorized bypassed &
-            		  // instead, call redirected to privilegeCache.hasPrivilege                    	
-                    	isAuthorized = privilegeCache.hasPrivilege(obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(), Permissions.UPDATE);
-                    	
-//                        isAuthorized = SecurityManager.getInstance(this.getClass())
-//						.isAuthorized(sessionDataBean.getUserName(),
-//						        obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
-//						        Permissions.UPDATE);
-                        Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
-                    }
+                	isAuthorized = isAuthorizedToUpdate(obj, sessionDataBean, hasObjectLevelPrivilege);
                 }
                 else
                 {
                     isAuthorized = false;
-                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId()+" "+isAuthorized);
+//                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId()+" "+isAuthorized);
                 }
             }
             
@@ -389,6 +351,51 @@ public class HibernateDAOImpl implements HibernateDAO
         }
        
     }
+
+    
+    /**
+     * Check whether user has permission to Update (Class or Object level - depending on Context)
+     * 
+     * @param obj
+     * @param sessionDataBean
+     * @param hasObjectLevelPrivilege
+     * @return
+     */
+	private boolean isAuthorizedToUpdate(Object obj, SessionDataBean sessionDataBean, boolean hasObjectLevelPrivilege) {
+		boolean isAuthorized;
+		String userName = sessionDataBean.getUserName();
+		
+		// To get privilegeCache through 
+		// Singleton instance of PrivilegeManager, requires User LoginName    	
+		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
+		
+		if(!(obj instanceof AbstractDomainObject)||!hasObjectLevelPrivilege)
+		{
+		 // Call to SecurityManager.isAuthorized bypassed &
+		 // instead, call redirected to privilegeCache.hasPrivilege                    	
+		  isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.UPDATE);	
+			
+//                    isAuthorized = SecurityManager.getInstance(this.getClass())
+//					        .isAuthorized(sessionDataBean.getUserName(),
+//					                obj.getClass().getName(),
+//					                Permissions.UPDATE);
+		Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
+		}
+		else
+		{
+		  // Call to SecurityManager.isAuthorized bypassed &
+		  // instead, call redirected to privilegeCache.hasPrivilege                    	
+			isAuthorized = privilegeCache.hasPrivilege(obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(), Permissions.UPDATE);
+			
+//                        isAuthorized = SecurityManager.getInstance(this.getClass())
+//						.isAuthorized(sessionDataBean.getUserName(),
+//						        obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
+//						        Permissions.UPDATE);
+		    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
+		}
+		return isAuthorized;
+	}
     
     public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
     {
