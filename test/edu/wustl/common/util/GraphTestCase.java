@@ -50,17 +50,6 @@ public class GraphTestCase extends TestCase
 	}
 
 	/**
-	 * by Adding edge between 4 & 1 shold throw CyclicException
-	 *
-	 */
-	public void testPutEdge1()
-	{
-		String fourOne = "41";
-		graph.putEdge(four, one, fourOne);
-		assertTrue("Expected Cyclic Exception !!!", false);
-	}
-
-	/**
 	 * by Adding edge between 4 & 5 shold not throw CyclicException
 	 *
 	 */
