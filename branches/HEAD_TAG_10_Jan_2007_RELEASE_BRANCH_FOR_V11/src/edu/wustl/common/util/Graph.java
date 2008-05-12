@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.querysuite.exceptions.CyclicException;
-import edu.wustl.common.querysuite.queryobject.impl.BaseQueryObject;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -19,12 +17,13 @@ import edu.wustl.common.util.global.Constants;
  * @version 1.0
  * @created 31-Oct-2006 12.46.04 PM
  */
-
-public class Graph<V, E> extends BaseQueryObject
+public class Graph<V, E> implements Serializable
 {
 
 	private static final long serialVersionUID = 2744129191470144562L;
+
 	private Map<V, List<Edge>> incommingEdgeMap = new HashMap<V, List<Edge>>();
+
 	private Map<V, List<Edge>> outgoingEdgeMap = new HashMap<V, List<Edge>>();
 
 	public Graph()
@@ -36,8 +35,11 @@ public class Graph<V, E> extends BaseQueryObject
 	{
 
 		private static final long serialVersionUID = 2747448736801686112L;
+
 		private V sourceVertex;
+
 		private V targetVertex;
+
 		private E edgeObj;
 
 		public Edge(V sourceVertex, V targetVertex, E edgeobj)
@@ -99,22 +101,31 @@ public class Graph<V, E> extends BaseQueryObject
 	 */
 	public boolean addVertex(V vertex)
 	{
-		if (vertex != null)
+		if (containsVertex(vertex))
+			return false;
+		else
 		{
-			if (incommingEdgeMap.containsKey(vertex))
-				return false;
-			else
-			{
-				incommingEdgeMap.put(vertex, new ArrayList<Edge>());
-				outgoingEdgeMap.put(vertex, new ArrayList<Edge>());
-				return true;
-			}
+			incommingEdgeMap.put(vertex, new ArrayList<Edge>());
+			outgoingEdgeMap.put(vertex, new ArrayList<Edge>());
+			return true;
 		}
-		return false;
 	}
 
 	/**
-	 * Get the edge from the list of edges, if one exists between source vertex and target vertex.
+	 * Checks if specified vertex is present in this graph.
+	 * @param vertex
+	 *            the vertex whose presence is to be checked.
+	 * @return <tt>true</tt> if this vertex is present in this graph;
+	 *         <tt>false</tt> otherwise.
+	 */
+	public boolean containsVertex(V vertex)
+	{
+		return incommingEdgeMap.containsKey(vertex);
+	}
+
+	/**
+	 * Get the edge from the list of edges, if one exists between source vertex
+	 * and target vertex.
 	 * @param sourceVertex
 	 * @param targetVertex
 	 * @return edge object if it exists; null otherwise
@@ -134,7 +145,8 @@ public class Graph<V, E> extends BaseQueryObject
 	}
 
 	/**
-	 * This method checks whether an edge lies between the source vertex and target vertex.
+	 * This method checks whether an edge lies between the source vertex and
+	 * target vertex.
 	 * @param sourceVertex
 	 * @param targetVertex
 	 * @return true if the edge exists; false otherwise
@@ -170,34 +182,30 @@ public class Graph<V, E> extends BaseQueryObject
 	}
 
 	/**
-	 * Put the edge into the list of edges if it does not exist. If the edge exists
-	 * return the old edge and replace it with a new edge.
+	 * Put the edge into the list of edges if it does not exist. If the edge
+	 * exists return the old edge and replace it with a new edge.
 	 * @param sourceVertex
 	 * @param targetVertex
 	 * @param edge
 	 * @return the old edge if it exists; null otherwise
-	 * @throws CyclicException if the graph is realized to be cyclic
 	 */
-	public E putEdge(V sourceVertex, V targetVertex, E edge) throws CyclicException
+	public E putEdge(V sourceVertex, V targetVertex, E edge)
 	{
 		Edge theEdge = (Edge) getEdgeFromList(outgoingEdgeMap.get(sourceVertex), targetVertex,
 				false);
 
 		if (theEdge == null) // The edge does not exist!!
 		{
-			//Adding vertex in the vertex list if not present.
+			// Adding vertex in the vertex list if not present.
 			addVertex(sourceVertex);
 			addVertex(targetVertex);
 
-			if (isReverseReachable(sourceVertex, targetVertex))
-			{
-				throw new CyclicException("Adding this Edge will form a Cycle in Graph.");
-			}
-
-			//Add this Edge in outgoing & incomming Edges.
+			// Add this Edge in outgoing & incomming Edges.
 			Edge newEdge = new Edge(sourceVertex, targetVertex, edge);
 			outgoingEdgeMap.get(sourceVertex).add(newEdge);
 			incommingEdgeMap.get(targetVertex).add(newEdge);
+
+			return null;
 		}
 		else
 		// The edge already exists, so replace the existing edge and return it.
@@ -206,13 +214,12 @@ public class Graph<V, E> extends BaseQueryObject
 			theEdge.setEdgeObject(edge);
 			return oldEdge;
 		}
-		return null;
 	}
 
 	/**
-	 * Checks if the graph is weakly connected.
-	 * Graph will be connected if
-	 *  1. after Depth first traversing (without considering edge Direction) through graph from (the only one)unreachable node, results into  
+	 * Checks if the graph is weakly connected. Graph will be connected if 1.
+	 * after Depth first traversing (without considering edge Direction) through
+	 * graph from (the only one)unreachable node, results into
 	 * @return true if graph is connected; false if graph is disjoint
 	 */
 	public boolean isConnected()
@@ -220,8 +227,8 @@ public class Graph<V, E> extends BaseQueryObject
 		boolean isConnected = true;
 
 		List<V> unreachableNodes = getUnreachableNodeList();
-		//		if (unreachableNodes.size() >  1)
-		//			return false;
+		// if (unreachableNodes.size() > 1)
+		// return false;
 
 		Set<V> allVertexSet = new HashSet<V>();
 		allVertexSet.addAll(incommingEdgeMap.keySet());
@@ -230,15 +237,16 @@ public class Graph<V, E> extends BaseQueryObject
 		if (allVertexSet.isEmpty())
 			isConnected = true;
 		else
-			// after traversing if the allVertexSet is not empty means its a disconnected graph.
+			// after traversing if the allVertexSet is not empty means its a
+			// disconnected graph.
 			isConnected = false;
 
 		return isConnected;
 	}
 
 	/**
-	 * This method will return the list of vertices having no incomming Edges. 
-	 * The node having no incomming edges will be treated as Root node. 
+	 * This method will return the list of vertices having no incomming Edges.
+	 * The node having no incomming edges will be treated as Root node.
 	 * @return list of vertices having no incomming Edges.
 	 */
 	public List<V> getUnreachableNodeList()
@@ -277,8 +285,10 @@ public class Graph<V, E> extends BaseQueryObject
 	}
 
 	/**
-	 * To remove all edges of Vertex. This will remove all incoming & outgoing edges of given vertex.
-	 * @param vertex the reference to vertex.
+	 * To remove all edges of Vertex. This will remove all incoming & outgoing
+	 * edges of given vertex.
+	 * @param vertex
+	 *            the reference to vertex.
 	 */
 	private void removeAllEdgesOfVertex(V vertex)
 	{
@@ -287,34 +297,34 @@ public class Graph<V, E> extends BaseQueryObject
 		for (int index = 0; index < incommingEdges.size(); index++)
 		{
 			Edge edge = incommingEdges.get(index);
-			removeEdge(edge.sourceVertex,edge.targetVertex);
+			removeEdge(edge.sourceVertex, edge.targetVertex);
 		}
-		
+
 		// removing all outgoing edges for given vertex.
 		List<Edge> outgoingEdges = outgoingEdgeMap.get(vertex);
 		for (int index = 0; index < outgoingEdges.size(); index++)
 		{
 			Edge edge = outgoingEdges.get(index);
-			removeEdge(edge.sourceVertex,edge.targetVertex);
+			removeEdge(edge.sourceVertex, edge.targetVertex);
 		}
 	}
-	
+
 	/**
-	 * This method checks whether adding node from sourceVertex to targetVertex will result into cyclic graph or not.
-	 * 
-	 * Adding an edge will result into cycle only when the target vertex is reachable from source vertex i.e. 
-	 * Vertex B is reachable from vertex A if and only if 
-	 * 		1. There is direct edge from vertex C to B 
-	 * 		2. and C is reachable from A.
-	 *   
-	 * @param sourceVertex The source vertex of edge to be added.
-	 * @param targetVertex The target vertex of edge to be added.
-	 * @return true if the 
+	 * This method checks whether adding node from sourceVertex to targetVertex
+	 * will result into cyclic graph or not. Adding an edge will result into
+	 * cycle only when the target vertex is reachable from source vertex i.e.
+	 * Vertex B is reachable from vertex A if and only if 1. There is direct
+	 * edge from vertex C to B 2. and C is reachable from A.
+	 * @param sourceVertex
+	 *            The source vertex of edge to be added.
+	 * @param targetVertex
+	 *            The target vertex of edge to be added.
+	 * @return true if the
 	 */
 	private boolean isReverseReachable(V sourceVertex, V targetVertex)
 	{
 		if (sourceVertex.equals(targetVertex))
-			return true; //finaly reached from source to target!!! 
+			return true; // finaly reached from source to target!!!
 		List<Edge> edges = incommingEdgeMap.get(sourceVertex);
 		for (int i = 0; i < edges.size(); i++)
 		{
@@ -327,10 +337,13 @@ public class Graph<V, E> extends BaseQueryObject
 	}
 
 	/**
-	 * Method to traverse using Depth First algorithm. 
-	 * It removes the vertex from allVertexSet while visiting each vertex. dfs of connected graph should result into the allVetrexSet empty.
-	 * @param vertex The vertex to be visited.
-	 * @param allVertexSet Set of all nodes not visited yet.
+	 * Method to traverse using Depth First algorithm. It removes the vertex
+	 * from allVertexSet while visiting each vertex. dfs of connected graph
+	 * should result into the allVetrexSet empty.
+	 * @param vertex
+	 *            The vertex to be visited.
+	 * @param allVertexSet
+	 *            Set of all nodes not visited yet.
 	 */
 	private void dfs(V vertex, Set<V> allVertexSet)
 	{
@@ -345,9 +358,11 @@ public class Graph<V, E> extends BaseQueryObject
 			{
 				Edge edge = edges.get(i);
 				if (allVertexSet.contains(edge.targetVertex))
-					dfs(edge.targetVertex, allVertexSet); // this vertex is not yet visited.
+					dfs(edge.targetVertex, allVertexSet); // this vertex is
+				// not yet visited.
 				if (allVertexSet.contains(edge.sourceVertex))
-					dfs(edge.sourceVertex, allVertexSet); // this vertex is not yet visited.
+					dfs(edge.sourceVertex, allVertexSet); // this vertex is
+				// not yet visited.
 			}
 		}
 	}
@@ -381,10 +396,10 @@ public class Graph<V, E> extends BaseQueryObject
 	}
 
 	/**
-	 * To get the list directly reachable Vertices from the given vertex. 
-	 * @return List of Vertices directly reachable from the given vertex. 
-	 * Returns null if vertex is not present in graph,
-	 * Returns empty list if vertex has no directly reachable node.
+	 * To get the list directly reachable Vertices from the given vertex.
+	 * @return List of Vertices directly reachable from the given vertex.
+	 *         Returns null if vertex is not present in graph, Returns empty
+	 *         list if vertex has no directly reachable node.
 	 */
 	public List<V> getDirectSuccessorOf(V vertex)
 	{
@@ -404,10 +419,11 @@ public class Graph<V, E> extends BaseQueryObject
 	}
 
 	/**
-	 * To get the list of vertices from which the given vertex is directly reachable. 
-	 * @return List of Vertices from which the given vertex is directly reachable. 
-	 * Returns null if vertex is not present in graph,
-	 * Returns empty list if vertex has no incomming Edges.
+	 * To get the list of vertices from which the given vertex is directly
+	 * reachable.
+	 * @return List of Vertices from which the given vertex is directly
+	 *         reachable. Returns null if vertex is not present in graph,
+	 *         Returns empty list if vertex has no incomming Edges.
 	 */
 	public List<V> getDirectPredecessorOf(V vertex)
 	{
@@ -427,10 +443,13 @@ public class Graph<V, E> extends BaseQueryObject
 
 	/**
 	 * All possible path between two vertices.
-	 * @param fromVertex the begining vertex.
-	 * @param toVetrex the ending vertix.
+	 * @param fromVertex
+	 *            the begining vertex.
+	 * @param toVetrex
+	 *            the ending vertix.
 	 * @return List of all paths, where path is again List of Vertices.
-	 * @throws IllegalArgumentException when the fromVetrex or toVetrex is not in the graph.
+	 * @throws IllegalArgumentException
+	 *             when the fromVetrex or toVetrex is not in the graph.
 	 */
 	public List<List<V>> getReachablePaths(V fromVertex, V toVetrex)
 	{
@@ -472,10 +491,13 @@ public class Graph<V, E> extends BaseQueryObject
 
 	/**
 	 * All possible path Edges between two vertices.
-	 * @param fromVertex the begining vertex.
-	 * @param toVetrex the ending vertix.
+	 * @param fromVertex
+	 *            the begining vertex.
+	 * @param toVetrex
+	 *            the ending vertix.
 	 * @return List of all path Edges, where path is again List of Vertices.
-	 * @throws IllegalArgumentException when the fromVetrex or toVetrex is not in the graph.
+	 * @throws IllegalArgumentException
+	 *             when the fromVetrex or toVetrex is not in the graph.
 	 */
 	public List<List<E>> getReachableEdgePaths(V fromVertex, V toVetrex)
 	{
@@ -498,7 +520,8 @@ public class Graph<V, E> extends BaseQueryObject
 	 * To get the List of Vertices having outgoing Edges from given vertex.
 	 * @param vertex
 	 * @return
-	 * @throws IllegalArgumentException if the vertex does not exists in graph.
+	 * @throws IllegalArgumentException
+	 *             if the vertex does not exists in graph.
 	 */
 	public List<V> getOutgoingVertices(V vertex)
 	{
@@ -520,13 +543,88 @@ public class Graph<V, E> extends BaseQueryObject
 	 * To get List of all vertices present in graph.
 	 * @return List of all vertices present in graph.
 	 */
-	public List<V> getVertices()
+	public Set<V> getVertices()
 	{
-		List<V> vertices = new ArrayList<V>();
+		Set<V> vertices = new HashSet<V>();
 		vertices.addAll(incommingEdgeMap.keySet());
 		return vertices;
 	}
-	
+
+	/**
+	 * @return list of all edges in this graph.
+	 */
+	public Set<E> getEdges()
+	{
+		Set<E> res = new HashSet<E>();
+		for (List<Edge> edges : incommingEdgeMap.values())
+		{
+			for (Edge edge : edges)
+			{
+				res.add(edge.edgeObj);
+			}
+		}
+		return res;
+	}
+
+	public boolean isTree()
+	{
+		if (!isConnected())
+		{
+			return false;
+		}
+		boolean foundRoot = false;
+		for (V vertex : getVertices())
+		{
+			List<Edge> in = incommingEdgeMap.get(vertex);
+			if (in.size() > 1)
+			{
+				return false;
+			}
+			if (in.isEmpty())
+			{
+				if (foundRoot)
+				{
+					return false;
+				}
+				foundRoot = true;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks if adding specified edge will cause a new cycle in the graph.
+	 * @param src
+	 *            src vertex
+	 * @param target
+	 *            target vertex
+	 * @return <tt>true</tt> if this edge will cause a new cycle in this
+	 *         graph;<tt>false</tt> otherwise.
+	 */
+	public boolean willCauseNewCycle(V src, V target)
+	{
+		if (!(containsVertex(src) && containsVertex(target)))
+		{
+			return false;
+		}
+		return isReverseReachable(src, target);
+	}
+
+	/**
+	 * Checks if adding specified edge will violate the tree constraint "every
+	 * node must have atmost one parent".
+	 * @param src
+	 *            the src vertex
+	 * @param target
+	 *            the target vertex
+	 * @return <tt>true</tt> is adding the specified edge will violate the
+	 *         tree constraint; <tt>false</tt> otherwise.
+	 */
+	public boolean willViolateTreeConstraint(V src, V target)
+	{
+		return !containsVertex(target) || getDirectPredecessorOf(target).isEmpty();
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */

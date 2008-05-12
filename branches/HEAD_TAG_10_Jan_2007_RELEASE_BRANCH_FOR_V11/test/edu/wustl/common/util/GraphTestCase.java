@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
-import edu.wustl.common.querysuite.exceptions.CyclicException;
 
 /**
  * @author prafull_kadam
@@ -57,14 +56,8 @@ public class GraphTestCase extends TestCase
 	public void testPutEdge1()
 	{
 		String fourOne = "41";
-		try
-		{
-			graph.putEdge(four, one, fourOne);
-			assertTrue("Expected Cyclic Exception !!!", false);
-		}
-		catch (CyclicException e)
-		{
-		}
+		graph.putEdge(four, one, fourOne);
+		assertTrue("Expected Cyclic Exception !!!", false);
 	}
 
 	/**
@@ -73,17 +66,10 @@ public class GraphTestCase extends TestCase
 	 */
 	public void testPutEdge2()
 	{
-		try
-		{
-			String edge = graph.putEdge(four, five, fourFive);
-			assertNull("Expected null value from putEdge method since edge does not Exist!!!", edge);
-			edge = graph.getEdge(four, five);
-			assertEquals("Unequal edge got from Graph!!!", edge, fourFive);
-		}
-		catch (CyclicException e)
-		{
-			assertTrue("Unexpected Cyclic Exception !!!", false);
-		}
+		String edge = graph.putEdge(four, five, fourFive);
+		assertNull("Expected null value from putEdge method since edge does not Exist!!!", edge);
+		edge = graph.getEdge(four, five);
+		assertEquals("Unequal edge got from Graph!!!", edge, fourFive);
 	}
 
 	/**
@@ -101,15 +87,8 @@ public class GraphTestCase extends TestCase
 	 */
 	public void testIsConnected2()
 	{
-		try
-		{
-			graph.putEdge(six, five, sixFive);
-			assertFalse("Expected false value from isConnected method!!!", graph.isConnected());
-		}
-		catch (CyclicException e)
-		{
-			assertTrue("Unexpected Cyclic Exception !!!", false);
-		}
+		graph.putEdge(six, five, sixFive);
+		assertFalse("Expected false value from isConnected method!!!", graph.isConnected());
 	}
 
 	/**
@@ -120,15 +99,8 @@ public class GraphTestCase extends TestCase
 	 */
 	public void testIsConnected3()
 	{
-		try
-		{
-			graph.putEdge(five, four, fiveFour);
-			assertTrue("Expected true value from isConnected method!!!", graph.isConnected());
-		}
-		catch (CyclicException e)
-		{
-			assertTrue("Unexpected Cyclic Exception !!!", false);
-		}
+		graph.putEdge(five, four, fiveFour);
+		assertTrue("Expected true value from isConnected method!!!", graph.isConnected());
 	}
 
 	/**
@@ -142,19 +114,11 @@ public class GraphTestCase extends TestCase
 		actualList.add(one);
 		assertEquals("incorrect unreachableNodeList!!!", graph.getUnreachableNodeList(), actualList);
 
-		try
-		{
-			actualList.add(five);
-			graph.putEdge(five, four, fiveFour);
-			assertEquals("incorrect unreachableNodeList!!!", graph.getUnreachableNodeList(),
-					actualList);
-		}
-		catch (CyclicException e)
-		{
-			assertTrue("Unexpected Cyclic Exception !!!", false);
-		}
+		actualList.add(five);
+		graph.putEdge(five, four, fiveFour);
+		assertEquals("incorrect unreachableNodeList!!!", graph.getUnreachableNodeList(), actualList);
 	}
-	
+
 	/**
 	 * To test getReachablePaths(V,V) method.
 	 * 
@@ -173,43 +137,43 @@ public class GraphTestCase extends TestCase
 	 * graph.getReachablePaths(5,1) should return empty path list.
 	 * 
 	 */
-	
+
 	public void testgetReachablePaths1()
 	{
-		try
-		{
-			graph.putEdge(four, five, fourFive);
-			graph.putEdge(two, five, "25");
-			graph.putEdge(one, four, "14");
-			List<List<Integer>> actualPaths = graph.getReachablePaths(one, five);
-			
-			List<List<Integer>> paths = new ArrayList<List<Integer>>();
-			List<Integer> path1 = new ArrayList<Integer>();
-			path1.add(one);path1.add(three);path1.add(four);path1.add(five);
-			paths.add(path1);
-			List<Integer> path2 = new ArrayList<Integer>();
-			path2.add(one);path2.add(four);path2.add(five);
-			paths.add(path2);
-			List<Integer> path3 = new ArrayList<Integer>();
-			path3.add(one);path3.add(two);path3.add(five);
-			paths.add(path3);
-			
-//			System.out.println("Graph:"+graph.toString());
-//			displayPaths(paths);
-//			displayPaths(actualPaths);
-			
-			assertEquals("Expected paths not found!!!", paths,actualPaths);
-			
-			paths = new ArrayList<List<Integer>>();
-			actualPaths = graph.getReachablePaths(five, one);
-			assertEquals("Expected no paths between two vertices!!!", paths,actualPaths);
-			
-		}
-		catch (CyclicException e)
-		{
-			assertTrue("Unexpected Cyclic Exception !!!", false);
-		}
+		graph.putEdge(four, five, fourFive);
+		graph.putEdge(two, five, "25");
+		graph.putEdge(one, four, "14");
+		List<List<Integer>> actualPaths = graph.getReachablePaths(one, five);
+
+		List<List<Integer>> paths = new ArrayList<List<Integer>>();
+		List<Integer> path1 = new ArrayList<Integer>();
+		path1.add(one);
+		path1.add(three);
+		path1.add(four);
+		path1.add(five);
+		paths.add(path1);
+		List<Integer> path2 = new ArrayList<Integer>();
+		path2.add(one);
+		path2.add(four);
+		path2.add(five);
+		paths.add(path2);
+		List<Integer> path3 = new ArrayList<Integer>();
+		path3.add(one);
+		path3.add(two);
+		path3.add(five);
+		paths.add(path3);
+
+		//			System.out.println("Graph:"+graph.toString());
+		//			displayPaths(paths);
+		//			displayPaths(actualPaths);
+
+		assertEquals("Expected paths not found!!!", paths, actualPaths);
+
+		paths = new ArrayList<List<Integer>>();
+		actualPaths = graph.getReachablePaths(five, one);
+		assertEquals("Expected no paths between two vertices!!!", paths, actualPaths);
 	}
+
 	/**
 	 * To test getReachablePaths(V,V) method.
 	 * Call to method graph.getReachablePaths(vertex1,vertex2) should throw an Exception when any of vertex1 or vertex2 is not present in the graph.  
@@ -219,7 +183,7 @@ public class GraphTestCase extends TestCase
 	{
 		try
 		{
-			List<List<Integer>> actualPaths = graph.getReachablePaths(one, five);	
+			List<List<Integer>> actualPaths = graph.getReachablePaths(one, five);
 			assertTrue("Expected IllegalArgument Exception !!!", false);
 		}
 		catch (IllegalArgumentException e)
@@ -227,8 +191,9 @@ public class GraphTestCase extends TestCase
 		}
 		List<List<Integer>> actualPaths = graph.getReachablePaths(three, two);
 		List<List<Integer>> paths = new ArrayList<List<Integer>>();
-		assertEquals("Expected no paths between two vertices!!!", paths,actualPaths);
+		assertEquals("Expected no paths between two vertices!!!", paths, actualPaths);
 	}
+
 	/**
 	 * method to display paths
 	 * @param paths
@@ -237,7 +202,7 @@ public class GraphTestCase extends TestCase
 	{
 		for (Iterator<List<Integer>> iter = paths.iterator(); iter.hasNext();)
 		{
-			System.out.println("path::"+iter.next());
+			System.out.println("path::" + iter.next());
 		}
 	}
 }
