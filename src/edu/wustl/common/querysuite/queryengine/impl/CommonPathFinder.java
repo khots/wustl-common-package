@@ -1,14 +1,12 @@
 
 package edu.wustl.common.querysuite.queryengine.impl;
 
-import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -40,11 +38,18 @@ public class CommonPathFinder implements IPathFinder
 			Connection connection = null;
 			try
 			{
-				InitialContext context = new InitialContext();
-				DataSource dataSource = (DataSource) context.lookup(getDataSource());
+				InitialContext initialContext = new InitialContext();
+				Context env = (Context) initialContext.lookup("java:comp/env");
+                String dsName = (String) env.lookup("DataSource");
+                Logger.out.info("Data source name found: " + dsName);
+                
+                DataSource dataSource = (DataSource)initialContext.lookup(dsName);
+                Logger.out.info("Data source found: " + dataSource);
+                
 				connection = dataSource.getConnection();
+				Logger.out.info("Connection established: " + connection);
+				
 				pathFinder = PathFinder.getInstance(connection);
-
 			}
 			catch (NamingException e)
 			{
@@ -71,34 +76,6 @@ public class CommonPathFinder implements IPathFinder
 		}
 	}
 	
-	/*
-	 * This method is for testing only. Its is solely meant to be used in CommonPathFinderTest class
-	 */
-	String getDS() {
-		return getDataSource();
-	}
-
-	//  Name of the property file
-	private String getDataSource()
-	{
-		String propertyfile = "commonpackage.properties";
-		ClassLoader classLoader = CommonPathFinder.class.getClassLoader();
-		URL url = classLoader.getResource(propertyfile);
-		Properties properties = new Properties();
-		try
-		{
-			properties.load(url.openStream());
-		}
-		catch (IOException e)
-		{
-			Logger.out.error((new StringBuilder()).append("Unable to load properties from : ")
-					.append(propertyfile).toString());
-			e.printStackTrace();
-		}
-		return (new StringBuilder()).append("java:/").append(
-				properties.getProperty("datasource.name")).toString();
-	}
-
 	/**
 	 * This method gets all the possible paths between two entities.
 	 */
