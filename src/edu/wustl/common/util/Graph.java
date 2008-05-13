@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.util.global.Constants;
-
 /**
  * @author Mandar Shidhore
  * @version 1.0
@@ -18,6 +16,9 @@ import edu.wustl.common.util.global.Constants;
  */
 
 // TODO check getEdge(). edgeObj may be null.
+// TODO check Edge.hashCode() no equals
+// TODO check isConnected()... self-edge causes problem. ASSUMES ROOTED GRAPH.
+// TODO getReachablePaths etc... incorrect if cycles present.
 public class Graph<V, E> implements Serializable {
 
     private static final long serialVersionUID = 2744129191470144562L;
@@ -60,19 +61,6 @@ public class Graph<V, E> implements Serializable {
 
         public void setEdgeObject(E edgeObj) {
             this.edgeObj = edgeObj;
-        }
-
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            int hash = 1;
-            hash = hash * Constants.HASH_PRIME + edgeObj.hashCode();
-            hash = hash * Constants.HASH_PRIME + sourceVertex.hashCode();
-            hash = hash * Constants.HASH_PRIME + targetVertex.hashCode();
-
-            return super.hashCode();
         }
 
         /**
@@ -566,7 +554,9 @@ public class Graph<V, E> implements Serializable {
         if (containsEdge(src, target)) {
             return false;
         }
-        return !getDirectPredecessorOf(target).isEmpty();
+        return !(getDirectPredecessorOf(target).isEmpty() && getReachablePaths(
+                                                                               target,
+                                                                               src).isEmpty());
     }
 
     /**
