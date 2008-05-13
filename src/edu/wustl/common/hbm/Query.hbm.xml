@@ -27,7 +27,7 @@
         <many-to-one
             name="constraints"
             class="edu.wustl.common.querysuite.queryobject.impl.Constraints"
-            cascade="all-delete-orphan"
+            cascade="all"
             outer-join="auto"
             update="true"
             insert="true"
