@@ -82,7 +82,7 @@ public class DBUtil
 		}
 		catch (Exception ex)
 		{
-			Logger.out.debug("Exception: " + ex.getMessage(), ex);
+			Logger.out.error("Exception: " + ex.getMessage(), ex);
 			throw new RuntimeException(ex);
 		}
 	}
