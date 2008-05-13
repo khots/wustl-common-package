@@ -51,6 +51,14 @@ public class JoinGraph extends BaseQueryObject implements IJoinGraph
 	}
 
 	/**
+	 * @param graphEntryCollection the graphEntryList to set
+	 */
+	private void setGraphEntryCollection(Collection<GraphEntry> graphEntryCollection)
+	{
+		this.graphEntryCollection = graphEntryCollection;
+	}
+
+	/**
 	 * @return the graphEntryList
 	 * @hibernate.set name="graphEntryCollection" cascade="all-delete-orphan"
 	 *                lazy="false"
