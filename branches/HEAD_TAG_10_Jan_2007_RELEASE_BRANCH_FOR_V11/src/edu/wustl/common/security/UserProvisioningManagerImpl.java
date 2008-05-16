@@ -34,9 +34,12 @@ public class UserProvisioningManagerImpl extends
 	 * @throws Exception
 	 */
 	public UserProvisioningManagerImpl() throws Exception {
-		super(SecurityManager.CATISSUE_CORE_CONTEXT_NAME);
-		SessionFactory sf = ApplicationSessionFactory.getSessionFactory(SecurityManager.CATISSUE_CORE_CONTEXT_NAME);
-		super.setAuthorizationDAO(new AuthorizationDAOImpl(sf,"catissuecore"));
+		/** Modified by amit_doshi
+		 *  code reviewer abhijit_naik 
+		 */
+		super(SecurityManager.APPLICATION_CONTEXT_NAME);
+		SessionFactory sf = ApplicationSessionFactory.getSessionFactory(SecurityManager.APPLICATION_CONTEXT_NAME);
+		super.setAuthorizationDAO(new AuthorizationDAOImpl(sf,SecurityManager.APPLICATION_CONTEXT_NAME));
 	}
 	
 	
