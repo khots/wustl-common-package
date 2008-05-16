@@ -51,7 +51,7 @@ public class PagenationTag extends TagSupport
             }
             else
             {
-            	out.println("<table class=\"dataTableWhiteLabel\" border=0 bordercolor=#666699 width=98%>");
+            	out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=38%>");
             }
 
             if (pageNum > numLinks)
