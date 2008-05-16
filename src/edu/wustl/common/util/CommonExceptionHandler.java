@@ -15,6 +15,7 @@ import org.apache.struts.action.ExceptionHandler;
 import org.apache.struts.config.ExceptionConfig;
 
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -41,7 +42,10 @@ public class CommonExceptionHandler extends ExceptionHandler {
                                                    throws ServletException {
     		String errorMessage = getErrorMsg(ex);
             Logger.out.error( errorMessage, ex );
-            request.getSession().setAttribute( Constants.ERROR_DETAIL, "Unhandled Exception occured in caTISSUE Core: "+ex.getMessage() );
+            /** Modified by amit_doshi
+		 	*  code reviewer abhijit_naik 
+		 	*/
+            request.getSession().setAttribute( Constants.ERROR_DETAIL, "Unhandled Exception occured in "+Variables.applicationName +" : "+ex.getMessage() );
             return super.execute( ex, ae, mapping, formInstance, request, response );
 
       }
