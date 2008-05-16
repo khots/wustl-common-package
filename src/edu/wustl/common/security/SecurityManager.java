@@ -86,7 +86,8 @@ public class SecurityManager implements Permissions {
 
 	private Class requestingClass = null;
 
-	public static String CATISSUE_CORE_CONTEXT_NAME = "catissuecore";
+	//Changed by amit_doshi 
+	public static String APPLICATION_CONTEXT_NAME = "catissuecore";
 
 	private static final String ADMINISTRATOR_ROLE = "1";
 
@@ -150,7 +151,7 @@ public class SecurityManager implements Permissions {
 			synchronized (requestingClass) {
 				if (authenticationManager == null) {
 					authenticationManager = SecurityServiceProvider
-					.getAuthenticationManager(CATISSUE_CORE_CONTEXT_NAME);
+					.getAuthenticationManager(APPLICATION_CONTEXT_NAME);
 				}
 			}
 		}
@@ -173,7 +174,7 @@ public class SecurityManager implements Permissions {
 			synchronized (requestingClass) {
 				if (authorizationManager == null) {
 					authorizationManager = SecurityServiceProvider
-					.getAuthorizationManager(CATISSUE_CORE_CONTEXT_NAME);
+					.getAuthorizationManager(APPLICATION_CONTEXT_NAME);
 				}
 			}
 		}
@@ -2608,7 +2609,212 @@ public class SecurityManager implements Permissions {
 		return hasIdentifiedDataAccess;
 
 	}
-		
+
+	/**
+	 * This method checks whether user identified by userName has given
+	 * permission on object identified by identifier of table identified by
+	 * tableAlias
+	 * @author supriya_dankh
+	 * @param userName
+	 * @param tableAlias
+	 * @param identifier
+	 * @param permission
+	 * @return
+	 */
+	public boolean checkPermission(String userName, String entityClassName,
+			Object identifier, String permission,PrivilegeType privilegeType)
+	{   
+		if (Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
+		{
+			boolean isAuthorized = false;
+			Logger.out.debug("Entity class name:" + entityClassName + " tableName:"
+					+ entityClassName + " Identifier:" + identifier + " Permission:" + permission
+					+ " userName" + userName);
+
+			//Supriya: Security Data in database might be on the basis of classname/table name/table alias name
+			//Depending on the option that an application chooses corresponding prefix is used to check permissions
+			if (!(securityDataPrefix.equals(CLASS_NAME) || securityDataPrefix.equals(TABLE_ALIAS_NAME) ||securityDataPrefix.equals(TABLE_NAME)))
+			{ 
+				entityClassName = "";
+			}
+			try
+			{
+				//If type of privilege is class level check user's privilege on
+				// class
+				if (privilegeType == PrivilegeType.ClassLevel)
+				{
+					isAuthorized = SecurityManager.getInstance(this.getClass()).isAuthorized(
+							userName, entityClassName, permission);
+				}
+				//else if it is object level check user's privilege on object
+				// identifier
+				else if (privilegeType == PrivilegeType.ObjectLevel)
+				{
+					isAuthorized = SecurityManager.getInstance(this.getClass()).checkPermission(
+							userName, entityClassName, String.valueOf(identifier), permission);
+				}
+				//else no privilege needs to be checked
+				else if (privilegeType == PrivilegeType.InsecureLevel)
+				{
+					isAuthorized = true;
+				}
+
+			}
+			catch (SMException e)
+			{
+				Logger.out.debug(" Exception while checking permission:" + e.getMessage(), e);
+				return isAuthorized;
+			}
+			return isAuthorized;
+		}
+		return true;
+
+	}
+
+	/**
+	 * This method returns true if user has privilege on identified data in list
+	 * else false
+	 * @author Supriya_Dankh
+	 * @param sessionDataBean
+	 * @param queryResultObjectDataMap
+	 * @param list
+	 * @return 
+	 */
+	public boolean hasPrivilegeOnIdentifiedDataNew(SessionDataBean sessionDataBean, Map<String,QueryResultObjectDataBean> queryResultObjectDataMap,
+			List aList)
+	{ 
+		// boolean that indicates whether user has privilege on identified data
+		boolean hasPrivilegeOnIdentifiedData = true;
+		String entityName = "";
+		Set keySet = queryResultObjectDataMap.keySet();
+		for (Object key : keySet)
+		{
+			QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap.get(key);
+			if (queryResultObjectDataBean.getMainEntityIdentifierColumnId() != -1)
+			{
+				if (!queryResultObjectDataBean.isMainEntity())
+				{
+					entityName = queryResultObjectDataBean.getMainEntity().getName();
+				}
+				else
+					entityName = queryResultObjectDataBean.getEntity().getName();
+				hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean.getUserName(),
+						entityName, aList.get(queryResultObjectDataBean
+								.getMainEntityIdentifierColumnId()),
+								Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
+								.getPrivilegeType());
+			}
+
+			//if user does not have privilege on even a single identified
+			// data in row
+			//user does not have privilege on all the identified data in
+			// that row
+			if (!hasPrivilegeOnIdentifiedData)
+			{
+				hasPrivilegeOnIdentifiedData = false;
+				return hasPrivilegeOnIdentifiedData;
+			}
+		}
+		return hasPrivilegeOnIdentifiedData;
+	}
+
+	/**
+	 * This method removes data from list aList.
+	 * It could be all data related to QueryResultObjectDataBean
+	 * or only the identified fields depending on 
+	 * the value of boolean removeOnlyIdentifiedData
+	 * user
+	 * @author supriya_dankh
+	 * @param aList
+	 * @param queryResultObjectData
+	 * @param removeOnlyIdentifiedData
+	 */
+	private void removeUnauthorizedFieldsData(List aList,
+			QueryResultObjectDataBean queryResultObjectData,
+			boolean removeOnlyIdentifiedData) { 
+
+//		Logger.out.debug(" Entity:" + queryResultObjectData.getMainEntity().getName()
+//		+ " removeOnlyIdentifiedData:" + removeOnlyIdentifiedData);
+		Vector objectColumnIds;
+
+		//If removeOnlyIdentifiedData is true then get Identified data column ids
+		//else get all column Ids to remove them
+		if (removeOnlyIdentifiedData) {
+			objectColumnIds = queryResultObjectData
+			.getIdentifiedDataColumnIds();
+		} else {
+			objectColumnIds = queryResultObjectData.getObjectColumnIds();
+		}
+		Logger.out.debug("objectColumnIds:" + objectColumnIds);
+		if (objectColumnIds != null) {
+			for (int k = 0; k < objectColumnIds.size(); k++) {
+				aList.set(((Integer) objectColumnIds.get(k)).intValue(), "##");
+			}
+		}
+	}
+
+	/**
+	 * Filters a row i.e. removes data from row according to User privileges.
+	 * @param sessionDataBean
+	 * @param queryResultObjectDataMap
+	 * @param aList
+	 */
+	/*public void filterResultRow(SessionDataBean sessionDataBean,
+			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList)
+	{ 
+		boolean isAuthorisedUser = true;
+		boolean hasPrivilegeOnIdentifiedData = true;
+		if (queryResultObjectDataMap != null)
+		{
+			Set keySet = queryResultObjectDataMap.keySet();
+
+			for (Object key : keySet)
+			{
+				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
+				.get(key);
+				String entityName = "";
+				if (!queryResultObjectDataBean.isMainEntity())
+				{
+					entityName = queryResultObjectDataBean.getMainEntity().getName();
+				}
+				else
+					entityName = queryResultObjectDataBean.getEntity().getName();
+
+				//Check if user has read privilege on perticular object or not.
+				if (!(queryResultObjectDataBean.getMainEntityIdentifierColumnId() == -1)
+						&& (queryResultObjectDataBean.isReadDeniedObject()))
+				{
+					isAuthorisedUser = checkPermission(sessionDataBean.getUserName(), entityName,
+							aList.get(queryResultObjectDataBean.getMainEntityIdentifierColumnId()),
+							Permissions.READ_DENIED, queryResultObjectDataBean.getPrivilegeType());
+
+					isAuthorisedUser = !isAuthorisedUser;
+				}
+				//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
+				else if (!isAuthorisedUser)
+				{
+					removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, false);
+				}
+
+				//If user is authorized to read data then check for identified data access.
+				if (isAuthorisedUser && queryResultObjectDataBean.isHasAssociatedIdentifiedData())
+				{
+					hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean.getUserName(),
+							entityName, aList.get(queryResultObjectDataBean
+									.getMainEntityIdentifierColumnId()),
+									Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
+									.getPrivilegeType());
+
+					//If user is not authorized to see identified data then replace identified column values by ##
+					if (!hasPrivilegeOnIdentifiedData)
+					{
+						removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, true);
+					}
+				}
+			}
+		}
+	}*/
+
 //	public static void main(String[] args)
 //	{		
 //	try
