@@ -6,6 +6,9 @@
  */
 package edu.wustl.common.exception;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
 
 
 /**
@@ -37,7 +40,10 @@ public class BizLogicException extends Exception
 	 */
 	public BizLogicException(String message, Exception wrapException)
 	{
-		super(message);
+		/**Added by amit_doshi to fix the bug related to exception chaining
+		 * code reviewer :- abhijit_naik
+		 */
+		super(message,wrapException);
 		this.wrapException = wrapException;
 	}
 	
@@ -56,4 +62,5 @@ public class BizLogicException extends Exception
 	{
 		this.wrapException = wrapException;
 	}
+	
 }

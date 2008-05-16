@@ -34,7 +34,10 @@ public class AssignDataException extends Exception
 	 */
 	public AssignDataException(String message, Exception wrapException)
 	{
-		super(message);
+		/**Added by amit_doshi to fix the bug related to exception chaining
+		 * code reviewer :- abhijit_naik
+		 */
+		super(message,wrapException);
 		this.wrapException = wrapException;
 	}
 	
