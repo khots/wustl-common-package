@@ -69,9 +69,7 @@ public abstract class BaseAction extends Action
 		}
 		setRequestData(request);
 		setSelectedMenu(request);
-		//Mandar 17-Apr-06 : 1667:- Application URL
-		Utility.setApplicationURL(request.getRequestURL().toString());
-
+		
 		ActionForward actionForward = executeAction(mapping, form, request, response);
 		
 		long endTime = System.currentTimeMillis();		
@@ -88,7 +86,10 @@ public abstract class BaseAction extends Action
 	 */
 	protected void preExecute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
 	{
-
+		/** Added by amit_doshi
+		 *  code reviewer abhijit_naik 
+		 */
+		Utility.setApplicationURL(request.getRequestURL().toString());
 	}
 
 	protected void setRequestData(HttpServletRequest request)
