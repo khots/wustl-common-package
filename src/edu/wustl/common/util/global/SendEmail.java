@@ -59,8 +59,39 @@ public class SendEmail
      * @param body "Body" of the mail
      * @return true if mail was successfully sent, false if it fails
      */
-    public boolean sendmail(String to, String cc, String bcc, String from, String host,
-            String subject, String body)
+     /** Modified by kiran_pinnamaneni
+	  *  code reviewer abhijit_naik 
+	  */
+	public boolean sendmail(String to, String cc, String bcc, String from, String host, String subject, String body)
+	{
+
+		String[] toArray = {to};
+		String[] ccArray = null;
+		String[] bccArray = null;
+		if (cc != null)
+		{
+			ccArray = new String[1];
+			ccArray[0] = cc;
+		}
+		if (bcc != null)
+		{	bccArray = new String[1];
+			bccArray[0] = bcc;
+		}
+		return sendmail(toArray,ccArray,bccArray,from,host,subject,body);
+	}
+
+	/**
+	 * Used to send the mail with given parameters.
+	 * @param to "To" Address for sending the mail
+	 * @param cc "CC" Address for sending the mail
+	 * @param bcc "BCC" Address for sending the mail
+	 * @param from "From" Address for sending the mail
+	 * @param host "Host" from where to send the mail
+	 * @param subject "Subject" of the mail
+	 * @param body "Body" of the mail
+	 * @return true if mail was successfully sent, false if it fails
+	 */
+	public boolean sendmail(String[] to, String[] cc, String[] bcc, String from, String host, String subject, String body)
     {
         
         //create some properties and get the default Session
@@ -75,17 +106,20 @@ public class SendEmail
             // create a message
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(from));
-            InternetAddress[] toAddress = {new InternetAddress(to)};
+			InternetAddress[] toAddress = convertArrayToInternetAddrArray(to);
+			//InternetAddress[] toAddress = {new InternetAddress(to)};
             
             if (cc != null)
             {
-                InternetAddress[] ccAddress = {new InternetAddress(cc)};
+				InternetAddress[] ccAddress = convertArrayToInternetAddrArray(cc);
+				//InternetAddress[] ccAddress = {new InternetAddress(cc)};
                 msg.setRecipients(Message.RecipientType.CC,ccAddress);
             }
             
             if (bcc != null)
             {
-                InternetAddress[] bccAddress = {new InternetAddress(bcc)};
+				InternetAddress[] bccAddress = convertArrayToInternetAddrArray(bcc);
+				//InternetAddress[] bccAddress = {new InternetAddress(bcc)};
                 msg.setRecipients(Message.RecipientType.BCC,bccAddress);
             }
             //set TO
@@ -126,4 +160,19 @@ public class SendEmail
 
         return true;
     }
+
+			 /** Added by kiran_pinnamaneni
+			  *  code reviewer abhijit_naik 
+			  */
+	private InternetAddress[] convertArrayToInternetAddrArray(String[] arrayToConvert) throws Exception
+	{
+		InternetAddress[] internetAddress = new InternetAddress[arrayToConvert.length];
+
+		for (int i = 0; i < arrayToConvert.length; i++)
+		{
+			internetAddress[i] = new InternetAddress(arrayToConvert[i]);
+		}
+		return internetAddress;
+	}
+
 }
