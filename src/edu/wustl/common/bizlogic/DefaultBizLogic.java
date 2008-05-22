@@ -65,7 +65,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
 	{
-		dao.insert(obj, sessionDataBean, true, true);
+		dao.insert(obj, sessionDataBean, false, true);
 	}
 
 	/**
