@@ -248,8 +248,11 @@ public class PrivilegeCache
 	public void updatePrivilege(String objectId, String privilegeName, boolean value)
 	{
 		BitSet bitSet = privilegeMap.get(objectId);
-
-		bitSet.set(getBitNumber(privilegeName), value);
+		
+		if(privilegeName.equals("READ"))
+			bitSet.set(getBitNumber("READ_DENIED"), !value);
+		else	
+			bitSet.set(getBitNumber(privilegeName), value);
 	}
 
 	/**
