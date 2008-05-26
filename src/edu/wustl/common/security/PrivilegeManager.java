@@ -162,10 +162,9 @@ public class PrivilegeManager
 	 */
 	private void addObjectToPrivilegeCaches(String objectId)
 	{
-		PrivilegeManager privilegeCacheManager = PrivilegeManager.getInstance();
 		try 
 		{
-			Collection<PrivilegeCache> listOfPrivilegeCaches = privilegeCacheManager.getPrivilegeCaches();
+			Collection<PrivilegeCache> listOfPrivilegeCaches = getPrivilegeCaches();
 
 			ProtectionElement protectionElement = privilegeUtility.getUserProvisioningManager().getProtectionElement(objectId);
 
@@ -230,7 +229,7 @@ public class PrivilegeManager
 		
 		for(User user : users)
 		{
-			listOfPrivilegeCaches = PrivilegeManager.getInstance().getPrivilegeCaches();
+			listOfPrivilegeCaches = getPrivilegeCaches();
 
 			for(PrivilegeCache privilegeCache : listOfPrivilegeCaches)
 			{
