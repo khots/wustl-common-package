@@ -235,7 +235,10 @@ public class PrivilegeManager
 			{
 				if(privilegeCache.getLoginName().equals(user.getLoginName()))
 				{
-					privilegeCache.updatePrivilege(objectType.getName()+"_"+objectIds[0], privilegeName, assignOperation);
+					for(Long objectId : objectIds)
+					{
+						privilegeCache.updatePrivilege(objectType.getName()+"_"+objectId, privilegeName, assignOperation);
+					}
 				}
 			}
 			assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
