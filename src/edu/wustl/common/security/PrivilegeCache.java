@@ -342,8 +342,10 @@ public class PrivilegeCache
 		{
 			if(privilegeCache.getLoginName().equals(privilegeUtility.getUserById(userId.toString()).getLoginName()))
 			{
-				updatePrivilege(objectType.getName()+"_"+objectIds[0], privilegeName, assignOperation);
-				break;
+				for(Long objectId : objectIds)
+				{
+					updatePrivilege(objectType.getName()+"_"+objectId, privilegeName, assignOperation);
+				}
 			}
 		}
 		assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
