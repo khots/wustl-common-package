@@ -6,10 +6,12 @@
  */
 package edu.wustl.common.security.dao;
 
+import gov.nih.nci.logging.api.logger.hibernate.HibernateSessionFactoryHelper;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement;
 import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
@@ -22,8 +24,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -281,6 +286,52 @@ public class AuthorizationDAOImpl extends
 								.stringArrayToString(protectionElementIds)
 						+ " to Protection Group" + protectionGroupId + "|");
 	}
+	
+	
+    public Set getGroups(String userId) throws CSObjectNotFoundException {
+        Session s = null;
+        Set groups = new HashSet();
+        try {
+            s = HibernateSessionFactoryHelper.getAuditSession(sf);
+
+            User user = (User) this.getObjectByPrimaryKey(s, User.class,
+                    new Long(userId));
+            groups = user.getGroups();
+            List list = new ArrayList();
+            Iterator toSortIterator = groups.iterator();
+            while(toSortIterator.hasNext()){ list.add(toSortIterator.next()); }
+            Collections.sort(list);
+            groups.clear();
+            groups.addAll(list);
+            
+            log.debug("The result size:" + groups.size());
+
+        } catch (Exception ex) {
+            log.error(ex);
+            if (log.isDebugEnabled())
+                log
+                        .debug("Authorization|||getGroups|Failure|Error in obtaining Groups for User Id "
+                                + userId + "|" + ex.getMessage());
+            throw new CSObjectNotFoundException(
+                    "An error occurred while obtaining Associated Groups for the User\n"
+                            + ex.getMessage(), ex);
+        } finally {
+            try {
+                s.close();
+            } catch (Exception ex2) {
+                if (log.isDebugEnabled())
+                    log
+                            .debug("Authorization|||getGroups|Failure|Error in Closing Session |"
+                                    + ex2.getMessage());
+            }
+        }
+        if (log.isDebugEnabled())
+            log
+                    .debug("Authorization|||getGroups|Success|Successful in obtaining Groups for User Id "
+                            + userId + "|");
+        return groups;
+
+    }
 	
 	
 	private Object getObjectByPrimaryKey(Session s, Class objectType,
