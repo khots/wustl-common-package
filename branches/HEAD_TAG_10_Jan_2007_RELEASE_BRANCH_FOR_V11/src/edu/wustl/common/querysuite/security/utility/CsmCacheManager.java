@@ -95,7 +95,7 @@ public class CsmCacheManager
 						{
 							List<String> cpIdList = cpIdsList.get(i);
 							Long cpId = cpIdList.get(0) != null ? Long.parseLong(cpIdList.get(0)) : -1;
-							entityName = Constants.CP_CLASS_NAME;
+							entityName = Variables.mainProtocolObject;
 							isAuthorisedUser = checkReadDenied(sessionDataBean, cache,
 									queryResultObjectDataBean, entityName, cpId);
 							
@@ -172,7 +172,7 @@ public class CsmCacheManager
 						{
 							List<String> cpIdList = cpIdsList.get(i);
 							Long cpId = cpIdList.get(0) != null ? Long.parseLong(cpIdList.get(0)) : -1;
-							entityName = Constants.CP_CLASS_NAME;
+							entityName = Variables.mainProtocolObject;
 							hasPrivilegeOnIdentifiedData = checkIdentifiedDataAccess(
 									sessionDataBean, cache, queryResultObjectDataBean, entityName,
 									cpId);
@@ -328,7 +328,7 @@ public class CsmCacheManager
 				Logger.out.error("Error ocured while getting CP ids for entity : "+entityName);
 				e.printStackTrace();
 			}
-		}else if (entityName.equals(Constants.CP_CLASS_NAME))
+		}else if (entityName.equals(Variables.mainProtocolObject))
 		{
 		    List<String> cpIdList = new ArrayList<String>();
 		    cpIdList.add(String.valueOf(entityId));
