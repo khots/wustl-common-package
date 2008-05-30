@@ -670,5 +670,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
 		privilegeManager.addPrivlegeCache(loginName,privilegeCache);
 	}
+
+	@Override
+	protected void postInsert(Collection<AbstractDomainObject> objCollection, DAO dao,
+			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+	{
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

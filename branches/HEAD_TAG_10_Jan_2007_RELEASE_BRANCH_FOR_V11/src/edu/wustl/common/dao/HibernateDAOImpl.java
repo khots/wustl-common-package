@@ -135,29 +135,22 @@ public class HibernateDAOImpl implements HibernateDAO
      * Declared in AbstractDAO class. 
      * @throws DAOException
      */
-    public void rollback() throws DAOException
+    public void rollback()
     {
-    //	Logger.out.info("rollback call:------------------------");
-        try
+        if(isUpdated==true) 
         {
-            Logger.out.debug("SESSION COMMIT: "+session.connection().getAutoCommit());
-        }
-        catch (Exception dbex)
-        {
-            dbex.printStackTrace();
-        }
-
-        if(isUpdated==true) {
-        try
-        {
-            if (transaction != null)
-                transaction.rollback();
-        }
-        catch (HibernateException dbex)
-        {
-            Logger.out.error(dbex.getMessage(), dbex);
-            throw handleError("Error in rollback: ", dbex);
-        }
+	        try
+	        {
+	            if (transaction != null)
+	            {
+	                transaction.rollback();
+	            }
+	        }
+	        catch (HibernateException dbex)
+	        {
+	            Logger.out.error(dbex.getMessage(), dbex);
+	            //throw handleError("Error in rollback: ", dbex);
+	        }
         }
     }
     

@@ -133,7 +133,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * Declared in AbstractDAO class. 
 	 * @throws DAOException
 	 */
-	public void rollback() throws DAOException
+	public void rollback()
 	{
 		try
 		{
@@ -143,8 +143,6 @@ public class JDBCDAOImpl implements JDBCDAO
 		catch (SQLException dbex)
 		{
 			Logger.out.error(dbex.getMessage(), dbex);
-			//new DAOException("Error in rollback", dbex);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
 		}
 	}
 
