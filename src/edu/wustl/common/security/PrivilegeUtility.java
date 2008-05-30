@@ -3,9 +3,11 @@
  */
 package edu.wustl.common.security;
 
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
@@ -32,6 +34,7 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.beans.SecurityDataBean;
 import gov.nih.nci.security.authorization.domainobjects.Role;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.global.Constants;
 
 /**
@@ -42,19 +45,10 @@ import edu.wustl.common.util.global.Constants;
  */
 public class PrivilegeUtility 
 {
-	public static String CATISSUE_CORE_CONTEXT_NAME = "catissuecore";
 	private static AuthorizationManager authorizationManager = null;
 	private Class requestingClass = PrivilegeUtility.class;
 	
-	private static final String ADMINISTRATOR_ROLE = "1";
-	private static final String SUPERVISOR_ROLE = "2";
-	private static final String TECHNICIAN_ROLE = "3";
-	private static final String PUBLIC_ROLE = "7";
-	private static final String ADMINISTRATOR_GROUP_ID = "1";
-	private static final String SUPERVISOR_GROUP_ID = "2";
-	private static final String TECHNICIAN_GROUP_ID = "3";
-	private static final String PUBLIC_GROUP_ID = "4";
-	
+	   
 	/**
 	 * This method creates protection elements corresponding to protection
 	 * objects passed and associates them with static as well as dynamic
@@ -189,7 +183,7 @@ public class PrivilegeUtility
 					.get(i);
 
 					group
-					.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
+					.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
 					group.setGroupName(userGroupRoleProtectionGroupBean
 							.getGroupName());
 					groupSearchCriteria = new GroupSearchCriteria(group);
@@ -234,7 +228,7 @@ public class PrivilegeUtility
 
 					protectionGroup = new ProtectionGroup();
 					protectionGroup
-					.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
+					.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
 					protectionGroup
 					.setProtectionGroupName(userGroupRoleProtectionGroupBean
 							.getProtectionGroupName());
@@ -328,7 +322,7 @@ public class PrivilegeUtility
 		try
 		{
 			protectionElement
-			.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
+			.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
 			protectionElement
 			.setProtectionElementDescription(protectionObject
 					.getClass().getName()
@@ -557,7 +551,7 @@ public class PrivilegeUtility
 			synchronized (requestingClass) {
 				if (authorizationManager == null) {
 					authorizationManager = SecurityServiceProvider
-					.getAuthorizationManager(CATISSUE_CORE_CONTEXT_NAME);
+					.getAuthorizationManager(SecurityManager.APPLICATION_CONTEXT_NAME);
 				}
 			}
 		}
@@ -629,6 +623,7 @@ public class PrivilegeUtility
 		Role role;
 		role = new Role();
 		role.setName(roleName);
+		role.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
 		roleSearchCriteria = new RoleSearchCriteria(role);
 		List list;
 		try {
@@ -881,18 +876,18 @@ public class PrivilegeUtility
 		
 	
 	public String getGroupIdForRole(String roleID) {
-		if (roleID.equals(ADMINISTRATOR_ROLE)) {
+		if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE))) {
 			Logger.out.debug(" role corresponds to Administrator group");
-			return ADMINISTRATOR_GROUP_ID;
-		} else if (roleID.equals(SUPERVISOR_ROLE)) {
+			return SecurityManager.rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID);
+		} else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE))) {
 			Logger.out.debug(" role corresponds to Supervisor group");
-			return SUPERVISOR_GROUP_ID;
-		} else if (roleID.equals(TECHNICIAN_ROLE)) {
+			return SecurityManager.rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID);
+		} else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE))) {
 			Logger.out.debug(" role corresponds to Technician group");
-			return TECHNICIAN_GROUP_ID;
-		} else if (roleID.equals(PUBLIC_ROLE)) {
+			return SecurityManager.rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID);
+		} else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.PUBLIC_ROLE))) {
 			Logger.out.debug(" role corresponds to public group");
-			return PUBLIC_GROUP_ID;
+			return SecurityManager.rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID);
 		} else {
 			Logger.out.debug("role corresponds to no group");
 			return null;
