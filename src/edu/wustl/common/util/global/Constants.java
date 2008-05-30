@@ -504,4 +504,29 @@ public class Constants
 	
 	public static final String 	CP_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";
 	public static final String EXPORT_FILE_NAME_START = "Report_Content_";
+    
+    public static final String SECURITY_MANAGER_PROP_FILE = "SecurityManager.properties";
+    public static final String APPLN_CONTEXT_NAME = "application.context.name";
+    public static final String SECURITY_MANAGER_CLASSNAME = "class.name";
+    
+    public static final String MAIN_PROTOCOL_OBJECT = "mainprotocolobject.classname";
+    public static final String READ_DENIED_OBJECTS = "readdeniedobjects";
+    public static final String CSM_PROPERTY_FILE = "csm.properties";
+    public static final String ROLE_ADMINISTRATOR="Administrator";
+    public static final String TECHNICIAN = "Technician";
+	public static final String SUPERVISOR = "Supervisor";
+	public static final String SCIENTIST = "Scientist";
+	
+	public static final String ADMINISTRATOR_ROLE = "ADMINISTRATOR_ROLE";
+	public static final String SUPERVISOR_ROLE = "SUPERVISOR_ROLE";
+	public static final String TECHNICIAN_ROLE = "TECHNICIAN_ROLE";
+	public static final String PUBLIC_ROLE = "PUBLIC_ROLE";
+	public static final String ADMINISTRATOR_GROUP_ID = "ADMINISTRATOR_GROUP_ID";
+	public static final String SUPERVISOR_GROUP_ID = "SUPERVISOR_GROUP_ID";
+	public static final String TECHNICIAN_GROUP_ID = "TECHNICIAN_GROUP_ID";
+	public static final String PUBLIC_GROUP_ID = "PUBLIC_GROUP_ID";
+	public static final String APPLICATION_CLINPORTAL = "clinportal";
+
 }
+
+
