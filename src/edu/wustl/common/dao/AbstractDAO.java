@@ -44,5 +44,5 @@ public interface AbstractDAO extends DAO
      * Rollback all the changes after last commit.  
      * @throws DAOException
      */
-    public abstract void rollback() throws DAOException;
+    public abstract void rollback();
 }

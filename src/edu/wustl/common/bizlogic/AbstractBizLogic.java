@@ -9,7 +9,9 @@
  */
 package edu.wustl.common.bizlogic;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +78,15 @@ public abstract class AbstractBizLogic implements IBizLogic
      * */
     protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
     
+    /**
+     * This method gets called after insert method. Any logic after insertnig object in database can be included here.
+     * @param objCollection Collection of object to be inserted
+     * @param dao the dao object
+     * @param sessionDataBean session specific data
+     * @throws DAOException
+     * @throws UserNotAuthorizedException 
+     * */
+    protected abstract void postInsert(Collection<AbstractDomainObject> objCollection, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
     /**
      * Deletes an object from the database.
      * @param obj The object to be deleted.
@@ -150,18 +161,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch(DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,obj,"Deleting");
-			if(errMsg==null)
-			{
-				errMsg=ex.getMessage();
-			}
-			try
-			{
-				dao.rollback();
-			}
-			catch(DAOException daoEx)
-			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-			}
+			dao.rollback();
 			Logger.out.debug("Error in delete");
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -191,7 +191,15 @@ public abstract class AbstractBizLogic implements IBizLogic
     {
     	return formatException(ex.getWrapException(),obj,operation);
     }
-    
+    /**
+     * 
+     * @param obj The object to be inserted
+     * @param sessionDataBean  session specific data
+     * @param daoType Type of dao (Hibernate or JDBC)
+     * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
+     * @throws UserNotAuthorizedException User Not Authorized Exception
+     * @throws BizLogicException Wrapping DAO exception into Bizlogic exception
+     */
     private void insert(Object obj, SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly) throws UserNotAuthorizedException, BizLogicException
     {
     	long startTime = System.currentTimeMillis();
@@ -199,36 +207,16 @@ public abstract class AbstractBizLogic implements IBizLogic
 		try
 		{
 	        dao.openSession(sessionDataBean);
-	        validate(obj, dao, Constants.ADD);	        
-	        preInsert(obj, dao, sessionDataBean);
-	        if(isInsertOnly)
-		    {
-	        	insert(obj,dao);	        	
-		    }
-	        else
-		    {
-		    	insert(obj, dao, sessionDataBean);
-		    }
+	        validateAndInsert(obj, sessionDataBean, isInsertOnly, dao);
 	        dao.commit();
-	        // refresh the index for titli search
-//			refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+	        //refresh the index for titli search
+	        //refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
 	        postInsert(obj, dao, sessionDataBean);
 		}
 		catch(DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,obj,"Inserting");
-			if(errMsg==null)
-			{
-				errMsg=ex.getMessage();
-			}
-			try
-			{
-				dao.rollback();
-			}
-			catch(DAOException daoEx)
-			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-			}
+			dao.rollback();
 			Logger.out.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -247,6 +235,85 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
 		}
     }
+    /**
+     * 
+     * @param objCollection Collection of objects to be inserted
+     * @param sessionDataBean  session specific data
+     * @param daoType Type of dao (Hibernate or JDBC)
+     * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
+     * @throws UserNotAuthorizedException User Not Authorized Exception
+     * @throws BizLogicException Wrapping DAO exception into Bizlogic exception
+     */
+    public final void insert(Collection<AbstractDomainObject> objCollection, SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly) throws BizLogicException, UserNotAuthorizedException
+    {
+    	AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
+    	try
+    	{
+    		dao.openSession(sessionDataBean);
+    		insertMultiple(objCollection,dao,sessionDataBean);
+	    	dao.commit();
+	    	postInsert(objCollection, dao, sessionDataBean);
+		}
+		catch (DAOException ex)
+		{
+			String errMsg = getErrorMessage(ex,objCollection,"Inserting");
+			dao.rollback();
+			Logger.out.debug("Error in insert");
+			throw new BizLogicException(errMsg, ex);
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch(DAOException daoEx)
+			{
+				String errMsg = getErrorMessage(daoEx,objCollection,"Session Close");
+				errMsg=daoEx.getMessage();
+				throw new BizLogicException(errMsg,daoEx);
+			}
+		}
+    }
+    /**
+     * 
+     * @param objCollection Collection of objects to be inserted
+     * @param sessionDataBean  session specific data
+     * @param dao Type of dao (Hibernate or JDBC)
+     * @throws UserNotAuthorizedException User Not Authorized Exception
+     * @throws BizLogicException Wrapping DAO exception into Bizlogic exception
+     */
+    public final void insertMultiple(Collection<AbstractDomainObject> objCollection, AbstractDAO dao,SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+    {
+    	Iterator<AbstractDomainObject> domainObjectItr = objCollection.iterator();
+    	while(domainObjectItr.hasNext())
+	    {
+	    	Object abstractDomainObject = domainObjectItr.next();
+	    	validateAndInsert(abstractDomainObject, sessionDataBean, false, dao);
+		}
+    }
+	/**
+	 * @param obj object to be inser and validate
+	 * @param sessionDataBean
+	 * @param isInsertOnly
+	 * @param dao
+	 * @throws DAOException
+	 * @throws UserNotAuthorizedException
+	 */
+	private void validateAndInsert(Object obj, SessionDataBean sessionDataBean,
+			boolean isInsertOnly, AbstractDAO dao) throws DAOException, UserNotAuthorizedException
+	{
+		validate(obj, dao, Constants.ADD);	        
+		preInsert(obj, dao, sessionDataBean);
+		if(isInsertOnly)
+		{
+			insert(obj,dao);	        	
+		}
+		else
+		{
+			insert(obj, dao, sessionDataBean);
+		}
+	}
     
     public final void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException
 	{
@@ -283,20 +350,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			//added to format constrainviolation message
 			String errMsg = getErrorMessage(ex,currentObj,"Updating");
-			if(errMsg==null)
-			{
-				errMsg=ex.getMessage();
-			}
-			try
-			{
-				dao.rollback();
-			}
-			catch(DAOException daoEx)
-			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-				//throw new BizLogicException(ex.getMessage(), ex);
-			}
+			dao.rollback();
 			//TODO ERROR Handling
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -344,16 +398,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch(DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch(DAOException daoEx)
-			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-				//throw new BizLogicException(ex.getMessage(), ex);
-			}
+			dao.rollback();
 			//TODO ERROR Handling
 			throw new BizLogicException(ex.getMessage(), ex);
 		}
