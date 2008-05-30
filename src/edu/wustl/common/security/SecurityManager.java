@@ -9,29 +9,29 @@
 
 package edu.wustl.common.security;
 
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.QueryResultObjectData;
-import edu.wustl.common.beans.QueryResultObjectDataBean;
-import edu.wustl.common.beans.SecurityDataBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.query.AbstractClient;
-import edu.wustl.common.querysuite.security.PrivilegeType;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.SMTransactionException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Roles;
-import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.XMLPropertyHandler;
+import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -40,24 +40,18 @@ import gov.nih.nci.security.AuthorizationManager;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
-import gov.nih.nci.security.authorization.domainobjects.Application;
 import gov.nih.nci.security.authorization.domainobjects.Group;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionElementPrivilegeContext;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionGroupRoleContext;
 import gov.nih.nci.security.authorization.domainobjects.Role;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.dao.ApplicationSearchCriteria;
 import gov.nih.nci.security.dao.GroupSearchCriteria;
 import gov.nih.nci.security.dao.ProtectionElementSearchCriteria;
-import gov.nih.nci.security.dao.ProtectionGroupSearchCriteria;
 import gov.nih.nci.security.dao.RoleSearchCriteria;
 import gov.nih.nci.security.dao.SearchCriteria;
 import gov.nih.nci.security.dao.UserSearchCriteria;
 import gov.nih.nci.security.exceptions.CSException;
-import gov.nih.nci.security.exceptions.CSObjectNotFoundException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
 
 /**
@@ -85,34 +79,16 @@ public class SecurityManager implements Permissions {
 	private static AuthorizationManager authorizationManager = null;
 
 	private Class requestingClass = null;
-
-	//Changed by amit_doshi 
-	public static String APPLICATION_CONTEXT_NAME = "catissuecore";
-
-	private static final String ADMINISTRATOR_ROLE = "1";
-
-	private static final String SUPERVISOR_ROLE = "2";
-
-	private static final String TECHNICIAN_ROLE = "3";
-
-	private static final String PUBLIC_ROLE = "7";
-
-	private static final String ADMINISTRATOR_GROUP = "ADMINISTRATOR_GROUP";
-
-	private static final String SUPERVISOR_GROUP = "SUPERVISOR_GROUP";
-
-	private static final String TECHNICIAN_GROUP = "TECHNICIAN_GROUP";
-
-	private static final String PUBLIC_GROUP = "PUBLIC_GROUP";
-
-	private static final String ADMINISTRATOR_GROUP_ID = "1";
-
-	private static final String SUPERVISOR_GROUP_ID = "2";
-
-	private static final String TECHNICIAN_GROUP_ID = "3";
-
-	private static final String PUBLIC_GROUP_ID = "4";
-
+	public static boolean initialized = false;
+	public static String APPLICATION_CONTEXT_NAME = null; 
+		
+	public static HashMap<String, String> rolegroupNamevsId= new HashMap<String, String>();
+	
+	public static final String ADMINISTRATOR_GROUP = "ADMINISTRATOR_GROUP";
+	public static final String SUPERVISOR_GROUP = "SUPERVISOR_GROUP";
+	public static final String TECHNICIAN_GROUP = "TECHNICIAN_GROUP";
+	public static final String PUBLIC_GROUP = "PUBLIC_GROUP";
+	
 	public static final String CLASS_NAME = "CLASS_NAME";
 
 	public static final String TABLE_NAME = "TABLE_NAME";
@@ -126,17 +102,142 @@ public class SecurityManager implements Permissions {
 	 * @param class1
 	 */
 	public SecurityManager(Class class1) {
+		super();
 		requestingClass = class1;
+		if(!initialized)
+		{
+			getApplicationContextName();
+			initializeConstants();
+		}
 	}
 
 	/**
 	 * @param class1
 	 * @return
 	 */
-	public static SecurityManager getInstance(Class class1) {
-		return new SecurityManager(class1);
+	public static final SecurityManager getInstance(Class class1) {
+		Class className = null;
+        try
+        {
+            InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
+                    Constants.SECURITY_MANAGER_PROP_FILE);
+            Properties p = new Properties();
+            p.load(inputStream);
+            inputStream.close();
+            String securityManagerClass = p.getProperty(Constants.SECURITY_MANAGER_CLASSNAME);
+            if(securityManagerClass!=null)
+            	className = Class.forName(securityManagerClass);
+            if(className != null)
+            {
+            	Constructor[] cons = className.getConstructors();
+            	return (SecurityManager)cons[0].newInstance(class1);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+       	return new SecurityManager(class1);
 	}
+	
+	 public static String getApplicationContextName()
+	    {
+	        String applicationName = "";
+	        try
+	        {
+	            InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
+	                    Constants.SECURITY_MANAGER_PROP_FILE);
+	            Properties p = new Properties();
+	            p.load(inputStream);
+	            inputStream.close();
+	            applicationName = p.getProperty(Constants.APPLN_CONTEXT_NAME);
+	            APPLICATION_CONTEXT_NAME = applicationName;       
+	        }
+	        catch (Exception e)
+	        {
+	            e.printStackTrace();
+	        }
+	        
+	        return applicationName; 
+	    }
+	
+	 /**
+     * Returns group id from Group name
+     * @param groupName
+     * @return
+     * @throws CSException 
+     * @throws SMException 
+     */
+    private String getGroupID(String groupName) throws CSException, SMException
+    {
+        Group group = new Group();
+        group.setGroupName(groupName);
+        UserProvisioningManager userProvisioningManager;
+        SearchCriteria searchCriteria = new GroupSearchCriteria(group);
+        List list;
+        userProvisioningManager = getUserProvisioningManager();
+        group.setApplication(userProvisioningManager
+                .getApplication(APPLICATION_CONTEXT_NAME));
+        list = getObjects(searchCriteria);
+        if (list.isEmpty() == false)
+        {
+            group = (Group) list.get(0);
+            return group.getGroupId().toString();
+        }
 
+        return null;
+    }
+    
+    /**
+     * Returns role id from role name
+     * @param roleName
+     * @return
+     */
+    private String getRoleID(String roleName)  throws CSException, SMException
+    {
+        Role role = new Role();
+        role.setName(roleName);
+        UserProvisioningManager userProvisioningManager;
+        SearchCriteria searchCriteria = new RoleSearchCriteria(role);
+        List list;
+        userProvisioningManager = getUserProvisioningManager();
+        role.setApplication(userProvisioningManager
+                .getApplication(APPLICATION_CONTEXT_NAME));
+        list = getObjects(searchCriteria);
+        if (list.isEmpty() == false)
+        {
+            role = (Role) list.get(0);
+            return role.getId().toString();
+        }
+        return null;
+    }
+    
+    
+    public void initializeConstants()
+    {
+    	try
+    	{
+ 		
+    		rolegroupNamevsId.put(Constants.ADMINISTRATOR_ROLE, getRoleID(Constants.ROLE_ADMINISTRATOR));
+    		rolegroupNamevsId.put(Constants.PUBLIC_ROLE,getRoleID(Constants.SCIENTIST));
+    		rolegroupNamevsId.put(Constants.TECHNICIAN_ROLE,getRoleID(Constants.TECHNICIAN));
+    		rolegroupNamevsId.put(Constants.SUPERVISOR_ROLE,getRoleID(Constants.SUPERVISOR));
+    		rolegroupNamevsId.put(Constants.ADMINISTRATOR_GROUP_ID, getGroupID(ADMINISTRATOR_GROUP));
+    		rolegroupNamevsId.put(Constants.PUBLIC_GROUP_ID,getGroupID(PUBLIC_GROUP));
+    		rolegroupNamevsId.put(Constants.TECHNICIAN_GROUP_ID,getGroupID(TECHNICIAN_GROUP));
+    		rolegroupNamevsId.put(Constants.SUPERVISOR_GROUP_ID,getGroupID(SUPERVISOR_GROUP));
+        	initialized=true;
+	   	}
+    	catch(CSException e)
+    	{
+    		e.printStackTrace();
+    	}
+    	catch(SMException e)
+    	{
+    		e.printStackTrace();
+    	}
+    }
 	/**
 	 * Returns the AuthenticationManager for the caTISSUE Core. This method
 	 * follows the singleton pattern so that only one AuthenticationManager is
@@ -195,17 +296,6 @@ public class SecurityManager implements Permissions {
 
 		return userProvisioningManager;
 	}
-
-	/*public Application getApplication(String applicationName)
-	throws CSException {
-		Application application = new Application();
-		application.setApplicationName(applicationName);
-		ApplicationSearchCriteria applicationSearchCriteria = new ApplicationSearchCriteria(
-				application);
-		application = (Application) getUserProvisioningManager().getObjects(
-				applicationSearchCriteria).get(0);
-		return application;
-	}*/
 
 	/**
 	 * Returns true or false depending on the person gets authenticated or not.
@@ -354,10 +444,10 @@ public class SecurityManager implements Permissions {
 		UserProvisioningManager userProvisioningManager = null;
 		try {
 			userProvisioningManager = getUserProvisioningManager();
-			roles.add(userProvisioningManager.getRoleById(ADMINISTRATOR_ROLE));
-			roles.add(userProvisioningManager.getRoleById(SUPERVISOR_ROLE));
-			roles.add(userProvisioningManager.getRoleById(TECHNICIAN_ROLE));
-			roles.add(userProvisioningManager.getRoleById(PUBLIC_ROLE));
+			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)));
+			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)));
+			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)));
+			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.PUBLIC_ROLE)));
 		} catch (CSException e) {
 			Logger.out.debug("Unable to get roles: Exception: "
 					+ e.getMessage());
@@ -387,13 +477,13 @@ public class SecurityManager implements Permissions {
 			user = userProvisioningManager.getUserById(userID);
 
 			//Remove user from any other role if he is assigned some
-			userProvisioningManager.removeUserFromGroup(ADMINISTRATOR_ROLE,
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE),
 					String.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(SUPERVISOR_ROLE, String
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE), String
 					.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(TECHNICIAN_ROLE, String
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE), String
 					.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(PUBLIC_GROUP_ID, String
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.PUBLIC_ROLE), String
 					.valueOf(user.getUserId()));
 
 			//Add user to corresponding group
@@ -414,18 +504,18 @@ public class SecurityManager implements Permissions {
 	}
 
 	private String getGroupIdForRole(String roleID) {
-		if (roleID.equals(ADMINISTRATOR_ROLE)) {
+		if (roleID.equals(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE))) {
 			Logger.out.debug(" role corresponds to Administrator group");
-			return ADMINISTRATOR_GROUP_ID;
-		} else if (roleID.equals(SUPERVISOR_ROLE)) {
+			return rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID);
+		} else if (roleID.equals(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE))) {
 			Logger.out.debug(" role corresponds to Supervisor group");
-			return SUPERVISOR_GROUP_ID;
-		} else if (roleID.equals(TECHNICIAN_ROLE)) {
+			return rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID);
+		} else if (roleID.equals(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE))) {
 			Logger.out.debug(" role corresponds to Technician group");
-			return TECHNICIAN_GROUP_ID;
-		} else if (roleID.equals(PUBLIC_ROLE)) {
+			return rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID);
+		} else if (roleID.equals(rolegroupNamevsId.get(Constants.PUBLIC_ROLE))) {
 			Logger.out.debug(" role corresponds to public group");
-			return PUBLIC_GROUP_ID;
+			return rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID);
 		} else {
 			Logger.out.debug("role corresponds to no group");
 			return null;
@@ -445,19 +535,25 @@ public class SecurityManager implements Permissions {
 			it = groups.iterator();
 			while (it.hasNext()) {
 				group = (Group) it.next();
-				if (group.getGroupName().equals(ADMINISTRATOR_GROUP)) {
-					role = userProvisioningManager
-					.getRoleById(ADMINISTRATOR_ROLE);
-					return role;
-				} else if (group.getGroupName().equals(SUPERVISOR_GROUP)) {
-					role = userProvisioningManager.getRoleById(SUPERVISOR_ROLE);
-					return role;
-				} else if (group.getGroupName().equals(TECHNICIAN_GROUP)) {
-					role = userProvisioningManager.getRoleById(TECHNICIAN_ROLE);
-					return role;
-				} else if (group.getGroupName().equals(PUBLIC_GROUP)) {
-					role = userProvisioningManager.getRoleById(PUBLIC_ROLE);
-					return role;
+				if (group.getApplication().getApplicationName().equals(APPLICATION_CONTEXT_NAME))
+				{
+					if (group.getGroupName().equals(ADMINISTRATOR_GROUP)) {
+						role = userProvisioningManager
+						.getRoleById(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE));
+						return role;
+					} else if (group.getGroupName().equals(SUPERVISOR_GROUP)) {
+						role = userProvisioningManager
+						.getRoleById(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE));
+						return role;
+					} else if (group.getGroupName().equals(TECHNICIAN_GROUP)) {
+						role = userProvisioningManager
+						.getRoleById(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE));
+						return role;
+					} else if (group.getGroupName().equals(PUBLIC_GROUP)) {
+						role = userProvisioningManager
+						.getRoleById(rolegroupNamevsId.get(Constants.PUBLIC_ROLE));
+						return role;
+					}
 				}
 			}
 		} catch (CSException e) {
@@ -493,21 +589,24 @@ public class SecurityManager implements Permissions {
 			while (it.hasNext())
 			{
 				group = (Group) it.next();
-				if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) 
+				if (group.getApplication().getApplicationName().equals(APPLICATION_CONTEXT_NAME))
 				{
-					return Roles.ADMINISTRATOR;
-				}
-				else if (group.getGroupName().equals(SUPERVISOR_GROUP)) 
-				{
-					return Roles.SUPERVISOR;
-				}
-				else if (group.getGroupName().equals(TECHNICIAN_GROUP)) 
-				{
-					return Roles.TECHNICIAN;
-				}
-				else if (group.getGroupName().equals(PUBLIC_GROUP)) 
-				{
-					return Roles.SCIENTIST;
+					if (group.getGroupName().equals(ADMINISTRATOR_GROUP) ) 
+					{
+						return Roles.ADMINISTRATOR;
+					}
+					else if (group.getGroupName().equals(SUPERVISOR_GROUP)) 
+					{
+						return Roles.SUPERVISOR;
+					}
+					else if (group.getGroupName().equals(TECHNICIAN_GROUP)) 
+					{
+						return Roles.TECHNICIAN;
+					}
+					else if (group.getGroupName().equals(PUBLIC_GROUP)) 
+					{
+						return Roles.SCIENTIST;
+					}
 				}
 			}
 		}
@@ -598,50 +697,6 @@ public class SecurityManager implements Permissions {
 			throw new SMException(e.getMessage(), e);
 		}
 	}
-
-	/**
-	 * Checks wether the user has EXECUTE privilege on the Action subclass of
-	 * SecureAction.
-	 * 
-	 * @param string
-	 * @return @throws
-	 *         CSException
-	 */
-	/*public boolean isAuthorizedToExecuteAction(String loginName, String objectId)
-	throws Exception {
-		Logger.out.debug("Login Name: " + loginName);
-		User user = getUser(loginName);
-		//        String objectId = getObjectIdForSecureMethodAccess();
-
-		Logger.out.debug("The User name is: " + user.getName());
-		Logger.out.debug("The Object ID is: " + objectId);
-
-		boolean isAuthorized = false;
-		try {
-			isAuthorized = getAuthorizationManager().checkPermission(
-					user.getName(), objectId, EXECUTE);
-
-		} catch (CSException ex) {
-			Logger.out.fatal("The Security Service encountered "
-					+ "a fatal exception.", ex);
-			throw new Exception(
-					"The Security Service encountered a fatal exception.", ex);
-		}
-
-		return isAuthorized;
-
-	}*/
-
-	//    /**
-	//     * Returns the object id of the protection element that represents
-	//     * the Action that is being requested for invocation.
-	//     * @param clazz
-	//     * @return
-	//     */
-	//    private String getObjectIdForSecureMethodAccess()
-	//    {
-	//        return requestingClass.getName();
-	//    }
 
 	/**
 	 * Returns list of objects corresponding to the searchCriteria passed
@@ -792,6 +847,7 @@ public class SecurityManager implements Permissions {
 			//    	    }
 
 			consolidatedGroups = userProvisioningManager.getGroups(userId);
+			
 			if (null != consolidatedGroups) {
 				Iterator it = consolidatedGroups.iterator();
 				while (it.hasNext()) {
@@ -816,7 +872,7 @@ public class SecurityManager implements Permissions {
 				finalUserGroupIds[i] = (String) it.next();
 				Logger.out.debug("Group user is assigned to: "
 						+ finalUserGroupIds[i]);
-			}
+			}			
 
 			/**
 			 * Setting groups for user and updating it
@@ -833,399 +889,6 @@ public class SecurityManager implements Permissions {
 
 	}
 
-	/**
-	 * This method creates protection elements corresponding to protection
-	 * objects passed and associates them with static as well as dynamic
-	 * protection groups that are passed. It also creates user group, role,
-	 * protection group mapping for all the elements in authorization data
-	 * 
-	 * @param authorizationData
-	 *            Vector of SecurityDataBean objects
-	 * @param protectionObjects
-	 *            Set of AbstractDomainObject instances
-	 * @param dynamicGroups
-	 *            Array of dynamic group names
-	 * @throws SMException
-	 */
-	/*public void insertAuthorizationData(Vector authorizationData,
-			Set protectionObjects, String[] dynamicGroups) throws SMException {
-
-		Set protectionElements;
-
-		Iterator it;
-
-		try {
-
-			*//**
-			 * Create protection elements corresponding to all protection
-			 * objects
-			 *//*
-			protectionElements = createProtectionElementsFromProtectionObjects(protectionObjects);
-
-			*//**
-			 * Create user group role protection group and their mappings if
-			 * required
-			 *//*
-			if (authorizationData != null)
-			{
-				createUserGroupRoleProtectionGroup(authorizationData,
-						protectionElements);
-			}
-
-			*//**
-			 * Assigning protection elements to dynamic groups
-			 *//*
-			assignProtectionElementsToGroups(protectionElements, dynamicGroups);
-
-			Logger.out
-			.debug("************** Inserted authorization Data ***************");
-
-		} catch (CSException e) {
-			Logger.out.fatal("The Security Service encountered "
-					+ "a fatal exception.", e);
-			throw new SMException(
-					"The Security Service encountered a fatal exception.", e);
-		}
-
-	}*/
-
-	/**
-	 * This method assigns Protection Elements passed to the Protection group
-	 * names passed.
-	 * 
-	 * @param protectionElements
-	 * @param groups
-	 * @throws CSException
-	 */
-	/*private void assignProtectionElementsToGroups(Set protectionElements,
-			String[] groups) {
-		ProtectionElement protectionElement;
-		Iterator it;
-		if (groups != null) {
-			for (int i = 0; i < groups.length; i++) {
-				for (it = protectionElements.iterator(); it.hasNext();) {
-					protectionElement = (ProtectionElement) it.next();
-					assignProtectionElementToGroup(protectionElement, groups[i]);
-				}
-			}
-		}
-	}
-*/
-	/**
-	 * This method creates user group, role, protection group mappings in
-	 * database for the passed authorizationData. It also adds protection
-	 * elements to the protection groups for which mapping is made. For each
-	 * element in authorization Data passed: User group is created and users are
-	 * added to user group if one does not exist by the name passed. Similarly
-	 * Protection Group is created and protection elements are added to it if
-	 * one does not exist. Finally user group and protection group are
-	 * associated with each other by the role they need to be associated with.
-	 * If no role exists by the name an exception is thrown and the
-	 * corresponding mapping is not created
-	 * 
-	 * @param authorizationData
-	 * @param protectionElements
-	 * @throws CSException
-	 * @throws SMException
-	 */ 
-	/*private void createUserGroupRoleProtectionGroup(Vector authorizationData,
-			Set protectionElements) throws CSException, SMException {
-		ProtectionElement protectionElement;
-		ProtectionGroup protectionGroup = null;
-		SecurityDataBean userGroupRoleProtectionGroupBean;
-		RoleSearchCriteria roleSearchCriteria;
-		Role role;
-		String[] roleIds = null;
-		List list;
-		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-		Group group;
-		GroupSearchCriteria groupSearchCriteria;
-		Set userGroup;
-		User user;
-		Iterator it;
-		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-
-		if (authorizationData != null) {
-			Logger.out.debug(" UserGroupRoleProtectionGroup Size:"
-					+ authorizationData.size());
-			for (int i = 0; i < authorizationData.size(); i++) {
-				Logger.out.debug(" authorizationData:" + i + " "
-						+ authorizationData.get(i).toString());
-				group = new Group();
-
-				try {
-
-					userGroupRoleProtectionGroupBean = (SecurityDataBean) authorizationData
-					.get(i);
-
-					group
-					.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
-					group.setGroupName(userGroupRoleProtectionGroupBean
-							.getGroupName());
-					groupSearchCriteria = new GroupSearchCriteria(group);
-					*//**
-					 * If group already exists
-					 *//*
-					try {
-						list = getObjects(groupSearchCriteria);
-						Logger.out.debug("User group " + group.getGroupName()
-								+ " already exists");
-					}
-					*//**
-					 * If group does not exist already
-					 *//*
-					catch (SMException ex) {
-						Logger.out.debug("User group " + group.getGroupName()
-								+ " does not exist");
-						//                        group.setUsers(userGroupRoleProtectionGroupBean.getGroup());
-						userProvisioningManager.createGroup(group);
-						Logger.out.debug("User group " + group.getGroupName()
-								+ " created");
-						Logger.out.debug("Users added to group : "
-								+ group.getUsers());
-						list = getObjects(groupSearchCriteria);
-					}
-					group = (Group) list.get(0);
-
-					*//**
-					 * Assigning group to users in userGroup
-					 *//*
-					userGroup = userGroupRoleProtectionGroupBean.getGroup();
-					for (it = userGroup.iterator(); it.hasNext();) {
-						user = (User) it.next();
-						//                    userProvisioningManager.assignGroupsToUser(String.valueOf(user.getUserId()),new
-						// String[] {String.valueOf(group.getGroupId())});
-						assignAdditionalGroupsToUser(String.valueOf(user
-								.getUserId()), new String[] { String
-							.valueOf(group.getGroupId()) });
-						Logger.out.debug("userId:" + user.getUserId()
-								+ " group Id:" + group.getGroupId());
-					}
-
-					protectionGroup = new ProtectionGroup();
-					protectionGroup
-					.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
-					protectionGroup
-					.setProtectionGroupName(userGroupRoleProtectionGroupBean
-							.getProtectionGroupName());
-					protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
-							protectionGroup);
-					*//**
-					 * If Protection group already exists add protection
-					 * elements to the group
-					 *//*
-					try {
-						list = getObjects(protectionGroupSearchCriteria);
-						protectionGroup = (ProtectionGroup) list.get(0);
-						Logger.out.debug(" From Database: "
-								+ protectionGroup.toString());
-
-					}
-					*//**
-					 * If the protection group does not already exist create the
-					 * protection group and add protection elements to it.
-					 *//*
-					catch (SMException sme) {
-						protectionGroup
-						.setProtectionElements(protectionElements);
-						userProvisioningManager
-						.createProtectionGroup(protectionGroup);
-						Logger.out.debug("Protection group created: "
-								+ protectionGroup.toString());
-					}
-
-					role = new Role();
-					role
-					.setName(userGroupRoleProtectionGroupBean
-							.getRoleName());
-					roleSearchCriteria = new RoleSearchCriteria(role);
-					list = getObjects(roleSearchCriteria);
-					roleIds = new String[1];
-					roleIds[0] = String.valueOf(((Role) list.get(0)).getId());
-					userProvisioningManager.assignGroupRoleToProtectionGroup(
-							String.valueOf(protectionGroup
-									.getProtectionGroupId()), String
-									.valueOf(group.getGroupId()), roleIds);
-					Logger.out.debug("Assigned Group Role To Protection Group "
-							+ protectionGroup.getProtectionGroupId() + " "
-							+ String.valueOf(group.getGroupId()) + " "
-							+ roleIds);
-				} catch (CSTransactionException ex) {
-					Logger.out.error(
-							"Error occured Assigned Group Role To Protection Group "
-							+ protectionGroup.getProtectionGroupId()
-							+ " " + String.valueOf(group.getGroupId())
-							+ " " + roleIds, ex);
-					throw new SMException (ex.getMessage(),ex);
-				}
-			}
-		}
-	}*/
-
-	/**
-	 * This method creates protection elements from the protection objects
-	 * passed and associate them with respective static groups they should be
-	 * added to depending on their class name if the corresponding protection
-	 * element does not already exist.
-	 * 
-	 * @param protectionObjects
-	 * @return @throws
-	 *         CSException
-	 */
-	/*private Set createProtectionElementsFromProtectionObjects(
-			Set protectionObjects) throws CSException {
-		ProtectionElement protectionElement;
-		Set protectionElements = new HashSet();
-		AbstractDomainObject protectionObject;
-		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-		Iterator it;
-
-		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-
-		if (protectionObjects != null) {
-			for (it = protectionObjects.iterator(); it.hasNext();) {
-				protectionElement = new ProtectionElement();
-				protectionObject = (AbstractDomainObject) it.next();
-				protectionElement.setObjectId(protectionObject.getObjectId());
-
-				populateProtectionElement(
-						protectionElement, protectionObject, userProvisioningManager);
-				protectionElements.add(protectionElement);
-			}
-		}
-		return protectionElements;
-	}*/
-
-	/**
-	 * @param protectionElement
-	 * @param protectionObject
-	 * @return
-	 * @throws CSException
-	 */
-	/*private void populateProtectionElement(
-			ProtectionElement protectionElement,
-			AbstractDomainObject protectionObject, 
-			UserProvisioningManager userProvisioningManager) throws CSException {
-		try
-		{
-			protectionElement
-			.setApplication(getApplication(CATISSUE_CORE_CONTEXT_NAME));
-			protectionElement
-			.setProtectionElementDescription(protectionObject
-					.getClass().getName()
-					+ " object");
-			protectionElement
-			.setProtectionElementName(protectionObject.getObjectId());
-			*//**
-			 * Adding protection elements to static groups they
-			 * should be added to
-			 *//*
-			String [] staticGroups = (String[]) Constants.STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES
-			.get(protectionObject.getClass().getName());
-
-			setProtectGroups(protectionElement,
-					staticGroups);
-
-			userProvisioningManager
-			.createProtectionElement(protectionElement);
-
-		} catch (CSTransactionException ex) {
-			Logger.out.warn(
-					ex.getMessage() + "Error occured while creating Potection Element "
-					+ protectionElement.getProtectionElementName());
-			throw new CSException (ex.getMessage(),ex);
-		}
-
-	}*/
-
-	/**
-	 * @param protectionElement
-	 * @param staticGroups
-	 * @param protectionGroups
-	 * @return
-	 * @throws CSException
-	 */
-	/*private void setProtectGroups(ProtectionElement protectionElement,
-			String[] staticGroups) throws CSException {
-		ProtectionGroup protectionGroup;
-		Set protectionGroups = null;
-		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-		if (staticGroups != null) {
-			protectionGroups = new HashSet();
-			for (int i = 0; i < staticGroups.length; i++) {
-				Logger.out.debug(" group name " + i + " "
-						+ staticGroups[i]);
-				protectionGroup = new ProtectionGroup();
-				protectionGroup
-				.setProtectionGroupName(staticGroups[i]);
-				protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
-						protectionGroup);
-				try {
-					List list = getObjects(protectionGroupSearchCriteria);
-					protectionGroup = (ProtectionGroup) list
-					.get(0);
-					Logger.out.debug(" From Database: "
-							+ protectionGroup.toString());
-					protectionGroups.add(protectionGroup);
-				} catch (SMException sme) {
-					Logger.out.warn(
-							"Error occured while retrieving "
-							+ staticGroups[i]
-							               + "  From Database: ");
-				}
-
-			}
-			protectionElement
-			.setProtectionGroups(protectionGroups);
-		}
-	}*/
-
-	/**
-	 * @param protectionObject
-	 * @return
-	 */
-//	private String getObjectId(AbstractDomainObject protectionObject) {
-//	if(protectionObject instanceof Specimen)
-//	{
-//	Logger.out.debug(protectionObject.getClass().getName()+" is an instance of Specimen class");
-//	return Specimen.class.getName()
-//	+ "_" + protectionObject.getId();
-//	}
-//	return protectionObject.getClass()
-//	.getName()
-//	+ "_" + protectionObject.getId();
-//	}
-
-	/**
-	 * @param protectionElement
-	 * @param userProvisioningManager
-	 * @param dynamicGroups
-	 * @param i
-	 * @throws CSException
-	 */
-	/*private void assignProtectionElementToGroup(
-			ProtectionElement protectionElement, String GroupsName)
-
-	{
-		try {
-			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			userProvisioningManager.assignProtectionElement(GroupsName,
-					protectionElement.getObjectId());
-			Logger.out.debug("Associated protection group: " + GroupsName
-					+ " to protectionElement"
-					+ protectionElement.getProtectionElementName());
-		}
-
-		catch (CSException e) {
-			Logger.out
-			.error(
-					"The Security Service encountered an error while associating protection group: "
-					+ GroupsName
-					+ " to protectionElement"
-					+ protectionElement
-					.getProtectionElementName());
-		}
-	}*/
 
 	public boolean isAuthorized(String userName, String objectId,
 			String privilegeName) throws SMException {
@@ -1243,64 +906,7 @@ public class SecurityManager implements Permissions {
 		}
 	}
 
-	/*public boolean isAuthorized(String userName, String objectId,
-			String attributeName, String privilegeName) throws SMException {
-		try {
-			return getAuthorizationManager().checkPermission(userName,
-					objectId, attributeName, privilegeName);
-		} catch (CSException e) {
-			Logger.out.debug("Unable to get all users: Exception: "
-					+ e.getMessage());
-			throw new SMException(e.getMessage(), e);
-		}
-	}*/
-
-	/**
-	 * Checks whether the user group of id (groupid) has permission 
-	 * over the object of type (objectType) with the given identifier (objectIdentifier).
-	 * @param groupId The user group to be checked.
-	 * @param objectType The object type.
-	 * @param objectIdentifier The iedntifier of the object.
-	 * @return Returns true if the user group has permission over the object, else returns false.
-	 * @throws SMException
-	 */
-	/*public boolean checkPermission(String groupId, String objectType,
-			String objectIdentifier) throws SMException 
-			{
-		if(Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
-		{
-			Logger.out.debug("Check Privilege for user group.................................");
-			String protectionElementName = objectType + "_" + objectIdentifier; 
-			Logger.out.debug("protectionElementName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+protectionElementName);
-
-			try
-			{
-				UserProvisioningManager userProvisioningManager = getUserProvisioningManager();  
-				Set privilegeContextForGroup = userProvisioningManager
-				.getProtectionElementPrivilegeContextForGroup(groupId);
-				Iterator iterator = privilegeContextForGroup.iterator();
-				while (iterator.hasNext())
-				{
-					ProtectionElementPrivilegeContext pePrivilegeContext = (ProtectionElementPrivilegeContext) iterator.next();
-					if (pePrivilegeContext.getProtectionElement().getProtectionElementName().equals(protectionElementName))
-					{
-						return true;
-					}
-				}
-			}
-			catch (CSObjectNotFoundException csObjNotExp)
-			{
-				throw new SMException(csObjNotExp.getMessage(), csObjNotExp);
-			}
-			catch (CSException csExp)
-			{
-				throw new SMException(csExp.getMessage(), csExp);
-			}
-			return false;
-		}
-		return true;
-			}*/
-
+	
 	public boolean checkPermission(String userName, String objectType,
 			String objectIdentifier, String privilegeName) throws SMException 
 			{
@@ -1379,9 +985,10 @@ public class SecurityManager implements Permissions {
 		String name = null;
 		String protectionElementName = obj.getObjectId();
 		try {
-			protectionElement = getAuthorizationManager().getProtectionElement(
+			AuthorizationManager authManager = getAuthorizationManager();
+			protectionElement = authManager.getProtectionElement(
 					protectionElementName);
-			protectionGroups = getAuthorizationManager().getProtectionGroups(
+			protectionGroups = authManager.getProtectionGroups(
 					protectionElement.getProtectionElementId().toString());
 			it = protectionGroups.iterator();
 			while (it.hasNext()) {
@@ -1423,9 +1030,10 @@ public class SecurityManager implements Permissions {
 		String[] names = null;
 		String protectionElementName = obj.getObjectId();
 		try {
-			protectionElement = getAuthorizationManager().getProtectionElement(
+			AuthorizationManager authManager = getAuthorizationManager();
+			protectionElement = authManager.getProtectionElement(
 					protectionElementName);
-			protectionGroups = getAuthorizationManager().getProtectionGroups(
+			protectionGroups = authManager.getProtectionGroups(
 					protectionElement.getProtectionElementId().toString());
 			it = protectionGroups.iterator();
 			names = new String[protectionGroups.size()];
@@ -1598,629 +1206,7 @@ public class SecurityManager implements Permissions {
 
 	}
 
-	//    public void setOwnerForProtectionElement(
-	//            edu.wustl.catissuecore.domain.User user, java.lang.String userName)
-	//            throws SMException
-	//    {
-	//        if (user != null && userName != null)
-	//        {
-	//            String protectionElementObjectId = user.getClass().getName() + "_"
-	//                    + user.getId();
-	//            Logger.out.debug(" Protection Element Object Id:"
-	//                    + protectionElementObjectId);
-	//            Logger.out.debug(" userName:" + userName);
-	//            try
-	//            {
-	//                UserProvisioningManager userProvisioningManager =
-	// getUserProvisioningManager();
-	//                userProvisioningManager.setOwnerForProtectionElement(
-	//                        protectionElementObjectId, new String[]{userName});
-	//            }
-	//            catch (CSException e)
-	//            {
-	//                Logger.out.debug("Unable to set owner: Exception: "
-	//                        + e.getMessage());
-	//                throw new SMException(e.getMessage(), e);
-	//            }
-	//        }
-	//        else
-	//        {
-	//            Logger.out.debug("user:" + user + " username:" + userName);
-	//        }
-	//    }
-
-	/**
-	 * This method assigns privilege by privilegeName to the user identified by
-	 * userId on the objects identified by objectIds
-	 * @param privilegeName
-	 * @param objectIds
-	 * @param userId
-	 * @throws SMException
-	 */
-	/*public void assignPrivilegeToUser(String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, boolean assignOperation) throws SMException 
-			{
-		Logger.out.debug("In assignPrivilegeToUser...");
-		Logger.out.debug("privilegeName:" + privilegeName + " objectType:"
-				+ objectType + " objectIds:"
-				+ Utility.getArrayString(objectIds) + " userId:" + userId);
-
-		if (privilegeName == null || objectType == null || objectIds == null
-				|| userId == null) 
-		{
-			Logger.out
-			.debug("Cannot assign privilege to user. One of the parameters is null.");
-		} 
-		else 
-		{
-			String protectionGroupName = null;
-			String roleName;
-			Role role;
-			ProtectionGroup protectionGroup;
-
-			try 
-			{
-
-				//Getting Appropriate Role
-				//role name is generated as <<privilegeName>>_ONLY
-				if (privilegeName.equals(Permissions.READ))
-					roleName = Permissions.READ_DENIED;
-				else
-					roleName = privilegeName + "_ONLY";
-
-				role = getRole(roleName);
-				Logger.out.debug("Operation>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+(assignOperation == true?"Remove READ_DENIED":"Add READ_DENIED"));
-
-				Set roles = new HashSet();
-				roles.add(role);
-
-				if (privilegeName.equals(Permissions.USE))
-				{
-					protectionGroupName = "PG_" + userId + "_ROLE_" + role.getId();
-
-					if (assignOperation == Constants.PRIVILEGE_ASSIGN)
-					{
-						Logger.out.debug("Assign Protection elements");
-
-						protectionGroup = getProtectionGroup(protectionGroupName);
-
-						// Assign Protection elements to Protection Group
-						assignProtectionElements(protectionGroup
-								.getProtectionGroupName(), objectType, objectIds);
-
-						assignUserRoleToProtectionGroup(userId, roles, protectionGroup, assignOperation);
-					}
-					else
-					{
-						Logger.out.debug("De Assign Protection elements");
-						Logger.out.debug("protectionGroupName : "+protectionGroupName+" objectType : "+objectType+" objectIds : "+Utility.getArrayString(objectIds)); 
-						deAssignProtectionElements(protectionGroupName,objectType,objectIds);
-					}
-				}
-				else
-				{
-					// In case of assign remove the READ_DENIED privilege of the user
-					// and in case of de-assign add the READ_DENIED privilege to the user.
-					assignOperation = ! assignOperation;
-
-					for (int i = 0; i < objectIds.length;i++)
-					{
-						// Getting Appropriate Group
-						// Protection Group Name is generated as
-						// PG_<<userID>>_ROLE_<<roleID>>
-
-						Logger.out.debug("objectType............................"+objectType);
-						//changed by ajay
-
-						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants.getCollectionProtocolPGName(objectIds[i]);
-						else if (objectType.getName().equals(Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants.getDistributionProtocolPGName(objectIds[i]);
-
-						protectionGroup = getProtectionGroup(protectionGroupName);
-
-						Logger.out.debug("Assign User Role To Protection Group");
-
-						//Assign User Role To Protection Group
-						assignUserRoleToProtectionGroup(userId, roles, protectionGroup, assignOperation);
-					}
-				}
-			} 
-			catch (CSException csex)
-			{
-				throw new SMException(csex);
-			}
-		}
-			}*/
-
-	/**
-	 * This method returns protection group corresponding to the naem passed. In
-	 * case it does not exist it creates one and returns that.
-	 * 
-	 * @param protectionGroupName
-	 * @return @throws
-	 *         CSException
-	 * @throws CSTransactionException
-	 * @throws SMException
-	 */
-	/*private ProtectionGroup getProtectionGroup(String protectionGroupName)
-	throws CSException, CSTransactionException, SMException {
-		Logger.out.debug(" protectionGroupName:" + protectionGroupName);
-		if (protectionGroupName == null) {
-			Logger.out.debug("protectionGroupName passed is null");
-			throw new SMException("No protectionGroup of name null");
-		}
-
-		//Search for Protection Group of the name passed
-		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-		ProtectionGroup protectionGroup;
-		protectionGroup = new ProtectionGroup();
-		protectionGroup.setProtectionGroupName(protectionGroupName);
-		protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
-				protectionGroup);
-		UserProvisioningManager userProvisioningManager = null;
-		List list;
-		try {
-			userProvisioningManager = getUserProvisioningManager();
-			list = getObjects(protectionGroupSearchCriteria);
-		} catch (SMException e) {
-			Logger.out.debug("Protection Group not found by name "
-					+ protectionGroupName);
-			userProvisioningManager.createProtectionGroup(protectionGroup);
-			list = getObjects(protectionGroupSearchCriteria);
-		}
-		protectionGroup = (ProtectionGroup) list.get(0);
-
-		Logger.out.debug(" ID of ProtectionGroup "
-				+ protectionGroup.getProtectionGroupName() + " is "
-				+ protectionGroup.getProtectionGroupId());
-		return protectionGroup;
-	}*/
-
-	/**
-	 * This method returns role corresponding to the rolename passed
-	 * 
-	 * @param privilegeName
-	 * @param list
-	 * @return @throws
-	 *         CSException
-	 * @throws SMException
-	 */
-	/*private Role getRole(String roleName) throws CSException, SMException {
-		Logger.out.debug(" roleName:" + roleName);
-		if (roleName == null) {
-			Logger.out.debug("Rolename passed is null");
-			throw new SMException("No role of name null");
-		}
-
-		//Search for role by the name roleName
-		RoleSearchCriteria roleSearchCriteria;
-		Role role;
-		role = new Role();
-		role.setName(roleName);
-		roleSearchCriteria = new RoleSearchCriteria(role);
-		List list;
-		try {
-			list = getObjects(roleSearchCriteria);
-		} catch (SMException e) {
-			Logger.out.debug("Role not found by name " + roleName);
-			throw new SMException("Role not found by name " + roleName, e);
-		}
-		role = (Role) list.get(0);
-		Logger.out.debug(" RoleId of role " + role.getName() + " is "
-				+ role.getId());
-		return role;
-	}*/
-
-	/**
-	 * This method assigns privilege by privilegeName to the user group
-	 * identified by role corresponding to roleId on the objects identified by
-	 * objectIds
-	 * 
-	 * @param privilegeName
-	 * @param objectIds
-	 * @param roleId
-	 * @throws SMException
-	 */
-	/*public void assignPrivilegeToGroup(String privilegeName, Class objectType,
-			Long[] objectIds, String roleId, boolean assignOperation) throws SMException {
-
-		Logger.out.debug("privilegeName:" + privilegeName + " objectType:"
-				+ objectType + " objectIds:"
-				+ Utility.getArrayString(objectIds) + " roleId:" + roleId);
-		if (privilegeName == null || objectType == null || objectIds == null
-				|| roleId == null) {
-			Logger.out
-			.debug("Cannot assign privilege to user. One of the parameters is null.");
-		} else {
-			String groupId;
-			UserProvisioningManager userProvisioningManager;
-			String protectionGroupName = null;
-			String roleName;
-//			RoleSearchCriteria roleSearchCriteria;
-			Role role;
-			List list;
-//			ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-			ProtectionGroup protectionGroup;
-			try
-			{
-				//Get user group for the corresponding role
-				groupId = getGroupIdForRole(roleId);
-				userProvisioningManager = getUserProvisioningManager();
-
-				//Getting Appropriate Role
-				//role name is generated as <<privilegeName>>_ONLY
-				if (privilegeName.equals(Permissions.READ))
-					roleName = Permissions.READ_DENIED;
-				else
-					roleName = privilegeName + "_ONLY";
-				role = getRole(roleName);
-
-				Set roles = new HashSet();
-				roles.add(role);
-
-				if (privilegeName.equals("USE"))
-				{
-					protectionGroupName = "PG_GROUP_" + groupId + "_ROLE_" + role.getId();
-
-					if (assignOperation == Constants.PRIVILEGE_ASSIGN)
-					{
-						protectionGroup = getProtectionGroup(protectionGroupName);
-
-						Logger.out.debug("Assign Protection elements");
-
-						//Assign Protection elements to Protection Group
-						assignProtectionElements(protectionGroup
-								.getProtectionGroupName(), objectType, objectIds);
-
-						assignGroupRoleToProtectionGroup(Long.valueOf(groupId), roles,
-								protectionGroup, assignOperation);
-					}
-					else
-					{
-						Logger.out.debug("De Assign Protection elements");
-
-						deAssignProtectionElements(protectionGroupName, objectType, objectIds);
-					}
-				}
-				else
-				{
-					Logger.out.debug("Value Before#####################"+assignOperation);
-
-					// In case of assign remove the READ_DENIED privilege of the group
-					// and in case of de-assign add the READ_DENIED privilege to the group.
-					assignOperation = ! assignOperation;
-
-					Logger.out.debug("Value After#####################"+assignOperation);
-
-					for (int i = 0; i < objectIds.length;i++)
-					{
-
-						//Getting Appropriate Group
-						// Protection Group Name is generated as
-						// PG_<<userID>>_ROLE_<<roleID>>
-						//				protectionGroupName = "PG_GROUP_" + groupId + "_ROLE_"
-						//						+ role.getId();
-						Logger.out.debug("objectType............................"+objectType);
-
-						// Commented by Ashwin --- remove dependency on domainobject package
-
-						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants.getCollectionProtocolPGName(objectIds[i]);
-						else if (objectType.getName().equals(Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants.getDistributionProtocolPGName(objectIds[i]);
-
-
-						protectionGroup = getProtectionGroup(protectionGroupName);
-
-						//				Logger.out.debug("Assign Protection elements");
-						//				//Assign Protection elements to Protection Group
-						//				assignProtectionElements(protectionGroup
-						//						.getProtectionGroupName(), objectType, objectIds);
-
-						Logger.out.debug("Assign Group Role To Protection Group");
-
-						//Assign User Role To Protection Group
-						assignGroupRoleToProtectionGroup(Long.valueOf(groupId), roles,
-								protectionGroup, assignOperation);
-					}
-				}
-
-			} catch (CSException csex) {
-				throw new SMException(csex);
-			}
-		}
-
-	}*/
-
-	/**
-	 * This method assigns additional protection Elements identified by
-	 * protectionElementIds to the protection Group identified by
-	 * protectionGroupName
-	 * 
-	 * @param protectionGroupName
-	 * @param objectIds
-	 * @throws SMException
-	 */
-	/*public void assignProtectionElements(String protectionGroupName,
-			Class objectType, Long[] objectIds) throws SMException {
-		try {
-			Logger.out.debug("Protection Group Name:" + protectionGroupName
-					+ " objectType:" + objectType + " protectionElementIds:"
-					+ Utility.getArrayString(objectIds));
-
-			if (protectionGroupName == null || objectType == null
-					|| objectIds == null) {
-				Logger.out.debug(" One of the parameters is null");
-				throw new SMException(
-				"Could not assign Protection elements to protection group. One or more parameters are null");
-			}
-
-			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			for (int i = 0; i < objectIds.length; i++) {
-				try {
-					userProvisioningManager.assignProtectionElement(
-							protectionGroupName, objectType.getName() + "_"
-							+ objectIds[i]);
-				} catch (CSTransactionException txex) //thrown when association
-				// already exists
-				{
-					Logger.out.debug("Exception:" + txex.getMessage());
-				}
-			}
-		} catch (CSException csex) {
-			Logger.out.debug(
-					"Could not assign Protection elements to protection group",
-					csex);
-			throw new SMException(
-					"Could not assign Protection elements to protection group",
-					csex);
-		}
-	}*/
-
-	/**
-	 * This method assigns user identified by userId, roles identified by roles
-	 * on protectionGroup
-	 * 
-	 * @param userId
-	 * @param roles
-	 * @param protectionGroup
-	 * @throws SMException
-	 */
-	/*public void assignUserRoleToProtectionGroup(Long userId, Set roles,
-			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException {
-		Logger.out.debug("userId:" + userId + " roles:" + roles
-				+ " protectionGroup:" + protectionGroup);
-		if (userId == null || roles == null || protectionGroup == null) {
-			Logger.out
-			.debug("Could not assign user role to protection group. One or more parameters are null");
-			throw new SMException(
-			"Could not assign user role to protection group");
-		}
-		Set protectionGroupRoleContextSet;
-		ProtectionGroupRoleContext protectionGroupRoleContext;
-		Iterator it;
-		Set aggregatedRoles = new HashSet();
-		String[] roleIds = null;
-		try {
-			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			protectionGroupRoleContextSet = userProvisioningManager
-			.getProtectionGroupRoleContextForUser(String
-					.valueOf(userId));
-
-			//get all the roles that user has on this protection group
-			it = protectionGroupRoleContextSet.iterator();
-			while (it.hasNext()) {
-				protectionGroupRoleContext = (ProtectionGroupRoleContext) it
-				.next();
-				if (protectionGroupRoleContext.getProtectionGroup()
-						.getProtectionGroupId().equals(
-								protectionGroup.getProtectionGroupId())) {
-					aggregatedRoles.addAll(protectionGroupRoleContext
-							.getRoles());
-
-					break;
-				}
-			}
-
-			// if the operation is assign, add the roles to be assigned.
-			if (assignOperation == Constants.PRIVILEGE_ASSIGN)
-			{
-				aggregatedRoles.addAll(roles);
-			}
-			else // if the operation is de-assign, remove the roles to be de-assigned.
-			{
-				Set newaggregateRoles = removeRoles(aggregatedRoles, roles);
-				aggregatedRoles = newaggregateRoles;
-			}
-
-			roleIds = new String[aggregatedRoles.size()];
-			Iterator roleIt = aggregatedRoles.iterator();
-
-			for (int i = 0; roleIt.hasNext(); i++) {
-				roleIds[i] = String.valueOf(((Role) roleIt.next()).getId());
-			}
-
-			userProvisioningManager.assignUserRoleToProtectionGroup(String
-					.valueOf(userId), roleIds, String.valueOf(protectionGroup
-							.getProtectionGroupId()));
-
-		} catch (CSException csex) {
-			Logger.out.debug("Could not assign user role to protection group",
-					csex);
-			throw new SMException(
-					"Could not assign user role to protection group", csex);
-		}
-	}*/
-
-	/**
-	 * This method assigns user group identified by groupId, roles identified by
-	 * roles on protectionGroup
-	 * 
-	 * @param groupId
-	 * @param roles
-	 * @param protectionGroup
-	 * @throws SMException
-	 */
-	/*public void assignGroupRoleToProtectionGroup(Long groupId, Set roles,
-			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException {
-		Logger.out.debug("userId:" + groupId + " roles:" + roles
-				+ " protectionGroup:"
-				+ protectionGroup.getProtectionGroupName());
-
-		if (groupId == null || roles == null || protectionGroup == null) {
-			Logger.out
-			.debug("Could not assign group role to protection group. One or more parameters are null");
-			throw new SMException(
-			"Could not assign group role to protection group. One or more parameters are null");
-		}
-		Set protectionGroupRoleContextSet = null;
-		ProtectionGroupRoleContext protectionGroupRoleContext = null;
-		Iterator it;
-		Set aggregatedRoles = new HashSet();
-		String[] roleIds = null;
-		Role role;
-		try {
-			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-
-			*//**
-			 * Name : Aarti Sharma
-			 * Reviewer: Sachin Lale
-			 * Bug ID: 4418
-			 * Description: CSM API getProtectionGroupRoleContextForGroup throws exception
-			 * CSObjectNotFoundException when called on oracle database thus leading to this problem.
-			 * Check is made for this exception now so that the method works for oracle as well.
-			 *//*
-			try
-			{
-				protectionGroupRoleContextSet = userProvisioningManager
-				.getProtectionGroupRoleContextForGroup(String
-						.valueOf(groupId));
-			}
-			catch (CSObjectNotFoundException e) {
-				Logger.out.debug("Could not find Role Context for the Group: "+
-						e.toString());
-			}
-
-			if(protectionGroupRoleContext!=null)
-			{
-
-				it = protectionGroupRoleContextSet.iterator();
-				while (it.hasNext()) {
-					protectionGroupRoleContext = (ProtectionGroupRoleContext) it
-					.next();
-					if (protectionGroupRoleContext.getProtectionGroup()
-							.getProtectionGroupId().equals(
-									protectionGroup.getProtectionGroupId())) {
-						aggregatedRoles.addAll(protectionGroupRoleContext
-								.getRoles());
-
-						break;
-					}
-				}
-
-			}
-
-			// if the operation is assign, add the roles to be assigned.
-			if (assignOperation == Constants.PRIVILEGE_ASSIGN)
-			{
-				aggregatedRoles.addAll(roles);
-			}
-			else // if the operation is de-assign, remove the roles to be de-assigned.
-			{
-				Set newaggregateRoles = removeRoles(aggregatedRoles, roles);
-				aggregatedRoles = newaggregateRoles;
-			}
-
-			roleIds = new String[aggregatedRoles.size()];
-			Iterator roleIt = aggregatedRoles.iterator();
-
-			for (int i = 0; roleIt.hasNext(); i++) {
-				role = (Role) roleIt.next();
-				Logger.out.debug(" Role " + i + 1 + " " + role.getName());
-				roleIds[i] = String.valueOf(role.getId());
-			}
-
-			userProvisioningManager.assignGroupRoleToProtectionGroup(String
-					.valueOf(protectionGroup.getProtectionGroupId()), String
-					.valueOf(groupId), roleIds);
-
-		} catch (CSException csex) {
-			Logger.out.debug("Could not assign user role to protection group",
-					csex);
-			throw new SMException(
-					"Could not assign user role to protection group", csex);
-		}
-	}*/
-
-	/*private Set removeRoles(Set fromSet, Set toSet)
-	{
-		Set differnceRoles = new HashSet();
-		Iterator fromSetiterator = fromSet.iterator();
-		while (fromSetiterator.hasNext())
-		{
-			Role role1  = (Role) fromSetiterator.next();
-
-			Iterator toSetIterator = toSet.iterator();
-			while (toSetIterator.hasNext())
-			{
-				Role role2 = (Role) toSetIterator.next();
-
-				if (role1.getId().equals(role2.getId()) == false)
-				{
-					differnceRoles.add(role1);
-				}
-			}
-		}
-
-		return differnceRoles;
-	}*/
-
-	/**
-	 * @param protectionGroupName
-	 * @param objectType
-	 * @param objectIds
-	 * @throws SMException
-	 */
-	/*private void deAssignProtectionElements(String protectionGroupName,
-			Class objectType, Long[] objectIds) throws SMException {
-		try {
-			Logger.out.debug("Protection Group Name:" + protectionGroupName
-					+ " protectionElementIds:"
-					+ Utility.getArrayString(objectIds));
-			if (protectionGroupName == null || objectType == null
-					|| objectIds == null) {
-				Logger.out
-				.debug("Cannot disassign protection elements. One of the parameters is null.");
-				throw new SMException(
-				"Could not deassign Protection elements to protection group. One of the parameters is null.");
-			}
-			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			for (int i = 0; i < objectIds.length; i++) {
-				try {
-					Logger.out.debug(" protectionGroupName:"
-							+ protectionGroupName + " objectId:"
-							+ objectType.getName() + "_" + objectIds[i]);
-					userProvisioningManager.deAssignProtectionElements(
-							protectionGroupName, objectType.getName() + "_"
-							+ objectIds[i]);
-				} catch (CSTransactionException txex) //thrown when no
-				// association exists
-				{
-					Logger.out.debug("Exception:" + txex.getMessage(), txex);
-				}
-			}
-		} catch (CSException csex) {
-			Logger.out
-			.debug(
-					"Could not deassign Protection elements to protection group",
-					csex);
-			throw new SMException(
-					"Could not deassign Protection elements to protection group",
-					csex);
-		}
-	}*/
-
+	
 	/**
 	 * @param sessionDataBean
 	 * @param queryResultObjectDataMap
@@ -2609,212 +1595,7 @@ public class SecurityManager implements Permissions {
 		return hasIdentifiedDataAccess;
 
 	}
-
-	/**
-	 * This method checks whether user identified by userName has given
-	 * permission on object identified by identifier of table identified by
-	 * tableAlias
-	 * @author supriya_dankh
-	 * @param userName
-	 * @param tableAlias
-	 * @param identifier
-	 * @param permission
-	 * @return
-	 */
-	public boolean checkPermission(String userName, String entityClassName,
-			Object identifier, String permission,PrivilegeType privilegeType)
-	{   
-		if (Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
-		{
-			boolean isAuthorized = false;
-			Logger.out.debug("Entity class name:" + entityClassName + " tableName:"
-					+ entityClassName + " Identifier:" + identifier + " Permission:" + permission
-					+ " userName" + userName);
-
-			//Supriya: Security Data in database might be on the basis of classname/table name/table alias name
-			//Depending on the option that an application chooses corresponding prefix is used to check permissions
-			if (!(securityDataPrefix.equals(CLASS_NAME) || securityDataPrefix.equals(TABLE_ALIAS_NAME) ||securityDataPrefix.equals(TABLE_NAME)))
-			{ 
-				entityClassName = "";
-			}
-			try
-			{
-				//If type of privilege is class level check user's privilege on
-				// class
-				if (privilegeType == PrivilegeType.ClassLevel)
-				{
-					isAuthorized = SecurityManager.getInstance(this.getClass()).isAuthorized(
-							userName, entityClassName, permission);
-				}
-				//else if it is object level check user's privilege on object
-				// identifier
-				else if (privilegeType == PrivilegeType.ObjectLevel)
-				{
-					isAuthorized = SecurityManager.getInstance(this.getClass()).checkPermission(
-							userName, entityClassName, String.valueOf(identifier), permission);
-				}
-				//else no privilege needs to be checked
-				else if (privilegeType == PrivilegeType.InsecureLevel)
-				{
-					isAuthorized = true;
-				}
-
-			}
-			catch (SMException e)
-			{
-				Logger.out.debug(" Exception while checking permission:" + e.getMessage(), e);
-				return isAuthorized;
-			}
-			return isAuthorized;
-		}
-		return true;
-
-	}
-
-	/**
-	 * This method returns true if user has privilege on identified data in list
-	 * else false
-	 * @author Supriya_Dankh
-	 * @param sessionDataBean
-	 * @param queryResultObjectDataMap
-	 * @param list
-	 * @return 
-	 */
-	public boolean hasPrivilegeOnIdentifiedDataNew(SessionDataBean sessionDataBean, Map<String,QueryResultObjectDataBean> queryResultObjectDataMap,
-			List aList)
-	{ 
-		// boolean that indicates whether user has privilege on identified data
-		boolean hasPrivilegeOnIdentifiedData = true;
-		String entityName = "";
-		Set keySet = queryResultObjectDataMap.keySet();
-		for (Object key : keySet)
-		{
-			QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap.get(key);
-			if (queryResultObjectDataBean.getMainEntityIdentifierColumnId() != -1)
-			{
-				if (!queryResultObjectDataBean.isMainEntity())
-				{
-					entityName = queryResultObjectDataBean.getMainEntity().getName();
-				}
-				else
-					entityName = queryResultObjectDataBean.getEntity().getName();
-				hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean.getUserName(),
-						entityName, aList.get(queryResultObjectDataBean
-								.getMainEntityIdentifierColumnId()),
-								Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
-								.getPrivilegeType());
-			}
-
-			//if user does not have privilege on even a single identified
-			// data in row
-			//user does not have privilege on all the identified data in
-			// that row
-			if (!hasPrivilegeOnIdentifiedData)
-			{
-				hasPrivilegeOnIdentifiedData = false;
-				return hasPrivilegeOnIdentifiedData;
-			}
-		}
-		return hasPrivilegeOnIdentifiedData;
-	}
-
-	/**
-	 * This method removes data from list aList.
-	 * It could be all data related to QueryResultObjectDataBean
-	 * or only the identified fields depending on 
-	 * the value of boolean removeOnlyIdentifiedData
-	 * user
-	 * @author supriya_dankh
-	 * @param aList
-	 * @param queryResultObjectData
-	 * @param removeOnlyIdentifiedData
-	 */
-	private void removeUnauthorizedFieldsData(List aList,
-			QueryResultObjectDataBean queryResultObjectData,
-			boolean removeOnlyIdentifiedData) { 
-
-//		Logger.out.debug(" Entity:" + queryResultObjectData.getMainEntity().getName()
-//		+ " removeOnlyIdentifiedData:" + removeOnlyIdentifiedData);
-		Vector objectColumnIds;
-
-		//If removeOnlyIdentifiedData is true then get Identified data column ids
-		//else get all column Ids to remove them
-		if (removeOnlyIdentifiedData) {
-			objectColumnIds = queryResultObjectData
-			.getIdentifiedDataColumnIds();
-		} else {
-			objectColumnIds = queryResultObjectData.getObjectColumnIds();
-		}
-		Logger.out.debug("objectColumnIds:" + objectColumnIds);
-		if (objectColumnIds != null) {
-			for (int k = 0; k < objectColumnIds.size(); k++) {
-				aList.set(((Integer) objectColumnIds.get(k)).intValue(), "##");
-			}
-		}
-	}
-
-	/**
-	 * Filters a row i.e. removes data from row according to User privileges.
-	 * @param sessionDataBean
-	 * @param queryResultObjectDataMap
-	 * @param aList
-	 */
-	/*public void filterResultRow(SessionDataBean sessionDataBean,
-			Map<String,QueryResultObjectDataBean> queryResultObjectDataMap, List aList)
-	{ 
-		boolean isAuthorisedUser = true;
-		boolean hasPrivilegeOnIdentifiedData = true;
-		if (queryResultObjectDataMap != null)
-		{
-			Set keySet = queryResultObjectDataMap.keySet();
-
-			for (Object key : keySet)
-			{
-				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
-				.get(key);
-				String entityName = "";
-				if (!queryResultObjectDataBean.isMainEntity())
-				{
-					entityName = queryResultObjectDataBean.getMainEntity().getName();
-				}
-				else
-					entityName = queryResultObjectDataBean.getEntity().getName();
-
-				//Check if user has read privilege on perticular object or not.
-				if (!(queryResultObjectDataBean.getMainEntityIdentifierColumnId() == -1)
-						&& (queryResultObjectDataBean.isReadDeniedObject()))
-				{
-					isAuthorisedUser = checkPermission(sessionDataBean.getUserName(), entityName,
-							aList.get(queryResultObjectDataBean.getMainEntityIdentifierColumnId()),
-							Permissions.READ_DENIED, queryResultObjectDataBean.getPrivilegeType());
-
-					isAuthorisedUser = !isAuthorisedUser;
-				}
-				//If user is not authorized to read the data then remove all data relaeted to this perticular from row.
-				else if (!isAuthorisedUser)
-				{
-					removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, false);
-				}
-
-				//If user is authorized to read data then check for identified data access.
-				if (isAuthorisedUser && queryResultObjectDataBean.isHasAssociatedIdentifiedData())
-				{
-					hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean.getUserName(),
-							entityName, aList.get(queryResultObjectDataBean
-									.getMainEntityIdentifierColumnId()),
-									Permissions.IDENTIFIED_DATA_ACCESS, queryResultObjectDataBean
-									.getPrivilegeType());
-
-					//If user is not authorized to see identified data then replace identified column values by ##
-					if (!hasPrivilegeOnIdentifiedData)
-					{
-						removeUnauthorizedFieldsData(aList, queryResultObjectDataBean, true);
-					}
-				}
-			}
-		}
-	}*/
-
+		
 //	public static void main(String[] args)
 //	{		
 //	try
