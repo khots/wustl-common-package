@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.DOMWriter;
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -140,6 +141,7 @@ public class DBUtil
 				throw new HibernateException(ex.getMessage(), ex);
 			}
 			threadLocal.set(s);
+			s.setFlushMode(FlushMode.COMMIT);
 		}
 		return s;
 	}
