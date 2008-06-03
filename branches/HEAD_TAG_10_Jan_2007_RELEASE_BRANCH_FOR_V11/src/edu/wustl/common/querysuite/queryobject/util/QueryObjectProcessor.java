@@ -16,13 +16,13 @@ import java.util.Set;
 
 import edu.wustl.common.querysuite.exceptions.CyclicException;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
+import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
-import edu.wustl.common.querysuite.queryobject.IOutputTreeNode;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
@@ -39,13 +39,13 @@ public class QueryObjectProcessor
 	/**
 	 * holds constraints object of the Query that is currently being processed.
 	 */
-	private IConstraints constraints;   
-	
+	private IConstraints constraints;
+
 	/**
 	 * holds joinGraph object of the Query that is currently being processed
 	 */
 	private JoinGraph joinGraph;
-	
+
 	/**
 	 * contains the expression ids of the expressions having more than one parent.
 	 */
@@ -68,7 +68,6 @@ public class QueryObjectProcessor
 	{
 		return new QueryObjectProcessor().replaceMultipleParent(constraints);
 	}
-
 
 	/**
 	 * if there are any nodes with multiple parents, then it converts Expression graph to the tree. 
@@ -179,9 +178,9 @@ public class QueryObjectProcessor
 			// setting logical connector.
 			if (index != 0)
 			{
-				ILogicalConnector logicalConnector = fromExpression.getLogicalConnector(index - 1,
+				IConnector<LogicalOperator> logicalConnector = fromExpression.getConnector(index - 1,
 						index);
-				toExpression.setLogicalConnector(index - 1, index, logicalConnector);
+				toExpression.setConnector(index - 1, index, logicalConnector);
 			}
 		}
 
@@ -230,23 +229,6 @@ public class QueryObjectProcessor
 	 * @param root The root noe of the output tree.
 	 * @return map of all Children nodes along with their ids under given output tree node.
 	 */
-	public static Map<Long, IOutputTreeNode> getAllChildrenNodes(IOutputTreeNode root)
-	{
-		Map<Long, IOutputTreeNode> map = new HashMap<Long, IOutputTreeNode>();
-		map.put(root.getId(), root);
-		List<IOutputTreeNode> children = root.getChildren();
-		for (IOutputTreeNode childNode : children)
-		{
-			map.putAll(getAllChildrenNodes(childNode));
-		}
-		return map;
-	}
-
-	/**
-	 * To get map of all Children nodes along with their ids under given output tree node.
-	 * @param root The root noe of the output tree.
-	 * @return map of all Children nodes along with their ids under given output tree node.
-	 */
 	public static Map<Long, OutputTreeDataNode> getAllChildrenNodes(OutputTreeDataNode root)
 	{
 		Map<Long, OutputTreeDataNode> map = new HashMap<Long, OutputTreeDataNode>();
@@ -258,20 +240,23 @@ public class QueryObjectProcessor
 		}
 		return map;
 	}
+
 	/**
 	 * To get map of all Children nodes along with their ids under given output tree node.
 	 * @param root The root noe of the output tree.
 	 * @param map of all Children nodes along with their ids under given output tree node.
 	 */
-	private static void addAllChildrenNodes(OutputTreeDataNode root,Map<String, OutputTreeDataNode> map)
+	private static void addAllChildrenNodes(OutputTreeDataNode root,
+			Map<String, OutputTreeDataNode> map)
 	{
 		map.put(root.getUniqueNodeId(), root);
 		List<OutputTreeDataNode> children = root.getChildren();
 		for (OutputTreeDataNode childNode : children)
 		{
-			addAllChildrenNodes(childNode,map);
+			addAllChildrenNodes(childNode, map);
 		}
-	}	
+	}
+
 	/**
 	 * It returns all the nodes present all tress in results. 
 	 * @param keys set of trees
@@ -280,13 +265,13 @@ public class QueryObjectProcessor
 	public static Map<String, OutputTreeDataNode> getAllChildrenNodes(Set<OutputTreeDataNode> keys)
 	{
 		Map<String, OutputTreeDataNode> map = new HashMap<String, OutputTreeDataNode>();
-		for(OutputTreeDataNode root:keys)
+		for (OutputTreeDataNode root : keys)
 		{
-			addAllChildrenNodes(root,map);
+			addAllChildrenNodes(root, map);
 		}
 		return map;
 	}
-	
+
 	/**
 	 * It returns all the nodes present all tress in results. 
 	 * @param keys set of trees
@@ -295,9 +280,9 @@ public class QueryObjectProcessor
 	public static Map<String, OutputTreeDataNode> getAllChildrenNodes(List<OutputTreeDataNode> keys)
 	{
 		Map<String, OutputTreeDataNode> map = new HashMap<String, OutputTreeDataNode>();
-		for(OutputTreeDataNode root:keys)
+		for (OutputTreeDataNode root : keys)
 		{
-			addAllChildrenNodes(root,map);
+			addAllChildrenNodes(root, map);
 		}
 		return map;
 	}

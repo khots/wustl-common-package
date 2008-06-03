@@ -4,34 +4,39 @@
 
 package edu.wustl.common.querysuite.queryengine;
 
+import java.util.List;
 import java.util.Map;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
+import edu.wustl.common.querysuite.queryobject.INamedTerm;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 
 /**
  * To Generate SQL for the given Query Object.
+ * 
  * @author prafull_kadam
- *
+ * 
  */
-public interface ISqlGenerator
-{
+public interface ISqlGenerator {
 
-	/**
-	 * Generates SQL for the given Query Object.
-	 * @param query The Reference to Query Object.
-	 * @return the String representing SQL for the given Query object.
-	 * @throws MultipleRootsException When there are multpile roots present in a graph.
-	 * @throws SqlException When there is error in the passed IQuery object.
-	 */
-	String generateSQL(IQuery query) throws MultipleRootsException, SqlException;
-	
-	/**
-	 * This method will return map of DE attributes verses & their column names present in the select part of the SQL. 
-	 * These DE attributes will be attributes of the each node present in the Output tree.
-	 * @return map of DE attributes verses & their column names present in the select part of the SQL.
-	 * @deprecated This method will not required any more.
-	 */
-	Map<Long, Map<AttributeInterface,String>> getColumnMap();
+    /**
+     * Generates SQL for the given Query Object.
+     * 
+     * @param query The Reference to Query Object.
+     * @return the String representing SQL for the given Query object.
+     * @throws MultipleRootsException When there are multpile roots present in a
+     *             graph.
+     * @throws SqlException When there is error in the passed IQuery object.
+     */
+    String generateSQL(IQuery query) throws MultipleRootsException, SqlException;
+
+    List<OutputTreeDataNode> getRootOutputTreeNodeList();
+
+    /**
+     * @return map with key as sql's column name and value as the term which
+     *         that column represents.
+     */
+    Map<String, INamedTerm> getOutputTermsColumns();
 }

@@ -1,5 +1,6 @@
 /**
- * TODO Correct all the mock object. All parameters of the query are not set properly. Null pointer exception will occur.
+ * TODO Correct all the mock object. All parameters of the query are not set
+ * properly. Null pointer exception will occur.
  */
 package edu.wustl.common.querysuite.queryobject;
 
@@ -11,40 +12,27 @@ import edu.common.dynamicextensions.domain.Attribute;
 import edu.common.dynamicextensions.domain.Entity;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
-import edu.wustl.common.querysuite.bizLogic.QueryBizLogic;
-import edu.wustl.common.querysuite.queryobject.IConstraints;
-import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.ILogicalConnector;
-import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
-import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.querysuite.queryobject.LogicalOperator;
-import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
+import edu.wustl.common.querysuite.queryobject.impl.Connector;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
-import edu.wustl.common.querysuite.queryobject.impl.LogicalConnector;
-import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.logger.Logger;
 
 /**
- *
+ * 
  * @author chetan_patil
  * @created Aug 8, 2007
  */
 public class QueryObjectTestCase extends TestCase {
 
-    private DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-
-    QueryBizLogic<IParameterizedQuery> queryBizLogic = new QueryBizLogic<IParameterizedQuery>();
-
     static {
-        Logger.configure();// To avoid null pointer Exception for code calling logger statements.
+        // TODO
+        // Logger.configure();// To avoid null pointer Exception for code
+        // calling logger statements.
     }
 
     /**
@@ -61,7 +49,7 @@ public class QueryObjectTestCase extends TestCase {
 
         // Saving Condition object
         try {
-            defaultBizLogic.insert(condition, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<Condition>().insert(condition);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -97,14 +85,14 @@ public class QueryObjectTestCase extends TestCase {
 
         // Saving Rule object
         try {
-            defaultBizLogic.insert(rule, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<Rule>().insert(rule);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
     /**
-     *  To test the saving of Expression with one Rule object.
+     * To test the saving of Expression with one Rule object.
      */
     public void testSaveExpressionWith1Rule() {
         // Condition 1
@@ -145,14 +133,15 @@ public class QueryObjectTestCase extends TestCase {
 
         // Saving Expression object
         try {
-            defaultBizLogic.insert(expression1, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<Expression>().insert(expression1);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
     /**
-     * To test saving of Expression having two operands, one a Rule and other a ExpressionId connected by LogicalConnector
+     * To test saving of Expression having two operands, one a Rule and other a
+     * ExpressionId connected by LogicalConnector
      */
     public void testSaveExpressionWith2Operands() {
         // Condition 1
@@ -184,10 +173,10 @@ public class QueryObjectTestCase extends TestCase {
         expressionOperandList1.add(new ExpressionId(1));
 
         // LogicalOperator between two operands of Expression2
-        ILogicalConnector logicalConnector1 = new LogicalConnector();
-        logicalConnector1.setLogicalOperator(LogicalOperator.And);
+        IConnector<LogicalOperator> logicalConnector1 = new Connector<LogicalOperator>();
+        logicalConnector1.setOperator(LogicalOperator.And);
 
-        List<ILogicalConnector> logicalConnectors = new ArrayList<ILogicalConnector>();
+        List<IConnector<LogicalOperator>> logicalConnectors = new ArrayList<IConnector<LogicalOperator>>();
         logicalConnectors.add(logicalConnector1);
 
         // Expression 1
@@ -202,14 +191,15 @@ public class QueryObjectTestCase extends TestCase {
 
         // Saving Expression2
         try {
-            defaultBizLogic.insert(expression1, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<Expression>().insert(expression1);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
     /**
-     * To test saving of Expression having two operands, one a Rule and other a ExpressionId connected by LogicalConnector and one ConstraintEntity
+     * To test saving of Expression having two operands, one a Rule and other a
+     * ExpressionId connected by LogicalConnector and one ConstraintEntity
      */
     public void testSaveExpressionWith2OperandsAndConstraintEntity() {
         // Condition 1
@@ -241,10 +231,10 @@ public class QueryObjectTestCase extends TestCase {
         expressionOperandList1.add(new ExpressionId(1));
 
         // LogicalOperator between two operands of Expression2
-        ILogicalConnector logicalConnector1 = new LogicalConnector();
-        logicalConnector1.setLogicalOperator(LogicalOperator.And);
+        IConnector<LogicalOperator> logicalConnector1 = new Connector<LogicalOperator>();
+        logicalConnector1.setOperator(LogicalOperator.And);
 
-        List<ILogicalConnector> logicalConnectors = new ArrayList<ILogicalConnector>();
+        List<IConnector<LogicalOperator>> logicalConnectors = new ArrayList<IConnector<LogicalOperator>>();
         logicalConnectors.add(logicalConnector1);
 
         // ConstraintEntity
@@ -265,14 +255,15 @@ public class QueryObjectTestCase extends TestCase {
 
         // Saving Expression2
         try {
-            defaultBizLogic.insert(expression1, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<Expression>().insert(expression1);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
     /**
-     * To test saving of Expression having a ConstraintEntity object and two Rules that are connected by LogicalConnector. 
+     * To test saving of Expression having a ConstraintEntity object and two
+     * Rules that are connected by LogicalConnector.
      */
     public void testSaveExpressionWith2RulesAndConstraintEntity() {
         // Condition 1
@@ -327,10 +318,10 @@ public class QueryObjectTestCase extends TestCase {
         expressionOperandList.add(rule2);
 
         // LogicalOperator between two operands of Expression2
-        ILogicalConnector logicalConnector = new LogicalConnector();
-        logicalConnector.setLogicalOperator(LogicalOperator.And);
+        IConnector<LogicalOperator> logicalConnector = new Connector<LogicalOperator>();
+        logicalConnector.setOperator(LogicalOperator.And);
 
-        List<ILogicalConnector> logicalConnectors = new ArrayList<ILogicalConnector>();
+        List<IConnector<LogicalOperator>> logicalConnectors = new ArrayList<IConnector<LogicalOperator>>();
         logicalConnectors.add(logicalConnector);
 
         // ConstraintEntity
@@ -352,21 +343,21 @@ public class QueryObjectTestCase extends TestCase {
 
         // Saving Expression2
         try {
-            defaultBizLogic.insert(expression, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<Expression>().insert(expression);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
     /**
-     * To test saving of Expression having a Constraint. 
+     * To test saving of Expression having a Constraint.
      */
     public void testSaveConstraint() {
         IQuery query = QueryGeneratorMock.createSpecimenBioHazardQuery1();
         IConstraints constraint = query.getConstraints();
 
         try {
-            defaultBizLogic.insert(constraint, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<IConstraints>().insert(constraint);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -377,7 +368,8 @@ public class QueryObjectTestCase extends TestCase {
      */
     public void testRetrieveQuery() {
         try {
-            IQuery query = (IQuery) (defaultBizLogic.retrieve(Query.class.getName(), "id", 1L)).get(0);
+            IQuery query = (IQuery) (new HibernateDatabaseOperations<IQuery>().retrieve(Query.class.getName(), "id", 1L))
+                    .get(0);
             assertTrue(query != null);
         } catch (Exception e) {
             fail(e.getMessage());
@@ -391,7 +383,7 @@ public class QueryObjectTestCase extends TestCase {
         IParameterizedQuery parameterizedQuery = QueryGeneratorMock.createSpecimenBioHazardQuery4();
 
         try {
-            queryBizLogic.insert(parameterizedQuery, Constants.HIBERNATE_DAO);
+            new HibernateDatabaseOperations<IParameterizedQuery>().insert(parameterizedQuery);
         } catch (Exception e) {
             fail(e.getMessage());
         }

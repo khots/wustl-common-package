@@ -5,13 +5,12 @@ package edu.wustl.common.querysuite;
  * 
  */
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import edu.wustl.common.querysuite.queryengine.impl.SqlGeneratorGenericTestCase;
 import edu.wustl.common.querysuite.queryengine.impl.SqlGeneratorTestCase;
 import edu.wustl.common.querysuite.queryobject.impl.ExpressionTestCase;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraphTestCase;
-import edu.wustl.common.util.GraphTestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * @author prafull_kadam
@@ -32,7 +31,6 @@ public class TestAll
 		suite.addTestSuite(JoinGraphTestCase.class);
 		suite.addTestSuite(SqlGeneratorTestCase.class);
 		suite.addTestSuite(SqlGeneratorGenericTestCase.class);
-		suite.addTestSuite(GraphTestCase.class);
 		return suite;
 	}
 }
