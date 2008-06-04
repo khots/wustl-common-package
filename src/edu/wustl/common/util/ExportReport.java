@@ -292,7 +292,7 @@ public class ExportReport
 				temp.write(newLine);
 			}
 		}
-		closeFile();
+		//closeFile();
 	}
 	/**
 	 * Creates a zip file , contains a csv and other txt files
