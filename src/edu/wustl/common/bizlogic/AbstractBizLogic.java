@@ -161,6 +161,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch(DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,obj,"Deleting");
+			if(errMsg==null)
+			{
+				errMsg = ex.getMessage();
+			}
 			dao.rollback();
 			Logger.out.debug("Error in delete");
 			throw new BizLogicException(errMsg, ex);
@@ -216,6 +220,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch(DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,obj,"Inserting");
+			if(errMsg==null)
+			{
+				errMsg = ex.getMessage();
+			}
 			dao.rollback();
 			Logger.out.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
@@ -257,6 +265,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,objCollection,"Inserting");
+			if(errMsg==null)
+			{
+				errMsg = ex.getMessage();
+			}
 			dao.rollback();
 			Logger.out.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
@@ -350,6 +362,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			//added to format constrainviolation message
 			String errMsg = getErrorMessage(ex,currentObj,"Updating");
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
 			dao.rollback();
 			//TODO ERROR Handling
 			throw new BizLogicException(errMsg, ex);
