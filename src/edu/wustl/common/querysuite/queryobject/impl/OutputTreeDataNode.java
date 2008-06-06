@@ -4,6 +4,7 @@
 
 package edu.wustl.common.querysuite.queryobject.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,13 @@ import edu.wustl.common.util.global.Constants;
  * Output tree node Class for Advance Query tree. 
  * Only SQLGenerator class will instanciate objects of this class, & It is expected that other classes should use getter methods only.
  */
-public class OutputTreeDataNode
+public class OutputTreeDataNode implements Serializable
 {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4865638917714061869L;
 
 	private long id;
 	

@@ -828,23 +828,10 @@ public class SecurityManager implements Permissions {
 		Set consolidatedGroups;
 		String[] finalUserGroupIds;
 		UserProvisioningManager userProvisioningManager;
-		User user;
-		UserSearchCriteria userSearchCriteria;
-		Group group = new Group();
-		GroupSearchCriteria groupSearchCriteria;
-		List list;
+		Group group =null;
+		
 		try {
 			userProvisioningManager = getUserProvisioningManager();
-			//            user = new User();
-			//            user.setUserId(userId);
-			//            userSearchCriteria = new UserSearchCriteria(user);
-			//            list = getObjects(userSearchCriteria);
-			//            user = (User)(list.get(0));
-			//            if(user == null )
-			//    	    {
-			//    	        Logger.out.debug("User with user ID "+userId+" not found");
-			//    	        throw new SMException("User with user ID "+userId+" not found");
-			//    	    }
 
 			consolidatedGroups = userProvisioningManager.getGroups(userId);
 			

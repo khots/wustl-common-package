@@ -75,12 +75,6 @@ public class CommonAddEditAction extends Action
         try
         {
         
-        	/**
-        	 * Modified : Amit Doshi
-        	 * Reviewer : abhijit_naik 
-        	 * date : 1/4/2008
-        	 * 
-        	 */
             AbstractActionForm abstractForm = (AbstractActionForm) form;
            if (abstractForm.isAddOperation())
             {

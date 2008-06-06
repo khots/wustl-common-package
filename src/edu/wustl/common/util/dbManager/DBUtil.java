@@ -37,7 +37,7 @@ public class DBUtil
 	private static SessionFactory m_sessionFactory;
 
 	//ThreadLocal to hold the Session for the current executing thread. 
-	private static final ThreadLocal threadLocal = new ThreadLocal();
+	private static final ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
 	//Initialize the session Factory in the Static block.
 	//Initialize the session Factory in the Static block.
 	private static EntityResolver entityResolver = XMLHelper.DEFAULT_DTD_RESOLVER;
@@ -126,7 +126,7 @@ public class DBUtil
 	 * */
 	public static Session currentSession() throws HibernateException
 	{
-		Session s = (Session) threadLocal.get();
+		Session s = threadLocal.get();
 
 		//Open a new Session, if this Thread has none yet
 		if (s == null)
@@ -151,7 +151,7 @@ public class DBUtil
 	 * */
 	public static void closeSession() throws HibernateException
 	{
-		Session s = (Session) threadLocal.get();
+		Session s = threadLocal.get();
 		threadLocal.set(null);
 		if (s != null)
 			s.close();

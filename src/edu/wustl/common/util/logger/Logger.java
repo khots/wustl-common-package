@@ -10,8 +10,21 @@
  */
 package edu.wustl.common.util.logger;
 
+import javax.servlet.ServletContext;
 
-public abstract class Logger
+import org.apache.log4j.PropertyConfigurator;
+
+import edu.wustl.common.util.CVSTagReader;
+import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.Variables;
+
+
+/**
+ * This is an utility class which provides functions to get logger objects. 
+ * This class get neither instantiated nor extended.
+ *
+ */
+public final class Logger
 {
 	public static org.apache.log4j.Logger out;
 	
@@ -27,11 +40,20 @@ public abstract class Logger
 		    out=org.apache.log4j.Logger.getLogger(categoryName);
 		}
 	}
-    
+    /**
+     * Creates new logger object for a given class. 
+     * @param className java class for which logger need to be created.
+     * @return new logger object.
+     */
+    public static org.apache.log4j.Logger getLogger(Class className)
+    {
+    	return org.apache.log4j.Logger.getLogger(className); 
+    }
     /**
      * Configures the logger properties from the log4j.properties file.
      * The log4j.properties file should be present in the classpath for configuring.
      */
+    @Deprecated
     public static void configure()
     {
         if (out == null)
@@ -40,7 +62,21 @@ public abstract class Logger
         }
     }
     
+	/**
+	 * Logger class should not get instantiated from outside. Hence the constructor is private. 
+	 */
 	private Logger()
 	{
+	}
+	
+	public static void configDefaultLogger(ServletContext servletContext)
+	{
+        String applicationResourcesPath = servletContext.getRealPath("WEB-INF")
+        + System.getProperty("file.separator")
+        + "classes" + System.getProperty("file.separator")
+        + servletContext.getInitParameter("applicationproperties");
+
+        configure(applicationResourcesPath);
+		
 	}
 }

@@ -43,7 +43,8 @@ public class Constants
 	
 	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
 	
-	public static final  HashMap STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES = new HashMap();
+	public static final  HashMap<String, String[]> 
+			STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES = new HashMap<String, String[]>();
 	
 	// Mandar: Used for Date Validations in Validator Class
 	public static final String DATE_SEPARATOR = "-";
