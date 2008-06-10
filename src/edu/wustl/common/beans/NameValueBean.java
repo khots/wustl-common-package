@@ -10,6 +10,8 @@
 
 package edu.wustl.common.beans;
 
+import java.io.Serializable;
+
 /**
  *<p>Title: </p>
  *<p>Description:  </p>
@@ -19,8 +21,12 @@ package edu.wustl.common.beans;
  *@version 1.0
  */
 
-public class NameValueBean implements Comparable
+public class NameValueBean implements Comparable,Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 861314614541823827L;
 	private Object name; 
 	private Object value;
 	/*
