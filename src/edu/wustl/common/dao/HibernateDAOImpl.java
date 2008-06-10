@@ -614,7 +614,7 @@ public class HibernateDAOImpl implements HibernateDAO
         return list;
     }
     
-    public Object retrieve(String sourceObjectName, Serializable id)
+    public Object retrieve(String sourceObjectName, Long id)
             throws DAOException
     {
         try

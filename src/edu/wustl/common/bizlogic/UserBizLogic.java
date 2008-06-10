@@ -36,6 +36,7 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.EmailHandler;
 import edu.wustl.common.util.Roles;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.PasswordManager;
@@ -65,25 +66,34 @@ public class UserBizLogic extends DefaultBizLogic
         
         try
         {
-            List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getId());
+            //List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getId());
+        	Object object = dao.retrieve(Department.class.getName(), user.getDepartment().getId());
+        	object = HibernateMetaData.getProxyObjectImpl(object);
+        	
             Department department = null;
-            if (list.size() != 0)
+            if (object!=null)
             {
-                department = (Department) list.get(0);
+                department = (Department)object;
             }
             
-            list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getId());
+            //list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getId());
+            object = dao.retrieve(Institution.class.getName(), user.getInstitution().getId());
+            object = HibernateMetaData.getProxyObjectImpl(object);
+            
             Institution institution = null;
-            if (list.size() != 0)
+            if (object!=null)
             {
-                institution = (Institution) list.get(0);
+                institution = (Institution) object;
             }
             
-            list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getId());
+            //list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getId());
+            object = dao.retrieve(CancerResearchGroup.class.getName(), user.getCancerResearchGroup().getId());
+            object = HibernateMetaData.getProxyObjectImpl(object);
+            
             CancerResearchGroup cancerResearchGroup = null;
-            if (list.size() != 0)
+            if (object!=null)
             {
-                cancerResearchGroup = (CancerResearchGroup) list.get(0);
+                cancerResearchGroup = (CancerResearchGroup) object;
             }
             
             user.setDepartment(department);
