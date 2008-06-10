@@ -527,15 +527,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			dao.openSession(null);
 
-			List list= dao.retrieve(className, Constants.SYSTEM_IDENTIFIER, identifier);
+			//List list= dao.retrieve(className, Constants.SYSTEM_IDENTIFIER, identifier);
+			Object object = dao.retrieve(className, identifier);
+			object = HibernateMetaData.getProxyObjectImpl(object);
 			
-	        if (list!=null && !list.isEmpty())
+	        if (object!=null)
 	        {
 	            /* 
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
+	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)object;
 	        	
 	        	prePopulateUIBean(abstractDomain,  uiForm);
 	        	uiForm.setAllValues(abstractDomain);
@@ -584,15 +586,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			dao.openSession(null);
 
-			List list = dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
-			
-			if (list!=null&&!list.isEmpty())
+			//List list = dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
+			Object object = dao.retrieve(className, identifier);
+			object = HibernateMetaData.getProxyObjectImpl(object);
+						
+			if (object!=null)
 	        {
 	            /* 
 	              If the record searched is present in the database,
 	              populate the formbean with the information retrieved.
 	             */
-	        	abstractDomain = (AbstractDomainObject)list.get(0);
+	        	abstractDomain = (AbstractDomainObject)object;
 	        	if( abstractDomain != null )
 	        	{
 	        		abstractDomain.setAllValues(uiForm);
