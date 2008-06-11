@@ -477,13 +477,13 @@ public class SecurityManager implements Permissions {
 			user = userProvisioningManager.getUserById(userID);
 
 			//Remove user from any other role if he is assigned some
-			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE),
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID),
 					String.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE), String
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID), String
 					.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE), String
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID), String
 					.valueOf(user.getUserId()));
-			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.PUBLIC_ROLE), String
+			userProvisioningManager.removeUserFromGroup(rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID), String
 					.valueOf(user.getUserId()));
 
 			//Add user to corresponding group
