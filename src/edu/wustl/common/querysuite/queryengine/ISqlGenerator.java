@@ -9,7 +9,7 @@ import java.util.Map;
 
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
-import edu.wustl.common.querysuite.queryobject.INamedTerm;
+import edu.wustl.common.querysuite.queryobject.IOutputTerm;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 
@@ -38,5 +38,5 @@ public interface ISqlGenerator {
      * @return map with key as sql's column name and value as the term which
      *         that column represents.
      */
-    Map<String, INamedTerm> getOutputTermsColumns();
+    Map<String, IOutputTerm> getOutputTermsColumns();
 }
