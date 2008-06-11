@@ -64,7 +64,7 @@
 
 	<!-- Compile all files, generated and hand-written -->
 	<target name="compile" depends="init">
-		<javac destdir="${target.dir}" includes="**/*.*" debug="on" includeAntRuntime="false">
+		<javac destdir="${target.dir}" includes="**/*.*" debug="on" includeAntRuntime="false" target="1.5">
 			<src path="${src.dir}" />
 			<src path="${test.dir}" />
 			<classpath>
