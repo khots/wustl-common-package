@@ -12,6 +12,7 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ArithmeticOperator;
+import edu.wustl.common.querysuite.queryobject.DSInterval;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
@@ -23,7 +24,7 @@ import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.ILiteral;
-import edu.wustl.common.querysuite.queryobject.INamedTerm;
+import edu.wustl.common.querysuite.queryobject.IOutputTerm;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQuery;
@@ -33,7 +34,6 @@ import edu.wustl.common.querysuite.queryobject.ITerm;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.TermType;
-import edu.wustl.common.querysuite.queryobject.TimeInterval;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 
 /**
@@ -3877,7 +3877,7 @@ public class QueryGeneratorMock {
      * Temporal (C.timestamp - 30mins &lt;= F.timestamp)
      * </pre>
      */
-    public static IQuery createTemporalQueryDateDiff() {
+    public static IQuery createTemporalQueryDateOffset() {
         try {
             IQuery query = QueryObjectFactory.createQuery();
             IConstraints constraints = query.getConstraints();
@@ -3897,15 +3897,14 @@ public class QueryGeneratorMock {
                     frozenEvtParam.getExpressionId(), QueryObjectFactory.createIntraModelAssociation(specFroz));
 
             IExpressionAttribute collTime = QueryObjectFactory.createExpressionAttribute(collEvtParam
-                    .getExpressionId(), entityManager.getAttribute(EntityManagerMock.COLL_EVT_NAME, "timestamp"),
-                    TermType.Date);
-            IExpressionAttribute frozTime = QueryObjectFactory.createExpressionAttribute(frozenEvtParam
-                    .getExpressionId(),
-                    entityManager.getAttribute(EntityManagerMock.FROZEN_EVT_NAME, "timestamp"), TermType.Date);
+                    .getExpressionId(), entityManager.getAttribute(EntityManagerMock.COLL_EVT_NAME, "timestamp"));
+            IExpressionAttribute frozTime = QueryObjectFactory
+                    .createExpressionAttribute(frozenEvtParam.getExpressionId(), entityManager.getAttribute(
+                            EntityManagerMock.FROZEN_EVT_NAME, "timestamp"));
 
             ITerm lhs = QueryObjectFactory.createTerm();
             lhs.addOperand(frozTime);
-            IDateOffsetLiteral offSet = QueryObjectFactory.createDateOffsetLiteral("30", TimeInterval.Minute);
+            IDateOffsetLiteral offSet = QueryObjectFactory.createDateOffsetLiteral("30", DSInterval.Minute);
             lhs.addOperand(conn(ArithmeticOperator.Minus), offSet);
             ITerm rhs = QueryObjectFactory.createTerm();
             rhs.addOperand(collTime);
@@ -3917,6 +3916,32 @@ public class QueryGeneratorMock {
             formula.setOperator(RelationalOperator.LessThanOrEquals);
 
             specimen.setInView(true);
+            return query;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * <pre>
+     * SCG
+     *      CollectionEventParam (C)
+     *      FrozenEventParam (F) 
+     * Temporal (C.timestamp - F.timestamp = 30 mins)
+     * </pre>
+     */
+    public static IQuery createTemporalQueryDateDiff() {
+        try {
+            IQuery query = createTemporalQueryDateOffset();
+            IExpressionId exprId = query.getConstraints().getRootExpressionId();
+            ICustomFormula formula = (ICustomFormula) query.getConstraints().getExpression(exprId).getOperand(2);
+            ITerm thirtyMins = formula.getAllRhs().get(0);
+            formula.getAllRhs().clear();
+            ITerm newRhs = QueryObjectFactory.createTerm();
+            newRhs.addOperand(formula.getLhs().getOperand(1));
+            formula.addRhs(newRhs);
+
+            formula.getLhs().setOperand(1, thirtyMins.getOperand(0));
             return query;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -3958,10 +3983,10 @@ public class QueryGeneratorMock {
 
             IExpressionAttribute regTime = QueryObjectFactory.createExpressionAttribute(collProtReg
                     .getExpressionId(), entityManager.getAttribute(
-                    EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME, "registrationDate"), TermType.Date);
+                    EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME, "registrationDate"));
             IExpressionAttribute evtPoint = QueryObjectFactory.createExpressionAttribute(collProtEvt
                     .getExpressionId(), entityManager.getAttribute(EntityManagerMock.COLLECTION_PROTOCOL_EVT_NAME,
-                    "studyCalendarEventPoint"), TermType.Numeric);
+                    "studyCalendarEventPoint"));
             // regTime + evtPoint = "05-30-2008"
             ITerm lhs = QueryObjectFactory.createTerm();
             lhs.addOperand(regTime);
@@ -3985,7 +4010,7 @@ public class QueryGeneratorMock {
 
     public static IQuery createTemporalQueryWithOtherCond() {
         try {
-            IQuery query = createTemporalQueryDateDiff();
+            IQuery query = createTemporalQueryDateOffset();
             IExpressionId scgId = query.getConstraints().getRootExpressionId();
             IExpression scg = query.getConstraints().getExpression(scgId);
 
@@ -4008,7 +4033,7 @@ public class QueryGeneratorMock {
             IExpression scg = query.getConstraints().getExpression(scgId);
 
             ICustomFormula formula = (ICustomFormula) scg.getOperand(2);
-            INamedTerm term = QueryObjectFactory.createNamedTerm(formula.getLhs(), "term");
+            IOutputTerm term = QueryObjectFactory.createNamedTerm(formula.getLhs(), "term");
             query.getOutputTerms().add(term);
             return query;
         } catch (Exception e) {

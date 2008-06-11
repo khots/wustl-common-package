@@ -49,7 +49,7 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionAttribute;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.INamedTerm;
+import edu.wustl.common.querysuite.queryobject.IOutputTerm;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
@@ -544,9 +544,10 @@ public class SqlGenerator implements ISqlGenerator {
                 String actualRightAlias = getAliasFor(childExpression, rightEntity);
                 String rightAlias = actualRightAlias;
                 if (!processedAlias.contains(aliasAppenderMap.get(childExpressionId))) {
-                    if(SecurityManager.APPLICATION_CONTEXT_NAME.equalsIgnoreCase(Constants.APPLICATION_CLINPORTAL))
-                    {
-                        leftAlias = getAliasFor(constraints.getExpression(parentExpressionId), eavAssociation.getEntity());
+                    if (SecurityManager.APPLICATION_CONTEXT_NAME
+                            .equalsIgnoreCase(Constants.APPLICATION_CLINPORTAL)) {
+                        leftAlias = getAliasFor(constraints.getExpression(parentExpressionId), eavAssociation
+                                .getEntity());
                     }
                     if (InheritanceUtils.getInstance().isInherited(eavAssociation)) {
                         eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
@@ -753,17 +754,12 @@ public class SqlGenerator implements ISqlGenerator {
                 parent = parent.getParentEntity();
             }
 
-            if(isReverse)
-            {
-                    for (String joinSql : joinSqlList)
-                    {
-                        combinedJoinPart.append(joinSql);
-                    }
-            }
-            else
-            {
-                for (String joinSql : joinSqlList)
-                {
+            if (isReverse) {
+                for (String joinSql : joinSqlList) {
+                    combinedJoinPart.append(joinSql);
+                }
+            } else {
+                for (String joinSql : joinSqlList) {
                     combinedJoinPart.insert(0, joinSql);
                 }
             }
@@ -1611,10 +1607,10 @@ public class SqlGenerator implements ISqlGenerator {
      *             join graph.
      */
     void createAliasAppenderMap() throws MultipleRootsException {
-        int i = 1;
         Enumeration<IExpressionId> exprIds = constraints.getExpressionIds();
         while (exprIds.hasMoreElements()) {
-            aliasAppenderMap.put(exprIds.nextElement(), i++);
+            IExpressionId exprId = exprIds.nextElement();
+            aliasAppenderMap.put(exprId, exprId.getInt());
         }
     }
 
@@ -1815,10 +1811,10 @@ public class SqlGenerator implements ISqlGenerator {
         return termProcessor.convertTerm(term).getString();
     }
 
-    private String getSelectForOutputTerms(List<INamedTerm> terms) {
-        outputTermsColumns = new HashMap<String, INamedTerm>();
+    private String getSelectForOutputTerms(List<IOutputTerm> terms) {
+        outputTermsColumns = new HashMap<String, IOutputTerm>();
         StringBuffer s = new StringBuffer();
-        for (INamedTerm term : terms) {
+        for (IOutputTerm term : terms) {
             String termString = "(" + getTermString(term.getTerm()) + ")";
             String columnName = COLUMN_NAME + selectIndex++;
             s.append(termString + " " + columnName + " ,");
@@ -1827,9 +1823,9 @@ public class SqlGenerator implements ISqlGenerator {
         return removeLastComma(s.toString());
     }
 
-    private Map<String, INamedTerm> outputTermsColumns;
+    private Map<String, IOutputTerm> outputTermsColumns;
 
-    public Map<String, INamedTerm> getOutputTermsColumns() {
+    public Map<String, IOutputTerm> getOutputTermsColumns() {
         return outputTermsColumns;
     }
 }
