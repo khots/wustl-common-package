@@ -68,8 +68,7 @@ public class UserBizLogic extends DefaultBizLogic
         {
             //List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getId());
         	Object object = dao.retrieve(Department.class.getName(), user.getDepartment().getId());
-        	object = HibernateMetaData.getProxyObjectImpl(object);
-        	
+        	        	
             Department department = null;
             if (object!=null)
             {
@@ -78,8 +77,7 @@ public class UserBizLogic extends DefaultBizLogic
             
             //list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getId());
             object = dao.retrieve(Institution.class.getName(), user.getInstitution().getId());
-            object = HibernateMetaData.getProxyObjectImpl(object);
-            
+                       
             Institution institution = null;
             if (object!=null)
             {
@@ -88,8 +86,7 @@ public class UserBizLogic extends DefaultBizLogic
             
             //list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getId());
             object = dao.retrieve(CancerResearchGroup.class.getName(), user.getCancerResearchGroup().getId());
-            object = HibernateMetaData.getProxyObjectImpl(object);
-            
+                        
             CancerResearchGroup cancerResearchGroup = null;
             if (object!=null)
             {

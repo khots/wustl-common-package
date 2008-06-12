@@ -135,7 +135,7 @@ public class HibernateDAOImpl implements HibernateDAO
      * Declared in AbstractDAO class. 
      * @throws DAOException
      */
-    public void rollback()
+    public void rollback() throws DAOException
     {
         if(isUpdated==true) 
         {
@@ -149,7 +149,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	        catch (HibernateException dbex)
 	        {
 	            Logger.out.error(dbex.getMessage(), dbex);
-	            //throw handleError("Error in rollback: ", dbex);
+	            throw handleError("Error in rollback: ", dbex);
 	        }
         }
     }
@@ -619,7 +619,8 @@ public class HibernateDAOImpl implements HibernateDAO
     {
         try
         {
-            return session.load(Class.forName(sourceObjectName), id);
+        	Object object = session.load(Class.forName(sourceObjectName), id); 
+            return HibernateMetaData.getProxyObjectImpl(object);
         }
         catch (ClassNotFoundException cnFoundExp)
         {
