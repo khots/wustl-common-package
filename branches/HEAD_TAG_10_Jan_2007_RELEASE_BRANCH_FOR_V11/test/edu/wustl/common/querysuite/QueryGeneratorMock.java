@@ -3874,7 +3874,7 @@ public class QueryGeneratorMock {
      * SCG
      *      CollectionEventParam (C)
      *      FrozenEventParam (F) 
-     * Temporal (C.timestamp - 30mins &lt;= F.timestamp)
+     * Temporal (F.timestamp - 30mins &lt;= C.timestamp)
      * </pre>
      */
     public static IQuery createTemporalQueryDateOffset() {
@@ -3927,7 +3927,7 @@ public class QueryGeneratorMock {
      * SCG
      *      CollectionEventParam (C)
      *      FrozenEventParam (F) 
-     * Temporal (C.timestamp - F.timestamp = 30 mins)
+     * Temporal (F.timestamp - C.timestamp = 30 mins)
      * </pre>
      */
     public static IQuery createTemporalQueryDateDiff() {
@@ -4026,13 +4026,27 @@ public class QueryGeneratorMock {
         }
     }
 
-    public static IQuery createTemporalOutputQuery() {
+    public static IQuery createTemporalOutputTimestampQuery() {
         try {
             IQuery query = createTemporalQueryOffsetAttribute();
             IExpressionId scgId = query.getConstraints().getRootExpressionId();
             IExpression scg = query.getConstraints().getExpression(scgId);
 
             ICustomFormula formula = (ICustomFormula) scg.getOperand(2);
+            IOutputTerm term = QueryObjectFactory.createNamedTerm(formula.getLhs(), "term");
+            query.getOutputTerms().add(term);
+            return query;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public static IQuery createTemporalOutputDSIntervalQuery() {
+        try {
+            IQuery query = createTemporalQueryDateDiff();
+            IExpressionId exprId = query.getConstraints().getRootExpressionId();
+            ICustomFormula formula = (ICustomFormula) query.getConstraints().getExpression(exprId).getOperand(2);
+            
             IOutputTerm term = QueryObjectFactory.createNamedTerm(formula.getLhs(), "term");
             query.getOutputTerms().add(term);
             return query;
