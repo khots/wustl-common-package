@@ -49,14 +49,15 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionAttribute;
 import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
-import edu.wustl.common.querysuite.queryobject.IOutputTerm;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
+import edu.wustl.common.querysuite.queryobject.IOutputTerm;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.ITerm;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.querysuite.queryobject.TermType;
 import edu.wustl.common.querysuite.queryobject.impl.Connector;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
@@ -69,6 +70,7 @@ import edu.wustl.common.querysuite.utils.DatabaseSQLSettings;
 import edu.wustl.common.querysuite.utils.DatabaseType;
 import edu.wustl.common.querysuite.utils.TermProcessor;
 import edu.wustl.common.querysuite.utils.TermProcessor.IAttributeAliasProvider;
+import edu.wustl.common.querysuite.utils.TermProcessor.TermString;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
@@ -1390,24 +1392,12 @@ public class SqlGenerator implements ISqlGenerator {
     String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType) throws SqlException {
 
         if (dataType instanceof StringTypeInformationInterface)// for data type
-        // String it
-        // will be
-        // enclosed in
-        // single quote.
+        // String it will be enclosed in single quote.
         {
             value = value.replaceAll("'", "''");
             value = "'" + value + "'";
         } else if (dataType instanceof DateTypeInformationInterface) // for
-        // data
-        // type
-        // date
-        // it
-        // will
-        // be
-        // enclosed
-        // in
-        // single
-        // quote.
+        // data type date it will be enclosed in single quote.
         {
             try {
                 Date date = new Date();
@@ -1773,8 +1763,10 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     // //////// CUSTOM FORMULA
-    private CustomFormulaProcessor customFormulaProcessor = new CustomFormulaProcessor(getAliasProvider(),
-            getDatabaseSQLSettings());
+
+    private CustomFormulaProcessor getCustomFormulaProcessor() {
+        return new CustomFormulaProcessor(getAliasProvider(), getDatabaseSQLSettings());
+    }
 
     private DatabaseSQLSettings getDatabaseSQLSettings() {
         DatabaseType databaseType;
@@ -1801,14 +1793,32 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     private String getCustomFormulaString(ICustomFormula formula) {
-        return customFormulaProcessor.asString(formula);
+        return getCustomFormulaProcessor().asString(formula);
     }
 
     // output terms
-    private TermProcessor termProcessor = new TermProcessor(getAliasProvider(), getDatabaseSQLSettings());
+
+    private TermProcessor getTermProcessor() {
+        return new TermProcessor(getAliasProvider(), getDatabaseSQLSettings());
+    }
 
     private String getTermString(ITerm term) {
-        return termProcessor.convertTerm(term).getString();
+        TermString termString = getTermProcessor().convertTerm(term);
+        String s = termString.getString();
+        if (termString.getTermType() != TermType.DSInterval) {
+            return s;
+        }
+
+        s = "(" + s + ")";
+        switch (getDatabaseSQLSettings().getDatabaseType()) {
+            case MySQL :
+                return "hour" + s + "*60*60 + minute" + s + "*60 + second" + s;
+            case Oracle :
+                return "extract(hour from " + s + ")*60*60 + extract(minute from " + s
+                        + ")*60 + extract(second from " + s + ")";
+            default :
+                throw new RuntimeException("won't occur.");
+        }
     }
 
     private String getSelectForOutputTerms(List<IOutputTerm> terms) {
