@@ -161,7 +161,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch(DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,obj,"Deleting");
-			dao.rollback();
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
+			try
+			{
+				dao.rollback();				
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+			}
 			Logger.out.debug("Error in delete");
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -227,7 +238,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch(DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,obj,"Inserting");
-			dao.rollback();
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
+			try
+			{
+				dao.rollback();
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+			}
 			Logger.out.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -268,7 +290,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException ex)
 		{
 			String errMsg = getErrorMessage(ex,objCollection,"Inserting");
-			dao.rollback();
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
+			try
+			{
+				dao.rollback();
+			}
+			catch(DAOException daoEx)
+			{
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+			}
 			Logger.out.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -361,7 +394,20 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			//added to format constrainviolation message
 			String errMsg = getErrorMessage(ex,currentObj,"Updating");
-			dao.rollback();
+			if(errMsg==null)
+			{
+				errMsg=ex.getMessage();
+			}
+			try
+			{
+				dao.rollback();				
+			}
+			catch(DAOException daoEx)
+			{
+				//TODO ERROR Handling
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				//throw new BizLogicException(ex.getMessage(), ex);
+			}
 			//TODO ERROR Handling
 			throw new BizLogicException(errMsg, ex);
 		}
@@ -409,7 +455,16 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch(DAOException ex)
 		{
-			dao.rollback();
+			try
+			{
+				dao.rollback();
+			}
+			catch(DAOException daoEx)
+			{
+				//TODO ERROR Handling
+				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				//throw new BizLogicException(ex.getMessage(), ex);
+			}
 			//TODO ERROR Handling
 			throw new BizLogicException(ex.getMessage(), ex);
 		}
@@ -529,8 +584,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 			//List list= dao.retrieve(className, Constants.SYSTEM_IDENTIFIER, identifier);
 			Object object = dao.retrieve(className, identifier);
-			object = HibernateMetaData.getProxyObjectImpl(object);
-			
+						
 	        if (object!=null)
 	        {
 	            /* 
@@ -588,8 +642,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 			//List list = dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
 			Object object = dao.retrieve(className, identifier);
-			object = HibernateMetaData.getProxyObjectImpl(object);
-						
+									
 			if (object!=null)
 	        {
 	            /* 
