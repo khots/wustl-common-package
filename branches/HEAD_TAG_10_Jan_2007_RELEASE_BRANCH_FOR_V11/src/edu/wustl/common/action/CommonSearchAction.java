@@ -32,6 +32,7 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.factory.AbstractBizLogicFactory;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.MasterFactory;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -60,8 +61,9 @@ public class CommonSearchAction extends Action
         String target = null;
         
         /* Get the id whose information is to be searched */
-        Long identifier = 	Long.valueOf(request.getParameter(Constants.SYSTEM_IDENTIFIER)); 
-        if(identifier == null || identifier.longValue() == 0  )
+        String obj =request.getParameter(Constants.SYSTEM_IDENTIFIER);
+        Long identifier = 	new Long(Utility.toLong(obj)); 
+        if(identifier.longValue() == 0  )
         {
         	identifier = (Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER);
         	

@@ -524,13 +524,32 @@ public class Utility
 	public static int toInt(Object obj)
 	{
 		int value=0;
-		if(obj == null)
-			return value;
-		else
-		{	Integer intObj = (Integer)obj;
-			value=intObj.intValue() ;
-			return value;
+		if(obj != null)
+		{	
+			String objVal = String.valueOf(obj);
+			if(objVal.length()>0)
+			{
+				Integer intObj = Integer.parseInt(objVal);
+				value=intObj.intValue() ;
+			}
 		}
+		return value;
+	}
+	
+	public static long toLong(Object obj)
+	{
+		long value=0;
+		if(obj != null)
+		{	
+			String objVal = String.valueOf(obj);
+			if(objVal.length()>0)
+			{
+				Long intObj = Long.parseLong(objVal);
+				value=intObj.longValue() ;
+			}
+		}
+		return value;
+
 	}
 	
 	public static double toDouble(Object obj)
