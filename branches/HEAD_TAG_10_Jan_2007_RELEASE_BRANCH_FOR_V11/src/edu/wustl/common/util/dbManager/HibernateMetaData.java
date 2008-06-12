@@ -121,6 +121,7 @@ public class HibernateMetaData
 
 	public static String getTableName(Class classObj)
 	{
+		
 		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
 		if(tbl!=null)
 			return tbl.getName();
@@ -460,7 +461,7 @@ public class HibernateMetaData
 		{
 			HibernateProxy hp  = (HibernateProxy)domainObject;
 			Object obj = hp.getHibernateLazyInitializer().getImplementation();
-			System.out.println(obj+" : obj");
+			Logger.out.debug(obj+" : obj");
 			return (AbstractDomainObject)obj;
 		}
         return domainObject;
