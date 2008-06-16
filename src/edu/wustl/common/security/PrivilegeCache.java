@@ -5,6 +5,7 @@
 
 package edu.wustl.common.security;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import org.w3c.dom.NodeList;
  */
 public class PrivilegeCache
 {
+	private static List<String> lookInDatabase = new ArrayList<String>();
 	/* login name of the user who has
 	 * logged in
 	 */
@@ -49,7 +51,7 @@ public class PrivilegeCache
 	/* the map of object id and corresponding permissions / privileges  
 	 */
 	private Map<String, BitSet> privilegeMap;
-
+	
 	// CONSTRUCTOR
 	/**
 	 * After initialization of the variables, 
@@ -130,12 +132,21 @@ public class PrivilegeCache
 				{
 					Element element = (Element)(nodeList1.item(counter));
 					String temp = new String(element.getAttribute("pattern"));
+					String lookInDb = new String(element.getAttribute("lookInDatabase"));
+					
+					if(lookInDb.equalsIgnoreCase("false") || lookInDb.equalsIgnoreCase(""))
+					{
 					ProtectionElement protectionElement = new ProtectionElement();
 					protectionElement.setObjectId(temp);
 					ProtectionElementSearchCriteria protectionElementSearchCriteria = new ProtectionElementSearchCriteria(protectionElement);
 					List list = privilegeUtility.getUserProvisioningManager().getObjects(protectionElementSearchCriteria);
 					Collection objectPrivilegeMap = privilegeUtility.getUserProvisioningManager().getPrivilegeMap(loginName, list);
 					populatePrivileges(objectPrivilegeMap);
+					}
+					else
+					{
+						lookInDatabase.add(temp.replace('*', '_'));
+					}
 				}
 
 				long endTime = System.currentTimeMillis();
@@ -228,10 +239,46 @@ public class PrivilegeCache
 	public boolean hasPrivilege(String objectId, String privilegeName)
 	{	
 		BitSet bitSet = privilegeMap.get(objectId);
+		
+		if(bitSet == null)
+		{
+			for(String objectIdPart : lookInDatabase)
+			{
+				if(objectId.startsWith(objectIdPart))
+				{
+					bitSet = checkPrivilegeInDatabase(objectId, privilegeName);
+				}
+			}
+		}
 
 		return bitSet.get(getBitNumber(privilegeName));
 	}
 
+	
+	private BitSet checkPrivilegeInDatabase(String objectId, String privilegeName)
+	{
+		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
+		
+		BitSet bitSet = privilegeMap.get(objectId);
+		
+			try 
+			{
+				ProtectionElement protectionElement = new ProtectionElement();
+				protectionElement.setObjectId(objectId);
+				ProtectionElementSearchCriteria protectionElementSearchCriteria = new ProtectionElementSearchCriteria(protectionElement);
+				List list = privilegeUtility.getUserProvisioningManager().getObjects(protectionElementSearchCriteria);
+				Collection objectPrivilegeMap = privilegeUtility.getUserProvisioningManager().getPrivilegeMap(loginName, list);
+				populatePrivileges(objectPrivilegeMap);
+				bitSet = privilegeMap.get(objectId);
+			} 
+			catch (CSException excp) 
+			{
+				Logger.out.error(excp.getMessage(), excp);
+			}
+		
+		return bitSet;
+	}
+	
 
 	public void updatePrivilege(Class classObj, String privilegeName, boolean value)
 	{
