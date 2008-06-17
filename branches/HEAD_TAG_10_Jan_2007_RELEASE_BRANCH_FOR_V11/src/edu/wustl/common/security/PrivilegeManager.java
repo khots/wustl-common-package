@@ -6,7 +6,11 @@
 
 package edu.wustl.common.security;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +31,14 @@ import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.Role;
 import gov.nih.nci.security.exceptions.CSException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * @author ravindra_jain
@@ -45,11 +57,21 @@ public class PrivilegeManager
 
 	private PrivilegeUtility privilegeUtility;
 	
+	private List<String> lazyObjects;
+	private List<String> classes ;
+	private List<String> eagerObjects ;
+	
 	// CONSTRUCTOR
-	public PrivilegeManager() 
+	private PrivilegeManager() 
 	{
+		lazyObjects = new ArrayList<String>();
+		classes = new ArrayList<String>();
+		eagerObjects = new ArrayList<String>();
+		
 		privilegeUtility = new PrivilegeUtility();
 		privilegeCaches = new HashMap<String, PrivilegeCache>();
+		
+		readXmlFile("CacheableObjects.xml");
 	}
 
 	/**
@@ -60,7 +82,7 @@ public class PrivilegeManager
 		if(instance==null)
 		{
 			instance  = new PrivilegeManager();
-		}
+		}		
 		return instance;
 	}
 
@@ -386,4 +408,82 @@ public class PrivilegeManager
 		
 		return true;
 	}
+	
+	
+	private void readXmlFile(String fileName)
+	{
+		try {
+			String xmlFileName = fileName;
+			
+			InputStream inputXmlFile = this.getClass().getClassLoader()
+					.getResourceAsStream(xmlFileName);
+
+			if (inputXmlFile != null) 
+			{
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				Document doc = builder.parse(inputXmlFile);
+
+				Element root = null;
+				root = doc.getDocumentElement();
+
+				if (root == null) {
+					throw new Exception("file can not be read");
+				}
+
+				NodeList nodeList = root.getElementsByTagName("Class");
+
+				int length = nodeList.getLength();
+				
+				for (int counter = 0; counter < length; counter++) 
+				{
+					Element element = (Element) (nodeList.item(counter));
+					String temp = new String(element.getAttribute("name"));
+					classes.add(temp);
+				}
+				
+				NodeList nodeList1 = root.getElementsByTagName("ObjectType");
+
+				int length1 = nodeList1.getLength();
+
+				for (int counter = 0; counter < length1; counter++) 
+				{
+					Element element = (Element) (nodeList1.item(counter));
+					String temp = new String(element.getAttribute("pattern"));
+					String lazily = new String(element.getAttribute("cacheLazily"));
+
+					if (lazily.equalsIgnoreCase("false")
+							|| lazily.equalsIgnoreCase("")) 
+					{
+						eagerObjects.add(temp);
+					} else 
+					{
+						lazyObjects.add(temp.replace('*', '_'));
+					}
+				}
+			}
+		} catch (ParserConfigurationException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (SAXException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (IOException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (Exception excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		}
+	}
+
+	public List<String> getClasses() {
+		return Collections.unmodifiableList(classes);
+	}
+
+	public List<String> getLazyObjects() {
+		return Collections.unmodifiableList(lazyObjects);
+	}
+
+	public List<String> getEagerObjects() {
+		return Collections.unmodifiableList(eagerObjects);
+	}
+
 }
