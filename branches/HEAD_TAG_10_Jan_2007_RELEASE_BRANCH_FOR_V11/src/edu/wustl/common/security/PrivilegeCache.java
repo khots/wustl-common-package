@@ -145,7 +145,10 @@ public class PrivilegeCache
 					}
 					else
 					{
-						lookInDatabase.add(temp.replace('*', '_'));
+						if(!lookInDatabase.contains(temp.replace('*', '_')))
+						{
+							lookInDatabase.add(temp.replace('*', '_'));
+						}
 					}
 				}
 
