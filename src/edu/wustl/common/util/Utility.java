@@ -209,7 +209,8 @@ public class Utility
 	
 	/**
 	 * Start: Change for API Search   --- Jitendra 06/10/2006
-	 * In Case of Api Search, previoulsy it was failing since there was default class level initialization 
+	 * In Case of Api Search, previoulsy it was failing since there was default 
+	 * class level initialization 
 	 * on domain object. For example in ParticipantMedicalIdentifier object, it was initialized as 
 	 * protected Site site= new Site(); So we removed default class level initialization on domain object.
 	 * Hence getValueFor() method was returning null. So write new method SetValueFor() which will 
@@ -219,18 +220,21 @@ public class Utility
 	 * @return
 	 * @throws Exception
 	 */
-	public static Object SetValueFor(Object obj, String attrName) throws Exception
+	public static Object setValueFor(Object obj, String attrName, Object attrValue ) throws Exception
 	{
-		Object retObject = null;
+
 		//create the setter method for the attribute.
 		String methodName =  Utility.createAccessorMethodName(attrName,true);			
 		Class objClass = obj.getClass();			
 		Method method = findMethod(objClass,methodName);
-		retObject = method.getParameterTypes()[0].newInstance();	
-		Object objArr[] = {retObject};
+		if (attrValue == null)
+		{
+			attrValue = method.getParameterTypes()[0].newInstance();
+		}
+		Object objArr[] = {attrValue};
 		//set the newInstance to the setter nethod of parent obj
 		method.invoke(obj,objArr);			
-		return retObject;
+		return attrValue;
 	
 	}	
 	
