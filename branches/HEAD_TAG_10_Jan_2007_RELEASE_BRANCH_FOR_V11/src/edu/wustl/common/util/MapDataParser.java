@@ -233,7 +233,7 @@ public class MapDataParser
 			//Change for API Search   --- Jitendra 06/10/2006
 			if(retObj == null) 
 			{
-				retObj = Utility.SetValueFor(parentObj,className);
+				retObj = Utility.setValueFor(parentObj,className , null);
 			}			
 			return retObj;
 		}
