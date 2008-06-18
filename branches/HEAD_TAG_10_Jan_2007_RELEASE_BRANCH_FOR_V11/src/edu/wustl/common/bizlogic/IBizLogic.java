@@ -73,6 +73,8 @@ public interface IBizLogic
      */
     public abstract List retrieve(String sourceObjectName) throws DAOException;
     
+    public Object retrieve(String sourceObjectName, Long id)  throws DAOException;
+    
     public abstract List getList(String sourceObjectName, String[] displayNameFields, String valueField, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition, String separatorBetweenFields,  boolean isToExcludeDisabled) throws DAOException;

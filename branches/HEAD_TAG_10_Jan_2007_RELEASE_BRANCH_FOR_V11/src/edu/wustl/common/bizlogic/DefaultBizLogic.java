@@ -222,6 +222,34 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
 	}
+	
+	public Object retrieve(String sourceObjectName, Long id)  throws DAOException
+	{
+		
+		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+
+		Object object = null;
+		
+		try
+		{
+			dao.openSession(null);
+
+			object  = dao.retrieve(sourceObjectName, id);
+			//dao.commit();
+		}
+		catch (DAOException daoExp)
+		{
+			daoExp.printStackTrace();
+			Logger.out.error(daoExp.getMessage(), daoExp);
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+
+		return object;
+
+	}
 
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField, boolean isToExcludeDisabled) throws DAOException
 	{
