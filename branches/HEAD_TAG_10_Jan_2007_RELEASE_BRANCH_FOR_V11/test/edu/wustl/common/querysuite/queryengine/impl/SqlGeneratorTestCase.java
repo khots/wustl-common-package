@@ -122,7 +122,7 @@ public class SqlGeneratorTestCase extends TestCase {
             assertEquals("Participant_0.ACTIVITY_STATUS like '%Active%'", generator.getSQL(condition1, expression));
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -150,7 +150,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     "Participant_0.IDENTIFIER in (1,2,3,4) And (Participant_0.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_0.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy')) And Participant_0.ACTIVITY_STATUS!='Disabled' And Participant_0.ACTIVITY_STATUS!='Disabled'",
                     generator.getSQL(rule));
         } catch (Exception e) {
-            fail("Unexpected Expection!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -163,7 +163,9 @@ public class SqlGeneratorTestCase extends TestCase {
             EntityInterface participantEntity = entityManager.getEntityByName(EntityManagerMock.PARTICIPANT_NAME);
             IQueryEntity participantQueryEntity = QueryObjectFactory.createQueryEntity(participantEntity);
             IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantQueryEntity);
-            generator.setJoinGraph(new JoinGraph());
+            JoinGraph joinGraph = new JoinGraph();
+            joinGraph.addIExpressionId(expression.getExpressionId());
+            generator.setJoinGraph(joinGraph);
             String SQL = generator.getWherePartSQL(expression, null, false);
             // System.out.println("testParticpiantExpression:"+ SQL);
             assertEquals(
@@ -181,7 +183,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     SQL);
 
         } catch (Exception e) {
-            fail("Unexpected Expection!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -234,7 +236,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -264,7 +266,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     "Select distinct Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER Column12 ,ParticipantMedicalIdentif_2.IDENTIFIER Column13 From catissue_participant Participant_1 left join catissue_part_medical_id ParticipantMedicalIdentif_2 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS='Active' And Participant_1.ACTIVITY_STATUS!='Disabled') And(Participant_1.IDENTIFIER in (1,2,3,4) And (Participant_1.BIRTH_DATE>=TO_DATE('1-1-2000','mm-dd-yyyy') And Participant_1.BIRTH_DATE<=TO_DATE('1-2-2000','mm-dd-yyyy')) And Participant_1.ACTIVITY_STATUS!='Disabled') And(ParticipantMedicalIdentif_2.MEDICAL_RECORD_NUMBER='M001')",
                     sql);
         } catch (Exception e) {
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -283,7 +285,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     "Select distinct Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 From catissue_participant Participant_1 Where Participant_1.ACTIVITY_STATUS='Active' And Participant_1.ACTIVITY_STATUS!='Disabled'",
                     sql);
         } catch (Exception e) {
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -297,7 +299,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     "Select distinct SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 ,Specimen_2.TYPE Column5 ,Specimen_2.POSITION_DIMENSION_TWO Column6 ,Specimen_2.POSITION_DIMENSION_ONE Column7 ,Specimen_2.PATHOLOGICAL_STATUS Column8 ,Specimen_2.LINEAGE Column9 ,Specimen_2.LABEL Column10 ,Specimen_2.IDENTIFIER Column11 ,Specimen_2.COMMENTS Column12 ,Specimen_2.BARCODE Column13 ,Specimen_2.AVAILABLE Column14 ,Specimen_2.ACTIVITY_STATUS Column15 ,Specimen_3.TYPE Column16 ,Specimen_3.POSITION_DIMENSION_TWO Column17 ,Specimen_3.POSITION_DIMENSION_ONE Column18 ,Specimen_3.PATHOLOGICAL_STATUS Column19 ,Specimen_3.LINEAGE Column20 ,Specimen_3.LABEL Column21 ,Specimen_3.IDENTIFIER Column22 ,Specimen_3.COMMENTS Column23 ,Specimen_3.BARCODE Column24 ,Specimen_3.AVAILABLE Column25 ,Specimen_3.ACTIVITY_STATUS Column26 ,Specimen_4.TYPE Column27 ,Specimen_4.POSITION_DIMENSION_TWO Column28 ,Specimen_4.POSITION_DIMENSION_ONE Column29 ,Specimen_4.PATHOLOGICAL_STATUS Column30 ,Specimen_4.LINEAGE Column31 ,Specimen_4.LABEL Column32 ,Specimen_4.IDENTIFIER Column33 ,Specimen_4.COMMENTS Column34 ,Specimen_4.BARCODE Column35 ,Specimen_4.AVAILABLE Column36 ,Specimen_4.ACTIVITY_STATUS Column37 ,Specimen_5.TYPE Column38 ,Specimen_5.POSITION_DIMENSION_TWO Column39 ,Specimen_5.POSITION_DIMENSION_ONE Column40 ,Specimen_5.PATHOLOGICAL_STATUS Column41 ,Specimen_5.LINEAGE Column42 ,Specimen_5.LABEL Column43 ,Specimen_5.IDENTIFIER Column44 ,Specimen_5.COMMENTS Column45 ,Specimen_5.BARCODE Column46 ,Specimen_5.AVAILABLE Column47 ,Specimen_5.ACTIVITY_STATUS Column48 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_specimen Specimen_2 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_2.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_3 on (Specimen_2.IDENTIFIER=Specimen_3.PARENT_SPECIMEN_ID) left join catissue_specimen Specimen_4 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_4.SPECIMEN_COLLECTION_GROUP_ID) left join catissue_specimen Specimen_5 on (SpecimenCollectionGroup_1.IDENTIFIER=Specimen_5.SPECIMEN_COLLECTION_GROUP_ID) Where (SpecimenCollectionGroup_1.NAME like 'X%' And SpecimenCollectionGroup_1.ACTIVITY_STATUS!='Disabled') Or((Specimen_2.TYPE='RNA' And Specimen_2.ACTIVITY_STATUS!='Disabled') Or(Specimen_3.TYPE='DNA' And Specimen_3.ACTIVITY_STATUS!='Disabled')) And(Specimen_4.AVAILABLE=1 And Specimen_4.ACTIVITY_STATUS!='Disabled') Or(Specimen_5.TYPE!='DNA' And Specimen_5.ACTIVITY_STATUS!='Disabled')",
                     sql);
         } catch (Exception e) {
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -327,7 +329,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -355,7 +357,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -390,7 +392,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -426,7 +428,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -456,7 +458,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -486,7 +488,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -527,7 +529,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -573,7 +575,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -626,7 +628,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -658,7 +660,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -692,7 +694,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -726,7 +728,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -751,7 +753,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -772,7 +774,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -792,7 +794,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -812,7 +814,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -836,7 +838,7 @@ public class SqlGeneratorTestCase extends TestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -856,7 +858,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -877,7 +879,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     "Select distinct Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 ,CollectionProtocolRegistr_2.REGISTRATION_DATE Column12 ,CollectionProtocolRegistr_2.PROTOCOL_PARTICIPANT_ID Column13 ,CollectionProtocolRegistr_2.IDENTIFIER Column14 ,CollectionProtocolRegistr_2.ACTIVITY_STATUS Column15 ,ParticipantMedicalIdentif_3.MEDICAL_RECORD_NUMBER Column16 ,ParticipantMedicalIdentif_3.IDENTIFIER Column17 ,ParticipantMedicalIdentif_4.MEDICAL_RECORD_NUMBER Column18 ,ParticipantMedicalIdentif_4.IDENTIFIER Column19 ,CollectionProtocolRegistr_5.REGISTRATION_DATE Column20 ,CollectionProtocolRegistr_5.PROTOCOL_PARTICIPANT_ID Column21 ,CollectionProtocolRegistr_5.IDENTIFIER Column22 ,CollectionProtocolRegistr_5.ACTIVITY_STATUS Column23 ,ParticipantMedicalIdentif_6.MEDICAL_RECORD_NUMBER Column24 ,ParticipantMedicalIdentif_6.IDENTIFIER Column25 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_3 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_3.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_4 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_4.PARTICIPANT_ID) left join catissue_coll_prot_reg CollectionProtocolRegistr_5 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_5.PARTICIPANT_ID) left join catissue_part_medical_id ParticipantMedicalIdentif_6 on (Participant_1.IDENTIFIER=ParticipantMedicalIdentif_6.PARTICIPANT_ID) Where (Participant_1.FIRST_NAME='Prafull' And Participant_1.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS='Active' And CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_5.ACTIVITY_STATUS='Disabled' And CollectionProtocolRegistr_5.ACTIVITY_STATUS!='Disabled')",
                     sql);
         } catch (Exception e) {
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -1014,7 +1016,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     .getRootOutputTreeNodeList().size());
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -1050,7 +1052,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     .getRootOutputTreeNodeList().size());
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -1101,7 +1103,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     .getRootOutputTreeNodeList().size());
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -1352,7 +1354,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     .getRootOutputTreeNodeList().size());
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -1375,7 +1377,7 @@ public class SqlGeneratorTestCase extends TestCase {
                     .getRootOutputTreeNodeList().size());
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -1439,7 +1441,7 @@ public class SqlGeneratorTestCase extends TestCase {
             assertEquals(expectedSql, sql);
         } catch (Exception e) {
             // e.printStackTrace();
-            fail("Unexpected Expection, While Generating SQL for the Query!!!");
+            throw new RuntimeException(e);
         }
     }
 }
