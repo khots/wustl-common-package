@@ -1,5 +1,6 @@
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -245,7 +246,17 @@ public class SqlGenerator implements ISqlGenerator {
 
         String sql = selectPart + " " + fromPart + " " + wherePart;
 
+        log(sql);
         return sql;
+    }
+
+    private void log(String sql) {
+        // TODO format.
+        try {
+            new SQLLogger().log(sql);
+        } catch (IOException e) {
+            Logger.out.error("Error while logging sql.\n" + e);
+        }
     }
 
     /**
