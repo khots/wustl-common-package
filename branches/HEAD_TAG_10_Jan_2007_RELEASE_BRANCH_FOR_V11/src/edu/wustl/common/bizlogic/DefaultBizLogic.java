@@ -388,6 +388,71 @@ public class DefaultBizLogic extends AbstractBizLogic
 		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
 	}
+	
+	protected List disableObjects(DAO dao, String tablename, Class sourceClass, 
+			String classIdentifier, Long objIDArr[]) throws DAOException
+	{
+		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
+		disableAndAuditObjects(dao, sourceClass.getName(), tablename, listOfSubElement);
+		return listOfSubElement;
+	}
+	
+	/**
+	 * 
+	 * @param dao
+	 * @param sourceClass
+	 * @param tablename
+	 * @param listOfSubElement
+	 * @throws DAOException
+	 */
+	protected void disableAndAuditObjects(DAO dao, String sourceClass, String tablename, 
+			List listOfSubElement) throws DAOException
+	{
+		Iterator iterator = listOfSubElement.iterator();
+		Collection auditEventLogsCollection = new HashSet();
+
+		try
+		{
+			while (iterator.hasNext())
+			{
+				Long objectId = (Long) iterator.next();
+				IActivityStatus object  =(IActivityStatus) dao.retrieve( sourceClass, objectId);
+				object.setActivityStatus(Constants.ACTIVITY_STATUS_DISABLED);
+				dao.update(object, null, false, false, false);
+				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
+			}
+	
+			HibernateDAO hibDAO = (HibernateDAO) dao;
+			hibDAO.addAuditEventLogs(auditEventLogsCollection);
+		}
+		catch (UserNotAuthorizedException ex)
+		{
+			throw new DAOException(ex); //TODO: should throw bizlogicexception
+		}
+	}
+	/**
+	 * @param tablename
+	 * @param auditEventLogsCollection
+	 * @param objectId
+	 */
+	private void addAuditEventstoColl(String tablename, Collection auditEventLogsCollection,
+			Long objectId)
+	{
+		AuditEventLog auditEventLog = new AuditEventLog();
+		auditEventLog.setObjectIdentifier(objectId);
+		auditEventLog.setObjectName(tablename);
+		auditEventLog.setEventType(Constants.UPDATE_OPERATION);
+	
+		Collection auditEventDetailsCollection = new HashSet();
+		AuditEventDetails auditEventDetails = new AuditEventDetails();
+		auditEventDetails.setElementName(Constants.ACTIVITY_STATUS_COLUMN);
+		auditEventDetails.setCurrentValue(Constants.ACTIVITY_STATUS_DISABLED);
+	
+		auditEventDetailsCollection.add(auditEventDetails);
+	
+		auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
+		auditEventLogsCollection.add(auditEventLog);
+	}	
 
 	/**
 	 * @param tablename
@@ -401,22 +466,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		while (iterator.hasNext())
 		{
 			Long objectIdentifier = (Long) iterator.next();
-			AuditEventLog auditEventLog = new AuditEventLog();
-			auditEventLog.setObjectIdentifier(objectIdentifier);
-			auditEventLog.setObjectName(tablename);
-			auditEventLog.setEventType(Constants.UPDATE_OPERATION);
-
-			Collection auditEventDetailsCollection = new HashSet();
-			AuditEventDetails auditEventDetails = new AuditEventDetails();
-			auditEventDetails.setElementName(Constants.ACTIVITY_STATUS_COLUMN);
-			auditEventDetails.setCurrentValue(Constants.ACTIVITY_STATUS_DISABLED);
-
-			auditEventDetailsCollection.add(auditEventDetails);
-
-			auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
-			auditEventLogsCollection.add(auditEventLog);
+			addAuditEventstoColl(tablename, auditEventLogsCollection, objectIdentifier);
 		}
-
 		HibernateDAO hibDAO = (HibernateDAO) dao;
 		hibDAO.addAuditEventLogs(auditEventLogsCollection);
 	}
