@@ -26,6 +26,9 @@ import edu.wustl.common.util.global.Variables;
  */
 public final class Logger
 {
+	/**
+	 * @deprecated 
+	 */
 	public static org.apache.log4j.Logger out;
 	
     /**
