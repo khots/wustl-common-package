@@ -14,6 +14,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
+import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.impl.Condition;
 import edu.wustl.common.querysuite.queryobject.impl.Connector;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
@@ -21,6 +22,7 @@ import edu.wustl.common.querysuite.queryobject.impl.ExpressionId;
 import edu.wustl.common.querysuite.queryobject.impl.Query;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.Rule;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * 
@@ -31,7 +33,7 @@ public class QueryObjectTestCase extends TestCase {
 
     static {
         // TODO
-        // Logger.configure();// To avoid null pointer Exception for code
+        Logger.configure();// To avoid null pointer Exception for code
         // calling logger statements.
     }
 
@@ -368,8 +370,8 @@ public class QueryObjectTestCase extends TestCase {
      */
     public void testRetrieveQuery() {
         try {
-            IQuery query = (IQuery) (new HibernateDatabaseOperations<IQuery>().retrieve(Query.class.getName(), "id", 1L))
-                    .get(0);
+            IQuery query = (IQuery) (new HibernateDatabaseOperations<IQuery>().retrieve(Query.class.getName(),
+                    "id", 1L)).get(0);
             assertTrue(query != null);
         } catch (Exception e) {
             fail(e.getMessage());
@@ -383,7 +385,7 @@ public class QueryObjectTestCase extends TestCase {
         IParameterizedQuery parameterizedQuery = QueryGeneratorMock.createSpecimenBioHazardQuery4();
 
         try {
-            new HibernateDatabaseOperations<IParameterizedQuery>().insert(parameterizedQuery);
+            new QueryBizLogic<IParameterizedQuery>().saveQuery(parameterizedQuery);
         } catch (Exception e) {
             fail(e.getMessage());
         }
