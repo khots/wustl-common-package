@@ -546,7 +546,8 @@ public class PrivilegeUtility
 	 *         CSException
 	 */
 	protected AuthorizationManager getAuthorizationManager() throws CSException {
-
+		//Creating instance of security manager to initialize and set constants default value
+		SecurityManager securityManager = SecurityManager.getInstance(this.getClass());
 		if (authorizationManager == null) {
 			synchronized (requestingClass) {
 				if (authorizationManager == null) {
