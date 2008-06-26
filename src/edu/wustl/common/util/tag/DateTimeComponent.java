@@ -18,8 +18,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-
 import edu.wustl.common.util.Utility;
+
 /**
  * @author mandar_deshmukh
  *
@@ -395,6 +395,20 @@ public class DateTimeComponent extends TagSupport
 	 */
 	private void initializeParameters()
 	{
+		if(value == null)
+		    value = "";	   
+		
+		if(value.trim().length() > 0)
+		{
+			Integer specimenYear = new Integer(Utility.getYear(value ));
+			Integer specimenMonth = new Integer(Utility.getMonth(value ));
+			Integer specimenDay = new Integer(Utility.getDay(value ));
+			day=specimenDay.intValue();
+			month=specimenMonth.intValue();
+			year=specimenYear.intValue();
+			
+		}
+		
 		Date currentDate = Calendar.getInstance().getTime();
 		 
 		if(Utility.isNull(month)   )
