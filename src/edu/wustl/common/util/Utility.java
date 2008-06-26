@@ -778,4 +778,36 @@ public class Utility
 		columnDisplayName = className +" : " + attributeLabel ;
 		return columnDisplayName;
 	}
+	private static String pattern = "MM-dd-yyyy";
+	public static int getMonth(String date) {
+		int month = 0;
+
+		month = getCalendar(date, pattern).get(Calendar.MONTH);
+		month = month + 1;
+		return month;
+	}
+	public static int getDay(String date) {
+		int day = 0;
+		day = getCalendar(date, pattern).get(Calendar.DAY_OF_MONTH);
+		return day;
+	}
+	public static int getYear(String date) {
+		int year = 0;
+		year = getCalendar(date, pattern).get(Calendar.YEAR);
+		return year;
+	}
+	private static Calendar getCalendar(String date, String pattern) {
+		try {
+			SimpleDateFormat dateformat = new SimpleDateFormat(pattern);
+			Date givenDate = dateformat.parse(date);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(givenDate);
+			return calendar;
+		} catch (Exception e) {
+			Logger.out.error(e);
+			Calendar calendar = Calendar.getInstance();
+			return calendar;
+		}
+	}
+
 }
