@@ -24,7 +24,6 @@ import java.util.Map;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.querysuite.security.utility.CsmCache;
 import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
-import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -32,22 +31,22 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author prafull_kadam
- * Query Executor class, for executing SQL on batabase & getting corresponding results. 
+ * Query Executor class, for executing SQL on database & getting corresponding results. 
  * This is abstract class, sql execution implementation for specific type of database should be implemented in the derived class of this class.
  */
 public abstract class AbstractQueryExecutor
 {
 
 	/**
-	 * Holds the reference to coonnection object.
+	 * Holds the reference to connection object.
 	 */
 	protected Connection connection;
 	/**
-	 * Holds refernce to the statement object.
+	 * Holds reference to the statement object.
 	 */
 	protected PreparedStatement stmt = null;
 	/**
-	 * Holds refernce to the resultSet object.
+	 * Holds reference to the resultSet object.
 	 */
 	protected ResultSet resultSet = null;
 	/**
@@ -55,7 +54,7 @@ public abstract class AbstractQueryExecutor
 	 */
 	protected String query;
 	/**
-	 * Holds refernce to the SessionDataBean object.
+	 * Holds reference to the SessionDataBean object.
 	 */
 	protected SessionDataBean sessionDataBean;
 	/**
