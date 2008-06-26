@@ -251,14 +251,6 @@ public class Client extends AbstractClient
                                 "COLLECTION_PROTOCOL_ID")));
         relationConditionsForRelatedTables.put(new Relation(
                 Query.SPECIMEN,
-                Query.SPECIMEN),
-                new RelationCondition(new DataElement(
-                        Query.SPECIMEN, "Identifier"),
-                        new Operator(Operator.EQUAL), new DataElement(
-                                Query.SPECIMEN,
-                                "PARENT_SPECIMEN_ID")));
-        relationConditionsForRelatedTables.put(new Relation(
-                Query.SPECIMEN,
                 Query.SPECIMEN_EVENT_PARAMETERS),
                 new RelationCondition(new DataElement(
                         Query.SPECIMEN, "Identifier"),
@@ -374,14 +366,6 @@ public class Client extends AbstractClient
                         new Operator(Operator.EQUAL), new DataElement(
                                 Query.SPECIMEN,
                                 "COLLECTION_PROTOCOL_ID")));
-        relationConditionsForRelatedTables.put(new Relation(
-                Query.SPECIMEN,
-                Query.SPECIMEN),
-                new RelationCondition(new DataElement(
-                        Query.SPECIMEN, "Identifier"),
-                        new Operator(Operator.EQUAL), new DataElement(
-                                Query.SPECIMEN,
-                                "PARENT_SPECIMEN_ID")));
 
         Query query;
 //        SimpleConditionsNode simpleConditionsNode;
@@ -566,7 +550,7 @@ public class Client extends AbstractClient
 					query.addElementToView(new DataElement(Query.PARTICIPANT,"IDENTIFIER"));
 					query.addElementToView(new DataElement(Query.COLLECTION_PROTOCOL,"IDENTIFIER"));
 	                query.addElementToView(new DataElement(Query.SPECIMEN_COLLECTION_GROUP,"IDENTIFIER"));
-	                query.addElementToView(new DataElement(Query.SPECIMEN,"PARENT_SPECIMEN_ID"));
+	               // query.addElementToView(new DataElement(Query.SPECIMEN,"PARENT_SPECIMEN_ID"));
 	                query.addElementToView(new DataElement(Query.SPECIMEN,"IDENTIFIER"));
 	                
 				
