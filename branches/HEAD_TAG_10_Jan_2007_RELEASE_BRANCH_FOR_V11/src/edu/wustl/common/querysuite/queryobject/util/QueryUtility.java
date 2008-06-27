@@ -45,7 +45,7 @@ public class QueryUtility {
                 IExpression expression = constraints.getExpression(expressionId);
                 for (int index = 0; index < expression.numberOfOperands(); index++) {
                     IExpressionOperand expressionOperand = expression.getOperand(index);
-                    if (!expressionOperand.isSubExpressionOperand()) {
+                    if (expressionOperand instanceof IRule) {
                         IRule rule = (IRule) expressionOperand;
                         Collection<ICondition> conditionList = rule.getConditions();
 
