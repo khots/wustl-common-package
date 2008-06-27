@@ -63,7 +63,6 @@ public class HibernateDAOImpl implements HibernateDAO
         try
         {
             session = DBUtil.currentSession();
-            
            // Logger.out.info("Transaction begin:---------------------");
             transaction = session.beginTransaction();
             
@@ -143,7 +142,7 @@ public class HibernateDAOImpl implements HibernateDAO
       * is not gettting set to true. Because of this roll back is not happining on parent object
       * 
       */
-    	//   if(isUpdated==true) 
+    	if(isUpdated==true) 
         {
 	        try
 	        {
