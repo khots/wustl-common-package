@@ -44,7 +44,7 @@ public class PrivilegeCache
 	private Map<String, BitSet> privilegeMap;
 
 	// CONSTRUCTOR
-	/**
+	/**R
 	 * After initialization of the variables, a call to function 'initialize()'
 	 * is made initialize() uses some ProtectionElementSearchCriterias & gets
 	 * Protection Elements from the database
@@ -203,8 +203,10 @@ public class PrivilegeCache
 				}
 			}
 		}
-
-		return bitSet.get(getBitNumber(privilegeName));
+ 
+		boolean is = bitSet.get(getBitNumber(privilegeName));
+		return is;
+		
 	}
 
 	private BitSet getPrivilegesFromDatabase(String objectId, String privilegeName) 
@@ -298,6 +300,54 @@ public class PrivilegeCache
 		}
 		if (Permissions.IDENTIFIED_DATA_ACCESS.equals(privilegeName)) {
 			return 9;
+		}
+		if(Permissions.DEFINE_ANNOTATION.equals(privilegeName)){
+			return 10;
+		}
+		if(Permissions.DISTRIBUTION.equals(privilegeName)){
+			return 11;
+		}
+		if(Permissions.GENERAL_ADMINISTRATION.equals(privilegeName)){
+			return 12;
+		}
+		if(Permissions.GENERAL_SITE_ADMINISTRATION.equals(privilegeName)){
+			return 13;
+		}
+		if(Permissions.PARTICIPANT_SCG_ANNOTATION.equals(privilegeName)){
+			return 14;
+		}
+		if(Permissions.PHI.equals(privilegeName)){
+			return 15;
+		}
+		if(Permissions.PROTOCOL_ADMINISTRATION.equals(privilegeName)){
+			return 16;
+		}
+		if(Permissions.QUERY.equals(privilegeName)){
+			return 17;
+		}
+		if(Permissions.REGISTRATION.equals(privilegeName)){
+			return 18;
+		}
+		if(Permissions.REPOSITORY_ADMINISTRATION.equals(privilegeName)){
+			return 19;
+		}
+		if(Permissions.SPECIMEN_ACCESSION.equals(privilegeName)){
+			return 20;
+		}
+		if(Permissions.SPECIMEN_ANNOTATION.equals(privilegeName)){
+			return 21;
+		}
+		if(Permissions.SPECIMEN_PROCESSING.equals(privilegeName)){
+			return 22;
+		}
+		if(Permissions.SPECIMEN_STORAGE.equals(privilegeName)){
+			return 23;
+		}
+		if(Permissions.STORAGE_ADMINISTRATION.equals(privilegeName)){
+			return 24;
+		}
+		if(Permissions.USER_PROVISIONING.equals(privilegeName)){
+			return 25;
 		}
 		return 0;
 	}

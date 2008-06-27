@@ -8,12 +8,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -120,6 +130,59 @@ public class Utility
         
     }
     
-    
+    /**
+	 * For MSR changes
+	 */
+
+	public static Map initializeMap()
+	{
+		Map<String, String> privilegeDetailsMap = Variables.privilegeDetailsMap;
+		
+		try 
+		{
+			InputStream inputXmlFile = Utility.class.getClassLoader()
+					.getResourceAsStream("PermissionMapDetails.xml");
+
+			if (inputXmlFile != null) 
+			{
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				Document doc = builder.parse(inputXmlFile);
+
+				Element root = null;
+				root = doc.getDocumentElement();
+
+				if (root == null) {
+					throw new Exception("file can not be read");
+				}
+
+				NodeList nodeList = root.getElementsByTagName("Map");
+
+				int length = nodeList.getLength();
+
+				for (int counter = 0; counter < length; counter++) 
+				{
+					Element element = (Element) (nodeList.item(counter));
+					String key = new String(element.getAttribute("key"));
+					String value = new String(element.getAttribute("value"));
+
+					privilegeDetailsMap.put(key, value);
+				}
+			}
+		} catch (ParserConfigurationException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (SAXException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (IOException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (Exception excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		}
+		
+		return privilegeDetailsMap;
+	}
+
+	
 
 }

@@ -85,6 +85,7 @@ public class SecurityManager implements Permissions {
 	public static HashMap<String, String> rolegroupNamevsId= new HashMap<String, String>();
 	
 	public static final String ADMINISTRATOR_GROUP = "ADMINISTRATOR_GROUP";
+	public static final String SUPER_ADMINISTRATOR_GROUP = "SUPER_ADMINISTRATOR_GROUP";
 	public static final String SUPERVISOR_GROUP = "SUPERVISOR_GROUP";
 	public static final String TECHNICIAN_GROUP = "TECHNICIAN_GROUP";
 	public static final String PUBLIC_GROUP = "PUBLIC_GROUP";
@@ -227,6 +228,8 @@ public class SecurityManager implements Permissions {
     		rolegroupNamevsId.put(Constants.PUBLIC_GROUP_ID,getGroupID(PUBLIC_GROUP));
     		rolegroupNamevsId.put(Constants.TECHNICIAN_GROUP_ID,getGroupID(TECHNICIAN_GROUP));
     		rolegroupNamevsId.put(Constants.SUPERVISOR_GROUP_ID,getGroupID(SUPERVISOR_GROUP));
+    		rolegroupNamevsId.put(Constants.SUPER_ADMINISTRATOR_ROLE, getRoleID(Constants.ROLE_SUPER_ADMINISTRATOR));
+    		rolegroupNamevsId.put(Constants.SUPER_ADMINISTRATOR_GROUP_ID, getRoleID(SUPER_ADMINISTRATOR_GROUP));
         	initialized=true;
 	   	}
     	catch(CSException e)
@@ -444,10 +447,12 @@ public class SecurityManager implements Permissions {
 		UserProvisioningManager userProvisioningManager = null;
 		try {
 			userProvisioningManager = getUserProvisioningManager();
+			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.SUPER_ADMINISTRATOR_ROLE)));
 			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)));
 			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)));
 			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)));
 			roles.add(userProvisioningManager.getRoleById(rolegroupNamevsId.get(Constants.PUBLIC_ROLE)));
+			
 		} catch (CSException e) {
 			Logger.out.debug("Unable to get roles: Exception: "
 					+ e.getMessage());
@@ -1597,7 +1602,8 @@ public class SecurityManager implements Permissions {
 //	e.printStackTrace();
 //	}
 //	}
-
+	
+	
 }
 
 

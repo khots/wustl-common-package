@@ -4,6 +4,9 @@ package edu.wustl.common.util.dbManager;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
+import edu.wustl.common.security.exceptions.SMException;
+import edu.wustl.common.util.logger.Logger;
+
 /**
  * @author kapil_kaveeshwar
  *
@@ -33,6 +36,16 @@ public class DAOException extends Exception
 	public DAOException(Exception ex)
 	{
 		this("", ex);
+	}
+	
+	public DAOException(SMException e)
+	{
+		this("", e);
+		Logger.out.error("Exception in Authorization: " + e.getMessage(), e);
+		String message = "Security Exception: " + e.getMessage();
+		if (e.getCause() != null)
+			message = message + " : " + e.getCause().getMessage();
+		this.setMessage(message);
 	}
 
 	/**

@@ -26,10 +26,12 @@ import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
+import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.Role;
 import gov.nih.nci.security.exceptions.CSException;
+import gov.nih.nci.security.exceptions.CSTransactionException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -485,5 +487,45 @@ public class PrivilegeManager
 	public List<String> getEagerObjects() {
 		return Collections.unmodifiableList(eagerObjects);
 	}
+	
+	public void createRole(String roleName,Set<String>privileges) throws CSException, SMException
+	{
+		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
+		Role role=null;
+		try{ 
+		    role = privilegeUtility.getRole(roleName);
+		}catch(Exception e){
+			role = new Role();
+			role.setName(roleName);
+			role.setDesc("Dynamically created role");
+			role.setApplication(privilegeUtility.getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
+			Set<Privilege> privilegeList = new HashSet<Privilege>();
+			for (String privilegeId : privileges)
+			{
+				Privilege privilege = privilegeUtility.getUserProvisioningManager().getPrivilegeById(privilegeId);
+				privilegeList.add(privilege);
+			}
+			role.setPrivileges(privilegeList);
+			UserProvisioningManager userProvisioningManager = privilegeUtility.getUserProvisioningManager(); 
+			userProvisioningManager.createRole(role);
+		}
+		 
+	}
+	
+	public void insertPrivileges(List<Integer> userIdsList,List<Integer> entityIdsList,String protectionGrpName,Set<String>privileges,String roleName) throws CSTransactionException, CSException, SMException
+	{
+		ProtectionGroup pg ;
+		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
+		pg = privilegeUtility.getProtectionGroup(protectionGrpName);
+		if(pg !=null)
+		{
+			pg = new ProtectionGroup();
+		pg.setProtectionGroupName(protectionGrpName);
+		
+		}
+		
+	}
+	
+	
 
 }

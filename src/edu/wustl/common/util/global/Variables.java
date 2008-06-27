@@ -44,4 +44,7 @@ public class Variables
      public static Map<String,String> entityCPSqlMap = new HashMap<String, String>();
      public static String mainProtocolObject  = new String();
      public static List<String> queryReadDeniedObjectList = new ArrayList<String>();
+     
+     // Ravi : for Multi Site Rep. changes
+     public static Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
 }
