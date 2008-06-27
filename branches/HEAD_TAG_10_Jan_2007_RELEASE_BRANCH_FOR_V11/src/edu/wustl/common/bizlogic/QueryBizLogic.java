@@ -323,18 +323,6 @@ public class QueryBizLogic extends DefaultBizLogic
 		identifiedData.add("SURGICAL_PATHOLOGICAL_NUMBER");
 		Client.identifiedDataMap.put(Query.CLINICAL_REPORT, identifiedData);
 
-		//For ClinicalStudyRegistration
-		identifiedData = new Vector();
-		identifiedData.add("REGISTRATION_DATE");
-		Client.identifiedDataMap.put(Query.CLINICAL_STUDY_REGISTRATION, identifiedData);
-		
-		//For Event Entry
-		identifiedData = new Vector();
-		identifiedData.add("ENCOUNTER_DATE");
-		Client.identifiedDataMap.put(Query.CLINICAL_STUDY_EVENT_ENTRY, identifiedData);
-		
-		
-		
 		//        Client.identifiedClassNames.add(Participant.class.getName());
 		//        Client.identifiedClassNames.add(CollectionProtocolRegistration.class.getName());
 		//        Client.identifiedClassNames.add(SpecimenCollectionGroup.class.getName());
