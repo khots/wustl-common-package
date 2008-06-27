@@ -52,6 +52,8 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
      * Activity Status.
      */
     protected String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
+    
+    protected String objectId = "";
 
     /**
      * @return Returns the mutable.
@@ -309,4 +311,18 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	 * @param addObjectIdentifier - Identifier of newly added object by AddNew operation
 	 */
 	public void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier){}
+
+	
+	public String getObjectId()
+	{
+		return objectId;
+	}
+
+	
+	public void setObjectId(String objectId)
+	{
+		this.objectId = objectId;
+	}
+	
+	
 }

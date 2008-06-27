@@ -1,6 +1,8 @@
 
 package edu.wustl.common.action;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,6 +12,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.common.dynamicextensions.util.global.Variables;
+import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.util.Permissions;
@@ -41,14 +46,17 @@ public abstract class SecureAction extends BaseAction
      */
     protected ActionForward executeAction(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception
-    {
-        if (isAuthorizedToExecute(request))
-        {
+    {  
+    	
+        
         	//call to check AddNew operation
             checkAddNewOperation(request);
+            ActionForward ac = executeSecureAction(mapping, form, request, response);
             
-            return executeSecureAction(mapping, form, request, response);
-        }
+            if (isAuthorizedToExecute(request,form))
+            {
+            	return ac;
+            } 	
 
         Logger.out.debug("The Access was denied for the User "+ getUserLoginName(request)
                 + "to Execute this Action "+this.getClass().getName());
@@ -77,27 +85,16 @@ public abstract class SecureAction extends BaseAction
      * @throws Exception
      */
     protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
-    {
-    	Long startTimeToGetPrivilegeCache = System.currentTimeMillis();
+    { 
     	
-		// To get privilegeCache through 
-		// Singleton instance of PrivilegeManager, requires User LoginName		
-    	PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(getUserLoginName(request));
-		Long endTimeToGetPrivilegeCache = System.currentTimeMillis();
-		Long timeToGetPrivilegeCache = endTimeToGetPrivilegeCache - startTimeToGetPrivilegeCache;
-		
-		Long startTimeToCheckPrivilege = System.currentTimeMillis();
-		// Call to SecurityManager.isAuthorizedToExecuteAction bypassed &
-		// instead, call redirected to privilegeCache.hasPrivilege		
-		boolean isAuthorized = privilegeCache.hasPrivilege(getObjectIdForSecureMethodAccess(request), Permissions.EXECUTE);
-		Long endTimeToCheckPrivilege = System.currentTimeMillis();	
-		Long timeToCheckPrivilege = endTimeToCheckPrivilege - startTimeToCheckPrivilege;
-		
-		return isAuthorized;
-		
-       // return SecurityManager.getInstance(this.getClass())
-         //       .isAuthorizedToExecuteAction(getUserLoginName(request),getObjectIdForSecureMethodAccess(request));
+    		String objectId = (String)request.getAttribute("OBJECT_ID");
+    		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+    		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(getUserLoginName(request));
+    		
+    		boolean isAuthorized = privilegeCache.hasPrivilege(objectId, getPrivilegeName(getObjectIdForSecureMethodAccess(request)));
+    		
+    		return isAuthorized;
+    		
     }
     
     /**
@@ -109,6 +106,12 @@ public abstract class SecureAction extends BaseAction
     protected String getObjectIdForSecureMethodAccess(HttpServletRequest request)
     {
         return this.getClass().getName();
+    }
+    
+    protected String getPrivilegeName(String actionClassName)
+    {
+    	String privilegeName = Variables.privilegeDetailsMap.get(actionClassName);
+    	return privilegeName;
     }
 
     /**
@@ -123,4 +126,37 @@ public abstract class SecureAction extends BaseAction
      */
     protected abstract ActionForward executeSecureAction(ActionMapping mapping,
             ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    
+    protected String getObjectId(AbstractActionForm form)
+    {
+    	return null;
+    }
+    
+    private boolean isAuthorizedToExecute (HttpServletRequest request,ActionForm form) throws Exception
+    {  
+    	String baseObjectId = null;
+    	if (form instanceof AbstractActionForm)
+    	{
+		AbstractActionForm abstractForm = (AbstractActionForm) form;
+		baseObjectId = getObjectId(abstractForm);
+    	}
+    	
+		request.setAttribute("OBJECT_ID", baseObjectId);
+		String objectId = getObjectIdForSecureMethodAccess(request);
+		if (baseObjectId != null)
+		{
+			return isAuthorizedToExecute(request);
+		}
+		else if (Variables.privilegeDetailsMap.get(objectId) != null && Variables.privilegeDetailsMap.get(objectId).equals(
+				Permissions.GENERAL_ADMINISTRATION))
+		{
+			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
+					Constants.SESSION_DATA);
+			return sessionDataBean.isAdmin();
+		}
+		else
+		{
+			return true;
+		}
+	}
 }

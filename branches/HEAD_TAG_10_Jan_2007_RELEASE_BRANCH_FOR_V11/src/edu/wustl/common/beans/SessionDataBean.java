@@ -29,8 +29,19 @@ public class SessionDataBean
     private String ipAddress=new String();
     private Long userId = null;
     private boolean securityRequired=new Boolean(false);
+    private boolean isAdmin = false;
     
-    /**
+    
+	public boolean isAdmin()
+	{
+		return isAdmin;
+	}
+	
+	public void setAdmin(boolean isAdmin)
+	{
+		this.isAdmin = isAdmin;
+	}
+	/**
      * @return Returns the userName.
      */
     public String getUserName()

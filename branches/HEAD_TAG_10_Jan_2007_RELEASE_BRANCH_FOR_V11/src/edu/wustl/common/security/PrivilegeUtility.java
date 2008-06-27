@@ -18,11 +18,13 @@ import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.Application;
 import gov.nih.nci.security.authorization.domainobjects.Group;
+import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroupRoleContext;
 import gov.nih.nci.security.dao.ApplicationSearchCriteria;
 import gov.nih.nci.security.dao.GroupSearchCriteria;
+import gov.nih.nci.security.dao.PrivilegeSearchCriteria;
 import gov.nih.nci.security.dao.ProtectionGroupSearchCriteria;
 import gov.nih.nci.security.dao.RoleSearchCriteria;
 import gov.nih.nci.security.dao.SearchCriteria;
@@ -639,6 +641,13 @@ public class PrivilegeUtility
 		return role;
 	}
 	
+	public Set<Privilege> getRolePrivileges(String id) throws CSObjectNotFoundException, CSException
+	{
+		
+	  return getUserProvisioningManager().getPrivileges(id);
+		
+	}
+	
 	
 	/**
 	 * This method returns protection group corresponding to the naem passed. In
@@ -993,5 +1002,20 @@ public class PrivilegeUtility
 			throw new SMException(
 					"Could not assign user role to protection group", csex);
 		}
+	}
+	 
+	public List<Privilege> getPrivilegeList() throws CSException
+	{
+		Privilege privilege = new Privilege();
+		privilege.setName("*");
+		PrivilegeSearchCriteria privilegeSearchCriteria = new PrivilegeSearchCriteria(privilege);
+		List<Privilege> prvilegeList =  getUserProvisioningManager().getObjects(privilegeSearchCriteria);
+		return prvilegeList;
+	}
+	
+	public Privilege getPrivilegeById(String privilegeId) throws CSException
+	{ 
+		return getUserProvisioningManager().getPrivilegeById(privilegeId);
+		
 	}
 }

@@ -492,7 +492,7 @@ public class Constants
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10,50,100,500,Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
 	public static final String ISCHECKPERMISSION="isToCheckCSMPermission";
-	
+	 
 	public static final int HASH_PRIME = 7;
 	public static final String QUERY_SQL = "querySQL";
 
@@ -517,7 +517,9 @@ public class Constants
     public static final String TECHNICIAN = "Technician";
 	public static final String SUPERVISOR = "Supervisor";
 	public static final String SCIENTIST = "Scientist";
+	 public static final String ROLE_SUPER_ADMINISTRATOR="SuperAdministrator";
 	
+	public static final String SUPER_ADMINISTRATOR_ROLE = "SUPER_ADMINISTRATOR_ROLE";
 	public static final String ADMINISTRATOR_ROLE = "ADMINISTRATOR_ROLE";
 	public static final String SUPERVISOR_ROLE = "SUPERVISOR_ROLE";
 	public static final String TECHNICIAN_ROLE = "TECHNICIAN_ROLE";
@@ -526,6 +528,7 @@ public class Constants
 	public static final String SUPERVISOR_GROUP_ID = "SUPERVISOR_GROUP_ID";
 	public static final String TECHNICIAN_GROUP_ID = "TECHNICIAN_GROUP_ID";
 	public static final String PUBLIC_GROUP_ID = "PUBLIC_GROUP_ID";
+	public static final String SUPER_ADMINISTRATOR_GROUP_ID = "SUPER_ADMINISTRATOR_GROUP_ID";
 	public static final String APPLICATION_CLINPORTAL = "clinportal";
 
 public static final String hashedOut = "##";
