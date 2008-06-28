@@ -722,8 +722,8 @@ public class SecurityManager implements Permissions {
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 		List list = userProvisioningManager.getObjects(searchCriteria);
 		if (null == list || list.size() <= 0) {
-			Logger.out.debug("Search resulted in no results");
-			throw new SMException("Search resulted in no results");
+			// Logger.out.debug("Search resulted in no results");
+			// throw new SMException("Search resulted in no results");
 		}
 		return list;
 	}

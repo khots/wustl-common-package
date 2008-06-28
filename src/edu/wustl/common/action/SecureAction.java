@@ -147,10 +147,10 @@ public abstract class SecureAction extends BaseAction
 		{
 			return isAuthorizedToExecute(request);
 		}
-		else if (Variables.privilegeDetailsMap.get(objectId) != null && Variables.privilegeDetailsMap.get(objectId).equals(
-				Permissions.GENERAL_ADMINISTRATION) ||Variables.privilegeDetailsMap.get(objectId).equals(
-						Permissions.REPOSITORY_ADMINISTRATION)||Variables.privilegeDetailsMap.get(objectId).equals(
-								Permissions.PROTOCOL_ADMINISTRATION))
+		else if (Variables.privilegeDetailsMap.get(objectId) != null && 
+				 (Variables.privilegeDetailsMap.get(objectId).equals(Permissions.GENERAL_ADMINISTRATION) ||
+				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.REPOSITORY_ADMINISTRATION)||
+				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.PROTOCOL_ADMINISTRATION)))
 		{
 			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 					Constants.SESSION_DATA);
