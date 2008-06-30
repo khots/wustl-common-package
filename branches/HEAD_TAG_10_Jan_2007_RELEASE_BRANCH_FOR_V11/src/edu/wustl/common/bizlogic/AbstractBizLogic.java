@@ -12,7 +12,6 @@ package edu.wustl.common.bizlogic;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import titli.controller.Name;
@@ -229,7 +228,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		try
 		{
 	        dao.openSession(sessionDataBean);
-	        validateAndInsert(obj, sessionDataBean, isInsertOnly, dao);
+	    	validate(obj, dao, Constants.ADD);	        
+			preInsert(obj, dao, sessionDataBean);
+	        insert(obj, sessionDataBean, isInsertOnly, dao);
 	        dao.commit();
 	        //refresh the index for titli search
 	        //refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
@@ -283,6 +284,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     	try
     	{
     		dao.openSession(sessionDataBean);
+    		preInsert(objCollection, dao, sessionDataBean);
     		insertMultiple(objCollection,dao,sessionDataBean);
 	    	dao.commit();
 	    	postInsert(objCollection, dao, sessionDataBean);
@@ -333,7 +335,8 @@ public abstract class AbstractBizLogic implements IBizLogic
     	while(domainObjectItr.hasNext())
 	    {
 	    	Object abstractDomainObject = domainObjectItr.next();
-	    	validateAndInsert(abstractDomainObject, sessionDataBean, false, dao);
+	    	validate(abstractDomainObject, dao, Constants.ADD);	
+	    	insert(abstractDomainObject, sessionDataBean, false, dao);
 		}
     }
 	/**
@@ -344,11 +347,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws DAOException
 	 * @throws UserNotAuthorizedException
 	 */
-	private void validateAndInsert(Object obj, SessionDataBean sessionDataBean,
+	private void insert(Object obj, SessionDataBean sessionDataBean,
 			boolean isInsertOnly, AbstractDAO dao) throws DAOException, UserNotAuthorizedException
 	{
-		validate(obj, dao, Constants.ADD);	        
-		preInsert(obj, dao, sessionDataBean);
 		if(isInsertOnly)
 		{
 			insert(obj,dao);	        	
