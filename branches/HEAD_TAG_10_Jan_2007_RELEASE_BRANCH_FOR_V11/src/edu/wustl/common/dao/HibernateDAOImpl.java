@@ -221,7 +221,15 @@ public class HibernateDAOImpl implements HibernateDAO
                     	
             			// Call to SecurityManager.isAuthorized bypassed &
             			// instead, call redirected to privilegeCache.hasPrivilege                		
-                		isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.CREATE);
+                		if (!isObjectCpBased(obj)) 
+                		{
+							isAuthorized = privilegeCache.hasPrivilege(obj
+									.getClass(), Permissions.CREATE);
+						} else 
+						{
+							isAuthorized = true;
+						}
+
                 		
 //                    	isAuthorized = SecurityManager.getInstance(this.getClass())
 //						        .isAuthorized(userName,
@@ -257,6 +265,34 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         
     }
+    
+    
+    private boolean isObjectCpBased(Object obj) 
+    {
+		if (obj != null
+				&& (obj.getClass().getName().equalsIgnoreCase(
+						"edu.wustl.catissuecore.domain.Participant") || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.Specimen") || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier") ||  obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.CollectionProtocolRegistration") || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.SpecimenCollectionGroup") || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.SpecimenCollection") || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.SpecimenCharacteristics"))) {
+			return true;
+		} 
+		else 
+		{
+			return false;
+		}
+	}
+
+    
     
     private DAOException handleError(String message, Exception hibExp)
     {
@@ -363,6 +399,11 @@ public class HibernateDAOImpl implements HibernateDAO
 		boolean isAuthorized;
 		String userName = sessionDataBean.getUserName();
 		
+		if(isObjectCpBased(obj))
+		{
+			return true;
+		}
+
 		// To get privilegeCache through 
 		// Singleton instance of PrivilegeManager, requires User LoginName    	
 		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
