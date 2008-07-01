@@ -221,7 +221,7 @@ public class HibernateDAOImpl implements HibernateDAO
                     	
             			// Call to SecurityManager.isAuthorized bypassed &
             			// instead, call redirected to privilegeCache.hasPrivilege                		
-                		if (!isObjectCpBased(obj)) 
+                		if (!isObjectCpOrSiteBased(obj)) 
                 		{
 							isAuthorized = privilegeCache.hasPrivilege(obj
 									.getClass(), Permissions.CREATE);
@@ -267,7 +267,7 @@ public class HibernateDAOImpl implements HibernateDAO
     }
     
     
-    private boolean isObjectCpBased(Object obj) 
+    private boolean isObjectCpOrSiteBased(Object obj) 
     {
 		if (obj != null
 				&& (obj.getClass().getName().equalsIgnoreCase(
@@ -283,7 +283,12 @@ public class HibernateDAOImpl implements HibernateDAO
 						.getClass().getName().equalsIgnoreCase(
 								"edu.wustl.catissuecore.domain.SpecimenCollection") || obj
 						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.SpecimenCharacteristics"))) {
+								"edu.wustl.catissuecore.domain.SpecimenCharacteristics") || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.StorageContainer")  || obj
+						.getClass().getName().equalsIgnoreCase(
+								"edu.wustl.catissuecore.domain.Capacity"))) 
+		{
 			return true;
 		} 
 		else 
@@ -399,7 +404,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		boolean isAuthorized;
 		String userName = sessionDataBean.getUserName();
 		
-		if(isObjectCpBased(obj))
+		if(isObjectCpOrSiteBased(obj))
 		{
 			return true;
 		}
