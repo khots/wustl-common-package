@@ -517,7 +517,7 @@ public class Constants
     public static final String TECHNICIAN = "Technician";
 	public static final String SUPERVISOR = "Supervisor";
 	public static final String SCIENTIST = "Scientist";
-	 public static final String ROLE_SUPER_ADMINISTRATOR="SuperAdministrator";
+	public static final String ROLE_SUPER_ADMINISTRATOR="SUPERADMINISTRATOR";
 	
 	public static final String SUPER_ADMINISTRATOR_ROLE = "SUPER_ADMINISTRATOR_ROLE";
 	public static final String ADMINISTRATOR_ROLE = "ADMINISTRATOR_ROLE";
