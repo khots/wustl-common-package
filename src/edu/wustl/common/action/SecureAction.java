@@ -154,7 +154,21 @@ public abstract class SecureAction extends BaseAction
 		{
 			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 					Constants.SESSION_DATA);
-			return sessionDataBean.isAdmin();
+			if(sessionDataBean == null)
+			{
+				if(request.getAttribute("pageOf").toString().equalsIgnoreCase("pageOfSignUp"))
+		    	{
+		    	    return true;
+		    	}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return sessionDataBean.isAdmin();
+			}
 		}
 		else
 		{
