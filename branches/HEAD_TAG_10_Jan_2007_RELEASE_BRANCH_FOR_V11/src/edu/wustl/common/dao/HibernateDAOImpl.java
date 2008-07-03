@@ -285,10 +285,6 @@ public class HibernateDAOImpl implements HibernateDAO
 						.getClass().getName().equalsIgnoreCase(
 								"edu.wustl.catissuecore.domain.SpecimenCharacteristics") || obj
 						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.StorageContainer")  || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.Capacity")  || obj
-						.getClass().getName().equalsIgnoreCase(
 								"edu.wustl.catissuecore.domain.CollectionEventParameters")  || obj
 						.getClass().getName().equalsIgnoreCase(
 								"edu.wustl.catissuecore.domain.ReceivedEventParameters"))) 
