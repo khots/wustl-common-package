@@ -130,9 +130,7 @@ public class DBUtil
 		//Open a new Session, if this Thread has none yet
 		if (s == null)
 		{
-			InterceptorTest interceptorTest =new InterceptorTest();
-			s = m_sessionFactory.openSession(interceptorTest);
-		
+			s = m_sessionFactory.openSession();
 			try
 			{
 				s.connection().setAutoCommit(false);
