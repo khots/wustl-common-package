@@ -13,14 +13,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.hibernate.Hibernate;
+
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -29,7 +30,7 @@ public class MapDataParser
 {
 	private String packageName = "";
 	private Map bigMap = new HashMap();
-	private Collection dataList = new HashSet();	
+	private Collection dataList = new LinkedHashSet();	
 	
 	public MapDataParser(String packageName)
 	{
