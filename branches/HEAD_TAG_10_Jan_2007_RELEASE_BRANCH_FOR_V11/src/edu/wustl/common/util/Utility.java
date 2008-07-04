@@ -809,5 +809,35 @@ public class Utility
 			return calendar;
 		}
 	}
+	public static String getDisplayLabelForUnderscore(String objectName)
+	{
+		String attrLabel = "";
+		int len = objectName.length();
+		for (int i = 0; i < len; i++)
+		{
+			char attrChar = objectName.charAt(i);
+			int asciiValueCurrent = attrChar;
+			
+			if(asciiValueCurrent >= 65 && asciiValueCurrent <= 90){
+				if(i==0||objectName.charAt(i-1)==95){
+					attrLabel = attrLabel + "" + attrChar;
+				}
+				else{
+					asciiValueCurrent= asciiValueCurrent+32;
+					attrLabel = attrLabel + "" +(char) asciiValueCurrent;
+				}
+			}
+			else if(asciiValueCurrent==95)
+			{
+				if(i==0||i==len-1){
+					continue;
+				}
+				else{
+					attrLabel = attrLabel + " " ;
+				}
+			}
+		}
+		return attrLabel;
+	}
 
 }
