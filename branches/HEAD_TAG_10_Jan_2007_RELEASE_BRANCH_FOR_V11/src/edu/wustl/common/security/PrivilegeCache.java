@@ -302,52 +302,52 @@ public class PrivilegeCache
 			return 9;
 		}
 		if(Permissions.DEFINE_ANNOTATION.equals(privilegeName)){
-			return 10;
+			return 17;
 		}
 		if(Permissions.DISTRIBUTION.equals(privilegeName)){
-			return 11;
+			return 21;
 		}
 		if(Permissions.GENERAL_ADMINISTRATION.equals(privilegeName)){
-			return 12;
+			return 29;
 		}
 		if(Permissions.GENERAL_SITE_ADMINISTRATION.equals(privilegeName)){
-			return 13;
+			return 28;
 		}
 		if(Permissions.PARTICIPANT_SCG_ANNOTATION.equals(privilegeName)){
-			return 14;
+			return 24;
 		}
 		if(Permissions.PHI.equals(privilegeName)){
-			return 15;
+			return 23;
 		}
 		if(Permissions.PROTOCOL_ADMINISTRATION.equals(privilegeName)){
 			return 16;
 		}
 		if(Permissions.QUERY.equals(privilegeName)){
-			return 17;
+			return 22;
 		}
 		if(Permissions.REGISTRATION.equals(privilegeName)){
 			return 18;
 		}
 		if(Permissions.REPOSITORY_ADMINISTRATION.equals(privilegeName)){
-			return 19;
+			return 14;
 		}
 		if(Permissions.SPECIMEN_ACCESSION.equals(privilegeName)){
 			return 20;
 		}
 		if(Permissions.SPECIMEN_ANNOTATION.equals(privilegeName)){
-			return 21;
+			return 25;
 		}
 		if(Permissions.SPECIMEN_PROCESSING.equals(privilegeName)){
-			return 22;
+			return 26;
 		}
 		if(Permissions.SPECIMEN_STORAGE.equals(privilegeName)){
-			return 23;
+			return 27;
 		}
 		if(Permissions.STORAGE_ADMINISTRATION.equals(privilegeName)){
-			return 24;
+			return 15;
 		}
 		if(Permissions.USER_PROVISIONING.equals(privilegeName)){
-			return 25;
+			return 13;
 		}
 		return 0;
 	}

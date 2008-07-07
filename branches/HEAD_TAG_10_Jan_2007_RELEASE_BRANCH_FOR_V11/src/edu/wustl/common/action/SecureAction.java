@@ -151,6 +151,7 @@ public abstract class SecureAction extends BaseAction
 				 (Variables.privilegeDetailsMap.get(objectId).equals(Permissions.GENERAL_ADMINISTRATION) ||
 				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.REPOSITORY_ADMINISTRATION)||
 				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.STORAGE_ADMINISTRATION) ||
+				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.REGISTRATION) ||
 				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.PROTOCOL_ADMINISTRATION)))
 		{
 			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
