@@ -399,7 +399,7 @@ public class CsmCacheManager
 		{
 			hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean,
 					entityName, entityId,
-					Permissions.IDENTIFIED_DATA_ACCESS
+					Permissions.PHI
 					);
 
 			cache.addNewObjectInIdentifiedDataAccsessMap(entityId,
