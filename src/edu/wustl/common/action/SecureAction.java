@@ -88,11 +88,22 @@ public abstract class SecureAction extends BaseAction
     { 
     	
     		String objectId = (String)request.getAttribute("OBJECT_ID");
-    		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-    		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(getUserLoginName(request));
+    		String [] objArray = objectId.split("_");
+    		String baseString = objArray[0];
+    		String objId = "";
+    		boolean isAuthorized = false;
+    		for (int i = 1 ; i < objArray.length;i++)
+    		{
+    			objId = baseString + "_" + objArray[i];
+    			PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+    			PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(getUserLoginName(request));
     		
-    		boolean isAuthorized = privilegeCache.hasPrivilege(objectId, getPrivilegeName(getObjectIdForSecureMethodAccess(request)));
-    		
+    			isAuthorized = privilegeCache.hasPrivilege(objId, getPrivilegeName(getObjectIdForSecureMethodAccess(request)));
+    			if (isAuthorized)
+    			{
+    				break;
+    			}
+    		}
     		return isAuthorized;
     		
     }
