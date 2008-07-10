@@ -29,7 +29,8 @@ public interface Permissions {
 	public static final String SPECIMEN_ACCESSION = "SPECIMEN_ACCESSION";
 	public static final String DISTRIBUTION = "DISTRIBUTION";
 	public static final String QUERY = "QUERY";
-	public static final String PHI = "PHI";
+	// public static final String PHI = "PHI";
+	public static final String PHI = "PHI_ACCESS";
 	public static final String PARTICIPANT_SCG_ANNOTATION = "PARTICIPANT_SCG_ANNOTATION";
 	public static final String SPECIMEN_ANNOTATION = "SPECIMEN_ANNOTATION";
 	public static final String SPECIMEN_PROCESSING = "SPECIMEN_PROCESSING";
