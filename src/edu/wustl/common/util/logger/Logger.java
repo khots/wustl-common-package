@@ -10,9 +10,13 @@
  */
 package edu.wustl.common.util.logger;
 
+import java.io.InputStream;
+import java.net.URL;
+
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.spi.LoggerFactory;
 
 import edu.wustl.common.util.CVSTagReader;
 import edu.wustl.common.util.global.ApplicationProperties;
@@ -31,6 +35,15 @@ public final class Logger
 	 */
 	public static org.apache.log4j.Logger out;
 	
+	static {
+		
+		URL url  = Logger.class.getClassLoader().getResource("log4j.properties");
+		if(url != null)
+		{
+			PropertyConfigurator.configure(url);			
+		}
+
+	}
     /**
      * Configures the logger with the properties of the specified category name in the log4j.xml file.
      * The category should be present in the log4j.xml file in the JBOSS_HOME/server/default/conf folder.
@@ -40,7 +53,7 @@ public final class Logger
 	{
 		if(out==null)
 		{
-		    out=org.apache.log4j.Logger.getLogger(categoryName);
+		    out=getLogger(Logger.class);
 		}
 	}
     /**
@@ -61,7 +74,7 @@ public final class Logger
     {
         if (out == null)
         {
-            out=org.apache.log4j.Logger.getLogger("");
+            out=org.apache.log4j.Logger.getLogger("Catissue");
         }
     }
     
