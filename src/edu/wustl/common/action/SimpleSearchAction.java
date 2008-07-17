@@ -226,26 +226,26 @@ public class SimpleSearchAction extends BaseAction
 		/**
 		 * Constants.SWITCHSECURIRY is removed from if statement
 		 */
-		if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE))
+		
+		simpleQueryBizLogic.createQueryResultObjectData(fromTables, queryResultObjectDataMap,
+				query);
+
+		List identifierColumnNames = new ArrayList();
+		identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(
+				queryResultObjectDataMap, query);
+		simpleQueryBizLogic.setDependentIdentifiedColumnIds(queryResultObjectDataMap, query);
+
+		//Aarti: adding other columns to the result view
+		//			for (int i = 0; i < columnNames.size(); i++) {
+		//				identifierColumnNames.add((String) columnNames.get(i));
+		//			}
+
+		for (int i = 0; i < identifierColumnNames.size(); i++)
 		{
-
-			simpleQueryBizLogic.createQueryResultObjectData(fromTables, queryResultObjectDataMap,
-					query);
-
-			List identifierColumnNames = new ArrayList();
-			identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(
-					queryResultObjectDataMap, query);
-			simpleQueryBizLogic.setDependentIdentifiedColumnIds(queryResultObjectDataMap, query);
-
-			//Aarti: adding other columns to the result view
-			//			for (int i = 0; i < columnNames.size(); i++) {
-			//				identifierColumnNames.add((String) columnNames.get(i));
-			//			}
-
-			for (int i = 0; i < identifierColumnNames.size(); i++)
-			{
-				columnNames.add((String) identifierColumnNames.get(i));
-			}
+			columnNames.add((String) identifierColumnNames.get(i));
+		}
+		if(isSecureExecute)
+		{
 			
 			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
 			hasConditionOnIdentifiedField = query.hasConditionOnIdentifiedField();
@@ -258,10 +258,19 @@ public class SimpleSearchAction extends BaseAction
 			 *  PagenatedResultData object will contain the query results  
 			 */
 			pagenatedResultData = query.execute(getSessionData(request), isSecureExecute, queryResultObjectDataMap, hasConditionOnIdentifiedField,0 ,recordsPerPage);
+		}
+		else
+		{
+			isSecureExecute = false;
+			hasConditionOnIdentifiedField = false;
+			pagenatedResultData = query.execute(getSessionData(request), false, null, false,0,recordsPerPage);
+		}
+	 	if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE))
+		{
 			/**
 			 * Added by Vijay. Check is added to decide hyperlink should be displayed or not, based on the variable isSecurityRequired of session dataBean
 			 */
-			//if(!isSecureExecute)
+			if(!isSecureExecute)
 			{
 				/**
 				 * Name : Prafull_kadam
@@ -303,10 +312,7 @@ public class SimpleSearchAction extends BaseAction
 			 *  PagenatedResultData object will contain the query results  
 			 */
 
-			isSecureExecute = false;
-			hasConditionOnIdentifiedField = false;
-
-			pagenatedResultData = query.execute(getSessionData(request), false, null, false,0,recordsPerPage);
+			
 		}
 
 		// List of results the query will return on execution.
