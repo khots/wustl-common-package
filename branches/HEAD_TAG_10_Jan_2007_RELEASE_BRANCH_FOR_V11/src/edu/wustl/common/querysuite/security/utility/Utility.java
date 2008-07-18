@@ -25,17 +25,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IQuery;
-import edu.wustl.common.querysuite.queryobject.util.QueryUtility;
 import edu.wustl.common.querysuite.security.PrivilegeType;
+import edu.wustl.common.querysuite.utils.QueryUtility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -71,7 +69,7 @@ public class Utility
      */
     public static boolean isConditionOnIdentifiedField(IQuery query)
     {
-        Map<IExpressionId, Collection<ICondition>> allSelectedConditions = QueryUtility
+        Map<IExpression, Collection<ICondition>> allSelectedConditions = QueryUtility
                 .getAllSelectedConditions(query);
         Collection<Collection<ICondition>> values = allSelectedConditions.values();
         Boolean trueValue = new Boolean(true);

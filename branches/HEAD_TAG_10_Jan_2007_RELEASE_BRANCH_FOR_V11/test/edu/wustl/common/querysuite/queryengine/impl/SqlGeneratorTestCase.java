@@ -15,12 +15,11 @@ import edu.wustl.common.querysuite.EntityManagerMock;
 import edu.wustl.common.querysuite.QueryGeneratorMock;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IOutputTerm;
-import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
+import edu.wustl.common.querysuite.queryobject.IOutputTerm;
 import edu.wustl.common.querysuite.queryobject.IQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
@@ -164,7 +163,7 @@ public class SqlGeneratorTestCase extends TestCase {
             IQueryEntity participantQueryEntity = QueryObjectFactory.createQueryEntity(participantEntity);
             IExpression expression = QueryGeneratorMock.creatParticipantExpression1(participantQueryEntity);
             JoinGraph joinGraph = new JoinGraph();
-            joinGraph.addIExpressionId(expression.getExpressionId());
+            joinGraph.addIExpression(expression);
             generator.setJoinGraph(joinGraph);
             String SQL = generator.getWherePartSQL(expression, null, false);
             // System.out.println("testParticpiantExpression:"+ SQL);
@@ -196,7 +195,7 @@ public class SqlGeneratorTestCase extends TestCase {
         IConstraints constraints = query.getConstraints();
         IExpression rootExpression;
         try {
-            rootExpression = constraints.getExpression(constraints.getRootExpressionId());
+            rootExpression = constraints.getRootExpression();
             generator.setJoinGraph((JoinGraph) constraints.getJoinGraph());
 
             generator.buildQuery(query);
@@ -541,7 +540,7 @@ public class SqlGeneratorTestCase extends TestCase {
      */
     public void testGetAliasName1() {
         generator.aliasNameMap = new HashMap<String, String>();
-        generator.aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+        generator.aliasAppenderMap = new HashMap<IExpression, Integer>();
         IConstraints constraints = QueryObjectFactory.createConstraints();
         try {
             // Creating entity with name
@@ -552,26 +551,26 @@ public class SqlGeneratorTestCase extends TestCase {
             IQueryEntity cprQueryEntity = QueryObjectFactory.createQueryEntity(cprEntity);
 
             IExpression expressionOne = constraints.addExpression(cprQueryEntity);
-            generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
+            generator.aliasAppenderMap.put(expressionOne, new Integer(1));
             String aliasNameExpected1 = generator.getAliasName(expressionOne);
             // System.out.println(aliasNameExpected1);
             assertTrue("The length of alias exceeds 30 characters!!!", aliasNameExpected1.length() <= 30);
-            assertEquals("Incorrect AliasName returned from getAliasName method!!!",
-                    "CollectionProtocolRegistr_1", aliasNameExpected1);
+            assertEquals("Incorrect AliasName returned from getAliasName method!!!", "CollectionProtocolRegistr_1",
+                    aliasNameExpected1);
 
             // Creating another entity with name
             // "edu.wustl.catissuecore.domain.CollectionProtocolRegistration"
             // because of different ExpressionId the alias will different.
             IExpression expressionTwo = constraints.addExpression(cprQueryEntity);
-            generator.aliasAppenderMap.put(expressionTwo.getExpressionId(), new Integer(2));
+            generator.aliasAppenderMap.put(expressionTwo, new Integer(2));
             String aliasNameExpected2 = generator.getAliasName(expressionTwo);
             // System.out.println(aliasNameExpected2);
             assertNotSame(
                     "getAliasName method returned same alias name for the classes having same ClassName but are different Alias Appender!!!",
                     aliasNameExpected1, aliasNameExpected2);
             assertTrue("The length of alias exceeds 30 characters!!!", aliasNameExpected2.length() <= 30);
-            assertEquals("Incorrect AliasName returned from getAliasName method!!!",
-                    "CollectionProtocolRegistr_2", aliasNameExpected2);
+            assertEquals("Incorrect AliasName returned from getAliasName method!!!", "CollectionProtocolRegistr_2",
+                    aliasNameExpected2);
 
         } catch (Exception e) {
             // e.printStackTrace();
@@ -586,7 +585,7 @@ public class SqlGeneratorTestCase extends TestCase {
      */
     public void testGetAliasName2() {
         generator.aliasNameMap = new HashMap<String, String>();
-        generator.aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+        generator.aliasAppenderMap = new HashMap<IExpression, Integer>();
         EntityManagerMock enitytManager = new EntityManagerMock();
         IConstraints constraints = QueryObjectFactory.createConstraints();
         try {
@@ -598,12 +597,12 @@ public class SqlGeneratorTestCase extends TestCase {
             IQueryEntity cprQueryEntity = QueryObjectFactory.createQueryEntity(cprEntity);
 
             IExpression expressionOne = constraints.addExpression(cprQueryEntity);
-            generator.aliasAppenderMap.put(expressionOne.getExpressionId(), new Integer(1));
+            generator.aliasAppenderMap.put(expressionOne, new Integer(1));
             String aliasNameExpected1 = generator.getAliasName(expressionOne);
             // System.out.println(aliasNameExpected1);
             assertTrue("The length of alias exceeds 30 characters!!!", aliasNameExpected1.length() <= 30);
-            assertEquals("Incorrect AliasName returned from getAliasName method!!!",
-                    "CollectionProtocolRegistr_1", aliasNameExpected1);
+            assertEquals("Incorrect AliasName returned from getAliasName method!!!", "CollectionProtocolRegistr_1",
+                    aliasNameExpected1);
 
             // Creating another entity with name
             // "CAedu.wustl.catissuecore.domain.CollectionProtocolRegistration"
@@ -616,15 +615,15 @@ public class SqlGeneratorTestCase extends TestCase {
             cprQueryEntity = QueryObjectFactory.createQueryEntity(entityThree);
 
             IExpression expressionThree = constraints.addExpression(cprQueryEntity);
-            generator.aliasAppenderMap.put(expressionThree.getExpressionId(), new Integer(1));
+            generator.aliasAppenderMap.put(expressionThree, new Integer(1));
             String aliasNameExpected2 = generator.getAliasName(expressionThree);
             // System.out.println(aliasNameExpected2);
             assertNotSame(
                     "getAliasName method returned same alias name for the classes having same ClassName but are different packages!!!",
                     aliasNameExpected1, aliasNameExpected2);
             assertTrue("The length of alias exceeds 30 characters!!!", aliasNameExpected2.length() <= 30);
-            assertEquals("Incorrect AliasName returned from getAliasName method!!!",
-                    "CollectionProtocolRegistr1_1", aliasNameExpected2);
+            assertEquals("Incorrect AliasName returned from getAliasName method!!!", "CollectionProtocolRegistr1_1",
+                    aliasNameExpected2);
 
         } catch (Exception e) {
             // e.printStackTrace();
@@ -1384,32 +1383,32 @@ public class SqlGeneratorTestCase extends TestCase {
     public void testTemporalDateOffset() {
         check(
                 QueryGeneratorMock.createTemporalQueryDateOffset(),
-                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), -maketime(0, 30, 0)) <= timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP))");
+                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), concat('-',time_format(maketime((30)/60, (30)%60, 0),'%H:%i:%s'))) <= timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP))");
     }
 
     public void testTemporalDateDiff() {
         check(
                 QueryGeneratorMock.createTemporalQueryDateDiff(),
-                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)) <= maketime(0, 30, 0))");
+                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)) <= maketime((30)/60, (30)%60, 0))");
     }
 
     public void testTemporalOffsetAttribute() {
         check(
                 QueryGeneratorMock.createTemporalQueryOffsetAttribute(),
-                "Select distinct SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_REG_ID=CollectionProtocolRegistr_2.IDENTIFIER) left join catissue_coll_prot_event CollectionProtocolEvent_3 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_EVT_ID=CollectionProtocolEvent_3.IDENTIFIER) Where (SpecimenCollectionGroup_1.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), maketime(CollectionProtocolEvent_3.STUDY_CALENDAR_EVENT_POINT*24, 0, 0)) = timestamp(STR_TO_DATE('05-30-2008', '%m-%d-%Y')))");
+                "Select distinct SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_REG_ID=CollectionProtocolRegistr_2.IDENTIFIER) left join catissue_coll_prot_event CollectionProtocolEvent_3 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_EVT_ID=CollectionProtocolEvent_3.IDENTIFIER) Where (SpecimenCollectionGroup_1.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), maketime((CollectionProtocolEvent_3.STUDY_CALENDAR_EVENT_POINT)*24, 0, 0)) = timestamp(STR_TO_DATE('2008-05-30', '%Y-%m-%d')))");
     }
 
     public void testTemporalWithOtherCond() {
         check(
                 QueryGeneratorMock.createTemporalQueryWithOtherCond(),
-                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.IDENTIFIER is NOT NULL And Specimen_1.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), -maketime(0, 30, 0)) <= timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP))");
+                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.IDENTIFIER is NOT NULL And Specimen_1.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), concat('-',time_format(maketime((30)/60, (30)%60, 0),'%H:%i:%s'))) <= timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP))");
     }
 
     public void testTemporalOutputTimestamp() {
         IQuery query = QueryGeneratorMock.createTemporalOutputTimestampQuery();
         check(
                 query,
-                "Select distinct SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 ,(timestamp(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), maketime(CollectionProtocolEvent_3.STUDY_CALENDAR_EVENT_POINT*24, 0, 0))) Column5 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_REG_ID=CollectionProtocolRegistr_2.IDENTIFIER) left join catissue_coll_prot_event CollectionProtocolEvent_3 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_EVT_ID=CollectionProtocolEvent_3.IDENTIFIER) Where (SpecimenCollectionGroup_1.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), maketime(CollectionProtocolEvent_3.STUDY_CALENDAR_EVENT_POINT*24, 0, 0)) = timestamp(STR_TO_DATE('05-30-2008', '%m-%d-%Y')))");
+                "Select distinct SpecimenCollectionGroup_1.ACTIVITY_STATUS Column0 ,SpecimenCollectionGroup_1.CLINICAL_STATUS Column1 ,SpecimenCollectionGroup_1.CLINICAL_DIAGNOSIS Column2 ,SpecimenCollectionGroup_1.NAME Column3 ,SpecimenCollectionGroup_1.IDENTIFIER Column4 ,(timestamp(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), maketime((CollectionProtocolEvent_3.STUDY_CALENDAR_EVENT_POINT)*24, 0, 0))) Column5 From catissue_specimen_coll_group SpecimenCollectionGroup_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_REG_ID=CollectionProtocolRegistr_2.IDENTIFIER) left join catissue_coll_prot_event CollectionProtocolEvent_3 on (SpecimenCollectionGroup_1.COLLECTION_PROTOCOL_EVT_ID=CollectionProtocolEvent_3.IDENTIFIER) Where (SpecimenCollectionGroup_1.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And(timestamp(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), maketime((CollectionProtocolEvent_3.STUDY_CALENDAR_EVENT_POINT)*24, 0, 0)) = timestamp(STR_TO_DATE('2008-05-30', '%Y-%m-%d')))");
         Map<String, IOutputTerm> outCols = generator.getOutputTermsColumns();
         assertEquals(1, outCols.size());
         String expectedColName = "Column5";
@@ -1422,7 +1421,7 @@ public class SqlGeneratorTestCase extends TestCase {
         IQuery query = QueryGeneratorMock.createTemporalOutputDSIntervalQuery();
         check(
                 query,
-                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,(hour(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)))*60*60 + minute(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)))*60 + second(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)))) Column11 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)) <= maketime(0, 30, 0))");
+                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,(hour(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)))*60*60 + minute(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)))*60 + second(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)))) Column11 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(timediff(timestamp(SpecimenEventParameters_3.EVENT_TIMESTAMP), timestamp(SpecimenEventParameters_2.EVENT_TIMESTAMP)) <= maketime((30)/60, (30)%60, 0))");
         Map<String, IOutputTerm> outCols = generator.getOutputTermsColumns();
         assertEquals(1, outCols.size());
         String expectedColName = "Column11";
@@ -1433,6 +1432,12 @@ public class SqlGeneratorTestCase extends TestCase {
         check(
                 query,
                 "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 ,(extract(hour from (cast(SpecimenEventParameters_3.EVENT_TIMESTAMP as timestamp) - cast(SpecimenEventParameters_2.EVENT_TIMESTAMP as timestamp)))*60*60 + extract(minute from (cast(SpecimenEventParameters_3.EVENT_TIMESTAMP as timestamp) - cast(SpecimenEventParameters_2.EVENT_TIMESTAMP as timestamp)))*60 + extract(second from (cast(SpecimenEventParameters_3.EVENT_TIMESTAMP as timestamp) - cast(SpecimenEventParameters_2.EVENT_TIMESTAMP as timestamp)))) Column11 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(cast(SpecimenEventParameters_3.EVENT_TIMESTAMP as timestamp) - cast(SpecimenEventParameters_2.EVENT_TIMESTAMP as timestamp) <= NUMTODSINTERVAL(30, 'Minute'))");
+    }
+
+    public void testTemporalPartCPR() {
+        check(
+                QueryGeneratorMock.createTemporalQueryParticipantCPR(),
+                "Select distinct Participant_1.VITAL_STATUS Column0 ,Participant_1.SOCIAL_SECURITY_NUMBER Column1 ,Participant_1.GENOTYPE Column2 ,Participant_1.MIDDLE_NAME Column3 ,Participant_1.LAST_NAME Column4 ,Participant_1.IDENTIFIER Column5 ,Participant_1.GENDER Column6 ,Participant_1.FIRST_NAME Column7 ,Participant_1.ETHNICITY Column8 ,Participant_1.DEATH_DATE Column9 ,Participant_1.BIRTH_DATE Column10 ,Participant_1.ACTIVITY_STATUS Column11 From catissue_participant Participant_1 left join catissue_coll_prot_reg CollectionProtocolRegistr_2 on (Participant_1.IDENTIFIER=CollectionProtocolRegistr_2.PARTICIPANT_ID) Where (Participant_1.ACTIVITY_STATUS!='Disabled') And(CollectionProtocolRegistr_2.ACTIVITY_STATUS!='Disabled') And(timediff(timestamp(CollectionProtocolRegistr_2.REGISTRATION_DATE), timestamp(Participant_1.BIRTH_DATE)) > maketime((30)/60, (30)%60, 0))");
     }
 
     private void check(IQuery query, String expectedSql) {

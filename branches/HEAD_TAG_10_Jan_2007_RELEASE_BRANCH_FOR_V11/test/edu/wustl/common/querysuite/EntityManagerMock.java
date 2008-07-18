@@ -23,6 +23,7 @@ import edu.common.dynamicextensions.domain.databaseproperties.TableProperties;
 import edu.common.dynamicextensions.domaininterface.AbstractAttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.databaseproperties.ColumnPropertiesInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
@@ -33,7 +34,48 @@ import edu.common.dynamicextensions.util.global.Constants.AssociationDirection;
 import edu.common.dynamicextensions.util.global.Constants.InheritanceStrategy;
 
 public class EntityManagerMock extends EntityManager {
-    DomainObjectFactory factory = DomainObjectFactory.getInstance();
+    DomainObjectFactory factory = new DomainObjectFactory() {
+        @Override
+        public EntityInterface createEntity() {
+            EntityInterface entity = super.createEntity();
+            entity.addEntityGroupInterface(entityGroup);
+            entityGroup.addEntity(entity);
+            return entity;
+        }
+
+        @Override
+        public AttributeInterface createStringAttribute() {
+            return (setAttrId(super.createStringAttribute()));
+        }
+
+        @Override
+        public AttributeInterface createDoubleAttribute() {
+            return (setAttrId(super.createDoubleAttribute()));
+        }
+
+        @Override
+        public AttributeInterface createDateAttribute() {
+            return (setAttrId(super.createDateAttribute()));
+        }
+
+        @Override
+        public AttributeInterface createLongAttribute() {
+            return (setAttrId(super.createLongAttribute()));
+        }
+
+        private AttributeInterface setAttrId(AttributeInterface attr) {
+            attr.setId(attrId++);
+            return attr;
+        }
+    };
+
+    public EntityManagerMock() {
+        entityGroup = factory.createEntityGroup();
+    }
+
+    public final EntityGroupInterface entityGroup;
+
+    private long attrId = 1;
 
     public List<EntityInterface> entityList = new ArrayList<EntityInterface>();
 
@@ -194,14 +236,14 @@ public class EntityManagerMock extends EntityManager {
         Collection<AssociationInterface> associations = new ArrayList<AssociationInterface>();
         if (sourceEntityName.equals(PARTICIPANT_NAME) && sourceRoleName.equals("participant")) {
             AssociationInterface association = createAssociation(PARTICIPANT_NAME, PARTICIPANT_MEDICAL_ID_NAME,
-                    AssociationDirection.BI_DIRECTIONAL, "participant", "participantMedicalIdentifierCollection",
-                    null, "PARTICIPANT_ID");
+                    AssociationDirection.BI_DIRECTIONAL, "participant", "participantMedicalIdentifierCollection", null,
+                    "PARTICIPANT_ID");
             associations.add(association);
 
             // another Association.
             association = createAssociation(PARTICIPANT_NAME, COLLECTION_PROTOCOL_REGISTRATION_NAME,
-                    AssociationDirection.BI_DIRECTIONAL, "participant",
-                    "collectionProtocolRegistrationCollection", null, "PARTICIPANT_ID");
+                    AssociationDirection.BI_DIRECTIONAL, "participant", "collectionProtocolRegistrationCollection",
+                    null, "PARTICIPANT_ID");
             associations.add(association);
         } else if (sourceEntityName.equals(PARTICIPANT_NAME) && sourceRoleName.equals("annotation")) {
             AssociationInterface association = createAssociation(PARTICIPANT_NAME, DE_LEVEL4_INHERITANCE,
@@ -226,9 +268,8 @@ public class EntityManagerMock extends EntityManager {
             associations.add(association);
 
             for (String specimenClass : specimenClasses) {
-                association = createAssociation(sourceEntityName, specimenClass,
-                        AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup", "specimenCollection",
-                        null, "SPECIMEN_COLLECTION_GROUP_ID");
+                association = createAssociation(sourceEntityName, specimenClass, AssociationDirection.BI_DIRECTIONAL,
+                        "specimenCollectionGroup", "specimenCollection", null, "SPECIMEN_COLLECTION_GROUP_ID");
                 associations.add(association);
             }
 
@@ -236,7 +277,7 @@ public class EntityManagerMock extends EntityManager {
                     AssociationDirection.SRC_DESTINATION, "specimenCollectionGroup", "collectionProtocolEvent",
                     "COLLECTION_PROTOCOL_EVT_ID", null);
             associations.add(association);
-            
+
             association = createAssociation(SPECIMEN_COLLECTION_GROUP_NAME, COLLECTION_PROTOCOL_REGISTRATION_NAME,
                     AssociationDirection.BI_DIRECTIONAL, "specimenCollectionGroup", "collectionProtocolRegistration",
                     "COLLECTION_PROTOCOL_REG_ID", null);
@@ -250,18 +291,16 @@ public class EntityManagerMock extends EntityManager {
             AssociationInterface association = null;
 
             for (String specimenClass : specimenClasses) {
-                association = createAssociation(sourceEntityName, specimenClass,
-                        AssociationDirection.BI_DIRECTIONAL, "childrenSpecimen", "collectionProtocolEvent", null,
-                        "PARENT_SPECIMEN_ID");
+                association = createAssociation(sourceEntityName, specimenClass, AssociationDirection.BI_DIRECTIONAL,
+                        "childrenSpecimen", "collectionProtocolEvent", null, "PARENT_SPECIMEN_ID");
                 associations.add(association);
             }
         } else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("specimenCollection")) {
             AssociationInterface association = null;
 
             for (String specimenClass : specimenClasses) {
-                association = createAssociation(specimenClass, BIOHAZARD_NAME,
-                        AssociationDirection.BI_DIRECTIONAL, "specimenCollection", "biohazardCollection",
-                        "SPECIMEN_ID", "BIOHAZARD_ID");
+                association = createAssociation(specimenClass, BIOHAZARD_NAME, AssociationDirection.BI_DIRECTIONAL,
+                        "specimenCollection", "biohazardCollection", "SPECIMEN_ID", "BIOHAZARD_ID");
                 association.getConstraintProperties().setName("CATISSUE_SPECIMEN_BIOHZ_REL");
                 associations.add(association);
             }
@@ -269,9 +308,8 @@ public class EntityManagerMock extends EntityManager {
             AssociationInterface association = null;
 
             for (String specimenClass : specimenClasses) {
-                association = createAssociation(sourceEntityName, specimenClass,
-                        AssociationDirection.BI_DIRECTIONAL, "biohazardCollection", "specimenCollection",
-                        "BIOHAZARD_ID", "SPECIMEN_ID");
+                association = createAssociation(sourceEntityName, specimenClass, AssociationDirection.BI_DIRECTIONAL,
+                        "biohazardCollection", "specimenCollection", "BIOHAZARD_ID", "SPECIMEN_ID");
                 association.getConstraintProperties().setName("CATISSUE_SPECIMEN_BIOHZ_REL");
                 associations.add(association);
             }
@@ -279,14 +317,13 @@ public class EntityManagerMock extends EntityManager {
             AssociationInterface association = null;
 
             association = createAssociation(sourceEntityName, SPECIMEN_CHARACTERISTIC_NAME,
-                    AssociationDirection.SRC_DESTINATION, "", "specimenCharacteristics",
-                    "SPECIMEN_CHARACTERISTICS_ID", null);
+                    AssociationDirection.SRC_DESTINATION, "", "specimenCharacteristics", "SPECIMEN_CHARACTERISTICS_ID",
+                    null);
             associations.add(association);
         } else if (specimenClasses.contains(sourceEntityName) && sourceRoleName.equals("specimen")) {
             for (String event : eventClasses) {
                 AssociationInterface association = createAssociation(sourceEntityName, event,
-                        AssociationDirection.BI_DIRECTIONAL, "specimen", "specimenEventCollection", null,
-                        "SPECIMEN_ID");
+                        AssociationDirection.BI_DIRECTIONAL, "specimen", "specimenEventCollection", null, "SPECIMEN_ID");
                 associations.add(association);
             }
         } else if (sourceEntityName.equals(COLLECTION_PROTOCOL_REGISTRATION_NAME)
@@ -301,8 +338,7 @@ public class EntityManagerMock extends EntityManager {
                     COLLECTION_PROTOCOL_NAME, AssociationDirection.SRC_DESTINATION, "", "collectionProtocol",
                     "COLLECTION_PROTOCOL_ID", null);
             associations.add(association);
-        } else if (sourceEntityName.equals(COLLECTION_PROTOCOL_NAME)
-                && sourceRoleName.equals("collectionProtocol")) {
+        } else if (sourceEntityName.equals(COLLECTION_PROTOCOL_NAME) && sourceRoleName.equals("collectionProtocol")) {
             AssociationInterface association = createAssociation(COLLECTION_PROTOCOL_NAME,
                     COLLECTION_PROTOCOL_EVT_NAME, AssociationDirection.BI_DIRECTIONAL, "collectionProtocol",
                     "collectionProtocolEventCollection", null, "COLLECTION_PROTOCOL_ID");
@@ -324,6 +360,7 @@ public class EntityManagerMock extends EntityManager {
         EntityInterface targetEntity = getEntityByName(target);
 
         association.setEntity(sourceEntity);
+        sourceEntity.addAssociation(association);
         association.setTargetEntity(targetEntity);
         association.setAssociationDirection(direction);
         association.setId(identifier++);
@@ -397,8 +434,7 @@ public class EntityManagerMock extends EntityManager {
             ((Association) currentAssociation).setConstraintProperties(constraintProperties);
 
             associationsCollection.add(currentAssociation);
-        } else if (sourceEntityId.equals(PARTICIPANT_ID)
-                && targetEntityId.equals(COLLECTION_PROTOCOL_REGISTRATION_ID)) {
+        } else if (sourceEntityId.equals(PARTICIPANT_ID) && targetEntityId.equals(COLLECTION_PROTOCOL_REGISTRATION_ID)) {
             AssociationInterface currentAssociation = factory.createAssociation();
 
             EntityInterface sourceEntity = getEntityByName(PARTICIPANT_NAME);
@@ -530,8 +566,7 @@ public class EntityManagerMock extends EntityManager {
             currentAssociation.setTargetRole(targetRole);
 
             associationsCollection.add(currentAssociation);
-        } else if (sourceEntityId.equals(COLLECTION_PROTOCOL_ID)
-                && targetEntityId.equals(COLLECTION_PROTOCOL_EVT_ID)) {
+        } else if (sourceEntityId.equals(COLLECTION_PROTOCOL_ID) && targetEntityId.equals(COLLECTION_PROTOCOL_EVT_ID)) {
             AssociationInterface currentAssociation = factory.createAssociation();
 
             EntityInterface sourceEntity = getEntityByName(COLLECTION_PROTOCOL_NAME);
@@ -2317,8 +2352,8 @@ public class EntityManagerMock extends EntityManager {
     public static void main(String[] args) {
         EntityManagerMock testMock = new EntityManagerMock();
         try {
-            System.out.println(testMock.getEntityByName(SPECIMEN_PROTOCOL_NAME).getAbstractAttributeCollection()
-                    .size());
+            System.out
+                    .println(testMock.getEntityByName(SPECIMEN_PROTOCOL_NAME).getAbstractAttributeCollection().size());
             System.out.println(testMock.getEntityByName(PARTICIPANT_NAME).getName());
             System.out.println(testMock.getEntityByName(COLLECTION_PROTOCOL_REGISTRATION_NAME).getDescription());
             System.out.println(testMock.getEntityByName(PARTICIPANT_MEDICAL_ID_NAME).getId());
