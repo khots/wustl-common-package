@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.impl.metadata.QueryOutputTreeAttributeMetadata;
 import edu.wustl.common.util.global.Constants;
@@ -35,7 +34,7 @@ public class OutputTreeDataNode implements Serializable
 	private List<OutputTreeDataNode> children = new ArrayList<OutputTreeDataNode>();
 	IOutputEntity outputEntity;
 	private int treeNo;
-	private IExpressionId expressionId;
+	private int expressionId;
 	
 	private List<QueryOutputTreeAttributeMetadata> attributes = new ArrayList<QueryOutputTreeAttributeMetadata>();
 	
@@ -45,7 +44,7 @@ public class OutputTreeDataNode implements Serializable
 	 * @param expressionId The expression id corresponding to this Output tree.
 	 * @param treeNo The integer representing tree no.
 	 */
-	public OutputTreeDataNode(IOutputEntity outputEntity, IExpressionId expressionId, int treeNo)
+	public OutputTreeDataNode(IOutputEntity outputEntity, int expressionId, int treeNo)
 	{
 		this.outputEntity = outputEntity;
 		this.expressionId = expressionId;
@@ -69,7 +68,7 @@ public class OutputTreeDataNode implements Serializable
 	 * @param expressionId The expression id corresponding to this Output tree.
 	 * @return The reference to the child node.
 	 */
-	public OutputTreeDataNode addChild(IOutputEntity outputEntity, IExpressionId expressionId)
+	public OutputTreeDataNode addChild(IOutputEntity outputEntity, int expressionId)
 	{
 		OutputTreeDataNode child = new OutputTreeDataNode(outputEntity,expressionId, treeNo);
 		child.parentNode = this;
@@ -105,7 +104,7 @@ public class OutputTreeDataNode implements Serializable
 	/**
 	 * @return the expressionId The expression id corresponding to this expression.
 	 */
-	public IExpressionId getExpressionId()
+	public int getExpressionId()
 	{
 		return expressionId;
 	}

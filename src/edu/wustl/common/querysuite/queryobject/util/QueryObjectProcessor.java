@@ -19,7 +19,6 @@ import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
@@ -49,7 +48,7 @@ public class QueryObjectProcessor
 	/**
 	 * contains the expression ids of the expressions having more than one parent.
 	 */
-	private List<IExpressionId> idsToProcess;
+	private List<IExpression> exprsToProcess;
 
 	/**
 	 * Default constructor, made it protected to keep its implemenation as singlton class.
@@ -79,12 +78,12 @@ public class QueryObjectProcessor
 		boolean isAnyNodeProcessed = false;
 		this.constraints = constraints;
 		this.joinGraph = (JoinGraph) constraints.getJoinGraph();
-		idsToProcess = joinGraph.getNodesWithMultipleParents();
+		exprsToProcess = joinGraph.getNodesWithMultipleParents();
 		try
 		{
-			for (IExpressionId expressionId : idsToProcess)
+			for (IExpression expression : exprsToProcess)
 			{
-				replaceMultipleParent(expressionId);
+				replaceMultipleParent(expression);
 				isAnyNodeProcessed = true;
 			}
 		}
@@ -98,29 +97,26 @@ public class QueryObjectProcessor
 
 	/**
 	 * Creates another node for the expression having multiple parent. It will also create heirarcy below that node.
-	 * @param expressionId The Expression id having multiple panrent.
+	 * @param expression The Expression id having multiple panrent.
 	 * @throws CyclicException when adding an Edge in graph causes cycle in the graph.
 	 */
-	private void replaceMultipleParent(IExpressionId expressionId) throws CyclicException
+	private void replaceMultipleParent(IExpression expression) throws CyclicException
 	{
-		IExpression expression = constraints.getExpression(expressionId);
 		joinGraph = (JoinGraph) constraints.getJoinGraph();
-		List<IExpressionId> parents = joinGraph.getParentList(expressionId);
+		List<IExpression> parents = joinGraph.getParentList(expression);
 		for (int index = 1; index < parents.size(); index++) // iterating on all parent expression ids.
 		{
-			IExpressionId parentExpressionId = parents.get(index);
-			IExpression parentExpression = constraints.getExpression(parentExpressionId);
-			int childIndex = parentExpression.indexOfOperand(expressionId);
+			IExpression parentExpression = parents.get(index);
+			int childIndex = parentExpression.indexOfOperand(expression);
 
 			IExpression newExpression = constraints.addExpression(expression.getQueryEntity()); // creating new expression which will be copy of the given expression id.
 			newExpression.setInView(expression.isInView());
-			IExpressionId newExpressionId = newExpression.getExpressionId();
-			parentExpression.setOperand(childIndex, newExpressionId); // pointing the parent expression to the new expression.
+			parentExpression.setOperand(childIndex, newExpression); // pointing the parent expression to the new expression.
 
 			// changing associations.
-			IAssociation association = joinGraph.getAssociation(parentExpressionId, expressionId);
-			joinGraph.removeAssociation(parentExpressionId, expressionId);
-			joinGraph.putAssociation(parentExpressionId, newExpressionId, association);
+			IAssociation association = joinGraph.getAssociation(parentExpression, expression);
+			joinGraph.removeAssociation(parentExpression, expression);
+			joinGraph.putAssociation(parentExpression, newExpression, association);
 
 			// copying all expression info to new expression, including child expression heirarchy.
 			copy(expression, newExpression);
@@ -140,17 +136,15 @@ public class QueryObjectProcessor
 		{
 
 			IExpressionOperand operand = fromExpression.getOperand(index);
-			if (operand instanceof IExpressionId)
+			if (operand instanceof IExpression)
 			{
-				IExpressionId fromExpressionId = (IExpressionId) operand;
-				IExpression oldExpression = constraints.getExpression(fromExpressionId);
-				IAssociation association = joinGraph.getAssociation(fromExpression
-						.getExpressionId(), fromExpressionId);
-				if (idsToProcess.contains(operand))
+				IExpression oldExpression = (IExpression) operand;
+				IAssociation association = joinGraph.getAssociation(fromExpression, oldExpression);
+				if (exprsToProcess.contains(operand))
 				{
 					// this node also have multiple parent. So just adding this operand in new expression's operand list & updating joingraph.
 					toExpression.addOperand(operand);
-					joinGraph.putAssociation(toExpression.getExpressionId(), fromExpressionId,
+					joinGraph.putAssociation(toExpression, oldExpression,
 							association);
 					// this will be handled seperately in method replaceMultipleParent.
 				}
@@ -160,9 +154,8 @@ public class QueryObjectProcessor
 					IExpression newExpression = constraints.addExpression(oldExpression
 							.getQueryEntity());
 					newExpression.setInView(oldExpression.isInView());
-					IExpressionId newExpressionId = newExpression.getExpressionId();
-					toExpression.addOperand(newExpressionId);
-					joinGraph.putAssociation(toExpression.getExpressionId(), newExpressionId,
+					toExpression.addOperand(newExpression);
+					joinGraph.putAssociation(toExpression, newExpression,
 							association);
 					copy(oldExpression, newExpression);
 				}

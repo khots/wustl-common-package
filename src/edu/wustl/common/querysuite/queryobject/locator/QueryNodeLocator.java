@@ -4,7 +4,6 @@
 package edu.wustl.common.querysuite.queryobject.locator;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.IExpression;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IJoinGraph;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 
@@ -27,12 +25,12 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 public class QueryNodeLocator
 {
 	List<Integer> maxNodeAtLevel;
-	List<List<IExpressionId>> visibleExpListLevelWize;
+	List<List<Integer>> visibleExpListLevelWize;
 	
 	private int maxX;
 	private IConstraints constraints;
 	private IJoinGraph graph;
-	private Map<IExpressionId, Position> positionMap;
+	private Map<Integer, Position> positionMap;
 	private final static int X_OFFSET = 10;
 	private final static int WIDTH_OF_NODE = 220;
 	
@@ -61,7 +59,7 @@ public class QueryNodeLocator
 	 * To get the Map of the visible nodes verses the x & y positions.
 	 * @return Map of the visible nodes verses the x & y positions.
 	 */
-	public Map<IExpressionId, Position>  getPositionMap()
+	public Map<Integer, Position>  getPositionMap()
 	{
 		return positionMap;
 	}
@@ -71,15 +69,15 @@ public class QueryNodeLocator
 	 */
 	private void createPositionMap()
 	{
-		positionMap = new HashMap<IExpressionId, Position>();
+		positionMap = new HashMap<Integer, Position>();
 		int x = X_OFFSET;
 		for (int level =0;level < maxNodeAtLevel.size();level++)
 		{
-			List<IExpressionId> list = visibleExpListLevelWize.get(level);
+			List<Integer> list = visibleExpListLevelWize.get(level);
 			int nodesAtThisLevel = list.size() ;
 			int yDiff = (maxX)/(nodesAtThisLevel+1);
 			int y = yDiff;
-			for(IExpressionId expId:list)
+			for(Integer expId:list)
 			{
 				positionMap.put(expId, new Position(x,y));
 				y+=yDiff;
@@ -94,31 +92,29 @@ public class QueryNodeLocator
 	 */
 	private int countNodeAtLevel()
 	{
-		List<IExpressionId> allRoots = graph.getAllRoots();
+		List<IExpression> allRootExprs = graph.getAllRoots();
+        List<Integer> allRoots = idsList(allRootExprs);
 		maxNodeAtLevel = new ArrayList<Integer>();
 		
 		int size = allRoots.size();
 		if (size==1)
 		{
-			visibleExpListLevelWize = new ArrayList<List<IExpressionId>>();
+			visibleExpListLevelWize = new ArrayList<List<Integer>>();
 			maxNodeAtLevel.add(1);
 			addToVisibleMap(allRoots.get(0),1);
 			process(allRoots.get(0),1);
 		}
 		else
 		{
-			positionMap = new HashMap<IExpressionId, Position>();
-			Enumeration<IExpressionId> expressionIds = constraints.getExpressionIds();
+			positionMap = new HashMap<Integer, Position>();
 			int yIncrement = X_OFFSET*6;
 			int y = yIncrement;
 			int x = X_OFFSET;
-			while (expressionIds.hasMoreElements())
+			for(IExpression expression : constraints)
 			{
-				IExpressionId expressionId = expressionIds.nextElement();
-				IExpression expression = constraints.getExpression(expressionId);
 				if (expression.isVisible())
 				{
-					positionMap.put(expressionId, new Position(x,y));
+					positionMap.put(expression.getExpressionId(), new Position(x,y));
 					x+=WIDTH_OF_NODE/2;
 					y+=yIncrement;
 				}
@@ -132,16 +128,16 @@ public class QueryNodeLocator
 	 * @param expId expression Id
 	 * @param level The level of the node in the Graph.
 	 */
-	private void addToVisibleMap(IExpressionId expId, int level)
+	private void addToVisibleMap(Integer expId, int level)
 	{
-		List<IExpressionId> list=null;
+		List<Integer> list=null;
 		if (level <= visibleExpListLevelWize.size()-1)
 		{
 			list = visibleExpListLevelWize.get(level);
 		}
 		else
 		{
-			list = new ArrayList<IExpressionId>();
+			list = new ArrayList<Integer>();
 			visibleExpListLevelWize.add(list);
 		}
 		list.add(expId);
@@ -151,11 +147,11 @@ public class QueryNodeLocator
 	 * @param expId expression Id
 	 * @param level The level of the node in the Graph.
 	 */
-	private void process(IExpressionId expId, int level)
+	private void process(Integer expId, int level)
 	{
 		
-		List<IExpressionId> childrenList = graph.getChildrenList(expId);
-		for (IExpressionId child: childrenList)
+		List<Integer> childrenList = idsList(graph.getChildrenList(constraints.getExpression(expId)));
+		for (Integer child: childrenList)
 		{
 			IExpression expression = constraints.getExpression(child);
 			if (expression.isInView())
@@ -181,6 +177,13 @@ public class QueryNodeLocator
 		}
 	}
 
+    private List<Integer> idsList(List<IExpression > exprList) {
+        List<Integer> res = new ArrayList<Integer>();
+        for(IExpression expr : exprList) {
+            res.add(expr.getExpressionId());
+        }
+        return res;
+    }
 	/**
 	 * @param args
 	 */
@@ -190,9 +193,9 @@ public class QueryNodeLocator
 		IQuery query = QueryObjectFactory.createQuery();
 		setViewForAll(query);
 		IConstraints constraints2 = query.getConstraints();
-		Map<IExpressionId, Position> positionMap2 = new QueryNodeLocator(500,query).getPositionMap();
-		Set<IExpressionId> keySet = positionMap2.keySet();
-		for (IExpressionId expId:keySet)
+		Map<Integer, Position> positionMap2 = new QueryNodeLocator(500,query).getPositionMap();
+		Set<Integer> keySet = positionMap2.keySet();
+		for (Integer expId:keySet)
 		{
 			Position position = positionMap2.get(expId);
 			String name = constraints2.getExpression(expId).getQueryEntity().getDynamicExtensionsEntity().getName();
@@ -206,10 +209,8 @@ public class QueryNodeLocator
 	private static void setViewForAll(IQuery query)
 	{
 		IConstraints constraints2 = query.getConstraints();
-		Enumeration<IExpressionId> expressionIds = constraints2.getExpressionIds();
-		while (expressionIds.hasMoreElements())
-		{
-			constraints2.getExpression(expressionIds.nextElement()).setVisible(true);
+		for(IExpression expr : constraints2) {
+            expr.setVisible(true);
 		}
 	}
 }

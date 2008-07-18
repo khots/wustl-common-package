@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +47,6 @@ import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.ICustomFormula;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionAttribute;
-import edu.wustl.common.querysuite.queryobject.IExpressionId;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
 import edu.wustl.common.querysuite.queryobject.IOutputEntity;
 import edu.wustl.common.querysuite.queryobject.IOutputTerm;
@@ -91,7 +89,7 @@ public class SqlGenerator implements ISqlGenerator {
      * This map holds integer value that will be appended to each table alias in
      * the sql.
      */
-    Map<IExpressionId, Integer> aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+    Map<IExpression, Integer> aliasAppenderMap = new HashMap<IExpression, Integer>();
 
     /**
      * This map holds the alias name generated for each fully Qualified
@@ -118,7 +116,7 @@ public class SqlGenerator implements ISqlGenerator {
      * sub-expressions (also their subexpressions & so on) also does not contain
      * any Rule
      */
-    private Set<IExpressionId> emptyExpressions;// Set of Empty Expressions.
+    private Set<IExpression> emptyExpressions;// Set of Empty Expressions.
 
     private Set<IExpression> pAndExpressions;// Set of Empty Expressions.
 
@@ -176,15 +174,17 @@ public class SqlGenerator implements ISqlGenerator {
      * 
      * @param expressionId Root Expression Id
      */
-    private void addactivityStatusToEmptExpr(IExpressionId expressionId) {
-
-        List<IExpressionId> operandList = joinGraph.getChildrenList(expressionId);
-        for (IExpressionId subExpression : operandList) {
-            if (subExpression.isSubExpressionOperand()) {
-                addactivityStatusToEmptExpr(subExpression);
-            }
-        }
+    private void addactivityStatusToEmptExpr(int expressionId) {
         Expression expression = (Expression) constraints.getExpression(expressionId);
+
+        List<IExpression> operandList = joinGraph.getChildrenList(expression);
+        for (IExpression subExpression : operandList) {
+            // TODO check this code.
+            // if (subExpression.isSubExpressionOperand()) {
+            addactivityStatusToEmptExpr(subExpression.getExpressionId());
+            // }
+        }
+
         if (!expression.containsRule()) {
             if (getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity()) != null) {
                 IRule rule = QueryObjectFactory.createRule();
@@ -215,16 +215,16 @@ public class SqlGenerator implements ISqlGenerator {
         processExpressionsWithCategories(queryClone);
 
         this.joinGraph = (JoinGraph) constraints.getJoinGraph();
-        IExpression rootExpression = constraints.getExpression(constraints.getRootExpressionId());
+        IExpression rootExpression = constraints.getRootExpression();
 
         // Initializin map variables.
-        aliasAppenderMap = new HashMap<IExpressionId, Integer>();
+        aliasAppenderMap = new HashMap<IExpression, Integer>();
         aliasNameMap = new HashMap<String, String>();
         createAliasAppenderMap();
 
         addactivityStatusToEmptExpr(rootExpression.getExpressionId());
         // Identifying empty Expressions.
-        emptyExpressions = new HashSet<IExpressionId>();
+        emptyExpressions = new HashSet<IExpression>();
         isEmptyExpression(rootExpression.getExpressionId());
 
         pAndExpressions = new HashSet<IExpression>();
@@ -284,14 +284,14 @@ public class SqlGenerator implements ISqlGenerator {
         // get added in
         // Query.
         for (IExpression expression : pAndExpressions) {
-            if (expressionIDs.add(aliasAppenderMap.get(expression.getExpressionId()))) {
+            if (expressionIDs.add(aliasAppenderMap.get(expression))) {
                 AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity()
                         .getDynamicExtensionsEntity());
                 if (attributeObj != null) {
                     // creating activityStatus is null condition, this is
                     // required in case of Pseudo-Anded expressions.
-                    ICondition condition = QueryObjectFactory.createCondition(attributeObj,
-                            RelationalOperator.IsNull, null);
+                    ICondition condition = QueryObjectFactory.createCondition(attributeObj, RelationalOperator.IsNull,
+                            null);
                     extraWherePAnd.append("(").append(getSQL(condition, expression)).append(" OR ");
 
                     // creating activityStatus != disabled condition.
@@ -315,8 +315,7 @@ public class SqlGenerator implements ISqlGenerator {
     private ICondition createActivityStatusCondition(AttributeInterface attributeObj) {
         List<String> values = new ArrayList<String>();
         values.add(Constants.ACTIVITY_STATUS_DISABLED);
-        ICondition condition = QueryObjectFactory.createCondition(attributeObj, RelationalOperator.NotEquals,
-                values);
+        ICondition condition = QueryObjectFactory.createCondition(attributeObj, RelationalOperator.NotEquals, values);
         return condition;
     }
 
@@ -333,8 +332,8 @@ public class SqlGenerator implements ISqlGenerator {
             Connection connection = null;
             try {
                 EntityInterface rootEntity = null;
-                EntityInterface rootDEEntity = constraints.getExpression(constraints.getRootExpressionId())
-                        .getQueryEntity().getDynamicExtensionsEntity();
+                EntityInterface rootDEEntity = constraints.getRootExpression().getQueryEntity()
+                        .getDynamicExtensionsEntity();
                 boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(rootDEEntity);
 
                 // This is temporary work around, This connection parameter will
@@ -349,8 +348,8 @@ public class SqlGenerator implements ISqlGenerator {
                  * method.
                  */
                 if (isCategory) {
-                    Category category = new CategoryOperations().getCategoryByEntityId(rootDEEntity.getId(),
-                            connection);
+                    Category category = new CategoryOperations()
+                            .getCategoryByEntityId(rootDEEntity.getId(), connection);
                     rootEntity = EntityManager.getInstance().getEntityByIdentifier(
                             category.getRootClass().getDeEntityId());
                 } else {
@@ -384,8 +383,7 @@ public class SqlGenerator implements ISqlGenerator {
     private boolean containsCategrory(IConstraints theConstraints) {
         Set<IQueryEntity> constraintEntities = constraints.getQueryEntities();
         for (IQueryEntity entity : constraintEntities) {
-            boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(entity
-                    .getDynamicExtensionsEntity());
+            boolean isCategory = edu.wustl.cab2b.common.util.Utility.isCategory(entity.getDynamicExtensionsEntity());
             if (isCategory) {
                 return true;
             }
@@ -464,10 +462,9 @@ public class SqlGenerator implements ISqlGenerator {
      * @throws SqlException When there is problem in creating from part. problem
      *             can be like: no primary key found in entity for join.
      */
-    String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias)
-            throws SqlException {
+    String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias) throws SqlException {
         StringBuffer buffer = new StringBuffer("");
-        IExpressionId parentExpressionId = expression.getExpressionId();
+        int parentExpressionId = expression.getExpressionId();
 
         if (processedAlias.isEmpty()) // this will be true only for root node.
         {
@@ -478,11 +475,11 @@ public class SqlGenerator implements ISqlGenerator {
             createFromPartForDerivedEntity(expression, buffer);
         }
 
-        Integer parentExpressionAliasAppender = aliasAppenderMap.get(parentExpressionId);
+        Integer parentExpressionAliasAppender = aliasAppenderMap.get(expression);
         processedAlias.add(parentExpressionAliasAppender);
 
         // Processing children
-        buffer.append(processChildExpressions(leftAlias, processedAlias, parentExpressionId));
+        buffer.append(processChildExpressions(leftAlias, processedAlias, expression));
         return buffer.toString();
     }
 
@@ -538,17 +535,19 @@ public class SqlGenerator implements ISqlGenerator {
      * @return the left join sql for children expression.
      * @throws SqlException when there is error in the passed IQuery object.
      */
-    private String processChildExpressions(String leftAlias, Set<Integer> processedAlias,
-            IExpressionId parentExpressionId) throws SqlException {
+    private String processChildExpressions(String leftAlias, Set<Integer> processedAlias, IExpression parentExpression)
+            throws SqlException {
         StringBuffer buffer = new StringBuffer();
-        List<IExpressionId> children = joinGraph.getChildrenList(parentExpressionId);
+
+        List<IExpression> children = joinGraph.getChildrenList(parentExpression);
         if (!children.isEmpty()) {
             // processing all outgoing edges/nodes from the current node in the
             // joingraph.
-            for (IExpressionId childExpressionId : children) {
-                IExpression childExpression = constraints.getExpression(childExpressionId);
+            for (IExpression childExpression : children) {
+                // IExpression childExpression =
+                // constraints.getExpression(childExpressionId);
 
-                IAssociation association = joinGraph.getAssociation(parentExpressionId, childExpressionId);
+                IAssociation association = joinGraph.getAssociation(parentExpression, childExpression);
 
                 AssociationInterface actualEavAssociation = ((IIntraModelAssociation) association)
                         .getDynamicExtensionsAssociation();
@@ -556,18 +555,15 @@ public class SqlGenerator implements ISqlGenerator {
                 EntityInterface rightEntity = eavAssociation.getTargetEntity();
                 String actualRightAlias = getAliasFor(childExpression, rightEntity);
                 String rightAlias = actualRightAlias;
-                if (!processedAlias.contains(aliasAppenderMap.get(childExpressionId))) {
-                    if (SecurityManager.APPLICATION_CONTEXT_NAME
-                            .equalsIgnoreCase(Constants.APPLICATION_CLINPORTAL)) {
-                        leftAlias = getAliasFor(constraints.getExpression(parentExpressionId), eavAssociation
-                                .getEntity());
+                if (!processedAlias.contains(aliasAppenderMap.get(childExpression))) {
+                    if (SecurityManager.APPLICATION_CONTEXT_NAME.equalsIgnoreCase(Constants.APPLICATION_CLINPORTAL)) {
+                        leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
                     }
                     if (InheritanceUtils.getInstance().isInherited(eavAssociation)) {
                         eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
                         rightEntity = eavAssociation.getTargetEntity();
 
-                        leftAlias = getAliasFor(constraints.getExpression(parentExpressionId), eavAssociation
-                                .getEntity());
+                        leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
                         rightAlias = getAliasFor(childExpression, eavAssociation.getTargetEntity());
                     }
 
@@ -613,18 +609,16 @@ public class SqlGenerator implements ISqlGenerator {
                         primaryKey = getPrimaryKey(rightEntity);
                         rightAttribute = rightAlias + "." + primaryKey.getColumnProperties().getName();
 
-                        buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
-                                + rightAlias + " on ");
+                        buffer.append(" left join " + rightEntity.getTableProperties().getName() + " " + rightAlias
+                                + " on ");
                         buffer.append("(" + leftAttribute + "=" + rightAttribute);
 
                         /*
                          * Adding descriminator column condition for the child
                          * node while forming FROM part left joins.
                          */
-                        buffer
-                                .append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(),
-                                        rightAlias)
-                                        + ")");
+                        buffer.append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(), rightAlias)
+                                + ")");
                     } else {
                         String leftAttribute = null;
                         String rightAttribute = null;
@@ -641,8 +635,8 @@ public class SqlGenerator implements ISqlGenerator {
                             leftAttribute = leftAlias + "." + primaryKey.getColumnProperties().getName();
                             rightAttribute = rightAlias + "." + constraintProperties.getTargetEntityKey();
                         }
-                        buffer.append(" left join " + rightEntity.getTableProperties().getName() + " "
-                                + rightAlias + " on ");
+                        buffer.append(" left join " + rightEntity.getTableProperties().getName() + " " + rightAlias
+                                + " on ");
                         buffer.append("(" + leftAttribute + "=" + rightAttribute);
 
                         /*
@@ -658,10 +652,8 @@ public class SqlGenerator implements ISqlGenerator {
                          * Adding descriminator column condition for the child
                          * node while forming FROM part left joins.
                          */
-                        buffer
-                                .append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(),
-                                        rightAlias)
-                                        + ")");
+                        buffer.append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(), rightAlias)
+                                + ")");
                     }
 
                     buffer.append(getParentHeirarchy(childExpression, childEntity, rightEntity));
@@ -713,8 +705,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return The String representing aliasName for the Many to Many table.
      */
     private String getAliasForMiddleTable(IExpression childExpression, String middleTableName) {
-        return getAliasForClassName("." + middleTableName) + "_"
-                + aliasAppenderMap.get(childExpression.getExpressionId());
+        return getAliasForClassName("." + middleTableName) + "_" + aliasAppenderMap.get(childExpression);
     }
 
     /**
@@ -751,12 +742,10 @@ public class SqlGenerator implements ISqlGenerator {
                     String rightAttributeColumn = rightEntityalias + "." + primaryKeyColumnName;
                     String sql = null;
                     if (isReverse) {
-                        sql = " inner join " + parent.getTableProperties().getName() + " " + rightEntityalias
-                                + " on ";
+                        sql = " inner join " + parent.getTableProperties().getName() + " " + rightEntityalias + " on ";
                         sql += "(" + leftAttributeColumn + "=" + rightAttributeColumn + ")";
                     } else {
-                        sql = " inner join " + entity.getTableProperties().getName() + " " + leftEntityalias
-                                + " on ";
+                        sql = " inner join " + entity.getTableProperties().getName() + " " + leftEntityalias + " on ";
                         sql += "(" + rightAttributeColumn + "=" + leftAttributeColumn + ")";
                     }
                     // joinSqlList.add(0, sql);
@@ -791,8 +780,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return The SQL representation of the Expression.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND)
-            throws SqlException {
+    String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND) throws SqlException {
         StringBuffer buffer = new StringBuffer("");
 
         EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
@@ -803,8 +791,7 @@ public class SqlGenerator implements ISqlGenerator {
         // which is not root Expression of the
         // Query.
         {
-            IAssociation association = joinGraph.getAssociation(parentExpression.getExpressionId(), expression
-                    .getExpressionId());
+            IAssociation association = joinGraph.getAssociation(parentExpression, expression);
             AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
                     .getDynamicExtensionsAssociation();
 
@@ -835,7 +822,7 @@ public class SqlGenerator implements ISqlGenerator {
         if (parentExpression == null || isPAND) // This will be true only for
         // root Expression of the Query.
         {
-            List<IExpressionId> childrenList = joinGraph.getChildrenList(expression.getExpressionId());
+            List<IExpression> childrenList = joinGraph.getChildrenList(expression);
             if (childrenList == null || childrenList.isEmpty()) {
                 /*
                  * No Child Expressions present for the root node, so this is
@@ -846,8 +833,7 @@ public class SqlGenerator implements ISqlGenerator {
                  */
                 if (entity.getParentEntity() != null
                         && InheritanceStrategy.TABLE_PER_HEIRARCHY.equals(entity.getInheritanceStrategy())) {
-                    String descriminatorCondition = getDescriminatorCondition(entity, getAliasFor(expression,
-                            entity));
+                    String descriminatorCondition = getDescriminatorCondition(entity, getAliasFor(expression, entity));
                     buffer.insert(0, "(");
                     buffer.append(")");
                     buffer.append(descriminatorCondition);
@@ -903,7 +889,7 @@ public class SqlGenerator implements ISqlGenerator {
             }
             pseudoAndSQL = "Select " + selectAttribute;
             Set<Integer> processedAlias = new HashSet<Integer>();
-            processedAlias.add(aliasAppenderMap.get(expression.getExpressionId()));
+            processedAlias.add(aliasAppenderMap.get(expression));
             String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
             StringBuffer buffer = new StringBuffer();
             buffer.append(" From ").append(tableName).append(" ").append(leftAlias);
@@ -934,12 +920,12 @@ public class SqlGenerator implements ISqlGenerator {
             boolean emptyExppression = false;
             if (operand instanceof IRule) {
                 operandSQL = getSQL((IRule) operand); // Processing Rule.
-            } else if (operand instanceof IExpressionId)
+            } else if (operand instanceof IExpression)
             // Processing sub Expression.
             {
                 emptyExppression = emptyExpressions.contains(operand);
                 if (!emptyExppression) {
-                    operandSQL = processSubExpression(expression, (IExpressionId) operand);
+                    operandSQL = processSubExpression(expression, (IExpression) operand);
                 }
             } else {
                 operandSQL = getCustomFormulaString((ICustomFormula) operand);
@@ -958,10 +944,10 @@ public class SqlGenerator implements ISqlGenerator {
 
                 int nextIndex = i + 1;
                 IExpressionOperand nextOperand = expression.getOperand(nextIndex);
-                if (nextOperand.isSubExpressionOperand() && emptyExpressions.contains(nextOperand)) {
+                if (nextOperand instanceof IExpression && emptyExpressions.contains(nextOperand)) {
                     for (; nextIndex < noOfRules; nextIndex++) {
                         nextOperand = expression.getOperand(nextIndex);
-                        if (!(nextOperand.isSubExpressionOperand() && emptyExpressions.contains(nextOperand))) {
+                        if (!(nextOperand instanceof IExpression && emptyExpressions.contains(nextOperand))) {
                             break;
                         }
                     }
@@ -980,8 +966,7 @@ public class SqlGenerator implements ISqlGenerator {
                     }
                     i = nextIndex - 1;
                 } else {
-                    currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL,
-                            nestingNumber);
+                    currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL, nestingNumber);
                     buffer.append(" " + connector.getOperator());
                 }
             } else {
@@ -1012,8 +997,7 @@ public class SqlGenerator implements ISqlGenerator {
      *            operator.
      * @return The updated current nesting count.
      */
-    private int attachOperandSQL(StringBuffer buffer, int currentNestingCounter, String operandSQL,
-            int nestingNumber) {
+    private int attachOperandSQL(StringBuffer buffer, int currentNestingCounter, String operandSQL, int nestingNumber) {
         if (currentNestingCounter < nestingNumber) {
             buffer.append(getParenthesis(nestingNumber - currentNestingCounter, "("));
             currentNestingCounter = nestingNumber;
@@ -1050,13 +1034,11 @@ public class SqlGenerator implements ISqlGenerator {
      * @param expression pAnd expression
      */
     private void addpAndExpression(IExpression expression) {
-        IExpressionId expressionId = expression.getExpressionId();
-        List<IExpressionId> childList = joinGraph.getChildrenList(expressionId);
+        List<IExpression> childList = joinGraph.getChildrenList(expression);
         pAndExpressions.add(expression);
 
-        for (IExpressionId newExpId : childList) {
-            IExpression exp = constraints.getExpression(newExpId);
-            addpAndExpression(exp);
+        for (IExpression newExp : childList) {
+            addpAndExpression(newExp);
         }
 
     }
@@ -1069,10 +1051,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return The SQL representation for the Sub expression.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    private String processSubExpression(IExpression expression, IExpressionId childExpressionId)
-            throws SqlException {
-        IExpression childExpression = constraints.getExpression(childExpressionId);
-
+    private String processSubExpression(IExpression expression, IExpression childExpression) throws SqlException {
         // boolean isPAND = ((Expression)
         // expression).isPseudoAnded(childExpression.getExpressionId(),
         // constraints);
@@ -1083,8 +1062,7 @@ public class SqlGenerator implements ISqlGenerator {
             if (!pAndExpressions.contains(childExpression)) {
                 addpAndExpression(childExpression);
             }
-            IAssociation association = joinGraph.getAssociation(expression.getExpressionId(), childExpression
-                    .getExpressionId());
+            IAssociation association = joinGraph.getAssociation(expression, childExpression);
             AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
                     .getDynamicExtensionsAssociation();
 
@@ -1095,8 +1073,7 @@ public class SqlGenerator implements ISqlGenerator {
             String joinAttribute = getAliasName(expression) + ".";
 
             ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
-            if (constraintProperties.getSourceEntityKey() != null
-                    && constraintProperties.getTargetEntityKey() != null)// Many
+            if (constraintProperties.getSourceEntityKey() != null && constraintProperties.getTargetEntityKey() != null)// Many
             // to
             // Many
             // Case
@@ -1243,8 +1220,8 @@ public class SqlGenerator implements ISqlGenerator {
         RelationalOperator operator = condition.getRelationalOperator();
         List<String> values = condition.getValues();
         if (values.size() != 1) {
-            throw new SqlException("Incorrect number of values found for Operator '" + operator
-                    + "' for condition:" + condition);
+            throw new SqlException("Incorrect number of values found for Operator '" + operator + "' for condition:"
+                    + condition);
         }
         String value = values.get(0);
         if (dataType instanceof StringTypeInformationInterface) {
@@ -1284,8 +1261,8 @@ public class SqlGenerator implements ISqlGenerator {
 
         List<String> values = condition.getValues();
         if (values.size() != 1) {
-            throw new SqlException("Incorrect number of values found for Operator '" + operator
-                    + "' for condition:" + condition);
+            throw new SqlException("Incorrect number of values found for Operator '" + operator + "' for condition:"
+                    + condition);
         }
         String value = values.get(0);
         if (operator.equals(RelationalOperator.Contains)) {
@@ -1370,8 +1347,7 @@ public class SqlGenerator implements ISqlGenerator {
         }
 
         AttributeTypeInformationInterface dataType = condition.getAttribute().getAttributeTypeInformation();
-        if (!(dataType instanceof DateTypeInformationInterface
-                || dataType instanceof IntegerTypeInformationInterface
+        if (!(dataType instanceof DateTypeInformationInterface || dataType instanceof IntegerTypeInformationInterface
                 || dataType instanceof LongTypeInformationInterface || dataType instanceof DoubleTypeInformationInterface)) {
             throw new SqlException("Incorrect Data type of operand for Between oparator in condition:" + condition);
         }
@@ -1436,14 +1412,14 @@ public class SqlGenerator implements ISqlGenerator {
                 Logger.out.error(parseExp.getMessage(), parseExp);
                 throw new SqlException(parseExp.getMessage(), parseExp);
             }
+
         } else if (dataType instanceof BooleanTypeInformationInterface) // defining
         // value
         // for
         // boolean
         // datatype.
         {
-            if (value == null
-                    || !(value.equalsIgnoreCase(Constants.TRUE) || value.equalsIgnoreCase(Constants.FALSE))) {
+            if (value == null || !(value.equalsIgnoreCase(Constants.TRUE) || value.equalsIgnoreCase(Constants.FALSE))) {
                 throw new SqlException("Incorrect value found in value part for boolean operator!!!");
             }
             if (value.equalsIgnoreCase(Constants.TRUE)) {
@@ -1551,7 +1527,7 @@ public class SqlGenerator implements ISqlGenerator {
         }
 
         String aliasName = getAliasForClassName(aliasEntity.getName());
-        Integer aliasAppender = aliasAppenderMap.get(expression.getExpressionId());
+        Integer aliasAppender = aliasAppenderMap.get(expression);
         if (aliasAppender == null)// for Junits
         {
             aliasAppender = 0;
@@ -1608,10 +1584,8 @@ public class SqlGenerator implements ISqlGenerator {
      *             join graph.
      */
     void createAliasAppenderMap() throws MultipleRootsException {
-        Enumeration<IExpressionId> exprIds = constraints.getExpressionIds();
-        while (exprIds.hasMoreElements()) {
-            IExpressionId exprId = exprIds.nextElement();
-            aliasAppenderMap.put(exprId, exprId.getInt());
+        for (IExpression expr : constraints) {
+            aliasAppenderMap.put(expr, expr.getExpressionId());
         }
     }
 
@@ -1660,16 +1634,16 @@ public class SqlGenerator implements ISqlGenerator {
      * @param expressionId the reference to the expression id.
      * @return true if the expression is empty.
      */
-    private boolean isEmptyExpression(IExpressionId expressionId) {
+    private boolean isEmptyExpression(int expressionId) {
         Expression expression = (Expression) constraints.getExpression(expressionId);
-        List<IExpressionId> operandList = joinGraph.getChildrenList(expressionId);
+        List<IExpression> operandList = joinGraph.getChildrenList(expression);
 
         boolean isEmpty = true;
         if (!operandList.isEmpty()) // Check whether any of its children
         // contains rule.
         {
-            for (IExpressionId subExpression : operandList) {
-                if (!isEmptyExpression(subExpression)) {
+            for (IExpression subExpression : operandList) {
+                if (!isEmptyExpression(subExpression.getExpressionId())) {
                     isEmpty = false;
                 }
             }
@@ -1681,7 +1655,7 @@ public class SqlGenerator implements ISqlGenerator {
         // SRINATH
         isEmpty = isEmpty && !expression.containsCustomFormula();
         if (isEmpty) {
-            emptyExpressions.add(expressionId); // Expression is empty.
+            emptyExpressions.add(expression); // Expression is empty.
         }
 
         return isEmpty;
@@ -1694,18 +1668,17 @@ public class SqlGenerator implements ISqlGenerator {
      *             joingraph.
      */
     private void createTree() throws MultipleRootsException {
-        IExpressionId rootExpID = joinGraph.getRoot();
-        IExpression rootExpression = constraints.getExpression(rootExpID);
+        IExpression rootExpression = joinGraph.getRoot();
         rootOutputTreeNodeList = new ArrayList<OutputTreeDataNode>();
         outputTreeNodeMap = new HashMap<Integer, OutputTreeDataNode>();
         OutputTreeDataNode rootOutputTreeNode = null;
         treeNo = 0;
         if (rootExpression.isInView()) {
             IOutputEntity rootOutputEntity = getOutputEntity(rootExpression);
-            rootOutputTreeNode = new OutputTreeDataNode(rootOutputEntity, rootExpID, treeNo++);
+            rootOutputTreeNode = new OutputTreeDataNode(rootOutputEntity, rootExpression.getExpressionId(), treeNo++);
 
             rootOutputTreeNodeList.add(rootOutputTreeNode);
-            outputTreeNodeMap.put(aliasAppenderMap.get(rootExpID), rootOutputTreeNode);
+            outputTreeNodeMap.put(aliasAppenderMap.get(rootExpression), rootOutputTreeNode);
         }
         completeTree(rootExpression, rootOutputTreeNode);
     }
@@ -1718,9 +1691,8 @@ public class SqlGenerator implements ISqlGenerator {
      *            null if there is no parent.
      */
     private void completeTree(IExpression expression, OutputTreeDataNode parentOutputTreeNode) {
-        List<IExpressionId> children = joinGraph.getChildrenList(expression.getExpressionId());
-        for (IExpressionId child : children) {
-            IExpression childExp = constraints.getExpression(child);
+        List<IExpression> children = joinGraph.getChildrenList(expression);
+        for (IExpression childExp : children) {
             OutputTreeDataNode childNode = parentOutputTreeNode;
             /**
              * Check whether chid node is in view or not. if it is in view then
@@ -1729,7 +1701,7 @@ public class SqlGenerator implements ISqlGenerator {
              */
             if (childExp.isInView()) {
                 IOutputEntity childOutputEntity = getOutputEntity(childExp);
-                Integer childAliasAppender = aliasAppenderMap.get(child);
+                Integer childAliasAppender = aliasAppenderMap.get(childExp);
 
                 /**
                  * Check whether output tree node for expression with the same
@@ -1741,10 +1713,10 @@ public class SqlGenerator implements ISqlGenerator {
                     if (parentOutputTreeNode == null) {
                         // New root node for output tree found, so create root
                         // node & add it in the rootOutputTreeNodeList.
-                        childNode = new OutputTreeDataNode(childOutputEntity, child, treeNo++);
+                        childNode = new OutputTreeDataNode(childOutputEntity, childExp.getExpressionId(), treeNo++);
                         rootOutputTreeNodeList.add(childNode);
                     } else {
-                        childNode = parentOutputTreeNode.addChild(childOutputEntity, child);
+                        childNode = parentOutputTreeNode.addChild(childOutputEntity, childExp.getExpressionId());
                     }
                     outputTreeNodeMap.put(childAliasAppender, childNode);
                 }
@@ -1789,15 +1761,14 @@ public class SqlGenerator implements ISqlGenerator {
             throw new UnsupportedOperationException("Custom formulas on " + Variables.databaseName
                     + " are not supported.");
         }
-        return new DatabaseSQLSettings(databaseType, Variables.datePattern);
+        return new DatabaseSQLSettings(databaseType);
     }
 
     private IAttributeAliasProvider getAliasProvider() {
         return new IAttributeAliasProvider() {
 
             public String getAliasFor(IExpressionAttribute exprAttr) {
-                IExpression expr = constraints.getExpression(exprAttr.getExpressionId());
-                return getSQL(exprAttr.getAttribute(), expr);
+                return getSQL(exprAttr.getAttribute(), exprAttr.getExpression());
             }
 
         };
@@ -1825,8 +1796,8 @@ public class SqlGenerator implements ISqlGenerator {
             case MySQL :
                 return "hour" + s + "*60*60 + minute" + s + "*60 + second" + s;
             case Oracle :
-                return "extract(hour from " + s + ")*60*60 + extract(minute from " + s
-                        + ")*60 + extract(second from " + s + ")";
+                return "extract(hour from " + s + ")*60*60 + extract(minute from " + s + ")*60 + extract(second from "
+                        + s + ")";
             default :
                 throw new RuntimeException("won't occur.");
         }

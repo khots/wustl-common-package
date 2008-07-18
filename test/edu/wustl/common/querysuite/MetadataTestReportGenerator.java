@@ -144,14 +144,13 @@ public class MetadataTestReportGenerator
 		expression.setInView(true);
 		IQueryEntity childConstraintEntity = QueryObjectFactory.createQueryEntity(associatedEntity);
 		IExpression childExpression = constraints.addExpression(childConstraintEntity);
-		expression.addOperand(childExpression.getExpressionId());
+		expression.addOperand(childExpression);
 		childExpression.setInView(true);
 		
 		IIntraModelAssociation Iassociation = QueryObjectFactory.createIntraModelAssociation(association);
 		try
 		{
-			constraints.getJoinGraph().putAssociation(expression.getExpressionId(),childExpression
-					.getExpressionId(), Iassociation);
+			constraints.getJoinGraph().putAssociation(expression,childExpression, Iassociation);
 		}
 		catch (CyclicException e)
 		{
