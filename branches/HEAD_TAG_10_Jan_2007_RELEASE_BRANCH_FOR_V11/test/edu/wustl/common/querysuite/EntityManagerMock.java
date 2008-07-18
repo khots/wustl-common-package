@@ -38,7 +38,7 @@ public class EntityManagerMock extends EntityManager {
         @Override
         public EntityInterface createEntity() {
             EntityInterface entity = super.createEntity();
-            entity.addEntityGroupInterface(entityGroup);
+            entity.setEntityGroup(entityGroup);
             entityGroup.addEntity(entity);
             return entity;
         }
@@ -793,14 +793,14 @@ public class EntityManagerMock extends EntityManager {
      * super.getEntitiesByAttributeDescription(arg0); }
      */
 
-    /**
+   /* *//**
      * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByAttributeName(java.lang.String)
-     */
+     *//*
     @Override
     public Collection getEntitiesByAttributeName(String arg0) throws DynamicExtensionsSystemException,
             DynamicExtensionsApplicationException {
         return super.getEntitiesByAttributeName(arg0);
-    }
+    }*/
 
     /**
      * @see edu.common.dynamicextensions.entitymanager.EntityManager#getEntitiesByConceptCode(java.lang.String)
