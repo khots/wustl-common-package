@@ -30,11 +30,6 @@ import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeManager;
-import edu.wustl.common.security.SecurityManager;
-import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 
 /**
  * @author kapil_kaveeshwar
