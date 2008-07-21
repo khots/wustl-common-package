@@ -161,7 +161,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @throws SqlException When there is error in the passed IQuery object.
      * @see edu.wustl.common.querysuite.queryengine.ISqlGenerator#generateSQL(edu.wustl.common.querysuite.queryobject.IQuery)
      */
-    public String generateSQL(IQuery query) throws MultipleRootsException, SqlException {
+    public String generateSQL(IQuery query) throws MultipleRootsException, SqlException, RuntimeException {
         Logger.out.debug("Srarted SqlGenerator.generateSQL().....");
         String sql = buildQuery(query);
         Logger.out.debug("Finished SqlGenerator.generateSQL()...SQL:" + sql);
@@ -205,7 +205,7 @@ public class SqlGenerator implements ISqlGenerator {
      *             joingraph.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    String buildQuery(IQuery query) throws MultipleRootsException, SqlException {
+    String buildQuery(IQuery query) throws MultipleRootsException, SqlException, RuntimeException {
         IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
         // IQuery queryClone = query;
         constraints = queryClone.getConstraints();
@@ -266,7 +266,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return
      * @throws SqlException
      */
-    private String getCompleteWherePart(IExpression rootExpression) throws SqlException {
+    private String getCompleteWherePart(IExpression rootExpression) throws SqlException, RuntimeException {
 
         String wherePart = getWherePartSQL(rootExpression, null, false);
 
@@ -780,7 +780,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return The SQL representation of the Expression.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND) throws SqlException {
+    String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND) throws SqlException, RuntimeException {
         StringBuffer buffer = new StringBuffer("");
 
         EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
@@ -907,7 +907,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return the SQL representation for the child operands.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    private String processOperands(IExpression expression) throws SqlException {
+    private String processOperands(IExpression expression) throws SqlException, RuntimeException {
         StringBuffer buffer = new StringBuffer("");
         int currentNestingCounter = 0;// holds current nesting number count
         // i.e. no of opening Braces that needs
@@ -1051,7 +1051,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @return The SQL representation for the Sub expression.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    private String processSubExpression(IExpression expression, IExpression childExpression) throws SqlException {
+    private String processSubExpression(IExpression expression, IExpression childExpression) throws SqlException, RuntimeException {
         // boolean isPAND = ((Expression)
         // expression).isPseudoAnded(childExpression.getExpressionId(),
         // constraints);
