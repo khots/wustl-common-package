@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -806,6 +807,11 @@ public class Utility
 	}
 	public static String getDisplayLabelForUnderscore(String objectName)
 	{
+		if(objectName.equals("PHI_ACCESS"))
+		{
+			return ApplicationProperties.getValue(objectName);
+		}
+		
 		String attrLabel = "";
 		int len = objectName.length();
 		for (int i = 0; i < len; i++)

@@ -737,17 +737,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public void cachePrivileges(String loginName) throws Exception
 	{
-		// storing PrivilegeCache for the user in session
 		// A privilegeCache object is created for a user during Login & 
 		// this cache contains the Classes, objects,... & corresponding Privileges
 		// which user has on these classes, objects, etc.
 		// All later Security checks are done through the cache & no call to the database is made
-		PrivilegeCache privilegeCache = new PrivilegeCache(loginName);
-		
-		// To add privilegeCache to
-		// Singleton instance of PrivilegeManager, requires User LoginName & privilegeCache object	
-		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-		privilegeManager.addPrivlegeCache(loginName,privilegeCache);
+		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(loginName);
+					
 	}
 
 	@Override

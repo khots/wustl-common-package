@@ -11,6 +11,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.wustl.common.security.PrivilegeUtility;
+import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.AuthorizationManager;
@@ -1004,6 +1006,8 @@ public class PrivilegeUtility
 		}
 	}
 	 
+	
+	/*
 	public List<Privilege> getPrivilegeList() throws CSException
 	{
 		Privilege privilege = new Privilege();
@@ -1011,7 +1015,7 @@ public class PrivilegeUtility
 		PrivilegeSearchCriteria privilegeSearchCriteria = new PrivilegeSearchCriteria(privilege);
 		List<Privilege> prvilegeList =  getUserProvisioningManager().getObjects(privilegeSearchCriteria);
 		return prvilegeList;
-	}
+	} */
 	
 	public Privilege getPrivilegeById(String privilegeId) throws CSException
 	{ 
