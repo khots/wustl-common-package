@@ -8,6 +8,7 @@ package edu.wustl.common.security;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeManager;
+import edu.wustl.common.security.PrivilegeUtility;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
@@ -51,7 +55,7 @@ public class PrivilegeManager
 {
 	/* Singleton instance of PrivilegeCacheManager
 	 */
-	private static PrivilegeManager instance;
+	private volatile static PrivilegeManager instance;
 
 	/* the map of object id and corresponding PrivilegeCache  
 	 */
@@ -77,14 +81,22 @@ public class PrivilegeManager
 	}
 
 	/**
-	 * to return the Singleton PrivilegeCacheManager instance
+	 * return the Singleton PrivilegeCacheManager instance
 	 */
 	public static PrivilegeManager getInstance() 
 	{
+		//double checked locking -- works with Java 1.5 - Juber
 		if(instance==null)
 		{
-			instance  = new PrivilegeManager();
-		}		
+			synchronized(PrivilegeManager.class)
+			{
+				if(instance == null)
+				{
+					instance  = new PrivilegeManager();	
+				}
+			}
+		}
+		
 		return instance;
 	}
 
@@ -99,20 +111,25 @@ public class PrivilegeManager
 	public PrivilegeCache getPrivilegeCache(String loginName)
 	{
 		PrivilegeCache privilegeCache = privilegeCaches.get(loginName);
-		if(privilegeCache == null)
+		if (privilegeCache == null)
 		{
-			try {
+			try
+			{
 				privilegeCache = new PrivilegeCache(loginName);
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			 privilegeCaches.put(loginName, privilegeCache);
+			
+			privilegeCaches.put(loginName, privilegeCache);
 		}
+		
 		return privilegeCache;
 	}
-
-
+	
+	
 	/**
 	 * To get PrivilegeCache objects for all users
 	 * belonging to a particular group
@@ -123,13 +140,13 @@ public class PrivilegeManager
 	 */
 	public List<PrivilegeCache> getPrivilegeCaches(String groupName) throws Exception
 	{
-		List<PrivilegeCache> listOfPrivilegeCaches = new Vector<PrivilegeCache>();
+		List<PrivilegeCache> listOfPrivilegeCaches = new ArrayList<PrivilegeCache>();
 
 		Set<User> users = privilegeUtility.getUserProvisioningManager().getUsers(groupName);
 
 		for(User user : users)
 		{
-			PrivilegeCache privilegeCache = privilegeCaches.get(user.getLoginName());
+			PrivilegeCache privilegeCache = privilegeCaches.get(user.getUserId().toString());
 
 			if(privilegeCache!= null)
 			{
@@ -153,26 +170,14 @@ public class PrivilegeManager
 	
 	
 	/**
-	 *  to add the PrivilegeCache object to the Map of PrivilegeCaches
-	 * 
-	 * @param loginName
-	 * @param privilegeCache
-	 */
-	public void addPrivlegeCache(String loginName, PrivilegeCache privilegeCache)
-	{
-		privilegeCaches.put(loginName, privilegeCache);
-	}
-
-
-	/**
 	 * This method will generally be called from CatissueCoreSesssionListener.sessionDestroyed 
 	 * in order to remove the corresponding PrivilegeCache from the Session
 	 * 
-	 * @param loginName
+	 * @param userId
 	 */
-	public void removePrivilegeCache(String loginName)
+	public void removePrivilegeCache(String userId)
 	{
-		privilegeCaches.remove(loginName);
+		privilegeCaches.remove(userId);
 	}
 	
 	

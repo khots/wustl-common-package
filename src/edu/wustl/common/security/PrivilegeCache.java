@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.security.PrivilegeCache;
+import edu.wustl.common.security.PrivilegeManager;
+import edu.wustl.common.security.PrivilegeUtility;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
@@ -22,6 +25,7 @@ import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
+import gov.nih.nci.security.authorization.domainobjects.ProtectionElementPrivilegeContext;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.Role;
 import gov.nih.nci.security.dao.ProtectionElementSearchCriteria;
@@ -31,8 +35,9 @@ import gov.nih.nci.security.exceptions.CSException;
  * @author ravindra_jain creation date : 14th April, 2008
  * @version 1.0
  */
-public class PrivilegeCache 
+public class PrivilegeCache
 {
+
 	/*
 	 * login name of the user who has logged in
 	 */
@@ -51,7 +56,7 @@ public class PrivilegeCache
 	 * 
 	 * @throws Exception
 	 */
-	public PrivilegeCache(String loginName) throws Exception 
+	public PrivilegeCache(String loginName) throws Exception
 	{
 		privilegeMap = new HashMap<String, BitSet>();
 		this.loginName = loginName;
@@ -70,51 +75,70 @@ public class PrivilegeCache
 	 * 
 	 * @throws Exception
 	 */
-	private void initialize() 
+	private void initialize() throws Exception
 	{
-		long startTime = System.currentTimeMillis();
+		/*
+		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
+		Set set = privilegeUtility.getUserProvisioningManager().getProtectionElementPrivilegeContextForUser(userId);
+		
+		
+		// To populate the privilege map
+		for (Object o : set)
+		{
+			ProtectionElementPrivilegeContext context = (ProtectionElementPrivilegeContext) o;
+			
+			String objectId = context.getProtectionElement().getObjectId();
 
-		for (String className : PrivilegeManager.getInstance().getClasses()) {
+			BitSet bitSet = new BitSet();
+
+			for (Object privilege : context.getPrivileges())
+			{
+				bitSet.set(getBitNumber(((Privilege) privilege).getName()));
+			}
+			
+			privilegeMap.put(objectId, bitSet);
+		}
+		*/
+
+		for (String className : PrivilegeManager.getInstance().getClasses())
+		{
 			Collection objectPrivilegeMap = getObjectPrivilegeMap(className);
 			populatePrivileges(objectPrivilegeMap);
 		}
 
-		for (String objectName : PrivilegeManager.getInstance().getEagerObjects()) {
-			Collection objectPrivilegeMap = getObjectPrivilegeMap(objectName);
+		for (String objectPattern : PrivilegeManager.getInstance().getEagerObjects())
+		{
+			Collection objectPrivilegeMap = getObjectPrivilegeMap(objectPattern);
 			populatePrivileges(objectPrivilegeMap);
 		}
 
-		long endTime = System.currentTimeMillis();
-		long time = endTime - startTime;
 	}
 
-	private Collection getObjectPrivilegeMap(String protectionElementObjectId) 
+	private Collection getObjectPrivilegeMap(String protectionElementObjectId)
 	{
 		Collection objectPrivilegeMap = new ArrayList();
-		
-		try 
+
+		try
 		{
 			PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 			ProtectionElement protectionElement = new ProtectionElement();
 			protectionElement.setObjectId(protectionElementObjectId);
 			ProtectionElementSearchCriteria protectionElementSearchCriteria = new ProtectionElementSearchCriteria(
 					protectionElement);
-			List list = privilegeUtility.getUserProvisioningManager()
-					.getObjects(protectionElementSearchCriteria);
-			
-			
-			if (list.size() > 0) 
+			List list = privilegeUtility.getUserProvisioningManager().getObjects(
+					protectionElementSearchCriteria);
+
+			if (list.size() > 0)
 			{
-				objectPrivilegeMap = privilegeUtility
-						.getUserProvisioningManager().getPrivilegeMap(
-								loginName, list);
+				objectPrivilegeMap = privilegeUtility.getUserProvisioningManager().getPrivilegeMap(
+						loginName, list);
 			}
 		}
-		catch (CSException excp) 
+		catch (CSException excp)
 		{
 			Logger.out.error(excp.getMessage(), excp);
 		}
-		
+
 		return objectPrivilegeMap;
 	}
 
@@ -131,16 +155,17 @@ public class PrivilegeCache
 	 * 
 	 * @param objectPrivilegeMapCollection
 	 */
-	private void populatePrivileges(Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection) 
+	private void populatePrivileges(Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection)
 	{
 		// To populate the permissionMap
-		for (ObjectPrivilegeMap objectPrivilegeMap : objectPrivilegeMapCollection) {
-			String objectId = objectPrivilegeMap.getProtectionElement()
-					.getObjectId();
+		for (ObjectPrivilegeMap objectPrivilegeMap : objectPrivilegeMapCollection)
+		{
+			String objectId = objectPrivilegeMap.getProtectionElement().getObjectId();
 
 			BitSet bitSet = new BitSet();
 
-			for (Object privilege : objectPrivilegeMap.getPrivileges()) {
+			for (Object privilege : objectPrivilegeMap.getPrivileges())
+			{
 				bitSet.set(getBitNumber(((Privilege) privilege).getName()));
 			}
 			privilegeMap.put(objectId, bitSet);
@@ -157,7 +182,7 @@ public class PrivilegeCache
 	 * @param privilegeName
 	 * @return
 	 */
-	public boolean hasPrivilege(Class classObj, String privilegeName) 
+	public boolean hasPrivilege(Class classObj, String privilegeName)
 	{
 		return hasPrivilege(classObj.getName(), privilegeName);
 	}
@@ -172,7 +197,7 @@ public class PrivilegeCache
 	 * @param privilegeName
 	 * @return
 	 */
-	public boolean hasPrivilege(AbstractDomainObject aDObject, String privilegeName) 
+	public boolean hasPrivilege(AbstractDomainObject aDObject, String privilegeName)
 	{
 		return hasPrivilege(aDObject.getObjectId(), privilegeName);
 	}
@@ -187,15 +212,20 @@ public class PrivilegeCache
 	 * @param privilegeName
 	 * @return
 	 */
-	public boolean hasPrivilege(String objectId, String privilegeName) 
+	public boolean hasPrivilege(String objectId, String privilegeName)
 	{
+		if (objectId.contains("edu.wustl.catissuecore.domain.User_"))
+		{
+			System.out.println("checking privileges for " + objectId);
+		}
+
 		BitSet bitSet = privilegeMap.get(objectId);
 
-		if (bitSet == null) 
+		if (bitSet == null)
 		{
-			for (String objectIdPart : PrivilegeManager.getInstance().getLazyObjects()) 
+			for (String objectIdPart : PrivilegeManager.getInstance().getLazyObjects())
 			{
-				if (objectId.startsWith(objectIdPart)) 
+				if (objectId.startsWith(objectIdPart))
 				{
 					bitSet = getPrivilegesFromDatabase(objectId, privilegeName);
 
@@ -203,33 +233,32 @@ public class PrivilegeCache
 				}
 			}
 		}
- 
+
 		boolean is = bitSet.get(getBitNumber(privilegeName));
 		return is;
-		
+
 	}
 
-	private BitSet getPrivilegesFromDatabase(String objectId, String privilegeName) 
+	private BitSet getPrivilegesFromDatabase(String objectId, String privilegeName)
 	{
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 
 		BitSet bitSet = privilegeMap.get(objectId);
 
-		try 
+		try
 		{
 			ProtectionElement protectionElement = new ProtectionElement();
 			protectionElement.setObjectId(objectId);
 			ProtectionElementSearchCriteria protectionElementSearchCriteria = new ProtectionElementSearchCriteria(
 					protectionElement);
-			List list = privilegeUtility.getUserProvisioningManager()
-					.getObjects(protectionElementSearchCriteria);
-			Collection objectPrivilegeMap = privilegeUtility
-					.getUserProvisioningManager().getPrivilegeMap(loginName,
-							list);
+			List list = privilegeUtility.getUserProvisioningManager().getObjects(
+					protectionElementSearchCriteria);
+			Collection objectPrivilegeMap = privilegeUtility.getUserProvisioningManager()
+					.getPrivilegeMap(loginName, list);
 			populatePrivileges(objectPrivilegeMap);
 			bitSet = privilegeMap.get(objectId);
-		} 
-		catch (CSException excp) 
+		}
+		catch (CSException excp)
 		{
 			Logger.out.error(excp.getMessage(), excp);
 		}
@@ -237,17 +266,17 @@ public class PrivilegeCache
 		return bitSet;
 	}
 
-	public void updatePrivilege(Class classObj, String privilegeName, boolean value) 
+	public void updatePrivilege(Class classObj, String privilegeName, boolean value)
 	{
 		updatePrivilege(classObj.getName(), privilegeName, value);
 	}
 
-	public void updatePrivilege(AbstractDomainObject aDObject, String privilegeName, boolean value) 
+	public void updatePrivilege(AbstractDomainObject aDObject, String privilegeName, boolean value)
 	{
 		updatePrivilege(aDObject.getObjectId(), privilegeName, value);
 	}
 
-	public void updatePrivilege(String objectId, String privilegeName, boolean value) 
+	public void updatePrivilege(String objectId, String privilegeName, boolean value)
 	{
 		BitSet bitSet = privilegeMap.get(objectId);
 
@@ -264,131 +293,157 @@ public class PrivilegeCache
 	 * 
 	 * @throws Exception
 	 */
-	public void refresh() throws Exception 
+	public void refresh() throws Exception
 	{
 		initialize();
 	}
 
-	private int getBitNumber(String privilegeName) 
+	private int getBitNumber(String privilegeName)
 	{
-		if (Permissions.READ.equals(privilegeName)) {
+		if (Permissions.READ.equals(privilegeName))
+		{
 			return 0;
 		}
-		if (Permissions.READ_DENIED.equals(privilegeName)) {
+		if (Permissions.READ_DENIED.equals(privilegeName))
+		{
 			return 1;
 		}
-		if (Permissions.UPDATE.equals(privilegeName)) {
+		if (Permissions.UPDATE.equals(privilegeName))
+		{
 			return 2;
 		}
-		if (Permissions.DELETE.equals(privilegeName)) {
+		if (Permissions.DELETE.equals(privilegeName))
+		{
 			return 3;
 		}
-		if (Permissions.CREATE.equals(privilegeName)) {
+		if (Permissions.CREATE.equals(privilegeName))
+		{
 			return 4;
 		}
-		if (Permissions.EXECUTE.equals(privilegeName)) {
+		if (Permissions.EXECUTE.equals(privilegeName))
+		{
 			return 5;
 		}
-		if (Permissions.USE.equals(privilegeName)) {
+		if (Permissions.USE.equals(privilegeName))
+		{
 			return 6;
 		}
-		if (Permissions.ASSIGN_READ.equals(privilegeName)) {
+		if (Permissions.ASSIGN_READ.equals(privilegeName))
+		{
 			return 7;
 		}
-		if (Permissions.ASSIGN_USE.equals(privilegeName)) {
+		if (Permissions.ASSIGN_USE.equals(privilegeName))
+		{
 			return 8;
 		}
-		if (Permissions.IDENTIFIED_DATA_ACCESS.equals(privilegeName)) {
+		if (Permissions.IDENTIFIED_DATA_ACCESS.equals(privilegeName))
+		{
 			return 9;
 		}
-		if(Permissions.DEFINE_ANNOTATION.equals(privilegeName)){
+		if (Permissions.DEFINE_ANNOTATION.equals(privilegeName))
+		{
 			return 17;
 		}
-		if(Permissions.DISTRIBUTION.equals(privilegeName)){
+		if (Permissions.DISTRIBUTION.equals(privilegeName))
+		{
 			return 21;
 		}
-		if(Permissions.GENERAL_ADMINISTRATION.equals(privilegeName)){
+		if (Permissions.GENERAL_ADMINISTRATION.equals(privilegeName))
+		{
 			return 29;
 		}
-		if(Permissions.GENERAL_SITE_ADMINISTRATION.equals(privilegeName)){
+		if (Permissions.GENERAL_SITE_ADMINISTRATION.equals(privilegeName))
+		{
 			return 28;
 		}
-		if(Permissions.PARTICIPANT_SCG_ANNOTATION.equals(privilegeName)){
+		if (Permissions.PARTICIPANT_SCG_ANNOTATION.equals(privilegeName))
+		{
 			return 24;
 		}
-		if(Permissions.PHI.equals(privilegeName)){
+		if (Permissions.PHI.equals(privilegeName))
+		{
 			return 23;
 		}
-		if(Permissions.PROTOCOL_ADMINISTRATION.equals(privilegeName)){
+		if (Permissions.PROTOCOL_ADMINISTRATION.equals(privilegeName))
+		{
 			return 16;
 		}
-		if(Permissions.QUERY.equals(privilegeName)){
+		if (Permissions.QUERY.equals(privilegeName))
+		{
 			return 22;
 		}
-		if(Permissions.REGISTRATION.equals(privilegeName)){
+		if (Permissions.REGISTRATION.equals(privilegeName))
+		{
 			return 18;
 		}
-		if(Permissions.REPOSITORY_ADMINISTRATION.equals(privilegeName)){
+		if (Permissions.REPOSITORY_ADMINISTRATION.equals(privilegeName))
+		{
 			return 14;
 		}
-		if(Permissions.SPECIMEN_ACCESSION.equals(privilegeName)){
+		if (Permissions.SPECIMEN_ACCESSION.equals(privilegeName))
+		{
 			return 20;
 		}
-		if(Permissions.SPECIMEN_ANNOTATION.equals(privilegeName)){
+		if (Permissions.SPECIMEN_ANNOTATION.equals(privilegeName))
+		{
 			return 25;
 		}
-		if(Permissions.SPECIMEN_PROCESSING.equals(privilegeName)){
+		if (Permissions.SPECIMEN_PROCESSING.equals(privilegeName))
+		{
 			return 26;
 		}
-		if(Permissions.SPECIMEN_STORAGE.equals(privilegeName)){
+		if (Permissions.SPECIMEN_STORAGE.equals(privilegeName))
+		{
 			return 27;
 		}
-		if(Permissions.STORAGE_ADMINISTRATION.equals(privilegeName)){
+		if (Permissions.STORAGE_ADMINISTRATION.equals(privilegeName))
+		{
 			return 15;
 		}
-		if(Permissions.USER_PROVISIONING.equals(privilegeName)){
+		if (Permissions.USER_PROVISIONING.equals(privilegeName))
+		{
 			return 13;
 		}
 		return 0;
 	}
 
-	public String getLoginName() 
+	public String getLoginName()
 	{
 		return loginName;
 	}
 
-	public void addObject(String objectId, Collection<Privilege> privileges) 
+	public void addObject(String objectId, Collection<Privilege> privileges)
 	{
 		BitSet bitSet = new BitSet();
 
-		for (Privilege privilege : privileges) {
+		for (Privilege privilege : privileges)
+		{
 			bitSet.set(getBitNumber(privilege.getName()));
 		}
 		privilegeMap.put(objectId, bitSet);
 	}
 
-	public void updateUserPrivilege(String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, boolean assignOperation)
-			throws Exception 
+	public void updateUserPrivilege(String privilegeName, Class objectType, Long[] objectIds,
+			Long userId, boolean assignOperation) throws Exception
 	{
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 		Collection<PrivilegeCache> listOfPrivilegeCaches = null;
 
-		listOfPrivilegeCaches = PrivilegeManager.getInstance()
-				.getPrivilegeCaches();
+		listOfPrivilegeCaches = PrivilegeManager.getInstance().getPrivilegeCaches();
 
-		for (PrivilegeCache privilegeCache : listOfPrivilegeCaches) {
+		for (PrivilegeCache privilegeCache : listOfPrivilegeCaches)
+		{
 			if (privilegeCache.getLoginName().equals(
-					privilegeUtility.getUserById(userId.toString())
-							.getLoginName())) {
-				for (Long objectId : objectIds) {
-					updatePrivilege(objectType.getName() + "_" + objectId,
-							privilegeName, assignOperation);
+					privilegeUtility.getUserById(userId.toString()).getLoginName()))
+			{
+				for (Long objectId : objectIds)
+				{
+					updatePrivilege(objectType.getName() + "_" + objectId, privilegeName,
+							assignOperation);
 				}
 			}
 		}
-		assignPrivilegeToUser(privilegeName, objectType, objectIds, userId,
-				assignOperation);
+		assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
 	}
 
 	/**
@@ -400,29 +455,29 @@ public class PrivilegeCache
 	 * @param userId
 	 * @throws SMException
 	 */
-	private void assignPrivilegeToUser(String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, boolean assignOperation)
-			throws SMException 
+	private void assignPrivilegeToUser(String privilegeName, Class objectType, Long[] objectIds,
+			Long userId, boolean assignOperation) throws SMException
 	{
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 
 		Logger.out.debug("In assignPrivilegeToUser...");
-		Logger.out.debug("privilegeName:" + privilegeName + " objectType:"
-				+ objectType + " objectIds:"
-				+ edu.wustl.common.util.Utility.getArrayString(objectIds)
+		Logger.out.debug("privilegeName:" + privilegeName + " objectType:" + objectType
+				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
 				+ " userId:" + userId);
 
-		if (privilegeName == null || objectType == null || objectIds == null
-				|| userId == null) {
-			Logger.out
-					.debug("Cannot assign privilege to user. One of the parameters is null.");
-		} else {
+		if (privilegeName == null || objectType == null || objectIds == null || userId == null)
+		{
+			Logger.out.debug("Cannot assign privilege to user. One of the parameters is null.");
+		}
+		else
+		{
 			String protectionGroupName = null;
 			String roleName;
 			Role role;
 			ProtectionGroup protectionGroup;
 
-			try {
+			try
+			{
 				// Getting Appropriate Role
 				// role name is generated as <<privilegeName>>_ONLY
 				if (privilegeName.equals(Permissions.READ))
@@ -432,61 +487,56 @@ public class PrivilegeCache
 
 				role = privilegeUtility.getRole(roleName);
 				Logger.out.debug("Operation>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-						+ (assignOperation == true ? "Remove READ_DENIED"
-								: "Add READ_DENIED"));
+						+ (assignOperation == true ? "Remove READ_DENIED" : "Add READ_DENIED"));
 
 				Set roles = new HashSet();
 				roles.add(role);
 
-				if (privilegeName.equals(Permissions.USE)) {
-					protectionGroupName = "PG_" + userId + "_ROLE_"
-							+ role.getId();
+				if (privilegeName.equals(Permissions.USE))
+				{
+					protectionGroupName = "PG_" + userId + "_ROLE_" + role.getId();
 
-					if (assignOperation == Constants.PRIVILEGE_ASSIGN) {
+					if (assignOperation == Constants.PRIVILEGE_ASSIGN)
+					{
 						Logger.out.debug("Assign Protection elements");
 
-						protectionGroup = privilegeUtility
-								.getProtectionGroup(protectionGroupName);
+						protectionGroup = privilegeUtility.getProtectionGroup(protectionGroupName);
 
 						// Assign Protection elements to Protection Group
-						privilegeUtility.assignProtectionElements(
-								protectionGroup.getProtectionGroupName(),
-								objectType, objectIds);
+						privilegeUtility.assignProtectionElements(protectionGroup
+								.getProtectionGroupName(), objectType, objectIds);
 
-						privilegeUtility
-								.assignUserRoleToProtectionGroup(userId, roles,
-										protectionGroup, assignOperation);
-					} else {
-						Logger.out.debug("De Assign Protection elements");
-						Logger.out.debug("protectionGroupName : "
-								+ protectionGroupName
-								+ " objectType : "
-								+ objectType
-								+ " objectIds : "
-								+ edu.wustl.common.util.Utility
-										.getArrayString(objectIds));
-						privilegeUtility.deAssignProtectionElements(
-								protectionGroupName, objectType, objectIds);
+						privilegeUtility.assignUserRoleToProtectionGroup(userId, roles,
+								protectionGroup, assignOperation);
 					}
-				} else {
+					else
+					{
+						Logger.out.debug("De Assign Protection elements");
+						Logger.out.debug("protectionGroupName : " + protectionGroupName
+								+ " objectType : " + objectType + " objectIds : "
+								+ edu.wustl.common.util.Utility.getArrayString(objectIds));
+						privilegeUtility.deAssignProtectionElements(protectionGroupName,
+								objectType, objectIds);
+					}
+				}
+				else
+				{
 					// In case of assign remove the READ_DENIED privilege of the
 					// user
 					// and in case of de-assign add the READ_DENIED privilege to
 					// the user.
 					assignOperation = !assignOperation;
 
-					for (int i = 0; i < objectIds.length; i++) {
+					for (int i = 0; i < objectIds.length; i++)
+					{
 						// Getting Appropriate Group
 						// Protection Group Name is generated as
 						// PG_<<userID>>_ROLE_<<roleID>>
 
-						Logger.out
-								.debug("objectType............................"
-										+ objectType);
+						Logger.out.debug("objectType............................" + objectType);
 						// changed by ajay
 
-						if (objectType.getName().equals(
-								Constants.COLLECTION_PROTOCOL_CLASS_NAME))
+						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
 							protectionGroupName = Constants
 									.getCollectionProtocolPGName(objectIds[i]);
 						else if (objectType.getName().equals(
@@ -494,21 +544,21 @@ public class PrivilegeCache
 							protectionGroupName = Constants
 									.getDistributionProtocolPGName(objectIds[i]);
 
-						protectionGroup = privilegeUtility
-								.getProtectionGroup(protectionGroupName);
+						protectionGroup = privilegeUtility.getProtectionGroup(protectionGroupName);
 
-						Logger.out
-								.debug("Assign User Role To Protection Group");
+						Logger.out.debug("Assign User Role To Protection Group");
 
 						// Assign User Role To Protection Group
-						privilegeUtility
-								.assignUserRoleToProtectionGroup(userId, roles,
-										protectionGroup, assignOperation);
+						privilegeUtility.assignUserRoleToProtectionGroup(userId, roles,
+								protectionGroup, assignOperation);
 					}
 				}
-			} catch (CSException csex) {
+			}
+			catch (CSException csex)
+			{
 				throw new SMException(csex);
 			}
 		}
 	}
+
 }
