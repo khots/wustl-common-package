@@ -57,6 +57,7 @@ import edu.wustl.common.querysuite.queryobject.ITerm;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.TermType;
+import edu.wustl.common.querysuite.queryobject.TimeInterval;
 import edu.wustl.common.querysuite.queryobject.impl.Connector;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
@@ -1808,11 +1809,20 @@ public class SqlGenerator implements ISqlGenerator {
         StringBuffer s = new StringBuffer();
         for (IOutputTerm term : terms) {
             String termString = "(" + getTermString(term.getTerm()) + ")";
+            termString = modifyForTimeInterval(termString, term.getTimeInterval());
             String columnName = COLUMN_NAME + selectIndex++;
             s.append(termString + " " + columnName + " ,");
             outputTermsColumns.put(columnName, term);
         }
         return removeLastComma(s.toString());
+    }
+
+    private String modifyForTimeInterval(String termString, TimeInterval<?> timeInterval) {
+        if (timeInterval == null) {
+            return termString;
+        }
+
+        return "(" + termString + ")/" + timeInterval.numSeconds();
     }
 
     private Map<String, IOutputTerm> outputTermsColumns;

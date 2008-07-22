@@ -12,7 +12,6 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ArithmeticOperator;
-import edu.wustl.common.querysuite.queryobject.DSInterval;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
@@ -32,6 +31,7 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.ITerm;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.querysuite.queryobject.TimeInterval;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 
 /**
@@ -3833,7 +3833,7 @@ public class QueryGeneratorMock {
             lhs.addOperand(registrationDate);
             lhs.addOperand(conn(ArithmeticOperator.Minus), birthDate);
 
-            IDateOffsetLiteral offSet = QueryObjectFactory.createDateOffsetLiteral("30", DSInterval.Minute);
+            IDateOffsetLiteral offSet = QueryObjectFactory.createDateOffsetLiteral("30", TimeInterval.Minute);
             ITerm rhs = QueryObjectFactory.createTerm();
             rhs.addOperand(offSet);
 
@@ -3887,7 +3887,7 @@ public class QueryGeneratorMock {
 
             ITerm lhs = QueryObjectFactory.createTerm();
             lhs.addOperand(frozTime);
-            IDateOffsetLiteral offSet = QueryObjectFactory.createDateOffsetLiteral("30", DSInterval.Minute);
+            IDateOffsetLiteral offSet = QueryObjectFactory.createDateOffsetLiteral("30", TimeInterval.Minute);
             lhs.addOperand(conn(ArithmeticOperator.Minus), offSet);
             ITerm rhs = QueryObjectFactory.createTerm();
             rhs.addOperand(collTime);
@@ -4022,12 +4022,13 @@ public class QueryGeneratorMock {
         }
     }
 
-    public static IQuery createTemporalOutputDSIntervalQuery() {
+    public static IQuery createTemporalOutputDSIntervalQuery(TimeInterval<?> timeInterval) {
         try {
             IQuery query = createTemporalQueryDateDiff();
             ICustomFormula formula = (ICustomFormula) query.getConstraints().getRootExpression().getOperand(2);
             IOutputTerm term = QueryObjectFactory.createOutputTerm(formula.getLhs(), "term");
             query.getOutputTerms().add(term);
+            term.setTimeInterval(timeInterval);
             return query;
         } catch (Exception e) {
             throw new RuntimeException(e);
