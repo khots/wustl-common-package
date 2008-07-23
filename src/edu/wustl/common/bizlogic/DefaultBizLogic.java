@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import edu.common.dynamicextensions.util.global.Variables;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
@@ -751,6 +752,66 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized(edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 */
+	public boolean isAuthorized(AbstractDAO dao, Object domainObject, SessionDataBean sessionDataBean)  
+	{
+		boolean isAuthorized = false;
+		//Get the base object id against which authorization will take place 
+		String protectionElementName = getObjectId(dao, domainObject);
+		//TODO To revisit this piece of code --> Vishvesh
+		if(protectionElementName.equals(Constants.allowOperation))
+		{
+			return true;
+		}
+		//Get the required privilege name which we would like to check for the logged in user.
+		String privilegeName = getPrivilegeName(domainObject);
+		PrivilegeCache privilegeCache = getPrivilegeCache(sessionDataBean);
+		//Checking whether the logged in user has the required privilege on the given protection element
+		isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
+		return isAuthorized;		
+	}
+	
+	/**This method gets the instance of privilege cache which is used for authorization.
+	 * @param sessionDataBean
+	 * @return
+	 */
+	private PrivilegeCache getPrivilegeCache(SessionDataBean sessionDataBean)
+	{
+		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
+		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(sessionDataBean.getUserName());
+		return privilegeCache;
+	}
+
+	/**
+	 * Gets privilege name depending upon operation performed
+	 * @param domainObject Object on which authorization is reqd.
+	 * @return Privilege Name
+	 */
+	protected String getPrivilegeName(Object domainObject)
+    {
+    	String privilegeName = Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
+    	return privilegeName;
+    }
+	
+	/**
+	 * @param domainObject
+	 * @return
+	 */
+	protected String getPrivilegeKey(Object domainObject)
+    {
+    	return null;
+    }
+	
+	/**
+	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.AbstractDAO, java.lang.Object)
+	 */
+	public String getObjectId(AbstractDAO dao, Object domainObject) 
+	{
+		return Constants.allowOperation;
 	}
 	
 }

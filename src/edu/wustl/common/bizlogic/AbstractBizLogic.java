@@ -228,13 +228,21 @@ public abstract class AbstractBizLogic implements IBizLogic
 		try
 		{
 	        dao.openSession(sessionDataBean);
-	    	validate(obj, dao, Constants.ADD);	        
-			preInsert(obj, dao, sessionDataBean);
-	        insert(obj, sessionDataBean, isInsertOnly, dao);
-	        dao.commit();
-	        //refresh the index for titli search
-	        //refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
-	        postInsert(obj, dao, sessionDataBean);
+	        // Authorization to ADD object checked here
+	        if (!isAuthorized(dao, obj, sessionDataBean))
+	        {
+	        	throw new UserNotAuthorizedException();
+	        } 
+	        else
+	        {
+	        	validate(obj, dao, Constants.ADD);	        
+	        	preInsert(obj, dao, sessionDataBean);
+	        	insert(obj, sessionDataBean, isInsertOnly, dao);
+		        dao.commit();
+		        //refresh the index for titli search
+		        //refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+		        postInsert(obj, dao, sessionDataBean);
+	        }	        
 		}
 		catch(DAOException ex)
 		{
@@ -284,10 +292,22 @@ public abstract class AbstractBizLogic implements IBizLogic
     	try
     	{
     		dao.openSession(sessionDataBean);
-    		preInsert(objCollection, dao, sessionDataBean);
-    		insertMultiple(objCollection,dao,sessionDataBean);
-	    	dao.commit();
-	    	postInsert(objCollection, dao, sessionDataBean);
+    		
+    		// Authorization to ADD multiple objects (e.g. Aliquots) checked here
+    		for(AbstractDomainObject obj : objCollection)
+    		{
+	    		if (!isAuthorized(dao, obj, sessionDataBean))
+		        {
+		        	throw new UserNotAuthorizedException();
+		        } 
+	    		else
+	    		{
+	    			preInsert(objCollection, dao, sessionDataBean);
+	    	    	insertMultiple(objCollection,dao,sessionDataBean);
+			    	dao.commit();
+			    	postInsert(objCollection, dao, sessionDataBean);
+	    		}
+    		}
 		}
 		catch (DAOException ex)
 		{
@@ -377,19 +397,28 @@ public abstract class AbstractBizLogic implements IBizLogic
 		try
 		{
 	        dao.openSession(sessionDataBean);
-	        validate(currentObj, dao, Constants.EDIT);
-	        preUpdate(dao, currentObj, oldObj, sessionDataBean);
-	        if(isUpdateOnly)
+	        
+	        // Authorization to UPDATE object checked here
+	        if (!isAuthorized(dao, oldObj, sessionDataBean))
 	        {
-	        	//update(currentObj,daoType);
-                update(dao, currentObj);
-	        }else{
-	        	update(dao, currentObj, oldObj, sessionDataBean);
-	        }  
-	        dao.commit();
-	        //refresh the index for titli search
-//			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
-	        postUpdate(dao, currentObj, oldObj, sessionDataBean);
+	        	throw new UserNotAuthorizedException();
+	        } 
+	        else
+	        {
+		        validate(currentObj, dao, Constants.EDIT);
+		        preUpdate(dao, currentObj, oldObj, sessionDataBean);
+		        if(isUpdateOnly)
+		        {
+		        	//update(currentObj,daoType);
+	                update(dao, currentObj);
+		        }else{
+		        	update(dao, currentObj, oldObj, sessionDataBean);
+		        }  
+		        dao.commit();
+		        //refresh the index for titli search
+	//			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
+		        postUpdate(dao, currentObj, oldObj, sessionDataBean);
+	        }
 		}
 		catch(DAOException ex)
 		{
@@ -701,5 +730,5 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;
+	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;	
 }

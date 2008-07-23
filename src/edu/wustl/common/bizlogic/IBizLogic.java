@@ -10,6 +10,7 @@ import java.util.List;
 
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
@@ -47,6 +48,21 @@ public interface IBizLogic
 	public abstract List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition) throws DAOException;
+	/**
+	 * This method checks for a particular privilege on a particular Object_Id
+	 * Gets privilege name as well as Object_Id from appropriate BizLogic 
+	 * depending on the context of the operation
+	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized(edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 */	
+	public  boolean isAuthorized(AbstractDAO dao,Object domainObject, SessionDataBean sessionDataBean) throws UserNotAuthorizedException;
+	
+	/**
+	 * This method returns the protection element name which should be used to authorize.
+	 * Default Implementation
+	 * If call is through some bizLogic which does not require authorization, 
+	 * let that operation be allowed for ALL
+	 */
+	public String getObjectId(AbstractDAO dao, Object domainObject);
     
     /**
      * Retrieves the records for class name in sourceObjectName according to field values passed.
