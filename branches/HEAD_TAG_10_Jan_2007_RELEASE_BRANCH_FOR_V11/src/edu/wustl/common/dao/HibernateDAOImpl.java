@@ -206,39 +206,13 @@ public class HibernateDAOImpl implements HibernateDAO
         
         try
         {
-            if (isSecureInsert)
-            {
-            	isAuthorized = false;
-                if (null != sessionDataBean)
-                {
-                    String userName = sessionDataBean.getUserName();
-                    if(userName != null)
-                    {
-                		// To get privilegeCache through 
-                		// Singleton instance of PrivilegeManager, requires User LoginName                    	
-                    	PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-                		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
-                    	
-            			// Call to SecurityManager.isAuthorized bypassed &
-            			// instead, call redirected to privilegeCache.hasPrivilege                		
-                		if (!isObjectCpOrSiteBased(obj)) 
-                		{
-							isAuthorized = privilegeCache.hasPrivilege(obj
-									.getClass(), Permissions.CREATE);
-						} else 
-						{
-							isAuthorized = true;
-						}
-
-                		
-//                    	isAuthorized = SecurityManager.getInstance(this.getClass())
-//						        .isAuthorized(userName,
-//						                obj.getClass().getName(),
-//						                Permissions.CREATE);
-                    }
-                }
-            }
-            
+        /**
+		* Now, Authorizations on Objects will be done in corresponding biz logic 
+		* for the Object through DefaultBizLogic's 'isAuthorized' method
+		* For this version, each Project will have to provide its implementation
+		* for objects which require secured access 
+		* By Default :: we return as 'true' i.e. user authorized
+		*/   
             if(isAuthorized)
             {
                 session.save(obj);
@@ -267,39 +241,7 @@ public class HibernateDAOImpl implements HibernateDAO
     }
     
     
-    private boolean isObjectCpOrSiteBased(Object obj) 
-    {
-		if (obj != null
-				&& (obj.getClass().getName().equalsIgnoreCase(
-						"edu.wustl.catissuecore.domain.Participant") || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.Specimen") || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.ParticipantMedicalIdentifier") ||  obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.CollectionProtocolRegistration") || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.SpecimenCollectionGroup") || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.SpecimenCollection") || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.SpecimenCharacteristics") || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.CollectionEventParameters")  || obj
-						.getClass().getName().equalsIgnoreCase(
-								"edu.wustl.catissuecore.domain.ReceivedEventParameters"))) 
-		{		
-			return true;
-		} 
-		else 
-		{
-			return false;
-		}
-	}
-
-    
-    
-    private DAOException handleError(String message, Exception hibExp)
+   private DAOException handleError(String message, Exception hibExp)
     {
         Logger.out.error(hibExp.getMessage(), hibExp);
         String msg = generateErrorMessage(message, hibExp);
@@ -345,18 +287,13 @@ public class HibernateDAOImpl implements HibernateDAO
     	boolean isAuthorized = true;
         try
         {
-            if (isSecureUpdate)
-            {
-                if (null != sessionDataBean)
-                {
-                	isAuthorized = isAuthorizedToUpdate(obj, sessionDataBean, hasObjectLevelPrivilege);
-                }
-                else
-                {
-                    isAuthorized = false;
-//                    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId()+" "+isAuthorized);
-                }
-            }
+       /**
+		* Now, Authorizations on Objects will be done in corresponding biz logic 
+		* for the Object through DefaultBizLogic's 'isAuthorized' method
+		* For this version, each Project will have to provide its implementation
+		* for objects which require secured access 
+		* By Default :: we return as 'true' i.e. user authorized
+		*/   
             
             if(isAuthorized)
             {
@@ -391,56 +328,6 @@ public class HibernateDAOImpl implements HibernateDAO
        
     }
 
-    
-    /**
-     * Check whether user has permission to Update (Class or Object level - depending on Context)
-     * 
-     * @param obj
-     * @param sessionDataBean
-     * @param hasObjectLevelPrivilege
-     * @return
-     */
-	private boolean isAuthorizedToUpdate(Object obj, SessionDataBean sessionDataBean, boolean hasObjectLevelPrivilege) {
-		boolean isAuthorized;
-		String userName = sessionDataBean.getUserName();
-		
-		if(isObjectCpOrSiteBased(obj))
-		{
-			return true;
-		}
-
-		// To get privilegeCache through 
-		// Singleton instance of PrivilegeManager, requires User LoginName    	
-		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
-		
-		if(!(obj instanceof AbstractDomainObject)||!hasObjectLevelPrivilege)
-		{
-		 // Call to SecurityManager.isAuthorized bypassed &
-		 // instead, call redirected to privilegeCache.hasPrivilege                    	
-		  isAuthorized = privilegeCache.hasPrivilege(obj.getClass(), Permissions.UPDATE);	
-			
-//                    isAuthorized = SecurityManager.getInstance(this.getClass())
-//					        .isAuthorized(sessionDataBean.getUserName(),
-//					                obj.getClass().getName(),
-//					                Permissions.UPDATE);
-		Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
-		}
-		else
-		{
-			
-		  // Call to SecurityManager.isAuthorized bypassed &
-		  // instead, call redirected to privilegeCache.hasPrivilege                    	
-			isAuthorized = privilegeCache.hasPrivilege(obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(), Permissions.UPDATE);
-			
-//                        isAuthorized = SecurityManager.getInstance(this.getClass())
-//						.isAuthorized(sessionDataBean.getUserName(),
-//						        obj.getClass().getName()+"_"+((AbstractDomainObject)obj).getId(),
-//						        Permissions.UPDATE);
-		    Logger.out.debug(" User's Authorization to update "+obj.getClass().getName()+" "+isAuthorized);
-		}
-		return isAuthorized;
-	}
     
     public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
     {

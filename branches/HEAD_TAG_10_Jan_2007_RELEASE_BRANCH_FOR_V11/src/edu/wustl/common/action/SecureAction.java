@@ -53,7 +53,8 @@ public abstract class SecureAction extends BaseAction
             checkAddNewOperation(request);
             ActionForward ac = executeSecureAction(mapping, form, request, response);
             
-            if (isAuthorizedToExecute(request,form))
+            // validation removed from Action forms & put in appropriate Biz Logics
+            if (true)
             {
             	return ac;
             } 	
@@ -87,7 +88,7 @@ public abstract class SecureAction extends BaseAction
     protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
     { 
     	
-    		String objectId = (String)request.getAttribute("OBJECT_ID");
+    		/*String objectId = (String)request.getAttribute("OBJECT_ID");
     		String [] objArray = objectId.split("_");
     		String baseString = objArray[0];
     		String objId = "";
@@ -104,7 +105,11 @@ public abstract class SecureAction extends BaseAction
     				break;
     			}
     		}
-    		return isAuthorized;
+    		return isAuthorized; */
+    		
+    		// validation removed from Action forms & put in appropriate Biz Logics
+    		// so, returning TRUE from here 
+    		return true;
     		
     }
     
@@ -146,15 +151,23 @@ public abstract class SecureAction extends BaseAction
     private boolean isAuthorizedToExecute (HttpServletRequest request,ActionForm form) throws Exception
     {  
     	String baseObjectId = null;
+    	SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
+				Constants.SESSION_DATA);
+    	
+    	if(sessionDataBean.isAdmin())
+    	{
+    		return true;
+    	}
+    	
     	if (form instanceof AbstractActionForm)
     	{
-		AbstractActionForm abstractForm = (AbstractActionForm) form;
-		baseObjectId = getObjectId(abstractForm);
+    		AbstractActionForm abstractForm = (AbstractActionForm) form;
+    		baseObjectId = getObjectId(abstractForm);
     	}
     	
 		request.setAttribute("OBJECT_ID", baseObjectId);
 		String objectId = getObjectIdForSecureMethodAccess(request);
-		if (baseObjectId != null)
+		if (baseObjectId != null && ! baseObjectId.equals(""))
 		{
 			return isAuthorizedToExecute(request);
 		}
@@ -165,8 +178,6 @@ public abstract class SecureAction extends BaseAction
 				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.REGISTRATION) ||
 				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.PROTOCOL_ADMINISTRATION)))
 		{
-			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
-					Constants.SESSION_DATA);
 			if(sessionDataBean == null)
 			{
 				if(request.getAttribute("pageOf").toString().equalsIgnoreCase("pageOfSignUp"))
