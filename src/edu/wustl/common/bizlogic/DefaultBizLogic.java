@@ -760,8 +760,21 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public boolean isAuthorized(AbstractDAO dao, Object domainObject, SessionDataBean sessionDataBean)  
 	{
 		boolean isAuthorized = false;
-		//Get the base object id against which authorization will take place 
-		String protectionElementName = getObjectId(dao, domainObject);
+		String protectionElementName = null;
+		
+		//	Get the base object id against which authorization will take place 
+		if(domainObject instanceof List)
+		{
+		    List list = (List) domainObject;
+			for(Object domainObject2 : list)
+			{
+				protectionElementName = getObjectId(dao, domainObject2);
+			}
+		}
+		else	
+		{
+			protectionElementName = getObjectId(dao, domainObject);
+		}
 		//TODO To revisit this piece of code --> Vishvesh
 		if(protectionElementName.equals(Constants.allowOperation))
 		{
