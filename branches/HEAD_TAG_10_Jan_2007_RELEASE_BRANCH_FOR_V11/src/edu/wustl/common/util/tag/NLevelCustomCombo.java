@@ -138,7 +138,7 @@ public class NLevelCustomCombo extends TagSupport
 		try {
 			JspWriter out = pageContext.getOut();
 			
-			combosHTMLStr = combosHTMLStr + "<table><tr>";
+			combosHTMLStr = combosHTMLStr + "<table cellpadding='0' cellspacing='0'><tr>";
 			getCombos(dataMap);
 
 			out.print(combosHTMLStr);
@@ -391,7 +391,7 @@ public class NLevelCustomCombo extends TagSupport
 		if(dMap instanceof Map)
 		{
 			Set keySet = ((Map)dMap).keySet();
-			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+formLabelStyle+"\" nowrap> "
+			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\">"+"</td><td class=\""+formLabelStyle+"\" nowrap> "
 												+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 												+"\" style =\""+styleClass
 												+"\" onmouseover =\"showTip(this.id)\""
@@ -453,7 +453,7 @@ public class NLevelCustomCombo extends TagSupport
 		}else if(dMap instanceof List)      // Termination condition for recursion
 		{
 			List dList = (List) dMap;
-			combosHTMLStr = combosHTMLStr + verticalCombosStart +"<td class=\""+formLabelStyle+"\"><label>"+labelNames[comboCounter]+"</label></td><td class=\""+formLabelStyle+"\" nowrap> "
+			combosHTMLStr = combosHTMLStr + verticalCombosStart +"<td class=\""+formLabelStyle+"\">"+"</td><td class=\""+formLabelStyle+"\" nowrap> "
 												+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 												+"\" style =\""+styleClass
 												+"\" class=\""+tdStyleClass
