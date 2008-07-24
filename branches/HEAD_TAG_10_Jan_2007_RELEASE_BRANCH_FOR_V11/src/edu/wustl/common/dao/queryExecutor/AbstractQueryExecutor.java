@@ -256,7 +256,7 @@ public abstract class AbstractQueryExecutor
 						//classes are derived from java.util.Date 
 						{
 							SimpleDateFormat formatter = new SimpleDateFormat(
-									Constants.DATE_PATTERN_MM_DD_YYYY);
+									Constants.DATE_PATTERN_MM_DD_YYYY + " "+Constants.TIME_PATTERN_HH_MM_SS);
 							value = formatter.format((java.util.Date) valueObj);
 						}
 						else
