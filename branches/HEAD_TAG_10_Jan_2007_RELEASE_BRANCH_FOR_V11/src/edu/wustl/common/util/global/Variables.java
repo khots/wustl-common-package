@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.wustl.common.beans.NameValueBean;
+
 /**
  * @author ajay_sharma
  *
@@ -47,4 +49,5 @@ public class Variables
      
      // Ravi : for Multi Site Rep. changes
      public static Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
+     public static Map<String, List<NameValueBean>> privilegeGroupingMap = new HashMap<String, List<NameValueBean>>();
 }
