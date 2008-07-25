@@ -557,15 +557,15 @@ public class SqlGenerator implements ISqlGenerator {
                 String actualRightAlias = getAliasFor(childExpression, rightEntity);
                 String rightAlias = actualRightAlias;
                 if (!processedAlias.contains(aliasAppenderMap.get(childExpression))) {
-                    if (SecurityManager.APPLICATION_CONTEXT_NAME.equalsIgnoreCase(Constants.APPLICATION_CLINPORTAL)) {
-                        leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
-                    }
                     if (InheritanceUtils.getInstance().isInherited(eavAssociation)) {
                         eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
                         rightEntity = eavAssociation.getTargetEntity();
 
                         leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
                         rightAlias = getAliasFor(childExpression, eavAssociation.getTargetEntity());
+                    } else
+                    {
+                    	leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
                     }
 
                     EntityInterface childEntity = childExpression.getQueryEntity().getDynamicExtensionsEntity();
