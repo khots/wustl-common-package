@@ -6,6 +6,8 @@
  */
 package edu.wustl.common.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,7 +26,17 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.ApplicationProperties;
@@ -839,6 +851,151 @@ public class Utility
 			}
 		}
 		return attrLabel;
+	}
+	
+	
+	/**
+	 * For MSR changes
+	 */
+
+	public static void initializePrivilegesMap()
+	{
+		Map<String, String> privilegeDetailsMap = Variables.privilegeDetailsMap;
+		Map<String, List<NameValueBean>> privilegeGroupingMap = Variables.privilegeGroupingMap; 
+		
+		try 
+		{
+			InputStream inputXmlFile = Utility.class.getClassLoader()
+					.getResourceAsStream("PermissionMapDetails.xml");
+
+			if (inputXmlFile != null) 
+			{
+				DocumentBuilderFactory factory = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				Document doc = builder.parse(inputXmlFile);
+
+				Element root = null;
+				root = doc.getDocumentElement();
+
+				if (root == null) {
+					throw new Exception("file can not be read");
+				}
+
+				NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
+
+				int length = nodeList.getLength();
+
+				for (int counter = 0; counter < length; counter++) 
+				{
+					Element element = (Element) (nodeList.item(counter));
+					String key = new String(element.getAttribute("key"));
+					String value = new String(element.getAttribute("value"));
+
+					privilegeDetailsMap.put(key, value);
+				}
+				
+				NodeList nodeList1 = root.getElementsByTagName("siteMapping");
+				int length1 = nodeList1.getLength();
+				String siteListKey = "SITE";
+				List<NameValueBean> sitePrivilegesList = new ArrayList<NameValueBean>();
+				
+				for(int counter = 0; counter < length1 ; counter++)
+				{
+					Element element = (Element) (nodeList1.item(counter));
+					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")), new String(element.getAttribute("id")));
+					sitePrivilegesList.add(nmv);
+				}
+				
+				privilegeGroupingMap.put(siteListKey, sitePrivilegesList);
+				
+				NodeList nodeList2 = root.getElementsByTagName("collectionProtocolMapping");
+				int length2 = nodeList2.getLength();
+				String cpListKey = "CP";
+				List<NameValueBean> cpPrivilegesList = new ArrayList<NameValueBean>();
+				
+				for(int counter = 0; counter < length2 ; counter++)
+				{
+					Element element = (Element) (nodeList2.item(counter));
+					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")), new String(element.getAttribute("id")));
+					cpPrivilegesList.add(nmv);
+				}
+				
+				privilegeGroupingMap.put(cpListKey, cpPrivilegesList);
+				
+				NodeList nodeList3 = root.getElementsByTagName("scientistMapping");
+				int length3 = nodeList3.getLength();
+				String scientistListKey = "SCIENTIST";
+				List<NameValueBean> scientistPrivilegesList = new ArrayList<NameValueBean>();
+				
+				for(int counter = 0; counter < length3 ; counter++)
+				{
+					Element element = (Element) (nodeList3.item(counter));
+					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")), new String(element.getAttribute("id")));
+					scientistPrivilegesList.add(nmv);
+				}
+				
+				privilegeGroupingMap.put(scientistListKey, scientistPrivilegesList);
+				
+				NodeList nodeList4 = root.getElementsByTagName("globalMapping");
+				int length4 = nodeList4.getLength();
+				String globalListKey = "GLOBAL";
+				List<NameValueBean> globalPrivilegesList = new ArrayList<NameValueBean>();
+				
+				for(int counter = 0; counter < length4 ; counter++)
+				{
+					Element element = (Element) (nodeList4.item(counter));
+					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")), new String(element.getAttribute("id")));
+					globalPrivilegesList.add(nmv);
+				}
+				
+				privilegeGroupingMap.put(globalListKey, globalPrivilegesList);
+				System.out.println(privilegeGroupingMap.size());
+			}
+		} catch (ParserConfigurationException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (SAXException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (IOException excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		} catch (Exception excp) {
+			Logger.out.error(excp.getMessage(), excp);
+		}
+}
+	
+	/**
+	 * For MSR changes
+	 */
+	public static List getAllPrivileges()
+	{
+		List<NameValueBean> allPrivileges = new ArrayList<NameValueBean>();
+		
+		List<NameValueBean> list1 =  Variables.privilegeGroupingMap.get("SITE");
+		List<NameValueBean> list2 = Variables.privilegeGroupingMap.get("CP");
+		List<NameValueBean> list3 = Variables.privilegeGroupingMap.get("SCIENTIST");
+		List<NameValueBean> list4 = Variables.privilegeGroupingMap.get("GLOBAL");
+		
+		for(NameValueBean nmv : list1)
+		{
+			allPrivileges.add(nmv);
+		}
+
+		for(NameValueBean nmv : list2)
+		{
+			allPrivileges.add(nmv);
+		}
+		
+		for(NameValueBean nmv : list3)
+		{
+			allPrivileges.add(nmv);
+		}
+		
+		for(NameValueBean nmv : list4)
+		{
+			allPrivileges.add(nmv);
+		}
+				
+		return allPrivileges;
 	}
 
 }
