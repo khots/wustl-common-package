@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.PrivilegeCache;
@@ -48,9 +49,9 @@ public class PrivilegeCache
 	 */
 	private Map<String, BitSet> privilegeMap;
 
-	// CONSTRUCTOR
-	/**R
-	 * After initialization of the variables, a call to function 'initialize()'
+	
+	/**
+	 * After initialization of the variables, a call to method 'initialize()'
 	 * is made initialize() uses some ProtectionElementSearchCriterias & gets
 	 * Protection Elements from the database
 	 * 
@@ -560,5 +561,51 @@ public class PrivilegeCache
 			}
 		}
 	}
+	
+	/**
+	 * get the ids and privileges where ids start with the given prefix
+	 * 
+	 * @param prefix
+	 * @return
+	 */
+	public Map<String, Set<String>> getPrivilegesforPrefix(String prefix)
+	{
+		Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+		
+		for(Entry<String, BitSet> entry : privilegeMap.entrySet())
+		{
+			if(entry.getKey().startsWith(prefix))
+			{
+				Set<String> privileges = getPrivilegeNames(entry.getValue());
+				map.put(entry.getKey(), privileges);
+			}
+		}
+		
+		return map;
+		
+	}
+
+	
+	/**
+	 * convert the given bitset into a set of privilege names
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private Set<String> getPrivilegeNames(BitSet value)
+	{
+		Set<String> privilegeNames = new HashSet<String>();
+		
+		//TODO this is dummy implementation - provide the right implementation
+		privilegeNames.add(Permissions.SPECIMEN_STORAGE);
+		privilegeNames.add(Permissions.ASSIGN_READ);
+		
+		return privilegeNames;
+		
+	}
+	
+	
+	
+	
 
 }
