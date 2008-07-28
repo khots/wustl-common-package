@@ -1,8 +1,6 @@
 
 package edu.wustl.common.action;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,10 +12,6 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.common.dynamicextensions.util.global.Variables;
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeManager;
-import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -148,7 +142,7 @@ public abstract class SecureAction extends BaseAction
     	return null;
     }
     
-    private boolean isAuthorizedToExecute (HttpServletRequest request,ActionForm form) throws Exception
+    /*private boolean isAuthorizedToExecute (HttpServletRequest request,ActionForm form) throws Exception
     {  
     	String baseObjectId = null;
     	SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
@@ -198,5 +192,5 @@ public abstract class SecureAction extends BaseAction
 		{
 			return true;
 		}
-	}
+	}*/
 }
