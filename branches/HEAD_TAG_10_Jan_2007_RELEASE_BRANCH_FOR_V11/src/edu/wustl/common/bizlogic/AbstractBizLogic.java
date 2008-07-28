@@ -399,7 +399,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        dao.openSession(sessionDataBean);
 	        
 	        // Authorization to UPDATE object checked here
-	        if (!isAuthorized(dao, oldObj, sessionDataBean))
+	        if (!isAuthorized(dao, currentObj, sessionDataBean))
 	        {
 	        	throw new UserNotAuthorizedException();
 	        } 
