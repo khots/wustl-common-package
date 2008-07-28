@@ -576,7 +576,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		while (iterator.hasNext())
 		{
 			AbstractDomainObject abstractDomainObject = (AbstractDomainObject) iterator.next();
-			if (id.equals(abstractDomainObject.getId()))			
+			
+			if (id != null && id.equals(abstractDomainObject.getId()))			
 			{
 				return abstractDomainObject;
 			}
