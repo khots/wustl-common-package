@@ -18,6 +18,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import edu.common.dynamicextensions.util.global.Variables;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
@@ -36,6 +40,7 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -826,5 +831,36 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return Constants.allowOperation;
 	}
+	
+	/**
+     * Executes the HQL query.
+     * @param query HQL query to execute.
+     * @throws ClassNotFoundException Class not fount Exception
+     * @throws BizLogicException BizLogic exception
+     */
+    public List executeQuery(String query) throws ClassNotFoundException, DAOException
+    {
+    	List returner = null;
+    	Session session = null;
+    	try
+		{
+        	session = DBUtil.getCleanSession();
+    		Query hibernateQuery = session.createQuery(query);
+			returner = hibernateQuery.list();
+		}
+		catch (HibernateException e)
+		{
+			throw (new DAOException(e));
+		}
+		catch (BizLogicException e)
+		{
+			throw new DAOException("Failed to create Session Object"+ e.getMessage());
+		} 
+		finally
+		{
+			session.close();
+		}
+		return returner;
+    }
 	
 }
