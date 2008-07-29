@@ -293,21 +293,10 @@ public abstract class AbstractBizLogic implements IBizLogic
     	{
     		dao.openSession(sessionDataBean);
     		
-    		// Authorization to ADD multiple objects (e.g. Aliquots) checked here
-    		for(AbstractDomainObject obj : objCollection)
-    		{
-	    		if (!isAuthorized(dao, obj, sessionDataBean))
-		        {
-		        	throw new UserNotAuthorizedException();
-		        } 
-	    		else
-	    		{
-	    			preInsert(objCollection, dao, sessionDataBean);
-	    	    	insertMultiple(objCollection,dao,sessionDataBean);
-			    	dao.commit();
-			    	postInsert(objCollection, dao, sessionDataBean);
-	    		}
-    		}
+	    	preInsert(objCollection, dao, sessionDataBean);
+	    	insertMultiple(objCollection,dao,sessionDataBean);
+			dao.commit();
+			postInsert(objCollection, dao, sessionDataBean);
 		}
 		catch (DAOException ex)
 		{
@@ -351,12 +340,18 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     public final void insertMultiple(Collection<AbstractDomainObject> objCollection, AbstractDAO dao,SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
     {
-    	Iterator<AbstractDomainObject> domainObjectItr = objCollection.iterator();
-    	while(domainObjectItr.hasNext())
-	    {
-	    	Object abstractDomainObject = domainObjectItr.next();
-	    	validate(abstractDomainObject, dao, Constants.ADD);	
-	    	insert(abstractDomainObject, sessionDataBean, false, dao);
+    	//  Authorization to ADD multiple objects (e.g. Aliquots) checked here
+		for(AbstractDomainObject obj : objCollection)
+		{
+    		if (!isAuthorized(dao, obj, sessionDataBean))
+	        {
+	        	throw new UserNotAuthorizedException();
+	        } 
+    		else
+    		{	
+			    validate(obj, dao, Constants.ADD);	
+			    insert(obj, sessionDataBean, false, dao);
+			}
 		}
     }
 	/**
