@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
@@ -568,15 +569,15 @@ public class PrivilegeCache
 	 * @param prefix
 	 * @return
 	 */
-	public Map<String, Set<String>> getPrivilegesforPrefix(String prefix)
+	public Map<String, List<NameValueBean>> getPrivilegesforPrefix(String prefix)
 	{
-		Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+		Map<String, List<NameValueBean>> map = new HashMap<String, List<NameValueBean>>();
 		
 		for(Entry<String, BitSet> entry : privilegeMap.entrySet())
 		{
 			if(entry.getKey().startsWith(prefix))
 			{
-				Set<String> privileges = getPrivilegeNames(entry.getValue());
+				List<NameValueBean> privileges = getPrivilegeNames(entry.getValue());
 				map.put(entry.getKey(), privileges);
 			}
 		}
@@ -592,13 +593,17 @@ public class PrivilegeCache
 	 * @param value
 	 * @return
 	 */
-	private Set<String> getPrivilegeNames(BitSet value)
+	private List<NameValueBean> getPrivilegeNames(BitSet value)
 	{
-		Set<String> privilegeNames = new HashSet<String>();
+		List<NameValueBean> privilegeNames = new ArrayList<NameValueBean>();
 		
 		//TODO this is dummy implementation - provide the right implementation
-		privilegeNames.add(Permissions.SPECIMEN_STORAGE);
-		privilegeNames.add(Permissions.ASSIGN_READ);
+		NameValueBean nmv = new NameValueBean();
+		nmv.setName(Permissions.SPECIMEN_STORAGE);
+		privilegeNames.add(nmv);
+		NameValueBean nmv1 = new NameValueBean();
+		nmv1.setName(Permissions.ASSIGN_READ);
+		privilegeNames.add(nmv1);
 		
 		return privilegeNames;
 		

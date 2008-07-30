@@ -19,17 +19,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.PrivilegeUtility;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
+import gov.nih.nci.security.authorization.domainobjects.Group;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
@@ -525,10 +528,40 @@ public class PrivilegeManager
 		if(pg !=null)
 		{
 			pg = new ProtectionGroup();
-		pg.setProtectionGroupName(protectionGrpName);
+			pg.setProtectionGroupName(protectionGrpName);
 		
 		}
 		
+	}
+	
+	/**
+	 * get a set of login names of users having given privilege on given object
+	 * 
+	 * @param objectId
+	 * @param privilege
+	 * @return  
+	 * @throws CSException 
+	 */
+	public Set<String> getAccesibleUsers(String objectId, String privilege) throws CSException 
+	{
+		Set<String> result = new HashSet<String>();
+		
+		UserProvisioningManager userProvisioningManager = privilegeUtility.getUserProvisioningManager();
+		
+		List list = userProvisioningManager.getAccessibleGroups(objectId, privilege);
+		
+		for(Object o : list)
+		{
+			Group group = (Group) o;
+			
+			for(Object o1 : group.getUsers())
+			{
+				User user = (User) o1;
+				result.add(user.getLoginName());
+			}
+		}
+		
+		return result;
 	}
 	
 	
