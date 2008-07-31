@@ -1786,6 +1786,7 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     private String getTermString(ITerm term) {
+        // TODO this is a tad ugly now; if/when sqlGen moves to query project, it won't be.
         TermString termString = getTermProcessor().convertTerm(term);
         String s = termString.getString();
         if (termString.getTermType() != TermType.DSInterval) {
@@ -1795,7 +1796,7 @@ public class SqlGenerator implements ISqlGenerator {
         s = "(" + s + ")";
         switch (getDatabaseSQLSettings().getDatabaseType()) {
             case MySQL :
-                return "hour" + s + "*60*60 + minute" + s + "*60 + second" + s;
+                return s;
             case Oracle :
                 return "extract(hour from " + s + ")*60*60 + extract(minute from " + s + ")*60 + extract(second from "
                         + s + ")";
