@@ -1798,7 +1798,7 @@ public class SqlGenerator implements ISqlGenerator {
             case MySQL :
                 return s;
             case Oracle :
-                return "extract(hour from " + s + ")*60*60 + extract(minute from " + s + ")*60 + extract(second from "
+                return "extract(day from " + s + ")*86400 + extract(hour from " + s + ")*3600 + extract(minute from " + s + ")*60 + extract(second from "
                         + s + ")";
             default :
                 throw new RuntimeException("won't occur.");
@@ -1822,8 +1822,9 @@ public class SqlGenerator implements ISqlGenerator {
         if (timeInterval == null) {
             return termString;
         }
-
-        return "(" + termString + ")/" + timeInterval.numSeconds();
+        termString = termString + "/" + timeInterval.numSeconds();
+        termString = "ROUND(" + termString + ")";
+        return termString;
     }
 
     private Map<String, IOutputTerm> outputTermsColumns;
