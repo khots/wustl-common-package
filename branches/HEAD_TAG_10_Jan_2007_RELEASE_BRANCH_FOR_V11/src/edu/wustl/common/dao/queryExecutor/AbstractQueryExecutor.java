@@ -250,7 +250,7 @@ public abstract class AbstractQueryExecutor
 					{
 						String value;
                         if(valueObj instanceof oracle.sql.DATE) {
-                            valueObj =  ((oracle.sql.DATE) valueObj).dateValue();
+                            valueObj =  ((oracle.sql.DATE) valueObj).timestampValue();
                         }
 						// Sri: Added check for date/time/timestamp since the
 						// default date format returned by toString was yyyy-dd-mm
