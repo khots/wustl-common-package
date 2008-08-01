@@ -320,7 +320,8 @@ public class NLevelCustomCombo extends TagSupport
 			{
 				initialValues[i] = "-1";
 			}
-		}else
+		}
+		else
 		{
 			for(int i = 0; i < initialValues.length;i++)
 			{
@@ -500,7 +501,7 @@ public class NLevelCustomCombo extends TagSupport
 			{
 				tdStyleClass = tdStyleClassArray[comboCounter];
 			}
-			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\" nowrap> "+labelNames[comboCounter]
+			combosHTMLStr = combosHTMLStr + verticalCombosStart + "<td class=\""+formLabelStyle+"\" nowrap> "
 									+"<select size=\"1\" name =\""+attributeNames[comboCounter]
 									+"\" style =\""+styleClass
 									+"\" class=\""+tdStyleClass
