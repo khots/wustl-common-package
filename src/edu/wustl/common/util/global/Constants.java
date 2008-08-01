@@ -333,6 +333,7 @@ public class Constants
 	// For Tree Applet
 	public static final String PAGEOF_STORAGE_LOCATION = "pageOfStorageLocation";
 	public static final String PAGEOF_SPECIMEN = "pageOfSpecimen";
+	public static final String PAGEOF_STORAGECONTAINER="pageOfStorageContainer";
 	public static final String PAGEOF_TISSUE_SITE = "pageOfTissueSite";
 	public static final String PAGEOF_MULTIPLE_SPECIMEN = "pageOfMultipleSpecimen";
 	//Added By Ramya
