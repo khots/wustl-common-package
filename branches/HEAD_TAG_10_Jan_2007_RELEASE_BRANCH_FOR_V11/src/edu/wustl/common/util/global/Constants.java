@@ -107,6 +107,16 @@ public class Constants
 	    return "USER_";
 	}
 	
+	public static final String getSitePGName(Long identifier)
+	{
+	    if(identifier == null)
+	    {
+	        return "SITE_";
+	    }
+	    return "SITE_"+identifier;
+	}
+	
+	
 	public static final String COLLECTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
 	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
 	// Aarti: Constants for security parameter required 
