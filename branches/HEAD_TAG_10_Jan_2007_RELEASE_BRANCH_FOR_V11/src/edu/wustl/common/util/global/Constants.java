@@ -542,6 +542,7 @@ public class Constants
 	public static final String SUPER_ADMINISTRATOR_GROUP_ID = "SUPER_ADMINISTRATOR_GROUP_ID";
 	public static final String APPLICATION_CLINPORTAL = "clinportal";
 	public static final String allowOperation = "allowOperation";
+	public static final String REGISTRATION = "REGISTRATION";
 	public static final String PHI_ACCESS = "PHI_ACCESS";
 	public static final String READ_DENIED = "READ_DENIED";
 	
