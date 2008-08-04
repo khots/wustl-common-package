@@ -30,7 +30,11 @@ import edu.wustl.common.util.logger.Logger;
 
 public class Validator
 {
-
+	/**
+	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc
+	 * */
+	private static final String REGEX_XSS_VULNERABLE = "[()<>]";
+	
     /**
      * Checks that the input String is a valid email address.
      * @param aEmailAddress String containing the email address to be checked.
@@ -1046,5 +1050,20 @@ public class Validator
 				
 		return days;
     }
-
+    
+    /**
+     * This method check for xxs vulnerable characters like <, >, (, ) etc.
+     * @param String for which xss vulnerable character [ (,),< or > ] to be checked.
+     * @return true if the string contains any xss vulnerable character else false.
+     */
+    public static boolean isXssVulnerable(String value){
+    	boolean isXssVulnerable=false;
+    	if(value!=null)
+    	{
+    		Pattern p = Pattern.compile(REGEX_XSS_VULNERABLE);
+    		Matcher m = p.matcher(value);
+    		isXssVulnerable= m.find();
+    	}
+    	return isXssVulnerable;
+    }
 }
