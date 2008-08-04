@@ -1775,7 +1775,7 @@ public class SqlGenerator implements ISqlGenerator {
         };
     }
 
-    private String getCustomFormulaString(ICustomFormula formula) {
+    protected String getCustomFormulaString(ICustomFormula formula) {
         return getCustomFormulaProcessor().asString(formula);
     }
 
