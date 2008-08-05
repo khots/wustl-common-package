@@ -358,7 +358,7 @@ public class DateTimeComponent extends TagSupport
 			onClickFunction = onClickImage;
 		
 		output = output + "<A onclick=\"" + onClickFunction + "\" href=\"javascript://\">";
-		output = output + "<IMG alt=\"" + iconComment +"\" src=\"images/calendar.gif\" border=0>";
+		output = output + "<span valign=middle ><IMG alt=\"" + iconComment +"\" src=\"images/calendar.gif\" hspace=0 vspace=0 align=top height=22 width=24 border=0></span>";
 		output = output + "</A>";
 		
 		output = output + "<DIV id=slcalcod"+id+" style=\"Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
