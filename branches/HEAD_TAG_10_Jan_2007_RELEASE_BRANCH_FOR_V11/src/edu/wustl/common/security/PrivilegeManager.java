@@ -545,22 +545,33 @@ public class PrivilegeManager
 	public Set<String> getAccesibleUsers(String objectId, String privilege) throws CSException 
 	{
 		Set<String> result = new HashSet<String>();
-		
-		UserProvisioningManager userProvisioningManager = privilegeUtility.getUserProvisioningManager();
-		
-		List list = userProvisioningManager.getAccessibleGroups(objectId, privilege);
-		
-		for(Object o : list)
+		try
 		{
-			Group group = (Group) o;
+			UserProvisioningManager userProvisioningManager = privilegeUtility.getUserProvisioningManager();
 			
-			for(Object o1 : group.getUsers())
+			List list = userProvisioningManager.getAccessibleGroups(objectId, privilege);
+			
+			for(Object o : list)
 			{
-				User user = (User) o1;
-				result.add(user.getLoginName());
+				Group group = (Group) o;
+				
+				for(Object o1 : group.getUsers())
+				{
+					User user = (User) o1;
+					result.add(user.getLoginName());
+				}
 			}
 		}
-		
+		catch(CSException e)
+		{
+			throw e;
+		}
+		catch(Throwable e)
+		{
+			//open connections?
+			
+		}
+			
 		return result;
 	}
 	
