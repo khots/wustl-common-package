@@ -22,7 +22,9 @@ import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.PrivilegeUtility;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Permissions;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
@@ -578,7 +580,10 @@ public class PrivilegeCache
 			if(entry.getKey().startsWith(prefix))
 			{
 				List<NameValueBean> privileges = getPrivilegeNames(entry.getValue());
-				map.put(entry.getKey(), privileges);
+				if(!privileges.isEmpty())
+				{
+					map.put(entry.getKey(), privileges);
+				}
 			}
 		}
 		
@@ -597,20 +602,86 @@ public class PrivilegeCache
 	{
 		List<NameValueBean> privilegeNames = new ArrayList<NameValueBean>();
 		
-		//TODO this is dummy implementation - provide the right implementation
-		NameValueBean nmv = new NameValueBean();
-		nmv.setName(Permissions.SPECIMEN_STORAGE);
-		privilegeNames.add(nmv);
-		NameValueBean nmv1 = new NameValueBean();
-		nmv1.setName(Permissions.ASSIGN_READ);
-		privilegeNames.add(nmv1);
+		for(int i=0; i<value.size();i++)
+		{
+			if(value.get(i))
+			{
+				NameValueBean nmv = new NameValueBean();
+				nmv.setName("DUMMY");
+				
+				switch(i)
+				{
+					case 17:
+						nmv.setName(Permissions.DEFINE_ANNOTATION);
+						break;
+										
+					case 21:
+						nmv.setName(Permissions.DISTRIBUTION);
+						break;
+						
+					case 29:
+						nmv.setName(Permissions.GENERAL_ADMINISTRATION);
+						break;
+					
+						/*
+					case 24:
+						nmv.setName(Permissions.PARTICIPANT_SCG_ANNOTATION);
+						break;
+						*/
+						
+					case 16:
+						nmv.setName(Permissions.PROTOCOL_ADMINISTRATION);
+						break;
+						
+					case 22:
+						nmv.setName(Permissions.QUERY);
+						break;
+						
+					case 18:
+						nmv.setName(Permissions.REGISTRATION);
+						break;
+						
+					case 14:
+						nmv.setName(Permissions.REPOSITORY_ADMINISTRATION);
+						break;
+					/*	
+					case 25:
+						nmv.setName(Permissions.SPECIMEN_ANNOTATION);
+						break;
+					*/
+						
+					case 26:
+						nmv.setName(Permissions.SPECIMEN_PROCESSING);
+						break;
+					/*	
+					case 27:
+						nmv.setName(Permissions.SPECIMEN_STORAGE);
+						break;
+					*/
+						
+					case 15:
+						nmv.setName(Permissions.STORAGE_ADMINISTRATION);
+						break;
+						
+					case 13:
+						nmv.setName(Permissions.USER_PROVISIONING);
+						break;
+				}
+				
+				for(Object o :Utility.getAllPrivileges())
+				{
+					NameValueBean privilege = (NameValueBean) o;
+					if(privilege.getName().equals(nmv.getName()))
+					{
+						nmv.setValue(privilege.getValue());
+						privilegeNames.add(nmv);
+						break;
+					}
+				}
+			}
+		}
 		
 		return privilegeNames;
-		
 	}
 	
-	
-	
-	
-
 }
