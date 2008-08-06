@@ -218,6 +218,8 @@ public class PrivilegeCache
 	 */
 	public boolean hasPrivilege(String objectId, String privilegeName)
 	{
+		boolean isAuthorized = false;
+		
 		if (objectId.contains("edu.wustl.catissuecore.domain.User_"))
 		{
 			System.out.println("checking privileges for " + objectId);
@@ -237,10 +239,12 @@ public class PrivilegeCache
 				}
 			}
 		}
-
-		boolean is = bitSet.get(getBitNumber(privilegeName));
-		return is;
-
+		
+		if(bitSet != null)
+		{
+			isAuthorized = bitSet.get(getBitNumber(privilegeName));
+		}
+		return isAuthorized;
 	}
 
 	private BitSet getPrivilegesFromDatabase(String objectId, String privilegeName)
