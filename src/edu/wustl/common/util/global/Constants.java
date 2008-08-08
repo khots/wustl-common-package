@@ -181,6 +181,12 @@ public class Constants
 	public static final String UPDATE_OPERATION = "UPDATE";
 	public static final String ACTIVITY_STATUS_COLUMN = "ACTIVITY_STATUS";
 	
+	//Constants for Summary Page
+	public static final String TISSUE = "Tissue";
+	public static final String MOLECULE = "Molecular";
+	public static final String CELL = "Cell";
+	public static final String FLUID = "Fluid";
+	
 	//Tree View constants.
 	public static final String TISSUE_SITE = "Tissue Site";
 	public static final String CLINICAL_DIAGNOSIS="Clinical Diagnosis";
