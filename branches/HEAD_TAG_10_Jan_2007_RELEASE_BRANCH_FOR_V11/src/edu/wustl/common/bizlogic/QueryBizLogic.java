@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -1015,7 +1016,89 @@ public class QueryBizLogic extends DefaultBizLogic
 		return sql;
 	}
 
-	// For Summary
+	// For Summary Report Page
+	/**
+	 * Returns the count of speciman of the type passed.
+	 * @param String of Specimen Type, JDDCDAO object
+	 * @return String
+	 * @throws DAOException
+	 * @throws ClassNotFoundException
+	 */
+	public String getSpecimenTypeCount(String specimanType, JDBCDAO jdbcDAO)
+			throws DAOException, ClassNotFoundException 
+	{
+		String prevValueDisplayName = "0";
+		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join catissue_abstract_specimen absspec "
+				+ " on specimen.identifier=absspec.identifier where absspec.SPECIMEN_CLASS = '"
+				+ specimanType
+				+ "' and specimen.COLLECTION_STATUS = 'Collected'";
+		try 
+		{
+			List list = jdbcDAO.executeQuery(sql, null, false, null);
+
+			if (!list.isEmpty()) 
+			{
+				List rowList = (List) list.get(0);
+				prevValueDisplayName = (String) rowList.get(0);
+			}			
+		}
+		catch (DAOException e) 
+		{
+			System.out.println(e);
+		}
+		return prevValueDisplayName;
+	}
+	
+	/**
+	 * Returns Map which has all the details of Summary Page
+	 * @return Map<String, Object>
+	 * @throws DAOException
+	 * @throws ClasssNotFoundException 
+	 */
+	
+	public Map<String, Object> getTotalSummaryDetails() throws DAOException
+	{		
+		JDBCDAO jdbcDAO = null;
+		Map<String, Object> summaryDataMap = null;
+		try
+		{
+			//Database connection established
+			jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			jdbcDAO.openSession(null);		
+			try
+			{
+				summaryDataMap = new HashMap<String, Object>();
+				summaryDataMap.put("TotalSpecimenCount", getTotalSpecimenCount(jdbcDAO));
+				summaryDataMap.put("TissueCount", getSpecimenTypeCount(Constants.TISSUE, jdbcDAO));
+				summaryDataMap.put("CellCount", getSpecimenTypeCount(Constants.CELL, jdbcDAO));
+				summaryDataMap.put("MoleculeCount", getSpecimenTypeCount(Constants.MOLECULE, jdbcDAO));
+				summaryDataMap.put("FluidCount", getSpecimenTypeCount(Constants.FLUID, jdbcDAO));
+				summaryDataMap.put("TissueTypeDetails", getSpecimenTypeDetailsCount(Constants.TISSUE, jdbcDAO));
+				summaryDataMap.put("CellTypeDetails", getSpecimenTypeDetailsCount(Constants.CELL, jdbcDAO));
+				summaryDataMap.put("MoleculeTypeDetails", getSpecimenTypeDetailsCount(Constants.MOLECULE, jdbcDAO));
+				summaryDataMap.put("FluidTypeDetails", getSpecimenTypeDetailsCount(Constants.FLUID, jdbcDAO));
+				summaryDataMap.put("TissueQuantity", getSpecimenTypeQuantity(Constants.TISSUE, jdbcDAO));
+				summaryDataMap.put("CellQuantity", getSpecimenTypeQuantity(Constants.CELL, jdbcDAO));
+				summaryDataMap.put("MoleculeQuantity", getSpecimenTypeQuantity(Constants.MOLECULE, jdbcDAO));
+				summaryDataMap.put("FluidQuantity", getSpecimenTypeQuantity(Constants.FLUID, jdbcDAO));
+			}
+			catch(ClassNotFoundException e)
+			{
+				System.out.println(e);
+			}
+		}		
+		catch (DAOException e)
+		{
+			System.out.println(e);
+		}
+		finally
+		{
+			jdbcDAO.closeSession();
+		}		
+		return summaryDataMap;
+	}
+	
+
 	/**
 	 * Returns the count of speciman of the type passed.
 	 * @param value
@@ -1023,110 +1106,105 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
-	public String getSpecimenTypeCount(String specimanType) throws DAOException,
+	private String getSpecimenTypeQuantity(String specimanType, JDBCDAO jdbcDAO) throws DAOException,
 			ClassNotFoundException
 	{
 		String prevValueDisplayName = "0";
-
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-		jdbcDAO.openSession(null);
-		/*String sql = "select count(*) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='" + specimanType
-				+ "'";*/
-		String sql = "select count(*) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='" + specimanType
-				+ "' and IS_COLL_PROT_REQ=0 and COLLECTION_STATUS='Collected'";
-		List list = jdbcDAO.executeQuery(sql, null, false, null);
-		jdbcDAO.closeSession();
-
-		if (!list.isEmpty())
+		String sql = "select sum(AVAILABLE_QUANTITY) from CATISSUE_SPECIMEN specimen join"
+				+ " catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier"
+				+ " where absspec.SPECIMEN_CLASS='" + specimanType + "'";
+		try 
 		{
-			List rowList = (List) list.get(0);
-			prevValueDisplayName = (String) rowList.get(0);
+			List list = jdbcDAO.executeQuery(sql, null, false, null);
+
+			if (!list.isEmpty()) 
+			{
+				List rowList = (List) list.get(0);
+				prevValueDisplayName = (String) rowList.get(0);
+			}			
 		}
+		catch (DAOException e) 
+		{
+			System.out.println(e);
+		}		
 		return prevValueDisplayName;
 	}
 
 	/**
-	 * Returns the count of speciman of the type passed.
-	 * @param value
-	 * @return 
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
-	 */
-	public String getSpecimenTypeQuantity(String specimanType) throws DAOException,
-			ClassNotFoundException
-	{
-		String prevValueDisplayName = "0";
-
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-		jdbcDAO.openSession(null);
-		String sql = "select sum(QUANTITY) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='"
-				+ specimanType + "'";
-		List list = jdbcDAO.executeQuery(sql, null, false, null);
-		jdbcDAO.closeSession();
-
-		if (!list.isEmpty())
-		{
-			List rowList = (List) list.get(0);
-			prevValueDisplayName = (String) rowList.get(0);
-		}
-		return prevValueDisplayName;
-	}
-
-	/**
-	 * 
+	 * Returns the Specimen Sub-Type and its available Quantity
 	 * @param specimenType Class whose details are to be retrieved
 	 * @return Vector of type and count name value bean
 	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws ClassNotFoundException, DAOException
 	 */
-	public Vector getSpecimenTypeDetailsCount(String specimenType) throws DAOException,
-			ClassNotFoundException
+	private Vector getSpecimenTypeDetailsCount(String specimenType, JDBCDAO jdbcDAO) throws DAOException,
+				ClassNotFoundException
 	{
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-		jdbcDAO.openSession(null);
-		//        String sql = "select count(*) from CATISSUE_SPECIMEN where SPECIMEN_CLASS='"+specimanType+"'";
-		String sql = "select type,count(*) from catissue_specimen where specimen_class='"
-				+ specimenType + "' and IS_COLL_PROT_REQ=0 and COLLECTION_STATUS='Collected' group by type order by type";
-		List list = jdbcDAO.executeQuery(sql, null, false, null);
-		jdbcDAO.closeSession();
-
-		Vector nameValuePairs = new Vector();
-		if (!list.isEmpty())
+		String sql = "select absspec.SPECIMEN_TYPE,COUNT(*) from CATISSUE_SPECIMEN specimen "+
+				"join catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier "+
+				"and specimen.COLLECTION_STATUS='Collected' " +
+				" and absspec.SPECIMEN_CLASS = '"+ specimenType + "'group by absspec.SPECIMEN_TYPE " +
+						" order by absspec.SPECIMEN_TYPE";
+		Vector nameValuePairs = null;
+		try 
 		{
-			// Creating name value beans.
-			for (int i = 0; i < list.size(); i++)
+			List list = jdbcDAO.executeQuery(sql, null, false, null);			
+			nameValuePairs = new Vector();
+			if (!list.isEmpty())
 			{
-				List detailList = (List) list.get(i);
-
-				NameValueBean nameValueBean = new NameValueBean();
-				nameValueBean.setName((String) detailList.get(0));
-				nameValueBean.setValue((String) detailList.get(1));
-				Logger.out.debug(i + " : " + nameValueBean.toString());
-				nameValuePairs.add(nameValueBean);
-			}
+				// Creating name value beans.
+				for (int i = 0; i < list.size(); i++)
+				{
+					List detailList = (List) list.get(i);
+					NameValueBean nameValueBean = new NameValueBean();
+					nameValueBean.setName((String) detailList.get(0));
+					nameValueBean.setValue((String) detailList.get(1));
+					Logger.out.debug(i + " : " + nameValueBean.toString());
+					nameValuePairs.add(nameValueBean);
+				}
+			}			
 		}
+		catch (DAOException e) 
+		{
+			System.out.println(e);
+		}			
 		return nameValuePairs;
 	}
-
-	public String getTotalSpecimenCount() throws DAOException, ClassNotFoundException
+	
+	/***
+	 * Returns the Total Specimen Count of caTissue
+	 * @param jdbcDAO
+	 * @return String
+	 * @throws DAOException
+	 * @throws ClassNotFoundException
+	 */
+	private String getTotalSpecimenCount(JDBCDAO jdbcDAO) throws DAOException, ClassNotFoundException
 	{
-		String prevValueDisplayName = "0";
-
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-		jdbcDAO.openSession(null);
-		//String sql = "select count(*) from CATISSUE_SPECIMEN";
-		String sql = "select count(*) from CATISSUE_SPECIMEN where IS_COLL_PROT_REQ=0 and COLLECTION_STATUS='Collected'";
-		List list = jdbcDAO.executeQuery(sql, null, false, null);
-		jdbcDAO.closeSession();
-
-		if (!list.isEmpty())
+		String prevValueDisplayName = "0";		
+		String sql = "select count(*) from CATISSUE_SPECIMEN";		
+		try 
 		{
-			List rowList = (List) list.get(0);
-			prevValueDisplayName = (String) rowList.get(0);
+			List list = jdbcDAO.executeQuery(sql, null, false, null);
+			if (!list.isEmpty())
+			{
+				List rowList = (List) list.get(0);
+				prevValueDisplayName = (String) rowList.get(0);
+			}			
 		}
+		catch (DAOException e)
+		{
+			System.out.println(e);
+		}		
 		return prevValueDisplayName;
 	}
-
+	
+	/***
+	 * 
+	 * @param sqlQuery
+	 * @param sessionData
+	 * @throws DAOException
+	 * @throws ClassNotFoundException
+	 */
 	public void insertQuery(String sqlQuery, SessionDataBean sessionData) throws DAOException,
 			ClassNotFoundException
 	{
