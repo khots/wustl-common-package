@@ -113,8 +113,18 @@ public class CommonAddEditAction extends Action
         	{
         	    userName = sessionDataBean.getUserName();
         	}
-            
-        	ActionError error = new ActionError("access.addedit.object.denied", userName, abstractDomain.getClass().getName());
+            String className = getActualClassName(abstractDomain.getClass().getName());
+            String decoratedPrivilegeName = Utility.getDisplayLabelForUnderscore(excp.getPrivilegeName());
+            String baseObject = "";
+            if (excp.getBaseObject() != null && excp.getBaseObject().trim().length() != 0)
+            {
+                baseObject = excp.getBaseObject();
+            } else 
+            {
+                baseObject = className;
+            }
+                
+            ActionError error = new ActionError("access.addedit.object.denied", userName, className,decoratedPrivilegeName,baseObject);
         	errors.add(ActionErrors.GLOBAL_ERROR, error);
         	saveErrors(request, errors);
         	target = Constants.FAILURE;
@@ -133,6 +143,26 @@ public class CommonAddEditAction extends Action
 
         return mapping.findForward(target);
     }
+    
+    
+    /**
+     * @param name
+     * @return
+     */
+    public String getActualClassName(String name)
+    {
+        if (name != null && name.trim().length()!=0)
+        {
+            String splitter = "\\."; 
+            String [] arr = name.split(splitter);
+            if (arr != null && arr.length != 0)
+            {
+                return arr[arr.length-1];
+            }
+        }
+        return name;
+    }
+    
     public String getObjectName(AbstractDomainObjectFactory abstractDomainObjectFactory,AbstractActionForm abstractForm) {
     	
     	return abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
