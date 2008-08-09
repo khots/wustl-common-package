@@ -229,12 +229,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 	        dao.openSession(sessionDataBean);
 	        // Authorization to ADD object checked here
-	        if (!isAuthorized(dao, obj, sessionDataBean))
-	        {
-	        	throw new UserNotAuthorizedException();
-	        } 
-	        else
-	        {
+	        if (isAuthorized(dao, obj, sessionDataBean))
+            {
 	        	validate(obj, dao, Constants.ADD);	        
 	        	preInsert(obj, dao, sessionDataBean);
 	        	insert(obj, sessionDataBean, isInsertOnly, dao);
@@ -242,7 +238,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		        //refresh the index for titli search
 		        //refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
 		        postInsert(obj, dao, sessionDataBean);
-	        }	        
+            }	        
 		}
 		catch(DAOException ex)
 		{

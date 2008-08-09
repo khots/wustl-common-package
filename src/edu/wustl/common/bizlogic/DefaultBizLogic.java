@@ -762,7 +762,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	/**
 	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized(edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
 	 */
-	public boolean isAuthorized(AbstractDAO dao, Object domainObject, SessionDataBean sessionDataBean)  
+	public boolean isAuthorized(AbstractDAO dao, Object domainObject, SessionDataBean sessionDataBean) throws UserNotAuthorizedException
 	{
 		boolean isAuthorized = false;
 		String protectionElementName = null;
@@ -790,6 +790,21 @@ public class DefaultBizLogic extends AbstractBizLogic
 		PrivilegeCache privilegeCache = getPrivilegeCache(sessionDataBean);
 		//Checking whether the logged in user has the required privilege on the given protection element
 		isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
+        if (!isAuthorized)
+        {
+            UserNotAuthorizedException ex = new UserNotAuthorizedException();
+            ex.setPrivilegeName(privilegeName);
+            if (protectionElementName != null && (protectionElementName.contains("Site") || protectionElementName.contains("CollectionProtocol")))
+            {
+                String [] arr = protectionElementName.split("_");
+                String [] nameArr = arr[0].split("\\.");
+                String baseObject = nameArr[nameArr.length-1];
+                ex.setBaseObject(baseObject);
+                ex.setBaseObjectIdentifier(arr[1]);
+            }
+            throw ex;
+            //ex.setBaseObject()
+        }
 		return isAuthorized;		
 	}
 	
