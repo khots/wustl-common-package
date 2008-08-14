@@ -1062,31 +1062,43 @@ public class QueryBizLogic extends DefaultBizLogic
 		Map<String, Object> summaryDataMap = null;
 		try
 		{
-			//Database connection established
-			jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-			jdbcDAO.openSession(null);		
-			try
-			{
-				summaryDataMap = new HashMap<String, Object>();
-				summaryDataMap.put("TotalSpecimenCount", getTotalSpecimenCount(jdbcDAO));
-				summaryDataMap.put("TissueCount", getSpecimenTypeCount(Constants.TISSUE, jdbcDAO));
-				summaryDataMap.put("CellCount", getSpecimenTypeCount(Constants.CELL, jdbcDAO));
-				summaryDataMap.put("MoleculeCount", getSpecimenTypeCount(Constants.MOLECULE, jdbcDAO));
-				summaryDataMap.put("FluidCount", getSpecimenTypeCount(Constants.FLUID, jdbcDAO));
-				summaryDataMap.put("TissueTypeDetails", getSpecimenTypeDetailsCount(Constants.TISSUE, jdbcDAO));
-				summaryDataMap.put("CellTypeDetails", getSpecimenTypeDetailsCount(Constants.CELL, jdbcDAO));
-				summaryDataMap.put("MoleculeTypeDetails", getSpecimenTypeDetailsCount(Constants.MOLECULE, jdbcDAO));
-				summaryDataMap.put("FluidTypeDetails", getSpecimenTypeDetailsCount(Constants.FLUID, jdbcDAO));
-				summaryDataMap.put("TissueQuantity", getSpecimenTypeQuantity(Constants.TISSUE, jdbcDAO));
-				summaryDataMap.put("CellQuantity", getSpecimenTypeQuantity(Constants.CELL, jdbcDAO));
-				summaryDataMap.put("MoleculeQuantity", getSpecimenTypeQuantity(Constants.MOLECULE, jdbcDAO));
-				summaryDataMap.put("FluidQuantity", getSpecimenTypeQuantity(Constants.FLUID, jdbcDAO));
-			}
-			catch(ClassNotFoundException e)
-			{
-				System.out.println(e);
-			}
-		}		
+			// Database connection established
+			jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(
+					Constants.JDBC_DAO);
+			jdbcDAO.openSession(null);
+
+			summaryDataMap = new HashMap<String, Object>();
+			summaryDataMap.put("TotalSpecimenCount",
+					getTotalSpecimenCount(jdbcDAO));
+			summaryDataMap.put("TissueCount", getSpecimenTypeCount(
+					Constants.TISSUE, jdbcDAO));
+			summaryDataMap.put("CellCount", getSpecimenTypeCount(
+					Constants.CELL, jdbcDAO));
+			summaryDataMap.put("MoleculeCount", getSpecimenTypeCount(
+					Constants.MOLECULE, jdbcDAO));
+			summaryDataMap.put("FluidCount", getSpecimenTypeCount(
+					Constants.FLUID, jdbcDAO));
+			summaryDataMap.put("TissueTypeDetails",
+					getSpecimenTypeDetailsCount(Constants.TISSUE, jdbcDAO));
+			summaryDataMap.put("CellTypeDetails", getSpecimenTypeDetailsCount(
+					Constants.CELL, jdbcDAO));
+			summaryDataMap.put("MoleculeTypeDetails",
+					getSpecimenTypeDetailsCount(Constants.MOLECULE, jdbcDAO));
+			summaryDataMap.put("FluidTypeDetails", getSpecimenTypeDetailsCount(
+					Constants.FLUID, jdbcDAO));
+			summaryDataMap.put("TissueQuantity", getSpecimenTypeQuantity(
+					Constants.TISSUE, jdbcDAO));
+			summaryDataMap.put("CellQuantity", getSpecimenTypeQuantity(
+					Constants.CELL, jdbcDAO));
+			summaryDataMap.put("MoleculeQuantity", getSpecimenTypeQuantity(
+					Constants.MOLECULE, jdbcDAO));
+			summaryDataMap.put("FluidQuantity", getSpecimenTypeQuantity(
+					Constants.FLUID, jdbcDAO));
+		}
+		catch (ClassNotFoundException e)
+		{
+			System.out.println(e);
+		}
 		catch (DAOException e)
 		{
 			System.out.println(e);
@@ -1181,7 +1193,9 @@ public class QueryBizLogic extends DefaultBizLogic
 	private String getTotalSpecimenCount(JDBCDAO jdbcDAO) throws DAOException, ClassNotFoundException
 	{
 		String prevValueDisplayName = "0";		
-		String sql = "select count(*) from CATISSUE_SPECIMEN";		
+		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join " +
+				"catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier " +
+				"where specimen.COLLECTION_STATUS='Collected'";		
 		try 
 		{
 			List list = jdbcDAO.executeQuery(sql, null, false, null);
