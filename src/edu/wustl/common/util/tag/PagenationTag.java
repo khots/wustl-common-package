@@ -47,7 +47,7 @@ public class PagenationTag extends TagSupport
             JspWriter out = pageContext.getOut();
             if (getPageName().equals("SpreadsheetView.do"))  //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp) 
             {
-            	out.println("<table class=\"dataTableWithoutBorder\" border=0 bordercolor=#666699 width=98%>");
+            	out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=98% >");
             }
             else
             {
