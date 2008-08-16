@@ -396,9 +396,11 @@ public class CsmCacheManager
 		Boolean hasPrivilegeOnIdentifiedData;
 		if (cache.isIdentifedDataAccess(entityId) == null)
 		{
-			hasPrivilegeOnIdentifiedData = checkPermission(sessionDataBean,
-					entityName, entityId,
-					Variables.privilegeDetailsMap.get(Constants.REGISTRATION) // (Constants.PHI_ACCESS)
+			hasPrivilegeOnIdentifiedData = 
+				((checkPermission(sessionDataBean, entityName, entityId, 
+						Variables.privilegeDetailsMap.get(Constants.PHI_ACCESS))) ||
+				(checkPermission(sessionDataBean, entityName, entityId,
+					    Variables.privilegeDetailsMap.get(Constants.REGISTRATION)))
 					);
 
 			cache.addNewObjectInIdentifiedDataAccsessMap(entityId,
