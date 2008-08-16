@@ -615,9 +615,9 @@ public class PrivilegeCache
 				
 				switch(i)
 				{
-					case 17:
+					/*case 17:
 						nmv.setName(Permissions.DEFINE_ANNOTATION);
-						break;
+						break;*/
 										
 					case 21:
 						nmv.setName(Permissions.DISTRIBUTION);
@@ -637,9 +637,9 @@ public class PrivilegeCache
 						nmv.setName(Permissions.PROTOCOL_ADMINISTRATION);
 						break;
 						
-					case 22:
+					/*case 22:
 						nmv.setName(Permissions.QUERY);
-						break;
+						break;*/
 						
 					case 18:
 						nmv.setName(Permissions.REGISTRATION);
