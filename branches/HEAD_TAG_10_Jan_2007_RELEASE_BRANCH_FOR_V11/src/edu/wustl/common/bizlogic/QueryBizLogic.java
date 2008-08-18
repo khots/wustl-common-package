@@ -1323,7 +1323,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
 						+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
 				jdbcDAO.executeUpdate(sqlForQueryLog);
-				String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="+queryNo;
+				String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="+queryNo+" for update";
 				list = jdbcDAO.executeQuery(sql1, null, false, null);
 
 				CLOB clob=null;
@@ -1347,7 +1347,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				osw.flush();
 				osw.close();
 				os.close();
-
+				jdbcDAO.commit();
 				Logger.out.info("sqlForQueryLog:" + sqlForQueryLog);
 				
 
