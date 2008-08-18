@@ -73,6 +73,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		{
 			//Creates a connection.
 			connection = DBUtil.getConnection();// getConnection(database, loginName, password);
+			connection.setAutoCommit(false);
 		}
 		catch (Exception sqlExp)
 		{
