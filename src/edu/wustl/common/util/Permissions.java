@@ -37,5 +37,6 @@ public interface Permissions {
 	public static final String SPECIMEN_STORAGE = "SPECIMEN_STORAGE";
 	public static final String GENERAL_SITE_ADMINISTRATION = "GENERAL_SITE_ADMINISTRATION";
 	public static final String GENERAL_ADMINISTRATION = "GENERAL_ADMINISTRATION";
+	public static final String SHIPMENT_PROCESSING = "SHIPMENT_PROCESSING";
 	
 }
