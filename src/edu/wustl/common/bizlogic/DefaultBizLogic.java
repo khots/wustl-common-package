@@ -65,6 +65,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
+	public void createProtectionElement(Object currentObj) throws BizLogicException
+	{
+		
+	}
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.

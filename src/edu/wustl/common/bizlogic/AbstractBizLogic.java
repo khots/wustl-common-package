@@ -51,8 +51,9 @@ public abstract class AbstractBizLogic implements IBizLogic
      * @param obj The object to be inserted.
      * @param dao the dao object
      * @param sessionDataBean session specific data
-     * @throws DAOException
-     * @throws UserNotAuthorizedException
+     * @throws DAOException This will get thrown if application failed to
+     *  communicate with database objects
+     * @throws UserNotAuthorizedException 
      * */
 	protected abstract void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
 	
