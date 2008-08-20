@@ -44,7 +44,7 @@ public interface IBizLogic
     public void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 	
     public void update(Object currentObj, int daoType) throws BizLogicException, UserNotAuthorizedException;
-    
+    public void createProtectionElement(Object currentObj) throws BizLogicException;
 	public abstract List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
             String[] whereColumnCondition, Object[] whereColumnValue,
             String joinCondition) throws DAOException;
