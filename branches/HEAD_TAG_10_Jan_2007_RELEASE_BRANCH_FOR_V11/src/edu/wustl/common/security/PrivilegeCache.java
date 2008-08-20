@@ -412,6 +412,10 @@ public class PrivilegeCache
 		{
 			return 13;
 		}
+		if (Permissions.SHIPMENT_PROCESSING.equals(privilegeName))
+		{
+			return 30;
+		}
 		return 0;
 	}
 
@@ -669,6 +673,10 @@ public class PrivilegeCache
 						
 					case 13:
 						nmv.setName(Permissions.USER_PROVISIONING);
+						break;
+					
+					case 30:
+						nmv.setName(Permissions.SHIPMENT_PROCESSING);
 						break;
 				}
 				
