@@ -175,6 +175,24 @@ public class PrivilegeCache
 			privilegeMap.put(objectId, bitSet);
 		}
 	}
+	
+	
+	/**
+	 * Simply checks if the user has any privilage on given object id
+	 *  
+	 * @param objectId
+	 * @return
+	 */
+	public boolean hasPrivilege(String objectId)
+	{
+		BitSet bitSet = privilegeMap.get(objectId);
+		if(bitSet != null && bitSet.cardinality()>0)
+		{
+			return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * To check for 'Class' & 'Action' level Privilege Here, we take className
