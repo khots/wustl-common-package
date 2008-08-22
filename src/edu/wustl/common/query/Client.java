@@ -160,14 +160,14 @@ public class Client extends AbstractClient
                         "Identifier"), new Operator(Operator.EQUAL),
                         new DataElement(Query.DISTRIBUTION_PROTOCOL,
                                 "Identifier")));
-        relationConditionsForRelatedTables.put(new Relation(
+   /*  relationConditionsForRelatedTables.put(new Relation(
                 Query.SPECIMEN_REQUIREMENT,
                 Query.DISTRIBUTION_SPECIMEN_REQUIREMENT),
                 new RelationCondition(new DataElement(
                         Query.SPECIMEN_REQUIREMENT, "Identifier"),
                         new Operator(Operator.EQUAL), new DataElement(
                                 Query.DISTRIBUTION_SPECIMEN_REQUIREMENT,
-                                "SPECIMEN_REQUIREMENT_ID")));
+                                "DISTRIBUTION_PROTOCOL_ID")));*/
         relationConditionsForRelatedTables.put(new Relation(
                 Query.DISTRIBUTION_PROTOCOL,
                 Query.DISTRIBUTION_SPECIMEN_REQUIREMENT),
@@ -326,7 +326,7 @@ public class Client extends AbstractClient
         objectTableNames.put(Query.DISTRIBUTION_PROTOCOL,
                 "catissue_distribution_protocol");
         objectTableNames.put(Query.DISTRIBUTION_SPECIMEN_REQUIREMENT,
-                "CATISSUE_DISTRIBUTION_SPE_REQ");
+                "CATISSUE_DISTRIBUTION_SPEC_REQ");
         objectTableNames.put(Query.REPORTED_PROBLEM,
                 "catissue_reported_problem");
         objectTableNames.put(Query.CELL_SPECIMEN_REQUIREMENT,
