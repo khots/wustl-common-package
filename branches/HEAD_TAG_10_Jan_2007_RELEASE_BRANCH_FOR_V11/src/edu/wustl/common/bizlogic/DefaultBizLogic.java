@@ -770,7 +770,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		boolean isAuthorized = false;
 		String protectionElementName = null;
-		
+		if(sessionDataBean.isAdmin())
+		{
+			return true;
+		}
 		//	Get the base object id against which authorization will take place 
 		if(domainObject instanceof List)
 		{
@@ -785,7 +788,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			protectionElementName = getObjectId(dao, domainObject);
 		}
 		//TODO To revisit this piece of code --> Vishvesh
-		if(protectionElementName.equals(Constants.allowOperation))
+		if(Constants.allowOperation.equals(protectionElementName))
 		{
 			return true;
 		}
