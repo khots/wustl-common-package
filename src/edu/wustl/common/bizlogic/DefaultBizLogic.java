@@ -770,6 +770,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		boolean isAuthorized = false;
 		String protectionElementName = null;
+		// Customize check for DE, return true if sessionDataBean is NULL
+		if(sessionDataBean == null)
+		{
+			return true;
+		}
 		if(sessionDataBean != null && sessionDataBean.isAdmin())
 		{
 			return true;
