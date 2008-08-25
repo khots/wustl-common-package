@@ -770,7 +770,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		boolean isAuthorized = false;
 		String protectionElementName = null;
-		if(sessionDataBean.isAdmin())
+		if(sessionDataBean != null && sessionDataBean.isAdmin())
 		{
 			return true;
 		}
