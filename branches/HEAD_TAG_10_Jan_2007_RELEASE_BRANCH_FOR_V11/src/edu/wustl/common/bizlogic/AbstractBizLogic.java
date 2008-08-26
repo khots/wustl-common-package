@@ -723,4 +723,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param uiForm object of the class which implements IValueObject
 	 */
 	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException;	
+	
+	public abstract boolean isReadDeniedTobeChecked();
+	
+	public abstract String getReadDeniedPrivilegeName();
 }

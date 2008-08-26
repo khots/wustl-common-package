@@ -126,4 +126,10 @@ public interface IBizLogic
     public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)throws DAOException,BizLogicException;
     
     public AbstractDomainObject populateDomainObject(String className, Long identifier, IValueObject uiForm) throws DAOException,BizLogicException,AssignDataException;
+	
+    public boolean isReadDeniedTobeChecked();
+	
+    public boolean hasPrivilegeToView(String objName, Long identifier, SessionDataBean sessionDataBean);
+	
+    public String getReadDeniedPrivilegeName();
 }
