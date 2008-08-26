@@ -24,12 +24,10 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionElementPrivilegeContext;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.Role;
 import gov.nih.nci.security.dao.ProtectionElementSearchCriteria;
@@ -645,9 +643,9 @@ public class PrivilegeCache
 						nmv.setName(Permissions.DISTRIBUTION);
 						break;
 						
-					case 29:
+					/*case 29:
 						nmv.setName(Permissions.GENERAL_ADMINISTRATION);
-						break;
+						break;*/
 					
 						/*
 					case 24:
@@ -667,9 +665,9 @@ public class PrivilegeCache
 						nmv.setName(Permissions.REGISTRATION);
 						break;
 						
-					case 14:
+					/*case 14:
 						nmv.setName(Permissions.REPOSITORY_ADMINISTRATION);
-						break;
+						break;*/
 					/*	
 					case 25:
 						nmv.setName(Permissions.SPECIMEN_ANNOTATION);
