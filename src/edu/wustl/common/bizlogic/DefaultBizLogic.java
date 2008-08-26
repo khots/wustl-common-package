@@ -11,6 +11,7 @@
 
 package edu.wustl.common.bizlogic;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,14 +31,17 @@ import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
+import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
@@ -889,5 +893,74 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return returner;
     }
+
+	@Override
+	public boolean isReadDeniedTobeChecked() 
+	{
+		return false;
+	}
+	
+	@Override
+	public String getReadDeniedPrivilegeName()
+	{
+		return null;
+	}
+	
+	public boolean hasPrivilegeToView(String objName, Long identifier, SessionDataBean sessionDataBean)
+	{
+		List cpIdsList = new ArrayList();
+		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
+		{
+			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, new Integer(identifier.toString()));
+	    	JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+	    	try 
+	    	{
+	    		jdbcDao.openSession(sessionDataBean);
+			
+	    		List list = null;
+				list = jdbcDao.executeQuery(cpQuery, sessionDataBean, false, null);
+	    		if (list != null && !list.isEmpty())
+	    		{
+	    			cpIdsList = (List) list.get(0);
+	    		}
+	    	} 
+	    	catch (Exception e) 
+	    	{
+				return false;
+			}
+	    	finally
+	    	{
+	    		try 
+	    		{
+					jdbcDao.closeSession();
+				} 
+	    		catch (DAOException e) 
+				{
+					e.printStackTrace();
+				}
+	    	}
+		}
+    	else
+    	{
+    		cpIdsList.add(identifier);
+    	}
+		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
+		StringBuffer sb = new StringBuffer();
+		sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
+		for (Object cpId : cpIdsList)
+		{
+			String privilegeName = getReadDeniedPrivilegeName();
+			boolean isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeName);
+			if (privilegeName != null && privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
+			{
+				isPresent = !isPresent;
+			}
+			if (!isPresent)
+			{
+				return false;
+			} 
+		}
+    	return true;
+	}
 	
 }

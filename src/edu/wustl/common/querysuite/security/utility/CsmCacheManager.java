@@ -468,6 +468,23 @@ public class CsmCacheManager
 	} 
 
 	/**
+	 * @param entityName
+	 * @param entityId
+	 * @return
+	 */
+	public static String getQueryStringForCP(String entityName, int entityId)
+	{
+		if (entityName == null || entityId == 0)
+		{
+			return null;
+		}
+		StringBuffer sb = new StringBuffer();
+		sb.append(Variables.entityCPSqlMap.get(entityName));
+		sb.append(entityId);
+		return sb.toString();
+	}
+	
+	/**
 	 * This method will internally call checkPermission of SecurityManager 
 	 * and will return if a user is authorized user or not.
 	 * @param sessionDataBean

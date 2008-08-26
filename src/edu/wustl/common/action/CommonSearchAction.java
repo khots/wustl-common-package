@@ -14,7 +14,6 @@ package edu.wustl.common.action;
 import java.io.IOException;
 import java.rmi.ServerException;
 import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,6 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
@@ -106,13 +106,23 @@ public class CommonSearchAction extends Action
 	        AbstractDomainObjectFactory abstractDomainObjectFactory = (AbstractDomainObjectFactory) MasterFactory
 	            				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
 	        String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
-        
+	        SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(Constants.SESSION_DATA);
 	        /**
 	         * Name : Vijay Pande
 	         * Reviewer Name: Sachin Lale
 	         * Therefore instead od using default bizlogic appropriate bizlogic is retrieved.
 	         */
 	        IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties.getValue("app.bizLogicFactory"),	"getBizLogic", abstractForm.getFormId());
+	        boolean hasPrivilege = true;
+	        if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
+	        {
+	        	hasPrivilege = bizLogic.hasPrivilegeToView(objName, identifier, sessionDataBean);
+	        }
+	        if(!hasPrivilege)
+	        {
+	        	throw new DAOException("Access denied ! User does not have privilege to view this information.");
+	        }
+	        
 	        //List list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
 	        boolean isSuccess = bizLogic.populateUIBean(objName,identifier,abstractForm);
 	        
@@ -154,7 +164,12 @@ public class CommonSearchAction extends Action
 	    }
 	    catch (DAOException excp)
 	    {
-	        target = Constants.FAILURE;
+	    	ActionErrors errors = new ActionErrors();
+	        ActionError error = new ActionError("access.view.action.denied");
+	        errors.add(ActionErrors.GLOBAL_ERROR, error);
+	        saveErrors(request, errors);
+	    	// target = Constants.FAILURE;
+	        target = Constants.ACCESS_DENIED;
 	        Logger.out.error(excp.getMessage(), excp);
 	    }
 	    return target;
