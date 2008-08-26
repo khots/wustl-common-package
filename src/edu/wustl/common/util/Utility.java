@@ -817,6 +817,10 @@ public class Utility
 			return calendar;
 		}
 	}
+//	public static void main(String[] args) {
+//	
+//		System.out.println(getDisplayLabelForUnderscore("Read Only"));
+//	}
 	public static String getDisplayLabelForUnderscore(String objectName)
 	{
 		if(objectName.equals("PHI_ACCESS"))
@@ -832,7 +836,7 @@ public class Utility
 			int asciiValueCurrent = attrChar;
 			
 			if(asciiValueCurrent >= 65 && asciiValueCurrent <= 90){
-				if(i==0||objectName.charAt(i-1)==95){
+				if(i==0||objectName.charAt(i-1)==95||objectName.charAt(i-1)==32){
 					attrLabel = attrLabel + "" + attrChar;
 				}
 				else{
@@ -848,6 +852,10 @@ public class Utility
 				else{
 					attrLabel = attrLabel + " " ;
 				}
+			}
+			else
+			{
+				attrLabel = attrLabel + "" + attrChar;
 			}
 		}
 		return attrLabel;
