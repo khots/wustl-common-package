@@ -908,6 +908,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	
 	public boolean hasPrivilegeToView(String objName, Long identifier, SessionDataBean sessionDataBean)
 	{
+		if(sessionDataBean != null && sessionDataBean.isAdmin())
+		{
+			return true;
+		}
+		
 		List cpIdsList = new ArrayList();
 		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
 		{
