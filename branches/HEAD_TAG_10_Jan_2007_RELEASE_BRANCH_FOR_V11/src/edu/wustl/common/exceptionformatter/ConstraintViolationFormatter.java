@@ -206,9 +206,9 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			indexofMsg+=Constants.MYSQL_DUPL_KEY_MSG.length();
 			
 			// Get the %d part of the string
-			String strKey =sqlMessage.substring(indexofMsg,sqlMessage.length()-2);
+			String strKey =sqlMessage.substring(indexofMsg,sqlMessage.length()-1);
 			key = Integer.parseInt(strKey);
-		 	Logger.out.debug(String.valueOf(key));		
+			Logger.out.debug(String.valueOf(key));
 			
 		 	// For the key extracted frm the string, get the column name on which the 
 			// costraint has failed
@@ -281,7 +281,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
         	dispTableName = ExceptionFormatterFactory.getDisplayName(tableName,connection);
 			arguments[0]=dispTableName;
 			columnName=columnNames.toString(); 
-			columnName=columnName.substring(0,columnName.length()-1);
+			columnName=columnName.substring(0,columnName.length());
 			arguments[1]=columnName; 	
 			Logger.out.debug("Column Name: " + columnNames.toString());
 			
