@@ -914,41 +914,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		
 		List cpIdsList = new ArrayList();
-		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
+		cpIdsList = Utility.getCPIdsList(objName, identifier, sessionDataBean, cpIdsList);
+		
+		if(cpIdsList == null)
 		{
-			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, new Integer(identifier.toString()));
-	    	JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-	    	try 
-	    	{
-	    		jdbcDao.openSession(sessionDataBean);
-			
-	    		List list = null;
-				list = jdbcDao.executeQuery(cpQuery, sessionDataBean, false, null);
-	    		if (list != null && !list.isEmpty())
-	    		{
-	    			cpIdsList = (List) list.get(0);
-	    		}
-	    	} 
-	    	catch (Exception e) 
-	    	{
-				return false;
-			}
-	    	finally
-	    	{
-	    		try 
-	    		{
-					jdbcDao.closeSession();
-				} 
-	    		catch (DAOException e) 
-				{
-					e.printStackTrace();
-				}
-	    	}
+			return false;
 		}
-    	else
-    	{
-    		cpIdsList.add(identifier);
-    	}
 		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
 		StringBuffer sb = new StringBuffer();
 		sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
@@ -967,5 +938,4 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
     	return true;
 	}
-	
 }
