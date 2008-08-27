@@ -37,7 +37,12 @@ import org.xml.sax.SAXException;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
 import edu.wustl.common.tree.TreeNodeImpl;
+import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -1004,6 +1009,46 @@ public class Utility
 		}
 				
 		return allPrivileges;
+	}
+	
+	public static List getCPIdsList(String objName, Long identifier, SessionDataBean sessionDataBean, List cpIdsList) 
+	{
+		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
+		{
+			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, new Integer(identifier.toString()));
+	    	JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+	    	try 
+	    	{
+	    		jdbcDao.openSession(sessionDataBean);
+			
+	    		List list = null;
+				list = jdbcDao.executeQuery(cpQuery, sessionDataBean, false, null);
+	    		if (list != null && !list.isEmpty())
+	    		{
+	    			cpIdsList = (List) list.get(0);
+	    		}
+	    	} 
+	    	catch (Exception e) 
+	    	{
+				return null;
+			}
+	    	finally
+	    	{
+	    		try 
+	    		{
+					jdbcDao.closeSession();
+				} 
+	    		catch (DAOException e) 
+				{
+					e.printStackTrace();
+				}
+	    	}
+		}
+    	else
+    	{
+    		cpIdsList.add(identifier);
+    	}
+		return cpIdsList;
 	}
 
 }
