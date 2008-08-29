@@ -805,7 +805,26 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String privilegeName = getPrivilegeName(domainObject);
 		PrivilegeCache privilegeCache = getPrivilegeCache(sessionDataBean);
 		//Checking whether the logged in user has the required privilege on the given protection element
-		isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
+		if(! protectionElementName.equalsIgnoreCase("ADMIN_PROTECTION_ELEMENT"))
+		{
+			String [] prArray = protectionElementName.split("_");
+			String baseObjectId = prArray[0];
+			String objId = "";
+			for (int i = 1 ; i < prArray.length;i++)
+			{
+				objId = baseObjectId + "_" + prArray[i];
+				isAuthorized = privilegeCache.hasPrivilege(objId, privilegeName);
+				if (!isAuthorized)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
+		}
+		
         if (!isAuthorized)
         {
             UserNotAuthorizedException ex = new UserNotAuthorizedException();
@@ -923,10 +942,26 @@ public class DefaultBizLogic extends AbstractBizLogic
 		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
 		StringBuffer sb = new StringBuffer();
 		sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
+		boolean isPresent = false;
+		
 		for (Object cpId : cpIdsList)
 		{
 			String privilegeName = getReadDeniedPrivilegeName();
-			boolean isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeName);
+			
+			String [] privilegeNames = privilegeName.split(",");
+			if(privilegeNames.length > 1)
+			{	
+				if((privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[0])))
+				{
+					isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[1]);
+					isPresent = !isPresent;
+				}
+			}
+			else
+			{
+				isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeName);
+			}
+				
 			if (privilegeName != null && privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
 			{
 				isPresent = !isPresent;
