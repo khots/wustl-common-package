@@ -160,7 +160,7 @@ public class Constants
 	// This string is used for searching " for key " string in the above error message
 	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
 	
-	public static final String GENERIC_DATABASE_ERROR = "An error occured during a database operation. Please report this problem to the adminstrator";
+	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation. Please report this problem to the administrator";
 	public static final String CONSTRAINT_VOILATION_ERROR = "Submission failed since a {0} with the same {1} already exists";
 	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
 	
