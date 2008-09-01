@@ -97,6 +97,7 @@ public class Utility
         List<String> queryReadDeniedObjectsList = new ArrayList<String>();
         Map<String,String> entityCSSqlMap = new HashMap<String, String>();
         String mainProtocolClassName=new String();
+        String validatorClassname = new String();
         File file = new File(Variables.applicationHome + System.getProperty("file.separator")+"WEB-INF"+System.getProperty("file.separator")+"classes"+System.getProperty("file.separator")+Constants.CSM_PROPERTY_FILE);
         if(file.exists())
         {
@@ -105,6 +106,7 @@ public class Utility
                 
                 csmPropertyFile.load(new FileInputStream(file));
                 mainProtocolClassName = csmPropertyFile.getProperty(Constants.MAIN_PROTOCOL_OBJECT);
+                validatorClassname = csmPropertyFile.getProperty(Constants.VALIDATOR_CLASSNAME);
                 String readdenied = csmPropertyFile.getProperty(Constants.READ_DENIED_OBJECTS);
                 String [] readDeniedObjects=readdenied.split(",");
                 for(int i=0;i<readDeniedObjects.length;i++)
@@ -124,6 +126,7 @@ public class Utility
            Variables.mainProtocolObject = mainProtocolClassName;
            Variables.queryReadDeniedObjectList.addAll(queryReadDeniedObjectsList);
            Variables.entityCPSqlMap.putAll(entityCSSqlMap);
+           Variables.validatorClassname = validatorClassname;
         }
         
     }

@@ -551,6 +551,7 @@ public class Constants
 	public static final String REGISTRATION = "REGISTRATION";
 	public static final String PHI_ACCESS = "PHI_ACCESS";
 	public static final String READ_DENIED = "READ_DENIED";
+	public static final String VALIDATOR_CLASSNAME = "validator.classname";
 	
 public static final String hashedOut = "##";
 }

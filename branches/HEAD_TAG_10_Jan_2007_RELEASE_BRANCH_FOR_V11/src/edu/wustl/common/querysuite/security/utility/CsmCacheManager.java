@@ -21,6 +21,8 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
+import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -35,12 +37,18 @@ import edu.wustl.common.util.logger.Logger;
 public class CsmCacheManager
 {
 	private Connection connection;
+	private IValidator validator;
 	
 	public CsmCacheManager(Connection connection)
 	{
 		this.connection = connection;
 	}
 	
+	private IValidator getValidatorInstance() 
+	{
+		return (IValidator) Utility.getObject(Variables.validatorClassname);
+	}
+
 	public CsmCache getNewCsmCacheObject()
 	{
 		CsmCache csmCache = new CsmCache();
@@ -507,6 +515,15 @@ public class CsmCacheManager
 		
 		if (Variables.privilegeDetailsMap.get(Constants.READ_DENIED).equals(permission))
 			isAuthorisedUser = !isAuthorisedUser;
+		
+		if(!isAuthorisedUser)
+		{
+			validator = getValidatorInstance();
+			if(validator != null)
+			{
+				isAuthorisedUser = validator.hasPrivilegeToView(sessionDataBean, entityId.toString(), permission);
+			}
+		}
 		return isAuthorisedUser;
 	}
 
