@@ -297,7 +297,7 @@
 		<delete>
 			<fileset dir="${build.dir}" includes="**/*" />
 		</delete>
-
+		<tstamp />
 		<jar taskname="build_jar" jarfile="${build.dir}/commonpackage.jar">
 			<fileset dir="${target.dir}">
 				<include name="**/*" />
@@ -306,6 +306,9 @@
 				<exclude name="**/JoinGraphTestCase*" />
 			</fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<manifest>
+				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+			</manifest>
 		</jar>
 
 		<antcall target="build_code_zip" />
