@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.hibernate.HibernateException;
@@ -933,18 +934,27 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		
 		List cpIdsList = new ArrayList();
+		Set<Long> cpIds = new HashSet<Long>();
+		
 		cpIdsList = Utility.getCPIdsList(objName, identifier, sessionDataBean, cpIdsList);
 		
 		if(cpIdsList == null)
 		{
 			return false;
 		}
+		
+		for(Object cpId : cpIdsList)
+		{
+			cpId = cpIdsList.get(0);
+			cpIds.add(Long.valueOf(cpId.toString()));
+		}
+		
 		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
 		StringBuffer sb = new StringBuffer();
 		sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
 		boolean isPresent = false;
 		
-		for (Object cpId : cpIdsList)
+		for (Long cpId : cpIds)
 		{
 			String privilegeName = getReadDeniedPrivilegeName();
 			
