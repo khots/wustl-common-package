@@ -347,8 +347,11 @@ public abstract class AbstractBizLogic implements IBizLogic
     		else
     		{	
 			    validate(obj, dao, Constants.ADD);	
-			    insert(obj, sessionDataBean, false, dao);
 			}
+		}    	
+		for(AbstractDomainObject obj : objCollection)
+		{
+		    insert(obj, sessionDataBean, false, dao);
 		}
     }
 	/**
