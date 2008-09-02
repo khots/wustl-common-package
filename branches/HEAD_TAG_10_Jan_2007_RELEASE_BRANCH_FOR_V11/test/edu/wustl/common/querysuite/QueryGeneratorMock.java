@@ -3609,9 +3609,10 @@ public class QueryGeneratorMock {
             List<String> biohazardExpressionRule1Values = new ArrayList<String>();
             biohazardExpressionRule1Values.add("Toxic");
 
-            ICondition biohazardExpressionRule1Condition1 = QueryObjectFactory.createParameterizedCondition(
-                    findAttribute(biohazardEntity, "type"), RelationalOperator.Equals, biohazardExpressionRule1Values,
-                    1, "BiohazardExpressionRule1Condition1");
+            ICondition biohazardExpressionRule1Condition1 = QueryObjectFactory.createCondition(
+                    findAttribute(biohazardEntity, "type"), RelationalOperator.Equals, biohazardExpressionRule1Values);
+            parameterizedQuery.getParameters().add(QueryObjectFactory.createParameter(biohazardExpressionRule1Condition1, "BiohazardExpressionRule1Condition1"));
+            
             IRule biohazardExpressionRule1 = QueryObjectFactory.createRule(null);
             biohazardExpressionRule1.addCondition(biohazardExpressionRule1Condition1);
             biohazardExpression.addOperand(biohazardExpressionRule1);
@@ -3654,9 +3655,11 @@ public class QueryGeneratorMock {
             List<String> specimenCharExpression1Rule1Values = new ArrayList<String>();
             specimenCharExpression1Rule1Values.add("skin");
 
-            ICondition specimenCharExpression1Rule1Condition1 = QueryObjectFactory.createParameterizedCondition(
+            ICondition specimenCharExpression1Rule1Condition1 = QueryObjectFactory.createCondition(
                     findAttribute(specimenCharEntity, "tissueSite"), RelationalOperator.Equals,
-                    specimenCharExpression1Rule1Values, 2, "SpecimenCharExpression1Rule1Condition1");
+                    specimenCharExpression1Rule1Values);
+            parameterizedQuery.getParameters().add(QueryObjectFactory.createParameter(biohazardExpressionRule1Condition1, "SpecimenCharExpression1Rule1Condition1"));
+
             IRule specimenCharExpression1Rule1 = QueryObjectFactory.createRule(null);
             specimenCharExpression1Rule1.addCondition(specimenCharExpression1Rule1Condition1);
             specimenCharExpression1.addOperand(specimenCharExpression1Rule1);
@@ -3704,9 +3707,9 @@ public class QueryGeneratorMock {
             List<String> specimenExpression3Rule1Values = new ArrayList<String>();
             specimenExpression3Rule1Values.add("cDNA");
 
-            ICondition specimenExpression3Rule1Condition1 = QueryObjectFactory.createParameterizedCondition(
-                    findAttribute(specimenEntity, "type"), RelationalOperator.Equals, specimenExpression3Rule1Values,
-                    3, "SpecimenExpression3Rule1Condition1");
+            ICondition specimenExpression3Rule1Condition1 = QueryObjectFactory.createCondition(
+                    findAttribute(specimenEntity, "type"), RelationalOperator.Equals, specimenExpression3Rule1Values);
+            parameterizedQuery.getParameters().add(QueryObjectFactory.createParameter(specimenExpression3Rule1Condition1, "SpecimenExpression3Rule1Condition1"));
             IRule specimenExpression3Rule1 = QueryObjectFactory.createRule(null);
             specimenExpression3Rule1.addCondition(specimenExpression3Rule1Condition1);
             specimenExpression3.addOperand(specimenExpression3Rule1);
@@ -3917,13 +3920,38 @@ public class QueryGeneratorMock {
         try {
             IQuery query = createTemporalQueryDateOffset();
             ICustomFormula formula = (ICustomFormula) query.getConstraints().getRootExpression().getOperand(2);
-            ITerm thirtyMins = formula.getAllRhs().get(0);
+            ITerm collTime = formula.getAllRhs().get(0);
             formula.getAllRhs().clear();
             ITerm newRhs = QueryObjectFactory.createTerm();
             newRhs.addOperand(formula.getLhs().getOperand(1));
             formula.addRhs(newRhs);
 
-            formula.getLhs().setOperand(1, thirtyMins.getOperand(0));
+            formula.getLhs().setOperand(1, collTime.getOperand(0));
+            return query;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * <pre>
+     * SCG
+     *      CollectionEventParam (C)
+     *      FrozenEventParam (F) 
+     *      Temporal (F.timestamp - C.timestamp = 30 mins)
+     * </pre>
+     */
+    public static IQuery createTemporalQueryYMDateDiff() {
+        try {
+            IQuery query = createTemporalQueryDateOffset();
+            ICustomFormula formula = (ICustomFormula) query.getConstraints().getRootExpression().getOperand(2);
+            ITerm collTime = formula.getAllRhs().get(0);
+            formula.getAllRhs().clear();
+            ITerm newRhs = QueryObjectFactory.createTerm();
+            newRhs.addOperand(QueryObjectFactory.createDateOffsetLiteral("6", TimeInterval.Year));
+            formula.addRhs(newRhs);
+
+            formula.getLhs().setOperand(1, collTime.getOperand(0));
             return query;
         } catch (Exception e) {
             throw new RuntimeException(e);
