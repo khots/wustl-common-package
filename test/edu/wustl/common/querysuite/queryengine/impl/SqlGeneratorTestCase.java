@@ -1440,6 +1440,14 @@ public class SqlGeneratorTestCase extends TestCase {
 
     }
 
+    public void testOracleYMInterval() {
+        IQuery query = QueryGeneratorMock.createTemporalQueryYMDateDiff();
+        setDataBaseType(Constants.ORACLE_DATABASE);
+        check(
+                query,
+                "Select distinct Specimen_1.TYPE Column0 ,Specimen_1.POSITION_DIMENSION_TWO Column1 ,Specimen_1.POSITION_DIMENSION_ONE Column2 ,Specimen_1.PATHOLOGICAL_STATUS Column3 ,Specimen_1.LINEAGE Column4 ,Specimen_1.LABEL Column5 ,Specimen_1.IDENTIFIER Column6 ,Specimen_1.COMMENTS Column7 ,Specimen_1.BARCODE Column8 ,Specimen_1.AVAILABLE Column9 ,Specimen_1.ACTIVITY_STATUS Column10 From catissue_specimen Specimen_1 left join catissue_specimen_event_param SpecimenEventParameters_2 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_2.SPECIMEN_ID) inner join catissue_coll_event_param CollectionEventParameters_2 on (SpecimenEventParameters_2.IDENTIFIER=CollectionEventParameters_2.IDENTIFIER) left join catissue_specimen_event_param SpecimenEventParameters_3 on (Specimen_1.IDENTIFIER=SpecimenEventParameters_3.SPECIMEN_ID) inner join catissue_frozen_event_param FrozenEventParameters_3 on (SpecimenEventParameters_3.IDENTIFIER=FrozenEventParameters_3.IDENTIFIER) Where (Specimen_1.ACTIVITY_STATUS!='Disabled') And(cast(SpecimenEventParameters_3.EVENT_TIMESTAMP as timestamp) <= cast(add_months(cast(SpecimenEventParameters_2.EVENT_TIMESTAMP as timestamp), (6) * 12) as timestamp))");
+    }
+
     public void testTemporalPartCPR() {
         check(
                 QueryGeneratorMock.createTemporalQueryParticipantCPR(),
