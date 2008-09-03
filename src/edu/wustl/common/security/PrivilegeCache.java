@@ -694,6 +694,10 @@ public class PrivilegeCache
 					case 30:
 						nmv.setName(Permissions.SHIPMENT_PROCESSING);
 						break;
+						
+					case 1:
+						nmv.setName(Permissions.READ_DENIED);
+						break;
 				}
 				
 				for(Object o :Utility.getAllPrivileges())
