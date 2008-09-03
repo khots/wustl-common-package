@@ -21,6 +21,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
+import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.DAOException;
@@ -91,7 +92,9 @@ public class CsmCacheManager
 					List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
 							entityName, mainEntityId);
 					if(cpIdsList.size()==0)//if this object is not associated to any CP then user will not have identified privilege on it.
-						hasPrivilegeOnIdentifiedData = false;
+					{
+						hasPrivilegeOnIdentifiedData = checkPermissionOnGlobalParticipant(sessionDataBean);
+					}
 					else
 					{
 						List<Boolean> readPrivilegeList = new ArrayList<Boolean>();
@@ -154,7 +157,9 @@ public class CsmCacheManager
 					List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
 							entityName, mainEntityId);
 					if(cpIdsList.size()==0)//if this object is not associated to any CP then user will not have identified privilege on it.
-						hasPrivilegeOnIdentifiedData = false;
+					{
+						hasPrivilegeOnIdentifiedData = checkPermissionOnGlobalParticipant(sessionDataBean);
+					}
 					else
 					{
 						List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
@@ -201,7 +206,9 @@ public class CsmCacheManager
 			List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
 					entityName, entityId);
 			if(cpIdsList.size()==0)//if this object is not associated to any CP then user will not have identified privilege on it.
-				hasPrivilegeOnIdentifiedData = false;
+			{
+				hasPrivilegeOnIdentifiedData = checkPermissionOnGlobalParticipant(sessionDataBean);
+			}
 			else
 			{
 				List<Boolean> readPrivilegeList = new ArrayList<Boolean>();
@@ -256,7 +263,9 @@ public class CsmCacheManager
 			List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
 					entityName, entityId);
 			if(cpIdsList.size()==0)//if this object is not associated to any CP then user will not have identified privilege on it.
-				hasPrivilegeOnIdentifiedData = false;
+			{
+				hasPrivilegeOnIdentifiedData = checkPermissionOnGlobalParticipant(sessionDataBean);
+			}
 			else
 			{
 				List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
@@ -526,7 +535,26 @@ public class CsmCacheManager
 		}
 		return isAuthorisedUser;
 	}
-
+	
+	/**
+	 * To check for Authorization for Global Participants - not registereed to any CP 
+	 * @param sessionDataBean
+	 * @param entityName
+	 * @param entityId
+	 * @param permission
+	 * @return
+	 */
+	private boolean checkPermissionOnGlobalParticipant(SessionDataBean sessionDataBean)
+	{
+		boolean isAuthorisedUser = false;
+		validator = getValidatorInstance();
+		if(validator != null)
+		{
+			isAuthorisedUser = validator.hasPrivilegeToViewGlobalParticipant(sessionDataBean);
+		}
+		return isAuthorisedUser;
+	}
+	
 	/**
 	 * Executes Query to get CP ids for given entity id on database.Results are added in List<List<String>> 
 	 * and this list is returned.
