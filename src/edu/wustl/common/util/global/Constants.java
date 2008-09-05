@@ -554,6 +554,7 @@ public class Constants
 	public static final String VALIDATOR_CLASSNAME = "validator.classname";
 	public static final String hashedOut = "##";
 	public static final int ONE = 1;
+	public static final int INITIALIZE = -1;
 }
 
 
