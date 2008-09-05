@@ -9,9 +9,9 @@ package edu.wustl.common.util.global;
 import java.util.HashMap;
 
 /**
- * This classes is specific to common files. And contains all variables used by classes from 
+ * This classes is specific to common files. And contains all variables used by classes from
  * common package.
- * @author gautam_shetty  
+ * @author gautam_shetty
  * */
 public class Constants 
 {
@@ -552,8 +552,8 @@ public class Constants
 	public static final String PHI_ACCESS = "PHI_ACCESS";
 	public static final String READ_DENIED = "READ_DENIED";
 	public static final String VALIDATOR_CLASSNAME = "validator.classname";
-	
-public static final String hashedOut = "##";
+	public static final String hashedOut = "##";
+	public static final int ONE = 1;
 }
 
 
