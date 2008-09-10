@@ -828,10 +828,10 @@ public class Utility
 //	}
 	public static String getDisplayLabelForUnderscore(String objectName)
 	{
-		if(objectName.equals("PHI_ACCESS"))
+		/*if(objectName.equals("PHI_ACCESS"))
 		{
 			return ApplicationProperties.getValue(objectName);
-		}
+		}*/
 		
 		String attrLabel = "";
 		int len = objectName.length();
