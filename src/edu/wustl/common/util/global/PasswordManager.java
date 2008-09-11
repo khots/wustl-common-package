@@ -19,6 +19,7 @@ import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -474,7 +475,10 @@ public class PasswordManager
     	switch(errorCode)
     	{
     		case FAIL_LENGTH:
-    			errMsg=ApplicationProperties.getValue("errors.newPassword.length");
+    			int minimumPasswordLength=Integer.parseInt(XMLPropertyHandler.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
+    			List<String> placeHolders = new ArrayList<String>();
+    			placeHolders.add(new Integer(minimumPasswordLength).toString());
+    			errMsg=ApplicationProperties.getValue("errors.newPassword.length",placeHolders);
     			break;
     		case FAIL_SAME_AS_OLD:
     			errMsg=ApplicationProperties.getValue("errors.newPassword.sameAsOld");
@@ -507,7 +511,7 @@ public class PasswordManager
     	String encodedPWD = encrypt(pwd);
     	System.out.println("encodedPWD:"+encodedPWD+":");
     	
-        System.out.println(decrypt("vGEbT0/97YA="));
+        System.out.println(decrypt("xa2ImfuLjjZavG8j0xzkLA=="));
         System.out.println("old decoding:"+decode("614164576d65696c6e63"));
         //Mandar 08-May-06
         if(args.length > 1 )
