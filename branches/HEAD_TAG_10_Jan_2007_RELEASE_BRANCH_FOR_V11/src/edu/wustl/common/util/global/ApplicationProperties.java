@@ -35,7 +35,6 @@ public class ApplicationProperties
 		if(bundle == null)
 		{
 			logger.fatal("resource bundle is null cannot return value for key " + theKey);
-			
 		}
 		else
 		{
@@ -53,7 +52,17 @@ public class ApplicationProperties
  */	
 	public static String getValue(String theKey, List placeHolders)
 	{
-		String msg = bundle.getString(theKey);
+		String msg = "";
+		if(bundle == null)
+		{
+			logger.fatal("resource bundle is null cannot return value for key " + theKey);
+			return msg;
+		}
+		else
+		{
+			msg = bundle.getString(theKey);
+		}
+
 		StringBuffer message = new StringBuffer(msg);
 
 		for (int i = 0; i < placeHolders.size(); i++)
