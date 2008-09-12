@@ -100,7 +100,6 @@ public class QueryBizLogic extends DefaultBizLogic
 			{
 				List row = (List) iterator.next();
 				queryObjectNameTableNameMap.put(row.get(0), row.get(1));
-				Logger.out.info("Key: " + row.get(0) + " value: " + row.get(1));
 			}
 
 		}
@@ -149,7 +148,7 @@ public class QueryBizLogic extends DefaultBizLogic
 			{
 				List row = (List) iterator.next();
 				pivilegeTypeMap.put(row.get(0), row.get(1));
-				Logger.out.info("Key: " + row.get(0) + " value: " + row.get(1));
+				
 			}
 
 		}
@@ -241,8 +240,6 @@ public class QueryBizLogic extends DefaultBizLogic
 						new RelationCondition(new DataElement(tableAlias1, columnName1),
 								new Operator(Operator.EQUAL), new DataElement(tableAlias2,
 										columnName2)));
-				Logger.out.info("Relation: " + tableAlias1 + ":" + tableAlias2 + " " + columnName1
-						+ ":" + columnName2);
 			}
 
 		}
