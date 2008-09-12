@@ -45,7 +45,8 @@ import edu.wustl.common.util.logger.Logger;
  * @author gautam_shetty
  */
 public abstract class AbstractBizLogic implements IBizLogic
-{                              
+{           
+	private static org.apache.log4j.Logger logger =Logger.getLogger(AbstractBizLogic.class);
 	/**
      * This method gets called before insert method. Any logic before inserting into database can be included here.
      * @param obj The object to be inserted.
@@ -173,7 +174,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
 			}
-			Logger.out.debug("Error in delete");
+			logger.debug("Error in delete");
 			throw new BizLogicException(errMsg, ex);
 		}
 		finally
@@ -256,7 +257,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
 			}
-			Logger.out.debug("Error in insert");
+			logger.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
 		}
 		finally
@@ -271,7 +272,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException();
 			}
 			long endTime = System.currentTimeMillis();		
-			Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
 		}
     }
     /**
@@ -310,7 +311,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
 			}
-			Logger.out.debug("Error in insert");
+			logger.debug("Error in insert");
 			throw new BizLogicException(errMsg, ex);
 		}
 		finally
@@ -448,7 +449,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException();
 			}
 			long endTime = System.currentTimeMillis();		
-			Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
 		}
     }
     
@@ -473,7 +474,7 @@ public abstract class AbstractBizLogic implements IBizLogic
         AbstractDAO dao = DAOFactory.getInstance().getDAO(daoType);
 		try
 		{
-		    Logger.out.debug(" privilegeName:"+privilegeName+" objectType:"+objectType+" objectIds:"+edu.wustl.common.util.Utility.getArrayString(objectIds)+" userId:"+userId+" roleId:"+roleId+" assignToUser:"+assignToUser);
+		    logger.debug(" privilegeName:"+privilegeName+" objectType:"+objectType+" objectIds:"+edu.wustl.common.util.Utility.getArrayString(objectIds)+" userId:"+userId+" roleId:"+roleId+" assignToUser:"+assignToUser);
 	        dao.openSession(sessionDataBean);
 	        setPrivilege(dao, privilegeName,objectType,objectIds,userId, roleId, assignToUser, assignOperation);
 	        dao.commit();
@@ -538,7 +539,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     	}
     	catch(Exception e)
     	{
-    		Logger.out.error(ex.getMessage(),ex);
+    		logger.error(ex.getMessage(),ex);
     		// if Error occured while formating message then get message
     		// formatted through Default Formatter
     		String arg[]={operation,tableName};
@@ -587,7 +588,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		} 
 		catch (TitliException e) 
 		{
-			Logger.out.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
 		}
 		
 	}
@@ -626,7 +627,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.error(daoExp.getMessage(),daoExp);
+			logger.error(daoExp.getMessage(),daoExp);
 			String errMsg = daoExp.getMessage();
 			throw new BizLogicException(errMsg, daoExp);	
 		}
@@ -645,7 +646,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		String simpleClassName = Utility.parseClassName(className);
 		
 		long endTime = System.currentTimeMillis();
-		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - "+ simpleClassName + " : " + (endTime - startTime));
+		logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - "+ simpleClassName + " : " + (endTime - startTime));
 
 		return isSuccess;
 	}
@@ -684,13 +685,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.error(daoExp.getMessage(),daoExp);
+			logger.error(daoExp.getMessage(),daoExp);
 			String errMsg=daoExp.getMessage();
 			throw new BizLogicException(errMsg, daoExp);
 		}
 		catch (AssignDataException daoExp)
 		{
-			Logger.out.error(daoExp.getMessage(),daoExp);
+			logger.error(daoExp.getMessage(),daoExp);
 			throw daoExp;
 		}
 		finally
@@ -708,7 +709,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		String simpleClassName = Utility.parseClassName(className);
 		
 		long endTime = System.currentTimeMillis();
-		Logger.out.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - "+	simpleClassName +" : "+ (endTime - startTime));
+		logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - "+	simpleClassName +" : "+ (endTime - startTime));
 
 		return abstractDomain;
 	}
