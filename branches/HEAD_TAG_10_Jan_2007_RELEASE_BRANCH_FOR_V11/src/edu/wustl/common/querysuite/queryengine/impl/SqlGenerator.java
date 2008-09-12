@@ -146,7 +146,7 @@ public class SqlGenerator implements ISqlGenerator {
      */
     // List<Map<Long, Map<AttributeInterface, String>>> columnMapList;
     private int treeNo; // this count represents number of output trees formed.
-
+    private Map<AttributeInterface,String> attributeColumnNameMap = new HashMap<AttributeInterface, String>();
     /**
      * Default Constructor to instantiate SQL generator object.
      */
@@ -439,7 +439,7 @@ public class SqlGenerator implements ISqlGenerator {
             String displayNameForColumn = Utility.getDisplayNameForColumn(attribute);
             treeNode.addAttribute(new QueryOutputTreeAttributeMetadata(attribute, columnAliasName, treeNode,
                     displayNameForColumn));
-
+            attributeColumnNameMap.put(attribute, columnAliasName);
             selectIndex++;
         }
         List<OutputTreeDataNode> children = treeNode.getChildren();
@@ -1831,5 +1831,9 @@ public class SqlGenerator implements ISqlGenerator {
 
     public Map<String, IOutputTerm> getOutputTermsColumns() {
         return outputTermsColumns;
+    }
+    public Map<AttributeInterface, String> getAttributeColumnNameMap()
+    {
+    	return attributeColumnNameMap;
     }
 }

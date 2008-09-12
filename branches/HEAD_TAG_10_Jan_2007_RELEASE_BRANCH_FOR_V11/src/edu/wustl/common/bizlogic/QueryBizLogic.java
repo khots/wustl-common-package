@@ -1409,4 +1409,14 @@ public class QueryBizLogic extends DefaultBizLogic
 			dao.closeSession();
 		}
 	}
+	public static List executeSQL(String sql) throws DAOException, ClassNotFoundException
+	{
+		Logger.out.debug("SQL to get cardinality between 2 entities... "+ sql);
+	
+		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		jdbcDao.openSession(null);
+		List list = jdbcDao.executeQuery(sql, null, false, null);
+		jdbcDao.closeSession();
+		return list;
+	}
 }
