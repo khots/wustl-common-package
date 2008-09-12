@@ -329,21 +329,21 @@ public class CsmCacheManager
 	 * @return entityName
 	 */
 	private String getEntityName(QueryResultObjectData queryResultObjectData) 
-	{
+	{ 
 		String tableName = (String) AbstractClient.objectTableNames.get(queryResultObjectData.getAliasName());
 		String entityName =HibernateMetaData.getClassName(tableName);
-		if(tableName.equals(Constants.CATISSUE_SPECIMEN))
-		{
-			try
-			{
-				Class classObject = Class.forName(entityName);
-				entityName = classObject.getSuperclass().getName();
-			}
-			catch (ClassNotFoundException classNotExp)
-			{
-				Logger.out.debug("Class "+entityName+" not present.");
-			}
-		}
+//		if(tableName.equals(Constants.CATISSUE_SPECIMEN))
+//		{
+//			try
+//			{
+//				Class classObject = Class.forName(entityName);
+//				entityName = classObject.getSuperclass().getName();
+//			}
+//			catch (ClassNotFoundException classNotExp)
+//			{
+//				Logger.out.debug("Class "+entityName+" not present.");
+//			}
+//		}
 		return entityName;
 	}
 
