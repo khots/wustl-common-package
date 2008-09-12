@@ -10,16 +10,12 @@
  */
 package edu.wustl.common.util.logger;
 
-import java.io.InputStream;
-import java.net.URL;
+import java.io.File;
 
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.spi.LoggerFactory;
 
-import edu.wustl.common.util.CVSTagReader;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Variables;
 
 
@@ -35,15 +31,7 @@ public final class Logger
 	 */
 	public static org.apache.log4j.Logger out;
 	
-	static {
-		
-		URL url  = Logger.class.getClassLoader().getResource("log4j.properties");
-		if(url != null)
-		{
-			PropertyConfigurator.configure(url);			
-		}
-
-	}
+	private static boolean isConfigured = false;
     /**
      * Configures the logger with the properties of the specified category name in the log4j.xml file.
      * The category should be present in the log4j.xml file in the JBOSS_HOME/server/default/conf folder.
@@ -63,7 +51,32 @@ public final class Logger
      */
     public static org.apache.log4j.Logger getLogger(Class className)
     {
+    	if(!isConfigured)
+    	{
+        	if (Variables.propertiesDirPath.length()!=0)
+        	{
+        		configureLogger();
+        	}
+    	}
     	return org.apache.log4j.Logger.getLogger(className); 
+    }
+    
+    private static void configureLogger()
+    {
+    	StringBuffer log4jFilePath = new StringBuffer( Variables.propertiesDirPath);
+    	try
+    	{
+
+			log4jFilePath.append(File.separator).append("log4j.properties");
+			PropertyConfigurator.configure( log4jFilePath.toString());
+		    out=org.apache.log4j.Logger.getLogger(Logger.class);
+			isConfigured = true;
+    	}
+    	catch (Exception malformedURLEx)
+    	{
+    		configure(Logger.class.getName());
+    		out.fatal("Logger not configured. Invalid config file " + log4jFilePath.toString());
+    	}
     }
     /**
      * Configures the logger properties from the log4j.properties file.
