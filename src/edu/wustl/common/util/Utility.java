@@ -1021,11 +1021,14 @@ public class Utility
 	    	{
 	    		jdbcDao.openSession(sessionDataBean);
 			
-	    		List list = null;
+	    		List<List> list = null;
 				list = jdbcDao.executeQuery(cpQuery, sessionDataBean, false, null);
 	    		if (list != null && !list.isEmpty())
 	    		{
-	    			cpIdsList = (List) list.get(0);
+	    			for(List list1 : list)
+	    			{
+	    				cpIdsList.add(Long.valueOf(list1.get(0).toString()));
+	    			}
 	    		}
 	    	} 
 	    	catch (Exception e) 
