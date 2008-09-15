@@ -24,31 +24,32 @@ import edu.wustl.common.beans.NameValueBean;
  * This class is specific to common files. It is used by common package.
  * */
 
-public class Variables 
+public class Variables
 {
-    public static String applicationName = new String();
-    public static String applicationVersion = new String();
-    
+	private static final String CONST_VARIABLES_VALUE="";
+    public static String applicationName=CONST_VARIABLES_VALUE;
+    public static String applicationVersion=CONST_VARIABLES_VALUE;
+
     /* To hold path of applicatio installation directory */
-    public static String applicationHome = new String();
-    
-    public static String databaseName=new String();
-    public static String propertiesDirPath = new String();
-    
-    public static String datePattern = new String();
-    public static String timePattern = new String();
-    public static String timeFormatFunction = new String();
-    public static String dateFormatFunction = new String();
-    public static String strTodateFunction = new String();
-    public static String dateTostrFunction = new String();
-    public static String catissueURL=new String();
-    
+    public static String applicationHome=CONST_VARIABLES_VALUE;
+
+    public static String databaseName=CONST_VARIABLES_VALUE;
+    public static String propertiesDirPath=CONST_VARIABLES_VALUE;
+
+    public static String datePattern=CONST_VARIABLES_VALUE;
+    public static String timePattern=CONST_VARIABLES_VALUE;
+    public static String timeFormatFunction=CONST_VARIABLES_VALUE;
+    public static String dateFormatFunction=CONST_VARIABLES_VALUE;
+    public static String strTodateFunction=CONST_VARIABLES_VALUE;
+    public static String dateTostrFunction=CONST_VARIABLES_VALUE;
+    public static String catissueURL=CONST_VARIABLES_VALUE;
+
      public static Map<String,String> entityCPSqlMap = new HashMap<String, String>();
-     public static String mainProtocolObject  = new String();
+     public static String mainProtocolObject =CONST_VARIABLES_VALUE;
      public static List<String> queryReadDeniedObjectList = new ArrayList<String>();
-     
+
      // Ravi : for Multi Site Rep. changes
      public static Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
      public static Map<String, List<NameValueBean>> privilegeGroupingMap = new HashMap<String, List<NameValueBean>>();
-     public static String validatorClassname  = new String();
+     public static String validatorClassname=CONST_VARIABLES_VALUE;
 }
