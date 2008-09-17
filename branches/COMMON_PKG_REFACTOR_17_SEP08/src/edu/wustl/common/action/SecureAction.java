@@ -4,8 +4,6 @@ package edu.wustl.common.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -13,7 +11,6 @@ import org.apache.struts.action.ActionMapping;
 import edu.common.dynamicextensions.util.global.Variables;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * Class intercepts the struts action call and performs authorization to ensure
@@ -27,97 +24,69 @@ import edu.wustl.common.util.logger.Logger;
  * it to the target role. 4. Associate the user or user_group with the
  * protection group in the context of the role created in step 3. 5. Subclass
  * the SecureAction and implement executeSecureWorkflow
- * 
+ *
  * @author Aarti Sharma
- *  
+ *
  */
 public abstract class SecureAction extends BaseAction
 {
-    /*
+
+    /**
      * Authorizes the user and executes the secure workflow. If authorization
      * fails, the user is denied access to the secured action
-     * 
+     *
+     * @param mapping	ActionMapping
+	 * @param form	ActionForm
+	 * @param request	HttpServletRequest
+	 * @param response	HttpServletResponse
+	 * @return ActionForward
+	 * @exception Exception Generic exception
      */
     protected ActionForward executeAction(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception
-    {  
-    	
-        
-        	//call to check AddNew operation
-            checkAddNewOperation(request);
-            ActionForward ac = executeSecureAction(mapping, form, request, response);
-            
-            // validation removed from Action forms & put in appropriate Biz Logics
-            if (true)
-            {
-            	return ac;
-            } 	
-
-        Logger.out.debug("The Access was denied for the User "+ getUserLoginName(request)
-                + "to Execute this Action "+this.getClass().getName());
-
-        ActionErrors errors = new ActionErrors();
-
-        ActionError error = new ActionError("access.execute.action.denied");
-        errors.add(ActionErrors.GLOBAL_ERROR, error);
-        saveErrors(request, errors);
-
-        return getActionForward(request,mapping);
+    {
+		checkAddNewOperation(request);
+		ActionForward ac = executeSecureAction(mapping, form, request, response);
+		return ac;
     }
 
-    /**
-     * @param mapping
-     * @return
-     */
+   /**
+    *
+    * @param request HttpServletRequest
+    * @param mapping ActionMapping
+    * @return ActionForward
+    */
     protected ActionForward getActionForward(HttpServletRequest request,ActionMapping mapping)
     {
         return mapping.findForward(Constants.ACCESS_DENIED);
     }
 
     /**
-     * @param request
-     * @return
-     * @throws Exception
+     * @param request HttpServletRequest
+     * @return boolean
+     * @throws Exception Generic exception
      */
     protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
-    { 
-    	
-    		/*String objectId = (String)request.getAttribute("OBJECT_ID");
-    		String [] objArray = objectId.split("_");
-    		String baseString = objArray[0];
-    		String objId = "";
-    		boolean isAuthorized = false;
-    		for (int i = 1 ; i < objArray.length;i++)
-    		{
-    			objId = baseString + "_" + objArray[i];
-    			PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-    			PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(getUserLoginName(request));
-    		
-    			isAuthorized = privilegeCache.hasPrivilege(objId, getPrivilegeName(getObjectIdForSecureMethodAccess(request)));
-    			if (isAuthorized)
-    			{
-    				break;
-    			}
-    		}
-    		return isAuthorized; */
-    		
-    		// validation removed from Action forms & put in appropriate Biz Logics
-    		// so, returning TRUE from here 
-    		return true;
-    		
+    {
+    	return true;
     }
-    
+
     /**
      * Returns the object id of the protection element that represents
      * the Action that is being requested for invocation.
-     * @param clazz
-     * @return
+     * @param request HttpServletRequest
+     * @return String
      */
     protected String getObjectIdForSecureMethodAccess(HttpServletRequest request)
     {
         return this.getClass().getName();
     }
-    
+
+    /**
+     *
+     * @param actionClassName String
+     * @return String
+     */
     protected String getPrivilegeName(String actionClassName)
     {
     	String privilegeName = Variables.privilegeDetailsMap.get(actionClassName);
@@ -126,71 +95,24 @@ public abstract class SecureAction extends BaseAction
 
     /**
      * Subclasses should implement this method to execute the Action logic.
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws Exception
+     *
+     * @param mapping ActionMapping
+     * @param form ActionForm
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return ActionForward
+     * @throws Exception Generic exception
      */
     protected abstract ActionForward executeSecureAction(ActionMapping mapping,
             ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception;
-    
+
+    /**
+     *
+     * @param form AbstractActionForm
+     * @return String
+     */
     protected String getObjectId(AbstractActionForm form)
     {
     	return null;
     }
-    
-    /*private boolean isAuthorizedToExecute (HttpServletRequest request,ActionForm form) throws Exception
-    {  
-    	String baseObjectId = null;
-    	SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
-				Constants.SESSION_DATA);
-    	
-    	if(sessionDataBean.isAdmin())
-    	{
-    		return true;
-    	}
-    	
-    	if (form instanceof AbstractActionForm)
-    	{
-    		AbstractActionForm abstractForm = (AbstractActionForm) form;
-    		baseObjectId = getObjectId(abstractForm);
-    	}
-    	
-		request.setAttribute("OBJECT_ID", baseObjectId);
-		String objectId = getObjectIdForSecureMethodAccess(request);
-		if (baseObjectId != null && ! baseObjectId.equals(""))
-		{
-			return isAuthorizedToExecute(request);
-		}
-		else if (Variables.privilegeDetailsMap.get(objectId) != null && 
-				 (Variables.privilegeDetailsMap.get(objectId).equals(Permissions.GENERAL_ADMINISTRATION) ||
-				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.REPOSITORY_ADMINISTRATION)||
-				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.STORAGE_ADMINISTRATION) ||
-				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.REGISTRATION) ||
-				 Variables.privilegeDetailsMap.get(objectId).equals(Permissions.PROTOCOL_ADMINISTRATION)))
-		{
-			if(sessionDataBean == null)
-			{
-				if(request.getAttribute("pageOf").toString().equalsIgnoreCase("pageOfSignUp"))
-		    	{
-		    	    return true;
-		    	}
-				else
-				{
-					return false;
-				}
-			}
-			else
-			{
-				return sessionDataBean.isAdmin();
-			}
-		}
-		else
-		{
-			return true;
-		}
-	}*/
 }
