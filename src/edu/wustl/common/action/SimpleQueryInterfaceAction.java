@@ -25,8 +25,10 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.bizlogic.QueryBizLogic;
+import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * SimpleQueryInterfaceAction initializes the fields in the Simple Query Interface.
@@ -34,163 +36,167 @@ import edu.wustl.common.util.global.Validator;
  */
 public class SimpleQueryInterfaceAction extends SecureAction
 {
-    
+
+	private org.apache.log4j.Logger logger= Logger.getLogger(SimpleQueryInterfaceAction.class);
     /**
      * Overrides the execute method of Action class.
+     * @param mapping	ActionMapping
+	 * @param form	ActionForm
+	 * @param request	HttpServletRequest
+	 * @param response	HttpServletResponse
+	 * @return ActionForward
+	 * @exception Exception Generic exception
      */
     public ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception
     {
-        SimpleQueryInterfaceForm simpleQueryInterfaceForm = (SimpleQueryInterfaceForm) form;
-
-        QueryBizLogic queryBizLogic = new QueryBizLogic();//(QueryBizLogic) BizLogicFactory.getBizLogic(simpleQueryInterfaceForm.getFormId());  
+    	logger.info("in executeSecureAction method.");
+    	SimpleQueryInterfaceForm simpleQueryInterfaceForm = (SimpleQueryInterfaceForm) form;
+        QueryBizLogic queryBizLogic = new QueryBizLogic();
         HttpSession session = request.getSession();
         String operation = (String)request.getParameter(Constants.OPERATION);
-        //Bug 1096:Setting the query map with the session object if the operation is redefining the query.
-        if(operation!=null && operation.equals(Constants.REDEFINE))
+        if(Constants.REDEFINE.equals(operation))
     	{
         	Map simpleQueryMap = (Map)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT);
         	String originalCounter = (String)session.getAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER);
     		simpleQueryInterfaceForm.setValues(simpleQueryMap);
     		simpleQueryInterfaceForm.setCounter(originalCounter);
     	}
-		//Set the session objects to null after it is set in the form.
 		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT,null);
 		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER,null);
+        setAttributeNameList(request, simpleQueryInterfaceForm, queryBizLogic);
+        request.setAttribute(Constants.ATTRIBUTE_CONDITION_LIST, Constants.ATTRIBUTE_CONDITION_ARRAY);
+        session.setAttribute(Constants.SIMPLE_QUERY_MAP,null);
+        session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST,null);
+        String pageOf = request.getParameter(Constants.PAGEOF);
+        request.setAttribute(Constants.PAGEOF, pageOf);
+        return mapping.findForward(pageOf);
+    }
 
-        //Patch for Bug : 806
-        String objectChanged = request.getParameter("objectChanged");
-        
-        if(objectChanged != null)
-        {
-        	Map map = simpleQueryInterfaceForm.getValues();
-        	
-        	//To fixed the bug which says Label/Title should be selected by default in search attibute drop down.
-//        	if(map.containsKey(objectChanged))
-//        	{
-//        		String objectValue = (String)map.get(objectChanged);
-//        		String newFieldValue = objectValue + ".IDENTIFIER.bigint";
-//        		
-//        		String fieldKey = objectChanged.replaceAll("table","field");
-//        		map.put(fieldKey,newFieldValue);
-//        	}
-        }
-        int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
-        for (int i=1;i<=counter;i++)
+	/**
+	 * @param request HttpServletRequest
+	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
+	 * @param queryBizLogic QueryBizLogic
+	 * @throws DAOException database exception
+	 * @throws ClassNotFoundException Generic exception
+	 */
+	private void setAttributeNameList(HttpServletRequest request,
+			SimpleQueryInterfaceForm simpleQueryInterfaceForm,
+			QueryBizLogic queryBizLogic) throws DAOException,
+			ClassNotFoundException
+	{
+		int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
+        for (int i=Constants.ONE;i<=counter;i++)
         {
             // Key of present object.
             String key = "SimpleConditionsNode:"+i+"_Condition_DataElement_table";
             String value = (String)simpleQueryInterfaceForm.getValue(key);
-            
             Validator validator = new Validator();
-            if ((value != null) && (validator.isValidOption(value)))
+            if (validator.isValidOption(value))
             {
                 List columnNameValueBeanList = queryBizLogic.getColumnNames(value);
-                if (columnNameValueBeanList.isEmpty() == false)
+                if (!columnNameValueBeanList.isEmpty())
                 {
-                    String attributeNameList = "attributeNameList"+i;
-                    request.setAttribute(attributeNameList, columnNameValueBeanList);
+                    request.setAttribute("attributeNameList"+i, columnNameValueBeanList);
                 }
             }
-            
-            // For the last condition row.  
-            if (i == counter) 
+
+            // For the last condition row.
+            if (i == counter)
             {
-                //Key of previous object.
-                String prevKey = "SimpleConditionsNode:"+(i-1)+"_Condition_DataElement_table";
-                String prevValue = (String)simpleQueryInterfaceForm.getValue(prevKey);
-                
-                //Mandar : code to hide the calendar icon
-                String calKey = "SimpleConditionsNode:"+i+"_showCalendar";
-                simpleQueryInterfaceForm.setShowCalendar(calKey,"");
-                // Mandar : code complete
-                
-                //If previous table name is not null, get the list of table name related to it.
-                if (prevValue != null)
-                {
-                    Set nextTableNameList = queryBizLogic.getNextTableNames(prevValue);
-                    if (nextTableNameList.isEmpty() == false)
-                    {
-                        String objectNameList = "objectList"+i;
-                        request.setAttribute(objectNameList, nextTableNameList);
-                        request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
-                    }
-                }
-                else//If there is only one condition row. 
-                {
-                    String aliasName = request.getParameter(Constants.TABLE_ALIAS_NAME);
-                    
-                    // Get all the table names.  
-                    Set objectNameValueBeanList = queryBizLogic.getAllTableNames(aliasName, Constants.SIMPLE_QUERY_TABLES);
-                    if (objectNameValueBeanList.isEmpty() == false)
-                    {
-                        request.setAttribute(Constants.OBJECT_NAME_LIST, objectNameValueBeanList);
-                        request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
-                    }
-                    
-                    if ((aliasName != null) && (!"".equals(aliasName)))
-            		{
-                        request.setAttribute(Constants.TABLE_ALIAS_NAME,aliasName);
-                        
-            		    List columnNameValueBeanList = queryBizLogic.getColumnNames(aliasName);
-                        if (columnNameValueBeanList.isEmpty() == false)
-                        {
-                            String attributeNameList = "attributeNameList1";
-                            request.setAttribute(attributeNameList, columnNameValueBeanList);
-                        }
-            		}
-                }
+                setLastAttributeNameList(request, simpleQueryInterfaceForm,queryBizLogic, i);
             }
             else// For rows other than last, show only the object selected.
             {
                 //Key of the next operator (AND/OR).
                 String nextOperatorKey = "SimpleConditionsNode:"+i+"_Operator_operator";
                 String nextOperatorValue = (String)simpleQueryInterfaceForm.getValue(nextOperatorKey);
-                
+
                 if (nextOperatorValue != null && !"".equals(nextOperatorValue))
                 {
                     String objectNameValueBeanList = "objectList"+i;
                     String prevValueDisplayName = queryBizLogic.getDisplayName(value);
-                    
                     NameValueBean nameValueBean = new NameValueBean();
                     nameValueBean.setName(prevValueDisplayName);
                     nameValueBean.setValue(value);
-                    
                     List objectList = new ArrayList();
                     objectList.add(nameValueBean);
-                    
                     request.setAttribute(objectNameValueBeanList, objectList);
                 }
             }
         }
-        
-        request.setAttribute(Constants.ATTRIBUTE_CONDITION_LIST, Constants.ATTRIBUTE_CONDITION_ARRAY);
-        
-        //Initialize the session attributes to null
-        session.setAttribute(Constants.SIMPLE_QUERY_MAP,null);
-        session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST,null);
-        String pageOf = request.getParameter(Constants.PAGEOF);
-        request.setAttribute(Constants.PAGEOF, pageOf);
-        
-        return mapping.findForward(pageOf);
-    }
-    
+	}
+
+	/**
+	 * @param request HttpServletRequest
+	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
+	 * @param queryBizLogic QueryBizLogic
+	 * @param index int
+	 * @throws DAOException database exception
+	 * @throws ClassNotFoundException Generic exception
+	 */
+	private void setLastAttributeNameList(HttpServletRequest request,
+			SimpleQueryInterfaceForm simpleQueryInterfaceForm,
+			QueryBizLogic queryBizLogic, int index) throws DAOException,
+			ClassNotFoundException
+	{
+		//Key of previous object.
+		String prevKey = "SimpleConditionsNode:"+(index-Constants.ONE)+"_Condition_DataElement_table";
+		String prevValue = (String)simpleQueryInterfaceForm.getValue(prevKey);
+		String calKey = "SimpleConditionsNode:"+index+"_showCalendar";
+		simpleQueryInterfaceForm.setShowCalendar(calKey,"");
+		if (prevValue != null)
+		{
+		    Set nextTableNameList = queryBizLogic.getNextTableNames(prevValue);
+		    if (!nextTableNameList.isEmpty())
+		    {
+		        String objectNameList = "objectList"+index;
+		        request.setAttribute(objectNameList, nextTableNameList);
+		        request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
+		    }
+		}
+		else//If there is only one condition row.
+		{
+		    String aliasName = request.getParameter(Constants.TABLE_ALIAS_NAME);
+		    // Get all the table names.
+		    Set objectNameValueBeanList = queryBizLogic.getAllTableNames(aliasName, Constants.SIMPLE_QUERY_TABLES);
+		    if (!objectNameValueBeanList.isEmpty())
+		    {
+		        request.setAttribute(Constants.OBJECT_NAME_LIST, objectNameValueBeanList);
+		        request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
+		    }
+
+		    if ((aliasName != null) && (!"".equals(aliasName)))
+			{
+		        request.setAttribute(Constants.TABLE_ALIAS_NAME,aliasName);
+			    List columnNameValueBeanList = queryBizLogic.getColumnNames(aliasName);
+		        if (!columnNameValueBeanList.isEmpty())
+		        {
+		            String attributeNameList = "attributeNameList1";
+		            request.setAttribute(attributeNameList, columnNameValueBeanList);
+		        }
+			}
+		}
+	}
+
     /**
      * Returns the object id of the protection element that represents
      * the Action that is being requested for invocation.
-     * @param clazz
-     * @return
+     * @param request HttpServletRequest
+     * @return String
      */
     protected String getObjectIdForSecureMethodAccess(HttpServletRequest request)
     {
+    	String objectId="";
         String aliasName = request.getParameter("aliasName");
         if(aliasName!=null && !aliasName.equals(""))
         {
-            return this.getClass().getName()+"_"+aliasName;
+        	objectId=this.getClass().getName()+"_"+aliasName;
         }
         else
         {
-            return super.getObjectIdForSecureMethodAccess(request);
+        	objectId=super.getObjectIdForSecureMethodAccess(request);
         }
+        return objectId;
     }
 }

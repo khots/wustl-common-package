@@ -12,7 +12,6 @@
 package edu.wustl.common.action;
 
 import java.io.IOException;
-import java.rmi.ServerException;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,73 +44,72 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CommonSearchAction extends Action
 {
+	private org.apache.log4j.Logger logger= Logger.getLogger(CommonSearchAction.class);
     /**
      * Overrides the execute method of Action class.
-     * Retrieves and populates the information to be edited. 
+     * Retrieves and populates the information to be edited.
+	 * @param mapping	ActionMapping
+	 * @param form	ActionForm
+	 * @param request	HttpServletRequest
+	 * @param response	HttpServletResponse
+	 * @return ActionForward
+	 * @exception IOException Generic exception
      * */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServerException
+            throws IOException
     {
-    	long startTime = System.currentTimeMillis();
-        
-        /** 
-         * Represents whether the search operation was successful or not.
-         */
+    	logger.info("in execute method");
+    	//long startTime = System.currentTimeMillis();
         String target = null;
-        
-        /* Get the id whose information is to be searched */
         String obj =request.getParameter(Constants.SYSTEM_IDENTIFIER);
-        Long identifier = 	new Long(Utility.toLong(obj)); 
+        Long identifier = 	Long.valueOf(Utility.toLong(obj));
         if(identifier.longValue() == 0  )
         {
         	identifier = (Long)request.getAttribute(Constants.SYSTEM_IDENTIFIER);
-        	
-        	//Deepti for futureSCG 
-        	//In case of CP based view when for any CPR there are no SCGs present then identifier will be null.
         	if (identifier == null )
         	{
-        		 String pageOf = (String)request.getAttribute(Constants.PAGEOF);
-                 if (pageOf == null)
-                 	pageOf = (String)request.getParameter(Constants.PAGEOF);
-                 target = pageOf;
-                 HashMap<String, Long> forwardToHashMap = new HashMap<String, Long>();
-                 forwardToHashMap.put("collectionProtocolId",new Long((String)request.getParameter("cpSearchCpId")));
-                 forwardToHashMap.put("participantId", new Long((String)request.getParameter("cpSearchParticipantId")));
-                 forwardToHashMap.put("COLLECTION_PROTOCOL_EVENT_ID", new Long((String)request.getParameter("COLLECTION_PROTOCOL_EVENT_ID")));
-                 request.setAttribute("forwardToHashMap", forwardToHashMap);
-                 
+                 target = getPageOf(request);
+                 request.setAttribute("forwardToHashMap", getForwordTohashMap(request));
                  return mapping.findForward(target);
         	}
         }
-        
         target = openPageInEdit( form, identifier, request);
-
-        long endTime = System.currentTimeMillis();        
-        Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+        //long endTime = System.currentTimeMillis();
+        //logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
         return mapping.findForward(target);
     }
-    
-    
+
+	/**
+	 * @param request HttpServletRequest
+	 * @return HashMap<String, Long>
+	 */
+	private HashMap<String, Long> getForwordTohashMap(HttpServletRequest request)
+	{
+		HashMap<String, Long> forwardToHashMap = new HashMap<String, Long>();
+		forwardToHashMap.put("collectionProtocolId",Long.valueOf(request.getParameter("cpSearchCpId")));
+		forwardToHashMap.put("participantId", Long.valueOf(request.getParameter("cpSearchParticipantId")));
+		forwardToHashMap.put("COLLECTION_PROTOCOL_EVENT_ID", Long.valueOf(request.getParameter("COLLECTION_PROTOCOL_EVENT_ID")));
+		return forwardToHashMap;
+	}
+
+    /**
+     *
+     * @param form ActionForm
+     * @param identifier Long
+     * @param request HttpServletRequest
+     * @return String
+     */
     private String openPageInEdit(ActionForm form, Long identifier, HttpServletRequest request)
     {
     	AbstractActionForm abstractForm = (AbstractActionForm) form;
-    	String target = null;
-
+    	String target = Constants.FAILURE;
 	    try
 	    {
-	        //Retrieves the information to be edited.
-	    	//IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties.getValue("app.bizLogicFactory"), "getBizLogic", abstractForm.getFormId());
-	        
 	        AbstractDomainObjectFactory abstractDomainObjectFactory = (AbstractDomainObjectFactory) MasterFactory
 	            				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
 	        String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
 	        SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(Constants.SESSION_DATA);
-	        /**
-	         * Name : Vijay Pande
-	         * Reviewer Name: Sachin Lale
-	         * Therefore instead od using default bizlogic appropriate bizlogic is retrieved.
-	         */
 	        IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties.getValue("app.bizLogicFactory"),	"getBizLogic", abstractForm.getFormId());
 	        boolean hasPrivilege = true;
 	        if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
@@ -122,56 +120,72 @@ public class CommonSearchAction extends Action
 	        {
 	        	throw new DAOException("Access denied ! User does not have privilege to view this information.");
 	        }
-	        
-	        //List list= bizLogic.retrieve(objName,Constants.SYSTEM_IDENTIFIER, identifier.toString());
+
 	        boolean isSuccess = bizLogic.populateUIBean(objName,identifier,abstractForm);
-	        
-	        //if (list!=null && list.size() != 0)
 	        if(isSuccess)
 	        {
-	            /* 
-	              If the record searched is present in the database,
-	              populate the formbean with the information retrieved.
-	             */
-//	        	AbstractDomainObject abstractDomain = (AbstractDomainObject)list.get(0);
-//	            abstractForm.setAllValues(abstractDomain);
-	            
-	            String pageOf = (String)request.getAttribute(Constants.PAGEOF);
-	            if (pageOf == null)
-	            	pageOf = (String)request.getParameter(Constants.PAGEOF);
-	            target = pageOf;
-	            abstractForm.setMutable(false);
-	            
-	            String operation = (String)request.getAttribute(Constants.OPERATION);
-	            request.setAttribute(Constants.OPERATION,operation);
+	            target = getTarget(request, abstractForm);
 	        }
 	        else
 	        {
-	            /* 
-	              If the searched record is not present in the database,  
-	              display an Error message.
-	             */
-	            ActionErrors errors = new ActionErrors();
-	            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.unknown", AbstractDomainObject.parseClassName(objName)));
-	            saveErrors(request,errors);
-	            target = new String(Constants.FAILURE);
+	            saveErrors(request,"errors.item.unknown", AbstractDomainObject.parseClassName(objName));
 	        }
 	    }
 	    catch (BizLogicException excp)
 	    {
-	        target = Constants.FAILURE;
-	        Logger.out.error(excp.getMessage(), excp);
+	        logger.error(excp.getMessage(), excp);
 	    }
 	    catch (DAOException excp)
 	    {
-	    	ActionErrors errors = new ActionErrors();
-	        ActionError error = new ActionError("access.view.action.denied");
-	        errors.add(ActionErrors.GLOBAL_ERROR, error);
-	        saveErrors(request, errors);
-	    	// target = Constants.FAILURE;
+	    	saveErrors(request,"access.view.action.denied", "");
 	        target = Constants.ACCESS_DENIED;
-	        Logger.out.error(excp.getMessage(), excp);
+	        logger.error(excp.getMessage(), excp);
 	    }
 	    return target;
     }
+
+
+	/**
+	 * @param request HttpServletRequest
+	 * @param key String
+	 * @param obj Object
+	 */
+	private void saveErrors(HttpServletRequest request, String key, Object obj)
+	{
+		ActionErrors errors = new ActionErrors();
+		ActionError error=new ActionError(key, obj);
+		errors.add(ActionErrors.GLOBAL_ERROR, error);
+		saveErrors(request,errors);
+	}
+
+
+	/**
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm
+	 * @return String target
+	 */
+	private String getTarget(HttpServletRequest request,
+			AbstractActionForm abstractForm)
+	{
+
+		String pageOf = getPageOf(request);
+		abstractForm.setMutable(false);
+		String operation = (String)request.getAttribute(Constants.OPERATION);
+		request.setAttribute(Constants.OPERATION,operation);
+		return pageOf;
+	}
+
+	/**
+	 * @param request HttpServletRequest
+	 * @return String value of pageOf
+	 */
+	private String getPageOf(HttpServletRequest request)
+	{
+		String pageOf = (String)request.getAttribute(Constants.PAGEOF);
+		if (pageOf == null)
+		{
+			pageOf = request.getParameter(Constants.PAGEOF);
+		}
+		return pageOf;
+	}
 }
