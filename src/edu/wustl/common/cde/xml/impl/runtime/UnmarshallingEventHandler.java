@@ -23,21 +23,27 @@ import org.xml.sax.SAXException;
  * @author
  *     Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
-public interface UnmarshallingEventHandler {
-    
-    /**
-     * Returns the content-tree object for which this unmarshaller
-     * is working for.
-     */
-    Object owner();
+public interface UnmarshallingEventHandler
+{
 
-    //
-    // event handlers
-    //
-    void enterElement(String uri, String local, String qname, Attributes atts) throws SAXException;
-    void leaveElement(String uri, String local, String qname ) throws SAXException;
-    void text(String s) throws SAXException;
-    void enterAttribute(String uri, String local, String qname ) throws SAXException;
-    void leaveAttribute(String uri, String local, String qname ) throws SAXException;
-    void leaveChild(int nextState) throws SAXException;
+	/**
+	 * Returns the content-tree object for which this unmarshaller
+	 * is working for.
+	 */
+	Object owner();
+
+	//
+	// event handlers
+	//
+	void enterElement(String uri, String local, String qname, Attributes atts) throws SAXException;
+
+	void leaveElement(String uri, String local, String qname) throws SAXException;
+
+	void text(String s) throws SAXException;
+
+	void enterAttribute(String uri, String local, String qname) throws SAXException;
+
+	void leaveAttribute(String uri, String local, String qname) throws SAXException;
+
+	void leaveChild(int nextState) throws SAXException;
 }

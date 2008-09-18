@@ -1,4 +1,6 @@
+
 package edu.wustl.common.exceptionformatter;
+
 /**
  * 
  * @author sachin_lale
@@ -11,7 +13,10 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 
 import edu.wustl.common.util.logger.Logger;
-public class ExceptionFormatterFactory {
+
+public class ExceptionFormatterFactory
+{
+
 	static ResourceBundle prop;
 	static
 	{
@@ -21,65 +26,67 @@ public class ExceptionFormatterFactory {
 			 * property file format is as follows:
 			 * Exception_Class_Name = Exception_Formatter_Class_Name
 			 */
-		    prop = ResourceBundle.getBundle("ExceptionFormatter");
-		    
+			prop = ResourceBundle.getBundle("ExceptionFormatter");
+
 			Logger.out.debug("File Loaded");
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage()+" " + e);
+			Logger.out.error(e.getMessage() + " " + e);
 		}
 	}
-	
+
 	// @param Exception excp : The fully qualified class name of excp 
 	//  and the Exception_Formatter class name should be in ExceptionFormatter.properties file   
 	public static ExceptionFormatter getFormatter(Exception excp)
 	{
-		ExceptionFormatter expFormatter=null;
+		ExceptionFormatter expFormatter = null;
 		try
 		{
 			//Get Excxeption Class name from given Object
-			String excpClassName = excp.getClass().getName(); 
-			
+			String excpClassName = excp.getClass().getName();
+
 			//Get Exception Formatter Class name from Properties file
 			String formatterClassName = prop.getString(excpClassName);
-			if(formatterClassName==null)
+			if (formatterClassName == null)
 			{
 				Logger.out.error("ExceptionFormatter Class not found for " + excpClassName);
 			}
 			else
 			{
 				//	Instantiate a Exception Formatter
-				Logger.out.debug("exceptionClass: " +excpClassName);
-				Logger.out.debug("formatterClass: " +formatterClassName);
-				expFormatter = (ExceptionFormatter)Class.forName(formatterClassName).newInstance();
+				Logger.out.debug("exceptionClass: " + excpClassName);
+				Logger.out.debug("formatterClass: " + formatterClassName);
+				expFormatter = (ExceptionFormatter) Class.forName(formatterClassName).newInstance();
 			}
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage()+" " + e);
+			Logger.out.error(e.getMessage() + " " + e);
 		}
 		return expFormatter;
 	}
-	public static String getDisplayName(String tableName,Connection  conn)
+
+	public static String getDisplayName(String tableName, Connection conn)
 	{
-		String displayName="";
-		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"+tableName+"'";
+		String displayName = "";
+		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"
+				+ tableName + "'";
 		try
 		{
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(sql);
-			while(rs.next())
+			while (rs.next())
 			{
-				displayName=rs.getString("DISPLAY_NAME");
+				displayName = rs.getString("DISPLAY_NAME");
 				break;
 			}
 			rs.close();
 			st.close();
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
-			Logger.out.error(ex.getMessage(),ex);
+			Logger.out.error(ex.getMessage(), ex);
 		}
 		return displayName;
 	}

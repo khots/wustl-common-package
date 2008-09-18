@@ -1,7 +1,5 @@
+
 package edu.wustl.common.query;
-
-
-
 
 /**
  *<p>Title: AdvancedQuery</p>
@@ -11,8 +9,9 @@ package edu.wustl.common.query;
  *@author Aarti Sharma
  *@version 1.0
  */
-public class AdvancedQuery extends Query {
-    
+public class AdvancedQuery extends Query
+{
+
 	/**
 	 * Name: Prafull
 	 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
@@ -20,15 +19,17 @@ public class AdvancedQuery extends Query {
 	 * 
 	 * For Advance Query the Order by clause will be added in following order given by array.  
 	 */
-	public static String[] QUERY_ORDERBY_SEQUENCE = {PARTICIPANT,COLLECTION_PROTOCOL, COLLECTION_PROTOCOL_REGISTRATION, SPECIMEN_COLLECTION_GROUP, SPECIMEN};
-	
-    /**
-     * Constructs a AdvancedQuery object
-     * @param queryStartObject - Start object for the query
-     */
-	public AdvancedQuery(final String queryStartObject){
-	    this.whereConditions = new CatissueAdvancedConditionsImpl();
-	    this.queryStartObject = queryStartObject;
+	public static String[] QUERY_ORDERBY_SEQUENCE = {PARTICIPANT, COLLECTION_PROTOCOL,
+			COLLECTION_PROTOCOL_REGISTRATION, SPECIMEN_COLLECTION_GROUP, SPECIMEN};
+
+	/**
+	 * Constructs a AdvancedQuery object
+	 * @param queryStartObject - Start object for the query
+	 */
+	public AdvancedQuery(final String queryStartObject)
+	{
+		this.whereConditions = new CatissueAdvancedConditionsImpl();
+		this.queryStartObject = queryStartObject;
 	}
 
 	/**
@@ -37,11 +38,11 @@ public class AdvancedQuery extends Query {
 	 * @param child child node
 	 * @return true if child is added to parent else false
 	 */
-	public boolean addCondition(AdvancedConditionsNode parent , AdvancedConditionsNode child)
+	public boolean addCondition(AdvancedConditionsNode parent, AdvancedConditionsNode child)
 	{
-		return ((AdvancedConditionsImpl)this.whereConditions).addCondition(parent,child);
+		return ((AdvancedConditionsImpl) this.whereConditions).addCondition(parent, child);
 	}
-	
+
 	/**
 	 * Add condition to root
 	 * @param condition - object to be added
@@ -49,7 +50,7 @@ public class AdvancedQuery extends Query {
 	 */
 	public boolean addCondition(AdvancedConditionsNode condition)
 	{
-		return ((AdvancedConditionsImpl)this.whereConditions).addCondition(condition);
+		return ((AdvancedConditionsImpl) this.whereConditions).addCondition(condition);
 	}
 
 }

@@ -1,5 +1,6 @@
 
 package edu.wustl.common.vo;
+
 /**
  * Class used to set the value of each field's value 
  * @author namita_srivastava
@@ -7,23 +8,24 @@ package edu.wustl.common.vo;
  */
 public class HTMLField
 {
+
 	//Name referred as property in field's attribute
 	private String name = "";
-	
+
 	//Id of each field including label
 	private String id = "";
-	
+
 	//Used for enabling & disabling field
 	private boolean isDisabled = false;
-	
+
 	//Used for populating value in case of comboBox
 	private String dataListName = "";
-	
-	public HTMLField(String name,String id,String dataListName)
+
+	public HTMLField(String name, String id, String dataListName)
 	{
 		this(name, id, dataListName, false);
 	}
-	
+
 	/**
 	 * @param name Name of field of page
 	 * @param id Id associated with field
@@ -42,14 +44,16 @@ public class HTMLField
 	 * For populating value in case of comboBox
 	 * @return String
 	 */
-	public String getDataListName() {
+	public String getDataListName()
+	{
 		return dataListName;
 	}
 
 	/**
 	 * @param dataListName to set
 	 */
-	public void setDataListName(String dataListName) {
+	public void setDataListName(String dataListName)
+	{
 		this.dataListName = dataListName;
 	}
 
@@ -57,14 +61,16 @@ public class HTMLField
 	 * Id associated with field
 	 * @return String
 	 */
-	public String getId() {
+	public String getId()
+	{
 		return id;
 	}
 
 	/**
 	 * @param id to set
 	 */
-	public void setId(String id) {
+	public void setId(String id)
+	{
 		this.id = id;
 	}
 
@@ -72,14 +78,16 @@ public class HTMLField
 	 * Used for enabling & disabling field
 	 * @return boolean
 	 */
-	public boolean isDisabled() {
+	public boolean isDisabled()
+	{
 		return isDisabled;
 	}
 
 	/**
 	 * @param isDisabled to set
 	 */
-	public void setDisabled(boolean isDisabled) {
+	public void setDisabled(boolean isDisabled)
+	{
 		this.isDisabled = isDisabled;
 	}
 
@@ -87,14 +95,16 @@ public class HTMLField
 	 * Name of field of page
 	 * @return String
 	 */
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
 	/**
 	 * @param name to set
 	 */
-	public void setName(String name) {
+	public void setName(String name)
+	{
 		this.name = name;
 	}
 }

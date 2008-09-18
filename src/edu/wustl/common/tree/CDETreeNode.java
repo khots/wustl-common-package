@@ -17,47 +17,48 @@ import java.io.Serializable;
  */
 public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparable
 {
+
 	private static final long serialVersionUID = 1234567890L;
-	
-    private String cdeName;
-    
-    public CDETreeNode()
-    {
-    }
-    
-    public CDETreeNode(Long identifier,String value)
-    {
-        super(identifier, value);
-    }
-    
-    /**
-     * @return Returns the cdeName.
-     */
-    public String getCdeName()
-    {
-        return cdeName;
-    }
-    
-    /**
-     * @param cdeName The cdeName to set.
-     */
-    public void setCdeName(String cdeName)
-    {
-        this.cdeName = cdeName;
-    }
-    
-    /* (non-Javadoc)
-     * @see edu.wustl.common.tree.TreeNodeImpl#toString()
-     */
-    public String toString()
-    {
-        return this.value;
-    }
-    
-    //Bug-2717: For sorting
-    public int compareTo(Object tmpobj)
+
+	private String cdeName;
+
+	public CDETreeNode()
 	{
-    	CDETreeNode treeNode = (CDETreeNode) tmpobj;
-    	return value.compareTo(treeNode.getValue());
+	}
+
+	public CDETreeNode(Long identifier, String value)
+	{
+		super(identifier, value);
+	}
+
+	/**
+	 * @return Returns the cdeName.
+	 */
+	public String getCdeName()
+	{
+		return cdeName;
+	}
+
+	/**
+	 * @param cdeName The cdeName to set.
+	 */
+	public void setCdeName(String cdeName)
+	{
+		this.cdeName = cdeName;
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.wustl.common.tree.TreeNodeImpl#toString()
+	 */
+	public String toString()
+	{
+		return this.value;
+	}
+
+	//Bug-2717: For sorting
+	public int compareTo(Object tmpobj)
+	{
+		CDETreeNode treeNode = (CDETreeNode) tmpobj;
+		return value.compareTo(treeNode.getValue());
 	}
 }

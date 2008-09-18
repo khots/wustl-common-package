@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package edu.wustl.common.util;
 
 import java.util.Comparator;
@@ -14,11 +15,12 @@ import edu.wustl.common.domain.AbstractDomainObject;
  */
 public class DomainBeanIdentifierComparator implements Comparator
 {
-	public int compare(Object object1, Object object2) 
+
+	public int compare(Object object1, Object object2)
 	{
-		AbstractDomainObject domainObject1 = (AbstractDomainObject)object1;
-		AbstractDomainObject domainObject2 = (AbstractDomainObject)object2;
-		
+		AbstractDomainObject domainObject1 = (AbstractDomainObject) object1;
+		AbstractDomainObject domainObject2 = (AbstractDomainObject) object2;
+
 		Long value = domainObject1.getId() - domainObject2.getId();
 		return value.intValue();
 	}

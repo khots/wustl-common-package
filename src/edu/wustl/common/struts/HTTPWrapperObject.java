@@ -26,37 +26,39 @@ import edu.wustl.common.factory.MasterFactory;
  */
 public class HTTPWrapperObject implements Serializable
 {
-    private static final long serialVersionUID = -4958330782397508598L;
-    private ActionForm formBean;
+
+	private static final long serialVersionUID = -4958330782397508598L;
+	private ActionForm formBean;
 	private String operation;
-	
-	public HTTPWrapperObject(){}
-	
-	public HTTPWrapperObject(Object domainObject,String operation) throws Exception
+
+	public HTTPWrapperObject()
 	{
-	    //Gautam: Changes done for common package.
-	    AbstractActionFormFactory actionFormFactory = (AbstractActionFormFactory)
-	    												MasterFactory.getFactory(
-	    												  "edu.wustl.catissuecore.actionForm.ActionFormFactory");
-		AbstractActionForm abstractForm = actionFormFactory.getFormBean(domainObject,operation);
+	}
+
+	public HTTPWrapperObject(Object domainObject, String operation) throws Exception
+	{
+		//Gautam: Changes done for common package.
+		AbstractActionFormFactory actionFormFactory = (AbstractActionFormFactory) MasterFactory
+				.getFactory("edu.wustl.catissuecore.actionForm.ActionFormFactory");
+		AbstractActionForm abstractForm = actionFormFactory.getFormBean(domainObject, operation);
 		formBean = abstractForm;
-		
+
 		this.operation = operation;
 	}
-	
+
 	/**
 	 * Returns FormBean object
 	 */
 	public ActionForm getForm()
 	{
-	    return formBean;
+		return formBean;
 	}
-	
+
 	/**
 	 * Returns Operation value
 	 */
 	public String getOperation()
 	{
-	    return this.operation;
+		return this.operation;
 	}
 }

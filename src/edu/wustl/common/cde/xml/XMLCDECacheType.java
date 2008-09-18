@@ -5,9 +5,7 @@
 // Generated on: 2005.08.23 at 10:44:28 GMT+05:30 
 //
 
-
 package edu.wustl.common.cde.xml;
-
 
 /**
  * Java content class for XMLCDECacheType complex type.
@@ -28,54 +26,54 @@ package edu.wustl.common.cde.xml;
  * </pre>
  * 
  */
-public interface XMLCDECacheType {
+public interface XMLCDECacheType
+{
 
+	/**
+	 * Gets the value of the refreshTime property.
+	 * 
+	 */
+	int getRefreshTime();
 
-    /**
-     * Gets the value of the refreshTime property.
-     * 
-     */
-    int getRefreshTime();
+	/**
+	 * Sets the value of the refreshTime property.
+	 * 
+	 */
+	void setRefreshTime(int value);
 
-    /**
-     * Sets the value of the refreshTime property.
-     * 
-     */
-    void setRefreshTime(int value);
+	/**
+	 * Gets the value of the XMLCDE property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list,
+	 * not a snapshot. Therefore any modification you make to the
+	 * returned list will be present inside the JAXB object.
+	 * This is why there is not a <CODE>set</CODE> method for the XMLCDE property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * <pre>
+	 *    getXMLCDE().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link edu.wustl.common.cde.xml.XMLCDE}
+	 * 
+	 */
+	java.util.List getXMLCDE();
 
-    /**
-     * Gets the value of the XMLCDE property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the XMLCDE property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getXMLCDE().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link edu.wustl.common.cde.xml.XMLCDE}
-     * 
-     */
-    java.util.List getXMLCDE();
+	/**
+	 * Gets the value of the lazyLoading property.
+	 * 
+	 */
+	boolean isLazyLoading();
 
-    /**
-     * Gets the value of the lazyLoading property.
-     * 
-     */
-    boolean isLazyLoading();
-
-    /**
-     * Sets the value of the lazyLoading property.
-     * 
-     */
-    void setLazyLoading(boolean value);
+	/**
+	 * Sets the value of the lazyLoading property.
+	 * 
+	 */
+	void setLazyLoading(boolean value);
 
 }

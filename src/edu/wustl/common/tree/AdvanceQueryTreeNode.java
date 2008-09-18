@@ -71,7 +71,7 @@ public class AdvanceQueryTreeNode extends TreeNodeImpl implements Serializable, 
 		{
 			AdvanceQueryTreeNode node = (AdvanceQueryTreeNode) obj;
 			if (displayName != null && node.displayName != null)
-			{	
+			{
 				//Bug id: 3624, compareTo function is replaced with compareToIgnoreCase to sort element alphabetically with case insensetive
 				return displayName.compareToIgnoreCase(node.displayName);
 			}

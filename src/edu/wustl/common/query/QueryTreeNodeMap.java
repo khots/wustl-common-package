@@ -9,6 +9,7 @@
  */
 
 package edu.wustl.common.query;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,31 +20,32 @@ import java.util.Map;
  */
 public class QueryTreeNodeMap
 {
-    /**
-     * Map of name of node to the level.
-     */
-    private Map nodeMap= new HashMap();
-    
-    /**
-     * Initializes a QueryTreeNodeMap. 
-     */
-    public QueryTreeNodeMap()
-    {
-        nodeMap.put(new Integer(0),"Root");
-        nodeMap.put(new Integer(1),"Participant");
-        nodeMap.put(new Integer(2),"Accession");
-        nodeMap.put(new Integer(3),"Specimen");
-        nodeMap.put(new Integer(4),"Segment");
-        nodeMap.put(new Integer(5),"Sample");
-    }
-    
-    /**
-     * Returns the name of the node according to the level.
-     * @param level The level of the node.
-     * @return the name of the node according to the level.
-     */
-    public String getNodeName(int level)
-    {
-        return (String)nodeMap.get(new Integer(level));
-    }
+
+	/**
+	 * Map of name of node to the level.
+	 */
+	private Map nodeMap = new HashMap();
+
+	/**
+	 * Initializes a QueryTreeNodeMap. 
+	 */
+	public QueryTreeNodeMap()
+	{
+		nodeMap.put(new Integer(0), "Root");
+		nodeMap.put(new Integer(1), "Participant");
+		nodeMap.put(new Integer(2), "Accession");
+		nodeMap.put(new Integer(3), "Specimen");
+		nodeMap.put(new Integer(4), "Segment");
+		nodeMap.put(new Integer(5), "Sample");
+	}
+
+	/**
+	 * Returns the name of the node according to the level.
+	 * @param level The level of the node.
+	 * @return the name of the node according to the level.
+	 */
+	public String getNodeName(int level)
+	{
+		return (String) nodeMap.get(new Integer(level));
+	}
 }

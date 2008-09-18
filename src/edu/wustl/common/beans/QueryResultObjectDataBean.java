@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package edu.wustl.common.beans;
 
 import java.util.HashMap;
@@ -10,53 +11,52 @@ import java.util.Vector;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.common.querysuite.security.PrivilegeType;
 
-
 /**
  * @author supriya_dankh
  * A class that will have information related CSM for every entity in query.Such as Entity name ,if this entity is 
  * main entity(for which CSM data is inserted in CSM tables) if not a main entity ,then which is main entity etc..   
  */
-public class QueryResultObjectDataBean 
+public class QueryResultObjectDataBean
 {
-    
-    //Particular entity from query for which QueryResultObjectDataBean has to be set.
-     private EntityInterface entity;
-     
-    //Main entity of entity.
+
+	//Particular entity from query for which QueryResultObjectDataBean has to be set.
+	private EntityInterface entity;
+
+	//Main entity of entity.
 	private EntityInterface mainEntity;
-	
+
 	//Index of Identifier column of main entity.
 	private int mainEntityIdentifierColumnId = -1;
-	
+
 	//Index of Identifier column of entity.
 	private int entityId;
-	
+
 	//Privilege Type of entity (class level/object level/No privilege)
 	private PrivilegeType privilegeType;
-	
+
 	//If this entity has associated Identified data or not.
-	private boolean hasAssociatedIdentifiedData ;
-	
+	private boolean hasAssociatedIdentifiedData;
+
 	//List of index  of identified data columns.
 	private Vector<Integer> IdentifiedDataColumnIds = new Vector<Integer>();
-	
+
 	//List of index  of object data columns.
 	private Vector<Integer> objectColumnIds = new Vector<Integer>();
-	
+
 	//Map of index of identifier columns of all main entities that are present in query.
-	private Map<EntityInterface,Integer> entityIdIndexMap = new HashMap<EntityInterface, Integer>();
-	
+	private Map<EntityInterface, Integer> entityIdIndexMap = new HashMap<EntityInterface, Integer>();
+
 	//A boolean variable that will state if read denied could be possible on a object or not.
 	private boolean isReadDeniedObject = false;
-	
-	private String csmEntityName ;
-	
+
+	private String csmEntityName;
+
 	// A boolean variable that will state if the entity contains any attribute of data type : file.
 	private boolean isClobeType;
-	
+
 	// this map will have the key as the index of the file type attribute and value as its metadata
-	private Map<Integer, ?extends Object> fileTypeAtrributeIndexMetadataMap = new HashMap<Integer, Object>();
-	
+	private Map<Integer, ? extends Object> fileTypeAtrributeIndexMetadataMap = new HashMap<Integer, Object>();
+
 	/**
 	 * Returns entity.
 	 * @return EntityInterface.
@@ -65,7 +65,7 @@ public class QueryResultObjectDataBean
 	{
 		return entity;
 	}
-   
+
 	/**
 	 * Sets entity.
 	 * @param entity
@@ -101,7 +101,7 @@ public class QueryResultObjectDataBean
 	 */
 	public boolean isMainEntity()
 	{
-		return mainEntity==null;
+		return mainEntity == null;
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class QueryResultObjectDataBean
 	{
 		return entityId;
 	}
-	
+
 	/**
 	 * Set id of entity
 	 * @param entityId
@@ -148,7 +148,7 @@ public class QueryResultObjectDataBean
 	{
 		return hasAssociatedIdentifiedData;
 	}
-	
+
 	/**
 	 * Get if this entity has associated identified data or not.
 	 * @param hasAssociatedIdentifiedData
@@ -157,7 +157,7 @@ public class QueryResultObjectDataBean
 	{
 		this.hasAssociatedIdentifiedData = hasAssociatedIdentifiedData;
 	}
-	
+
 	/**
 	 * Set List of index of identified data columns.
 	 * @return IdentifiedDataColumnIds.
@@ -166,7 +166,7 @@ public class QueryResultObjectDataBean
 	{
 		return IdentifiedDataColumnIds;
 	}
-	
+
 	/**
 	 * Get List of index of identified data columns.
 	 * @param identifiedDataColumnIds
@@ -184,7 +184,7 @@ public class QueryResultObjectDataBean
 	{
 		return objectColumnIds;
 	}
-	
+
 	/**
 	 * Get List of index  of object data columns.
 	 * @param objectColumnIds
@@ -193,7 +193,6 @@ public class QueryResultObjectDataBean
 	{
 		this.objectColumnIds = objectColumnIds;
 	}
-
 
 	/**
 	 * Get privilege type.
@@ -213,47 +212,42 @@ public class QueryResultObjectDataBean
 		this.privilegeType = privilegeType;
 	}
 
-	
 	public Map<EntityInterface, Integer> getEntityIdIndexMap()
 	{
 		return entityIdIndexMap;
 	}
 
-	
 	public void setEntityIdIndexMap(Map<EntityInterface, Integer> entityIdIndexMap)
 	{
 		this.entityIdIndexMap = entityIdIndexMap;
 	}
 
-	
 	public boolean isReadDeniedObject()
 	{
 		return isReadDeniedObject;
 	}
 
-	
 	public void setReadDeniedObject(boolean isReadDeniedObject)
 	{
 		this.isReadDeniedObject = isReadDeniedObject;
 	}
 
-	
 	public String getCsmEntityName()
 	{
 		return csmEntityName;
 	}
 
-	
 	public void setCsmEntityName(String csmEntityName)
 	{
 		this.csmEntityName = csmEntityName;
 	}
-	
+
 	/**
 	 * returns true if atleast one attribute is of 'file' type
 	 * @return value of isClobeType
 	 */
-	public boolean isClobeType() {
+	public boolean isClobeType()
+	{
 		return isClobeType;
 	}
 
@@ -261,7 +255,8 @@ public class QueryResultObjectDataBean
 	 * sets clob type true if atleast one attribute is of 'file' type
 	 * @param isClobeType - true if atleast one attribute is of 'file' type
 	 */
-	public void setClobeType(boolean isClobeType) {
+	public void setClobeType(boolean isClobeType)
+	{
 		this.isClobeType = isClobeType;
 	}
 
@@ -270,7 +265,8 @@ public class QueryResultObjectDataBean
 	 * @return map will have the key as the index of the 'file' 
 	 * type attribute and value as its metadata
 	 */
-	public Map<Integer, ? extends Object> getFileTypeAtrributeIndexMetadataMap() {
+	public Map<Integer, ? extends Object> getFileTypeAtrributeIndexMetadataMap()
+	{
 		return fileTypeAtrributeIndexMetadataMap;
 	}
 
@@ -279,9 +275,9 @@ public class QueryResultObjectDataBean
 	 * @param fileTypeAtrributeIndexMetadataMap
 	 */
 	public void setFileTypeAtrributeIndexMetadataMap(
-			Map<Integer, ? extends Object> fileTypeAtrributeIndexMetadataMap) {
+			Map<Integer, ? extends Object> fileTypeAtrributeIndexMetadataMap)
+	{
 		this.fileTypeAtrributeIndexMetadataMap = fileTypeAtrributeIndexMetadataMap;
 	}
 
-	
 }

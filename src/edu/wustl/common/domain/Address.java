@@ -19,54 +19,55 @@ import edu.wustl.common.actionForm.IValueObject;
  */
 public class Address extends AbstractDomainObject implements java.io.Serializable
 {
+
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
 	 * System generated unique identifier.
 	 */
-	protected Long id;
+	private Long id;
 
 	/**
 	 * Multi-Line Street Address.
 	 */
-	protected String street;
-	
+	private String street;
+
 	/**
 	 * City
 	 */
-	protected String city;
+	private String city;
 
 	/**
 	 * State
 	 */
-	protected String state;
+	private String state;
 
 	/**
 	 * Country
 	 */
-	protected String country;
+	private String country;
 
 	/**
 	 * Zip code
 	 */
-	protected String zipCode;
+	private String zipCode;
 
 	/**
 	 * Phone number
 	 */
-	protected String phoneNumber;
+	private String phoneNumber;
 
 	/**
 	 * Fax number
 	 */
-	protected String faxNumber;
-	
+	private String faxNumber;
+
 	/**
 	 * Returns the identifier assigned to Address.
 	 * 
 	 * @hibernate.id name="id" column="IDENTIFIER" type="long" length="30"
-     * unsaved-value="null" generator-class="native"
-     * @hibernate.generator-param name="sequence" value="CATISSUE_ADDRESS_SEQ" 
+	 * unsaved-value="null" generator-class="native"
+	 * @hibernate.generator-param name="sequence" value="CATISSUE_ADDRESS_SEQ" 
 	 * @return a unique system identifier assigned to the address.
 	 */
 	public Long getId()
@@ -214,12 +215,12 @@ public class Address extends AbstractDomainObject implements java.io.Serializabl
 	{
 		this.faxNumber = faxNumber;
 	}
-	   
-    /* (non-Javadoc)
-     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
-     */
-    public void setAllValues(IValueObject abstractForm)
-    {
 
-    }
+	/* (non-Javadoc)
+	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
+	 */
+	public void setAllValues(IValueObject abstractForm)
+	{
+
+	}
 }

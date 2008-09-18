@@ -13,7 +13,6 @@ package edu.wustl.common.factory;
 
 import edu.wustl.common.util.Utility;
 
-
 /**
  * This class returns the factory class object whose class name is 
  * provided to it.
@@ -21,14 +20,15 @@ import edu.wustl.common.util.Utility;
  */
 public class MasterFactory
 {
-    /**
-     * Returns the object of factory class whose class name is passed.
-     * @param className The class name whose object is to be instantiated.
-     * @return the object of factory class whose class name is passed.
-     */
-   public static Object getFactory(String factoryName)
-   {
-       Object factoryObject = Utility.getObject(factoryName);
-       return factoryObject;
-   }
+
+	/**
+	 * Returns the object of factory class whose class name is passed.
+	 * @param className The class name whose object is to be instantiated.
+	 * @return the object of factory class whose class name is passed.
+	 */
+	public static Object getFactory(String factoryName)
+	{
+		Object factoryObject = Utility.getObject(factoryName);
+		return factoryObject;
+	}
 }

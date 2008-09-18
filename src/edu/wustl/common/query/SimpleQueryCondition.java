@@ -1,7 +1,5 @@
+
 package edu.wustl.common.query;
-
-
-
 
 /**
  *<p>Title: </p>
@@ -11,12 +9,12 @@ package edu.wustl.common.query;
  *@author Aarti Sharma
  *@version 1.0
  */
-public class SimpleQueryCondition {
+public class SimpleQueryCondition
+{
 
-	public SimpleQueryCondition(){
+	public SimpleQueryCondition()
+	{
 
 	}
-
-	
 
 }

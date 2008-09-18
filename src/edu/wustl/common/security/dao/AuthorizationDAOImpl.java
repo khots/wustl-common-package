@@ -4,6 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 package edu.wustl.common.security.dao;
 
 import gov.nih.nci.logging.api.logger.hibernate.HibernateSessionFactoryHelper;
@@ -30,13 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author aarti_sharma
@@ -44,28 +44,30 @@ import org.apache.log4j.Logger;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class AuthorizationDAOImpl extends
-		gov.nih.nci.security.dao.AuthorizationDAOImpl {
+public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.AuthorizationDAOImpl
+{
 
 	static final Logger log = edu.wustl.common.util.logger.Logger.out;
 
 	private SessionFactory sf = null;
 
-
 	private String typeOfAccess = "MIXED";
+
 	/**
 	 * @param sf
 	 * @param applicationContextName
 	 * @throws CSConfigurationException 
 	 */
-	public AuthorizationDAOImpl(SessionFactory sf, String applicationContextName) throws CSConfigurationException {
+	public AuthorizationDAOImpl(SessionFactory sf, String applicationContextName)
+			throws CSConfigurationException
+	{
 		super(sf, applicationContextName);
 		this.sf = sf;
-		
+
 	}
 
-	public Collection getPrivilegeMap(String userName, Collection pEs)
-			throws CSException {
+	public Collection getPrivilegeMap(String userName, Collection pEs) throws CSException
+	{
 		ArrayList result = new ArrayList();
 		ResultSet rs = null;
 		PreparedStatement pstmt = null;
@@ -75,18 +77,21 @@ public class AuthorizationDAOImpl extends
 
 		Connection cn = null;
 
-		if (StringUtilities.isBlank(userName)) {
+		if (StringUtilities.isBlank(userName))
+		{
 			throw new CSException("userName can't be null!");
 		}
-		if (pEs == null) {
-			throw new CSException(
-					"protection elements collection can't be null!");
+		if (pEs == null)
+		{
+			throw new CSException("protection elements collection can't be null!");
 		}
-		if (pEs.size() == 0) {
+		if (pEs.size() == 0)
+		{
 			return result;
 		}
 
-		try {
+		try
+		{
 
 			s = sf.openSession();
 
@@ -103,15 +108,12 @@ public class AuthorizationDAOImpl extends
 			stbr.append(" csm_user_group ug,");
 			stbr.append(" csm_role_privilege rp,");
 			stbr.append(" csm_privilege p ");
-			stbr
-					.append(" where pgpe.protection_group_id = pg.protection_group_id");
-			stbr
-					.append(" and pgpe.protection_element_id = pe.protection_element_id");
+			stbr.append(" where pgpe.protection_group_id = pg.protection_group_id");
+			stbr.append(" and pgpe.protection_element_id = pe.protection_element_id");
 			stbr.append(" and pe.object_id= ?");
-			
+
 			stbr.append(" and pe.attribute=?");
-			stbr
-					.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
+			stbr.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
 			stbr.append(" and (( ugrpg.group_id = g.group_id");
 			stbr.append(" and ug.group_id= g.group_id");
 			stbr.append("       and ug.user_id = u.user_id)");
@@ -120,7 +122,7 @@ public class AuthorizationDAOImpl extends
 			stbr.append(" and u.login_name=?");
 			stbr.append(" and ugrpg.role_id = rp.role_id ");
 			stbr.append(" and rp.privilege_id = p.privilege_id");
-			
+
 			StringBuffer stbr2 = new StringBuffer();
 			stbr2.append("select distinct(p.privilege_name)");
 			stbr2.append(" from csm_protection_group pg,");
@@ -132,15 +134,12 @@ public class AuthorizationDAOImpl extends
 			stbr2.append(" csm_user_group ug,");
 			stbr2.append(" csm_role_privilege rp,");
 			stbr2.append(" csm_privilege p ");
-			stbr2
-					.append(" where pgpe.protection_group_id = pg.protection_group_id");
-			stbr2
-					.append(" and pgpe.protection_element_id = pe.protection_element_id");
+			stbr2.append(" where pgpe.protection_group_id = pg.protection_group_id");
+			stbr2.append(" and pgpe.protection_element_id = pe.protection_element_id");
 			stbr2.append(" and pe.object_id= ?");
-			
+
 			stbr2.append(" and pe.attribute IS NULL");
-			stbr2
-					.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
+			stbr2.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
 			stbr2.append(" and (( ugrpg.group_id = g.group_id");
 			stbr2.append(" and ug.group_id= g.group_id");
 			stbr2.append("       and ug.user_id = u.user_id)");
@@ -151,34 +150,38 @@ public class AuthorizationDAOImpl extends
 			stbr2.append(" and rp.privilege_id = p.privilege_id");
 
 			String sql = stbr.toString();
-			log.debug("SQL:"+sql);
+			log.debug("SQL:" + sql);
 			pstmt = cn.prepareStatement(sql);
-			
+
 			String sql2 = stbr2.toString();
 			pstmt2 = cn.prepareStatement(sql2);
 
 			Iterator it = pEs.iterator();
-			while (it.hasNext()) {
+			while (it.hasNext())
+			{
 				ProtectionElement pe = (ProtectionElement) it.next();
 				ArrayList privs = new ArrayList();
-				if (pe.getObjectId() != null) {
-					
-					if (pe.getAttribute() != null) {
+				if (pe.getObjectId() != null)
+				{
+
+					if (pe.getAttribute() != null)
+					{
 						pstmt.setString(1, pe.getObjectId());
 						pstmt.setString(2, pe.getAttribute());
 						pstmt.setString(3, userName);
 						rs = pstmt.executeQuery();
-					} else {
+					}
+					else
+					{
 						pstmt2.setString(1, pe.getObjectId());
 						pstmt2.setString(2, userName);
 						rs = pstmt2.executeQuery();
 					}
-					
+
 				}
 
-				
-
-				while (rs.next()) {
+				while (rs.next())
+				{
 					String priv = rs.getString(1);
 					Privilege p = new Privilege();
 					p.setName(priv);
@@ -191,69 +194,77 @@ public class AuthorizationDAOImpl extends
 
 			pstmt.close();
 
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			if (log.isDebugEnabled())
-				log.debug("Failed to get privileges for " + userName + "|"
-						+ ex.getMessage());
-			throw new CSException("Failed to get privileges for " + userName
-					+ "|" + ex.getMessage(), ex);
-		} finally {
-			try {
+				log.debug("Failed to get privileges for " + userName + "|" + ex.getMessage());
+			throw new CSException("Failed to get privileges for " + userName + "|"
+					+ ex.getMessage(), ex);
+		}
+		finally
+		{
+			try
+			{
 
 				s.close();
 				rs.close();
 				pstmt.close();
-			} catch (Exception ex2) {
+			}
+			catch (Exception ex2)
+			{
 				if (log.isDebugEnabled())
-					log
-							.debug("Authorization|||getPrivilegeMap|Failure|Error in Closing Session |"
-									+ ex2.getMessage());
+					log.debug("Authorization|||getPrivilegeMap|Failure|Error in Closing Session |"
+							+ ex2.getMessage());
 			}
 		}
 
 		return result;
 	}
-	
-	
 
 	//changes to load the object and then delete it
 	//else it throws exception
-	public void removeProtectionElementsFromProtectionGroup(
-			String protectionGroupId, String[] protectionElementIds)
-			throws CSTransactionException {
+	public void removeProtectionElementsFromProtectionGroup(String protectionGroupId,
+			String[] protectionElementIds) throws CSTransactionException
+	{
 		Session s = null;
 		Transaction t = null;
 
-		try {
+		try
+		{
 			s = sf.openSession();
 			t = s.beginTransaction();
 
-			ProtectionGroup protectionGroup = (ProtectionGroup) this
-					.getObjectByPrimaryKey(s, ProtectionGroup.class, new Long(
-							protectionGroupId));
+			ProtectionGroup protectionGroup = (ProtectionGroup) this.getObjectByPrimaryKey(s,
+					ProtectionGroup.class, new Long(protectionGroupId));
 
-			for (int i = 0; i < protectionElementIds.length; i++) {
+			for (int i = 0; i < protectionElementIds.length; i++)
+			{
 				ProtectionGroupProtectionElement intersection = new ProtectionGroupProtectionElement();
-				String query = "from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement" +
-				" where protectionGroupProtectionElement.protectionElement.protectionElementId="+protectionElementIds[i]+
-				" and protectionGroupProtectionElement.protectionGroup.protectionGroupId="+protectionGroupId ;	
-				Query queryObj =  s.createQuery(query);
+				String query = "from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement"
+						+ " where protectionGroupProtectionElement.protectionElement.protectionElementId="
+						+ protectionElementIds[i]
+						+ " and protectionGroupProtectionElement.protectionGroup.protectionGroupId="
+						+ protectionGroupId;
+				Query queryObj = s.createQuery(query);
 				List list = queryObj.list();
-				if(list!=null && list.size()>0)
+				if (list != null && list.size() > 0)
 					this.removeObject(list.get(0));
-				
-			}
-			
-			
-			
-			t.commit();
-			
 
-		} catch (Exception ex) {
+			}
+
+			t.commit();
+
+		}
+		catch (Exception ex)
+		{
 			log.error(ex);
-			try {
+			try
+			{
 				t.rollback();
-			} catch (Exception ex3) {
+			}
+			catch (Exception ex3)
+			{
 				if (log.isDebugEnabled())
 					log
 							.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error in Rolling Back Transaction|"
@@ -261,19 +272,20 @@ public class AuthorizationDAOImpl extends
 			}
 			log
 					.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error Occured in deassigning Protection Elements "
-							+ StringUtilities
-									.stringArrayToString(protectionElementIds)
-							+ " to Protection Group"
-							+ protectionGroupId
-							+ "|"
-							+ ex.getMessage());
+							+ StringUtilities.stringArrayToString(protectionElementIds)
+							+ " to Protection Group" + protectionGroupId + "|" + ex.getMessage());
 			throw new CSTransactionException(
 					"An error occured in deassigning Protection Elements from Protection Group\n"
 							+ ex.getMessage(), ex);
-		} finally {
-			try {
+		}
+		finally
+		{
+			try
+			{
 				s.close();
-			} catch (Exception ex2) {
+			}
+			catch (Exception ex2)
+			{
 				if (log.isDebugEnabled())
 					log
 							.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error in Closing Session |"
@@ -282,73 +294,80 @@ public class AuthorizationDAOImpl extends
 		}
 		log
 				.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Success|Success in deassigning Protection Elements "
-						+ StringUtilities
-								.stringArrayToString(protectionElementIds)
+						+ StringUtilities.stringArrayToString(protectionElementIds)
 						+ " to Protection Group" + protectionGroupId + "|");
 	}
-	
-	
-    public Set getGroups(String userId) throws CSObjectNotFoundException {
-        Session s = null;
-        Set groups = new HashSet();
-        try {
-            s = HibernateSessionFactoryHelper.getAuditSession(sf);
 
-            User user = (User) this.getObjectByPrimaryKey(s, User.class,
-                    new Long(userId));
-            groups = user.getGroups();
-            List list = new ArrayList();
-            Iterator toSortIterator = groups.iterator();
-            while(toSortIterator.hasNext()){ list.add(toSortIterator.next()); }
-            Collections.sort(list);
-            groups.clear();
-            groups.addAll(list);
-            
-            log.debug("The result size:" + groups.size());
+	public Set getGroups(String userId) throws CSObjectNotFoundException
+	{
+		Session s = null;
+		Set groups = new HashSet();
+		try
+		{
+			s = HibernateSessionFactoryHelper.getAuditSession(sf);
 
-        } catch (Exception ex) {
-            log.error(ex);
-            if (log.isDebugEnabled())
-                log
-                        .debug("Authorization|||getGroups|Failure|Error in obtaining Groups for User Id "
-                                + userId + "|" + ex.getMessage());
-            throw new CSObjectNotFoundException(
-                    "An error occurred while obtaining Associated Groups for the User\n"
-                            + ex.getMessage(), ex);
-        } finally {
-            try {
-                s.close();
-            } catch (Exception ex2) {
-                if (log.isDebugEnabled())
-                    log
-                            .debug("Authorization|||getGroups|Failure|Error in Closing Session |"
-                                    + ex2.getMessage());
-            }
-        }
-        if (log.isDebugEnabled())
-            log
-                    .debug("Authorization|||getGroups|Success|Successful in obtaining Groups for User Id "
-                            + userId + "|");
-        return groups;
+			User user = (User) this.getObjectByPrimaryKey(s, User.class, new Long(userId));
+			groups = user.getGroups();
+			List list = new ArrayList();
+			Iterator toSortIterator = groups.iterator();
+			while (toSortIterator.hasNext())
+			{
+				list.add(toSortIterator.next());
+			}
+			Collections.sort(list);
+			groups.clear();
+			groups.addAll(list);
 
-    }
-	
-	
-	private Object getObjectByPrimaryKey(Session s, Class objectType,
-			Long primaryKey) throws HibernateException,
-			CSObjectNotFoundException {
+			log.debug("The result size:" + groups.size());
 
-		if (primaryKey == null) {
+		}
+		catch (Exception ex)
+		{
+			log.error(ex);
+			if (log.isDebugEnabled())
+				log
+						.debug("Authorization|||getGroups|Failure|Error in obtaining Groups for User Id "
+								+ userId + "|" + ex.getMessage());
+			throw new CSObjectNotFoundException(
+					"An error occurred while obtaining Associated Groups for the User\n"
+							+ ex.getMessage(), ex);
+		}
+		finally
+		{
+			try
+			{
+				s.close();
+			}
+			catch (Exception ex2)
+			{
+				if (log.isDebugEnabled())
+					log.debug("Authorization|||getGroups|Failure|Error in Closing Session |"
+							+ ex2.getMessage());
+			}
+		}
+		if (log.isDebugEnabled())
+			log
+					.debug("Authorization|||getGroups|Success|Successful in obtaining Groups for User Id "
+							+ userId + "|");
+		return groups;
+
+	}
+
+	private Object getObjectByPrimaryKey(Session s, Class objectType, Long primaryKey)
+			throws HibernateException, CSObjectNotFoundException
+	{
+
+		if (primaryKey == null)
+		{
 			throw new CSObjectNotFoundException("The primary key can't be null");
 		}
 		Object obj = s.load(objectType, primaryKey);
 
-		if (obj == null) {
-			log
-					.debug("Authorization|||getObjectByPrimaryKey|Failure|Not found object of type "
-							+ objectType.getName() + "|");
-			throw new CSObjectNotFoundException(objectType.getName()
-					+ " not found");
+		if (obj == null)
+		{
+			log.debug("Authorization|||getObjectByPrimaryKey|Failure|Not found object of type "
+					+ objectType.getName() + "|");
+			throw new CSObjectNotFoundException(objectType.getName() + " not found");
 		}
 		log
 				.debug("Authorization|||getObjectByPrimaryKey|Success|Success in retrieving object of type "

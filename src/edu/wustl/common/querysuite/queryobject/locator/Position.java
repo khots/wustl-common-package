@@ -1,5 +1,5 @@
-package edu.wustl.common.querysuite.queryobject.locator;
 
+package edu.wustl.common.querysuite.queryobject.locator;
 
 /**
  * Class which contains x,y coordinates & its getters & setters.
@@ -8,7 +8,8 @@ package edu.wustl.common.querysuite.queryobject.locator;
  */
 public class Position
 {
-	private int x,y;
+
+	private int x, y;
 
 	/**
 	 * Default constructor.
@@ -17,10 +18,10 @@ public class Position
 	 */
 	public Position(int x, int y)
 	{
-		this.x=x;
-		this.y=y;
+		this.x = x;
+		this.y = y;
 	}
-	
+
 	/**
 	 * To get X coordinate value
 	 * @return The X coordinate value

@@ -12,20 +12,21 @@ package edu.wustl.common.factory;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 
-
 /**
  * This is an abstract class for the ActionFormFactory class.
  * @author gautam_shetty
  */
 public abstract class AbstractActionFormFactory
 {
-    /**
-     * Returns the formbean corressponding to the domain object passed 
-     * and the operation to be performed. 
-     * @param domainObject The domain object whose form bean is required.
-     * @param operation The operation to be performed.
-     * @return the formbean corressponding to the domain object passed
-     * and the operation to be performed.
-     */
-    public abstract AbstractActionForm getFormBean(Object domainObject,String operation) throws Exception;
+
+	/**
+	 * Returns the formbean corressponding to the domain object passed 
+	 * and the operation to be performed. 
+	 * @param domainObject The domain object whose form bean is required.
+	 * @param operation The operation to be performed.
+	 * @return the formbean corressponding to the domain object passed
+	 * and the operation to be performed.
+	 */
+	public abstract AbstractActionForm getFormBean(Object domainObject, String operation)
+			throws Exception;
 }

@@ -1,11 +1,8 @@
+
 package edu.wustl.common.query;
 
 import java.sql.SQLException;
 import java.util.HashSet;
-
-
-
-
 
 /**
  *<p>Title: </p>
@@ -15,15 +12,17 @@ import java.util.HashSet;
  *@author Aarti Sharma
  *@version 1.0
  */
-public abstract class ConditionsImpl {
+public abstract class ConditionsImpl
+{
 
-	public ConditionsImpl(){
+	public ConditionsImpl()
+	{
 
 	}
-	
+
 	public void formatTree()
 	{
-		
+
 	}
 
 	/**
@@ -33,13 +32,13 @@ public abstract class ConditionsImpl {
 	 * @throws SQLException
 	 */
 	public abstract String getString(int tableSufix) throws SQLException;
-	
-//	//method that returns object names of conditions
-//	//to form "FROM" part of query
-//	public abstract HashSet getConditionObjects();
+
+	//	//method that returns object names of conditions
+	//	//to form "FROM" part of query
+	//	public abstract HashSet getConditionObjects();
 
 	public abstract HashSet getQueryObjects();
-	
+
 	/**
 	 * This method returns true if there are conditions
 	 * present for where part
@@ -53,7 +52,5 @@ public abstract class ConditionsImpl {
 	 * @return
 	 */
 	public abstract boolean hasConditionOnIdentifiedField();
-	
-	
-	
+
 }

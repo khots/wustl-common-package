@@ -4,6 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 package edu.wustl.common.cde;
 
 import java.io.FileInputStream;
@@ -29,69 +30,72 @@ import edu.wustl.common.util.logger.Logger;
 /**@author kapil_kaveeshwar
  *  This is a communication link between the caTISSUE Core Application and the caDSR interface. 
  * */
-public class CDEManager 
+public class CDEManager
 {
+
 	public static CDEManager cdeManager;
-	
+
 	public static void init() throws Exception
 	{
-	    Logger.out.debug("Initializing CDE Manager");
+		Logger.out.debug("Initializing CDE Manager");
 		//Singleton instance of CDEManager 
 		cdeManager = new CDEManager();
 		cdeManager.loadCDEInMemory();
-//		cdeManager.refreshCache();
+		//		cdeManager.refreshCache();
 	}
-	
+
 	public static CDEManager getCDEManager()
 	{
 		return cdeManager;
 	}
-	
+
 	//A map between CDE name to its XML Object
 	private Map cdeXMLMAP;
-	
+
 	private CDEHandler cdeHandler;
-	
+
 	private CDEManager() throws Exception
 	{
 		cdeXMLMAP = new HashMap();
 		try
 		{
-            // create a JAXBContext capable of handling classes generated into the edu.wustl.common.cde.xml package
-            JAXBContext jaxbContextObject = JAXBContext.newInstance(Constants.CDE_XML_PACKAGE_PATH);
-            
-            // create an Unmarshaller which provides the ability to convert XML data into a tree of Java content objects.
-            Unmarshaller unmarshallerObject = jaxbContextObject.createUnmarshaller();
-            
-            // unmarshal a root instance document into a tree of Java content
-            // objects composed of classes from the pspl.cde package.
-            XMLCDECACHE root = 
-                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(Variables.applicationHome+
-                		System.getProperty("file.separator")+ Constants.CDE_CONF_FILE));
-            
-            // display the cde details
+			// create a JAXBContext capable of handling classes generated into the edu.wustl.common.cde.xml package
+			JAXBContext jaxbContextObject = JAXBContext.newInstance(Constants.CDE_XML_PACKAGE_PATH);
+
+			// create an Unmarshaller which provides the ability to convert XML data into a tree of Java content objects.
+			Unmarshaller unmarshallerObject = jaxbContextObject.createUnmarshaller();
+
+			// unmarshal a root instance document into a tree of Java content
+			// objects composed of classes from the pspl.cde package.
+			XMLCDECACHE root = (XMLCDECACHE) unmarshallerObject.unmarshal(new FileInputStream(
+					Variables.applicationHome + System.getProperty("file.separator")
+							+ Constants.CDE_CONF_FILE));
+
+			// display the cde details
 			List xmlCDEList = root.getXMLCDE();
 			Iterator iterator = xmlCDEList.iterator();
-			while(iterator.hasNext())
+			while (iterator.hasNext())
 			{
-				XMLCDE xmlCDEObj = (XMLCDE)iterator.next();
-				Logger.out.debug("Reading XML CDE Name : "+xmlCDEObj.getName());
-				cdeXMLMAP.put(xmlCDEObj.getName(),xmlCDEObj);
+				XMLCDE xmlCDEObj = (XMLCDE) iterator.next();
+				Logger.out.debug("Reading XML CDE Name : " + xmlCDEObj.getName());
+				cdeXMLMAP.put(xmlCDEObj.getName(), xmlCDEObj);
 			}
 			cdeHandler = new CDEHandler(cdeXMLMAP);
-        }
-		catch( JAXBException je)
+		}
+		catch (JAXBException je)
 		{
 			Logger.out.error(je.getMessage(), je);
-			throw new Exception("Could not read the" +Constants.CDE_CONF_FILE +" XML file : "+je.getMessage());
-        }
-		catch( IOException ioe )
+			throw new Exception("Could not read the" + Constants.CDE_CONF_FILE + " XML file : "
+					+ je.getMessage());
+		}
+		catch (IOException ioe)
 		{
 			Logger.out.error(ioe.getMessage(), ioe);
-			throw new Exception("Could not read the" +Constants.CDE_CONF_FILE +" XML file IO Error : "+ioe.getMessage());
-        }
+			throw new Exception("Could not read the" + Constants.CDE_CONF_FILE
+					+ " XML file IO Error : " + ioe.getMessage());
+		}
 	}
-	
+
 	/**
 	 * Retrieves live CDEs from the caDSR and updates the database cache. 
 	 */
@@ -101,7 +105,7 @@ public class CDEManager
 		cdeCacheManager.refresh(cdeXMLMAP);
 		loadCDEInMemory();
 	}
-	
+
 	/**
 	 * Populates the “in-memory cache” from the “database cache”. The loading
 	 * operation will be performed at application startup time. For faster startup
@@ -113,16 +117,16 @@ public class CDEManager
 	{
 		Logger.out.debug("Loading the CDEs in in memory");
 		cdeHandler.loadCDE();
-	 }
-	
+	}
+
 	/** 
 	 * Returns CDE for given CDE Name. 
 	 * */
-	public CDE getCDE(String CDEName) 
+	public CDE getCDE(String CDEName)
 	{
 		return cdeHandler.retrieve(CDEName);
 	}
-	
+
 	/**
 	 * @param cdeName Name of the CDE
 	 * @param otherValue NameValueBean object.
@@ -131,61 +135,61 @@ public class CDEManager
 	public List getPermissibleValueList(String cdeName, NameValueBean otherValue)
 	{
 		List list = new ArrayList();
-		
+
 		CDE cde = getCDE(cdeName);
-		
-		if(cde!=null)
+
+		if (cde != null)
 		{
 			Iterator iterator = cde.getPermissibleValues().iterator();
-			while(iterator.hasNext())
+			while (iterator.hasNext())
 			{
-				PermissibleValue permissibleValue = (PermissibleValue)iterator.next();
+				PermissibleValue permissibleValue = (PermissibleValue) iterator.next();
 				List pvList = loadPermissibleValue(permissibleValue);
 				list.addAll(pvList);
 			}
 		}
-		
+
 		Collections.sort(list);
-		
-		list.add(0,new NameValueBean(Constants.SELECT_OPTION,"-1"));
-//		if(otherValue!=null)
-//			list.add(1,otherValue);
-		
+
+		list.add(0, new NameValueBean(Constants.SELECT_OPTION, "-1"));
+		//		if(otherValue!=null)
+		//			list.add(1,otherValue);
+
 		return list;
 	}
-	
+
 	private List loadPermissibleValue(PermissibleValue permissibleValue)
 	{
 		List pvList = new ArrayList();
-		
+
 		String value = permissibleValue.getValue();
-		pvList.add(new NameValueBean(value,value));
-		
+		pvList.add(new NameValueBean(value, value));
+
 		Iterator iterator = permissibleValue.getSubPermissibleValues().iterator();
-		while(iterator.hasNext())
+		while (iterator.hasNext())
 		{
-			PermissibleValue subPermissibleValue = (PermissibleValue)iterator.next();
+			PermissibleValue subPermissibleValue = (PermissibleValue) iterator.next();
 			List subPVList = loadPermissibleValue(subPermissibleValue);
 			pvList.addAll(subPVList);
 		}
 		return pvList;
 	}
-	
+
 	public String getSubValueStr(String cdeName, String value)
 	{
 		List list = new ArrayList();
-		
+
 		CDE cde = getCDE(cdeName);
-		
+
 		boolean isParentFound = false;
 		Iterator iterator = cde.getPermissibleValues().iterator();
-		while(iterator.hasNext())
+		while (iterator.hasNext())
 		{
-			PermissibleValue permissibleValue = (PermissibleValue)iterator.next();
-			
-			if(value.equals(permissibleValue.getValue()))
+			PermissibleValue permissibleValue = (PermissibleValue) iterator.next();
+
+			if (value.equals(permissibleValue.getValue()))
 			{
-				Logger.out.debug("permissibleValue "+permissibleValue.getValue());
+				Logger.out.debug("permissibleValue " + permissibleValue.getValue());
 				isParentFound = true;
 				List pvList = loadPermissibleValue(permissibleValue, isParentFound, value);
 				list.addAll(pvList);
@@ -194,7 +198,7 @@ public class CDEManager
 			else
 			{
 				List pvList = loadPermissibleValue(permissibleValue, isParentFound, value);
-				if(!pvList.isEmpty())
+				if (!pvList.isEmpty())
 				{
 					isParentFound = true;
 					list.addAll(pvList);
@@ -202,17 +206,17 @@ public class CDEManager
 				}
 			}
 		}
-		Logger.out.debug("list "+list.size());
+		Logger.out.debug("list " + list.size());
 		Logger.out.debug(list);
-		
+
 		StringBuffer buff = new StringBuffer("(");
 		Iterator it = list.iterator();
-		while(it.hasNext())
+		while (it.hasNext())
 		{
-			String val = (String)it.next();
-			val = val.replaceAll("'","''");
-			buff.append("'"+val+"'");
-			if(!it.hasNext())
+			String val = (String) it.next();
+			val = val.replaceAll("'", "''");
+			buff.append("'" + val + "'");
+			if (!it.hasNext())
 				buff.append(")");
 			else
 				buff.append(",");
@@ -220,22 +224,23 @@ public class CDEManager
 		Logger.out.debug(buff);
 		return buff.toString();
 	}
-	
-	private List loadPermissibleValue(PermissibleValue permissibleValue, boolean isParentFound, String value)
+
+	private List loadPermissibleValue(PermissibleValue permissibleValue, boolean isParentFound,
+			String value)
 	{
 		List pvList = new ArrayList();
-		
-		if(isParentFound)
+
+		if (isParentFound)
 			pvList.add(permissibleValue.getValue());
-		
+
 		Iterator iterator = permissibleValue.getSubPermissibleValues().iterator();
-		while(iterator.hasNext())
+		while (iterator.hasNext())
 		{
-			PermissibleValue subPermissibleValue = (PermissibleValue)iterator.next();
-			
-			if(!isParentFound)
+			PermissibleValue subPermissibleValue = (PermissibleValue) iterator.next();
+
+			if (!isParentFound)
 			{
-				if(value.equals(subPermissibleValue.getValue()))
+				if (value.equals(subPermissibleValue.getValue()))
 				{
 					Logger.out.debug(value);
 					isParentFound = true;
@@ -246,7 +251,7 @@ public class CDEManager
 				else
 				{
 					List subPVList = loadPermissibleValue(subPermissibleValue, isParentFound, value);
-					if(!subPVList.isEmpty())
+					if (!subPVList.isEmpty())
 					{
 						pvList.addAll(subPVList);
 						isParentFound = true;
@@ -262,16 +267,16 @@ public class CDEManager
 		}
 		return pvList;
 	}
-	
+
 	public static void main(String[] args)
 	{
 		Variables.applicationHome = System.getProperty("user.dir");
 		Logger.configure("Application.properties");
-//		Logger.out = org.apache.log4j.Logger.getLogger("");
-//		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
+		//		Logger.out = org.apache.log4j.Logger.getLogger("");
+		//		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
 
 		CDEManager.getCDEManager().getSubValueStr("Tissue Site", "STOMACH");
-//		CDEManager aCDEManager = new CDEManager();
-//		aCDEManager.refreshCache();
+		//		CDEManager aCDEManager = new CDEManager();
+		//		aCDEManager.refreshCache();
 	}
 }

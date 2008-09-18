@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package edu.wustl.common.util;
 
 import java.io.IOException;
@@ -26,18 +27,17 @@ import titli.controller.Name;
  */
 public final class TitliTableMapper
 {
+
 	/**
 	 * the only instance of this class
 	 */
 	private static TitliTableMapper mapper;
-	
-	
+
 	/**
 	 * the in-memory document constructed from the xml file
 	 */
 	private Document document;
-	
-	
+
 	/**
 	 * the private constructor for singleton behaviour
 	 * it reads the xml file and creates the Document
@@ -45,8 +45,9 @@ public final class TitliTableMapper
 	 */
 	private TitliTableMapper()
 	{
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("titli-table-mapping.xml");
-		
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream(
+				"titli-table-mapping.xml");
+
 		/*
 		InputStream in=null;
 		try
@@ -58,52 +59,50 @@ public final class TitliTableMapper
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}*/
-		
+
 		DocumentBuilder builder = null;
-		
+
 		try
 		{
-			builder =DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		}
-		catch (ParserConfigurationException e) 
+		catch (ParserConfigurationException e)
 		{
 			e.printStackTrace();
-		} 
-		
+		}
+
 		try
-		{			
+		{
 			document = builder.parse(in);
 			in.close();
 		}
-		catch (SAXException e) 
+		catch (SAXException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		catch (IOException e) 
+		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 	}
-	
-	
+
 	/**
 	 * get the only instance of this class
 	 * @return the only instance of this class
 	 */
 	public static TitliTableMapper getInstance()
 	{
-		if (mapper==null)
+		if (mapper == null)
 		{
-			mapper= new TitliTableMapper(); 
+			mapper = new TitliTableMapper();
 		}
-		
+
 		return mapper;
 	}
-	
-	
+
 	/**
 	 * get the the label corresponding to the specified table name
 	 * @param tableName the table name
@@ -112,37 +111,35 @@ public final class TitliTableMapper
 	 */
 	public String getLabel(Name tableName) throws Exception
 	{
-		String label=tableName.toString();
-		
+		String label = tableName.toString();
+
 		Element root = null;
 		root = document.getDocumentElement();
-		
-		
-		if(root==null)
+
+		if (root == null)
 		{
 			throw new Exception("Tilti table mapping file can not be read");
 		}
-		
-		NodeList nodeList =root.getElementsByTagName("mapping");
-		
+
+		NodeList nodeList = root.getElementsByTagName("mapping");
+
 		int length = nodeList.getLength();
-		
-		for(int i=0; i<length; i++)
+
+		for (int i = 0; i < length; i++)
 		{
-			Element element = (Element)(nodeList.item(i));
-			
-			if(new Name(element.getAttribute("table")).equals(tableName))
+			Element element = (Element) (nodeList.item(i));
+
+			if (new Name(element.getAttribute("table")).equals(tableName))
 			{
-				label= element.getAttribute("label");
+				label = element.getAttribute("label");
 				break;
 			}
-			
+
 		}
-		
+
 		return label;
 	}
-	
-	
+
 	/**
 	 * get the pageOf string corresponding to the specified label
 	 * @param label the label
@@ -150,30 +147,29 @@ public final class TitliTableMapper
 	 */
 	public String getPageOf(String label)
 	{
-		String pageOf=null;
-		
+		String pageOf = null;
+
 		Element root = document.getDocumentElement();
-		
-		NodeList nodeList =root.getElementsByTagName("mapping");
-		
+
+		NodeList nodeList = root.getElementsByTagName("mapping");
+
 		int length = nodeList.getLength();
-		
-		for(int i=0; i<length; i++)
+
+		for (int i = 0; i < length; i++)
 		{
-			Element element = (Element)(nodeList.item(i));
-			
-			if(element.getAttribute("label").equals(label))
+			Element element = (Element) (nodeList.item(i));
+
+			if (element.getAttribute("label").equals(label))
 			{
-				pageOf= element.getAttribute("pageOf");
+				pageOf = element.getAttribute("pageOf");
 				break;
 			}
-			
+
 		}
-		
+
 		return pageOf;
 	}
 
-	
 	/**
 	 * get the table name corrsponding to the specified label
 	 * @param label the label
@@ -181,34 +177,30 @@ public final class TitliTableMapper
 	 */
 	public Name getTable(String label)
 	{
-		Name table =null;
-		
+		Name table = null;
+
 		Element root = document.getDocumentElement();
-		
-		NodeList nodeList =root.getElementsByTagName("mapping");
-		
+
+		NodeList nodeList = root.getElementsByTagName("mapping");
+
 		int length = nodeList.getLength();
-		
-		for(int i=0; i<length; i++)
+
+		for (int i = 0; i < length; i++)
 		{
-			Element element = (Element)(nodeList.item(i));
-			
-			if(element.getAttribute("label").equals(label))
+			Element element = (Element) (nodeList.item(i));
+
+			if (element.getAttribute("label").equals(label))
 			{
 				table = new Name(element.getAttribute("table"));
 				break;
 			}
-			
-		}
-		
-		return table;
-		
-	}
-	
 
-	
-	
-	
+		}
+
+		return table;
+
+	}
+
 	/**
 	 * 
 	 * @param args args for main
@@ -216,14 +208,13 @@ public final class TitliTableMapper
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		
+
 		TitliTableMapper tableMapper = TitliTableMapper.getInstance();
-		
+
 		//System.out.println(mapper.getPageOf("Cancer Research Group"));
 		System.out.println(mapper.getLabel(new Name("catissue_institution")));
 		System.out.println(mapper.getTable("Specimen Collection Group"));
-		
+
 	}
-	
 
 }

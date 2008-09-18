@@ -31,7 +31,8 @@ import edu.wustl.common.util.logger.Logger;
 public abstract class BaseAction extends Action
 {
 
-	private org.apache.log4j.Logger logger= Logger.getLogger(BaseAction.class);
+	private org.apache.log4j.Logger logger = Logger.getLogger(BaseAction.class);
+
 	/**
 	 * Method ensures that the user is authenticated before calling the
 	 * executeAction of the subclass. If the User is not authenticated then an
@@ -44,15 +45,15 @@ public abstract class BaseAction extends Action
 	 * @return ActionForward
 	 * @exception Exception Generic exception
 	 */
-	public final ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception
+	public final ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		logger.info("in execute method");
 		//long startTime = System.currentTimeMillis();
 		preExecute(mapping, form, request, response);
-		Object sessionData=request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
-		Object accessObj=request.getParameter(Constants.ACCESS);
-		if ( !(sessionData!= null &&  accessObj!= null) )
+		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
+		Object accessObj = request.getParameter(Constants.ACCESS);
+		if (!(sessionData != null && accessObj != null))
 		{
 			/* The case of session time out */
 			if (getSessionData(request) == null)
@@ -61,8 +62,8 @@ public abstract class BaseAction extends Action
 				throw new UserNotAuthenticatedException();
 			}
 		}
-		setAttributeFromParameter(request,Constants.OPERATION);
-		setAttributeFromParameter(request,Constants.MENU_SELECTED);
+		setAttributeFromParameter(request, Constants.OPERATION);
+		setAttributeFromParameter(request, Constants.MENU_SELECTED);
 		ActionForward actionForward = executeAction(mapping, form, request, response);
 		//long endTime = System.currentTimeMillis();
 		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
@@ -75,7 +76,8 @@ public abstract class BaseAction extends Action
 	 * @param request	HttpServletRequest
 	 * @param response	HttpServletResponse
 	 */
-	protected void preExecute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	protected void preExecute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response)
 	{
 		/** Added by amit_doshi
 		 *  code reviewer abhijit_naik
@@ -87,7 +89,7 @@ public abstract class BaseAction extends Action
 	 * @param request HttpServletRequest
 	 * @param paramName String -parameter name
 	 */
-	private void setAttributeFromParameter(HttpServletRequest request,String paramName)
+	private void setAttributeFromParameter(HttpServletRequest request, String paramName)
 	{
 		String paramValue = request.getParameter(paramName);
 		if (paramValue != null)
@@ -95,6 +97,7 @@ public abstract class BaseAction extends Action
 			request.setAttribute(paramName, paramValue);
 		}
 	}
+
 	/**
 	 * Returns the current User authenticated by CSM Authentication.
 	 * @param request HttpServletRequest
@@ -102,11 +105,11 @@ public abstract class BaseAction extends Action
 	 */
 	protected String getUserLoginName(HttpServletRequest request)
 	{
-		String userName=null;
+		String userName = null;
 		SessionDataBean sessionData = getSessionData(request);
 		if (sessionData != null)
 		{
-			userName=sessionData.getUserName();
+			userName = sessionData.getUserName();
 		}
 		return userName;
 	}
@@ -118,7 +121,7 @@ public abstract class BaseAction extends Action
 	 */
 	protected SessionDataBean getSessionData(HttpServletRequest request)
 	{
-		return (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
+		return (SessionDataBean) request.getSession().getAttribute(Constants.SESSION_DATA);
 	}
 
 	/**
@@ -132,8 +135,9 @@ public abstract class BaseAction extends Action
 	 * @return ActionForward
 	 * @throws Exception generic exception
 	 */
-	protected abstract ActionForward executeAction(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-			throws Exception;
+	protected abstract ActionForward executeAction(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception;
+
 	/**
 	 * This function checks call to the action and sets/removes required attributes if AddNew or ForwardTo activity is executing.
 	 * @param request - HTTPServletRequest calling the action
@@ -206,17 +210,17 @@ public abstract class BaseAction extends Action
 	 * @return 	ActionForward
 	 * @throws Exception generic exception
 	 */
-	protected ActionForward invokeMethod(String methodName, ActionMapping mapping, ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception
+	protected ActionForward invokeMethod(String methodName, ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		ActionForward actionForward=null;
+		ActionForward actionForward = null;
 		if (methodName.trim().length() > 0)
 		{
 			Method method = getMethod(methodName, this.getClass());
 			if (method != null)
 			{
 				Object args[] = {mapping, form, request, response};
-				actionForward=(ActionForward) method.invoke(this, args);
+				actionForward = (ActionForward) method.invoke(this, args);
 			}
 		}
 		return actionForward;
@@ -230,8 +234,9 @@ public abstract class BaseAction extends Action
 	 */
 	protected Method getMethod(String name, Class className)
 	{
-		Method method=null;
-		Class[] types = {ActionMapping.class, ActionForm.class, HttpServletRequest.class, HttpServletResponse.class};
+		Method method = null;
+		Class[] types = {ActionMapping.class, ActionForm.class, HttpServletRequest.class,
+				HttpServletResponse.class};
 		try
 		{
 			method = className.getDeclaredMethod(name, types);

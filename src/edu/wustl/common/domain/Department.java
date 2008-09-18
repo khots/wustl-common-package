@@ -12,12 +12,15 @@ package edu.wustl.common.domain;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.DepartmentForm;
 import edu.wustl.common.actionForm.IValueObject;
+import edu.wustl.common.actionForm.InstitutionForm;
+
 /**
  * A department to which a User belongs to.
  *  * @hibernate.class table="CATISSUE_DEPARTMENT"
  */
 public class Department extends AbstractDomainObject implements java.io.Serializable
 {
+
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
@@ -35,12 +38,13 @@ public class Department extends AbstractDomainObject implements java.io.Serializ
 	 * */
 	public Department()
 	{
-		
+
 	}
-	
+
 	public Department(AbstractActionForm form)
 	{
-		setAllValues(form);
+		InstitutionForm instituteForm = (InstitutionForm) form;
+		this.name = instituteForm.getName().trim();
 	}
 
 	/**
@@ -91,10 +95,10 @@ public class Department extends AbstractDomainObject implements java.io.Serializ
 	/* (non-Javadoc)
 	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
 	 */
-	public void setAllValues(IValueObject abstractForm) 
+	public void setAllValues(IValueObject abstractForm)
 	{
-		DepartmentForm departmentForm = (DepartmentForm)abstractForm;
-		
+		DepartmentForm departmentForm = (DepartmentForm) abstractForm;
+
 		this.name = departmentForm.getName().trim();
 	}
 }

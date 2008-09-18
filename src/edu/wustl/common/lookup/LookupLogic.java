@@ -6,12 +6,13 @@
  * @author vaishali_khandelwal
  * 
  */
+
 package edu.wustl.common.lookup;
 
 import java.util.List;
 
-
 public interface LookupLogic
 {
+
 	List lookup(LookupParameters params) throws Exception;
 }

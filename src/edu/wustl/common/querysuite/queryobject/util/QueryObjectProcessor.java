@@ -144,8 +144,7 @@ public class QueryObjectProcessor
 				{
 					// this node also have multiple parent. So just adding this operand in new expression's operand list & updating joingraph.
 					toExpression.addOperand(operand);
-					joinGraph.putAssociation(toExpression, oldExpression,
-							association);
+					joinGraph.putAssociation(toExpression, oldExpression, association);
 					// this will be handled seperately in method replaceMultipleParent.
 				}
 				else
@@ -155,8 +154,7 @@ public class QueryObjectProcessor
 							.getQueryEntity());
 					newExpression.setInView(oldExpression.isInView());
 					toExpression.addOperand(newExpression);
-					joinGraph.putAssociation(toExpression, newExpression,
-							association);
+					joinGraph.putAssociation(toExpression, newExpression, association);
 					copy(oldExpression, newExpression);
 				}
 			}
@@ -171,8 +169,8 @@ public class QueryObjectProcessor
 			// setting logical connector.
 			if (index != 0)
 			{
-				IConnector<LogicalOperator> logicalConnector = fromExpression.getConnector(index - 1,
-						index);
+				IConnector<LogicalOperator> logicalConnector = fromExpression.getConnector(
+						index - 1, index);
 				toExpression.setConnector(index - 1, index, logicalConnector);
 			}
 		}

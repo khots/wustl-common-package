@@ -17,9 +17,6 @@ import java.util.Map.Entry;
 
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.domain.AbstractDomainObject;
-import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeManager;
-import edu.wustl.common.security.PrivilegeUtility;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
@@ -50,7 +47,6 @@ public class PrivilegeCache
 	 */
 	private Map<String, BitSet> privilegeMap;
 
-	
 	/**
 	 * After initialization of the variables, a call to method 'initialize()'
 	 * is made initialize() uses some ProtectionElementSearchCriterias & gets
@@ -173,8 +169,7 @@ public class PrivilegeCache
 			privilegeMap.put(objectId, bitSet);
 		}
 	}
-	
-	
+
 	/**
 	 * Simply checks if the user has any privilage on given object id
 	 *  
@@ -184,11 +179,11 @@ public class PrivilegeCache
 	public boolean hasPrivilege(String objectId)
 	{
 		BitSet bitSet = privilegeMap.get(objectId);
-		if(bitSet != null && bitSet.cardinality()>0)
+		if (bitSet != null && bitSet.cardinality() > 0)
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -235,7 +230,7 @@ public class PrivilegeCache
 	public boolean hasPrivilege(String objectId, String privilegeName)
 	{
 		boolean isAuthorized = false;
-		
+
 		if (objectId.contains("edu.wustl.catissuecore.domain.User_"))
 		{
 			System.out.println("checking privileges for " + objectId);
@@ -255,8 +250,8 @@ public class PrivilegeCache
 				}
 			}
 		}
-		
-		if(bitSet != null)
+
+		if (bitSet != null)
 		{
 			isAuthorized = bitSet.get(getBitNumber(privilegeName));
 		}
@@ -588,7 +583,7 @@ public class PrivilegeCache
 			}
 		}
 	}
-	
+
 	/**
 	 * get the ids and privileges where ids start with the given prefix
 	 * 
@@ -598,24 +593,23 @@ public class PrivilegeCache
 	public Map<String, List<NameValueBean>> getPrivilegesforPrefix(String prefix)
 	{
 		Map<String, List<NameValueBean>> map = new HashMap<String, List<NameValueBean>>();
-		
-		for(Entry<String, BitSet> entry : privilegeMap.entrySet())
+
+		for (Entry<String, BitSet> entry : privilegeMap.entrySet())
 		{
-			if(entry.getKey().startsWith(prefix))
+			if (entry.getKey().startsWith(prefix))
 			{
 				List<NameValueBean> privileges = getPrivilegeNames(entry.getValue());
-				if(!privileges.isEmpty())
+				if (!privileges.isEmpty())
 				{
 					map.put(entry.getKey(), privileges);
 				}
 			}
 		}
-		
+
 		return map;
-		
+
 	}
 
-	
 	/**
 	 * convert the given bitset into a set of privilege names
 	 * 
@@ -625,46 +619,46 @@ public class PrivilegeCache
 	private List<NameValueBean> getPrivilegeNames(BitSet value)
 	{
 		List<NameValueBean> privilegeNames = new ArrayList<NameValueBean>();
-		
-		for(int i=0; i<value.size();i++)
+
+		for (int i = 0; i < value.size(); i++)
 		{
-			if(value.get(i))
+			if (value.get(i))
 			{
 				NameValueBean nmv = new NameValueBean();
 				nmv.setName("DUMMY");
-				
-				switch(i)
+
+				switch (i)
 				{
 					/*case 17:
 						nmv.setName(Permissions.DEFINE_ANNOTATION);
 						break;*/
-										
-					case 21:
+
+					case 21 :
 						nmv.setName(Permissions.DISTRIBUTION);
 						break;
-						
+
 					/*case 29:
 						nmv.setName(Permissions.GENERAL_ADMINISTRATION);
 						break;*/
-					
-						/*
+
+					/*
 					case 24:
-						nmv.setName(Permissions.PARTICIPANT_SCG_ANNOTATION);
-						break;
-						*/
-						
-					case 16:
+					nmv.setName(Permissions.PARTICIPANT_SCG_ANNOTATION);
+					break;
+					*/
+
+					case 16 :
 						nmv.setName(Permissions.PROTOCOL_ADMINISTRATION);
 						break;
-						
+
 					/*case 22:
 						nmv.setName(Permissions.QUERY);
 						break;*/
-						
-					case 18:
+
+					case 18 :
 						nmv.setName(Permissions.REGISTRATION);
 						break;
-						
+
 					/*case 14:
 						nmv.setName(Permissions.REPOSITORY_ADMINISTRATION);
 						break;*/
@@ -673,8 +667,8 @@ public class PrivilegeCache
 						nmv.setName(Permissions.SPECIMEN_ANNOTATION);
 						break;
 					*/
-						
-					case 26:
+
+					case 26 :
 						nmv.setName(Permissions.SPECIMEN_PROCESSING);
 						break;
 					/*	
@@ -682,28 +676,28 @@ public class PrivilegeCache
 						nmv.setName(Permissions.SPECIMEN_STORAGE);
 						break;
 					*/
-						
-					case 15:
+
+					case 15 :
 						nmv.setName(Permissions.STORAGE_ADMINISTRATION);
 						break;
-						
-					case 13:
+
+					case 13 :
 						nmv.setName(Permissions.USER_PROVISIONING);
 						break;
-					
-					case 30:
+
+					case 30 :
 						nmv.setName(Permissions.SHIPMENT_PROCESSING);
 						break;
-						
-					case 1:
+
+					case 1 :
 						nmv.setName(Permissions.READ_DENIED);
 						break;
 				}
-				
-				for(Object o :Utility.getAllPrivileges())
+
+				for (Object o : Utility.getAllPrivileges())
 				{
 					NameValueBean privilege = (NameValueBean) o;
-					if(privilege.getName().equals(nmv.getName()))
+					if (privilege.getName().equals(nmv.getName()))
 					{
 						nmv.setValue(privilege.getValue());
 						privilegeNames.add(nmv);
@@ -712,8 +706,8 @@ public class PrivilegeCache
 				}
 			}
 		}
-		
+
 		return privilegeNames;
 	}
-	
+
 }

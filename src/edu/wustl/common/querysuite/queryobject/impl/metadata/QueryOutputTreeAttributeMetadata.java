@@ -5,8 +5,8 @@
 package edu.wustl.common.querysuite.queryobject.impl.metadata;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * @author prafull_kadam
@@ -27,7 +27,7 @@ public class QueryOutputTreeAttributeMetadata
 
 	private String displayName;
 	private OutputTreeDataNode treeDataNode;
-	
+
 	/**
 	 * Constructor to instanciate this object.
 	 * @param attribute The reference to the DE attribute.
@@ -35,7 +35,8 @@ public class QueryOutputTreeAttributeMetadata
 	 * @param treeDataNode TODO
 	 * @param displayName TODO
 	 */
-	public QueryOutputTreeAttributeMetadata(AttributeInterface attribute, String columnName, OutputTreeDataNode treeDataNode, String displayName)
+	public QueryOutputTreeAttributeMetadata(AttributeInterface attribute, String columnName,
+			OutputTreeDataNode treeDataNode, String displayName)
 	{
 		this.attribute = attribute;
 		this.columnName = columnName;
@@ -76,10 +77,11 @@ public class QueryOutputTreeAttributeMetadata
 	{
 		return treeDataNode;
 	}
-	
+
 	public String getUniqueId()
-	{   
-		String id = this.getTreeDataNode().getExpressionId()+ Constants.EXPRESSION_ID_SEPARATOR + this.attribute.getId(); //TODO
+	{
+		String id = this.getTreeDataNode().getExpressionId() + Constants.EXPRESSION_ID_SEPARATOR
+				+ this.attribute.getId(); //TODO
 		return id;
 	}
 }

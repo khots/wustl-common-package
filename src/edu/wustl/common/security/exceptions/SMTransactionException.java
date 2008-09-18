@@ -1,9 +1,6 @@
 
 package edu.wustl.common.security.exceptions;
 
-
-
-
 /**
  * 
  *<p>Title: </p>
@@ -19,26 +16,33 @@ public class SMTransactionException extends SMException
 	/**
 	 * 
 	 */
-	public SMTransactionException() {
+	public SMTransactionException()
+	{
 		super();
 	}
+
 	/**
 	 * @param message
 	 */
-	public SMTransactionException(String message) {
+	public SMTransactionException(String message)
+	{
 		super(message);
 	}
+
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public SMTransactionException(String message, Throwable cause) {
+	public SMTransactionException(String message, Throwable cause)
+	{
 		super(message, cause);
 	}
+
 	/**
 	 * @param cause
 	 */
-	public SMTransactionException(Throwable cause) {
+	public SMTransactionException(Throwable cause)
+	{
 		super(cause);
 	}
 }

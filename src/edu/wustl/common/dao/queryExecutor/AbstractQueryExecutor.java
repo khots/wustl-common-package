@@ -115,7 +115,7 @@ public abstract class AbstractQueryExecutor
 			SessionDataBean sessionDataBean, boolean isSecureExecute,
 			boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex,
 			int noOfRecords) throws DAOException
-	{          
+	{
 		this.query = query;
 		this.connection = connection;
 		this.sessionDataBean = sessionDataBean;
@@ -125,7 +125,7 @@ public abstract class AbstractQueryExecutor
 		this.startIndex = startIndex;
 		this.noOfRecords = noOfRecords;
 		this.getSublistOfResult = startIndex != -1; // this will be used, when it required to get sublist of the result set.
-		
+
 		/**
 		 * setting noOfRecords = Integer.MAX_VALUE, if All records are expected from result. see getListFromResultSet method
 		 */
@@ -133,7 +133,7 @@ public abstract class AbstractQueryExecutor
 		{
 			this.noOfRecords = Integer.MAX_VALUE;
 		}
-		
+
 		PagenatedResultData pagenatedResultData = null;
 		try
 		{
@@ -145,12 +145,12 @@ public abstract class AbstractQueryExecutor
 			Logger.out.error(sqlExp.getMessage(), sqlExp);
 			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
 		}
-		
+
 		finally
-		{			
+		{
 			try
 			{
-				
+
 				if (resultSet != null)
 					resultSet.close();
 
@@ -182,25 +182,25 @@ public abstract class AbstractQueryExecutor
 	 * @throws SQLException
 	 */
 	protected List getListFromResultSet() throws SQLException
-	{           
- 		ResultSetMetaData metaData = resultSet.getMetaData();
-		
+	{
+		ResultSetMetaData metaData = resultSet.getMetaData();
+
 		boolean isLongKeyOfMap = false;
-		if(queryResultObjectDataMap!=null && !queryResultObjectDataMap.isEmpty())
+		if (queryResultObjectDataMap != null && !queryResultObjectDataMap.isEmpty())
 		{
 			Iterator mapIterator = queryResultObjectDataMap.keySet().iterator();
-			while(mapIterator.hasNext())
+			while (mapIterator.hasNext())
 			{
 				if (mapIterator.next() instanceof Long)
 				{
-					isLongKeyOfMap = true;	
+					isLongKeyOfMap = true;
 					break;
 				}
 			}
 		}
 
 		int columnCount = metaData.getColumnCount();
-		
+
 		/**
 		 * Name: Prafull
 		 * Reviewer: Aarti
@@ -215,13 +215,13 @@ public abstract class AbstractQueryExecutor
 		{
 			columnCount--;
 		}
-		
+
 		int recordCount = 0;
 		List list = new ArrayList();
-		 
+
 		CsmCacheManager cacheManager = new CsmCacheManager(connection);
 		CsmCache cache = cacheManager.getNewCsmCacheObject();
-		
+
 		/**
 		 * noOfRecords will hold value = Integer.MAX_VALUE when All records are expected from result. 
 		 */
@@ -230,7 +230,7 @@ public abstract class AbstractQueryExecutor
 			int i = 1;
 
 			List aList = new ArrayList();
-			
+
 			while (i <= columnCount)
 			{
 
@@ -238,10 +238,10 @@ public abstract class AbstractQueryExecutor
 				{
 
 					Object valueObj = resultSet.getObject(i);
-					
+
 					//Abhijit: Why used instanceof? 
 					// why not metaData.getColumnType(i) == Types.CLOB ??
-					
+
 					if (valueObj instanceof oracle.sql.CLOB)
 					{
 						aList.add(valueObj);
@@ -249,9 +249,10 @@ public abstract class AbstractQueryExecutor
 					else
 					{
 						String value;
-                        if(valueObj instanceof oracle.sql.DATE) {
-                            valueObj =  ((oracle.sql.DATE) valueObj).timestampValue();
-                        }
+						if (valueObj instanceof oracle.sql.DATE)
+						{
+							valueObj = ((oracle.sql.DATE) valueObj).timestampValue();
+						}
 						// Sri: Added check for date/time/timestamp since the
 						// default date format returned by toString was yyyy-dd-mm
 						// bug#463 
@@ -259,7 +260,8 @@ public abstract class AbstractQueryExecutor
 						//classes are derived from java.util.Date 
 						{
 							SimpleDateFormat formatter = new SimpleDateFormat(
-									Constants.DATE_PATTERN_MM_DD_YYYY + " "+Constants.TIME_PATTERN_HH_MM_SS);
+									Constants.DATE_PATTERN_MM_DD_YYYY + " "
+											+ Constants.TIME_PATTERN_HH_MM_SS);
 							value = formatter.format((java.util.Date) valueObj);
 						}
 						else
@@ -274,46 +276,53 @@ public abstract class AbstractQueryExecutor
 					aList.add("");
 				}
 				i++;
-			}   
-			if(!isLongKeyOfMap && queryResultObjectDataMap!=null)
-			{
-			//Aarti: If query has condition on identified data then check user's permission
-			//on the record's identified data.
-			//If user does not have privilege don't add the record to results list
-			//bug#1413
-			if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
-			{
-				boolean hasPrivilegeOnIdentifiedData = cacheManager.hasPrivilegeOnIdentifiedDataForSimpleSearch(sessionDataBean, queryResultObjectDataMap, aList, cache);
-				
-				if (!hasPrivilegeOnIdentifiedData)
-					continue;
 			}
-
-			//Aarti: Checking object level privileges on each record
-			if (Constants.switchSecurity && isSecureExecute)
+			if (!isLongKeyOfMap && queryResultObjectDataMap != null)
 			{
-				if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
-				{
-					//call filterRowForSimpleSearch of method of csm cache manager changed for csm-query performance issue.
-					cacheManager.filterRowForSimpleSearch(sessionDataBean,queryResultObjectDataMap, aList,cache );
-				}
-			}
-			}else
-			{
+				//Aarti: If query has condition on identified data then check user's permission
+				//on the record's identified data.
+				//If user does not have privilege don't add the record to results list
+				//bug#1413
 				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
 				{
-					boolean hasPrivilegeOnIdentifiedData =cacheManager.hasPrivilegeOnIdentifiedData(sessionDataBean, queryResultObjectDataMap, aList,cache);
+					boolean hasPrivilegeOnIdentifiedData = cacheManager
+							.hasPrivilegeOnIdentifiedDataForSimpleSearch(sessionDataBean,
+									queryResultObjectDataMap, aList, cache);
+
 					if (!hasPrivilegeOnIdentifiedData)
 						continue;
 				}
 
 				//Aarti: Checking object level privileges on each record
 				if (Constants.switchSecurity && isSecureExecute)
-				{ 
+				{
 					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
-					{ 
+					{
+						//call filterRowForSimpleSearch of method of csm cache manager changed for csm-query performance issue.
+						cacheManager.filterRowForSimpleSearch(sessionDataBean,
+								queryResultObjectDataMap, aList, cache);
+					}
+				}
+			}
+			else
+			{
+				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
+				{
+					boolean hasPrivilegeOnIdentifiedData = cacheManager
+							.hasPrivilegeOnIdentifiedData(sessionDataBean,
+									queryResultObjectDataMap, aList, cache);
+					if (!hasPrivilegeOnIdentifiedData)
+						continue;
+				}
+
+				//Aarti: Checking object level privileges on each record
+				if (Constants.switchSecurity && isSecureExecute)
+				{
+					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
+					{
 						//Supriya :call filterRow of method of csm cache manager changed for csm-query performance issue. 
-						cacheManager.filterRow(sessionDataBean, queryResultObjectDataMap, aList,cache );
+						cacheManager.filterRow(sessionDataBean, queryResultObjectDataMap, aList,
+								cache);
 					}
 				}
 			}
@@ -354,15 +363,15 @@ public abstract class AbstractQueryExecutor
 			 * 
 			 * forming new query, by using original query as inner query & adding rownum conditions in outer query.
 			 */
-			newSql.append(SELECT_CLAUSE).append(" * ").append(FROM_CLAUSE).append(" (").append(SELECT_CLAUSE)
-			.append(" qry.*, ROWNUM rn ").append(FROM_CLAUSE).append(" (").append(sql).append(") qry WHERE ROWNUM <= ")
-			.append(startIndex + noOfRecords).append(") WHERE rn > ")
-			.append(startIndex);
-// Another approach to form simillar query by putting both rownum conditions in the outer query.			
-//			newSql.append(SELECT_CLAUSE).append(" * ").append(FROM_CLAUSE).append(" (").append(SELECT_CLAUSE)
-//			.append(" qry.*, ROWNUM rn ").append(FROM_CLAUSE).append(" (").append(sql).append(") qry ) WHERE rn BETWEEN ")
-//			.append(startIndex+1).append(" AND ").append(startIndex + noOfRecords);;
-			
+			newSql.append(SELECT_CLAUSE).append(" * ").append(FROM_CLAUSE).append(" (").append(
+					SELECT_CLAUSE).append(" qry.*, ROWNUM rn ").append(FROM_CLAUSE).append(" (")
+					.append(sql).append(") qry WHERE ROWNUM <= ").append(startIndex + noOfRecords)
+					.append(") WHERE rn > ").append(startIndex);
+			// Another approach to form simillar query by putting both rownum conditions in the outer query.			
+			//			newSql.append(SELECT_CLAUSE).append(" * ").append(FROM_CLAUSE).append(" (").append(SELECT_CLAUSE)
+			//			.append(" qry.*, ROWNUM rn ").append(FROM_CLAUSE).append(" (").append(sql).append(") qry ) WHERE rn BETWEEN ")
+			//			.append(startIndex+1).append(" AND ").append(startIndex + noOfRecords);;
+
 		}
 		return newSql.toString();
 	}

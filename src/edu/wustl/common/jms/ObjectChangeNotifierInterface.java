@@ -1,3 +1,4 @@
+
 package edu.wustl.common.jms;
 
 import java.io.Serializable;
@@ -9,7 +10,8 @@ import java.io.Serializable;
  * 
  */
 public interface ObjectChangeNotifierInterface extends Serializable
-{	
+{
+
 	/**
 	 * This method is used to read the object 
 	 * */

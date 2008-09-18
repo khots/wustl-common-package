@@ -1,3 +1,4 @@
+
 package edu.wustl.common.util.dbManager;
 
 import java.io.BufferedInputStream;
@@ -25,38 +26,38 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
  */
 public class GenerateSchema
 {
-	public static void main(String[] args) throws HibernateException , IOException, Exception
+
+	public static void main(String[] args) throws HibernateException, IOException, Exception
 	{
 		boolean isToPrintOnConsole = false;
 		boolean isToExecuteOnDB = false;
-		if(args.length!=0)
+		if (args.length != 0)
 		{
 			String arg = args[0];
-			if(arg.equalsIgnoreCase("true"))
+			if (arg.equalsIgnoreCase("true"))
 			{
 				isToPrintOnConsole = true;
 				isToExecuteOnDB = true;
 			}
-			if(arg.equalsIgnoreCase("false"))
+			if (arg.equalsIgnoreCase("false"))
 			{
 				isToPrintOnConsole = false;
 				isToExecuteOnDB = false;
 			}
 		}
-		
+
 		File file = new File("db.properties");
-		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));  
+		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
 		Properties p = new Properties();
 		p.load(stram);
 		stram.close();
-		
-		
-			
+
 		Configuration cfg = new Configuration();
 		cfg.setProperties(p);
 		cfg.addDirectory(new File("./src"));
-		new SchemaExport(cfg).setOutputFile("query.sql").setDelimiter(";").create(isToPrintOnConsole, isToExecuteOnDB);
-//		if(isToExecuteOnDB)
-//			new GenerateUser();
+		new SchemaExport(cfg).setOutputFile("query.sql").setDelimiter(";").create(
+				isToPrintOnConsole, isToExecuteOnDB);
+		//		if(isToExecuteOnDB)
+		//			new GenerateUser();
 	}
 }

@@ -1,3 +1,4 @@
+
 package edu.wustl.common.vo;
 
 /**
@@ -7,25 +8,25 @@ package edu.wustl.common.vo;
  */
 public class SearchFieldData
 {
+
 	//Used for checking next field(text or comboBox) in the same row
 	private String dataType;
-	
+
 	//Dispalying text for the row used in 1st column
 	private String labelKey;
-	
+
 	//Instance of class used for setting field's attribute of 2nd column of the same row (operation field)
 	private HTMLField oprationField;
-	
+
 	//Instance of class used for setting field's attribute of 3rd column of the same row(value field) 
 	private HTMLField valueField;
-	
+
 	//Used for calling appropriate function according to dataType
 	private String functionName;
-	
+
 	//Used for specimen page only ****CHANGE REQUIRED****
 	private String unitFieldKey = "";
-	
-	
+
 	/**
 	 * @param dataType Datatype of field of page
 	 * @param labelKey Dispalying text for the row in page
@@ -34,7 +35,8 @@ public class SearchFieldData
 	 * @param functionName function according to dataType
 	 * @param unitFieldKey for displaying text at the end of field (specimen page only)
 	 */
-	public SearchFieldData(String dataType, String labelKey,HTMLField oprationField,HTMLField valueField,String functionName,String unitFieldKey)
+	public SearchFieldData(String dataType, String labelKey, HTMLField oprationField,
+			HTMLField valueField, String functionName, String unitFieldKey)
 	{
 		this.dataType = dataType;
 		this.labelKey = labelKey;
@@ -42,109 +44,108 @@ public class SearchFieldData
 		this.valueField = valueField;
 		this.functionName = functionName;
 		this.unitFieldKey = unitFieldKey;
-		
-	}
 
+	}
 
 	/**
 	 * Datatype of field of page
 	 * @return String
 	 */
-	public String getDataType() {
+	public String getDataType()
+	{
 		return dataType;
 	}
-
 
 	/**
 	 * @param dataType to set
 	 */
-	public void setDataType(String dataType) {
+	public void setDataType(String dataType)
+	{
 		this.dataType = dataType;
 	}
-
 
 	/**
 	 * function according to dataType
 	 * @return String
 	 */
-	public String getFunctionName() {
+	public String getFunctionName()
+	{
 		return functionName;
 	}
-
 
 	/**
 	 * @param functionName to set
 	 */
-	public void setFunctionName(String functionName) {
+	public void setFunctionName(String functionName)
+	{
 		this.functionName = functionName;
 	}
-
 
 	/**
 	 * Dispalying text for the row in page
 	 * @return String
 	 */
-	public String getLabelKey() {
+	public String getLabelKey()
+	{
 		return labelKey;
 	}
-
 
 	/**
 	 * @param labelKey to set
 	 */
-	public void setLabelKey(String labelKey) {
+	public void setLabelKey(String labelKey)
+	{
 		this.labelKey = labelKey;
 	}
-
 
 	/**
 	 * setting field's attribute of table
 	 * @return String
 	 */
-	public HTMLField getOprationField() {
+	public HTMLField getOprationField()
+	{
 		return oprationField;
 	}
-
 
 	/**
 	 * @param oprationField to set
 	 */
-	public void setOprationField(HTMLField oprationField) {
+	public void setOprationField(HTMLField oprationField)
+	{
 		this.oprationField = oprationField;
 	}
-
 
 	/**
 	 * for displaying text at the end of field (for specimen page only)
 	 * @return String
 	 */
-	public String getUnitFieldKey() {
+	public String getUnitFieldKey()
+	{
 		return unitFieldKey;
 	}
-
 
 	/**
 	 * @param unitFieldKey to set
 	 */
-	public void setUnitFieldKey(String unitFieldKey) {
+	public void setUnitFieldKey(String unitFieldKey)
+	{
 		this.unitFieldKey = unitFieldKey;
 	}
-
 
 	/**
 	 * setting field's attribute of table
 	 * @return String
 	 */
-	public HTMLField getValueField() {
+	public HTMLField getValueField()
+	{
 		return valueField;
 	}
-
 
 	/**
 	 * @param valueField to set
 	 */
-	public void setValueField(HTMLField valueField) {
+	public void setValueField(HTMLField valueField)
+	{
 		this.valueField = valueField;
 	}
 }
-

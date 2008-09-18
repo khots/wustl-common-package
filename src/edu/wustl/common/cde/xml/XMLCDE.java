@@ -5,9 +5,7 @@
 // Generated on: 2005.08.23 at 10:44:28 GMT+05:30 
 //
 
-
 package edu.wustl.common.cde.xml;
-
 
 /**
  * Java content class for XMLCDE complex type.
@@ -30,90 +28,90 @@ package edu.wustl.common.cde.xml;
  * </pre>
  * 
  */
-public interface XMLCDE {
+public interface XMLCDE
+{
 
+	/**
+	 * Gets the value of the XMLPermissibleValues property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list,
+	 * not a snapshot. Therefore any modification you make to the
+	 * returned list will be present inside the JAXB object.
+	 * This is why there is not a <CODE>set</CODE> method for the XMLPermissibleValues property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * <pre>
+	 *    getXMLPermissibleValues().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link edu.wustl.common.cde.xml.XMLPermissibleValueType}
+	 * 
+	 */
+	java.util.List getXMLPermissibleValues();
 
-    /**
-     * Gets the value of the XMLPermissibleValues property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the XMLPermissibleValues property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getXMLPermissibleValues().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link edu.wustl.common.cde.xml.XMLPermissibleValueType}
-     * 
-     */
-    java.util.List getXMLPermissibleValues();
+	/**
+	 * Gets the value of the cache property.
+	 * 
+	 */
+	boolean isCache();
 
-    /**
-     * Gets the value of the cache property.
-     * 
-     */
-    boolean isCache();
+	/**
+	 * Sets the value of the cache property.
+	 * 
+	 */
+	void setCache(boolean value);
 
-    /**
-     * Sets the value of the cache property.
-     * 
-     */
-    void setCache(boolean value);
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link java.lang.String}
+	 */
+	java.lang.String getName();
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String}
-     */
-    java.lang.String getName();
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link java.lang.String}
+	 */
+	void setName(java.lang.String value);
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String}
-     */
-    void setName(java.lang.String value);
+	/**
+	 * Gets the value of the publicId property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link java.lang.String}
+	 */
+	java.lang.String getPublicId();
 
-    /**
-     * Gets the value of the publicId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String}
-     */
-    java.lang.String getPublicId();
+	/**
+	 * Sets the value of the publicId property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link java.lang.String}
+	 */
+	void setPublicId(java.lang.String value);
 
-    /**
-     * Sets the value of the publicId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String}
-     */
-    void setPublicId(java.lang.String value);
+	/**
+	 * Gets the value of the lazyLoading property.
+	 * 
+	 */
+	boolean isLazyLoading();
 
-    /**
-     * Gets the value of the lazyLoading property.
-     * 
-     */
-    boolean isLazyLoading();
-
-    /**
-     * Sets the value of the lazyLoading property.
-     * 
-     */
-    void setLazyLoading(boolean value);
+	/**
+	 * Sets the value of the lazyLoading property.
+	 * 
+	 */
+	void setLazyLoading(boolean value);
 
 }

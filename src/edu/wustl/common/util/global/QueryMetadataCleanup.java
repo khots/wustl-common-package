@@ -163,12 +163,12 @@ public class QueryMetadataCleanup
 		if (pathCnt != 0)
 		{
 			sql = pathDelSQL.substring(0, pathDelSQL.length() - 1) + ")";
-			writer.write("\n"+sql);
+			writer.write("\n" + sql);
 			stmt.executeUpdate(sql);
 		}
 
 		sql = associationDelSQL.substring(0, associationDelSQL.length() - 1) + ")";
-		writer.write("\n"+sql);
+		writer.write("\n" + sql);
 		stmt.executeUpdate(sql);
 		writer.write("\nDeleted following records from corresponding table: ");
 		writer.write(deletedRecords.toString());

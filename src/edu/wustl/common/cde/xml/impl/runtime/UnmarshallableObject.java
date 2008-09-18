@@ -7,7 +7,6 @@
 
 package edu.wustl.common.cde.xml.impl.runtime;
 
-
 /**
  * Generated classes have to implement this interface for it
  * to be unmarshallable.
@@ -16,8 +15,9 @@ package edu.wustl.common.cde.xml.impl.runtime;
  */
 public interface UnmarshallableObject
 {
-    /**
-     * Creates an unmarshaller that will unmarshall this object.
-     */
-    UnmarshallingEventHandler createUnmarshaller( UnmarshallingContext context );
+
+	/**
+	 * Creates an unmarshaller that will unmarshall this object.
+	 */
+	UnmarshallingEventHandler createUnmarshaller(UnmarshallingContext context);
 }

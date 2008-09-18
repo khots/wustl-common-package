@@ -5,8 +5,8 @@
  * Company: Washington University, School of Medicine, St. Louis.
  * @author vaishali_khandelwal
  */
-package edu.wustl.common.lookup;
 
+package edu.wustl.common.lookup;
 
 public interface LookupParameters
 {

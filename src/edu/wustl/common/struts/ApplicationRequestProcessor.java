@@ -43,41 +43,41 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 			try
 			{
 				ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
-				HTTPWrapperObject wrapperObject = (HTTPWrapperObject)ois.readObject();
-				
+				HTTPWrapperObject wrapperObject = (HTTPWrapperObject) ois.readObject();
+
 				String operation = wrapperObject.getOperation();
-				
+
 				ActionForm form = wrapperObject.getForm();
-				
-				if(operation.equals(Constants.LOGIN))
+
+				if (operation.equals(Constants.LOGIN))
 				{
-					request.setAttribute(Constants.OPERATION,Constants.LOGIN);
+					request.setAttribute(Constants.OPERATION, Constants.LOGIN);
 				}
-				else if(operation.equals(Constants.LOGOUT))
+				else if (operation.equals(Constants.LOGOUT))
 				{
-				    request.setAttribute(Constants.OPERATION,Constants.LOGOUT);
+					request.setAttribute(Constants.OPERATION, Constants.LOGOUT);
 				}
 				else
 				{
-					request.setAttribute(Constants.OPERATION,operation);
+					request.setAttribute(Constants.OPERATION, operation);
 				}
-				
+
 				Logger.out.debug("mapping.getAttribute() " + mapping.getAttribute());
-				
+
 				if ("request".equals(mapping.getScope()))
 				{
-				    if(form !=null)
+					if (form != null)
 					{
-				        request.setAttribute(mapping.getAttribute(), form);
+						request.setAttribute(mapping.getAttribute(), form);
 					}
 				}
 				else
 				{
 					HttpSession session = request.getSession();
-					
-					if(form !=null)
+
+					if (form != null)
 					{
-					    session.setAttribute(mapping.getAttribute(), form);
+						session.setAttribute(mapping.getAttribute(), form);
 					}
 				}
 				return form;
@@ -93,7 +93,7 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 			return super.processActionForm(request, response, mapping);
 		}
 	}
-	
+
 	protected void processPopulate(HttpServletRequest request, HttpServletResponse response,
 			ActionForm form, ActionMapping mapping) throws ServletException
 	{
@@ -103,7 +103,7 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 		}
 		else
 		{
-			super.processPopulate(request,  response, form,  mapping);
+			super.processPopulate(request, response, form, mapping);
 		}
 	}
 }

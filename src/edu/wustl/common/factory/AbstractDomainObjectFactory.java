@@ -21,18 +21,19 @@ import edu.wustl.common.exception.AssignDataException;
 public abstract class AbstractDomainObjectFactory
 {
 
-    /**
-     * Returns an AbstractDomain object copy of the form bean object. 
-     * @param FORM_TYPE Form bean Id.
-     * @param form Form bean object.
-     * @return an AbstractDomain object copy of the form bean object.
-     */
-    public abstract AbstractDomainObject getDomainObject(int FORM_TYPE,AbstractActionForm form) throws AssignDataException;
-    
-    /**
-     * Returns the fully qualified name of the class according to the form bean type.
-     * @param FORM_TYPE Form bean Id.
-     * @return the fully qualified name of the class according to the form bean type.
-     */
-    public abstract String getDomainObjectName(int FORM_TYPE);
+	/**
+	 * Returns an AbstractDomain object copy of the form bean object. 
+	 * @param FORM_TYPE Form bean Id.
+	 * @param form Form bean object.
+	 * @return an AbstractDomain object copy of the form bean object.
+	 */
+	public abstract AbstractDomainObject getDomainObject(int FORM_TYPE, AbstractActionForm form)
+			throws AssignDataException;
+
+	/**
+	 * Returns the fully qualified name of the class according to the form bean type.
+	 * @param FORM_TYPE Form bean Id.
+	 * @return the fully qualified name of the class according to the form bean type.
+	 */
+	public abstract String getDomainObjectName(int FORM_TYPE);
 }

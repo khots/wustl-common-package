@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -32,12 +31,10 @@ import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
-import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.exceptions.SMException;
@@ -57,6 +54,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class DefaultBizLogic extends AbstractBizLogic
 {
+
 	/**
 	 * This method gets called before insert method. Any logic before inserting into database can be included here.
 	 * @param obj The object to be inserted.
@@ -65,21 +63,24 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException
 	 * @throws UserNotAuthorizedException
 	 * */
-	protected void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+	protected void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
+			throws DAOException, UserNotAuthorizedException
 	{
 
 	}
 
 	public void createProtectionElement(Object currentObj) throws BizLogicException
 	{
-		
+
 	}
+
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
 	 * @throws DAOException
 	 */
-	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
+			throws DAOException, UserNotAuthorizedException
 	{
 		dao.insert(obj, sessionDataBean, true, true);
 	}
@@ -92,7 +93,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException
 	 * @throws UserNotAuthorizedException 
 	 * */
-	protected void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+	protected void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
+			throws DAOException, UserNotAuthorizedException
 	{
 
 	}
@@ -117,8 +119,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException
 	 * @throws UserNotAuthorizedException
 	 * */
-	protected void preUpdate(DAO dao, Object currentObj, Object oldObj, SessionDataBean sessionDataBean) throws BizLogicException,
-			UserNotAuthorizedException
+	protected void preUpdate(DAO dao, Object currentObj, Object oldObj,
+			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
 	{
 
 	}
@@ -128,7 +130,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param obj The object to be updated into the database. 
 	 * @throws DAOException
 	 */
-	protected void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+	protected void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean)
+			throws DAOException, UserNotAuthorizedException
 	{
 		dao.update(obj, sessionDataBean, true, true, false);
 		dao.audit(obj, oldObj, sessionDataBean, true);
@@ -143,8 +146,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException
 	 * @throws UserNotAuthorizedException
 	 * */
-	protected void postUpdate(DAO dao, Object currentObj, Object oldObj, SessionDataBean sessionDataBean) throws BizLogicException,
-			UserNotAuthorizedException
+	protected void postUpdate(DAO dao, Object currentObj, Object oldObj,
+			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
 	{
 
 	}
@@ -164,8 +167,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param joinCondition The join condition.
 	 * @throws SMException
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName, String[] whereColumnCondition,
-			Object[] whereColumnValue, String joinCondition) throws DAOException
+	public List retrieve(String sourceObjectName, String[] selectColumnName,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition) throws DAOException
 	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
 
@@ -175,7 +179,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.openSession(null);
 
-			list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+			list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
+					whereColumnCondition, whereColumnValue, joinCondition);
 			//dao.commit();
 		}
 		catch (DAOException daoExp)
@@ -199,10 +204,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param joinCondition The join condition.
 	 * @throws SMException
 	 */
-	public List retrieve(String sourceObjectName, String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws DAOException
+	public List retrieve(String sourceObjectName, String[] whereColumnName,
+			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
+			throws DAOException
 	{
-		return retrieve(sourceObjectName,null, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+		return retrieve(sourceObjectName, null, whereColumnName, whereColumnCondition,
+				whereColumnValue, joinCondition);
 	}
 
 	/**
@@ -237,19 +244,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
 	}
-	
-	public Object retrieve(String sourceObjectName, Long id)  throws DAOException
+
+	public Object retrieve(String sourceObjectName, Long id) throws DAOException
 	{
-		
+
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
 
 		Object object = null;
-		
+
 		try
 		{
 			dao.openSession(null);
 
-			object  = dao.retrieve(sourceObjectName, id);
+			object = dao.retrieve(sourceObjectName, id);
 			//dao.commit();
 		}
 		catch (DAOException daoExp)
@@ -266,7 +273,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
-	public List getList(String sourceObjectName, String[] displayNameFields, String valueField, boolean isToExcludeDisabled) throws DAOException
+	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+			boolean isToExcludeDisabled) throws DAOException
 	{
 		String[] whereColumnName = null;
 		String[] whereColumnCondition = null;
@@ -281,8 +289,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			whereColumnValue = new String[]{Constants.ACTIVITY_STATUS_DISABLED};
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
-				separatorBetweenFields);
+		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
+				whereColumnCondition, whereColumnValue, joinCondition, separatorBetweenFields);
 	}
 
 	/**
@@ -298,28 +306,31 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return
 	 * @throws DAOException
 	 */
-	public List getList(String sourceObjectName, String[] displayNameFields, String valueField, String[] whereColumnName,
-			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
+	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
 			throws DAOException
 	{
-		 String[] whereColName = {""};
-		 String[] whereColCondition = {""};
-		 Object[] whereColValue = {""};
-		
+		String[] whereColName = {""};
+		String[] whereColCondition = {""};
+		Object[] whereColValue = {""};
+
 		if (isToExcludeDisabled)
 		{
 			whereColName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
 			whereColCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
-			whereColValue = Utility.addElement(whereColumnValue, Constants.ACTIVITY_STATUS_DISABLED);
+			whereColValue = Utility
+					.addElement(whereColumnValue, Constants.ACTIVITY_STATUS_DISABLED);
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColName, whereColCondition, whereColValue, joinCondition,
-				separatorBetweenFields);
+		return getList(sourceObjectName, displayNameFields, valueField, whereColName,
+				whereColCondition, whereColValue, joinCondition, separatorBetweenFields);
 	}
 
 	//Mandar : 12-May-06 : bug id 863 : Sorting of ID columns
-	private List getList(String sourceObjectName, String[] displayNameFields, String valueField, String[] whereColumnName,
-			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition, String separatorBetweenFields) throws DAOException
+	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition, String separatorBetweenFields) throws DAOException
 	{
 		//Logger.out.debug("in get list");
 		List nameValuePairs = new ArrayList();
@@ -333,7 +344,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		selectColumnName[displayNameFields.length] = valueField;
 
-		List results = retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+		List results = retrieve(sourceObjectName, selectColumnName, whereColumnName,
+				whereColumnCondition, whereColumnValue, joinCondition);
 
 		NameValueBean nameValueBean;
 		Object[] columnArray = null;
@@ -399,23 +411,23 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return nameValuePairs;
 	}
 
-	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier, String tablename, String colName, Long objIDArr[])
-			throws DAOException
+	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier,
+			String tablename, String colName, Long objIDArr[]) throws DAOException
 	{
 		dao.disableRelatedObjects(tablename, colName, objIDArr);
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
 	}
-	
-	protected List disableObjects(DAO dao, String tablename, Class sourceClass, 
+
+	protected List disableObjects(DAO dao, String tablename, Class sourceClass,
 			String classIdentifier, Long objIDArr[]) throws DAOException
 	{
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		disableAndAuditObjects(dao, sourceClass.getName(), tablename, listOfSubElement);
 		return listOfSubElement;
 	}
-	
+
 	/**
 	 * 
 	 * @param dao
@@ -424,7 +436,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param listOfSubElement
 	 * @throws DAOException
 	 */
-	protected void disableAndAuditObjects(DAO dao, String sourceClass, String tablename, 
+	protected void disableAndAuditObjects(DAO dao, String sourceClass, String tablename,
 			List listOfSubElement) throws DAOException
 	{
 		Iterator iterator = listOfSubElement.iterator();
@@ -435,12 +447,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 			while (iterator.hasNext())
 			{
 				Long objectId = (Long) iterator.next();
-				IActivityStatus object  =(IActivityStatus) dao.retrieve( sourceClass, objectId);
+				IActivityStatus object = (IActivityStatus) dao.retrieve(sourceClass, objectId);
 				object.setActivityStatus(Constants.ACTIVITY_STATUS_DISABLED);
 				dao.update(object, null, false, false, false);
 				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
 			}
-	
+
 			HibernateDAO hibDAO = (HibernateDAO) dao;
 			hibDAO.addAuditEventLogs(auditEventLogsCollection);
 		}
@@ -449,6 +461,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throw new DAOException(ex); //TODO: should throw bizlogicexception
 		}
 	}
+
 	/**
 	 * @param tablename
 	 * @param auditEventLogsCollection
@@ -461,17 +474,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 		auditEventLog.setObjectIdentifier(objectId);
 		auditEventLog.setObjectName(tablename);
 		auditEventLog.setEventType(Constants.UPDATE_OPERATION);
-	
+
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
 		auditEventDetails.setElementName(Constants.ACTIVITY_STATUS_COLUMN);
 		auditEventDetails.setCurrentValue(Constants.ACTIVITY_STATUS_DISABLED);
-	
+
 		auditEventDetailsCollection.add(auditEventDetails);
-	
+
 		auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
 		auditEventLogsCollection.add(auditEventLog);
-	}	
+	}
 
 	/**
 	 * @param tablename
@@ -491,7 +504,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		hibDAO.addAuditEventLogs(auditEventLogsCollection);
 	}
 
-	public List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier, Long objIDArr[]) throws DAOException
+	public List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
+			Long objIDArr[]) throws DAOException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String selectColumnName[] = {Constants.SYSTEM_IDENTIFIER};
@@ -501,35 +515,40 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Object[] whereColumnValue = {objIDArr};
 		String joinCondition = Constants.AND_JOIN_CONDITION;
 
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
+				whereColumnCondition, whereColumnValue, joinCondition);
 		list = Utility.removeNull(list);
-		Logger.out.debug(sourceClass.getName() + " Related objects to " + edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
+		Logger.out.debug(sourceClass.getName() + " Related objects to "
+				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		return list;
 	}
 
 	//Aarti: Overloaded to let selectColumnName and whereColumnName also be
 	// parameters to method and are not hardcoded
-	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName, String[] whereColumnName, Long objIDArr[])
-			throws DAOException
+	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
+			String[] whereColumnName, Long objIDArr[]) throws DAOException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String[] whereColumnCondition = {"in"};
 		Object[] whereColumnValue = {objIDArr};
 		String joinCondition = Constants.AND_JOIN_CONDITION;
 
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
-		Logger.out.debug(sourceClass.getName() + " Related objects to " + edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
+		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
+				whereColumnCondition, whereColumnValue, joinCondition);
+		Logger.out.debug(sourceClass.getName() + " Related objects to "
+				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		list = Utility.removeNull(list);
 		return list;
 	}
 
-	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName, String[] whereColumnValue, String[] whereColumnCondition)
-			throws DAOException
+	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName,
+			String[] whereColumnValue, String[] whereColumnCondition) throws DAOException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String joinCondition = Constants.AND_JOIN_CONDITION;
 		String selectColumnName[] = {Constants.SYSTEM_IDENTIFIER};
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
+				whereColumnCondition, whereColumnValue, joinCondition);
 
 		list = Utility.removeNull(list);
 		return list;
@@ -543,30 +562,32 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * Privilege is to be assigned to user or a role is identified by boolean assignToUser
 	 * 
 	 */
-	protected void setPrivilege(DAO dao, String privilegeName, Class objectType, Long[] objectIds, Long userId, String roleId, boolean assignToUser,
-			boolean assignOperation) throws SMException, DAOException
+	protected void setPrivilege(DAO dao, String privilegeName, Class objectType, Long[] objectIds,
+			Long userId, String roleId, boolean assignToUser, boolean assignOperation)
+			throws SMException, DAOException
 	{
-		Logger.out.debug(" privilegeName:" + privilegeName + " objectType:" + objectType + " objectIds:"
-				+ edu.wustl.common.util.Utility.getArrayString(objectIds) + " userId:" + userId + " roleId:" + roleId + " assignToUser:"
-				+ assignToUser);
-		
+		Logger.out.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
+				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
+				+ " userId:" + userId + " roleId:" + roleId + " assignToUser:" + assignToUser);
+
 		edu.wustl.common.security.PrivilegeUtility privilegeUtility = new edu.wustl.common.security.PrivilegeUtility();
-		
+
 		// To get privilegeCache through 
 		// Singleton instance of PrivilegeManager, requires User LoginName
 		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-				
+
 		if (assignToUser)
 		{
-//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
-				
-			try 
+			//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
+
+			try
 			{
 				String userName = privilegeUtility.getUserById(userId.toString()).getLoginName();
 				PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
-				privilegeCache.updateUserPrivilege(privilegeName, objectType, objectIds, userId, assignOperation);
-			} 
-			catch (Exception e) 
+				privilegeCache.updateUserPrivilege(privilegeName, objectType, objectIds, userId,
+						assignOperation);
+			}
+			catch (Exception e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -574,13 +595,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		else
 		{
-//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
-			
-			try 
+			//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
+
+			try
 			{
-				privilegeManager.updateGroupPrivilege(privilegeName, objectType, objectIds, roleId, assignOperation);
-			} 
-			catch (Exception e) 
+				privilegeManager.updateGroupPrivilege(privilegeName, objectType, objectIds, roleId,
+						assignOperation);
+			}
+			catch (Exception e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -595,12 +617,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		while (iterator.hasNext())
 		{
 			AbstractDomainObject abstractDomainObj = (AbstractDomainObject) iterator.next();
-			
-			if (id != null && id.equals(abstractDomainObj.getId()))			
+
+			if (id != null && id.equals(abstractDomainObj.getId()))
 			{
 				abstractDomainObject = abstractDomainObj;
 				break;
-			} 
+			}
 		}
 		return abstractDomainObject;
 	}
@@ -626,31 +648,33 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		if (ado != null)
 		{
-			Long identifier = ((AbstractDomainObject)ado).getId();
+			Long identifier = ((AbstractDomainObject) ado).getId();
 			if (identifier != null)
 			{
 				String className = ado.getClass().getName();
 				String activityStatus = ado.getActivityStatus();
-				if(activityStatus==null)
+				if (activityStatus == null)
 				{
 					activityStatus = getActivityStatus(dao, className, identifier);
 				}
 				if (activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
 				{
-					throw new DAOException(errorName + " " + ApplicationProperties.getValue("error.object.closed"));
+					throw new DAOException(errorName + " "
+							+ ApplicationProperties.getValue("error.object.closed"));
 				}
 			}
 		}
 	}
 
-	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier) throws DAOException
+	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier)
+			throws DAOException
 	{
 		String whereColumnNames[] = {Constants.SYSTEM_IDENTIFIER};
 		String colConditions[] = {"="};
 		Object whereColumnValues[] = {indetifier};
 		String[] selectColumnName = {Constants.ACTIVITY_STATUS};
-		List list = dao
-				.retrieve(sourceObjectName, selectColumnName, whereColumnNames, colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
+		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnNames,
+				colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
 
 		String activityStatus = "";
 		if (!list.isEmpty())
@@ -665,16 +689,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
 	{
-		dao.insert(obj,null,false,false);
+		dao.insert(obj, null, false, false);
 	}
 
 	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
 	{
-		dao.update(obj,null,false,false,false);
+		dao.update(obj, null, false, false, false);
 	}
 
-    public Object retrieveAttribute(Class objClass, Long id, String attributeName) throws DAOException
-    {
+	public Object retrieveAttribute(Class objClass, Long id, String attributeName)
+			throws DAOException
+	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
 
 		Object attribute = null;
@@ -694,7 +719,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			dao.closeSession();
 		}
 		return attribute;
-    }
+	}
+
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
 	 * @param sourceObjectName Source object in the Database. 
@@ -704,7 +730,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException
 	 * @see edu.wustl.common.bizlogic.IBizLogic#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
 	 */
-	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException 
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName)
+			throws DAOException
 	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
 
@@ -726,29 +753,29 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return attribute;
 	}
-	
+
 	/**
 	 * This method gets called before populateUIBean method. Any logic before updating uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm) throws BizLogicException
+	protected void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
+			throws BizLogicException
 	{
-		
+
 	}
-	
-	
+
 	/**
 	 * This method gets called after populateUIBean method. Any logic after populating  object uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
 	 */
-	protected void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)throws BizLogicException
+	protected void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
+			throws BizLogicException
 	{
-		
+
 	}
-	
-	
+
 	/**
 	 * This method is called from LoginAction (after successful User Login)
 	 * & here, privilegeCache object gets created for logged user 
@@ -764,7 +791,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		// which user has on these classes, objects, etc.
 		// All later Security checks are done through the cache & no call to the database is made
 		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(loginName);
-					
+
 	}
 
 	@Override
@@ -772,37 +799,40 @@ public class DefaultBizLogic extends AbstractBizLogic
 			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
 	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized(edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
 	 */
-	public boolean isAuthorized(AbstractDAO dao, Object domainObject, SessionDataBean sessionDataBean) throws UserNotAuthorizedException, DAOException
+	public boolean isAuthorized(AbstractDAO dao, Object domainObject,
+			SessionDataBean sessionDataBean) throws UserNotAuthorizedException, DAOException
 	{
 		boolean isAuthorized = false;
 		String protectionElementName = null;
 		// Customize check for DE, return true if sessionDataBean is NULL
-		if(sessionDataBean == null || (sessionDataBean != null && sessionDataBean.isAdmin()))
+		if (sessionDataBean == null || (sessionDataBean != null && sessionDataBean.isAdmin()))
 		{
 			isAuthorized = true;
-		} else {
-				
+		}
+		else
+		{
+
 			//	Get the base object id against which authorization will take place 
-			if(domainObject instanceof List)
+			if (domainObject instanceof List)
 			{
-			    List list = (List) domainObject;
-				for(Object domainObject2 : list)
+				List list = (List) domainObject;
+				for (Object domainObject2 : list)
 				{
 					protectionElementName = getObjectId(dao, domainObject2);
 				}
 			}
-			else	
+			else
 			{
 				protectionElementName = getObjectId(dao, domainObject);
 			}
 			//TODO To revisit this piece of code --> Vishvesh
-			if(Constants.allowOperation.equals(protectionElementName))
+			if (Constants.allowOperation.equals(protectionElementName))
 			{
 				isAuthorized = true;
 			}
@@ -811,15 +841,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String privilegeName = getPrivilegeName(domainObject);
 		PrivilegeCache privilegeCache = getPrivilegeCache(sessionDataBean);
 		//Checking whether the logged in user has the required privilege on the given protection element
-		
-		if(!isAuthorized)
+
+		if (!isAuthorized)
 		{
-			if(! protectionElementName.equalsIgnoreCase("ADMIN_PROTECTION_ELEMENT"))
+			if (!protectionElementName.equalsIgnoreCase("ADMIN_PROTECTION_ELEMENT"))
 			{
-				String [] prArray = protectionElementName.split("_");
+				String[] prArray = protectionElementName.split("_");
 				String baseObjectId = prArray[0];
 				String objId = "";
-				for (int i = 1 ; i < prArray.length;i++)
+				for (int i = 1; i < prArray.length; i++)
 				{
 					objId = baseObjectId + "_" + prArray[i];
 					isAuthorized = privilegeCache.hasPrivilege(objId, privilegeName);
@@ -831,28 +861,30 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			else
 			{
-				isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
+				isAuthorized = privilegeCache.hasPrivilege(protectionElementName, privilegeName);
 			}
-		}	
-	    if (!isAuthorized)
-	    {
-	            UserNotAuthorizedException ex = new UserNotAuthorizedException();
-	            ex.setPrivilegeName(privilegeName);
-	            if (protectionElementName != null && (protectionElementName.contains("Site") || protectionElementName.contains("CollectionProtocol")))
-	            {
-	                String [] arr = protectionElementName.split("_");
-	                String [] nameArr = arr[0].split("\\.");
-	                String baseObject = nameArr[nameArr.length-1];
-	                ex.setBaseObject(baseObject);
-	                ex.setBaseObjectIdentifier(arr[1]);
-	            }
-	            throw ex;
-	            //ex.setBaseObject()
-	    }
-		
-		return isAuthorized;		
+		}
+		if (!isAuthorized)
+		{
+			UserNotAuthorizedException ex = new UserNotAuthorizedException();
+			ex.setPrivilegeName(privilegeName);
+			if (protectionElementName != null
+					&& (protectionElementName.contains("Site") || protectionElementName
+							.contains("CollectionProtocol")))
+			{
+				String[] arr = protectionElementName.split("_");
+				String[] nameArr = arr[0].split("\\.");
+				String baseObject = nameArr[nameArr.length - 1];
+				ex.setBaseObject(baseObject);
+				ex.setBaseObjectIdentifier(arr[1]);
+			}
+			throw ex;
+			//ex.setBaseObject()
+		}
+
+		return isAuthorized;
 	}
-	
+
 	/**This method gets the instance of privilege cache which is used for authorization.
 	 * @param sessionDataBean
 	 * @return
@@ -860,7 +892,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	private PrivilegeCache getPrivilegeCache(SessionDataBean sessionDataBean)
 	{
 		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(sessionDataBean.getUserName());
+		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(sessionDataBean
+				.getUserName());
 		return privilegeCache;
 	}
 
@@ -870,42 +903,42 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return Privilege Name
 	 */
 	protected String getPrivilegeName(Object domainObject)
-    {
-    	String privilegeName = Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
-    	return privilegeName;
-    }
-	
+	{
+		String privilegeName = Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
+		return privilegeName;
+	}
+
 	/**
 	 * @param domainObject
 	 * @return
 	 */
 	protected String getPrivilegeKey(Object domainObject)
-    {
-    	return null;
-    }
-	
+	{
+		return null;
+	}
+
 	/**
 	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.AbstractDAO, java.lang.Object)
 	 */
-	public String getObjectId(AbstractDAO dao, Object domainObject) 
+	public String getObjectId(AbstractDAO dao, Object domainObject)
 	{
 		return Constants.allowOperation;
 	}
-	
+
 	/**
-     * Executes the HQL query.
-     * @param query HQL query to execute.
-     * @throws ClassNotFoundException Class not fount Exception
-     * @throws BizLogicException BizLogic exception
-     */
-    public List executeQuery(String query) throws ClassNotFoundException, DAOException
-    {
-    	List returner = null;
-    	Session session = null;
-    	try
+	 * Executes the HQL query.
+	 * @param query HQL query to execute.
+	 * @throws ClassNotFoundException Class not fount Exception
+	 * @throws BizLogicException BizLogic exception
+	 */
+	public List executeQuery(String query) throws ClassNotFoundException, DAOException
+	{
+		List returner = null;
+		Session session = null;
+		try
 		{
-        	session = DBUtil.getCleanSession();
-    		Query hibernateQuery = session.createQuery(query);
+			session = DBUtil.getCleanSession();
+			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
 		}
 		catch (HibernateException e)
@@ -914,52 +947,58 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (BizLogicException e)
 		{
-			throw new DAOException("Failed to create Session Object"+ e.getMessage());
-		} 
+			throw new DAOException("Failed to create Session Object" + e.getMessage());
+		}
 		finally
 		{
 			session.close();
 		}
 		return returner;
-    }
+	}
 
 	@Override
-	public boolean isReadDeniedTobeChecked() 
+	public boolean isReadDeniedTobeChecked()
 	{
 		return false;
 	}
-	
+
 	@Override
 	public String getReadDeniedPrivilegeName()
 	{
 		return null;
 	}
-	
-	public boolean hasPrivilegeToView(String objName, Long identifier, SessionDataBean sessionDataBean)
+
+	public boolean hasPrivilegeToView(String objName, Long identifier,
+			SessionDataBean sessionDataBean)
 	{
 		boolean hasprivilege = true;
-		if(sessionDataBean != null && sessionDataBean.isAdmin())
+		if (sessionDataBean != null && sessionDataBean.isAdmin())
 		{
 			hasprivilege = true;
-		} else {
+		}
+		else
+		{
 
 			List cpIdsList = new ArrayList();
 			Set<Long> cpIds = new HashSet<Long>();
 
 			cpIdsList = Utility.getCPIdsList(objName, identifier, sessionDataBean, cpIdsList);
 
-			if(cpIdsList == null)
+			if (cpIdsList == null)
 			{
 				hasprivilege = false;
-			} else	{
+			}
+			else
+			{
 
-				for(Object cpId : cpIdsList)
+				for (Object cpId : cpIdsList)
 				{
 					cpId = cpIdsList.get(0);
 					cpIds.add(Long.valueOf(cpId.toString()));
 				}
 
-				PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
+				PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(
+						sessionDataBean.getUserName());
 				StringBuffer sb = new StringBuffer();
 				sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
 				boolean isPresent = false;
@@ -968,28 +1007,32 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					String privilegeName = getReadDeniedPrivilegeName();
 
-					String [] privilegeNames = privilegeName.split(",");
-					if(privilegeNames.length > 1)
-					{	
-						if((privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[0])))
+					String[] privilegeNames = privilegeName.split(",");
+					if (privilegeNames.length > 1)
+					{
+						if ((privilegeCache.hasPrivilege(sb.toString() + cpId.toString(),
+								privilegeNames[0])))
 						{
-							isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[1]);
+							isPresent = privilegeCache.hasPrivilege(
+									sb.toString() + cpId.toString(), privilegeNames[1]);
 							isPresent = !isPresent;
 						}
 					}
 					else
 					{
-						isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeName);
+						isPresent = privilegeCache.hasPrivilege(sb.toString() + cpId.toString(),
+								privilegeName);
 					}
 
-					if (privilegeName != null && privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
+					if (privilegeName != null
+							&& privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
 					{
 						isPresent = !isPresent;
 					}
 					if (!isPresent)
 					{
 						hasprivilege = false;
-					} 
+					}
 				}
 			}
 		}

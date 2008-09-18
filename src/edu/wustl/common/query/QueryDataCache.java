@@ -28,24 +28,25 @@ import edu.wustl.common.util.global.Constants;
  */
 public class QueryDataCache
 {
+
 	/**
-     * Returns a map of all query data.
-     * @return a map of all query data.
-     */
+	 * Returns a map of all query data.
+	 * @return a map of all query data.
+	 */
 	public static Map getQueryData() throws DAOException
 	{
-		HibernateDAO dao = (HibernateDAO)DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
-		
+		HibernateDAO dao = (HibernateDAO) DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+
 		dao.openSession(null);
 		List list = dao.retrieve(QueryTableData.class.getName());
 		dao.closeSession();
-		
+
 		HashMap tableMap = new HashMap();
-		
-		for(int i=0;i<list.size();i++)
+
+		for (int i = 0; i < list.size(); i++)
 		{
-			QueryTableData tableData = (QueryTableData)list.get(i);
-			tableMap.put(tableData.getAliasName(),tableData);
+			QueryTableData tableData = (QueryTableData) list.get(i);
+			tableMap.put(tableData.getAliasName(), tableData);
 		}
 		return tableMap;
 	}

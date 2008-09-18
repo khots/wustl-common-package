@@ -5,9 +5,9 @@
  *<p>Company: Washington University, School of Medicine, St. Louis.</p>
  *@author Aarti Sharma
  *@version 1.0
- */ 
-package edu.wustl.common.exception;
+ */
 
+package edu.wustl.common.exception;
 
 /**
  *<p>Title: </p>
@@ -21,5 +21,4 @@ package edu.wustl.common.exception;
 public class UserNotAuthenticatedException extends Exception
 {
 
-    
 }

@@ -5,12 +5,10 @@
 // Generated on: 2005.08.23 at 10:44:28 GMT+05:30 
 //
 
-
 package edu.wustl.common.cde.xml;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
-
 
 /**
  * This object contains factory methods for each 
@@ -26,131 +24,137 @@ import javax.xml.bind.PropertyException;
  * provided in this class.
  * 
  */
-public class ObjectFactory
-    extends edu.wustl.common.cde.xml.impl.runtime.DefaultJAXBContextImpl
+public class ObjectFactory extends edu.wustl.common.cde.xml.impl.runtime.DefaultJAXBContextImpl
 {
 
-    private static java.util.HashMap defaultImplementations = new java.util.HashMap(16, 0.75F);
-    private static java.util.HashMap rootTagMap = new java.util.HashMap();
-    public final static edu.wustl.common.cde.xml.impl.runtime.GrammarInfo grammarInfo = new edu.wustl.common.cde.xml.impl.runtime.GrammarInfoImpl(rootTagMap, defaultImplementations, (edu.wustl.common.cde.xml.ObjectFactory.class));
-    public final static java.lang.Class version = (edu.wustl.common.cde.xml.impl.JAXBVersion.class);
+	private static java.util.HashMap defaultImplementations = new java.util.HashMap(16, 0.75F);
+	private static java.util.HashMap rootTagMap = new java.util.HashMap();
+	public final static edu.wustl.common.cde.xml.impl.runtime.GrammarInfo grammarInfo = new edu.wustl.common.cde.xml.impl.runtime.GrammarInfoImpl(
+			rootTagMap, defaultImplementations, (edu.wustl.common.cde.xml.ObjectFactory.class));
+	public final static java.lang.Class version = (edu.wustl.common.cde.xml.impl.JAXBVersion.class);
 
-    static {
-        defaultImplementations.put((edu.wustl.common.cde.xml.XMLPermissibleValueType.class), "edu.wustl.common.cde.xml.impl.XMLPermissibleValueTypeImpl");
-        defaultImplementations.put((edu.wustl.common.cde.xml.XMLCDECacheType.class), "edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl");
-        defaultImplementations.put((edu.wustl.common.cde.xml.XMLCDE.class), "edu.wustl.common.cde.xml.impl.XMLCDEImpl");
-        defaultImplementations.put((edu.wustl.common.cde.xml.XMLCDECACHE.class), "edu.wustl.common.cde.xml.impl.XMLCDECACHEImpl");
-        rootTagMap.put(new javax.xml.namespace.QName("", "XMLCDE_CACHE"), (edu.wustl.common.cde.xml.XMLCDECACHE.class));
-    }
+	static
+	{
+		defaultImplementations.put((edu.wustl.common.cde.xml.XMLPermissibleValueType.class),
+				"edu.wustl.common.cde.xml.impl.XMLPermissibleValueTypeImpl");
+		defaultImplementations.put((edu.wustl.common.cde.xml.XMLCDECacheType.class),
+				"edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl");
+		defaultImplementations.put((edu.wustl.common.cde.xml.XMLCDE.class),
+				"edu.wustl.common.cde.xml.impl.XMLCDEImpl");
+		defaultImplementations.put((edu.wustl.common.cde.xml.XMLCDECACHE.class),
+				"edu.wustl.common.cde.xml.impl.XMLCDECACHEImpl");
+		rootTagMap.put(new javax.xml.namespace.QName("", "XMLCDE_CACHE"),
+				(edu.wustl.common.cde.xml.XMLCDECACHE.class));
+	}
 
-    /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: edu.wustl.common.cde.xml
-     * 
-     */
-    public ObjectFactory() {
-        super(grammarInfo);
-    }
+	/**
+	 * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: edu.wustl.common.cde.xml
+	 * 
+	 */
+	public ObjectFactory()
+	{
+		super(grammarInfo);
+	}
 
-    /**
-     * Create an instance of the specified Java content interface.
-     * 
-     * @param javaContentInterface
-     *     the Class object of the javacontent interface to instantiate
-     * @return
-     *     a new instance
-     * @throws JAXBException
-     *     if an error occurs
-     */
-    public java.lang.Object newInstance(java.lang.Class javaContentInterface)
-        throws javax.xml.bind.JAXBException
-    {
-        return super.newInstance(javaContentInterface);
-    }
+	/**
+	 * Create an instance of the specified Java content interface.
+	 * 
+	 * @param javaContentInterface
+	 *     the Class object of the javacontent interface to instantiate
+	 * @return
+	 *     a new instance
+	 * @throws JAXBException
+	 *     if an error occurs
+	 */
+	public java.lang.Object newInstance(java.lang.Class javaContentInterface)
+			throws javax.xml.bind.JAXBException
+	{
+		return super.newInstance(javaContentInterface);
+	}
 
-    /**
-     * Get the specified property. This method can only be
-     * used to get provider specific properties.
-     * Attempting to get an undefined property will result
-     * in a PropertyException being thrown.
-     * 
-     * @param name
-     *     the name of the property to retrieve
-     * @return
-     *     the value of the requested property
-     * @throws PropertyException
-     *     when there is an error retrieving the given property or value
-     */
-    public java.lang.Object getProperty(java.lang.String name)
-        throws javax.xml.bind.PropertyException
-    {
-        return super.getProperty(name);
-    }
+	/**
+	 * Get the specified property. This method can only be
+	 * used to get provider specific properties.
+	 * Attempting to get an undefined property will result
+	 * in a PropertyException being thrown.
+	 * 
+	 * @param name
+	 *     the name of the property to retrieve
+	 * @return
+	 *     the value of the requested property
+	 * @throws PropertyException
+	 *     when there is an error retrieving the given property or value
+	 */
+	public java.lang.Object getProperty(java.lang.String name)
+			throws javax.xml.bind.PropertyException
+	{
+		return super.getProperty(name);
+	}
 
-    /**
-     * Set the specified property. This method can only be
-     * used to set provider specific properties.
-     * Attempting to set an undefined property will result
-     * in a PropertyException being thrown.
-     * 
-     * @param value
-     *     the value of the property to be set
-     * @param name
-     *     the name of the property to retrieve
-     * @throws PropertyException
-     *     when there is an error processing the given property or value
-     */
-    public void setProperty(java.lang.String name, java.lang.Object value)
-        throws javax.xml.bind.PropertyException
-    {
-        super.setProperty(name, value);
-    }
+	/**
+	 * Set the specified property. This method can only be
+	 * used to set provider specific properties.
+	 * Attempting to set an undefined property will result
+	 * in a PropertyException being thrown.
+	 * 
+	 * @param value
+	 *     the value of the property to be set
+	 * @param name
+	 *     the name of the property to retrieve
+	 * @throws PropertyException
+	 *     when there is an error processing the given property or value
+	 */
+	public void setProperty(java.lang.String name, java.lang.Object value)
+			throws javax.xml.bind.PropertyException
+	{
+		super.setProperty(name, value);
+	}
 
-    /**
-     * Create an instance of XMLPermissibleValueType
-     * 
-     * @throws JAXBException
-     *     if an error occurs
-     */
-    public edu.wustl.common.cde.xml.XMLPermissibleValueType createXMLPermissibleValueType()
-        throws javax.xml.bind.JAXBException
-    {
-        return new edu.wustl.common.cde.xml.impl.XMLPermissibleValueTypeImpl();
-    }
+	/**
+	 * Create an instance of XMLPermissibleValueType
+	 * 
+	 * @throws JAXBException
+	 *     if an error occurs
+	 */
+	public edu.wustl.common.cde.xml.XMLPermissibleValueType createXMLPermissibleValueType()
+			throws javax.xml.bind.JAXBException
+	{
+		return new edu.wustl.common.cde.xml.impl.XMLPermissibleValueTypeImpl();
+	}
 
-    /**
-     * Create an instance of XMLCDECacheType
-     * 
-     * @throws JAXBException
-     *     if an error occurs
-     */
-    public edu.wustl.common.cde.xml.XMLCDECacheType createXMLCDECacheType()
-        throws javax.xml.bind.JAXBException
-    {
-        return new edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl();
-    }
+	/**
+	 * Create an instance of XMLCDECacheType
+	 * 
+	 * @throws JAXBException
+	 *     if an error occurs
+	 */
+	public edu.wustl.common.cde.xml.XMLCDECacheType createXMLCDECacheType()
+			throws javax.xml.bind.JAXBException
+	{
+		return new edu.wustl.common.cde.xml.impl.XMLCDECacheTypeImpl();
+	}
 
-    /**
-     * Create an instance of XMLCDE
-     * 
-     * @throws JAXBException
-     *     if an error occurs
-     */
-    public edu.wustl.common.cde.xml.XMLCDE createXMLCDE()
-        throws javax.xml.bind.JAXBException
-    {
-        return new edu.wustl.common.cde.xml.impl.XMLCDEImpl();
-    }
+	/**
+	 * Create an instance of XMLCDE
+	 * 
+	 * @throws JAXBException
+	 *     if an error occurs
+	 */
+	public edu.wustl.common.cde.xml.XMLCDE createXMLCDE() throws javax.xml.bind.JAXBException
+	{
+		return new edu.wustl.common.cde.xml.impl.XMLCDEImpl();
+	}
 
-    /**
-     * Create an instance of XMLCDECACHE
-     * 
-     * @throws JAXBException
-     *     if an error occurs
-     */
-    public edu.wustl.common.cde.xml.XMLCDECACHE createXMLCDECACHE()
-        throws javax.xml.bind.JAXBException
-    {
-        return new edu.wustl.common.cde.xml.impl.XMLCDECACHEImpl();
-    }
+	/**
+	 * Create an instance of XMLCDECACHE
+	 * 
+	 * @throws JAXBException
+	 *     if an error occurs
+	 */
+	public edu.wustl.common.cde.xml.XMLCDECACHE createXMLCDECACHE()
+			throws javax.xml.bind.JAXBException
+	{
+		return new edu.wustl.common.cde.xml.impl.XMLCDECACHEImpl();
+	}
 
 }

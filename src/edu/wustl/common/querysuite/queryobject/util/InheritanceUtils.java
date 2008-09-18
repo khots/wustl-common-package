@@ -69,10 +69,11 @@ public class InheritanceUtils implements InheritanceUtilsInterface
 	public AttributeInterface getActualAttribute(AttributeInterface attribute)
 	{
 		EntityInterface parentEntity = attribute.getEntity().getParentEntity();
-		while (parentEntity!=null)
+		while (parentEntity != null)
 		{
-			Collection<AttributeInterface> attributeCollection = parentEntity.getAttributeCollection();
-			for (AttributeInterface att:attributeCollection)
+			Collection<AttributeInterface> attributeCollection = parentEntity
+					.getAttributeCollection();
+			for (AttributeInterface att : attributeCollection)
 			{
 				if (att.getName().equals(attribute.getName()))
 				{
@@ -83,7 +84,7 @@ public class InheritanceUtils implements InheritanceUtilsInterface
 			parentEntity = parentEntity.getParentEntity();
 		}
 		return attribute;
-//		return InheritanceUtil.getActualAttribute(attribute);
+		//		return InheritanceUtil.getActualAttribute(attribute);
 	}
 
 	/**

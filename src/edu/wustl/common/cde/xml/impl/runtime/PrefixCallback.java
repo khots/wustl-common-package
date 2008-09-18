@@ -9,5 +9,6 @@ package edu.wustl.common.cde.xml.impl.runtime;
 
 public interface PrefixCallback
 {
-    void onPrefixMapping( String prefix, String uri ) throws org.xml.sax.SAXException;
+
+	void onPrefixMapping(String prefix, String uri) throws org.xml.sax.SAXException;
 }

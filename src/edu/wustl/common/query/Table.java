@@ -4,6 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 package edu.wustl.common.query;
 
 import java.io.Serializable;
@@ -15,7 +16,9 @@ import java.sql.SQLException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class Table  implements Serializable{
+public class Table implements Serializable
+{
+
 	private String tableName;
 	private String tableAliasAppend;
 	private Table linkingTable;
@@ -24,120 +27,138 @@ public class Table  implements Serializable{
 	 * @param tableName
 	 * @param tableAliasAppend
 	 */
-	public Table(String tableName, String tableAliasAppend) {
+	public Table(String tableName, String tableAliasAppend)
+	{
 		super();
 		this.tableName = tableName;
 		this.tableAliasAppend = tableAliasAppend;
 	}
-	
-	public Table(String tableName, String tableAliasAppend, Table linkingTable) {
+
+	public Table(String tableName, String tableAliasAppend, Table linkingTable)
+	{
 		super();
 		this.tableName = tableName;
 		this.tableAliasAppend = tableAliasAppend;
 		this.linkingTable = linkingTable;
 	}
-	
+
 	/**
 	 * 
 	 */
-	public Table() {
-		
+	public Table()
+	{
+
 	}
 
 	/**
 	 * @param tablename2
 	 */
-	public Table(String tablename2) {
-		this.tableName=tablename2;
+	public Table(String tablename2)
+	{
+		this.tableName = tablename2;
 	}
-	
+
 	/**
 	 * @param table
 	 */
-	public Table(Table table) {
-		if(table != null)
+	public Table(Table table)
+	{
+		if (table != null)
 		{
 			this.tableName = table.tableName;
 			this.tableAliasAppend = table.tableAliasAppend;
-			if(linkingTable !=null)
+			if (linkingTable != null)
 				this.linkingTable = new Table(linkingTable);
 		}
 	}
-	
+
 	/**
 	 * @return Returns the tableAliasAppend.
 	 */
-	public String getTableAliasAppend() {
+	public String getTableAliasAppend()
+	{
 		return tableAliasAppend;
 	}
+
 	/**
 	 * @param tableAliasAppend The tableAliasAppend to set.
 	 */
-	public void setTableAliasAppend(String tableAliasAppend) {
+	public void setTableAliasAppend(String tableAliasAppend)
+	{
 		this.tableAliasAppend = tableAliasAppend;
 	}
+
 	/**
 	 * @return Returns the tableName.
 	 */
-	public String getTableName() {
+	public String getTableName()
+	{
 		return tableName;
 	}
+
 	/**
 	 * @param tableName The tableName to set.
 	 */
-	public void setTableName(String tableName) {
+	public void setTableName(String tableName)
+	{
 		this.tableName = tableName;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals(Object obj) {
-		if (obj instanceof Table) {
-			Table table = (Table)obj;
-            if(!tableName.equals(table.tableName))
-                return false;
-            if(tableAliasAppend == null && table.tableAliasAppend == null)
-            {	
-            	return true;
-            }
-            if((tableAliasAppend == null && table.tableName.equals(table.tableAliasAppend)) 
-            		|| (table.tableAliasAppend == null && tableName.equals(tableAliasAppend)))
-					{
-            			return true;
-					}
-            if((tableAliasAppend == null && !table.tableName.equals(table.tableAliasAppend)) 
-            		|| (table.tableAliasAppend == null && !tableName.equals(tableAliasAppend)))
-					{
-            			return false;
-					}
-            if(!tableAliasAppend.equals(table.tableAliasAppend))
-        		return false;
-            return true;
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof Table)
+		{
+			Table table = (Table) obj;
+			if (!tableName.equals(table.tableName))
+				return false;
+			if (tableAliasAppend == null && table.tableAliasAppend == null)
+			{
+				return true;
+			}
+			if ((tableAliasAppend == null && table.tableName.equals(table.tableAliasAppend))
+					|| (table.tableAliasAppend == null && tableName.equals(tableAliasAppend)))
+			{
+				return true;
+			}
+			if ((tableAliasAppend == null && !table.tableName.equals(table.tableAliasAppend))
+					|| (table.tableAliasAppend == null && !tableName.equals(tableAliasAppend)))
+			{
+				return false;
+			}
+			if (!tableAliasAppend.equals(table.tableAliasAppend))
+				return false;
+			return true;
 		}
-       else
-           return false;
+		else
+			return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
-	public int hashCode() {
+	public int hashCode()
+	{
 		return 1;
 	}
+
 	/**
 	 * @return
 	 * @throws SQLException
 	 */
-	public String toSQLString() throws SQLException {
-		if(tableName == null)
+	public String toSQLString() throws SQLException
+	{
+		if (tableName == null)
 		{
 			throw new SQLException("table name is null");
-		}	
-		else if(Client.objectTableNames.get(tableName) == null)
-		{
-			throw new SQLException("Unknown table name:"+tableName);
 		}
-		else if(tableAliasAppend != null )
+		else if (Client.objectTableNames.get(tableName) == null)
+		{
+			throw new SQLException("Unknown table name:" + tableName);
+		}
+		else if (tableAliasAppend != null)
 		{
 			return tableAliasAppend;
 		}
@@ -145,37 +166,43 @@ public class Table  implements Serializable{
 		{
 			return tableName;
 		}
-			
-	}
-	
-	/**
-	 * @return
-	 */
-	public String toString() {
-			return tableName+" "+tableAliasAppend;
+
 	}
 
 	/**
 	 * @return
 	 */
-	public boolean hasDifferentAlias() {
-		if(tableAliasAppend == null)
+	public String toString()
+	{
+		return tableName + " " + tableAliasAppend;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean hasDifferentAlias()
+	{
+		if (tableAliasAppend == null)
 			return false;
-		if(tableAliasAppend.equals(tableName))
+		if (tableAliasAppend.equals(tableName))
 			return false;
 		else
 			return true;
 	}
+
 	/**
 	 * @return Returns the linkingTable.
 	 */
-	public Table getLinkingTable() {
+	public Table getLinkingTable()
+	{
 		return linkingTable;
 	}
+
 	/**
 	 * @param linkingTable The linkingTable to set.
 	 */
-	public void setLinkingTable(Table linkingTable) {
+	public void setLinkingTable(Table linkingTable)
+	{
 		this.linkingTable = linkingTable;
 	}
 }

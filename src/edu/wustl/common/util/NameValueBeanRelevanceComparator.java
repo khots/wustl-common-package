@@ -27,7 +27,8 @@ public class NameValueBeanRelevanceComparator implements java.util.Comparator
 				{
 					if (nvb1.getName() != null && nvb2.getName() != null)
 					{
-						return nvb1.getName().toString().toLowerCase().compareTo(nvb2.getName().toString().toLowerCase());
+						return nvb1.getName().toString().toLowerCase().compareTo(
+								nvb2.getName().toString().toLowerCase());
 					}
 				}
 				else

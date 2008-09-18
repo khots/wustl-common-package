@@ -1,5 +1,5 @@
-package edu.wustl.common.action;
 
+package edu.wustl.common.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,10 +24,11 @@ import edu.wustl.common.util.logger.Logger;
  *@author Aarti Sharma
  *@version 1.0
  */
-public class LogoutAction  extends BaseAction
+public class LogoutAction extends BaseAction
 {
 
-	private org.apache.log4j.Logger logger= Logger.getLogger(LoginAction.class);
+	private org.apache.log4j.Logger logger = Logger.getLogger(LoginAction.class);
+
 	/**
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
@@ -42,13 +43,13 @@ public class LogoutAction  extends BaseAction
 		logger.info("in execute method");
 		HttpSession session = request.getSession();
 		//Delete Advance Query table if exists
-	 	SessionDataBean sessionData = getSessionData(request);
-	 	//Advance Query table name with userID attached
-		String tempTableName = Constants.QUERY_RESULTS_TABLE+"_"+sessionData.getUserId();
- 		JDBCDAO jdbcDao = (JDBCDAO)DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-        jdbcDao.openSession(sessionData);
-       	jdbcDao.delete(tempTableName);
-        jdbcDao.closeSession();
+		SessionDataBean sessionData = getSessionData(request);
+		//Advance Query table name with userID attached
+		String tempTableName = Constants.QUERY_RESULTS_TABLE + "_" + sessionData.getUserId();
+		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		jdbcDao.openSession(sessionData);
+		jdbcDao.delete(tempTableName);
+		jdbcDao.closeSession();
 		session.invalidate();
 		return (mapping.findForward(Constants.SUCCESS));
 	}

@@ -66,10 +66,10 @@ public class QueryBizLogic extends DefaultBizLogic
 			+ "FIRST_TABLE_JOIN_COLUMN, SECOND_TABLE_JOIN_COLUMN "
 			+ "from CATISSUE_RELATED_TABLES_MAP";
 
-// Commenting this variable as its not used anywhere	
-//	private static final String GET_COLUMN_DATA = "select ALIAS_NAME,COLUMN_NAME from CATISSUE_INTERFACE_COLUMN_DATA columnData, "
-//			+ "CATISSUE_QUERY_TABLE_DATA tableData where columnData.TABLE_ID = tableData.TABLE_ID  "
-//			+ "and columnData.IDENTIFIER=";
+	// Commenting this variable as its not used anywhere	
+	//	private static final String GET_COLUMN_DATA = "select ALIAS_NAME,COLUMN_NAME from CATISSUE_INTERFACE_COLUMN_DATA columnData, "
+	//			+ "CATISSUE_QUERY_TABLE_DATA tableData where columnData.TABLE_ID = tableData.TABLE_ID  "
+	//			+ "and columnData.IDENTIFIER=";
 
 	private static final String GET_TABLE_ALIAS = "select ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA "
 			+ "where TABLE_ID=";
@@ -148,7 +148,7 @@ public class QueryBizLogic extends DefaultBizLogic
 			{
 				List row = (List) iterator.next();
 				pivilegeTypeMap.put(row.get(0), row.get(1));
-				
+
 			}
 
 		}
@@ -363,12 +363,12 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
-    
-    /**
-     * Bug#3549
-     * Patch 1_1
-     * Description: modified query to order the result  by ATTRIBUTE_ORDER column.
-     */
+
+	/**
+	 * Bug#3549
+	 * Patch 1_1
+	 * Description: modified query to order the result  by ATTRIBUTE_ORDER column.
+	 */
 	public List getColumnNames(String value) throws DAOException, ClassNotFoundException
 	{
 		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.ATTRIBUTE_TYPE, temp.TABLES_IN_PATH, temp.DISPLAY_NAME,temp.ATTRIBUTE_ORDER "
@@ -384,7 +384,9 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " relationData.RELATIONSHIP_ID = displayData.RELATIONSHIP_ID and "
 				+ " columnData.IDENTIFIER = displayData.COL_ID and "
 				+ " tableData.ALIAS_NAME = '"
-				+ value + "') temp " + " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
+				+ value
+				+ "') temp "
+				+ " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
 		Logger.out.debug("SQL*****************************" + sql);
 
@@ -401,8 +403,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		{
 			List rowList = (List) iterator.next();
 			String columnValue = (String) rowList.get(j++) + "." + (String) rowList.get(j++) + "."
-					+ (String) rowList.get(j++);   
-            
+					+ (String) rowList.get(j++);
+
 			String tablesInPath = (String) rowList.get(j++);
 			if ((tablesInPath != null) && ("".equals(tablesInPath) == false))
 			{
@@ -522,7 +524,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		String aliasName = (String) rowList.get(0), displayName = (String) rowList.get(1);
 		Iterator iterator = checkList.iterator();
 		boolean isTableExists = false;
-		
+
 		while (iterator.hasNext())
 		{
 			List row = (List) iterator.next();
@@ -853,7 +855,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
-		String atrributeType ="";
+		String atrributeType = "";
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext())
 		{
@@ -979,13 +981,13 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @param defaultViewAttributesOnly true if user wants only Default view attributes, else query created will return all column names for given aliasName.
 	 * @return The sql query.
 	 */
-     
-    /**
-     * Bug#3549
-     * Patch 1_2
-     * Description:modified query to order the result  by ATTRIBUTE_ORDER column.
-     */
-    
+
+	/**
+	 * Bug#3549
+	 * Patch 1_2
+	 * Description:modified query to order the result  by ATTRIBUTE_ORDER column.
+	 */
+
 	private String getQueryFor(String aliasName, boolean defaultViewAttributesOnly)
 	{
 		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME,  temp.DISPLAY_NAME, temp.TABLES_IN_PATH  "
@@ -1022,76 +1024,67 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
-	public String getSpecimenTypeCount(String specimanType, JDBCDAO jdbcDAO)
-			throws DAOException, ClassNotFoundException 
+	public String getSpecimenTypeCount(String specimanType, JDBCDAO jdbcDAO) throws DAOException,
+			ClassNotFoundException
 	{
 		String prevValueDisplayName = "0";
 		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join catissue_abstract_specimen absspec "
 				+ " on specimen.identifier=absspec.identifier where absspec.SPECIMEN_CLASS = '"
-				+ specimanType
-				+ "' and specimen.COLLECTION_STATUS = 'Collected'";
-		try 
+				+ specimanType + "' and specimen.COLLECTION_STATUS = 'Collected'";
+		try
 		{
 			List list = jdbcDAO.executeQuery(sql, null, false, null);
 
-			if (!list.isEmpty()) 
+			if (!list.isEmpty())
 			{
 				List rowList = (List) list.get(0);
 				prevValueDisplayName = (String) rowList.get(0);
-			}			
+			}
 		}
-		catch (DAOException e) 
+		catch (DAOException e)
 		{
 			e.printStackTrace();
 		}
 		return prevValueDisplayName;
 	}
-	
+
 	/**
 	 * Returns Map which has all the details of Summary Page
 	 * @return Map<String, Object>
 	 * @throws DAOException
 	 * @throws ClasssNotFoundException 
 	 */
-	
+
 	public Map<String, Object> getTotalSummaryDetails() throws DAOException
-	{		
+	{
 		JDBCDAO jdbcDAO = null;
 		Map<String, Object> summaryDataMap = null;
 		try
 		{
 			// Database connection established
-			jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(
-					Constants.JDBC_DAO);
+			jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			jdbcDAO.openSession(null);
 
 			summaryDataMap = new HashMap<String, Object>();
-			summaryDataMap.put("TotalSpecimenCount",
-					getTotalSpecimenCount(jdbcDAO));
-			summaryDataMap.put("TissueCount", getSpecimenTypeCount(
-					Constants.TISSUE, jdbcDAO));
-			summaryDataMap.put("CellCount", getSpecimenTypeCount(
-					Constants.CELL, jdbcDAO));
-			summaryDataMap.put("MoleculeCount", getSpecimenTypeCount(
+			summaryDataMap.put("TotalSpecimenCount", getTotalSpecimenCount(jdbcDAO));
+			summaryDataMap.put("TissueCount", getSpecimenTypeCount(Constants.TISSUE, jdbcDAO));
+			summaryDataMap.put("CellCount", getSpecimenTypeCount(Constants.CELL, jdbcDAO));
+			summaryDataMap.put("MoleculeCount", getSpecimenTypeCount(Constants.MOLECULE, jdbcDAO));
+			summaryDataMap.put("FluidCount", getSpecimenTypeCount(Constants.FLUID, jdbcDAO));
+			summaryDataMap.put("TissueTypeDetails", getSpecimenTypeDetailsCount(Constants.TISSUE,
+					jdbcDAO));
+			summaryDataMap.put("CellTypeDetails", getSpecimenTypeDetailsCount(Constants.CELL,
+					jdbcDAO));
+			summaryDataMap.put("MoleculeTypeDetails", getSpecimenTypeDetailsCount(
 					Constants.MOLECULE, jdbcDAO));
-			summaryDataMap.put("FluidCount", getSpecimenTypeCount(
-					Constants.FLUID, jdbcDAO));
-			summaryDataMap.put("TissueTypeDetails",
-					getSpecimenTypeDetailsCount(Constants.TISSUE, jdbcDAO));
-			summaryDataMap.put("CellTypeDetails", getSpecimenTypeDetailsCount(
-					Constants.CELL, jdbcDAO));
-			summaryDataMap.put("MoleculeTypeDetails",
-					getSpecimenTypeDetailsCount(Constants.MOLECULE, jdbcDAO));
-			summaryDataMap.put("FluidTypeDetails", getSpecimenTypeDetailsCount(
-					Constants.FLUID, jdbcDAO));
-			summaryDataMap.put("TissueQuantity", getSpecimenTypeQuantity(
-					Constants.TISSUE, jdbcDAO));
-			summaryDataMap.put("CellQuantity", getSpecimenTypeQuantity(
-					Constants.CELL, jdbcDAO));
-			summaryDataMap.put("MoleculeQuantity", getSpecimenTypeQuantity(
-					Constants.MOLECULE, jdbcDAO));
-			summaryDataMap.put("FluidQuantity", getSpecimenTypeQuantity(
-					Constants.FLUID, jdbcDAO));
+			summaryDataMap.put("FluidTypeDetails", getSpecimenTypeDetailsCount(Constants.FLUID,
+					jdbcDAO));
+			summaryDataMap
+					.put("TissueQuantity", getSpecimenTypeQuantity(Constants.TISSUE, jdbcDAO));
+			summaryDataMap.put("CellQuantity", getSpecimenTypeQuantity(Constants.CELL, jdbcDAO));
+			summaryDataMap.put("MoleculeQuantity", getSpecimenTypeQuantity(Constants.MOLECULE,
+					jdbcDAO));
+			summaryDataMap.put("FluidQuantity", getSpecimenTypeQuantity(Constants.FLUID, jdbcDAO));
 		}
 		catch (ClassNotFoundException e)
 		{
@@ -1104,10 +1097,9 @@ public class QueryBizLogic extends DefaultBizLogic
 		finally
 		{
 			jdbcDAO.closeSession();
-		}		
+		}
 		return summaryDataMap;
 	}
-	
 
 	/**
 	 * Returns the count of speciman of the type passed.
@@ -1116,27 +1108,27 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
-	private String getSpecimenTypeQuantity(String specimanType, JDBCDAO jdbcDAO) throws DAOException,
-			ClassNotFoundException
+	private String getSpecimenTypeQuantity(String specimanType, JDBCDAO jdbcDAO)
+			throws DAOException, ClassNotFoundException
 	{
 		String prevValueDisplayName = "0";
 		String sql = "select sum(AVAILABLE_QUANTITY) from CATISSUE_SPECIMEN specimen join"
 				+ " catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier"
 				+ " where absspec.SPECIMEN_CLASS='" + specimanType + "'";
-		try 
+		try
 		{
 			List list = jdbcDAO.executeQuery(sql, null, false, null);
 
-			if (!list.isEmpty()) 
+			if (!list.isEmpty())
 			{
 				List rowList = (List) list.get(0);
 				prevValueDisplayName = (String) rowList.get(0);
-			}			
+			}
 		}
-		catch (DAOException e) 
+		catch (DAOException e)
 		{
 			e.printStackTrace();
-		}		
+		}
 		return prevValueDisplayName;
 	}
 
@@ -1147,18 +1139,18 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException, DAOException
 	 */
-	private List getSpecimenTypeDetailsCount(String specimenType, JDBCDAO jdbcDAO) throws DAOException,
-				ClassNotFoundException
+	private List getSpecimenTypeDetailsCount(String specimenType, JDBCDAO jdbcDAO)
+			throws DAOException, ClassNotFoundException
 	{
-		String sql = "select absspec.SPECIMEN_TYPE,COUNT(*) from CATISSUE_SPECIMEN specimen "+
-				"join catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier "+
-				"and specimen.COLLECTION_STATUS='Collected' " +
-				" and absspec.SPECIMEN_CLASS = '"+ specimenType + "'group by absspec.SPECIMEN_TYPE " +
-						" order by absspec.SPECIMEN_TYPE";
+		String sql = "select absspec.SPECIMEN_TYPE,COUNT(*) from CATISSUE_SPECIMEN specimen "
+				+ "join catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier "
+				+ "and specimen.COLLECTION_STATUS='Collected' " + " and absspec.SPECIMEN_CLASS = '"
+				+ specimenType + "'group by absspec.SPECIMEN_TYPE "
+				+ " order by absspec.SPECIMEN_TYPE";
 		List nameValuePairs = null;
-		try 
+		try
 		{
-			List list = jdbcDAO.executeQuery(sql, null, false, null);			
+			List list = jdbcDAO.executeQuery(sql, null, false, null);
 			nameValuePairs = new ArrayList();
 			if (!list.isEmpty())
 			{
@@ -1172,15 +1164,15 @@ public class QueryBizLogic extends DefaultBizLogic
 					Logger.out.debug(i + " : " + nameValueBean.toString());
 					nameValuePairs.add(nameValueBean);
 				}
-			}			
+			}
 		}
-		catch (DAOException e) 
+		catch (DAOException e)
 		{
 			e.printStackTrace();
-		}			
+		}
 		return nameValuePairs;
 	}
-	
+
 	/***
 	 * Returns the Total Specimen Count of caTissue
 	 * @param jdbcDAO
@@ -1188,35 +1180,35 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
-	private String getTotalSpecimenCount(JDBCDAO jdbcDAO) throws DAOException, ClassNotFoundException
+	private String getTotalSpecimenCount(JDBCDAO jdbcDAO) throws DAOException,
+			ClassNotFoundException
 	{
-		String prevValueDisplayName = "0";		
-		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join " +
-				"catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier " +
-				"where specimen.COLLECTION_STATUS='Collected'";		
-		try 
+		String prevValueDisplayName = "0";
+		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join "
+				+ "catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier "
+				+ "where specimen.COLLECTION_STATUS='Collected'";
+		try
 		{
 			List list = jdbcDAO.executeQuery(sql, null, false, null);
 			if (!list.isEmpty())
 			{
 				List rowList = (List) list.get(0);
 				prevValueDisplayName = (String) rowList.get(0);
-			}			
+			}
 		}
 		catch (DAOException e)
 		{
 			e.printStackTrace();
-		}		
+		}
 		return prevValueDisplayName;
 	}
-	
-	
-	public void insertQueryForMySQL(String sqlQuery,SessionDataBean sessionData,JDBCDAO jdbcDAO)throws DAOException,
-	ClassNotFoundException
+
+	public void insertQueryForMySQL(String sqlQuery, SessionDataBean sessionData, JDBCDAO jdbcDAO)
+			throws DAOException, ClassNotFoundException
 	{
 		String sqlQuery1 = sqlQuery.replaceAll("'", "''");
 		long no = 1;
-		
+
 		SimpleDateFormat fSDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String timeStamp = fSDateFormat.format(new Date());
 
@@ -1229,8 +1221,8 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ ipAddr + "','" + timeStamp + "','" + userId + "','" + comments + "')";
 		jdbcDAO.executeUpdate(sqlForAudiEvent);
 
-		String sql = "select max(identifier) from catissue_audit_event where USER_ID='"
-				+ userId + "'";
+		String sql = "select max(identifier) from catissue_audit_event where USER_ID='" + userId
+				+ "'";
 
 		List list = jdbcDAO.executeQuery(sql, null, false, null);
 
@@ -1252,12 +1244,11 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sqlForQueryLog = "insert into catissue_audit_event_query_log(QUERY_DETAILS,AUDIT_EVENT_ID) values ('"
 				+ sqlQuery1 + "','" + no + "')";
 		jdbcDAO.executeUpdate(sqlForQueryLog);
-	
-		
+
 	}
-	
-	public void insertQueryForOracle(String sqlQuery,SessionDataBean sessionData,JDBCDAO jdbcDAO)throws DAOException,
-	ClassNotFoundException, SQLException, IOException
+
+	public void insertQueryForOracle(String sqlQuery, SessionDataBean sessionData, JDBCDAO jdbcDAO)
+			throws DAOException, ClassNotFoundException, SQLException, IOException
 	{
 		String sqlQuery1 = sqlQuery.replaceAll("'", "''");
 		long no = 1;
@@ -1293,7 +1284,8 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ ipAddr
 				+ "',to_date('"
 				+ timeStamp
-				+ "','yyyy-mm-dd HH24:MI:SS'),'" + userId + "','" + comments + "')";
+				+ "','yyyy-mm-dd HH24:MI:SS'),'"
+				+ userId + "','" + comments + "')";
 		Logger.out.info("sqlForAuditLog:" + sqlForAudiEvent);
 		jdbcDAO.executeUpdate(sqlForAudiEvent);
 
@@ -1319,25 +1311,26 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
 				+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
 		jdbcDAO.executeUpdate(sqlForQueryLog);
-		String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="+queryNo+" for update";
+		String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="
+				+ queryNo + " for update";
 		list = jdbcDAO.executeQuery(sql1, null, false, null);
 
-		CLOB clob=null;
-		
+		CLOB clob = null;
+
 		if (!list.isEmpty())
 		{
 
 			List columnList = (List) list.get(0);
 			if (!columnList.isEmpty())
 			{
-				clob = (CLOB)columnList.get(0);
+				clob = (CLOB) columnList.get(0);
 			}
 		}
-//		get output stream from the CLOB object
+		//		get output stream from the CLOB object
 		OutputStream os = clob.getAsciiOutputStream();
 		OutputStreamWriter osw = new OutputStreamWriter(os);
-		
-//	use that output stream to write character data to the Oracle data store
+
+		//	use that output stream to write character data to the Oracle data store
 		osw.write(sqlQuery1.toCharArray());
 		//write data and commit
 		osw.flush();
@@ -1345,10 +1338,9 @@ public class QueryBizLogic extends DefaultBizLogic
 		os.close();
 		jdbcDAO.commit();
 		Logger.out.info("sqlForQueryLog:" + sqlForQueryLog);
-		
 
-	
 	}
+
 	/***
 	 * 
 	 * @param sqlQuery
@@ -1367,18 +1359,20 @@ public class QueryBizLogic extends DefaultBizLogic
 			jdbcDAO.openSession(null);
 			if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
 			{
-				insertQueryForMySQL(sqlQuery,sessionData,jdbcDAO);
-				
-			} else {
-				
-				insertQueryForOracle(sqlQuery,sessionData,jdbcDAO);
+				insertQueryForMySQL(sqlQuery, sessionData, jdbcDAO);
+
+			}
+			else
+			{
+
+				insertQueryForOracle(sqlQuery, sessionData, jdbcDAO);
 			}
 		}
-		catch(IOException e)
+		catch (IOException e)
 		{
 			throw new DAOException(e.getMessage());
 		}
-		catch(SQLException e)
+		catch (SQLException e)
 		{
 			throw new DAOException(e.getMessage());
 		}
@@ -1391,7 +1385,7 @@ public class QueryBizLogic extends DefaultBizLogic
 			jdbcDAO.closeSession();
 		}
 	}
-	
+
 	/**
 	 * Method to execute the given SQL to get the query result.
 	 * @param sessionDataBean reference to SessionDataBean object
@@ -1400,16 +1394,18 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @return The reference to PagenatedResultData, which contains the Query result information.
 	 * @throws DAOException
 	 */
-	public PagenatedResultData execute(SessionDataBean sessionDataBean, QuerySessionData querySessionData, int startIndex)
-			throws DAOException
+	public PagenatedResultData execute(SessionDataBean sessionDataBean,
+			QuerySessionData querySessionData, int startIndex) throws DAOException
 	{
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		try
 		{
 			dao.openSession(null);
-			edu.wustl.common.dao.queryExecutor.PagenatedResultData pagenatedResultData = dao.executeQuery(querySessionData.getSql(), sessionDataBean,
-					querySessionData.isSecureExecute(), querySessionData.isHasConditionOnIdentifiedField(), querySessionData.getQueryResultObjectDataMap(),
-					startIndex, querySessionData.getRecordsPerPage());
+			edu.wustl.common.dao.queryExecutor.PagenatedResultData pagenatedResultData = dao
+					.executeQuery(querySessionData.getSql(), sessionDataBean, querySessionData
+							.isSecureExecute(), querySessionData.isHasConditionOnIdentifiedField(),
+							querySessionData.getQueryResultObjectDataMap(), startIndex,
+							querySessionData.getRecordsPerPage());
 
 			return pagenatedResultData;
 		}
@@ -1426,10 +1422,11 @@ public class QueryBizLogic extends DefaultBizLogic
 			dao.closeSession();
 		}
 	}
+
 	public static List executeSQL(String sql) throws DAOException, ClassNotFoundException
 	{
-		Logger.out.debug("SQL to get cardinality between 2 entities... "+ sql);
-	
+		Logger.out.debug("SQL to get cardinality between 2 entities... " + sql);
+
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);

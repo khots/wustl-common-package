@@ -32,27 +32,31 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 
 public class CDEDownloader
 {
-	public static int MAX_SERVER_CONNECT_ATTEMPTS = Integer.parseInt(ApplicationProperties.getValue("max.server.connect.attempts"));
-	public static int MAX_CDE_DOWNLOAD_ATTEMPTS = Integer.parseInt(ApplicationProperties.getValue("max.cde.download.attempts"));
+
+	public static int MAX_SERVER_CONNECT_ATTEMPTS = Integer.parseInt(ApplicationProperties
+			.getValue("max.server.connect.attempts"));
+	public static int MAX_CDE_DOWNLOAD_ATTEMPTS = Integer.parseInt(ApplicationProperties
+			.getValue("max.cde.download.attempts"));
 	private ApplicationService appService;
-	
+
 	//Mandar : 05-Apr-06 : Bugid:1622 : Removed throws Exception
-	public CDEDownloader() 
+	public CDEDownloader()
 	{
 	} // CDEDownloader constructor
-	
+
 	private void init() throws Exception
 	{
 		// creates the passwordauthenticaton object to be used for establishing 
 		// the connection with the databse server.
 		CDEConConfig.dbserver = XMLPropertyHandler.getValue("casdr.server");
-		if(XMLPropertyHandler.getValue("use.proxy.server").equals("true"))
+		if (XMLPropertyHandler.getValue("use.proxy.server").equals("true"))
 		{
 			setCDEConConfig();
-			createPasswordAuthentication(CDEConConfig.proxyhostip, CDEConConfig.proxyport, CDEConConfig.username, CDEConConfig.password);
+			createPasswordAuthentication(CDEConConfig.proxyhostip, CDEConConfig.proxyport,
+					CDEConConfig.username, CDEConConfig.password);
 		} // use.proxy.server = true
 	} // init
-	
+
 	/**
 	 * @param proxyhost is used to specify the host to connect 
 	 * @param proxyport is used to specify the port to be used for connection
@@ -67,26 +71,26 @@ public class CDEDownloader
 	{
 		//Mandar : 05-Apr-06 Bugid: 1622 : Added call to init() after removing it from constructor
 		init();
-		
+
 		int connectAttempts = 0;
-		while(connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS)
+		while (connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS)
 		{
 			try
 			{
 				appService = ApplicationService.getRemoteInstance(CDEConConfig.dbserver);
-				
-				if(appService!=null)
+
+				if (appService != null)
 					return;
 			} //try
 			catch (Exception conexp)
 			{
-				Logger.out.error("Connection Error: "+conexp.getMessage(), conexp);
+				Logger.out.error("Connection Error: " + conexp.getMessage(), conexp);
 			} // catch
 			connectAttempts++;
 		} // while connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS
-		throw new Exception("Connection Error: Unable to connect to "+CDEConConfig.dbserver);
+		throw new Exception("Connection Error: Unable to connect to " + CDEConConfig.dbserver);
 	} // connect
-	
+
 	/**
 	 * @param cdeCon It is the Configuration object. Contains all required
 	 *  information  for connection.
@@ -98,25 +102,25 @@ public class CDEDownloader
 	 */
 	public CDE downloadCDE(XMLCDE xmlCDE) throws Exception
 	{
-	    Logger.out.info("Downloading CDE "+xmlCDE.getName());
-	    
-	    int downloadAttempts = 0;
-		while(downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS)
+		Logger.out.info("Downloading CDE " + xmlCDE.getName());
+
+		int downloadAttempts = 0;
+		while (downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS)
 		{
 			try
 			{
 				CDE resultCde = retrieveDataElement(xmlCDE);
-				
-				if(resultCde!=null)
+
+				if (resultCde != null)
 					return resultCde;
 			}
 			catch (Exception conexp)
 			{
-				Logger.out.error("CDE Download Error: "+conexp.getMessage(), conexp);
+				Logger.out.error("CDE Download Error: " + conexp.getMessage(), conexp);
 			}
 			downloadAttempts++;
 		} // while downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS
-		throw new Exception("CDE Download Error: Unable to download CDE "+xmlCDE.getName());
+		throw new Exception("CDE Download Error: Unable to download CDE " + xmlCDE.getName());
 	} // downloadCDE
 
 	/**
@@ -128,11 +132,12 @@ public class CDEDownloader
 	{
 		//Create the dataelement and set the dataEelement properties
 		DataElement dataElementQuery = new DataElementImpl();
-		
+
 		// flag for whether to load the cde using PublicID or not.
-		boolean loadByPublicID = Boolean.getBoolean(ApplicationProperties.getValue("cde.load.by.publicid"));
-		
-		if(loadByPublicID)
+		boolean loadByPublicID = Boolean.getBoolean(ApplicationProperties
+				.getValue("cde.load.by.publicid"));
+
+		if (loadByPublicID)
 		{
 			dataElementQuery.setPublicID(new Long(xmlCDE.getPublicId()));
 		} // loadByPublicID = true
@@ -140,51 +145,54 @@ public class CDEDownloader
 		{
 			dataElementQuery.setPreferredName(xmlCDE.getName());
 		} // else loadByPublicID = false
-		
-		dataElementQuery.setLatestVersionIndicator(Constants.BOOLEAN_YES );
-		
+
+		dataElementQuery.setLatestVersionIndicator(Constants.BOOLEAN_YES);
+
 		List resultList = appService.search(DataElement.class, dataElementQuery);
-		
+
 		// check if any cde exists with the given public id.
-		if (resultList!=null && !resultList.isEmpty())
+		if (resultList != null && !resultList.isEmpty())
 		{
 			//retreive the Data Element for the given search condition
 			DataElement dataElement = (DataElement) resultList.get(0);
-			
+
 			//Mandar : bug1622: Use of parameterised constructor 
 			// create the cde object and set the values.
-			CDEImpl cdeobj = new CDEImpl(dataElement.getPublicID().toString(),dataElement.getPreferredName(),
-					dataElement.getLongName(),dataElement.getPreferredDefinition(),
-					dataElement.getVersion().toString(),dataElement.getDateModified());
-			
-			Logger.out.debug("CDE Public Id : "+cdeobj.getPublicId());
-			Logger.out.debug("CDE Def : "+cdeobj.getDefination());
-			Logger.out.debug("CDE Long Name : "+cdeobj.getLongName());
-			Logger.out.debug("CDE Version : "+cdeobj.getVersion());
-			Logger.out.debug("CDE Perferred Name : "+cdeobj.getPreferredName());
-			Logger.out.debug("CDE Last Modified Date : "+cdeobj.getDateLastModified());
-			
+			CDEImpl cdeobj = new CDEImpl(dataElement.getPublicID().toString(), dataElement
+					.getPreferredName(), dataElement.getLongName(), dataElement
+					.getPreferredDefinition(), dataElement.getVersion().toString(), dataElement
+					.getDateModified());
+
+			Logger.out.debug("CDE Public Id : " + cdeobj.getPublicId());
+			Logger.out.debug("CDE Def : " + cdeobj.getDefination());
+			Logger.out.debug("CDE Long Name : " + cdeobj.getLongName());
+			Logger.out.debug("CDE Version : " + cdeobj.getVersion());
+			Logger.out.debug("CDE Perferred Name : " + cdeobj.getPreferredName());
+			Logger.out.debug("CDE Last Modified Date : " + cdeobj.getDateLastModified());
+
 			//Access the permissible value.
 			ValueDomain valueDomain = dataElement.getValueDomain();
 			Logger.out.debug("valueDomain class : " + valueDomain.getClass());
-			
-			if(valueDomain instanceof EnumeratedValueDomain)
+
+			if (valueDomain instanceof EnumeratedValueDomain)
 			{
-				EnumeratedValueDomain enumValueDomain = (EnumeratedValueDomain)valueDomain;
-				
-			    Collection permissibleValueCollection = enumValueDomain.getValueDomainPermissibleValueCollection();
+				EnumeratedValueDomain enumValueDomain = (EnumeratedValueDomain) valueDomain;
+
+				Collection permissibleValueCollection = enumValueDomain
+						.getValueDomainPermissibleValueCollection();
 				Set permissibleValues = getPermissibleValues(permissibleValueCollection);
 				cdeobj.setPermissibleValues(permissibleValues);
 			} // valueDomain instanceof EnumeratedValueDomain
-			
+
 			return cdeobj;
 		} // resultList!=null && !resultList.isEmpty()
-		else //no Data Element retreived
+		else
+		//no Data Element retreived
 		{
 			return null;
 		}
 	} // retrieveDataElement
-	
+
 	/**
 	 * Returns the Set of Permissible values from the collection of value domains. 
 	 * @param valueDomainCollection The value domain collection. 
@@ -193,31 +201,33 @@ public class CDEDownloader
 	 */
 	private Set getPermissibleValues(Collection valueDomainCollection)
 	{
-	    Logger.out.debug("Value Domain Size : "+valueDomainCollection.size());
-	    
-	    Set permissibleValuesSet = new HashSet();
-	    
-	    Iterator iterator = valueDomainCollection.iterator();
-	    while(iterator.hasNext())
-	    {
-	        ValueDomainPermissibleValue valueDomainPermissibleValue = (ValueDomainPermissibleValue) iterator.next();
-	        
-	        //caDSR permissible value object
-	        PermissibleValue permissibleValue = (PermissibleValue) valueDomainPermissibleValue.getPermissibleValue();
-	        
-	        //Create the instance of catissue permissible value
-	        edu.wustl.common.cde.PermissibleValueImpl cachedPermissibleValue = new PermissibleValueImpl();
-	        
-	        cachedPermissibleValue.setConceptid(permissibleValue.getId());
-	        cachedPermissibleValue.setValue(permissibleValue.getValue());
-	        
-	        Logger.out.debug("Concept ID : "+cachedPermissibleValue.getConceptid());
-	        Logger.out.debug("Value : "+cachedPermissibleValue.getValue());
-	        permissibleValuesSet.add(cachedPermissibleValue);
-	    } // while iterator
-	    return permissibleValuesSet;
+		Logger.out.debug("Value Domain Size : " + valueDomainCollection.size());
+
+		Set permissibleValuesSet = new HashSet();
+
+		Iterator iterator = valueDomainCollection.iterator();
+		while (iterator.hasNext())
+		{
+			ValueDomainPermissibleValue valueDomainPermissibleValue = (ValueDomainPermissibleValue) iterator
+					.next();
+
+			//caDSR permissible value object
+			PermissibleValue permissibleValue = (PermissibleValue) valueDomainPermissibleValue
+					.getPermissibleValue();
+
+			//Create the instance of catissue permissible value
+			edu.wustl.common.cde.PermissibleValueImpl cachedPermissibleValue = new PermissibleValueImpl();
+
+			cachedPermissibleValue.setConceptid(permissibleValue.getId());
+			cachedPermissibleValue.setValue(permissibleValue.getValue());
+
+			Logger.out.debug("Concept ID : " + cachedPermissibleValue.getConceptid());
+			Logger.out.debug("Value : " + cachedPermissibleValue.getValue());
+			permissibleValuesSet.add(cachedPermissibleValue);
+		} // while iterator
+		return permissibleValuesSet;
 	} // getPermissibleValues
-	
+
 	/**
 	 * @param proxyhost  url of the database to connect
 	 * @param proxyport port to be used for connection
@@ -228,19 +238,19 @@ public class CDEDownloader
 	 * proxy host and proxy port to create a PasswordAuthentication 
 	 * that will be used for establishing the connection.
 	 */
-	private void createPasswordAuthentication(String proxyhost,
-				String proxyport,String username,String password) throws Exception
+	private void createPasswordAuthentication(String proxyhost, String proxyport, String username,
+			String password) throws Exception
 	{
 		/**
 		 * username is a final variable for the username.  
 		 */
 		final String localusername = username;
-		
+
 		/**
 		 * password is a final variable for the password.  
 		 */
 		final String localpassword = password;
-		
+
 		/**
 		 * authenticator is an object of Authenticator used for 
 		 * authentication of the username and password.   
@@ -256,46 +266,46 @@ public class CDEDownloader
 		};
 		// setting the authenticator
 		Authenticator.setDefault(authenticator);
-		
+
 		/**
 		 * Checking the proxy port for validity
 		 */
 		boolean validnum = CommonUtilities.checknum(proxyport, 0, 0);
-		
+
 		if (validnum == false)
 		{
 			//Logger.out.info("Invalid Proxy Port: " + proxyport);
 			throw new Exception("Invalid ProxyPort");
 		} // validnum == false
-		
+
 		// setting the system settings
 		System.setProperty("proxyHost", proxyhost);
 		System.setProperty("proxyPort", proxyport);
 	} //createPasswordAuthentication
-	
+
 	private void setCDEConConfig()
 	{
-		CDEConConfig.proxyhostip =XMLPropertyHandler.getValue("proxy.host");
+		CDEConConfig.proxyhostip = XMLPropertyHandler.getValue("proxy.host");
 		CDEConConfig.proxyport = XMLPropertyHandler.getValue("proxy.port");
 		CDEConConfig.password = XMLPropertyHandler.getValue("proxy.username");
 		CDEConConfig.username = XMLPropertyHandler.getValue("proxy.password");
 	} // setCDEConConfig
-	
-//	public static void main(String []args) throws Exception
-//	{
-//		ApplicationProperties.initBundle("ApplicationResources");
-//		
-//		// to remove the Logger configuration from the file
-//		Variables.catissueHome = System.getProperty("user.dir");
-//		Logger.out = org.apache.log4j.Logger.getLogger("");
-//		PropertyConfigurator.configure(Variables.catissueHome+"/WEB-INF/src/"+"ApplicationResources.properties");
-//		
-//		XMLCDE xmlCDE = new XMLCDEImpl();
-//		xmlCDE.setName("PT_RACE_CAT");
-//		xmlCDE.setPublicId("106");
-//		
-//		CDEDownloader cdeDownloader = new CDEDownloader();
-//		cdeDownloader.connect();
-//		CDE cde = cdeDownloader.downloadCDE(xmlCDE);
-//	} 	
+
+	//	public static void main(String []args) throws Exception
+	//	{
+	//		ApplicationProperties.initBundle("ApplicationResources");
+	//		
+	//		// to remove the Logger configuration from the file
+	//		Variables.catissueHome = System.getProperty("user.dir");
+	//		Logger.out = org.apache.log4j.Logger.getLogger("");
+	//		PropertyConfigurator.configure(Variables.catissueHome+"/WEB-INF/src/"+"ApplicationResources.properties");
+	//		
+	//		XMLCDE xmlCDE = new XMLCDEImpl();
+	//		xmlCDE.setName("PT_RACE_CAT");
+	//		xmlCDE.setPublicId("106");
+	//		
+	//		CDEDownloader cdeDownloader = new CDEDownloader();
+	//		cdeDownloader.connect();
+	//		CDE cde = cdeDownloader.downloadCDE(xmlCDE);
+	//	} 	
 }
