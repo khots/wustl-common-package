@@ -19,66 +19,68 @@ import edu.wustl.common.util.global.Constants;
  */
 public class StorageContainerTreeNode extends TreeNodeImpl implements Serializable, Comparable
 {
-    private static final long serialVersionUID = 1234567890L;
-    
-    /**
-     * Type of storage container.
-     */
-    private String type;
-    
-    private String toolTip="";
 
-    private String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
-    
-    /**
-     * Default constructor. 
-     */
-    public StorageContainerTreeNode()
-    {
-    }
-    
-    /**
-     * Parameterized constructor. 
-     */
-    public StorageContainerTreeNode(Long identifier, String value, String type)
-    {
-        super(identifier, value);
-        this.type = type;
-    }
+	private static final long serialVersionUID = 1234567890L;
 
-    //constructor with tooltip 
-    public StorageContainerTreeNode(Long identifier, String value, String type, String toolTip, String activityStatus)
-    {
-        super(identifier, value);
-        this.type = type;
-        this.toolTip = toolTip; 
-        this.activityStatus = activityStatus;
-    }
-    
+	/**
+	 * Type of storage container.
+	 */
+	private String type;
+
+	private String toolTip = "";
+
+	private String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
+
+	/**
+	 * Default constructor. 
+	 */
+	public StorageContainerTreeNode()
+	{
+	}
+
+	/**
+	 * Parameterized constructor. 
+	 */
+	public StorageContainerTreeNode(Long identifier, String value, String type)
+	{
+		super(identifier, value);
+		this.type = type;
+	}
+
+	//constructor with tooltip 
+	public StorageContainerTreeNode(Long identifier, String value, String type, String toolTip,
+			String activityStatus)
+	{
+		super(identifier, value);
+		this.type = type;
+		this.toolTip = toolTip;
+		this.activityStatus = activityStatus;
+	}
+
 	/**
 	 * @return Returns the toolTip.
 	 */
-	public String getToolTip() {
+	public String getToolTip()
+	{
 		return toolTip;
 	}
 
-    /**
-     * @return Returns the type.
-     */
-    public String getType()
-    {
-        return type;
-    }
-    
-    /**
-     * @param type The type to set.
-     */
-    public void setType(String type)
-    {
-        this.type = type;
-    }
-    
-    
+	/**
+	 * @return Returns the type.
+	 */
+	public String getType()
+	{
+		return type;
+	}
+
+	/**
+	 * @param type The type to set.
+	 */
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
 	/**
 	 * @return Returns the activityStatus.
 	 */
@@ -86,6 +88,7 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	{
 		return activityStatus;
 	}
+
 	/**
 	 * @param activityStatus The activityStatus to set.
 	 */
@@ -93,18 +96,19 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	{
 		this.activityStatus = activityStatus;
 	}
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString()
-    {
-        String nodeName = value;
-        return nodeName;
-    }
-    
-    public int compareTo(Object tmpobj)
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString()
 	{
-    	StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
-    	return this.identifier.compareTo(treeNode.identifier);
+		String nodeName = value;
+		return nodeName;
 	}
- }
+
+	public int compareTo(Object tmpobj)
+	{
+		StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
+		return this.identifier.compareTo(treeNode.identifier);
+	}
+}

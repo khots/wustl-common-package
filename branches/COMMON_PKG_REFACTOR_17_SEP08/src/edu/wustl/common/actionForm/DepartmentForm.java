@@ -31,85 +31,86 @@ import edu.wustl.common.util.logger.Logger;
  * */
 public class DepartmentForm extends AbstractActionForm
 {
-    /**
-     * Name of the Department.
-     */
-    private String name;
-    
-    /**
-     * No argument constructor for UserForm class 
-     */
-    public DepartmentForm()
-    {
-        reset();
-    }
 
-    /**
-     * Copies the data from an AbstractDomain object to a DepartmentForm object.
-     * @param Department An AbstractDomain object.  
-     */
-    public void setAllValues(AbstractDomainObject abstractDomain)
-    {
-        Department department = (Department)abstractDomain;
-        this.id = department.getId().longValue();
-        this.name = department.getName();
-    }
-    
-        
-    /**
-     * Returns the name of the Department.
-     * @return String representing the name of the Department
-     */
-    public String getName()
-    {
-        return (this.name);
-    }
+	/**
+	 * Name of the Department.
+	 */
+	private String name;
 
-    /**
-     * Sets the name of this Department
-     * @param Name name of the Department.
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+	/**
+	 * No argument constructor for UserForm class 
+	 */
+	public DepartmentForm()
+	{
+		reset();
+	}
 
-    /**
-     * Returns the id assigned to form bean
-     */
-    public int getFormId()
-    {
-        return Constants.DEPARTMENT_FORM_ID;
-    }
-    
-    /**
-     * Resets the values of all the fields.
-     * Is called by the overridden reset method defined in ActionForm.  
-     * */
-    protected void reset()
-    {
-        this.name = null;
-    }
+	/**
+	 * Copies the data from an AbstractDomain object to a DepartmentForm object.
+	 * @param Department An AbstractDomain object.  
+	 */
+	public void setAllValues(AbstractDomainObject abstractDomain)
+	{
+		Department department = (Department) abstractDomain;
+		this.id = department.getId().longValue();
+		this.name = department.getName();
+	}
 
-    /**
-    * Overrides the validate method of ActionForm.
-    * */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) 
-    {
-        ActionErrors errors = new ActionErrors();
-        Validator validator = new Validator();
-        try
-        {
-            if (validator.isEmpty(name))
-            {
-            	errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.required",ApplicationProperties.getValue("department.name")));
-            }
-        }
-        catch(Exception excp)
-        {
-            Logger.out.error(excp.getMessage(),excp);
-        }
-        return errors;
-     }
-    
+	/**
+	 * Returns the name of the Department.
+	 * @return String representing the name of the Department
+	 */
+	public String getName()
+	{
+		return (this.name);
+	}
+
+	/**
+	 * Sets the name of this Department
+	 * @param Name name of the Department.
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	/**
+	 * Returns the id assigned to form bean
+	 */
+	public int getFormId()
+	{
+		return Constants.DEPARTMENT_FORM_ID;
+	}
+
+	/**
+	 * Resets the values of all the fields.
+	 * Is called by the overridden reset method defined in ActionForm.  
+	 * */
+	protected void reset()
+	{
+		this.name = null;
+	}
+
+	/**
+	* Overrides the validate method of ActionForm.
+	* */
+	public ActionErrors validate(ActionMapping mapping, HttpServletRequest request)
+	{
+		ActionErrors errors = new ActionErrors();
+		Validator validator = new Validator();
+		try
+		{
+			if (validator.isEmpty(name))
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.required",
+						ApplicationProperties.getValue("department.name")));
+			}
+		}
+		catch (Exception excp)
+		{
+			Logger.out.error(excp.getMessage(), excp);
+		}
+		return errors;
+	}
+
 }

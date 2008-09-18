@@ -1,9 +1,7 @@
+
 package edu.wustl.common.query;
 
 import java.sql.SQLException;
-
-
-
 
 /**
  *<p>Title: SimpleConditionsNode</p>
@@ -13,13 +11,14 @@ import java.sql.SQLException;
  *@author Aarti Sharma
  *@version 1.0
  */
-public class SimpleConditionsNode {
-    
-    /**
-     * A Condition on a data element in the query
-     */
+public class SimpleConditionsNode
+{
+
+	/**
+	 * A Condition on a data element in the query
+	 */
 	private Condition condition = new Condition();
-	
+
 	/**
 	 * Operation with next consition i.e. AND/OR
 	 */
@@ -27,9 +26,9 @@ public class SimpleConditionsNode {
 
 	public SimpleConditionsNode()
 	{
-	    
+
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param condition
@@ -37,10 +36,10 @@ public class SimpleConditionsNode {
 	 */
 	public SimpleConditionsNode(Condition condition, Operator operationWithNextcondition)
 	{
-	    this.operator = operationWithNextcondition;
-	    this.condition = condition;
+		this.operator = operationWithNextcondition;
+		this.condition = condition;
 	}
-	
+
 	/**
 	 * 
 	 * @param tableSufix
@@ -49,34 +48,36 @@ public class SimpleConditionsNode {
 	 */
 	public String toSQLString(int tableSufix) throws SQLException
 	{
-        return condition.toSQLString(tableSufix) + " " + operator.toSQLString();
+		return condition.toSQLString(tableSufix) + " " + operator.toSQLString();
 	}
 
-    public Condition getCondition()
-    {
-        return condition;
-    }
-    public void setCondition(Condition condition)
-    {
-        this.condition = condition;
-    }
-    public Operator getOperator()
-    {
-        return operator;
-    }
-    public void setOperator(
-            Operator operator)
-    {
-        this.operator = operator;
-    }
-    
-//    public String getConditionObject()
-//    {
-//        return condition.getDataElement().getTableAliasName();
-//    }
-    
-    public Table getConditionTable()
-    {
-        return condition.getDataElement().getTable();
-    }
+	public Condition getCondition()
+	{
+		return condition;
+	}
+
+	public void setCondition(Condition condition)
+	{
+		this.condition = condition;
+	}
+
+	public Operator getOperator()
+	{
+		return operator;
+	}
+
+	public void setOperator(Operator operator)
+	{
+		this.operator = operator;
+	}
+
+	//    public String getConditionObject()
+	//    {
+	//        return condition.getDataElement().getTableAliasName();
+	//    }
+
+	public Table getConditionTable()
+	{
+		return condition.getDataElement().getTable();
+	}
 }

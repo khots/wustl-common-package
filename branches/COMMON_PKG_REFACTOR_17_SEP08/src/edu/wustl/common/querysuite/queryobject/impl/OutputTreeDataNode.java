@@ -27,17 +27,17 @@ public class OutputTreeDataNode implements Serializable
 	private static final long serialVersionUID = 4865638917714061869L;
 
 	private long id;
-	
-	private static long lastId = 0; 
+
+	private static long lastId = 0;
 	private OutputTreeDataNode parentNode;
 
 	private List<OutputTreeDataNode> children = new ArrayList<OutputTreeDataNode>();
 	IOutputEntity outputEntity;
 	private int treeNo;
 	private int expressionId;
-	
+
 	private List<QueryOutputTreeAttributeMetadata> attributes = new ArrayList<QueryOutputTreeAttributeMetadata>();
-	
+
 	/**
 	 * The Constructor to instantiate the object of this class.
 	 * @param outputEntity The reference to the output Entity.
@@ -59,7 +59,7 @@ public class OutputTreeDataNode implements Serializable
 	 */
 	public long getId()
 	{
-		return  id;
+		return id;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class OutputTreeDataNode implements Serializable
 	 */
 	public OutputTreeDataNode addChild(IOutputEntity outputEntity, int expressionId)
 	{
-		OutputTreeDataNode child = new OutputTreeDataNode(outputEntity,expressionId, treeNo);
+		OutputTreeDataNode child = new OutputTreeDataNode(outputEntity, expressionId, treeNo);
 		child.parentNode = this;
 		children.add(child);
 
@@ -100,7 +100,7 @@ public class OutputTreeDataNode implements Serializable
 	{
 		return parentNode;
 	}
-	
+
 	/**
 	 * @return the expressionId The expression id corresponding to this expression.
 	 */
@@ -108,7 +108,7 @@ public class OutputTreeDataNode implements Serializable
 	{
 		return expressionId;
 	}
-	
+
 	/**
 	 * @return the treeNo
 	 */
@@ -154,7 +154,7 @@ public class OutputTreeDataNode implements Serializable
 	public int hashCode()
 	{
 		int hash = 1;
-//		hash = hash * Constants.HASH_PRIME + (int) treeNo;
+		//		hash = hash * Constants.HASH_PRIME + (int) treeNo;
 		hash = hash * Constants.HASH_PRIME + (int) id;
 		return hash;
 	}
@@ -167,8 +167,9 @@ public class OutputTreeDataNode implements Serializable
 	public String toString()
 	{
 		return "[" + id + ":" + outputEntity.toString() + "("
-				+ (parentNode == null ? "-" : parentNode.getId()+"") + ")" + "]";
+				+ (parentNode == null ? "-" : parentNode.getId() + "") + ")" + "]";
 	}
+
 	/**
 	 * @return the attributes
 	 */
@@ -177,7 +178,6 @@ public class OutputTreeDataNode implements Serializable
 		return attributes;
 	}
 
-	
 	/**
 	 * @param attributes the attributes to set
 	 */
@@ -192,9 +192,10 @@ public class OutputTreeDataNode implements Serializable
 	 */
 	public String getUniqueNodeId()
 	{
-		 String uniqueNodeId = this.treeNo+"_"+id;
-		 return uniqueNodeId;
+		String uniqueNodeId = this.treeNo + "_" + id;
+		return uniqueNodeId;
 	}
+
 	/**
 	 * To add attribute metadat Object in the list.
 	 * @param attribute The reference to the attribute metadata object.
@@ -203,7 +204,7 @@ public class OutputTreeDataNode implements Serializable
 	{
 		attributes.add(attribute);
 	}
-	
+
 	/**
 	 * TO get the metadata object for the given attribute.
 	 * @param attribute The reference to the attribute, this attribute must be part of this outputTreeDataNode.
@@ -211,12 +212,12 @@ public class OutputTreeDataNode implements Serializable
 	 */
 	public QueryOutputTreeAttributeMetadata getAttributeMetadata(AttributeInterface attribute)
 	{
-		for (QueryOutputTreeAttributeMetadata attributeMetadata: attributes)
+		for (QueryOutputTreeAttributeMetadata attributeMetadata : attributes)
 		{
 			if (attributeMetadata.getAttribute().equals(attribute))
 				return attributeMetadata;
 		}
 		return null;
 	}
-	
+
 }

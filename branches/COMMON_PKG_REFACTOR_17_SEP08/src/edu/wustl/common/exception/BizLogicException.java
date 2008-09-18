@@ -4,11 +4,8 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 package edu.wustl.common.exception;
-
-import java.io.PrintStream;
-import java.io.PrintWriter;
-
 
 
 /**
@@ -19,22 +16,24 @@ import java.io.PrintWriter;
  */
 public class BizLogicException extends Exception
 {
-	private Exception wrapException; 
-	
+
+	private Exception wrapException;
+
 	public BizLogicException()
 	{
-		
+
 	}
+
 	public BizLogicException(String message)
 	{
-		this(message,null);
+		this(message, null);
 	}
-	
+
 	public BizLogicException(Exception ex)
 	{
-		this("",ex);
+		this("", ex);
 	}
-	
+
 	/**
 	 * @param wrapException The wrapException to set.
 	 */
@@ -43,10 +42,10 @@ public class BizLogicException extends Exception
 		/**Added by amit_doshi to fix the bug related to exception chaining
 		 * code reviewer :- abhijit_naik
 		 */
-		super(message,wrapException);
+		super(message, wrapException);
 		this.wrapException = wrapException;
 	}
-	
+
 	/**
 	 * @return Returns the wrapException.
 	 */
@@ -54,7 +53,7 @@ public class BizLogicException extends Exception
 	{
 		return wrapException;
 	}
-	
+
 	/**
 	 * @param wrapException The wrapException to set.
 	 */
@@ -62,5 +61,5 @@ public class BizLogicException extends Exception
 	{
 		this.wrapException = wrapException;
 	}
-	
+
 }

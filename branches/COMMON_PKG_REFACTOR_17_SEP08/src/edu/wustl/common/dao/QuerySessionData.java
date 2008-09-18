@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class QuerySessionData
 {
+
 	// The SQL for the query for which user is navigating results.  
 	String sql;
 	Map queryResultObjectDataMap;

@@ -1,3 +1,4 @@
+
 package edu.wustl.common.actionForm;
 
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -7,9 +8,9 @@ import edu.wustl.common.domain.AbstractDomainObject;
  * @author sachin_lale
  *
  */
-public interface IValueObject 
+public interface IValueObject
 {
-	
+
 	public void setAllValues(AbstractDomainObject abstractDomain);
 
 }

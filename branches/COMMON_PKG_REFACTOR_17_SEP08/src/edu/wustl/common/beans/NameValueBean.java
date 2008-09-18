@@ -21,19 +21,20 @@ import java.io.Serializable;
  *@version 1.0
  */
 
-public class NameValueBean implements Comparable,Serializable
+public class NameValueBean implements Comparable, Serializable
 {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 861314614541823827L;
-	private Object name; 
+	private Object name;
 	private Object value;
 	/*
 	 * we are using this field to improve performance
 	 */
 	private String nameLowerCase;
-	
+
 	//Relevence counter field is for sorting according to relevance
 	private Long relevanceCounter;
 
@@ -45,25 +46,24 @@ public class NameValueBean implements Comparable,Serializable
 	public NameValueBean(Object name, Object value)
 	{
 		this.name = name;
-		
-		if(this.name instanceof String)
+
+		if (this.name instanceof String)
 		{
-			this.nameLowerCase = ((String)this.name).toLowerCase();
+			this.nameLowerCase = ((String) this.name).toLowerCase();
 		}
-		
+
 		this.value = value;
 	}
 
-	
-	public NameValueBean(Object name, Object value,Long relevanceCounter)
+	public NameValueBean(Object name, Object value, Long relevanceCounter)
 	{
 		this.name = name;
-		
-		if(this.name instanceof String)
+
+		if (this.name instanceof String)
 		{
-			this.nameLowerCase = ((String)this.name).toLowerCase();
+			this.nameLowerCase = ((String) this.name).toLowerCase();
 		}
-		
+
 		this.value = value;
 		this.relevanceCounter = relevanceCounter;
 	}
@@ -82,12 +82,12 @@ public class NameValueBean implements Comparable,Serializable
 	public void setName(Object name)
 	{
 		this.name = name;
-		
-		if(this.name instanceof String)
+
+		if (this.name instanceof String)
 		{
-			this.nameLowerCase = ((String)this.name).toLowerCase();
+			this.nameLowerCase = ((String) this.name).toLowerCase();
 		}
-		
+
 	}
 
 	/**
@@ -106,7 +106,6 @@ public class NameValueBean implements Comparable,Serializable
 		this.value = value;
 	}
 
-	
 	/**
 	 * @return Returns the relevanceCounter.
 	 */

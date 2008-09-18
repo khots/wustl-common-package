@@ -5,9 +5,9 @@
  *<p>Company: Washington University, School of Medicine, St. Louis.</p>
  *@author Aarti Sharma
  *@version 1.0
- */ 
-package edu.wustl.common.query;
+ */
 
+package edu.wustl.common.query;
 
 /**
  * @author aarti_sharma

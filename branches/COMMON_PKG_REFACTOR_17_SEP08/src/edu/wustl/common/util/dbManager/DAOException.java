@@ -37,7 +37,7 @@ public class DAOException extends Exception
 	{
 		this("", ex);
 	}
-	
+
 	public DAOException(SMException e)
 	{
 		this("", e);

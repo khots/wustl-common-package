@@ -21,22 +21,28 @@ import com.sun.xml.bind.unmarshaller.InterningXMLReader;
  * @author
  *     Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
  */
-final class InterningUnmarshallerHandler extends InterningXMLReader implements SAXUnmarshallerHandler {
-    
-    private final SAXUnmarshallerHandler core;
-    
-    InterningUnmarshallerHandler( SAXUnmarshallerHandler core ) {
-        super();
-        setContentHandler(core);
-        this.core = core;
-    }
-    
-    public void handleEvent(ValidationEvent event, boolean canRecover) throws SAXException {
-        core.handleEvent(event,canRecover);
-    }
+final class InterningUnmarshallerHandler extends InterningXMLReader
+		implements
+			SAXUnmarshallerHandler
+{
 
-    public Object getResult() throws JAXBException, IllegalStateException {
-        return core.getResult();
-    }
+	private final SAXUnmarshallerHandler core;
+
+	InterningUnmarshallerHandler(SAXUnmarshallerHandler core)
+	{
+		super();
+		setContentHandler(core);
+		this.core = core;
+	}
+
+	public void handleEvent(ValidationEvent event, boolean canRecover) throws SAXException
+	{
+		core.handleEvent(event, canRecover);
+	}
+
+	public Object getResult() throws JAXBException, IllegalStateException
+	{
+		return core.getResult();
+	}
 
 }

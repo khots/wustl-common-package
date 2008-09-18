@@ -5,9 +5,7 @@
 // Generated on: 2005.08.23 at 10:44:28 GMT+05:30 
 //
 
-
 package edu.wustl.common.cde.xml;
-
 
 /**
  * Java content class for XMLCDE_CACHE element declaration.
@@ -19,8 +17,9 @@ package edu.wustl.common.cde.xml;
  * 
  */
 public interface XMLCDECACHE
-    extends javax.xml.bind.Element, edu.wustl.common.cde.xml.XMLCDECacheType
+		extends
+			javax.xml.bind.Element,
+			edu.wustl.common.cde.xml.XMLCDECacheType
 {
-
 
 }

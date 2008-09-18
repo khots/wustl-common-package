@@ -19,20 +19,21 @@ import com.sun.xml.bind.JAXBObject;
  */
 public interface XMLSerializable extends JAXBObject
 {
-    /**
-     * Serializes child elements and texts into the specified target.
-     */
-    void serializeBody( XMLSerializer target ) throws SAXException;
-    
-    /**
-     * Serializes attributes into the specified target.
-     */
-    void serializeAttributes( XMLSerializer target ) throws SAXException;
-    
-    /**
-     * Declares all the namespace URIs this object is using at
-     * its top-level scope into the specified target.
-     */
-    void serializeURIs( XMLSerializer target ) throws SAXException;
+
+	/**
+	 * Serializes child elements and texts into the specified target.
+	 */
+	void serializeBody(XMLSerializer target) throws SAXException;
+
+	/**
+	 * Serializes attributes into the specified target.
+	 */
+	void serializeAttributes(XMLSerializer target) throws SAXException;
+
+	/**
+	 * Declares all the namespace URIs this object is using at
+	 * its top-level scope into the specified target.
+	 */
+	void serializeURIs(XMLSerializer target) throws SAXException;
 
 }

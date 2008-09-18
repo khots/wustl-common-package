@@ -39,44 +39,46 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ResponseServlet extends HttpServlet
 {
-	protected void doGet(HttpServletRequest req, HttpServletResponse res)
-			throws ServletException, IOException
+
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException,
+			IOException
 	{
 		doPost(req, res);
 	}
-	
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
+
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException,
+			IOException
 	{
 		HTTPMessage httpMessage = new HTTPMessage();
-		
-		ActionMessages messages = (ActionMessages)req.getAttribute(Globals.MESSAGE_KEY);
-		ActionErrors errors = (ActionErrors)req.getAttribute(Globals.ERROR_KEY);
-		String operation = (String)req.getAttribute(Constants.OPERATION);
+
+		ActionMessages messages = (ActionMessages) req.getAttribute(Globals.MESSAGE_KEY);
+		ActionErrors errors = (ActionErrors) req.getAttribute(Globals.ERROR_KEY);
+		String operation = (String) req.getAttribute(Constants.OPERATION);
 		Iterator it = null;
 
-		if(messages != null)
+		if (messages != null)
 		{
 			it = messages.properties();
 			httpMessage.setResponseStatus(Constants.SUCCESS);
 		}
-		else if(errors != null)
+		else if (errors != null)
 		{
 			it = errors.properties();
 			httpMessage.setResponseStatus(Constants.FAILURE);
 		}
-		
-		if(it != null)
+
+		if (it != null)
 		{
-			Locale local = (Locale)req.getSession().getAttribute(Globals.LOCALE_KEY);
-			MessageResources resources = (MessageResources)req.getAttribute(Globals.MESSAGES_KEY);
-			
-			while(it.hasNext())
+			Locale local = (Locale) req.getSession().getAttribute(Globals.LOCALE_KEY);
+			MessageResources resources = (MessageResources) req.getAttribute(Globals.MESSAGES_KEY);
+
+			while (it.hasNext())
 			{
-				String property = (String)it.next();
-				
+				String property = (String) it.next();
+
 				Iterator iterator = null;
-				
-				if(messages != null)
+
+				if (messages != null)
 				{
 					iterator = messages.get(property);
 				}
@@ -84,44 +86,46 @@ public class ResponseServlet extends HttpServlet
 				{
 					iterator = errors.get(property);
 				}
-				
-				while(iterator.hasNext())
+
+				while (iterator.hasNext())
 				{
-					ActionMessage actionMessage = (ActionMessage)iterator.next();
+					ActionMessage actionMessage = (ActionMessage) iterator.next();
 					String key = actionMessage.getKey();
-					httpMessage.addMessage(resources.getMessage(local,key,actionMessage.getValues()));
+					httpMessage.addMessage(resources.getMessage(local, key, actionMessage
+							.getValues()));
 				}
 			}
 		}
-		else if(operation.equals(Constants.LOGIN))
+		else if (operation.equals(Constants.LOGIN))
 		{
 			httpMessage.setResponseStatus(Constants.SUCCESS);
 			httpMessage.addMessage(new String("Successful Login"));
 			httpMessage.setSessionId(req.getSession(true).getId());
 		}
-		else if(operation.equals(Constants.LOGOUT))
+		else if (operation.equals(Constants.LOGOUT))
 		{
-		    httpMessage.setResponseStatus(Constants.SUCCESS);
+			httpMessage.setResponseStatus(Constants.SUCCESS);
 			httpMessage.addMessage(new String("Successful Logout"));
 			httpMessage.setSessionId(null);
 		}
-		
-		if(!operation.equals(Constants.LOGIN) && !operation.equals(Constants.LOGOUT))
+
+		if (!operation.equals(Constants.LOGIN) && !operation.equals(Constants.LOGOUT))
 		{
-		    Logger.out.debug("id in ResponseServlet-->"+req.getAttribute(Constants.SYSTEM_IDENTIFIER));
-		
-		    if(req.getAttribute(Constants.SYSTEM_IDENTIFIER) != null)
-		    {
-		        httpMessage.setDomainObjectId((Long)req.getAttribute(Constants.SYSTEM_IDENTIFIER));
-		    }
-		    else
-		    {
-		        httpMessage.setDomainObjectId(null);
-		    }
+			Logger.out.debug("id in ResponseServlet-->"
+					+ req.getAttribute(Constants.SYSTEM_IDENTIFIER));
+
+			if (req.getAttribute(Constants.SYSTEM_IDENTIFIER) != null)
+			{
+				httpMessage.setDomainObjectId((Long) req.getAttribute(Constants.SYSTEM_IDENTIFIER));
+			}
+			else
+			{
+				httpMessage.setDomainObjectId(null);
+			}
 		}
-		
+
 		res.setContentType(Constants.HTTP_API);
-		
+
 		ObjectOutputStream oos = new ObjectOutputStream(res.getOutputStream());
 		oos.writeObject(httpMessage);
 		oos.flush();

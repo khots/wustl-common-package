@@ -1,6 +1,7 @@
 /**
  *
  */
+
 package edu.wustl.common.action;
 
 import java.sql.SQLException;
@@ -59,7 +60,8 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class TitliFetchAction extends Action
 {
-	private org.apache.log4j.Logger logger= Logger.getLogger(TitliFetchAction.class);
+
+	private org.apache.log4j.Logger logger = Logger.getLogger(TitliFetchAction.class);
 	private String alias;
 	private List dataList;
 	private List<String> columnNames;
@@ -74,49 +76,55 @@ public class TitliFetchAction extends Action
 	 * @return action forward
 	 *
 	 */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response)
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
 	{
 		// set the request and session attributes required by DataView.jsp and forward
 		// for that we need to fetch the selected group of records
 		logger.info("in execute method");
-		ActionForward actionForward=mapping.findForward(Constants.SUCCESS);
+		ActionForward actionForward = mapping.findForward(Constants.SUCCESS);
 		TitliSearchForm titliSearchForm = (TitliSearchForm) form;
-		titliSearchForm.setSortedResultMap((SortedResultMapInterface)(request.getSession().getAttribute(Constants.TITLI_SORTED_RESULT_MAP)));
+		titliSearchForm.setSortedResultMap((SortedResultMapInterface) (request.getSession()
+				.getAttribute(Constants.TITLI_SORTED_RESULT_MAP)));
 		TitliResultGroup resultGroup = titliSearchForm.getSelectedGroup();
-		Collection<SimpleConditionsNode> simpleConditionsNodeCollection = getSimpleConditionsNodeCollecton(resultGroup, request);
+		Collection<SimpleConditionsNode> simpleConditionsNodeCollection = getSimpleConditionsNodeCollecton(
+				resultGroup, request);
 		setDataAndColumnLists(simpleConditionsNodeCollection, request);
 		try
 		{
 			//if there is only one record in the selected group, go directly to the edit page
-			if(dataList.size()==Constants.ONE)
+			if (dataList.size() == Constants.ONE)
 			{
-				String pageOf=resultGroup.getPageOf();
-				List row = (List)(dataList.get(0));
-				String path = new StringBuffer().append(Constants.SEARCH_OBJECT_ACTION).append("?").append(Constants.PAGEOF).append("=").
-									append(pageOf).append("&").append(Constants.OPERATION).append("=").
-									append(Constants.SEARCH).append("&").append(Constants.SYSTEM_IDENTIFIER).append("=").
-									append((String)(row.get(id))).toString();
-				actionForward=getActionForward(Constants.TITLI_SINGLE_RESULT, path);
-			}else
+				String pageOf = resultGroup.getPageOf();
+				List row = (List) (dataList.get(0));
+				String path = new StringBuffer().append(Constants.SEARCH_OBJECT_ACTION).append("?")
+						.append(Constants.PAGEOF).append("=").append(pageOf).append("&").append(
+								Constants.OPERATION).append("=").append(Constants.SEARCH).append(
+								"&").append(Constants.SYSTEM_IDENTIFIER).append("=").append(
+								(String) (row.get(id))).toString();
+				actionForward = getActionForward(Constants.TITLI_SINGLE_RESULT, path);
+			}
+			else
 			{
 				request.setAttribute(Constants.PAGEOF, resultGroup.getPageOf());
 				request.setAttribute(Constants.SPREADSHEET_DATA_LIST, dataList);
 				request.setAttribute(Constants.SPREADSHEET_COLUMN_LIST, columnNames);
 				request.setAttribute(Constants.IDENTIFIER_FIELD_INDEX, identifierIndex);
 				request.setAttribute(Constants.PAGE_NUMBER, Constants.ONE);
-				request.getSession().setAttribute(Constants.TOTAL_RESULTS,	dataList.size());
+				request.getSession().setAttribute(Constants.TOTAL_RESULTS, dataList.size());
 			}
 		}
 		catch (TitliFetchException e)
 		{
-			logger.error("Exception in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("Exception in TitliFetchAction : " + e.getMessage(), e);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
-			logger.error("Exception in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("Exception in TitliFetchAction : " + e.getMessage(), e);
 		}
 		return actionForward;
 	}
+
 	/**
 	 *
 	 * @param name String
@@ -137,7 +145,8 @@ public class TitliFetchAction extends Action
 	 * @param request HttpServletRequest
 	 * @return Collection<SimpleConditionsNode> a collection of SimpleConditionsNode as needed to create SimpleQuery
 	 */
-	Collection<SimpleConditionsNode> getSimpleConditionsNodeCollecton(TitliResultGroup resultGroup, HttpServletRequest request)
+	Collection<SimpleConditionsNode> getSimpleConditionsNodeCollecton(TitliResultGroup resultGroup,
+			HttpServletRequest request)
 	{
 		Collection<SimpleConditionsNode> simpleConditionsNodeCollection = new ArrayList<SimpleConditionsNode>();
 		MatchListInterface matchList = resultGroup.getNativeGroup().getMatchList();
@@ -148,28 +157,31 @@ public class TitliFetchAction extends Action
 			setAliasFor(tableName.toString(), request);
 			TableInterface table = Titli.getInstance().getDatabase(dbName).getTable(tableName);
 			//for each match form a SimpleConditionsNode and add it to the collection
-			for(MatchInterface match : matchList)
+			for (MatchInterface match : matchList)
 			{
 				Name identifier = new Name(Constants.IDENTIFIER);
 				ColumnInterface column = table.getColumn(identifier);
 				String value = match.getUniqueKeys().get(identifier);
-			    DataElement dataElement = new DataElement(alias, Constants.IDENTIFIER, column.getType());
-				Condition condition = new Condition(dataElement, new Operator(Operator.EQUAL), value);
-				SimpleConditionsNode simpleConditionsNode  = new SimpleConditionsNode(condition, new Operator(Operator.OR));
+				DataElement dataElement = new DataElement(alias, Constants.IDENTIFIER, column
+						.getType());
+				Condition condition = new Condition(dataElement, new Operator(Operator.EQUAL),
+						value);
+				SimpleConditionsNode simpleConditionsNode = new SimpleConditionsNode(condition,
+						new Operator(Operator.OR));
 				simpleConditionsNodeCollection.add(simpleConditionsNode);
 			}
 		}
-		catch(TitliException e)
+		catch (TitliException e)
 		{
-			logger.error("Exception in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("Exception in TitliFetchAction : " + e.getMessage(), e);
 		}
-		catch(DAOException e)
+		catch (DAOException e)
 		{
-			logger.error("DAOException in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("DAOException in TitliFetchAction : " + e.getMessage(), e);
 		}
-		catch(ClassNotFoundException e)
+		catch (ClassNotFoundException e)
 		{
-			logger.error("ClassNotFoundException in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("ClassNotFoundException in TitliFetchAction : " + e.getMessage(), e);
 		}
 		return simpleConditionsNodeCollection;
 
@@ -181,7 +193,9 @@ public class TitliFetchAction extends Action
 	 * @param request the servlet request
 	 *
 	 */
-	private  void setDataAndColumnLists(Collection<SimpleConditionsNode> simpleConditionsNodeCollection, HttpServletRequest request)
+	private void setDataAndColumnLists(
+			Collection<SimpleConditionsNode> simpleConditionsNodeCollection,
+			HttpServletRequest request)
 	{
 		dataList = new ArrayList();
 		columnNames = new ArrayList<String>();
@@ -196,32 +210,36 @@ public class TitliFetchAction extends Action
 			List<String> fieldList = new ArrayList<String>();
 			List<String> aliasList = new ArrayList<String>();
 			aliasList.add(alias);
-			fieldList=getFieldList(simpleConditionsNodeCollection);
-			Vector selectDataElements = simpleQueryBizLogic.getSelectDataElements(null, aliasList, columnNames, true, fieldList);
+			fieldList = getFieldList(simpleConditionsNodeCollection);
+			Vector selectDataElements = simpleQueryBizLogic.getSelectDataElements(null, aliasList,
+					columnNames, true, fieldList);
 			query.setResultView(selectDataElements);
 			setColumnNames(query, queryResultObjectDataMap, simpleQueryBizLogic);
 			setIdentifierIndex(query);
 			int recordsPerPage = getRecordsPerPage(session);
-			PagenatedResultData pagenatedResultData=
-						query.execute(getSessionData(request), true, queryResultObjectDataMap, query.hasConditionOnIdentifiedField(),0 ,recordsPerPage);
+			PagenatedResultData pagenatedResultData = query.execute(getSessionData(request), true,
+					queryResultObjectDataMap, query.hasConditionOnIdentifiedField(), 0,
+					recordsPerPage);
 			QuerySessionData querySessionData = new QuerySessionData();
 			querySessionData.setSql(query.getString());
 			querySessionData.setQueryResultObjectDataMap(queryResultObjectDataMap);
 			querySessionData.setSecureExecute(true);
-			querySessionData.setHasConditionOnIdentifiedField(query.hasConditionOnIdentifiedField());
+			querySessionData
+					.setHasConditionOnIdentifiedField(query.hasConditionOnIdentifiedField());
 			querySessionData.setRecordsPerPage(recordsPerPage);
 			querySessionData.setTotalNumberOfRecords(pagenatedResultData.getTotalRecords());
 			session.setAttribute(Constants.QUERY_SESSION_DATA, querySessionData);
 			dataList = pagenatedResultData.getResult();
-			id = (Integer)(query.getColumnIdsMap().get(alias+"."+Constants.IDENTIFIER))-Constants.ONE;
+			id = (Integer) (query.getColumnIdsMap().get(alias + "." + Constants.IDENTIFIER))
+					- Constants.ONE;
 		}
-		catch(DAOException e)
+		catch (DAOException e)
 		{
-			logger.error("DAOException in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("DAOException in TitliFetchAction : " + e.getMessage(), e);
 		}
-		catch(SQLException e)
+		catch (SQLException e)
 		{
-			logger.error("SQLException in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("SQLException in TitliFetchAction : " + e.getMessage(), e);
 		}
 	}
 
@@ -250,9 +268,11 @@ public class TitliFetchAction extends Action
 	{
 		Set fromTables = query.getTableNamesSet();
 		query.setTableSet(fromTables);
-		simpleQueryBizLogic.createQueryResultObjectData(fromTables, queryResultObjectDataMap, query);
+		simpleQueryBizLogic
+				.createQueryResultObjectData(fromTables, queryResultObjectDataMap, query);
 		List identifierColumnNames = new ArrayList();
-		identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(queryResultObjectDataMap, query);
+		identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(
+				queryResultObjectDataMap, query);
 		simpleQueryBizLogic.setDependentIdentifiedColumnIds(queryResultObjectDataMap, query);
 		for (int i = 0; i < identifierColumnNames.size(); i++)
 		{
@@ -264,18 +284,20 @@ public class TitliFetchAction extends Action
 	 * @param simpleConditionsNodeCollection Collection<SimpleConditionsNode>
 	 * @return List<String> field List
 	 */
-	private List<String> getFieldList(Collection<SimpleConditionsNode> simpleConditionsNodeCollection)
+	private List<String> getFieldList(
+			Collection<SimpleConditionsNode> simpleConditionsNodeCollection)
 	{
 		List<String> fieldList = new ArrayList<String>();
-		if(simpleConditionsNodeCollection != null && !simpleConditionsNodeCollection.isEmpty())
+		if (simpleConditionsNodeCollection != null && !simpleConditionsNodeCollection.isEmpty())
 		{
 			Iterator<SimpleConditionsNode> itr = simpleConditionsNodeCollection.iterator();
-			while(itr.hasNext())
+			while (itr.hasNext())
 			{
 				SimpleConditionsNode simpleConditionsNode = (SimpleConditionsNode) itr.next();
 				Table table = simpleConditionsNode.getCondition().getDataElement().getTable();
 				DataElement dataElement = simpleConditionsNode.getCondition().getDataElement();
-				String field =table.getTableName() + "." + table.getTableName() + "." + dataElement.getField() + "." + dataElement.getFieldType() ;
+				String field = table.getTableName() + "." + table.getTableName() + "."
+						+ dataElement.getField() + "." + dataElement.getFieldType();
 				fieldList.add(field);
 			}
 		}
@@ -289,11 +311,13 @@ public class TitliFetchAction extends Action
 	private int getRecordsPerPage(HttpSession session)
 	{
 		int recordsPerPage;
-		String recordsPerPageSessionValue = (String) session.getAttribute(Constants.RESULTS_PER_PAGE);
-		if (recordsPerPageSessionValue==null)
+		String recordsPerPageSessionValue = (String) session
+				.getAttribute(Constants.RESULTS_PER_PAGE);
+		if (recordsPerPageSessionValue == null)
 		{
-			recordsPerPage = Integer.parseInt(XMLPropertyHandler.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
-			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage+"");
+			recordsPerPage = Integer.parseInt(XMLPropertyHandler
+					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
+			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage + "");
 		}
 		else
 		{
@@ -309,14 +333,17 @@ public class TitliFetchAction extends Action
 	 * @throws DAOException database exception
 	 * @throws ClassNotFoundException Generic exception
 	 */
-	private void setAliasFor(String tableName, HttpServletRequest request) throws DAOException,ClassNotFoundException
+	private void setAliasFor(String tableName, HttpServletRequest request) throws DAOException,
+			ClassNotFoundException
 	{
-		String query = "select "+Constants.TABLE_ALIAS_NAME_COLUMN+" from "+Constants.TABLE_DATA_TABLE_NAME+" where "+Constants.TABLE_TABLE_NAME_COLUMN+"='"+tableName+"'";
+		String query = "select " + Constants.TABLE_ALIAS_NAME_COLUMN + " from "
+				+ Constants.TABLE_DATA_TABLE_NAME + " where " + Constants.TABLE_TABLE_NAME_COLUMN
+				+ "='" + tableName + "'";
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		dao.openSession(getSessionData(request));
-		List list  = dao.executeQuery(query, getSessionData(request), false, null);
+		List list = dao.executeQuery(query, getSessionData(request), false, null);
 		List subList = (List) (list.get(0));
-		alias = (String)(subList.get(0));
+		alias = (String) (subList.get(0));
 		dao.closeSession();
 	}
 
@@ -327,8 +354,7 @@ public class TitliFetchAction extends Action
 	 */
 	protected SessionDataBean getSessionData(HttpServletRequest request)
 	{
-		return (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
+		return (SessionDataBean) request.getSession().getAttribute(Constants.SESSION_DATA);
 	}
-
 
 }

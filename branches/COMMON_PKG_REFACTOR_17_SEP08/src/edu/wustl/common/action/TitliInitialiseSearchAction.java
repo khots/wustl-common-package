@@ -1,6 +1,7 @@
 /**
  *
  */
+
 package edu.wustl.common.action;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +27,8 @@ import edu.wustl.common.util.logger.Logger;
 public class TitliInitialiseSearchAction extends Action
 {
 
-	private org.apache.log4j.Logger logger= Logger.getLogger(TitliInitialiseSearchAction.class);
+	private org.apache.log4j.Logger logger = Logger.getLogger(TitliInitialiseSearchAction.class);
+
 	/**
 	 * @param mapping the mapping
 	 * @param form the action form
@@ -34,7 +36,8 @@ public class TitliInitialiseSearchAction extends Action
 	 * @param response the response
 	 * @return action forward
 	 */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response)
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
 	{
 		logger.info("in execute method");
 		try
@@ -43,7 +46,7 @@ public class TitliInitialiseSearchAction extends Action
 		}
 		catch (TitliException e)
 		{
-			logger.error("TitliException in InitialiseTitliSearchAction : "+ e.getMessage(), e);
+			logger.error("TitliException in InitialiseTitliSearchAction : " + e.getMessage(), e);
 		}
 
 		TitliTableMapper.getInstance();

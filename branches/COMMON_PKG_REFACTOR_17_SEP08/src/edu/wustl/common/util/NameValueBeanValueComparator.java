@@ -21,7 +21,8 @@ public class NameValueBeanValueComparator implements java.util.Comparator
 			//Compare according to relevance counter
 			if (nvb1.getValue() != null && nvb2.getValue() != null)
 			{
-				return (new Long(Long.parseLong(nvb1.getValue().toString()))).compareTo(new Long(Long.parseLong(nvb2.getValue())));
+				return (new Long(Long.parseLong(nvb1.getValue().toString()))).compareTo(new Long(
+						Long.parseLong(nvb2.getValue())));
 			}
 		}
 		return 0;

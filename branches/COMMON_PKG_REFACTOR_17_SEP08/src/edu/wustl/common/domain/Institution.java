@@ -21,13 +21,14 @@ import edu.wustl.common.actionForm.InstitutionForm;
  */
 public class Institution extends AbstractDomainObject implements Serializable
 {
+
 	private static final long serialVersionUID = 1234567890L;
-	
+
 	/**
 	 * System generated unique id.
 	 */
 	protected Long id;
-	
+
 	/**
 	 * Name of the Institution.
 	 */
@@ -38,14 +39,15 @@ public class Institution extends AbstractDomainObject implements Serializable
 	 * */
 	public Institution()
 	{
-		
+
 	}
-	
+
 	public Institution(AbstractActionForm form)
 	{
-		setAllValues(form);
+		InstitutionForm instituteForm = (InstitutionForm) form;
+		this.name = instituteForm.getName().trim();
 	}
-	
+
 	/**
 	 * Returns the unique id assigned to institution.
 	 * @hibernate.id name="id" column="IDENTIFIER" type="long"
@@ -90,15 +92,14 @@ public class Institution extends AbstractDomainObject implements Serializable
 	{
 		this.name = name;
 	}
-	
-	
-    /* (non-Javadoc)
-     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
-     */
-    public void setAllValues(IValueObject abstractForm)
-    {
-		InstitutionForm instituteForm = (InstitutionForm)abstractForm;
-		
-		this.name = instituteForm.getName().trim() ;
-    }
+
+	/* (non-Javadoc)
+	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
+	 */
+	public void setAllValues(IValueObject abstractForm)
+	{
+		InstitutionForm instituteForm = (InstitutionForm) abstractForm;
+
+		this.name = instituteForm.getName().trim();
+	}
 }

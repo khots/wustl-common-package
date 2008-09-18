@@ -8,7 +8,6 @@ package edu.wustl.common.security;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,27 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import edu.wustl.common.beans.NameValueBean;
-import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeManager;
-import edu.wustl.common.security.PrivilegeUtility;
-import edu.wustl.common.security.exceptions.SMException;
-import edu.wustl.common.util.Permissions;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
-import edu.wustl.common.util.logger.Logger;
-
-import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.UserProvisioningManager;
-import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
-import gov.nih.nci.security.authorization.domainobjects.Group;
-import gov.nih.nci.security.authorization.domainobjects.Privilege;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
-import gov.nih.nci.security.authorization.domainobjects.Role;
-import gov.nih.nci.security.exceptions.CSException;
-import gov.nih.nci.security.exceptions.CSTransactionException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,6 +27,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.wustl.common.security.exceptions.SMException;
+import edu.wustl.common.util.Permissions;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
+import gov.nih.nci.security.authorization.domainobjects.Group;
+import gov.nih.nci.security.authorization.domainobjects.Privilege;
+import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
+import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
+import gov.nih.nci.security.authorization.domainobjects.Role;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
+import gov.nih.nci.security.exceptions.CSTransactionException;
+
 /**
  * @author ravindra_jain
  * creation date : 14th April, 2008
@@ -56,6 +49,7 @@ import org.xml.sax.SAXException;
  */
 public class PrivilegeManager
 {
+
 	/* Singleton instance of PrivilegeCacheManager
 	 */
 	private volatile static PrivilegeManager instance;
@@ -65,44 +59,43 @@ public class PrivilegeManager
 	private Map<String, PrivilegeCache> privilegeCaches;
 
 	private PrivilegeUtility privilegeUtility;
-	
+
 	private List<String> lazyObjects;
-	private List<String> classes ;
-	private List<String> eagerObjects ;
-	
+	private List<String> classes;
+	private List<String> eagerObjects;
+
 	// CONSTRUCTOR
-	private PrivilegeManager() 
+	private PrivilegeManager()
 	{
 		lazyObjects = new ArrayList<String>();
 		classes = new ArrayList<String>();
 		eagerObjects = new ArrayList<String>();
-		
+
 		privilegeUtility = new PrivilegeUtility();
 		privilegeCaches = new HashMap<String, PrivilegeCache>();
-		
+
 		readXmlFile("CacheableObjects.xml");
 	}
 
 	/**
 	 * return the Singleton PrivilegeCacheManager instance
 	 */
-	public static PrivilegeManager getInstance() 
+	public static PrivilegeManager getInstance()
 	{
 		//double checked locking -- works with Java 1.5 - Juber
-		if(instance==null)
+		if (instance == null)
 		{
-			synchronized(PrivilegeManager.class)
+			synchronized (PrivilegeManager.class)
 			{
-				if(instance == null)
+				if (instance == null)
 				{
-					instance  = new PrivilegeManager();	
+					instance = new PrivilegeManager();
 				}
 			}
 		}
-		
+
 		return instance;
 	}
-
 
 	/**
 	 * to return the PrivilegeCache object from the Map of PrivilegeCaches
@@ -125,14 +118,13 @@ public class PrivilegeManager
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			privilegeCaches.put(loginName, privilegeCache);
 		}
-		
+
 		return privilegeCache;
 	}
-	
-	
+
 	/**
 	 * To get PrivilegeCache objects for all users
 	 * belonging to a particular group
@@ -147,11 +139,11 @@ public class PrivilegeManager
 
 		Set<User> users = privilegeUtility.getUserProvisioningManager().getUsers(groupName);
 
-		for(User user : users)
+		for (User user : users)
 		{
 			PrivilegeCache privilegeCache = privilegeCaches.get(user.getUserId().toString());
 
-			if(privilegeCache!= null)
+			if (privilegeCache != null)
 			{
 				listOfPrivilegeCaches.add(privilegeCache);
 			}
@@ -170,8 +162,7 @@ public class PrivilegeManager
 	{
 		return privilegeCaches.values();
 	}
-	
-	
+
 	/**
 	 * This method will generally be called from CatissueCoreSesssionListener.sessionDestroyed 
 	 * in order to remove the corresponding PrivilegeCache from the Session
@@ -182,8 +173,7 @@ public class PrivilegeManager
 	{
 		privilegeCaches.remove(userId);
 	}
-	
-	
+
 	/**
 	 * This Utility method is called dynamically as soon as a 
 	 * Site or CollectionProtocol object gets created through the UI
@@ -194,51 +184,53 @@ public class PrivilegeManager
 	 */
 	private void addObjectToPrivilegeCaches(String objectId)
 	{
-		try 
+		try
 		{
 			Collection<PrivilegeCache> listOfPrivilegeCaches = getPrivilegeCaches();
 
-			ProtectionElement protectionElement = privilegeUtility.getUserProvisioningManager().getProtectionElement(objectId);
+			ProtectionElement protectionElement = privilegeUtility.getUserProvisioningManager()
+					.getProtectionElement(objectId);
 
 			Collection<ProtectionElement> protectionElements = new Vector<ProtectionElement>();
 			protectionElements.add(protectionElement);
 
-			for(PrivilegeCache privilegeCache : listOfPrivilegeCaches)
+			for (PrivilegeCache privilegeCache : listOfPrivilegeCaches)
 			{
-				Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection = privilegeUtility.
-				getUserProvisioningManager().getPrivilegeMap(privilegeCache.getLoginName(), protectionElements);
+				Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection = privilegeUtility
+						.getUserProvisioningManager().getPrivilegeMap(
+								privilegeCache.getLoginName(), protectionElements);
 
-				if(objectPrivilegeMapCollection.size()>0)
+				if (objectPrivilegeMapCollection.size() > 0)
 				{
-					privilegeCache.addObject(objectId, objectPrivilegeMapCollection.iterator().next().getPrivileges());
+					privilegeCache.addObject(objectId, objectPrivilegeMapCollection.iterator()
+							.next().getPrivileges());
 				}
 			}
-		} 
-		
-		catch (Exception e) 
+		}
+
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
-	
-	public void insertAuthorizationData(List authorizationData, Set protectionObjects, String[] dynamicGroups, String objectId)
+
+	public void insertAuthorizationData(List authorizationData, Set protectionObjects,
+			String[] dynamicGroups, String objectId)
 	{
-			PrivilegeUtility utility = new PrivilegeUtility();
-			try 
-			{
-				utility.insertAuthorizationData(authorizationData, protectionObjects, dynamicGroups);
-			} 
-			catch (SMException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			addObjectToPrivilegeCaches(objectId);
+		PrivilegeUtility utility = new PrivilegeUtility();
+		try
+		{
+			utility.insertAuthorizationData(authorizationData, protectionObjects, dynamicGroups);
+		}
+		catch (SMException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		addObjectToPrivilegeCaches(objectId);
 	}
-	
-	
+
 	/**
 	 * Used to Update the privilege of a group 
 	 * both in the Cache as well as in the database 
@@ -250,34 +242,34 @@ public class PrivilegeManager
 	 * @param assignOperation
 	 * @throws Exception
 	 */
-	public void updateGroupPrivilege(String privilegeName, Class objectType,
-			Long[] objectIds, String roleId, boolean assignOperation) throws Exception
+	public void updateGroupPrivilege(String privilegeName, Class objectType, Long[] objectIds,
+			String roleId, boolean assignOperation) throws Exception
 	{
 		PrivilegeUtility utility = new PrivilegeUtility();
 		Collection<PrivilegeCache> listOfPrivilegeCaches = null;
 		String groupId = utility.getGroupIdForRole(roleId);
-		
+
 		Set<User> users = utility.getUserProvisioningManager().getUsers(groupId);
-		
-		for(User user : users)
+
+		for (User user : users)
 		{
 			listOfPrivilegeCaches = getPrivilegeCaches();
 
-			for(PrivilegeCache privilegeCache : listOfPrivilegeCaches)
+			for (PrivilegeCache privilegeCache : listOfPrivilegeCaches)
 			{
-				if(privilegeCache.getLoginName().equals(user.getLoginName()))
+				if (privilegeCache.getLoginName().equals(user.getLoginName()))
 				{
-					for(Long objectId : objectIds)
+					for (Long objectId : objectIds)
 					{
-						privilegeCache.updatePrivilege(objectType.getName()+"_"+objectId, privilegeName, assignOperation);
+						privilegeCache.updatePrivilege(objectType.getName() + "_" + objectId,
+								privilegeName, assignOperation);
 					}
 				}
 			}
 			assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
-		}	
+		}
 	}
-	
-	
+
 	/**
 	 * This method assigns privilege by privilegeName to the user group
 	 * identified by role corresponding to roleId on the objects identified by
@@ -288,19 +280,20 @@ public class PrivilegeManager
 	 * @param roleId
 	 * @throws SMException
 	 */
-	private void assignPrivilegeToGroup(String privilegeName, Class objectType,
-			Long[] objectIds, String roleId, boolean assignOperation) throws SMException 
-			{
+	private void assignPrivilegeToGroup(String privilegeName, Class objectType, Long[] objectIds,
+			String roleId, boolean assignOperation) throws SMException
+	{
 		PrivilegeUtility utility = new PrivilegeUtility();
 
-		Logger.out.debug("privilegeName:" + privilegeName + " objectType:"
-				+ objectType + " objectIds:"
-				+ edu.wustl.common.util.Utility.getArrayString(objectIds) + " roleId:" + roleId);
-		if (privilegeName == null || objectType == null || objectIds == null
-				|| roleId == null) {
-			Logger.out
-			.debug("Cannot assign privilege to user. One of the parameters is null.");
-		} else {
+		Logger.out.debug("privilegeName:" + privilegeName + " objectType:" + objectType
+				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
+				+ " roleId:" + roleId);
+		if (privilegeName == null || objectType == null || objectIds == null || roleId == null)
+		{
+			Logger.out.debug("Cannot assign privilege to user. One of the parameters is null.");
+		}
+		else
+		{
 			String groupId;
 			UserProvisioningManager userProvisioningManager;
 			String protectionGroupName = null;
@@ -336,8 +329,8 @@ public class PrivilegeManager
 						Logger.out.debug("Assign Protection elements");
 
 						//Assign Protection elements to Protection Group
-						utility.assignProtectionElements(protectionGroup
-								.getProtectionGroupName(), objectType, objectIds);
+						utility.assignProtectionElements(protectionGroup.getProtectionGroupName(),
+								objectType, objectIds);
 
 						utility.assignGroupRoleToProtectionGroup(Long.valueOf(groupId), roles,
 								protectionGroup, assignOperation);
@@ -346,20 +339,21 @@ public class PrivilegeManager
 					{
 						Logger.out.debug("De Assign Protection elements");
 
-						utility.deAssignProtectionElements(protectionGroupName, objectType, objectIds);
+						utility.deAssignProtectionElements(protectionGroupName, objectType,
+								objectIds);
 					}
 				}
 				else
 				{
-					Logger.out.debug("Value Before#####################"+assignOperation);
+					Logger.out.debug("Value Before#####################" + assignOperation);
 
 					// In case of assign remove the READ_DENIED privilege of the group
 					// and in case of de-assign add the READ_DENIED privilege to the group.
-					assignOperation = ! assignOperation;
+					assignOperation = !assignOperation;
 
-					Logger.out.debug("Value After#####################"+assignOperation);
+					Logger.out.debug("Value After#####################" + assignOperation);
 
-					for (int i = 0; i < objectIds.length;i++)
+					for (int i = 0; i < objectIds.length; i++)
 					{
 
 						//Getting Appropriate Group
@@ -367,15 +361,17 @@ public class PrivilegeManager
 						// PG_<<userID>>_ROLE_<<roleID>>
 						//				protectionGroupName = "PG_GROUP_" + groupId + "_ROLE_"
 						//						+ role.getId();
-						Logger.out.debug("objectType............................"+objectType);
+						Logger.out.debug("objectType............................" + objectType);
 
 						// Commented by Ashwin --- remove dependency on domainobject package
 
 						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants.getCollectionProtocolPGName(objectIds[i]);
-						else if (objectType.getName().equals(Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants.getDistributionProtocolPGName(objectIds[i]);
-
+							protectionGroupName = Constants
+									.getCollectionProtocolPGName(objectIds[i]);
+						else if (objectType.getName().equals(
+								Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
+							protectionGroupName = Constants
+									.getDistributionProtocolPGName(objectIds[i]);
 
 						protectionGroup = utility.getProtectionGroup(protectionGroupName);
 
@@ -387,13 +383,14 @@ public class PrivilegeManager
 					}
 				}
 
-			} catch (CSException csex) {
+			}
+			catch (CSException csex)
+			{
 				throw new SMException(csex);
 			}
 		}
-			}
-	
-	
+	}
+
 	/**
 	 * This is a temporary method written for StorageContainer - special case
 	 * Used for StorageContainerBizLogic.isDeAssignable() method
@@ -403,137 +400,157 @@ public class PrivilegeManager
 	 * @param privilegeName
 	 * @return
 	 */
-	public boolean hasGroupPrivilege(String roleId, String objectId, String privilegeName) throws Exception
+	public boolean hasGroupPrivilege(String roleId, String objectId, String privilegeName)
+			throws Exception
 	{
 		PrivilegeUtility utility = new PrivilegeUtility();
 		String groupId = utility.getGroupIdForRole(roleId);
-		
+
 		Set<User> users = utility.getUserProvisioningManager().getUsers(groupId);
-		
-		for(User user : users)
+
+		for (User user : users)
 		{
-			if(!getPrivilegeCache(user.getLoginName()).hasPrivilege(objectId, privilegeName))
-				return false;		
+			if (!getPrivilegeCache(user.getLoginName()).hasPrivilege(objectId, privilegeName))
+				return false;
 		}
-		
+
 		return true;
 	}
-	
-	
+
 	private void readXmlFile(String fileName)
 	{
-		try {
+		try
+		{
 			String xmlFileName = fileName;
-			
-			InputStream inputXmlFile = this.getClass().getClassLoader()
-					.getResourceAsStream(xmlFileName);
 
-			if (inputXmlFile != null) 
+			InputStream inputXmlFile = this.getClass().getClassLoader().getResourceAsStream(
+					xmlFileName);
+
+			if (inputXmlFile != null)
 			{
-				DocumentBuilderFactory factory = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
 				Document doc = builder.parse(inputXmlFile);
 
 				Element root = null;
 				root = doc.getDocumentElement();
 
-				if (root == null) {
+				if (root == null)
+				{
 					throw new Exception("file can not be read");
 				}
 
 				NodeList nodeList = root.getElementsByTagName("Class");
 
 				int length = nodeList.getLength();
-				
-				for (int counter = 0; counter < length; counter++) 
+
+				for (int counter = 0; counter < length; counter++)
 				{
 					Element element = (Element) (nodeList.item(counter));
 					String temp = new String(element.getAttribute("name"));
 					classes.add(temp);
 				}
-				
+
 				NodeList nodeList1 = root.getElementsByTagName("ObjectType");
 
 				int length1 = nodeList1.getLength();
 
-				for (int counter = 0; counter < length1; counter++) 
+				for (int counter = 0; counter < length1; counter++)
 				{
 					Element element = (Element) (nodeList1.item(counter));
 					String temp = new String(element.getAttribute("pattern"));
 					String lazily = new String(element.getAttribute("cacheLazily"));
 
-					if (lazily.equalsIgnoreCase("false")
-							|| lazily.equalsIgnoreCase("")) 
+					if (lazily.equalsIgnoreCase("false") || lazily.equalsIgnoreCase(""))
 					{
 						eagerObjects.add(temp);
-					} else 
+					}
+					else
 					{
 						lazyObjects.add(temp.replace('*', '_'));
 					}
 				}
 			}
-		} catch (ParserConfigurationException excp) {
+		}
+		catch (ParserConfigurationException excp)
+		{
 			Logger.out.error(excp.getMessage(), excp);
-		} catch (SAXException excp) {
+		}
+		catch (SAXException excp)
+		{
 			Logger.out.error(excp.getMessage(), excp);
-		} catch (IOException excp) {
+		}
+		catch (IOException excp)
+		{
 			Logger.out.error(excp.getMessage(), excp);
-		} catch (Exception excp) {
+		}
+		catch (Exception excp)
+		{
 			Logger.out.error(excp.getMessage(), excp);
 		}
 	}
 
-	public List<String> getClasses() {
+	public List<String> getClasses()
+	{
 		return Collections.unmodifiableList(classes);
 	}
 
-	public List<String> getLazyObjects() {
+	public List<String> getLazyObjects()
+	{
 		return Collections.unmodifiableList(lazyObjects);
 	}
 
-	public List<String> getEagerObjects() {
+	public List<String> getEagerObjects()
+	{
 		return Collections.unmodifiableList(eagerObjects);
 	}
-	
-	public void createRole(String roleName,Set<String>privileges) throws CSException, SMException
+
+	public void createRole(String roleName, Set<String> privileges) throws CSException, SMException
 	{
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
-		Role role=null;
-		try{ 
-		    role = privilegeUtility.getRole(roleName);
-		}catch(Exception e){
+		Role role = null;
+		try
+		{
+			role = privilegeUtility.getRole(roleName);
+		}
+		catch (Exception e)
+		{
 			role = new Role();
 			role.setName(roleName);
 			role.setDesc("Dynamically created role");
-			role.setApplication(privilegeUtility.getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
+			role.setApplication(privilegeUtility
+					.getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
 			Set<Privilege> privilegeList = new HashSet<Privilege>();
 			for (String privilegeId : privileges)
 			{
-				Privilege privilege = privilegeUtility.getUserProvisioningManager().getPrivilegeById(privilegeId);
+				Privilege privilege = privilegeUtility.getUserProvisioningManager()
+						.getPrivilegeById(privilegeId);
 				privilegeList.add(privilege);
 			}
 			role.setPrivileges(privilegeList);
-			UserProvisioningManager userProvisioningManager = privilegeUtility.getUserProvisioningManager(); 
+			UserProvisioningManager userProvisioningManager = privilegeUtility
+					.getUserProvisioningManager();
 			userProvisioningManager.createRole(role);
 		}
-		 
+
 	}
-	
-	public void insertPrivileges(List<Integer> userIdsList,List<Integer> entityIdsList,String protectionGrpName,Set<String>privileges,String roleName) throws CSTransactionException, CSException, SMException
+
+	public void insertPrivileges(List<Integer> userIdsList, List<Integer> entityIdsList,
+			String protectionGrpName, Set<String> privileges, String roleName)
+			throws CSTransactionException, CSException, SMException
 	{
-		ProtectionGroup pg ;
+		ProtectionGroup pg;
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 		pg = privilegeUtility.getProtectionGroup(protectionGrpName);
-		if(pg !=null)
+		if (pg != null)
 		{
 			pg = new ProtectionGroup();
 			pg.setProtectionGroupName(protectionGrpName);
-		
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * get a set of login names of users having given privilege on given object
 	 * 
@@ -542,39 +559,38 @@ public class PrivilegeManager
 	 * @return  
 	 * @throws CSException 
 	 */
-	public Set<String> getAccesibleUsers(String objectId, String privilege) throws CSException 
+	public Set<String> getAccesibleUsers(String objectId, String privilege) throws CSException
 	{
 		Set<String> result = new HashSet<String>();
 		try
 		{
-			UserProvisioningManager userProvisioningManager = privilegeUtility.getUserProvisioningManager();
-			
+			UserProvisioningManager userProvisioningManager = privilegeUtility
+					.getUserProvisioningManager();
+
 			List list = userProvisioningManager.getAccessibleGroups(objectId, privilege);
-			
-			for(Object o : list)
+
+			for (Object o : list)
 			{
 				Group group = (Group) o;
-				
-				for(Object o1 : group.getUsers())
+
+				for (Object o1 : group.getUsers())
 				{
 					User user = (User) o1;
 					result.add(user.getLoginName());
 				}
 			}
 		}
-		catch(CSException e)
+		catch (CSException e)
 		{
 			throw e;
 		}
-		catch(Throwable e)
+		catch (Throwable e)
 		{
 			//open connections?
-			
+
 		}
-			
+
 		return result;
 	}
-	
-	
 
 }

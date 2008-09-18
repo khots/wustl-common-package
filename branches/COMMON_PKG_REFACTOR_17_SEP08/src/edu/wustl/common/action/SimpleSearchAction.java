@@ -55,7 +55,9 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class SimpleSearchAction extends BaseAction
 {
-	private org.apache.log4j.Logger logger= Logger.getLogger(SimpleQueryInterfaceAction.class);
+
+	private org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceAction.class);
+
 	/**
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
@@ -102,7 +104,7 @@ public class SimpleSearchAction extends BaseAction
 		MapDataParser parser = new MapDataParser("edu.wustl.common.query");
 		Collection simpleConditionNodeCollection = parser.generateData(map, true);
 		List fieldList = new ArrayList();
-		fieldList=getFieldList(simpleConditionNodeCollection);
+		fieldList = getFieldList(simpleConditionNodeCollection);
 		Map queryResultObjectDataMap = new HashMap();
 		SimpleQueryBizLogic simpleQueryBizLogic = new SimpleQueryBizLogic();
 		String viewAliasName = (String) map
@@ -120,7 +122,7 @@ public class SimpleSearchAction extends BaseAction
 			session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST, selectedColumns);
 		}
 		List columnNames = new ArrayList();
-		Vector selectDataElements =null;
+		Vector selectDataElements = null;
 		if (selectedColumns != null)
 		{
 			selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,
@@ -129,45 +131,47 @@ public class SimpleSearchAction extends BaseAction
 		else
 		{
 			selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,
-				aliasList, columnNames, true, fieldList);
+					aliasList, columnNames, true, fieldList);
 		}
 		query.setResultView(selectDataElements);
 		Set fromTables = new HashSet();
 		Set tableSet = query.getTableSet();
 		Iterator itr = tableSet.iterator();
-		while(itr.hasNext())
+		while (itr.hasNext())
 		{
-			Table table = (Table )itr.next();
+			Table table = (Table) itr.next();
 			fromTables.add(table.getTableName());
 		}
 
 		fromTables.addAll(fromTablesList);
 		fromTables.addAll(aliasList);
- 		query.setTableSet(fromTables);
+		query.setTableSet(fromTables);
 		simpleQueryBizLogic.addActivityStatusConditions(simpleConditionNodeCollection, fromTables);
 		simpleQueryBizLogic.createOrderByListInQuery(fromTables, query);
 		((SimpleQuery) query).addConditions(simpleConditionNodeCollection);
 
-		QueryBizLogic queryBizLogic = (QueryBizLogic)AbstractBizLogicFactory.getBizLogic(
-            	ApplicationProperties.getValue("app.bizLogicFactory"),
-				"getBizLogic", Constants.QUERY_INTERFACE_ID);
+		QueryBizLogic queryBizLogic = (QueryBizLogic) AbstractBizLogicFactory.getBizLogic(
+				ApplicationProperties.getValue("app.bizLogicFactory"), "getBizLogic",
+				Constants.QUERY_INTERFACE_ID);
 		int identifierIndex = 0;
 		int recordsPerPage;
-		String recordsPerPageSessionValue = (String)session.getAttribute(Constants.RESULTS_PER_PAGE);
-		if (recordsPerPageSessionValue==null)
+		String recordsPerPageSessionValue = (String) session
+				.getAttribute(Constants.RESULTS_PER_PAGE);
+		if (recordsPerPageSessionValue == null)
 		{
-				recordsPerPage = Integer.parseInt(XMLPropertyHandler.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
-				session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage+"");
+			recordsPerPage = Integer.parseInt(XMLPropertyHandler
+					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
+			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage + "");
 		}
 		else
 		{
 			recordsPerPage = Integer.parseInt(recordsPerPageSessionValue);
 		}
-		PagenatedResultData pagenatedResultData=null;
+		PagenatedResultData pagenatedResultData = null;
 		boolean isSecureExecute = getSessionData(request).isSecurityRequired();
 		boolean hasConditionOnIdentifiedField;
-		simpleQueryBizLogic.createQueryResultObjectData(fromTables, queryResultObjectDataMap,
-				query);
+		simpleQueryBizLogic
+				.createQueryResultObjectData(fromTables, queryResultObjectDataMap, query);
 
 		List identifierColumnNames = new ArrayList();
 		identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(
@@ -177,21 +181,24 @@ public class SimpleSearchAction extends BaseAction
 		{
 			columnNames.add((String) identifierColumnNames.get(i));
 		}
-		if(isSecureExecute)
+		if (isSecureExecute)
 		{
-			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
+			queryBizLogic.insertQuery(query.getString(), getSessionData(request));
 			hasConditionOnIdentifiedField = query.hasConditionOnIdentifiedField();
-			pagenatedResultData = query.execute(getSessionData(request), isSecureExecute, queryResultObjectDataMap, hasConditionOnIdentifiedField,0 ,recordsPerPage);
+			pagenatedResultData = query.execute(getSessionData(request), isSecureExecute,
+					queryResultObjectDataMap, hasConditionOnIdentifiedField, 0, recordsPerPage);
 		}
 		else
 		{
 			isSecureExecute = false;
 			hasConditionOnIdentifiedField = false;
-			pagenatedResultData = query.execute(getSessionData(request), false, null, false,0,recordsPerPage);
+			pagenatedResultData = query.execute(getSessionData(request), false, null, false, 0,
+					recordsPerPage);
 		}
-	 	if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE))
+		if (simpleQueryInterfaceForm.getPageOf().equals(Constants.PAGEOF_SIMPLE_QUERY_INTERFACE))
 		{
-			Map<Integer, QueryResultObjectData> hyperlinkColumnMap = simpleQueryBizLogic.getHyperlinkMap(queryResultObjectDataMap, query.getResultView());
+			Map<Integer, QueryResultObjectData> hyperlinkColumnMap = simpleQueryBizLogic
+					.getHyperlinkMap(queryResultObjectDataMap, query.getResultView());
 			session.setAttribute(Constants.HYPERLINK_COLUMN_MAP, hyperlinkColumnMap);
 
 		}
@@ -202,24 +209,26 @@ public class SimpleSearchAction extends BaseAction
 			Map tableMap = query.getIdentifierColumnIds(tableAliasNames);
 			if (tableMap != null)
 			{
-				identifierIndex = Integer.parseInt(tableMap.get(viewAliasName).toString()) - Constants.ONE;
-				request.setAttribute(Constants.IDENTIFIER_FIELD_INDEX,Integer.valueOf(identifierIndex));
+				identifierIndex = Integer.parseInt(tableMap.get(viewAliasName).toString())
+						- Constants.ONE;
+				request.setAttribute(Constants.IDENTIFIER_FIELD_INDEX, Integer
+						.valueOf(identifierIndex));
 			}
-			queryBizLogic.insertQuery(query.getString(),getSessionData(request));
+			queryBizLogic.insertQuery(query.getString(), getSessionData(request));
 		}
 
 		List list = pagenatedResultData.getResult();
 		if (list.isEmpty())
 		{
-			return getActionForwardForNoResult(request,simpleQueryInterfaceForm, session, map);
+			return getActionForwardForNoResult(request, simpleQueryInterfaceForm, session, map);
 		}
 		else
 		{
 			if ((list.size() == Constants.ONE)
-					&& (!Constants.PAGEOF_SIMPLE_QUERY_INTERFACE.equals(simpleQueryInterfaceForm.getPageOf())))
+					&& (!Constants.PAGEOF_SIMPLE_QUERY_INTERFACE.equals(simpleQueryInterfaceForm
+							.getPageOf())))
 			{
-				return getActionForwardForOneRow(simpleQueryInterfaceForm,
-						identifierIndex, list);
+				return getActionForwardForOneRow(simpleQueryInterfaceForm, identifierIndex, list);
 			}
 			else
 			{
@@ -247,10 +256,8 @@ public class SimpleSearchAction extends BaseAction
 	 * @param map Map
 	 * @return ActionForward
 	 */
-	private ActionForward getActionForwardForNoResult(
-			HttpServletRequest request,
-			SimpleQueryInterfaceForm simpleQueryInterfaceForm,
-			HttpSession session, Map map)
+	private ActionForward getActionForwardForNoResult(HttpServletRequest request,
+			SimpleQueryInterfaceForm simpleQueryInterfaceForm, HttpSession session, Map map)
 	{
 		ActionErrors errors = new ActionErrors();
 		errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.noRecordsFound"));
@@ -266,10 +273,10 @@ public class SimpleSearchAction extends BaseAction
 		session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER, null);
 
 		String path = Constants.SIMPLE_QUERY_INTERFACE_ACTION + "?" + Constants.PAGEOF + "="
-				+ simpleQueryInterfaceForm.getPageOf() + "&" ;
-		if(alias != null)
+				+ simpleQueryInterfaceForm.getPageOf() + "&";
+		if (alias != null)
 		{
-			path = path + Constants.TABLE_ALIAS_NAME + "="	+ alias;
+			path = path + Constants.TABLE_ALIAS_NAME + "=" + alias;
 		}
 
 		return getActionForward(Constants.SIMPLE_QUERY_NO_RESULTS, path);
@@ -282,8 +289,7 @@ public class SimpleSearchAction extends BaseAction
 	 * @return ActionForward
 	 */
 	private ActionForward getActionForwardForOneRow(
-			SimpleQueryInterfaceForm simpleQueryInterfaceForm,
-			int identifierIndex, List list)
+			SimpleQueryInterfaceForm simpleQueryInterfaceForm, int identifierIndex, List list)
 	{
 		List rowList = (List) list.get(0);
 
@@ -292,10 +298,10 @@ public class SimpleSearchAction extends BaseAction
 				+ Constants.SEARCH + "&" + Constants.SYSTEM_IDENTIFIER + "="
 				+ rowList.get(identifierIndex);
 
-		if(simpleQueryInterfaceForm.getPageOf().equals("pageOfCollectionProtocol"))
+		if (simpleQueryInterfaceForm.getPageOf().equals("pageOfCollectionProtocol"))
 		{
-			path = "/RetrieveCollectionProtocol.do?"+ Constants.SYSTEM_IDENTIFIER + "="
-			+ rowList.get(identifierIndex);
+			path = "/RetrieveCollectionProtocol.do?" + Constants.SYSTEM_IDENTIFIER + "="
+					+ rowList.get(identifierIndex);
 		}
 		return getActionForward(Constants.SIMPLE_QUERY_SINGLE_RESULT, path);
 	}
@@ -307,10 +313,10 @@ public class SimpleSearchAction extends BaseAction
 	private List<String> getFieldList(Collection<SimpleConditionsNode> simpleConditionNodeCollection)
 	{
 		List<String> fieldList = new ArrayList<String>();
-		if(simpleConditionNodeCollection != null && !simpleConditionNodeCollection.isEmpty() )
+		if (simpleConditionNodeCollection != null && !simpleConditionNodeCollection.isEmpty())
 		{
 			Iterator<SimpleConditionsNode> itr = simpleConditionNodeCollection.iterator();
-			while(itr.hasNext())
+			while (itr.hasNext())
 			{
 				SimpleConditionsNode simpleConditionsNode = (SimpleConditionsNode) itr.next();
 				Table table = simpleConditionsNode.getCondition().getDataElement().getTable();

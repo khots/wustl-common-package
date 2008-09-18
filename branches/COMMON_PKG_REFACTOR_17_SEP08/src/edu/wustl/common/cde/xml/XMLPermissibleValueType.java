@@ -5,9 +5,7 @@
 // Generated on: 2005.08.23 at 10:44:28 GMT+05:30 
 //
 
-
 package edu.wustl.common.cde.xml;
-
 
 /**
  * Java content class for XMLPermissibleValueType complex type.
@@ -29,73 +27,73 @@ package edu.wustl.common.cde.xml;
  * </pre>
  * 
  */
-public interface XMLPermissibleValueType {
+public interface XMLPermissibleValueType
+{
 
+	/**
+	 * Gets the value of the depthOfHierarchyTree property.
+	 * 
+	 */
+	int getDepthOfHierarchyTree();
 
-    /**
-     * Gets the value of the depthOfHierarchyTree property.
-     * 
-     */
-    int getDepthOfHierarchyTree();
+	/**
+	 * Sets the value of the depthOfHierarchyTree property.
+	 * 
+	 */
+	void setDepthOfHierarchyTree(int value);
 
-    /**
-     * Sets the value of the depthOfHierarchyTree property.
-     * 
-     */
-    void setDepthOfHierarchyTree(int value);
+	/**
+	 * Gets the value of the evsTerminology property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link java.lang.String}
+	 */
+	java.lang.String getEvsTerminology();
 
-    /**
-     * Gets the value of the evsTerminology property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String}
-     */
-    java.lang.String getEvsTerminology();
+	/**
+	 * Sets the value of the evsTerminology property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link java.lang.String}
+	 */
+	void setEvsTerminology(java.lang.String value);
 
-    /**
-     * Sets the value of the evsTerminology property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String}
-     */
-    void setEvsTerminology(java.lang.String value);
+	/**
+	 * Gets the value of the parentConceptCode property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link java.lang.String}
+	 */
+	java.lang.String getParentConceptCode();
 
-    /**
-     * Gets the value of the parentConceptCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String}
-     */
-    java.lang.String getParentConceptCode();
+	/**
+	 * Sets the value of the parentConceptCode property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link java.lang.String}
+	 */
+	void setParentConceptCode(java.lang.String value);
 
-    /**
-     * Sets the value of the parentConceptCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String}
-     */
-    void setParentConceptCode(java.lang.String value);
+	/**
+	 * Gets the value of the conceptCode property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link java.lang.String}
+	 */
+	java.lang.String getConceptCode();
 
-    /**
-     * Gets the value of the conceptCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String}
-     */
-    java.lang.String getConceptCode();
-
-    /**
-     * Sets the value of the conceptCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String}
-     */
-    void setConceptCode(java.lang.String value);
+	/**
+	 * Sets the value of the conceptCode property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link java.lang.String}
+	 */
+	void setConceptCode(java.lang.String value);
 
 }

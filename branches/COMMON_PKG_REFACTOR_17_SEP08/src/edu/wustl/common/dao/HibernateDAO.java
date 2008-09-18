@@ -1,3 +1,4 @@
+
 package edu.wustl.common.dao;
 
 import java.util.Collection;
@@ -6,8 +7,9 @@ import java.util.Collection;
 
 public interface HibernateDAO extends AbstractDAO
 {
+
 	public Object loadCleanObj(String sourceObjectName, Long id) throws Exception;
-	
+
 	public void addAuditEventLogs(Collection auditEventDetailsCollection);
 
 }

@@ -1,6 +1,7 @@
 /**
  *
  */
+
 package edu.wustl.common.action;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,8 @@ import edu.wustl.common.util.logger.Logger;
 public class TitliSearchAction extends Action
 {
 
-	private org.apache.log4j.Logger logger= Logger.getLogger(TitliSearchAction.class);
+	private org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchAction.class);
+
 	/**
 	 * @param mapping the mapping
 	 * @param form the action form
@@ -39,10 +41,11 @@ public class TitliSearchAction extends Action
 	 * @return action forward
 	 *
 	 */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response)
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
 	{
 		logger.info("in execute method");
-		ActionForward actionForward=mapping.findForward(Constants.SUCCESS);
+		ActionForward actionForward = mapping.findForward(Constants.SUCCESS);
 		TitliSearchForm titliSearchForm = (TitliSearchForm) form;
 		try
 		{
@@ -51,23 +54,24 @@ public class TitliSearchAction extends Action
 			MatchListInterface matchList = titli.search(searchString);
 			SortedResultMapInterface sortedResultMap = matchList.getSortedResultMap();
 			titliSearchForm.setSortedResultMap(sortedResultMap);
-			request.getSession().setAttribute(Constants.TITLI_SORTED_RESULT_MAP,sortedResultMap);
+			request.getSession().setAttribute(Constants.TITLI_SORTED_RESULT_MAP, sortedResultMap);
 			titliSearchForm.setDisplaySearchString("TiTLi Search");
-			titliSearchForm.setDisplayStats("Found "+matchList.getNumberOfMatches()+" matches in "+matchList.getTimeTaken()+" seconds");
+			titliSearchForm.setDisplayStats("Found " + matchList.getNumberOfMatches()
+					+ " matches in " + matchList.getTimeTaken() + " seconds");
 
 			//if matches are from just one table, go directly to TitliFetchAction, skip TitliResultUpdatable.jsp
-			if(sortedResultMap.size()==Constants.ONE)
+			if (sortedResultMap.size() == Constants.ONE)
 			{
-				actionForward=getActionForward(titliSearchForm,sortedResultMap);
+				actionForward = getActionForward(titliSearchForm, sortedResultMap);
 			}
 		}
 		catch (TitliException e)
 		{
-			logger.error("TitliException in TitliSearchAction : "+ e.getMessage(), e);
+			logger.error("TitliException in TitliSearchAction : " + e.getMessage(), e);
 		}
 		catch (Exception e)
 		{
-			logger.error("Exception in TitliFetchAction : "	+ e.getMessage(), e);
+			logger.error("Exception in TitliFetchAction : " + e.getMessage(), e);
 		}
 		return actionForward;
 	}
@@ -78,7 +82,8 @@ public class TitliSearchAction extends Action
 	 * @return the created ActionForward
 	 * @throws Exception geniric exception
 	 */
-	private ActionForward getActionForward(TitliSearchForm titliSearchForm,SortedResultMapInterface sortedResultMap) throws Exception
+	private ActionForward getActionForward(TitliSearchForm titliSearchForm,
+			SortedResultMapInterface sortedResultMap) throws Exception
 	{
 		Name tableName = sortedResultMap.keySet().toArray(new Name[0])[0];
 		String label = TitliTableMapper.getInstance().getLabel(tableName);

@@ -19,7 +19,9 @@ import edu.wustl.common.domain.AbstractDomainObject;
  * AbstractForwardToProcessor populates data required for ForwardTo activity
  * @author Krunal Thakkar
  */
-public abstract class AbstractForwardToProcessor 
+public abstract class AbstractForwardToProcessor
 {
-    public abstract HashMap populateForwardToData(AbstractActionForm actionForm, AbstractDomainObject domainObject);
+
+	public abstract HashMap populateForwardToData(AbstractActionForm actionForm,
+			AbstractDomainObject domainObject);
 }

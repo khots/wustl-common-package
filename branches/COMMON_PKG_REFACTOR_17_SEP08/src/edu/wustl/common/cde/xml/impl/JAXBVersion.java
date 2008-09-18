@@ -5,11 +5,11 @@
 // Generated on: 2005.08.23 at 10:44:28 GMT+05:30 
 //
 
-
 package edu.wustl.common.cde.xml.impl;
 
-public class JAXBVersion {
+public class JAXBVersion
+{
 
-    public final static java.lang.String version = "1.0.4";
+	public final static java.lang.String version = "1.0.4";
 
 }

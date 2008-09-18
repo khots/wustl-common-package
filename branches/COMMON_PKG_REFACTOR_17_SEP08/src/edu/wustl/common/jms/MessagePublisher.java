@@ -1,5 +1,5 @@
-package edu.wustl.common.jms;
 
+package edu.wustl.common.jms;
 
 /**
  * 
@@ -9,11 +9,12 @@ package edu.wustl.common.jms;
  */
 public interface MessagePublisher
 {
+
 	/**
 	 * This method is used to initialize the connection 
 	 * */
 	public void initialize();
-	
+
 	/**
 	 * @param obj
 	 * This method is used to publish message or data 

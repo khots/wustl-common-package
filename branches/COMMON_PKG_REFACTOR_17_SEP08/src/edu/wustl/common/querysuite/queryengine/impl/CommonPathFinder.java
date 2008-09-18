@@ -40,15 +40,15 @@ public class CommonPathFinder implements IPathFinder
 			{
 				InitialContext initialContext = new InitialContext();
 				Context env = (Context) initialContext.lookup("java:comp/env");
-                String dsName = (String) env.lookup("DataSource");
-                Logger.out.info("Data source name found: " + dsName);
-                
-                DataSource dataSource = (DataSource)initialContext.lookup(dsName);
-                Logger.out.info("Data source found: " + dataSource);
-                
+				String dsName = (String) env.lookup("DataSource");
+				Logger.out.info("Data source name found: " + dsName);
+
+				DataSource dataSource = (DataSource) initialContext.lookup(dsName);
+				Logger.out.info("Data source found: " + dataSource);
+
 				connection = dataSource.getConnection();
 				Logger.out.info("Connection established: " + connection);
-				
+
 				pathFinder = PathFinder.getInstance(connection);
 			}
 			catch (NamingException e)
@@ -75,7 +75,7 @@ public class CommonPathFinder implements IPathFinder
 			}
 		}
 	}
-	
+
 	/**
 	 * This method gets all the possible paths between two entities.
 	 */

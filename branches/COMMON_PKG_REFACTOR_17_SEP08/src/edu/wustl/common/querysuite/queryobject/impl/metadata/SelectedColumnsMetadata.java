@@ -1,3 +1,4 @@
+
 package edu.wustl.common.querysuite.queryobject.impl.metadata;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
  */
 public class SelectedColumnsMetadata
 {
+
 	/**
 	 * Selected object by user at the time of defining columns
 	 */
@@ -35,7 +37,7 @@ public class SelectedColumnsMetadata
 	 * List of output attribute objects.
 	 */
 	private List<IOutputAttribute> selectedOutputAttributeList;
-	
+
 	/**
 	 * 
 	 * @return
@@ -57,22 +59,23 @@ public class SelectedColumnsMetadata
 	public List<AttributeInterface> getAttributeList()
 	{
 		List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-		if (selectedAttributeMetaDataList!=null)
+		if (selectedAttributeMetaDataList != null)
 		{
-			for (QueryOutputTreeAttributeMetadata metadata: selectedAttributeMetaDataList)
+			for (QueryOutputTreeAttributeMetadata metadata : selectedAttributeMetaDataList)
 				attributeList.add(metadata.getAttribute());
 		}
 		return attributeList;
 	}
-	
-//	public void setAttributeList(List<AttributeInterface> attributeList)
-//	{
-//		this.attributeList = attributeList;
-//	}
+
+	//	public void setAttributeList(List<AttributeInterface> attributeList)
+	//	{
+	//		this.attributeList = attributeList;
+	//	}
 	public OutputTreeDataNode getCurrentSelectedObject()
 	{
 		return currentSelectedObject;
 	}
+
 	/**
 	 * @param currentSelectedObject the currentSelectedObject to set
 	 */
@@ -80,6 +83,7 @@ public class SelectedColumnsMetadata
 	{
 		this.currentSelectedObject = currentSelectedObject;
 	}
+
 	/**
 	 * @return the selectedColumnNameValueBeanList
 	 */
@@ -87,13 +91,16 @@ public class SelectedColumnsMetadata
 	{
 		return selectedColumnNameValueBeanList;
 	}
+
 	/**
 	 * @param selectedColumnNameValueBeanList the selectedColumnNameValueBeanList to set
 	 */
-	public void setSelectedColumnNameValueBeanList(List<NameValueBean> selectedColumnNameValueBeanList)
+	public void setSelectedColumnNameValueBeanList(
+			List<NameValueBean> selectedColumnNameValueBeanList)
 	{
 		this.selectedColumnNameValueBeanList = selectedColumnNameValueBeanList;
 	}
+
 	/**
 	 * @return the selectedAttributeMetaDataList
 	 */
@@ -101,13 +108,16 @@ public class SelectedColumnsMetadata
 	{
 		return selectedAttributeMetaDataList;
 	}
+
 	/**
 	 * @param selectedAttributeMetaDataList the selectedAttributeMetaDataList to set
 	 */
-	public void setSelectedAttributeMetaDataList(List<QueryOutputTreeAttributeMetadata> selectedAttributeMetaDataList)
+	public void setSelectedAttributeMetaDataList(
+			List<QueryOutputTreeAttributeMetadata> selectedAttributeMetaDataList)
 	{
 		this.selectedAttributeMetaDataList = selectedAttributeMetaDataList;
 	}
+
 	/**
 	 * @return the selectedOutputAttributeList
 	 */
@@ -115,6 +125,7 @@ public class SelectedColumnsMetadata
 	{
 		return selectedOutputAttributeList;
 	}
+
 	/**
 	 * @param selectedOutputAttributeList the selectedOutputAttributeList to set
 	 */

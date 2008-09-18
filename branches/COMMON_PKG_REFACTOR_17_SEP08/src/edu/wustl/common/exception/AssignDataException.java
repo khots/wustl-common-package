@@ -4,8 +4,8 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package edu.wustl.common.exception;
 
+package edu.wustl.common.exception;
 
 /**
  * @author kapil_kaveeshwar
@@ -15,20 +15,24 @@ package edu.wustl.common.exception;
  */
 public class AssignDataException extends Exception
 {
+
 	private Exception wrapException;
+
 	public AssignDataException()
 	{
-		
+
 	}
+
 	public AssignDataException(String message)
 	{
-		this(message,null);
+		this(message, null);
 	}
-	
+
 	public AssignDataException(Exception ex)
 	{
-		this("",ex);
+		this("", ex);
 	}
+
 	/**
 	 * @param wrapException The wrapException to set.
 	 */
@@ -37,19 +41,19 @@ public class AssignDataException extends Exception
 		/**Added by amit_doshi to fix the bug related to exception chaining
 		 * code reviewer :- abhijit_naik
 		 */
-		super(message,wrapException);
+		super(message, wrapException);
 		this.wrapException = wrapException;
 	}
-	
-	public static void main(String[] args) 
+
+	public static void main(String[] args)
 	{
-	    String str = "%a";
-	    
-	    if(str.endsWith("%"))
-	    {
-	        
-	    }
-	    else
-	    System.out.println("NOT WITH");
-    }
+		String str = "%a";
+
+		if (str.endsWith("%"))
+		{
+
+		}
+		else
+			System.out.println("NOT WITH");
+	}
 }

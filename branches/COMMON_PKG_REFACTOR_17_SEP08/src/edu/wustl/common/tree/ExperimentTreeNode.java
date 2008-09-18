@@ -1,3 +1,4 @@
+
 package edu.wustl.common.tree;
 
 import java.util.Date;
@@ -10,51 +11,47 @@ import java.util.Date;
  */
 public class ExperimentTreeNode extends TreeNodeImpl
 {
+
 	/**
 	 * Name of the experiment/experiment group.
 	 */
 	String name;
-	
+
 	/**
 	 * Description for the experiment/experiment group.
 	 */
 	String desc;
-	
+
 	/**
 	 * Date of creation.
 	 */
 	Date createdOn;
-	
+
 	/**
 	 * Date last updated.
 	 */
 	Date lastUpdatedOn;
-	
+
 	/**
 	 * boolean value to distinguish between experiment and experiment group.
 	 */
 	boolean isExperimentGroup = false;
-	
-	
-	
+
 	public ExperimentTreeNode()
 	{
 		super();
-	}	
-	
-	
+	}
+
 	public ExperimentTreeNode(Long id)
 	{
 		this(id, null);
 	}
-
 
 	public ExperimentTreeNode(Long id, String name)
 	{
 		setIdentifier(id);
 		setName(name);
 	}
-
 
 	/**
 	 * Gets creation date.
@@ -65,7 +62,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 		return createdOn;
 	}
 
-
 	/**
 	 * Sets creation date.
 	 * @param createdOn
@@ -74,7 +70,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	{
 		this.createdOn = createdOn;
 	}
-
 
 	/**
 	 * Gets description.
@@ -85,7 +80,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 		return desc;
 	}
 
-
 	/**
 	 * Sets Description.
 	 * @param desc
@@ -94,7 +88,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	{
 		this.desc = desc;
 	}
-
 
 	/**
 	 * Sets experiment Name.
@@ -105,7 +98,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 		return name;
 	}
 
-
 	/**
 	 * Sets experiment name.
 	 * @param name
@@ -114,8 +106,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	{
 		this.name = name;
 	}
-	
-	
+
 	/**
 	 * Returns true if the node is an experiment group node else false.
 	 * @return
@@ -125,7 +116,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 		return isExperimentGroup;
 	}
 
-
 	/**
 	 * Sets node type to experiment group if parameter passed is true, else experiment node.
 	 * @param isExperimentGroup
@@ -134,8 +124,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	{
 		this.isExperimentGroup = isExperimentGroup;
 	}
-	
-	
+
 	/**
 	 * Gets last updated date.
 	 * @return
@@ -144,7 +133,6 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	{
 		return lastUpdatedOn;
 	}
-
 
 	/**
 	 * Sets last updated date.
@@ -155,10 +143,9 @@ public class ExperimentTreeNode extends TreeNodeImpl
 		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
-	
 	public String toString()
 	{
 		return name;
 	}
-	
+
 }

@@ -1,9 +1,6 @@
 
 package edu.wustl.common.security.exceptions;
 
-
-
-
 /**
  * 
  *<p>Title: </p>
@@ -15,27 +12,34 @@ package edu.wustl.common.security.exceptions;
  */
 public class SMException extends Exception
 {
-	
-	public SMException() {
+
+	public SMException()
+	{
 		super();
 	}
+
 	/**
 	 * @param message
 	 */
-	public SMException(String message) {
+	public SMException(String message)
+	{
 		super(message);
 	}
+
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public SMException(String message, Throwable cause) {
+	public SMException(String message, Throwable cause)
+	{
 		super(message, cause);
 	}
+
 	/**
 	 * @param cause
 	 */
-	public SMException(Throwable cause) {
+	public SMException(Throwable cause)
+	{
 		super(cause);
 	}
 }

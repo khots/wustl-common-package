@@ -8,7 +8,8 @@ package edu.wustl.common.util;
  * 
  * @author Brian Husted
  */
-public interface Permissions {
+public interface Permissions
+{
 
 	public static final String READ = "READ";
 	public static final String READ_DENIED = "READ_DENIED";
@@ -38,5 +39,5 @@ public interface Permissions {
 	public static final String GENERAL_SITE_ADMINISTRATION = "GENERAL_SITE_ADMINISTRATION";
 	public static final String GENERAL_ADMINISTRATION = "GENERAL_ADMINISTRATION";
 	public static final String SHIPMENT_PROCESSING = "SHIPMENT_PROCESSING";
-	
+
 }

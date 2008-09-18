@@ -4,10 +4,10 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 package edu.wustl.common.audit;
 
 import java.io.Serializable;
-
 
 /**
  * @author kapil_kaveeshwar
@@ -17,5 +17,6 @@ import java.io.Serializable;
  */
 public interface Auditable extends Serializable
 {
+
 	public abstract Long getId();
 }

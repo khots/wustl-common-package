@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package edu.wustl.common.actionForm;
 
 import java.util.LinkedHashMap;
@@ -29,12 +30,13 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class TitliSearchForm extends ActionForm
 {
+
 	private String searchString;
-	
+
 	private String displaySearchString;
-	
+
 	private String displayStats;
-	
+
 	private SortedResultMapInterface sortedResultMap;
 
 	private Map<Name, TitliResultGroup> titliResultMap;
@@ -106,18 +108,18 @@ public class TitliSearchForm extends ActionForm
 	 */
 	public TitliResultGroup getSelectedGroup()
 	{
-		ResultGroupInterface i=null;
+		ResultGroupInterface i = null;
 		try
 		{
 			i = sortedResultMap.get(TitliTableMapper.getInstance().getTable(selectedLabel));
-			
+
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
-			Logger.out.error("Exception in TitliSearchForm : "+ e.getMessage(), e);
-			
+			Logger.out.error("Exception in TitliSearchForm : " + e.getMessage(), e);
+
 		}
-		
+
 		return new TitliResultGroup(i);
 
 	}
@@ -130,28 +132,27 @@ public class TitliSearchForm extends ActionForm
 		return titliResultMap;
 	}
 
-	
 	/**
 	 * validate the input
 	 * @param mapping the cation mapping
 	 * @param request the request
 	 * @return acttion errors
 	 */
-	public ActionErrors validate(ActionMapping mapping,HttpServletRequest request)
+	public ActionErrors validate(ActionMapping mapping, HttpServletRequest request)
 	{
 		ActionErrors errors = new ActionErrors();
 
 		String requestSearchString = request.getParameter("searchString");
 
 		// searchString is null or empty
-		if (requestSearchString == null|| requestSearchString.trim().equals(""))
+		if (requestSearchString == null || requestSearchString.trim().equals(""))
 		{
 			errors.add("empty search string", new ActionError("  "));
 		}
 
-		if (requestSearchString.startsWith("*")|| requestSearchString.startsWith("?"))
+		if (requestSearchString.startsWith("*") || requestSearchString.startsWith("?"))
 		{
-			errors.add("search string starts with * or ? ", new ActionError(	"  "));
+			errors.add("search string starts with * or ? ", new ActionError("  "));
 		}
 
 		return errors;
@@ -173,6 +174,7 @@ public class TitliSearchForm extends ActionForm
 	{
 		this.displaySearchString = displaySearchString;
 	}
+
 	/**
 	 * @return the displayStats
 	 */

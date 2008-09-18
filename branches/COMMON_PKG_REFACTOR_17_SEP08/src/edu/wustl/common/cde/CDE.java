@@ -23,31 +23,31 @@ import java.util.Set;
 public interface CDE
 {
 
-    /**
-     * This method is used to get the publicid of the CDE 
-     * @return returns a String object that contains the PUBLICID of the CDE 
-     */
-    String getPublicId();
+	/**
+	 * This method is used to get the publicid of the CDE 
+	 * @return returns a String object that contains the PUBLICID of the CDE 
+	 */
+	String getPublicId();
 
-    /**
-     * This method is used to get the longname of the CDE 
-     * @return returns a String object that contains the LongName of the CDE 
-     */
-    String getLongName();
+	/**
+	 * This method is used to get the longname of the CDE 
+	 * @return returns a String object that contains the LongName of the CDE 
+	 */
+	String getLongName();
 
-    /**
-     * This method is used to get the defination of the CDE 
-     * @return returns a String object that contains the Defination of the CDE 
-     */
-    String getDefination();
-    
-    Set getPermissibleValues();
-    
-    /**
-     * Returns the date when the CDE was last updated.
-     * @return the date when the CDE was last updated.
-     * @hibernate.property name="dateLastModified" type="timestamp" column="LAST_UPDATED"
-     */
-    public Date getDateLastModified();
+	/**
+	 * This method is used to get the defination of the CDE 
+	 * @return returns a String object that contains the Defination of the CDE 
+	 */
+	String getDefination();
+
+	Set getPermissibleValues();
+
+	/**
+	 * Returns the date when the CDE was last updated.
+	 * @return the date when the CDE was last updated.
+	 * @hibernate.property name="dateLastModified" type="timestamp" column="LAST_UPDATED"
+	 */
+	public Date getDateLastModified();
 
 }

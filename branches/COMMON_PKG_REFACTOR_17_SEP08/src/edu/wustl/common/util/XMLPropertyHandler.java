@@ -45,12 +45,12 @@ public class XMLPropertyHandler
 		XMLPropertyHandler.init("caTissueCore_Properties.xml");
 
 		String propertyValue1 = XMLPropertyHandler.getValue("server.port");
-		Logger.out.debug(""+propertyValue1);
+		Logger.out.debug("" + propertyValue1);
 	}
 
 	public static void init(String path) throws Exception
 	{
-		Logger.out.debug("path.........................."+path);
+		Logger.out.debug("path.........................." + path);
 		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 		try
 		{
@@ -64,17 +64,17 @@ public class XMLPropertyHandler
 		}
 		catch (SAXException e)
 		{
-			Logger.out.error(e.getMessage(),e);
+			Logger.out.error(e.getMessage(), e);
 			throw e;
 		}
 		catch (IOException e)
 		{
-			Logger.out.error(e.getMessage(),e);
+			Logger.out.error(e.getMessage(), e);
 			throw e;
 		}
 		catch (ParserConfigurationException e)
 		{
-			Logger.out.error("Could not locate a JAXP parser: "+e.getMessage(),e);
+			Logger.out.error("Could not locate a JAXP parser: " + e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -119,12 +119,12 @@ public class XMLPropertyHandler
 							isNameFound = true;
 						}
 					}
-					
-					if(isNameFound && subNodeName.equals("value"))
+
+					if (isNameFound && subNodeName.equals("value"))
 					{
 						//Check for null
-						String pValue="";
-						if(subchildNode!=null&&subchildNode.getFirstChild()!=null)
+						String pValue = "";
+						if (subchildNode != null && subchildNode.getFirstChild() != null)
 						{
 							pValue = (String) subchildNode.getFirstChild().getNodeValue();
 						}

@@ -20,55 +20,56 @@ import java.util.List;
  */
 public class HTTPMessage implements Serializable
 {
+
 	private List messageList;
-	
+
 	private String responseStatus;
-	
+
 	private String sessionId;
-	
+
 	private Long domainObjectId;
-	
+
 	public HTTPMessage()
 	{
 		messageList = new ArrayList();
 	}
-	
+
 	public HTTPMessage(List messageList)
 	{
 		this.messageList = messageList;
 	}
-	
+
 	/**
-     * Returns the list of error messages.
-     * @return the list of error messages.
-     * @see #setMessageList(List)
-     */
+	 * Returns the list of error messages.
+	 * @return the list of error messages.
+	 * @see #setMessageList(List)
+	 */
 	public List getMessageList()
 	{
 		return messageList;
 	}
-	
-	 /**
-     * Sets the list of error messages.
-     * @param message the list of error messages.
-     * @see #getMessageList()
-     */
+
+	/**
+	* Sets the list of error messages.
+	* @param message the list of error messages.
+	* @see #getMessageList()
+	*/
 	public void setMessageList(List message)
 	{
 		this.messageList = message;
 	}
-	
+
 	/**
-     * Adds an error object to the list.
-     * @param object an error object.
-     * @see #getMessageList()
-     * @see #setMessageList(List)
-     */
+	 * Adds an error object to the list.
+	 * @param object an error object.
+	 * @see #getMessageList()
+	 * @see #setMessageList(List)
+	 */
 	public void addMessage(Object object)
 	{
 		messageList.add(object);
 	}
-	
+
 	/**
 	 * Returns the Response Status of the operation
 	 * @return the Response Status of the operation
@@ -77,7 +78,7 @@ public class HTTPMessage implements Serializable
 	{
 		return responseStatus;
 	}
-	
+
 	/**
 	 * Sets Response Status of the operation 
 	 * @param responseStatus Response Status of the operation
@@ -95,7 +96,7 @@ public class HTTPMessage implements Serializable
 	{
 		return sessionId;
 	}
-	
+
 	/**
 	 * Sets the Session ID
 	 * @param sessionId the Session ID
@@ -104,22 +105,22 @@ public class HTTPMessage implements Serializable
 	{
 		this.sessionId = sessionId;
 	}
-	
+
 	/**
 	 * Sets the ID of Domain Object
 	 * @param domainObjectId the ID of Domain Object
 	 */
 	public void setDomainObjectId(Long domainObjectId)
 	{
-	    this.domainObjectId=domainObjectId;
+		this.domainObjectId = domainObjectId;
 	}
-	
+
 	/**
 	 * Returns the ID of Domain Object
 	 * @return the ID of Domain Object
 	 */
 	public Long getDomainObjectId()
 	{
-	    return this.domainObjectId;
+		return this.domainObjectId;
 	}
 }

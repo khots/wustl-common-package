@@ -2,6 +2,7 @@
  * Created on Jul 19, 2004
  *
  */
+
 package edu.wustl.common.util.global;
 
 import java.io.BufferedInputStream;
@@ -15,28 +16,29 @@ import java.util.Properties;
  */
 public class HibernateProperties
 {
+
 	private static Properties p;
-    
-    public static void initBundle(String baseName)
-    {
-    	try
+
+	public static void initBundle(String baseName)
+	{
+		try
 		{
 			File file = new File(baseName);
-			BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));  
+			BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
 			p = new Properties();
 			p.load(stram);
 			stram.close();
 		}
-		catch(Exception exe)
+		catch (Exception exe)
 		{
 			exe.printStackTrace();
-			throw new RuntimeException(
-				"Exception building HibernateProperties: " + exe.getMessage(), exe);
+			throw new RuntimeException("Exception building HibernateProperties: "
+					+ exe.getMessage(), exe);
 		}
-    	
-    	//ResourceBundle.
-    }
-	
+
+		//ResourceBundle.
+	}
+
 	public static String getValue(String theKey)
 	{
 		return p.getProperty(theKey);

@@ -21,13 +21,14 @@ import edu.wustl.common.actionForm.IValueObject;
  */
 public class CancerResearchGroup extends AbstractDomainObject implements Serializable
 {
+
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
 	 * System generated unique id.
 	 */
-	protected Long id;
-	
+	private Long id;
+
 	/**
 	 * Name of the cancer research group.
 	 */
@@ -38,14 +39,15 @@ public class CancerResearchGroup extends AbstractDomainObject implements Seriali
 	 * */
 	public CancerResearchGroup()
 	{
-		
+
 	}
-	
+
 	public CancerResearchGroup(AbstractActionForm form)
 	{
-		setAllValues(form);
+		CancerResearchGroupForm cancerResearchGroupForm = (CancerResearchGroupForm) form;
+		this.name = cancerResearchGroupForm.getName().trim();
 	}
-	
+
 	/**
 	 * Returns the unique id of the cancer research group.
 	 * @hibernate.id name="id" column="IDENTIFIER" type="long"
@@ -88,16 +90,15 @@ public class CancerResearchGroup extends AbstractDomainObject implements Seriali
 	{
 		this.name = name;
 	}
-	
-	
-    /* (non-Javadoc)
-     * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
-     */
-    public void setAllValues(IValueObject abstractForm)
-    {
-    	CancerResearchGroupForm cancerResearchGroupForm = (CancerResearchGroupForm)abstractForm;
-		
+
+	/* (non-Javadoc)
+	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
+	 */
+	public void setAllValues(IValueObject abstractForm)
+	{
+		CancerResearchGroupForm cancerResearchGroupForm = (CancerResearchGroupForm) abstractForm;
+
 		this.name = cancerResearchGroupForm.getName().trim();
-    }
+	}
 
 }

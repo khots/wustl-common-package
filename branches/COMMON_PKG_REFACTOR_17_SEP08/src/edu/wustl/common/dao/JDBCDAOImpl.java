@@ -9,7 +9,6 @@
 
 package edu.wustl.common.dao;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -313,7 +312,8 @@ public class JDBCDAOImpl implements JDBCDAO
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException
 	{
-		return executeQuery(query,sessionDataBean,isSecureExecute,false,queryResultObjectDataMap,-1,-1).getResult();
+		return executeQuery(query, sessionDataBean, isSecureExecute, false,
+				queryResultObjectDataMap, -1, -1).getResult();
 	}
 
 	/**
@@ -338,14 +338,18 @@ public class JDBCDAOImpl implements JDBCDAO
 		 * Calling executeQuery method with StartIndex parameter as -1, so that it will return all records from result.
 		 */
 
-		return executeQuery(query,sessionDataBean,isSecureExecute,hasConditionOnIdentifiedField,queryResultObjectDataMap,-1,-1).getResult();
+		return executeQuery(query, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
+				queryResultObjectDataMap, -1, -1).getResult();
 	}
 
-	
 	/**
 	 * @see edu.wustl.common.dao.JDBCDAO#executeQuery(java.lang.String, edu.wustl.common.beans.SessionDataBean, boolean, boolean, java.util.Map, int, int)
 	 */
-	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws ClassNotFoundException, DAOException {
+	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean,
+			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
+			Map queryResultObjectDataMap, int startIndex, int noOfRecords)
+			throws ClassNotFoundException, DAOException
+	{
 		//Aarti: Security checks
 		if (Constants.switchSecurity && isSecureExecute)
 		{
@@ -361,8 +365,8 @@ public class JDBCDAOImpl implements JDBCDAO
 		 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
 		 */
 
-		return  getQueryResultList(query, sessionDataBean, isSecureExecute,
-				hasConditionOnIdentifiedField, queryResultObjectDataMap,startIndex,noOfRecords);
+		return getQueryResultList(query, sessionDataBean, isSecureExecute,
+				hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
 	}
 
 	/**
@@ -391,7 +395,9 @@ public class JDBCDAOImpl implements JDBCDAO
 		 *
 		 * Calling QueryExecutor method.
 		 */
-		return AbstractQueryExecutor.getInstance().getQueryResultList(query,connection, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
+		return AbstractQueryExecutor.getInstance().getQueryResultList(query, connection,
+				sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
+				queryResultObjectDataMap, startIndex, noOfRecords);
 
 	}
 
@@ -435,14 +441,14 @@ public class JDBCDAOImpl implements JDBCDAO
 		return null;
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
 	 */
-	public void insert(String tableName, List columnValues) throws DAOException, SQLException{
-		insert(tableName,columnValues,null);
+	public void insert(String tableName, List columnValues) throws DAOException, SQLException
+	{
+		insert(tableName, columnValues, null);
 	}
-	
+
 	/**
 	 * @param tableName
 	 * @param columnValues
@@ -450,7 +456,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @throws DAOException
 	 * @throws SQLException
 	 */
-	public void insert(String tableName, List columnValues, List<String>... columnNames) throws DAOException, SQLException
+	public void insert(String tableName, List columnValues, List<String>... columnNames)
+			throws DAOException, SQLException
 	{
 		//Get metadate for temp table to set default values in date fields
 		String sql = "Select * from " + tableName + " where 1!=1";
@@ -460,11 +467,12 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Make a list of Date columns
 		List dateColumns = new ArrayList();
 		List numberColumns = new ArrayList();
-		
+
 		//added by Kunal
 		List<String> columnNames_t;
-		if(columnNames!=null && columnNames.length > 0){
-			columnNames_t = columnNames[0];			
+		if (columnNames != null && columnNames.length > 0)
+		{
+			columnNames_t = columnNames[0];
 		}
 		else
 		{
@@ -474,18 +482,17 @@ public class JDBCDAOImpl implements JDBCDAO
 				columnNames_t.add(metaData.getColumnName(i));
 			}
 		}
-		 
-		
-		 /** Name : Aarti Sharma
-		 * Reviewer: Prafull Kadam
-		 * Bug ID: 4126
-		 * Patch ID: 4126_1
-		 * See also: 4126_2
-		 * Desciption: Make a list of tinyint columns.
-		 * Tinyint datatype is used as a replacement for boolean in MySQL.
-		 */
+
+		/** Name : Aarti Sharma
+		* Reviewer: Prafull Kadam
+		* Bug ID: 4126
+		* Patch ID: 4126_1
+		* See also: 4126_2
+		* Desciption: Make a list of tinyint columns.
+		* Tinyint datatype is used as a replacement for boolean in MySQL.
+		*/
 		List tinyIntColumns = new ArrayList();
-				
+
 		for (int i = 1; i <= metaData.getColumnCount(); i++)
 		{
 			String type = metaData.getColumnTypeName(i);
@@ -495,28 +502,30 @@ public class JDBCDAOImpl implements JDBCDAO
 				numberColumns.add(new Integer(i));
 			if (type.equals("TINYINT"))
 				tinyIntColumns.add(new Integer(i));
-			
+
 		}
 
 		resultSet.close();
 		statement.close();
 		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + "(");
-		
+
 		Iterator<String> columnIterator = columnNames_t.iterator();
-		while(columnIterator.hasNext()){
+		while (columnIterator.hasNext())
+		{
 			query.append(columnIterator.next());
-			if(columnIterator.hasNext()){
+			if (columnIterator.hasNext())
+			{
 				query.append(",");
-			}else{
+			}
+			else
+			{
 				query.append(") values(");
 			}
 		}
-		
-		
-		
+
 		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
 		//Changed implementation with column names
-		
+
 		int i;
 
 		Iterator it = columnValues.iterator();
@@ -546,33 +555,36 @@ public class JDBCDAOImpl implements JDBCDAO
 				if (dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
 				{
 					java.util.Date date = null;
-					try {
-						date = Utility.parseDate("1-1-9999","mm-dd-yyyy");
-					} catch (ParseException e) {
+					try
+					{
+						date = Utility.parseDate("1-1-9999", "mm-dd-yyyy");
+					}
+					catch (ParseException e)
+					{
 						e.printStackTrace();
 					}
 					Date sqlDate = new Date(date.getTime());
 					stmt.setDate(i + 1, sqlDate);
 				}
-				 /** Name : Aarti Sharma
-				 * Reviewer:  Prafull Kadam
-				 * Bug ID: 4126
-				 * Patch ID: 4126_2
-				 * See also: 4126_1
-				 * Desciption: If the value of the column is true set 1 in the statement else set 0.
-				 * This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-				 * If this is not done then all values will be set as 0 
-				 * irrespective of whether the value is true or false.
-				 */
+				/** Name : Aarti Sharma
+				* Reviewer:  Prafull Kadam
+				* Bug ID: 4126
+				* Patch ID: 4126_2
+				* See also: 4126_1
+				* Desciption: If the value of the column is true set 1 in the statement else set 0.
+				* This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
+				* If this is not done then all values will be set as 0 
+				* irrespective of whether the value is true or false.
+				*/
 				else if (tinyIntColumns.contains(new Integer(i + 1)))
 				{
-					if(obj.equals("true") || obj.equals("TRUE"))
+					if (obj.equals("true") || obj.equals("TRUE"))
 					{
-						stmt.setObject(i+1, 1);
+						stmt.setObject(i + 1, 1);
 					}
 					else
 					{
-						stmt.setObject(i+1, 0);
+						stmt.setObject(i + 1, 0);
 					}
 				}
 				else
@@ -585,13 +597,14 @@ public class JDBCDAOImpl implements JDBCDAO
 					}
 					else
 					{
-						if (numberColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+						if (numberColumns.contains(new Integer(i + 1))
+								&& obj.toString().equals("##"))
 						{
 							stmt.setObject(i + 1, new Integer(-1));
 						}
 						else
 						{
-						  stmt.setObject(i + 1, obj);
+							stmt.setObject(i + 1, obj);
 						}
 					}
 				}
@@ -616,7 +629,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			}
 		}
 	}
-	
+
 	/**
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.AbstractDAO#update(java.lang.Object, SessionDataBean, boolean, boolean, boolean)
@@ -773,21 +786,23 @@ public class JDBCDAOImpl implements JDBCDAO
 	{
 	}
 
-    /* (non-Javadoc)
-     * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
-     */
-    public Object retrieveAttribute(Class<AbstractDomainObject> objClass,Long id,
-			String attributeName)
-			throws DAOException{
-    	return retrieveAttribute(objClass.getName(),id,attributeName);
-    }
+	/* (non-Javadoc)
+	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
+	 */
+	public Object retrieveAttribute(Class<AbstractDomainObject> objClass, Long id,
+			String attributeName) throws DAOException
+	{
+		return retrieveAttribute(objClass.getName(), id, attributeName);
+	}
+
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
 	 */
-	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException {
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName)
+			throws DAOException
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
 }

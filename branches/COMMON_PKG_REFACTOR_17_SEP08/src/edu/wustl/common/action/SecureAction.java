@@ -31,88 +31,88 @@ import edu.wustl.common.util.global.Constants;
 public abstract class SecureAction extends BaseAction
 {
 
-    /**
-     * Authorizes the user and executes the secure workflow. If authorization
-     * fails, the user is denied access to the secured action
-     *
-     * @param mapping	ActionMapping
+	/**
+	 * Authorizes the user and executes the secure workflow. If authorization
+	 * fails, the user is denied access to the secured action
+	 *
+	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
 	 * @param request	HttpServletRequest
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
 	 * @exception Exception Generic exception
-     */
-    protected ActionForward executeAction(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception
-    {
+	 */
+	protected ActionForward executeAction(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
 		checkAddNewOperation(request);
 		ActionForward ac = executeSecureAction(mapping, form, request, response);
 		return ac;
-    }
+	}
 
-   /**
-    *
-    * @param request HttpServletRequest
-    * @param mapping ActionMapping
-    * @return ActionForward
-    */
-    protected ActionForward getActionForward(HttpServletRequest request,ActionMapping mapping)
-    {
-        return mapping.findForward(Constants.ACCESS_DENIED);
-    }
+	/**
+	 *
+	 * @param request HttpServletRequest
+	 * @param mapping ActionMapping
+	 * @return ActionForward
+	 */
+	protected ActionForward getActionForward(HttpServletRequest request, ActionMapping mapping)
+	{
+		return mapping.findForward(Constants.ACCESS_DENIED);
+	}
 
-    /**
-     * @param request HttpServletRequest
-     * @return boolean
-     * @throws Exception Generic exception
-     */
-    protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
-    {
-    	return true;
-    }
+	/**
+	 * @param request HttpServletRequest
+	 * @return boolean
+	 * @throws Exception Generic exception
+	 */
+	protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
+	{
+		return true;
+	}
 
-    /**
-     * Returns the object id of the protection element that represents
-     * the Action that is being requested for invocation.
-     * @param request HttpServletRequest
-     * @return String
-     */
-    protected String getObjectIdForSecureMethodAccess(HttpServletRequest request)
-    {
-        return this.getClass().getName();
-    }
+	/**
+	 * Returns the object id of the protection element that represents
+	 * the Action that is being requested for invocation.
+	 * @param request HttpServletRequest
+	 * @return String
+	 */
+	protected String getObjectIdForSecureMethodAccess(HttpServletRequest request)
+	{
+		return this.getClass().getName();
+	}
 
-    /**
-     *
-     * @param actionClassName String
-     * @return String
-     */
-    protected String getPrivilegeName(String actionClassName)
-    {
-    	String privilegeName = Variables.privilegeDetailsMap.get(actionClassName);
-    	return privilegeName;
-    }
+	/**
+	 *
+	 * @param actionClassName String
+	 * @return String
+	 */
+	protected String getPrivilegeName(String actionClassName)
+	{
+		String privilegeName = Variables.privilegeDetailsMap.get(actionClassName);
+		return privilegeName;
+	}
 
-    /**
-     * Subclasses should implement this method to execute the Action logic.
-     *
-     * @param mapping ActionMapping
-     * @param form ActionForm
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @return ActionForward
-     * @throws Exception Generic exception
-     */
-    protected abstract ActionForward executeSecureAction(ActionMapping mapping,
-            ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception;
+	/**
+	 * Subclasses should implement this method to execute the Action logic.
+	 *
+	 * @param mapping ActionMapping
+	 * @param form ActionForm
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @return ActionForward
+	 * @throws Exception Generic exception
+	 */
+	protected abstract ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception;
 
-    /**
-     *
-     * @param form AbstractActionForm
-     * @return String
-     */
-    protected String getObjectId(AbstractActionForm form)
-    {
-    	return null;
-    }
+	/**
+	 *
+	 * @param form AbstractActionForm
+	 * @return String
+	 */
+	protected String getObjectId(AbstractActionForm form)
+	{
+		return null;
+	}
 }
