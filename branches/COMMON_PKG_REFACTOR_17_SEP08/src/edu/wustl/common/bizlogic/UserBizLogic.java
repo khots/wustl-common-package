@@ -66,37 +66,8 @@ public class UserBizLogic extends DefaultBizLogic
         
         try
         {
-            //List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getId());
-        	Object object = dao.retrieve(Department.class.getName(), user.getDepartment().getId());
-        	        	
-            Department department = null;
-            if (object!=null)
-            {
-                department = (Department)object;
-            }
-            
-            //list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getId());
-            object = dao.retrieve(Institution.class.getName(), user.getInstitution().getId());
-                       
-            Institution institution = null;
-            if (object!=null)
-            {
-                institution = (Institution) object;
-            }
-            
-            //list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getId());
-            object = dao.retrieve(CancerResearchGroup.class.getName(), user.getCancerResearchGroup().getId());
-                        
-            CancerResearchGroup cancerResearchGroup = null;
-            if (object!=null)
-            {
-                cancerResearchGroup = (CancerResearchGroup) object;
-            }
-            
-            user.setDepartment(department);
-            user.setInstitution(institution);
-            user.setCancerResearchGroup(cancerResearchGroup);
-            
+        	user = getUserObject(user , dao);
+                    	
             // If the page is of signup user don't create the csm user.
             if (user.getPageOf().equals(Constants.PAGEOF_SIGNUP) == false)
             {
@@ -166,6 +137,48 @@ public class UserBizLogic extends DefaultBizLogic
         }
     }
     
+    
+    private User getUserObject(User user , DAO dao)throws DAOException, UserNotAuthorizedException
+    {
+    	User userObj = user;
+    	
+    	 //List list = dao.retrieve(Department.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getDepartment().getId());
+    	Object object = dao.retrieve(Department.class.getName(), userObj.getDepartment().getId());
+    	        	
+        Department department = null;
+        if (object!=null)
+        {
+            department = (Department)object;
+        }
+        
+        //list = dao.retrieve(Institution.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getInstitution().getId());
+        object = dao.retrieve(Institution.class.getName(), userObj.getInstitution().getId());
+                   
+        Institution institution = null;
+        if (object!=null)
+        {
+            institution = (Institution) object;
+        }
+        
+        //list = dao.retrieve(CancerResearchGroup.class.getName(),Constants.SYSTEM_IDENTIFIER, user.getCancerResearchGroup().getId());
+        object = dao.retrieve(CancerResearchGroup.class.getName(), userObj.getCancerResearchGroup().getId());
+                    
+        CancerResearchGroup cancerResearchGroup = null;
+        if (object!=null)
+        {
+            cancerResearchGroup = (CancerResearchGroup) object;
+        }
+        
+        userObj.setDepartment(department);
+        userObj.setInstitution(institution);
+        userObj.setCancerResearchGroup(cancerResearchGroup);
+    	
+    	
+    	return userObj;
+    }
+    
+    
+    
     /**
      * Deletes the csm user from the csm user table.
      * @param csmUser The csm user to be deleted.
@@ -193,11 +206,11 @@ public class UserBizLogic extends DefaultBizLogic
      * elements returned by this class should be added to.
      * @return
      */
-    private Vector getAuthorizationData(AbstractDomainObject obj) throws SMException
+    private List getAuthorizationData(AbstractDomainObject obj) throws SMException
     {
         Logger.out.debug("--------------- In here ---------------");
         
-        Vector authorizationData = new Vector();
+        List authorizationData = new ArrayList();
         Set group = new HashSet();
         User aUser = (User)obj;
         
@@ -323,7 +336,7 @@ public class UserBizLogic extends DefaultBizLogic
      * and value as systemtIdentifier, of all users who are not disabled.
      * @throws DAOException
      */
-    public Vector getUsers(String operation) throws DAOException
+    public List getUsers(String operation) throws DAOException
     {
     	String sourceObjectName = User.class.getName();
     	String[] selectColumnName = null;
@@ -362,7 +375,7 @@ public class UserBizLogic extends DefaultBizLogic
         List users = retrieve(sourceObjectName, selectColumnName, whereColumnName,
                 whereColumnCondition, whereColumnValue, joinCondition);
         
-        Vector nameValuePairs = new Vector();
+        List nameValuePairs = new ArrayList();
         nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, String.valueOf(Constants.SELECT_OPTION_VALUE)));
         
         // If the list of users retrieved is not empty. 
@@ -392,12 +405,12 @@ public class UserBizLogic extends DefaultBizLogic
      * and value as systemtIdentifier, of all users who are not disabled.
      * @throws DAOException
      */
-    public Vector getCSMUsers() throws DAOException, SMException
+    public List getCSMUsers() throws DAOException, SMException
     {
         //Retrieve the users whose activity status is not disabled.
         List users = SecurityManager.getInstance(UserBizLogic.class).getUsers();
         
-        Vector nameValuePairs = new Vector();
+        List nameValuePairs = new ArrayList();
         nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, String.valueOf(Constants.SELECT_OPTION_VALUE)));
         
         // If the list of users retrieved is not empty. 
@@ -566,7 +579,7 @@ public class UserBizLogic extends DefaultBizLogic
     private List getRoles() throws SMException
     {
         //Sets the roleList attribute to be used in the Add/Edit User Page.
-        Vector roleList = SecurityManager.getInstance(UserBizLogic.class).getRoles();
+        List roleList = SecurityManager.getInstance(UserBizLogic.class).getRoles();
         
         List roleNameValueBeanList = new ArrayList();
         NameValueBean nameValueBean = new NameValueBean();

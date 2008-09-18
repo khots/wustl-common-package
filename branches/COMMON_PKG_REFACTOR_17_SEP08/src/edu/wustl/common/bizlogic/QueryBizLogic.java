@@ -276,7 +276,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		Client.objectTableNames = QueryBizLogic.getQueryObjectNameTableNameMap();
 		Client.relationConditionsForRelatedTables = QueryBizLogic.getRelationData();
 		Client.privilegeTypeMap = QueryBizLogic.getPivilegeTypeMap();
-		Vector identifiedData = new Vector();
+		List identifiedData = new ArrayList();
 
 		//        identifiedData.add("firstName");
 		//        identifiedData.add("lastName");
@@ -521,17 +521,18 @@ public class QueryBizLogic extends DefaultBizLogic
 	{
 		String aliasName = (String) rowList.get(0), displayName = (String) rowList.get(1);
 		Iterator iterator = checkList.iterator();
-
+		boolean isTableExists = false;
+		
 		while (iterator.hasNext())
 		{
 			List row = (List) iterator.next();
 			if (aliasName.equals((String) row.get(0)) && displayName.equals((String) row.get(1)))
 			{
-				return true;
+				isTableExists = true;
 			}
 		}
 
-		return false;
+		return isTableExists;
 	}
 
 	/**
@@ -605,8 +606,8 @@ public class QueryBizLogic extends DefaultBizLogic
 			whereColumnConditions[1] = "=";
 			whereColumnValues = new String[2];
 			whereColumnValues[0] = String.valueOf(forQI);
-			aliasName = "'" + aliasName + "'";
-			whereColumnValues[1] = aliasName;
+			String alias = "'" + aliasName + "'";
+			whereColumnValues[1] = alias;
 		}
 
 		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
@@ -643,12 +644,12 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
-	public static Vector getMainObjectsOfQuery() throws DAOException
+	public static List getMainObjectsOfQuery() throws DAOException
 	{
 		String sql = " select alias_name from CATISSUE_QUERY_TABLE_DATA where FOR_SQI=1";
 
 		List list = null;
-		java.util.Vector mainObjects = new java.util.Vector();
+		List mainObjects = new ArrayList();
 		JDBCDAO dao = null;
 		try
 		{
@@ -697,10 +698,10 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @return
 	 * @throws DAOException
 	 */
-	public static Vector getRelatedTableAliases(String aliasName) throws DAOException
+	public static List getRelatedTableAliases(String aliasName) throws DAOException
 	{
 		List list = null;
-		java.util.Vector relatedTableAliases = new java.util.Vector();
+		List relatedTableAliases = new ArrayList();
 		JDBCDAO dao = null;
 		try
 		{
@@ -852,7 +853,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
-		String atrributeType = new String();
+		String atrributeType ="";
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext())
 		{
@@ -882,7 +883,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				whereColumnNames, whereColumnConditions, whereColumnValues, null);
 		jdbcDAO.closeSession();
 		Logger.out.debug("List of Ids size: " + list.size() + " list " + list);
-		String tableIdString = new String();
+		String tableIdString = "";
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext())
 		{
@@ -938,10 +939,10 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
-		String tableName = new String();
-		String tableDisplayName = new String();
-		String columnName = new String();
-		String columnDisplayName = new String();
+		String tableName = "";
+		String tableDisplayName = "";
+		String columnName = "";
+		String columnDisplayName = "";
 		List columnList = new ArrayList();
 		Iterator iterator = list.iterator();
 		int j = 0, k = 0;
@@ -1041,7 +1042,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException e) 
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		return prevValueDisplayName;
 	}
@@ -1094,11 +1095,11 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (ClassNotFoundException e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		catch (DAOException e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		finally
 		{
@@ -1134,7 +1135,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException e) 
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}		
 		return prevValueDisplayName;
 	}
@@ -1146,7 +1147,7 @@ public class QueryBizLogic extends DefaultBizLogic
 	 * @throws DAOException
 	 * @throws ClassNotFoundException, DAOException
 	 */
-	private Vector getSpecimenTypeDetailsCount(String specimenType, JDBCDAO jdbcDAO) throws DAOException,
+	private List getSpecimenTypeDetailsCount(String specimenType, JDBCDAO jdbcDAO) throws DAOException,
 				ClassNotFoundException
 	{
 		String sql = "select absspec.SPECIMEN_TYPE,COUNT(*) from CATISSUE_SPECIMEN specimen "+
@@ -1154,11 +1155,11 @@ public class QueryBizLogic extends DefaultBizLogic
 				"and specimen.COLLECTION_STATUS='Collected' " +
 				" and absspec.SPECIMEN_CLASS = '"+ specimenType + "'group by absspec.SPECIMEN_TYPE " +
 						" order by absspec.SPECIMEN_TYPE";
-		Vector nameValuePairs = null;
+		List nameValuePairs = null;
 		try 
 		{
 			List list = jdbcDAO.executeQuery(sql, null, false, null);			
-			nameValuePairs = new Vector();
+			nameValuePairs = new ArrayList();
 			if (!list.isEmpty())
 			{
 				// Creating name value beans.
@@ -1175,7 +1176,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException e) 
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}			
 		return nameValuePairs;
 	}
@@ -1204,11 +1205,150 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}		
 		return prevValueDisplayName;
 	}
 	
+	
+	public void insertQueryForMySQL(String sqlQuery,SessionDataBean sessionData,JDBCDAO jdbcDAO)throws DAOException,
+	ClassNotFoundException
+	{
+		String sqlQuery1 = sqlQuery.replaceAll("'", "''");
+		long no = 1;
+		
+		SimpleDateFormat fSDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String timeStamp = fSDateFormat.format(new Date());
+
+		String ipAddr = sessionData.getIpAddress();
+
+		String userId = sessionData.getUserId().toString();
+		String comments = "QueryLog";
+
+		String sqlForAudiEvent = "insert into catissue_audit_event(IP_ADDRESS,EVENT_TIMESTAMP,USER_ID ,COMMENTS) values ('"
+				+ ipAddr + "','" + timeStamp + "','" + userId + "','" + comments + "')";
+		jdbcDAO.executeUpdate(sqlForAudiEvent);
+
+		String sql = "select max(identifier) from catissue_audit_event where USER_ID='"
+				+ userId + "'";
+
+		List list = jdbcDAO.executeQuery(sql, null, false, null);
+
+		if (!list.isEmpty())
+		{
+
+			List columnList = (List) list.get(0);
+			if (!columnList.isEmpty())
+			{
+				String str = (String) columnList.get(0);
+				if (!str.equals(""))
+				{
+					no = Long.parseLong(str);
+
+				}
+			}
+		}
+
+		String sqlForQueryLog = "insert into catissue_audit_event_query_log(QUERY_DETAILS,AUDIT_EVENT_ID) values ('"
+				+ sqlQuery1 + "','" + no + "')";
+		jdbcDAO.executeUpdate(sqlForQueryLog);
+	
+		
+	}
+	
+	public void insertQueryForOracle(String sqlQuery,SessionDataBean sessionData,JDBCDAO jdbcDAO)throws DAOException,
+	ClassNotFoundException, SQLException, IOException
+	{
+		String sqlQuery1 = sqlQuery.replaceAll("'", "''");
+		long no = 1;
+		SimpleDateFormat fSDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String timeStamp = fSDateFormat.format(new Date());
+
+		String ipAddr = sessionData.getIpAddress();
+
+		String userId = sessionData.getUserId().toString();
+		String comments = "QueryLog";
+
+		String sql = "select CATISSUE_AUDIT_EVENT_PARAM_SEQ.nextVal from dual";
+
+		List list = jdbcDAO.executeQuery(sql, null, false, null);
+
+		if (!list.isEmpty())
+		{
+
+			List columnList = (List) list.get(0);
+			if (!columnList.isEmpty())
+			{
+				String str = (String) columnList.get(0);
+				if (!"".equals(str))
+				{
+					no = Long.parseLong(str);
+
+				}
+			}
+		}
+		String sqlForAudiEvent = "insert into catissue_audit_event(IDENTIFIER,IP_ADDRESS,EVENT_TIMESTAMP,USER_ID ,COMMENTS) values ('"
+				+ no
+				+ "','"
+				+ ipAddr
+				+ "',to_date('"
+				+ timeStamp
+				+ "','yyyy-mm-dd HH24:MI:SS'),'" + userId + "','" + comments + "')";
+		Logger.out.info("sqlForAuditLog:" + sqlForAudiEvent);
+		jdbcDAO.executeUpdate(sqlForAudiEvent);
+
+		long queryNo = 1;
+		sql = "select CATISSUE_AUDIT_EVENT_QUERY_SEQ.nextVal from dual";
+
+		list = jdbcDAO.executeQuery(sql, null, false, null);
+
+		if (!list.isEmpty())
+		{
+
+			List columnList = (List) list.get(0);
+			if (!columnList.isEmpty())
+			{
+				String str = (String) columnList.get(0);
+				if (!str.equals(""))
+				{
+					queryNo = Long.parseLong(str);
+
+				}
+			}
+		}
+		String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
+				+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
+		jdbcDAO.executeUpdate(sqlForQueryLog);
+		String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="+queryNo+" for update";
+		list = jdbcDAO.executeQuery(sql1, null, false, null);
+
+		CLOB clob=null;
+		
+		if (!list.isEmpty())
+		{
+
+			List columnList = (List) list.get(0);
+			if (!columnList.isEmpty())
+			{
+				clob = (CLOB)columnList.get(0);
+			}
+		}
+//		get output stream from the CLOB object
+		OutputStream os = clob.getAsciiOutputStream();
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		
+//	use that output stream to write character data to the Oracle data store
+		osw.write(sqlQuery1.toCharArray());
+		//write data and commit
+		osw.flush();
+		osw.close();
+		os.close();
+		jdbcDAO.commit();
+		Logger.out.info("sqlForQueryLog:" + sqlForQueryLog);
+		
+
+	
+	}
 	/***
 	 * 
 	 * @param sqlQuery
@@ -1224,130 +1364,14 @@ public class QueryBizLogic extends DefaultBizLogic
 		try
 		{
 
-			String sqlQuery1 = sqlQuery.replaceAll("'", "''");
-			long no = 1;
-
 			jdbcDAO.openSession(null);
-
-			SimpleDateFormat fSDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String timeStamp = fSDateFormat.format(new Date());
-
-			String ipAddr = sessionData.getIpAddress();
-
-			String userId = sessionData.getUserId().toString();
-			String comments = "QueryLog";
-
 			if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
 			{
-				String sqlForAudiEvent = "insert into catissue_audit_event(IP_ADDRESS,EVENT_TIMESTAMP,USER_ID ,COMMENTS) values ('"
-						+ ipAddr + "','" + timeStamp + "','" + userId + "','" + comments + "')";
-				jdbcDAO.executeUpdate(sqlForAudiEvent);
-
-				String sql = "select max(identifier) from catissue_audit_event where USER_ID='"
-						+ userId + "'";
-
-				List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						String str = (String) columnList.get(0);
-						if (!str.equals(""))
-						{
-							no = Long.parseLong(str);
-
-						}
-					}
-				}
-
-				String sqlForQueryLog = "insert into catissue_audit_event_query_log(QUERY_DETAILS,AUDIT_EVENT_ID) values ('"
-						+ sqlQuery1 + "','" + no + "')";
-				Logger.out.debug("sqlForQueryLog:" + sqlForQueryLog);
-				jdbcDAO.executeUpdate(sqlForQueryLog);
-			}
-			else
-			{
-				String sql = "select CATISSUE_AUDIT_EVENT_PARAM_SEQ.nextVal from dual";
-
-				List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						String str = (String) columnList.get(0);
-						if (!str.equals(""))
-						{
-							no = Long.parseLong(str);
-
-						}
-					}
-				}
-				String sqlForAudiEvent = "insert into catissue_audit_event(IDENTIFIER,IP_ADDRESS,EVENT_TIMESTAMP,USER_ID ,COMMENTS) values ('"
-						+ no
-						+ "','"
-						+ ipAddr
-						+ "',to_date('"
-						+ timeStamp
-						+ "','yyyy-mm-dd HH24:MI:SS'),'" + userId + "','" + comments + "')";
-				Logger.out.info("sqlForAuditLog:" + sqlForAudiEvent);
-				jdbcDAO.executeUpdate(sqlForAudiEvent);
-
-				long queryNo = 1;
-				sql = "select CATISSUE_AUDIT_EVENT_QUERY_SEQ.nextVal from dual";
-
-				list = jdbcDAO.executeQuery(sql, null, false, null);
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						String str = (String) columnList.get(0);
-						if (!str.equals(""))
-						{
-							queryNo = Long.parseLong(str);
-
-						}
-					}
-				}
-				String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
-						+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
-				jdbcDAO.executeUpdate(sqlForQueryLog);
-				String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="+queryNo+" for update";
-				list = jdbcDAO.executeQuery(sql1, null, false, null);
-
-				CLOB clob=null;
+				insertQueryForMySQL(sqlQuery,sessionData,jdbcDAO);
 				
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						clob = (CLOB)columnList.get(0);
-					}
-				}
-//				get output stream from the CLOB object
-				OutputStream os = clob.getAsciiOutputStream();
-				OutputStreamWriter osw = new OutputStreamWriter(os);
+			} else {
 				
-//			use that output stream to write character data to the Oracle data store
-				osw.write(sqlQuery1.toCharArray());
-				//write data and commit
-				osw.flush();
-				osw.close();
-				os.close();
-				jdbcDAO.commit();
-				Logger.out.info("sqlForQueryLog:" + sqlForQueryLog);
-				
-
+				insertQueryForOracle(sqlQuery,sessionData,jdbcDAO);
 			}
 		}
 		catch(IOException e)
@@ -1366,10 +1390,6 @@ public class QueryBizLogic extends DefaultBizLogic
 		{
 			jdbcDAO.closeSession();
 		}
-		/*String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS) values ('"
-		 + no + "','" + sqlQuery1 + "')";
-		 jdbcDAO.executeUpdate(sqlForQueryLog);*/
-
 	}
 	
 	/**

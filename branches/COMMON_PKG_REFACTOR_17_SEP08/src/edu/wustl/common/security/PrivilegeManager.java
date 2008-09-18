@@ -222,7 +222,7 @@ public class PrivilegeManager
 	}
 	
 	
-	public void insertAuthorizationData(Vector authorizationData, Set protectionObjects, String[] dynamicGroups, String objectId)
+	public void insertAuthorizationData(List authorizationData, Set protectionObjects, String[] dynamicGroups, String objectId)
 	{
 			PrivilegeUtility utility = new PrivilegeUtility();
 			try 
