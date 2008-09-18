@@ -952,35 +952,36 @@ public abstract class Query {
 	 * @param relatedTables
 	 * @return
 	 */
-	public Vector getColumnIds(String tableAlias, Vector relatedTables) {
+	public List getColumnIds(String tableAlias, List relatedTables) {
 		Logger.out.debug(" tableAlias:" + tableAlias + " relatedTables:"
 				+ relatedTables);
-		if (relatedTables == null) {
-			relatedTables = new Vector();
-		}
-		Vector columnIds = new Vector();
+		
+		List columnIds = new ArrayList();
 		DataElement dataElement;
 		String dataElementTableName;
 		String dataElementFieldName;
-		for (int i = 0; i < resultView.size(); i++) {
-			dataElement = (DataElement) resultView.get(i);
-			dataElementTableName = dataElement.getTableAliasName();
-			dataElementFieldName = dataElement.getField();
+		
+		if (relatedTables != null) {
 
-			//I
-			if (dataElementTableName.equals(tableAlias)
-					|| relatedTables.contains(dataElementTableName)) {
-				if(dataElementTableName.equals(tableAlias) && (dataElementFieldName.equals(Constants.IDENTIFIER)|| 
-						dataElementFieldName.equals(Constants.PARENT_SPECIMEN_ID_COLUMN)))
-				{
-					continue;
+			for (int i = 0; i < resultView.size(); i++) {
+				dataElement = (DataElement) resultView.get(i);
+				dataElementTableName = dataElement.getTableAliasName();
+				dataElementFieldName = dataElement.getField();
+
+				//I
+				if (dataElementTableName.equals(tableAlias)
+						|| relatedTables.contains(dataElementTableName)) {
+					if(dataElementTableName.equals(tableAlias) && (dataElementFieldName.equals(Constants.IDENTIFIER)|| 
+							dataElementFieldName.equals(Constants.PARENT_SPECIMEN_ID_COLUMN)))
+					{
+						continue;
+					}
+					columnIds.add(new Integer(i + 1));
+					Logger.out.debug("tableAlias:" + tableAlias + " columnId:"
+							+ (i + 1));
 				}
-				columnIds.add(new Integer(i + 1));
-				Logger.out.debug("tableAlias:" + tableAlias + " columnId:"
-						+ (i + 1));
 			}
 		}
-
 		return columnIds;
 	}
 
@@ -993,49 +994,49 @@ public abstract class Query {
 	 * @param relatedTables
 	 * @return
 	 */
-	public Vector getIdentifiedColumnIds(String tableAlias, Vector relatedTables) {
+	public Vector getIdentifiedColumnIds(String tableAlias, List relatedTables) {
 		Logger.out.debug(" tableAlias:" + tableAlias + " relatedTables:"
 				+ relatedTables);
-		if (relatedTables == null) {
-			relatedTables = new Vector();
-		}
+		
 		Vector columnIds = new Vector();
 		DataElement dataElement;
 		String dataElementTableName;
 		String dataElementFieldName;
 		Vector identifiedData;
-		for (int i = 0; i < resultView.size(); i++) {
-			dataElement = (DataElement) resultView.get(i);
-			dataElementTableName = dataElement.getTableAliasName();
-			dataElementFieldName = dataElement.getField();
-			//I
-			if (dataElementTableName.equals(tableAlias)
-					|| relatedTables.contains(dataElementTableName)) {
-				identifiedData = (Vector) Client.identifiedDataMap
-						.get(dataElementTableName);
-				Logger.out.debug("Table:" + dataElementTableName
-						+ " Identified Data:" + identifiedData);
-				if (identifiedData != null) {
-					Logger.out.debug(" identifiedData not null..."
-							+ identifiedData);
-					Logger.out.debug(" dataElementFieldName:"
-							+ dataElementFieldName);
-					Logger.out
+		if (relatedTables != null) {
+			for (int i = 0; i < resultView.size(); i++) {
+				dataElement = (DataElement) resultView.get(i);
+				dataElementTableName = dataElement.getTableAliasName();
+				dataElementFieldName = dataElement.getField();
+				//I
+				if (dataElementTableName.equals(tableAlias)
+						|| relatedTables.contains(dataElementTableName)) {
+					identifiedData = (Vector) Client.identifiedDataMap
+					.get(dataElementTableName);
+					Logger.out.debug("Table:" + dataElementTableName
+							+ " Identified Data:" + identifiedData);
+					if (identifiedData != null) {
+						Logger.out.debug(" identifiedData not null..."
+								+ identifiedData);
+						Logger.out.debug(" dataElementFieldName:"
+								+ dataElementFieldName);
+						Logger.out
+						.debug(" identifiedData.contains(dataElementFieldName)***** "
+								+ identifiedData
+								.contains(dataElementFieldName));
+						if (identifiedData.contains(dataElementFieldName)) {
+							Logger.out
 							.debug(" identifiedData.contains(dataElementFieldName)***** "
 									+ identifiedData
-											.contains(dataElementFieldName));
-					if (identifiedData.contains(dataElementFieldName)) {
-						Logger.out
-								.debug(" identifiedData.contains(dataElementFieldName)***** "
-										+ identifiedData
-												.contains(dataElementFieldName));
-						columnIds.add(new Integer(i + 1));
-						Logger.out.debug("tableAlias:" + tableAlias
-								+ " Identified column:" + dataElementFieldName
-								+ " Identified columnId:" + (i + 1));
+									.contains(dataElementFieldName));
+							columnIds.add(new Integer(i + 1));
+							Logger.out.debug("tableAlias:" + tableAlias
+									+ " Identified column:" + dataElementFieldName
+									+ " Identified columnId:" + (i + 1));
+						}
 					}
-				}
 
+				}
 			}
 		}
 
@@ -1051,7 +1052,7 @@ public abstract class Query {
 	 * @param tableAliasVector
 	 * @return
 	 */
-	public Map getIdentifierColumnIds(Vector tableAliasVector) {
+	public Map getIdentifierColumnIds(List tableAliasVector) {
 		Logger.out.debug(" tableAliasVector:" + tableAliasVector);
 
 		Map columnIdsMap = new HashMap();
@@ -1113,8 +1114,7 @@ public abstract class Query {
 			dataElementTableName = dataElement.getTableAliasName();
 			dataElementFieldName = dataElement.getField();
 
-			columnIdsMap.put(dataElementTableName + "." + dataElementFieldName,
-					new Integer(i + 1));
+			columnIdsMap.put(dataElementTableName + "." + dataElementFieldName,Integer.valueOf((i + 1)));
 			Logger.out.debug("tableAlias:" + dataElementTableName + " "
 					+ dataElementFieldName + " columnId:" + (i + 1));
 

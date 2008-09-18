@@ -510,10 +510,10 @@ public abstract class AbstractBizLogic implements IBizLogic
     
 	public String formatException(Exception ex, Object obj, String operation)
 	{
-		String errMsg="";
+		String errMsg;
 		if(ex==null)
 		{
-			return null;
+			errMsg = null;
 		}
 		String roottableName = null;
 		String tableName = null;
@@ -562,9 +562,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			TitliInterface titli = Titli.getInstance();
 			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0]; 
 			String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
-			System.out.println("tableName: "+tableName);
 			String id= ((AbstractDomainObject) obj).getId().toString();
-			System.out.println("id: "+id);
 						
 			Map<Name, String> uniqueKey = new HashMap<Name, String>();
 			uniqueKey.put(new Name(Constants.IDENTIFIER), id);

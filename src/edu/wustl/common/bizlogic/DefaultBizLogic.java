@@ -302,14 +302,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
 			throws DAOException
 	{
+		 String[] whereColName = {""};
+		 String[] whereColCondition = {""};
+		 Object[] whereColValue = {""};
+		
 		if (isToExcludeDisabled)
 		{
-			whereColumnName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
-			whereColumnCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
-			whereColumnValue = Utility.addElement(whereColumnValue, Constants.ACTIVITY_STATUS_DISABLED);
+			whereColName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
+			whereColCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
+			whereColValue = Utility.addElement(whereColumnValue, Constants.ACTIVITY_STATUS_DISABLED);
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
+		return getList(sourceObjectName, displayNameFields, valueField, whereColName, whereColCondition, whereColValue, joinCondition,
 				separatorBetweenFields);
 	}
 
@@ -318,7 +322,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition, String separatorBetweenFields) throws DAOException
 	{
 		//Logger.out.debug("in get list");
-		Vector nameValuePairs = new Vector();
+		List nameValuePairs = new ArrayList();
 
 		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
 
@@ -346,7 +350,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			{
 				columnArray = (Object[]) results.get(i);
 				Object tmpObj = null;
-				Vector tmpBuffer = new Vector();
+				List tmpBuffer = new ArrayList();
 				StringBuffer nameBuff = new StringBuffer();
 				if (columnArray != null)
 				{
@@ -587,16 +591,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected Object getCorrespondingOldObject(Collection objectCollection, Long id)
 	{
 		Iterator iterator = objectCollection.iterator();
+		AbstractDomainObject abstractDomainObject = null;
 		while (iterator.hasNext())
 		{
-			AbstractDomainObject abstractDomainObject = (AbstractDomainObject) iterator.next();
+			AbstractDomainObject abstractDomainObj = (AbstractDomainObject) iterator.next();
 			
-			if (id != null && id.equals(abstractDomainObject.getId()))			
+			if (id != null && id.equals(abstractDomainObj.getId()))			
 			{
-				return abstractDomainObject;
-			}
+				abstractDomainObject = abstractDomainObj;
+				break;
+			} 
 		}
-		return null;
+		return abstractDomainObject;
 	}
 
 	protected DAOException handleSMException(SMException e)
@@ -646,14 +652,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List list = dao
 				.retrieve(sourceObjectName, selectColumnName, whereColumnNames, colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
 
+		String activityStatus = "";
 		if (!list.isEmpty())
 		{
 			Object obj = list.get(0);
 			Logger.out.debug("obj Class " + obj.getClass());
 			//Object[] objArr = (String)obj
-			return (String) obj;
+			activityStatus = (String) obj;
 		}
-		return "";
+		return activityStatus;
 	}
 
 	protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
@@ -776,71 +783,73 @@ public class DefaultBizLogic extends AbstractBizLogic
 		boolean isAuthorized = false;
 		String protectionElementName = null;
 		// Customize check for DE, return true if sessionDataBean is NULL
-		if(sessionDataBean == null)
+		if(sessionDataBean == null || (sessionDataBean != null && sessionDataBean.isAdmin()))
 		{
-			return true;
-		}
-		if(sessionDataBean != null && sessionDataBean.isAdmin())
-		{
-			return true;
-		}
-		//	Get the base object id against which authorization will take place 
-		if(domainObject instanceof List)
-		{
-		    List list = (List) domainObject;
-			for(Object domainObject2 : list)
+			isAuthorized = true;
+		} else {
+				
+			//	Get the base object id against which authorization will take place 
+			if(domainObject instanceof List)
 			{
-				protectionElementName = getObjectId(dao, domainObject2);
+			    List list = (List) domainObject;
+				for(Object domainObject2 : list)
+				{
+					protectionElementName = getObjectId(dao, domainObject2);
+				}
 			}
-		}
-		else	
-		{
-			protectionElementName = getObjectId(dao, domainObject);
-		}
-		//TODO To revisit this piece of code --> Vishvesh
-		if(Constants.allowOperation.equals(protectionElementName))
-		{
-			return true;
+			else	
+			{
+				protectionElementName = getObjectId(dao, domainObject);
+			}
+			//TODO To revisit this piece of code --> Vishvesh
+			if(Constants.allowOperation.equals(protectionElementName))
+			{
+				isAuthorized = true;
+			}
 		}
 		//Get the required privilege name which we would like to check for the logged in user.
 		String privilegeName = getPrivilegeName(domainObject);
 		PrivilegeCache privilegeCache = getPrivilegeCache(sessionDataBean);
 		//Checking whether the logged in user has the required privilege on the given protection element
-		if(! protectionElementName.equalsIgnoreCase("ADMIN_PROTECTION_ELEMENT"))
+		
+		if(!isAuthorized)
 		{
-			String [] prArray = protectionElementName.split("_");
-			String baseObjectId = prArray[0];
-			String objId = "";
-			for (int i = 1 ; i < prArray.length;i++)
+			if(! protectionElementName.equalsIgnoreCase("ADMIN_PROTECTION_ELEMENT"))
 			{
-				objId = baseObjectId + "_" + prArray[i];
-				isAuthorized = privilegeCache.hasPrivilege(objId, privilegeName);
-				if (!isAuthorized)
+				String [] prArray = protectionElementName.split("_");
+				String baseObjectId = prArray[0];
+				String objId = "";
+				for (int i = 1 ; i < prArray.length;i++)
 				{
-					break;
+					objId = baseObjectId + "_" + prArray[i];
+					isAuthorized = privilegeCache.hasPrivilege(objId, privilegeName);
+					if (!isAuthorized)
+					{
+						break;
+					}
 				}
 			}
-		}
-		else
-		{
-			isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
-		}
+			else
+			{
+				isAuthorized = privilegeCache.hasPrivilege(protectionElementName,privilegeName);
+			}
+		}	
+	    if (!isAuthorized)
+	    {
+	            UserNotAuthorizedException ex = new UserNotAuthorizedException();
+	            ex.setPrivilegeName(privilegeName);
+	            if (protectionElementName != null && (protectionElementName.contains("Site") || protectionElementName.contains("CollectionProtocol")))
+	            {
+	                String [] arr = protectionElementName.split("_");
+	                String [] nameArr = arr[0].split("\\.");
+	                String baseObject = nameArr[nameArr.length-1];
+	                ex.setBaseObject(baseObject);
+	                ex.setBaseObjectIdentifier(arr[1]);
+	            }
+	            throw ex;
+	            //ex.setBaseObject()
+	    }
 		
-        if (!isAuthorized)
-        {
-            UserNotAuthorizedException ex = new UserNotAuthorizedException();
-            ex.setPrivilegeName(privilegeName);
-            if (protectionElementName != null && (protectionElementName.contains("Site") || protectionElementName.contains("CollectionProtocol")))
-            {
-                String [] arr = protectionElementName.split("_");
-                String [] nameArr = arr[0].split("\\.");
-                String baseObject = nameArr[nameArr.length-1];
-                ex.setBaseObject(baseObject);
-                ex.setBaseObjectIdentifier(arr[1]);
-            }
-            throw ex;
-            //ex.setBaseObject()
-        }
 		return isAuthorized;		
 	}
 	
@@ -928,59 +937,63 @@ public class DefaultBizLogic extends AbstractBizLogic
 	
 	public boolean hasPrivilegeToView(String objName, Long identifier, SessionDataBean sessionDataBean)
 	{
+		boolean hasprivilege = true;
 		if(sessionDataBean != null && sessionDataBean.isAdmin())
 		{
-			return true;
-		}
-		
-		List cpIdsList = new ArrayList();
-		Set<Long> cpIds = new HashSet<Long>();
-		
-		cpIdsList = Utility.getCPIdsList(objName, identifier, sessionDataBean, cpIdsList);
-		
-		if(cpIdsList == null)
-		{
-			return false;
-		}
-		
-		for(Object cpId : cpIdsList)
-		{
-			cpId = cpIdsList.get(0);
-			cpIds.add(Long.valueOf(cpId.toString()));
-		}
-		
-		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
-		StringBuffer sb = new StringBuffer();
-		sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
-		boolean isPresent = false;
-		
-		for (Long cpId : cpIds)
-		{
-			String privilegeName = getReadDeniedPrivilegeName();
-			
-			String [] privilegeNames = privilegeName.split(",");
-			if(privilegeNames.length > 1)
-			{	
-				if((privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[0])))
+			hasprivilege = true;
+		} else {
+
+			List cpIdsList = new ArrayList();
+			Set<Long> cpIds = new HashSet<Long>();
+
+			cpIdsList = Utility.getCPIdsList(objName, identifier, sessionDataBean, cpIdsList);
+
+			if(cpIdsList == null)
+			{
+				hasprivilege = false;
+			} else	{
+
+				for(Object cpId : cpIdsList)
 				{
-					isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[1]);
-					isPresent = !isPresent;
+					cpId = cpIdsList.get(0);
+					cpIds.add(Long.valueOf(cpId.toString()));
+				}
+
+				PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(sessionDataBean.getUserName());
+				StringBuffer sb = new StringBuffer();
+				sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
+				boolean isPresent = false;
+
+				for (Long cpId : cpIds)
+				{
+					String privilegeName = getReadDeniedPrivilegeName();
+
+					String [] privilegeNames = privilegeName.split(",");
+					if(privilegeNames.length > 1)
+					{	
+						if((privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[0])))
+						{
+							isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeNames[1]);
+							isPresent = !isPresent;
+						}
+					}
+					else
+					{
+						isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeName);
+					}
+
+					if (privilegeName != null && privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
+					{
+						isPresent = !isPresent;
+					}
+					if (!isPresent)
+					{
+						hasprivilege = false;
+					} 
 				}
 			}
-			else
-			{
-				isPresent = privilegeCache.hasPrivilege(sb.toString()+cpId.toString(), privilegeName);
-			}
-				
-			if (privilegeName != null && privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
-			{
-				isPresent = !isPresent;
-			}
-			if (!isPresent)
-			{
-				return false;
-			} 
 		}
-    	return true;
+
+		return hasprivilege;
 	}
 }

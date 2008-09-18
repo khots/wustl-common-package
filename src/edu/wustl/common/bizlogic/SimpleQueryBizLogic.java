@@ -178,7 +178,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	public void createOrderByListInQuery(Set fromTables, Query query) throws DAOException
 	{
 		// getting main Query object present in the fromTables set & storing it in mainObjectsOfQuery.
-		Vector<String> mainObjectsOfQuery = QueryBizLogic.getMainObjectsOfQuery();
+		List<String> mainObjectsOfQuery = QueryBizLogic.getMainObjectsOfQuery();
 		mainObjectsOfQuery.retainAll(fromTables);
 		
 		//getting related object aliases present in query, & removing mainObjectsOfQuery aliase from it, so that this set will contain only related object & not any main Query object.
@@ -188,7 +188,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		for (String aliasName: mainObjectsOfQuery)
 		{
 			query.addToOrderByAttributeList(new DataElement(aliasName,Constants.IDENTIFIER));
-			Vector<String> relatedTableAliases = QueryBizLogic.getRelatedTableAliases(aliasName);
+			List<String> relatedTableAliases = QueryBizLogic.getRelatedTableAliases(aliasName);
 			relatedTableAliases.retainAll(relatedObjectAliases);
 			for (String relatedTableAlias :relatedTableAliases)
 			{
@@ -215,52 +215,50 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	{
 		SimpleConditionsNode activityStatusCondition = null;
 
-		if (className.equals(Constants.REPORTED_PROBLEM_CLASS_NAME))
+		if (!className.equals(Constants.REPORTED_PROBLEM_CLASS_NAME))
 		{
-			return null;
-		}
-		//Returns the Class object if it is a valid class else returns null.
-		Class classObject = edu.wustl.common.util.Utility.getClassObject(className);
-		if (classObject != null)
-		{
-			Field[] objectFields = classObject.getDeclaredFields();
-
-			for (int i = 0; i < objectFields.length; i++)
+			//Returns the Class object if it is a valid class else returns null.
+			Class classObject = edu.wustl.common.util.Utility.getClassObject(className);
+			if (classObject != null)
 			{
-				if (objectFields[i].getName().equals(Constants.ACTIVITY_STATUS))
+				Field[] objectFields = classObject.getDeclaredFields();
+	
+				for (int i = 0; i < objectFields.length; i++)
 				{
-					activityStatusCondition = new SimpleConditionsNode();
-					activityStatusCondition.getCondition().getDataElement().setTableName(aliasName);
-					activityStatusCondition.getCondition().getDataElement().setField(
-							Constants.ACTIVITY_STATUS_COLUMN);
-					activityStatusCondition.getCondition().getOperator().setOperator("!=");
-					activityStatusCondition.getCondition().setValue(
-							Constants.ACTIVITY_STATUS_DISABLED);
-					activityStatusCondition.getCondition().getDataElement().setFieldType(
-							Constants.FIELD_TYPE_VARCHAR);
-					return activityStatusCondition;
+					if (objectFields[i].getName().equals(Constants.ACTIVITY_STATUS))
+					{
+						activityStatusCondition = new SimpleConditionsNode();
+						activityStatusCondition.getCondition().getDataElement().setTableName(aliasName);
+						activityStatusCondition.getCondition().getDataElement().setField(
+								Constants.ACTIVITY_STATUS_COLUMN);
+						activityStatusCondition.getCondition().getOperator().setOperator("!=");
+						activityStatusCondition.getCondition().setValue(
+								Constants.ACTIVITY_STATUS_DISABLED);
+						activityStatusCondition.getCondition().getDataElement().setFieldType(
+								Constants.FIELD_TYPE_VARCHAR);
+					}
 				}
-			}
-
-			Class superClass = classObject.getSuperclass();
-			if ((activityStatusCondition == null)
-					&& (superClass.getName().equals(
-							"edu.wustl.common.domain.AbstractDomainObject") == false))
-			{
-				String superClassAliasName = getAliasName(superClass);
-				activityStatusCondition = getActivityStatusCondition(superClassAliasName,superClass.getName());
+	
+				Class superClass = classObject.getSuperclass();
+				if ((activityStatusCondition == null)
+						&& (superClass.getName().equals(
+								"edu.wustl.common.domain.AbstractDomainObject") == false))
+				{
+					String superClassAliasName = getAliasName(superClass);
+					activityStatusCondition = getActivityStatusCondition(superClassAliasName,superClass.getName());
+				}
 			}
 		}
 
 		return activityStatusCondition;
 	}
 
-	private Vector getViewElements(String[] selectedColumnsList)
+	private List getViewElements(String[] selectedColumnsList)
 	{
 		/*Split the string which is in the form TableAlias.columnNames.columnDisplayNames 
 		 * and set the dataelement object.
 		 */
-		Vector vector = new Vector();
+		List list = new ArrayList();
 		for (int i = 0; i < selectedColumnsList.length; i++)
 		{
 			StringTokenizer st = new StringTokenizer(selectedColumnsList[i], ".");
@@ -279,10 +277,10 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				}
 				dataElement.setField(field);
 			}
-			vector.add(dataElement);
+			list.add(dataElement);
 		}
 
-		return vector;
+		return list;
 	}
 
 	private List getColumnDisplayNames(String[] selectedColumnsList)
@@ -316,7 +314,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return The Vector of data elements objects for given table alias.
 	 * @throws DAOException
 	 */
-	public Vector getSelectDataElements(String[] selectedColumns, List tableList, List columnNames)
+	public List getSelectDataElements(String[] selectedColumns, List tableList, List columnNames)
 			throws DAOException
 	{
 		return getSelectDataElements(selectedColumns, tableList, columnNames, false);
@@ -332,10 +330,10 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return The Vector of data elements objects for given table alias.
 	 * @throws DAOException
 	 */
-	public Vector getSelectDataElements(String[] selectedColumns, List tableList, List columnNames,
+	public List getSelectDataElements(String[] selectedColumns, List tableList, List columnNames,
 			boolean onlyDefaultAttributes) throws DAOException
 	{
-		Vector selectDataElements = null;
+		List selectDataElements = null;
 
 		//If columns not conigured, set to default.
 		if (selectedColumns == null)
@@ -371,10 +369,10 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return The Vector of data elements objects for given table alias.
 	 * @throws DAOException
 	 */
-	public Vector getSelectDataElements(String[] selectedColumns, List tableList, List columnNames,
+	public List getSelectDataElements(String[] selectedColumns, List tableList, List columnNames,
 			boolean onlyDefaultAttributes, List fieldList) throws DAOException
 	{
-		Vector selectDataElements = getSelectDataElements(selectedColumns,tableList,columnNames,onlyDefaultAttributes);	
+		List selectDataElements = getSelectDataElements(selectedColumns,tableList,columnNames,onlyDefaultAttributes);	
 		
 		/**
 		 * Bug-2778: Results should return at least the attribute that was queried.
@@ -452,7 +450,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 			String nameSql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
 					+ parentTableAliasName + "'";
 			List nameList = jdbcDao.executeQuery(nameSql, null, false, null);
-			String tableDisplayName = new String();
+			String tableDisplayName = "";
 			if (!nameList.isEmpty())
 			{
 				List rowNameList = (List) nameList.get(0);
@@ -482,7 +480,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return Set of objects of that attributes to be added in the from clause.
 	 * @throws DAOException
 	 */
-	private List configureSelectDataElements(Vector selectDataElements) throws DAOException
+	private List configureSelectDataElements(List selectDataElements) throws DAOException
 	{
 		List forFromSet = new ArrayList();
 
@@ -513,10 +511,10 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @return the Vector of DataElement objects for the select clause of the query with Default view attribute.
 	 * @throws DAOException
 	 */
-	public Vector getViewElements(List aliasNameList, List columnList) throws DAOException
+	public List getViewElements(List aliasNameList, List columnList) throws DAOException
 	{
-		Vector vector = getViewElements(aliasNameList, columnList, true);
-		return vector;
+		List list = getViewElements(aliasNameList, columnList, true);
+		return list;
 	}
 
 	/**
@@ -535,10 +533,10 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
      * Description:modified query to order the result by ATTRIBUTE_ORDER column.
      */
     
-	public Vector getViewElements(List aliasNameList, List columnList, boolean OnlyDefaultAttribute)
+	public List getViewElements(List aliasNameList, List columnList, boolean OnlyDefaultAttribute)
 			throws DAOException
 	{
-		Vector vector = new Vector();
+		List elementList = new ArrayList();
 		try
 		{
 			JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
@@ -580,7 +578,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				String nameSql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
 						+ aliasName + "'";
 				List nameList = jdbcDao.executeQuery(nameSql, null, false, null);
-				String tableDisplayName = new String();
+				String tableDisplayName ="";
 				if (!nameList.isEmpty())
 				{
 					List rowNameList = (List) nameList.get(0);
@@ -599,7 +597,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 					Logger.out.debug("fieldName*********************" + fieldName);
 					dataElement.setField(fieldName + "." + (String) rowList.get(2));
 					dataElement.setFieldType((String) rowList.get(4));
-					vector.add(dataElement);
+					elementList.add(dataElement);
 					columnList.add((String) rowList.get(3) + " : " + tableDisplayName);
 				}
 			}
@@ -609,7 +607,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		{
 			throw new DAOException(classExp.getMessage(), classExp);
 		}
-		return vector;
+		return elementList;
 	}
 
 	/**
@@ -626,7 +624,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		queryResultObjectData.setAliasName(fromAliasNameValue);
 		//Aarti: getting related tables that should be dependent 
 		//on main object for authorization
-		Vector relatedTables = new Vector();
+		List relatedTables = new ArrayList();
 		relatedTables = QueryBizLogic.getRelatedTableAliases(fromAliasNameValue);
 		//remove all the related objects that are not part of the current query
 		for (int i = 0; i < relatedTables.size(); i++)
@@ -640,7 +638,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		Logger.out.debug("After removing tables not in query relatedTable:" + relatedTables);
 		//					Aarti: Get main query objects which should have individual checks
 		//for authorization and should not be dependent on others
-		Vector mainQueryObjects = QueryBizLogic.getMainObjectsOfQuery();
+		List mainQueryObjects = QueryBizLogic.getMainObjectsOfQuery();
 
 		String queryObject;
 		//Aarti: remove independent query objects from related objects
@@ -678,8 +676,8 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		Iterator keyIterator = keySet.iterator();
 		QueryResultObjectData queryResultObjectData2;
 		QueryResultObjectData queryResultObjectData3;
-		Vector queryObjects;
-		Vector queryObjectNames;
+		List queryObjects;
+		List queryObjectNames;
 		int initialColumnNumbers = query.getResultView().size();
 		Map columnIdsMap;
 
@@ -715,7 +713,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		Iterator keyIterator;
 		QueryResultObjectData queryResultObjectData2;
 		QueryResultObjectData queryResultObjectData3;
-		Vector queryObjects;
+		List queryObjects;
 		Set keySet2 = queryResultObjectDataMap.keySet();
 		keyIterator = keySet2.iterator();
 		for (int i = 0; keyIterator.hasNext(); i++)
@@ -750,7 +748,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		Iterator iterator = fromTables.iterator();
 		String tableAlias;
 		QueryResultObjectData queryResultObjectData;
-		Vector mainQueryObjects = QueryBizLogic.getMainObjectsOfQuery();
+		List mainQueryObjects = QueryBizLogic.getMainObjectsOfQuery();
 		Logger.out.debug(" tables in query:" + fromTables);
 		while (iterator.hasNext())
 		{
@@ -778,7 +776,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * Patch ID: SimpleSearchEdit_2 
 	 * Description: Method to get the Map which contains information about which columns to be Hyperlinked.
 	 */
-	public Map<Integer, QueryResultObjectData> getHyperlinkMap(Map<String,QueryResultObjectData> queryResultsObjectDataMap, Vector<DataElement> resultView) throws DAOException
+	public Map<Integer, QueryResultObjectData> getHyperlinkMap(Map<String,QueryResultObjectData> queryResultsObjectDataMap, List<DataElement> resultView) throws DAOException
 	{
 		Map<Integer, QueryResultObjectData> map = new HashMap<Integer, QueryResultObjectData>();
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
@@ -851,17 +849,20 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * @param columnName the name of the column to search.
 	 * @return -1 if no such data element exists in the resultview else return the index of it.
 	 */
-	private int getIndex(Vector<DataElement> resultView, String alias, String columnName)
+	private int getIndex(List<DataElement> resultView, String alias, String columnName)
 	{
+		int indexVal = -1;
+		
 		for (int index = 0; index < resultView.size(); index++)
 		{
 			DataElement element = resultView.get(index);
 			if (alias.equals(element.getTable().getTableName()) && columnName.equals(element.getField()))
 			{
-				return index;
+				indexVal = index;
+				break;
 			}
 		}
-		return -1;
+		return indexVal;
 	}
 	
 	private void addInListIfNotPresent(List list, String string)
@@ -888,7 +889,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 */
 	public String getTableName(String aliasName) throws DAOException, ClassNotFoundException
 	{
-		String tableName = new String();
+		String tableName = "";
 		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDAO.openSession(null);
 		String sql = "select TABLE_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
@@ -913,7 +914,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 */
 	public String getAliasName(String tableName) throws DAOException, ClassNotFoundException
 	{
-		String aliasName = new String();
+		String aliasName = "";
 		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDAO.openSession(null);
 		String sql = "select ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"

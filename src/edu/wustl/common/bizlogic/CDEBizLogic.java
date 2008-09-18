@@ -95,15 +95,15 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
      * (non-Javadoc)
      * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface#getTreeViewData()
      */
-    public Vector getTreeViewData() throws DAOException
+    public List getTreeViewData() throws DAOException
     {
         // TODO Auto-generated method stub
         return null;
     }
     
-    public Vector getTreeViewData(String cdeName) throws DAOException
+    public List getTreeViewData(String cdeName) throws DAOException
     {
-        cdeName = URLDecoder.decode(cdeName);
+       String cdeDecodedName = URLDecoder.decode(cdeName);
 //        try
 //        {
 //            cdeName = URLDecoder.decode(cdeName, "UTF-8");
@@ -113,19 +113,19 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 //            throw new DAOException("Could not generate tree : CDE name not proper.");
 //        }
         
-        CDE cde = CDEManager.getCDEManager().getCDE(cdeName);
+        CDE cde = CDEManager.getCDEManager().getCDE(cdeDecodedName);
         CDETreeNode root  = new CDETreeNode();
-        root.setCdeName(cdeName);
-        Vector vector = getTreeNodeList(root, cde.getPermissibleValues());
+        root.setCdeName(cdeDecodedName);
+        List list = getTreeNodeList(root, cde.getPermissibleValues());
         
-        return vector;
+        return list;
     }
     
 	/**
      * @param cde
      * @return
      */
-    private Vector getTreeNodeList(TreeNode parentTreeNode, Set permissibleValueSet)
+    private List getTreeNodeList(TreeNode parentTreeNode, Set permissibleValueSet)
     {
         Vector treeNodeVector = new Vector();
         if (permissibleValueSet == null)
@@ -139,7 +139,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
                     											 permissibleValueImpl.getValue());
             treeNode.setParentNode(parentTreeNode);
             treeNode.setCdeName(((CDETreeNode) parentTreeNode).getCdeName());
-            Vector subPermissibleValues = getTreeNodeList(treeNode,
+            List subPermissibleValues = getTreeNodeList(treeNode,
                     								permissibleValueImpl.getSubPermissibleValues());
             if (subPermissibleValues != null)
             {

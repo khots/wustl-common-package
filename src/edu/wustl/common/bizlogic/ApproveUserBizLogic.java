@@ -9,6 +9,7 @@
 
 package edu.wustl.common.bizlogic;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -154,10 +155,10 @@ public class ApproveUserBizLogic extends DefaultBizLogic
      * elements returned by this class should be added to.
      * @return
      */
-    private Vector getAuthorizationData(AbstractDomainObject obj) throws SMException
+    private List getAuthorizationData(AbstractDomainObject obj) throws SMException
     {
         Logger.out.debug("--------------- In here ---------------");
-        Vector authorizationData = new Vector();
+        List authorizationData = new ArrayList();
         Set group = new HashSet();
         SecurityDataBean userGroupRoleProtectionGroupBean;
         String protectionGroupName;

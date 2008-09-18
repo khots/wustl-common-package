@@ -67,7 +67,7 @@ public class PrivilegeUtility
 	 *            Array of dynamic group names
 	 * @throws SMException
 	 */
-	public void insertAuthorizationData(Vector authorizationData,
+	public void insertAuthorizationData(List authorizationData,
 			Set protectionObjects, String[] dynamicGroups) throws SMException {
 
 		Set protectionElements;
@@ -158,7 +158,7 @@ public class PrivilegeUtility
 	 * @throws CSException
 	 * @throws SMException
 	 */ 
-	private void createUserGroupRoleProtectionGroup(Vector authorizationData,
+	private void createUserGroupRoleProtectionGroup(List authorizationData,
 			Set protectionElements) throws CSException, SMException {
 		ProtectionGroup protectionGroup = null;
 		SecurityDataBean userGroupRoleProtectionGroupBean;
