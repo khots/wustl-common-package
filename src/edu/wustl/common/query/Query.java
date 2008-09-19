@@ -53,7 +53,7 @@ public abstract class Query
 	/**
 	 * Vector of DataElement objects that need to be selected in the output
 	 */
-	private Vector resultView = new Vector();
+	private List resultView = new Vector();
 
 	/**
 	 * Starting object from which all related objects can be part of the query
@@ -845,7 +845,7 @@ public abstract class Query
 	 * @param resultView
 	 *            The resultView to set.
 	 */
-	public void setResultView(Vector resultView)
+	public void setResultView(List resultView)
 	{
 		this.resultView = resultView;
 	}
@@ -854,7 +854,7 @@ public abstract class Query
 	 * 
 	 * @return
 	 */
-	public Vector getResultView()
+	public List getResultView()
 	{
 		return this.resultView;
 	}
