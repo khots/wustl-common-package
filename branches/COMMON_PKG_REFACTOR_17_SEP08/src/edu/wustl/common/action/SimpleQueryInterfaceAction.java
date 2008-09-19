@@ -37,7 +37,7 @@ import edu.wustl.common.util.logger.Logger;
 public class SimpleQueryInterfaceAction extends SecureAction
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.

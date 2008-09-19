@@ -33,7 +33,7 @@ import edu.wustl.common.util.logger.Logger;
 public class ApplicationFooterAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(ApplicationFooterAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationFooterAction.class);
 
 	/**
 	 * @param mapping ActionMapping

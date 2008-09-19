@@ -122,7 +122,7 @@ public class SimpleSearchAction extends BaseAction
 			session.setAttribute(Constants.CONFIGURED_SELECT_COLUMN_LIST, selectedColumns);
 		}
 		List columnNames = new ArrayList();
-		Vector selectDataElements = null;
+		List selectDataElements = null;
 		if (selectedColumns != null)
 		{
 			selectDataElements = simpleQueryBizLogic.getSelectDataElements(selectedColumns,

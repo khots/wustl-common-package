@@ -60,7 +60,7 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonAddEditAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(CommonAddEditAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonAddEditAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
