@@ -30,15 +30,16 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonExceptionHandler extends ExceptionHandler
 {
 
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonExceptionHandler.class);
 	/* (non-Javadoc)
 	 * @see org.apache.struts.action.ExceptionHandler#execute(java.lang.Exception, org.apache.struts.config.ExceptionConfig, org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public ActionForward execute(Exception ex, ExceptionConfig ae, ActionMapping mapping,
+	 */	
+	public ActionForward execute(Exception ex, ExceptionConfig exConfig, ActionMapping mapping,
 			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException
 	{
 		String errorMessage = getErrorMsg(ex);
-		Logger.out.error(errorMessage, ex);
+		logger.error(errorMessage, ex);
 		/** Modified by amit_doshi
 		*  code reviewer abhijit_naik 
 		*/
@@ -46,7 +47,7 @@ public class CommonExceptionHandler extends ExceptionHandler
 				Constants.ERROR_DETAIL,
 				"Unhandled Exception occured in " + Variables.applicationName + " : "
 						+ ex.getMessage());
-		return super.execute(ex, ae, mapping, formInstance, request, response);
+		return super.execute(ex, exConfig, mapping, formInstance, request, response);
 
 	}
 
@@ -60,11 +61,11 @@ public class CommonExceptionHandler extends ExceptionHandler
 
 		if (ex != null)
 		{
-			ByteArrayOutputStream bo = new ByteArrayOutputStream();
-			PrintWriter pw = new PrintWriter(bo, true);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintWriter pw = new PrintWriter(baos, true);
 			ex.printStackTrace(pw);
 			msg = "Unhandled Exception occured in caTISSUE Core \n" + "Message: " + ex.getMessage()
-					+ "\n" + "StackTrace: " + bo.toString();
+					+ "\n" + "StackTrace: " + baos.toString();
 		}
 
 		return msg;

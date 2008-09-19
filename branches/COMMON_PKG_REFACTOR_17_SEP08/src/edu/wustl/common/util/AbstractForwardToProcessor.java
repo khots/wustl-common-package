@@ -10,7 +10,7 @@
 
 package edu.wustl.common.util;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -22,6 +22,6 @@ import edu.wustl.common.domain.AbstractDomainObject;
 public abstract class AbstractForwardToProcessor
 {
 
-	public abstract HashMap populateForwardToData(AbstractActionForm actionForm,
+	public abstract Map populateForwardToData(AbstractActionForm actionForm,
 			AbstractDomainObject domainObject);
 }

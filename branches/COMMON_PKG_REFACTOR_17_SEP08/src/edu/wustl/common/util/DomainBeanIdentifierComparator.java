@@ -13,7 +13,7 @@ import edu.wustl.common.domain.AbstractDomainObject;
  * @author chetan_patil
  *
  */
-public class DomainBeanIdentifierComparator implements Comparator
+public class DomainBeanIdentifierComparator implements Comparator<Object>
 {
 
 	public int compare(Object object1, Object object2)

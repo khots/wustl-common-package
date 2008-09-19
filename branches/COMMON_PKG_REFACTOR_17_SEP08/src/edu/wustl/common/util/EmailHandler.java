@@ -29,36 +29,35 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class EmailHandler
 {
-
+	private static org.apache.log4j.Logger logger = Logger.getLogger(EmailHandler.class);
 	/**
 	 * Sends the email to the administrator regarding the status of the CDE downloading.
 	 * i.e. the CDEs successfully downloaded and the error messages in case of errors in downloading the CDEs. 
 	 */
-	public void sendCDEDownloadStatusEmail(List errorList)
+	public void sendCDEDownloadStatusEmail(List<String> errorList)
 	{
 		// Send the status of the CDE downloading to the administrator.
-		String body = "Dear Administrator," + "\n\n"
-				+ ApplicationProperties.getValue("email.cdeDownload.body.start") + "\n\n";
+		String body = new StringBuffer().append("Dear Administrator,").append("\n\n")
+			.append(ApplicationProperties.getValue("email.cdeDownload.body.start")).append("\n\n").toString();
 
-		Iterator iterator = errorList.iterator();
+		Iterator<String> iterator = errorList.iterator();
 		while (iterator.hasNext())
 		{
-			body = body + iterator.next() + "\n\n";
+			body = new StringBuffer().append(body).append(iterator.next())
+					.append("\n\n").toString();
 		}
 
-		body = "\n\n" + body + ApplicationProperties.getValue("email.catissuecore.team");
-
+		body = new StringBuffer().append("\n\n").append(body)
+				.append(ApplicationProperties.getValue("email.catissuecore.team")).toString();
 		String subject = ApplicationProperties.getValue("email.cdeDownload.subject");
-
 		boolean emailStatus = sendEmailToAdministrator(subject, body);
-
 		if (emailStatus)
 		{
-			Logger.out.info(ApplicationProperties.getValue("cdeDownload.email.success"));
+			logger.info(ApplicationProperties.getValue("cdeDownload.email.success"));
 		}
 		else
 		{
-			Logger.out.info(ApplicationProperties.getValue("cdeDownload.email.failure"));
+			logger.info(ApplicationProperties.getValue("cdeDownload.email.failure"));
 		}
 	}
 
@@ -72,16 +71,16 @@ public class EmailHandler
 	private boolean sendEmailToAdministrator(String subject, String body)
 	{
 		String adminEmailAddress = XMLPropertyHandler.getValue("email.administrative.emailAddress");
-		String sendFromEmailAddress = XMLPropertyHandler
+		String sendFrom = XMLPropertyHandler
 				.getValue("email.sendEmailFrom.emailAddress");
 		String mailServer = XMLPropertyHandler.getValue("email.mailServer");
 
-		body = body + "\n\n" + ApplicationProperties.getValue("loginDetails.catissue.url.message")
-				+ Variables.catissueURL;
+		String emailbody = new StringBuffer().append(body).append("\n\n").append(ApplicationProperties.getValue("loginDetails.catissue.url.message")).
+				append(Variables.catissueURL).toString();
 
 		SendEmail email = new SendEmail();
-		boolean emailStatus = email.sendmail(adminEmailAddress, sendFromEmailAddress, mailServer,
-				subject, body);
+		boolean emailStatus = email.sendmail(adminEmailAddress, sendFrom, mailServer,
+				subject, emailbody);
 
 		return emailStatus;
 	}
@@ -95,27 +94,29 @@ public class EmailHandler
 	{
 		String subject = ApplicationProperties.getValue("userRegistration.approve.subject");
 
-		String body = "Dear " + user.getLastName() + "," + user.getFirstName() + "\n\n"
-				+ ApplicationProperties.getValue("userRegistration.approved.body.start")
-				+ getUserDetailsEmailBody(user); // Get the user details in the body of the email.
+		String body = new StringBuffer().append("Dear ").append(user.getLastName()).append(",")
+					.append(user.getFirstName()).append("\n\n")
+					.append(ApplicationProperties.getValue("userRegistration.approved.body.start"))
+					.append(getUserDetailsEmailBody(user)).toString(); // Get the user details in the body of the email.
 
 		//Send login details email to the user.
 		sendLoginDetailsEmail(user, body);
 
-		body = body + "\n\n" + ApplicationProperties.getValue("userRegistration.thank.body.end")
-				+ "\n\n" + ApplicationProperties.getValue("email.catissuecore.team");
+		body = new StringBuffer().append(body).append("\n\n")
+				.append(ApplicationProperties.getValue("userRegistration.thank.body.end"))
+				.append("\n\n").append(ApplicationProperties.getValue("email.catissuecore.team")).toString();
 
 		//Send the user registration details email to the administrator.
 		boolean emailStatus = sendEmailToAdministrator(subject, body);
 
 		if (emailStatus)
 		{
-			Logger.out.info(ApplicationProperties.getValue("user.approve.email.success")
+			logger.info(ApplicationProperties.getValue("user.approve.email.success")
 					+ user.getLastName() + " " + user.getFirstName());
 		}
 		else
 		{
-			Logger.out.info(ApplicationProperties.getValue("user.approve.email.failure")
+			logger.info(ApplicationProperties.getValue("user.approve.email.failure")
 					+ user.getLastName() + " " + user.getFirstName());
 		}
 	}
@@ -127,33 +128,34 @@ public class EmailHandler
 	 */
 	private String getUserDetailsEmailBody(User user)
 	{
-		String userDetailsBody = "\n\n" + ApplicationProperties.getValue("user.loginName")
-				+ Constants.SEPARATOR + user.getLoginName() + "\n\n"
-				+ ApplicationProperties.getValue("user.lastName") + Constants.SEPARATOR
-				+ user.getLastName() + "\n\n" + ApplicationProperties.getValue("user.firstName")
-				+ Constants.SEPARATOR + user.getFirstName() + "\n\n"
-				+ ApplicationProperties.getValue("user.street") + Constants.SEPARATOR
-				+ user.getAddress().getStreet() + "\n\n"
-				+ ApplicationProperties.getValue("user.city") + Constants.SEPARATOR
-				+ user.getAddress().getCity() + "\n\n"
-				+ ApplicationProperties.getValue("user.zipCode") + Constants.SEPARATOR
-				+ user.getAddress().getZipCode() + "\n\n"
-				+ ApplicationProperties.getValue("user.state") + Constants.SEPARATOR
-				+ user.getAddress().getState() + "\n\n"
-				+ ApplicationProperties.getValue("user.country") + Constants.SEPARATOR
-				+ user.getAddress().getCountry() + "\n\n"
-				+ ApplicationProperties.getValue("user.phoneNumber") + Constants.SEPARATOR
-				+ user.getAddress().getPhoneNumber() + "\n\n"
-				+ ApplicationProperties.getValue("user.faxNumber") + Constants.SEPARATOR
-				+ user.getAddress().getFaxNumber() + "\n\n"
-				+ ApplicationProperties.getValue("user.emailAddress") + Constants.SEPARATOR
-				+ user.getEmailAddress() + "\n\n"
-				+ ApplicationProperties.getValue("user.institution") + Constants.SEPARATOR
-				+ user.getInstitution().getName() + "\n\n"
-				+ ApplicationProperties.getValue("user.department") + Constants.SEPARATOR
-				+ user.getDepartment().getName() + "\n\n"
-				+ ApplicationProperties.getValue("user.cancerResearchGroup") + Constants.SEPARATOR
-				+ user.getCancerResearchGroup().getName();
+		String userDetailsBody = new StringBuffer().append("\n\n")
+				.append(ApplicationProperties.getValue("user.loginName"))
+				.append(Constants.SEPARATOR).append(user.getLoginName()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.lastName")).append(Constants.SEPARATOR)
+				.append(user.getLastName()).append("\n\n").append(ApplicationProperties.getValue("user.firstName"))
+				.append(Constants.SEPARATOR).append(user.getFirstName()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.street")).append(Constants.SEPARATOR)
+				.append(user.getAddress().getStreet()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.city")).append(Constants.SEPARATOR)
+				.append(user.getAddress().getCity() + "\n\n")
+				.append(ApplicationProperties.getValue("user.zipCode")).append(Constants.SEPARATOR)
+				.append(user.getAddress().getZipCode()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.state")).append(Constants.SEPARATOR)
+				.append(user.getAddress().getState()).append( "\n\n")
+				.append(ApplicationProperties.getValue("user.country")).append( Constants.SEPARATOR)
+				.append(user.getAddress().getCountry()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.phoneNumber")).append(Constants.SEPARATOR)
+				.append(user.getAddress().getPhoneNumber()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.faxNumber")).append(Constants.SEPARATOR)
+				.append(user.getAddress().getFaxNumber()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.emailAddress")).append(Constants.SEPARATOR)
+				.append(user.getEmailAddress()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.institution")).append(Constants.SEPARATOR)
+				.append(user.getInstitution().getName()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.department")).append(Constants.SEPARATOR)
+				.append(user.getDepartment().getName()).append("\n\n")
+				.append(ApplicationProperties.getValue("user.cancerResearchGroup")).append(Constants.SEPARATOR)
+				.append(user.getCancerResearchGroup().getName()).toString();
 
 		return userDetailsBody;
 	}
@@ -166,22 +168,23 @@ public class EmailHandler
 	{
 		String subject = ApplicationProperties.getValue("userRegistration.request.subject");
 
-		String body = "Dear " + user.getLastName() + "," + user.getFirstName() + "\n\n"
-				+ ApplicationProperties.getValue("userRegistration.request.body.start") + "\n"
-				+ getUserDetailsEmailBody(user) + "\n\n\t"
-				+ ApplicationProperties.getValue("userRegistration.request.body.end") + "\n\n"
-				+ ApplicationProperties.getValue("email.catissuecore.team");
+		String body = new StringBuffer("Dear ").append(user.getLastName())
+				.append(",").append(user.getFirstName()).append("\n\n")
+				.append(ApplicationProperties.getValue("userRegistration.request.body.start")).append("\n")
+				.append(getUserDetailsEmailBody(user)).append("\n\n\t")
+				.append(ApplicationProperties.getValue("userRegistration.request.body.end")).append("\n\n")
+				.append(ApplicationProperties.getValue("email.catissuecore.team")).toString();
 
 		boolean emailStatus = sendEmailToUserAndAdministrator(user.getEmailAddress(), subject, body);
 
 		if (emailStatus)
 		{
-			Logger.out.info(ApplicationProperties.getValue("userRegistration.email.success")
+			logger.info(ApplicationProperties.getValue("userRegistration.email.success")
 					+ user.getLastName() + " " + user.getFirstName());
 		}
 		else
 		{
-			Logger.out.info(ApplicationProperties.getValue("userRegistration.email.failure")
+			logger.info(ApplicationProperties.getValue("userRegistration.email.failure")
 					+ user.getLastName() + " " + user.getFirstName());
 		}
 	}
@@ -202,7 +205,7 @@ public class EmailHandler
 		{
 			String subject = ApplicationProperties.getValue("loginDetails.email.subject");
 
-			String body = "Dear " + user.getFirstName() + " " + user.getLastName();
+			String body = new StringBuffer().append("Dear ").append(user.getFirstName()).append(" ").append(user.getLastName()).toString();
 
 			if (userDetailsBody != null)
 			{
@@ -211,26 +214,26 @@ public class EmailHandler
 
 			String roleOfUser = SecurityManager.getInstance(EmailHandler.class).getUserRole(
 					user.getCsmUserId().longValue()).getName();
-			body = body + "\n\n"
-					+ ApplicationProperties.getValue("forgotPassword.email.body.start") + "\n\t "
-					+ ApplicationProperties.getValue("user.loginName") + Constants.SEPARATOR
-					+ user.getLoginName() + "\n\t "
-					+ ApplicationProperties.getValue("user.password") + Constants.SEPARATOR
-					+ PasswordManager.decode(user.getPassword()) + "\n\t "
-					+ ApplicationProperties.getValue("user.role") + Constants.SEPARATOR
-					+ roleOfUser + "\n\n"
-					+ ApplicationProperties.getValue("email.catissuecore.team");
+			body = new StringBuffer(body).append("\n\n")
+					.append(ApplicationProperties.getValue("forgotPassword.email.body.start")).append("\n\t ")
+					.append(ApplicationProperties.getValue("user.loginName")).append(Constants.SEPARATOR)
+					.append(user.getLoginName()).append("\n\t ")
+					.append(ApplicationProperties.getValue("user.password")).append(Constants.SEPARATOR)
+					.append(PasswordManager.decode(user.getPassword())).append("\n\t ")
+					.append(ApplicationProperties.getValue("user.role")).append(Constants.SEPARATOR)
+					.append(roleOfUser + "\n\n")
+					.append(ApplicationProperties.getValue("email.catissuecore.team")).toString();
 
 			emailStatus = sendEmailToUser(user.getEmailAddress(), subject, body);
 
 			if (emailStatus)
 			{
-				Logger.out.info(ApplicationProperties.getValue("user.loginDetails.email.success")
+				logger.info(ApplicationProperties.getValue("user.loginDetails.email.success")
 						+ user.getLastName() + " " + user.getFirstName());
 			}
 			else
 			{
-				Logger.out.info(ApplicationProperties.getValue("user.loginDetails.email.failure")
+				logger.info(ApplicationProperties.getValue("user.loginDetails.email.failure")
 						+ user.getLastName() + " " + user.getFirstName());
 			}
 		}
@@ -256,12 +259,12 @@ public class EmailHandler
 		String sendFromEmailAddress = ApplicationProperties
 				.getValue("email.sendEmailFrom.emailAddress");
 
-		body = body + "\n\n" + ApplicationProperties.getValue("loginDetails.catissue.url.message")
-				+ Variables.catissueURL;
+		String emailBody = new StringBuffer().append(body).append("\n\n").append(ApplicationProperties.getValue("loginDetails.catissue.url.message")).
+				append(Variables.catissueURL).toString();
 
 		SendEmail email = new SendEmail();
 		boolean emailStatus = email.sendmail(userEmailAddress, sendFromEmailAddress, mailServer,
-				subject, body);
+				subject, emailBody);
 		return emailStatus;
 	}
 
@@ -282,12 +285,12 @@ public class EmailHandler
 				.getValue("email.sendEmailFrom.emailAddress");
 		String mailServer = ApplicationProperties.getValue("email.mailServer");
 
-		body = body + "\n\n" + ApplicationProperties.getValue("loginDetails.catissue.url.message")
-				+ Variables.catissueURL;
+		String emailBody = new StringBuffer().append(body).append("\n\n").append(ApplicationProperties.getValue("loginDetails.catissue.url.message"))
+							.append(Variables.catissueURL).toString();
 
 		SendEmail email = new SendEmail();
 		boolean emailStatus = email.sendmail(userEmailAddress, adminEmailAddress, null,
-				sendFromEmailAddress, mailServer, subject, body);
+				sendFromEmailAddress, mailServer, subject, emailBody);
 		return emailStatus;
 	}
 
@@ -299,30 +302,32 @@ public class EmailHandler
 	{
 		String subject = ApplicationProperties.getValue("userRegistration.reject.subject");
 
-		String body = "Dear " + user.getLastName() + "," + user.getFirstName() + "\n\n"
-				+ ApplicationProperties.getValue("userRegistration.reject.body.start");
+		String body = new StringBuffer().append("Dear ").append(user.getLastName()).append(",")
+				.append(user.getFirstName()).append("\n\n")
+				.append(ApplicationProperties.getValue("userRegistration.reject.body.start")).toString();
 
 		//Append the comments given by the administrator, if any.
-		if ((user.getComments() != null) && ("".equals(user.getComments()) == false))
+		if ((user.getComments() != null) && (!"".equals(user.getComments())))
 		{
-			body = body + "\n\n"
-					+ ApplicationProperties.getValue("userRegistration.reject.comments")
-					+ user.getComments();
+			body = new StringBuffer().append(body).append("\n\n")
+					.append(ApplicationProperties.getValue("userRegistration.reject.comments"))
+					.append(user.getComments()).toString();
 		}
 
-		body = body + "\n\n" + ApplicationProperties.getValue("userRegistration.thank.body.end")
-				+ "\n\n" + ApplicationProperties.getValue("email.catissuecore.team");
+		body = new StringBuffer().append(body).append("\n\n")
+				.append(ApplicationProperties.getValue("userRegistration.thank.body.end"))
+				.append("\n\n").append(ApplicationProperties.getValue("email.catissuecore.team")).toString();
 
 		boolean emailStatus = sendEmailToUserAndAdministrator(user.getEmailAddress(), subject, body);
 
 		if (emailStatus)
 		{
-			Logger.out.info(ApplicationProperties.getValue("user.reject.email.success")
+			logger.info(ApplicationProperties.getValue("user.reject.email.success")
 					+ user.getLastName() + " " + user.getFirstName());
 		}
 		else
 		{
-			Logger.out.info(ApplicationProperties.getValue("user.reject.email.success")
+			logger.info(ApplicationProperties.getValue("user.reject.email.success")
 					+ user.getLastName() + " " + user.getFirstName());
 		}
 	}
