@@ -18,6 +18,7 @@ import edu.wustl.common.exception.AssignDataException;
  */
 public class QueryTableData extends AbstractDomainObject implements Serializable
 {
+	private static final long serialVersionUID = 731008569234191793L;
 
 	private long identifier;
 
