@@ -63,7 +63,6 @@ public class LoginAction extends Action
 
 		if (form == null)
 		{
-			Logger.out.debug("Form is Null");
 			return mapping.findForward(Constants.FAILURE);
 		}
 		HttpSession prevSession = request.getSession();
