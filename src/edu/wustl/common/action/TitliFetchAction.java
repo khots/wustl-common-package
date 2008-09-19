@@ -61,7 +61,7 @@ import edu.wustl.common.util.logger.Logger;
 public class TitliFetchAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(TitliFetchAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliFetchAction.class);
 	private String alias;
 	private List dataList;
 	private List<String> columnNames;
@@ -211,7 +211,7 @@ public class TitliFetchAction extends Action
 			List<String> aliasList = new ArrayList<String>();
 			aliasList.add(alias);
 			fieldList = getFieldList(simpleConditionsNodeCollection);
-			Vector selectDataElements = simpleQueryBizLogic.getSelectDataElements(null, aliasList,
+			List selectDataElements = simpleQueryBizLogic.getSelectDataElements(null, aliasList,
 					columnNames, true, fieldList);
 			query.setResultView(selectDataElements);
 			setColumnNames(query, queryResultObjectDataMap, simpleQueryBizLogic);

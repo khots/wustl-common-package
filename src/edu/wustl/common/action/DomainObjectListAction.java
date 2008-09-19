@@ -40,7 +40,7 @@ import edu.wustl.common.util.logger.Logger;
 public class DomainObjectListAction extends SecureAction
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(DomainObjectListAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DomainObjectListAction.class);
 
 	/**
 	 * @param mapping ActionMapping

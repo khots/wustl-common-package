@@ -31,7 +31,7 @@ import edu.wustl.common.util.logger.Logger;
 public class TitliSearchAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchAction.class);
 
 	/**
 	 * @param mapping the mapping

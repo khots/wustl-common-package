@@ -33,7 +33,7 @@ import edu.wustl.common.util.logger.Logger;
 public class AddNewAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.

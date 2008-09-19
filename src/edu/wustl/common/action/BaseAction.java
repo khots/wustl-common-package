@@ -31,7 +31,7 @@ import edu.wustl.common.util.logger.Logger;
 public abstract class BaseAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(BaseAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(BaseAction.class);
 
 	/**
 	 * Method ensures that the user is authenticated before calling the

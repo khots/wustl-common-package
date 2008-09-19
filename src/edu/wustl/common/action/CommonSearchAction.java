@@ -45,7 +45,7 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonSearchAction extends Action
 {
 
-	private org.apache.log4j.Logger logger = Logger.getLogger(CommonSearchAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonSearchAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
