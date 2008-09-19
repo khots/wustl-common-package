@@ -23,12 +23,16 @@ import edu.wustl.common.util.logger.Logger;
 public class CVSTagReader
 {
 
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CVSTagReader.class);
 	/**
 	 * Reads the file and returns the CVS tag from comment section.
 	 * File pattern is 
 	 *
-		 /* $Name: 1.1.4.1.2.1 $
+		 /* $Name: 1.1.4.1.2.2 $
 		 * $Log: CVSTagReader.java,v $
+		 * Revision 1.1.4.1.2.2  2008/09/19 14:29:53  ravi_kumar
+		 * Code refactoring.
+		 *
 		 * Revision 1.1.4.1.2.1  2008/09/18 07:31:18  ravi_kumar
 		 * run formatter and removed all import related warnings.
 		 *
@@ -47,6 +51,7 @@ public class CVSTagReader
 	 **/
 	public String readTag(String file)
 	{
+		String tag=null;
 		try
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -55,32 +60,29 @@ public class CVSTagReader
 			{
 				if (line.indexOf("$Name:") != -1)
 				{
-					String tag = parseTag(line);
-					Logger.out.debug("tag " + tag);
-					return tag;
+					tag = parseTag(line);
 				}
 			}
 		}
 		catch (IOException exp)
 		{
-			//Any IOException is an invalid condition; therefore tag is null.
-			Logger.out.error(exp.getMessage(), exp);
+			logger.error(exp.getMessage(), exp);
 		}
-		return null;
+		return tag;
 	}
 
 	/**
 	 * @param str one line string that contains CVS tag
 	 * @return Returns the CVS tag parse from the following pattern.
-	 * Line pattern: * $Name: 1.1.4.1.2.1 $
-	 * Example1: * $Name: 1.1.4.1.2.1 $
-	 * Example2: * $Name: 1.1.4.1.2.1 $
+	 * Line pattern: * $Name: 1.1.4.1.2.2 $
+	 * Example1: * $Name: 1.1.4.1.2.2 $
+	 * Example2: * $Name: 1.1.4.1.2.2 $
 	 * */
 	private String parseTag(String str)
 	{
+		String tag=null;
 		try
 		{
-			//Tokenizer with default delimiter
 			StringTokenizer tok = new StringTokenizer(str);
 
 			//Ignore first token: "*:"
@@ -96,17 +98,16 @@ public class CVSTagReader
 					while (tok.hasMoreTokens())
 					{
 						tagvalue.append(tok.nextToken());
-						tagvalue.append(" ");
+						tagvalue.append(' ');
 					}
-					return tagvalue.toString().trim();
+					tag=tagvalue.toString().trim();
 				}
 			}
 		}
 		catch (Exception exp)
 		{
-			//Any exception to the pattern is invalid condition therefore tag is null.
-			Logger.out.error(exp.getMessage(), exp);
+			logger.error(exp.getMessage(), exp);
 		}
-		return null;
+		return tag;
 	}
 }

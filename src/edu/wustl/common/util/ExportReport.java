@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class for creating a file with a given list of data.
@@ -38,6 +40,14 @@ import edu.wustl.common.util.global.Constants;
 public class ExportReport
 {
 
+	private BufferedWriter temp;
+	private String zipFileName;
+	private String path;
+	private BufferedWriter cvsFileWriter;
+	private String fileName;
+	private final String newLine = System.getProperty(("line.separator"));
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ExportReport.class);
+
 	/**
 	 * 
 	 * @param fileName
@@ -46,8 +56,6 @@ public class ExportReport
 	public ExportReport(String fileName) throws IOException
 	{
 		temp = new BufferedWriter(new FileWriter(fileName));
-		/*this.fileName = fileName.substring(0,fileName.lastIndexOf("\""));
-		cvsFileWriter = new BufferedWriter(new FileWriter(this.fileName));*/
 	}
 
 	/**
@@ -63,12 +71,6 @@ public class ExportReport
 		writeData(values, delimiter, 0, 0);
 	}
 
-	private BufferedWriter temp;
-	private String zipFileName;
-	private String path;
-	private BufferedWriter cvsFileWriter;
-	String fileName;
-
 	/**
 	 * This constructor is called when the exported list contains data for 'file' attributes.
 	 * 
@@ -82,20 +84,20 @@ public class ExportReport
 		this.path = path;
 		this.zipFileName = zipFileName;
 		this.fileName = csvFileName;
-		cvsFileWriter = new BufferedWriter(new FileWriter(csvFileName));
+		this.cvsFileWriter = new BufferedWriter(new FileWriter(csvFileName));
 	}
 
 	/**
 	 * 
 	 * @param values
 	 * @param delimiter
-	 * @param exportMainEntityIdsList
+	 * @param mainEntityIdsList
 	 * @throws IOException
 	 */
-	public void writeDataToZip(List values, String delimiter, List exportMainEntityIdsList)
+	public void writeDataToZip(List values, String delimiter, List mainEntityIdsList)
 			throws IOException
 	{
-		writeDataToZip(values, delimiter, 0, 0, exportMainEntityIdsList);
+		writeDataToZip(values, delimiter, 0, 0, mainEntityIdsList);
 	}
 
 	/**
@@ -106,28 +108,28 @@ public class ExportReport
 	 * @param delimiter delimiter used for separting individaul fields.
 	 * @param noblankLines No of blank lines added before values
 	 * @param columnIndent No columns that will be left blank for values
-	 * @param exportMainEntityIdsList list of main entity ids : required in case of file exports.
+	 * @param mainEntityIdsList list of main entity ids : required in case of file exports.
 	 * @throws IOException
 	 */
 	public void writeDataToZip(List values, String delimiter, int noblankLines, int columnIndent,
-			List exportMainEntityIdsList) throws IOException
+			List mainEntityIdsList) throws IOException
 	{
 		List<String> files = new ArrayList<String>();
 		Map<String, String> idFileNameMap = new HashMap<String, String>();
-		if (exportMainEntityIdsList != null && !exportMainEntityIdsList.isEmpty())
+		if (mainEntityIdsList != null && !mainEntityIdsList.isEmpty())
 		{
 			String sql = "SELECT catissue_report_content.IDENTIFIER,REPORT_DATA FROM catissue_report_content,catissue_report_textcontent "
 					+ " WHERE catissue_report_content.IDENTIFIER = catissue_report_textcontent.REPORT_ID "
 					+ " AND catissue_report_textcontent.REPORT_ID IN ( ";
-			for (Iterator iterator = exportMainEntityIdsList.iterator(); iterator.hasNext();)
+			for (Iterator iterator = mainEntityIdsList.iterator(); iterator.hasNext();)
 			{
 				String mainEntityId = (String) iterator.next();
-				sql = sql + mainEntityId + ",";
+				sql = new StringBuffer().append(sql).append(mainEntityId).append(",").toString();
 				String file = Constants.EXPORT_FILE_NAME_START + mainEntityId + ".txt";
 				files.add(path + file);
 				idFileNameMap.put(mainEntityId + ".txt", file);
 			}
-			sql = sql.substring(0, sql.lastIndexOf(","));
+			sql = sql.substring(0, sql.lastIndexOf(','));
 			sql = sql + ")";
 			createDataFiles(sql);
 		}
@@ -145,49 +147,57 @@ public class ExportReport
 	{
 		try
 		{
-			String newLine = System.getProperty(("line.separator"));
 			List list = executeQuery(sql);
-			CLOB clob = null;
-			BufferedReader br;
 			if (!list.isEmpty())
 			{
 				Iterator iterator = list.iterator();
 				while (iterator.hasNext())
 				{
 					List columnList = (List) iterator.next();
-					if (!columnList.isEmpty())
-					{
-						if (columnList.get(1) instanceof CLOB)
-						{
-							clob = (CLOB) columnList.get(1);
-							br = new BufferedReader(clob.getCharacterStream());
-						}
-						else
-						{
-							String data = (String) columnList.get(1);
-							br = new BufferedReader(new StringReader(data));
-						}
-						String mainEntityId = (String) columnList.get(0);
-						String dataFileName = path + Constants.EXPORT_FILE_NAME_START
-								+ mainEntityId + ".txt";
-						File outFile = new File(dataFileName);
-						FileWriter out = new FileWriter(outFile);
-						StringBuffer strOut = new StringBuffer();
-						String aux;
-						while ((aux = br.readLine()) != null)
-						{
-							strOut.append(aux);
-							strOut.append(newLine);
-						}
-						out.write(strOut.toString());
-						out.close();
-					}
+					createFile(columnList);
 				}
 			}
 		}
-		catch (Exception e)
+		catch (Exception excp)
 		{
-			e.printStackTrace();
+			logger.error(excp.getMessage(), excp);
+		}
+	}
+
+	/**
+	 * @param columnList
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	private void createFile(List columnList) throws SQLException, IOException
+	{
+		CLOB clob;
+		BufferedReader br;
+		if (!columnList.isEmpty())
+		{
+			if (columnList.get(1) instanceof CLOB)
+			{
+				clob = (CLOB) columnList.get(1);
+				br = new BufferedReader(clob.getCharacterStream());
+			}
+			else
+			{
+				String data = (String) columnList.get(1);
+				br = new BufferedReader(new StringReader(data));
+			}
+			String mainEntityId = (String) columnList.get(0);
+			String dataFileName = path + Constants.EXPORT_FILE_NAME_START + mainEntityId + ".txt";
+			File outFile = new File(dataFileName);
+			FileWriter out = new FileWriter(outFile);
+			StringBuffer strOut = new StringBuffer();
+			String aux;
+			while ((aux = br.readLine()) != null)
+			{
+				strOut.append(aux);
+				strOut.append(newLine);
+			}
+			out.write(strOut.toString());
+			out.close();
 		}
 	}
 
@@ -203,7 +213,6 @@ public class ExportReport
 	private void createCSVFile(List values, String delimiter, int noblankLines, int columnIndent,
 			Map<String, String> idFileNameMap) throws IOException
 	{
-		String newLine = System.getProperty(("line.separator"));
 		for (int i = 0; i < noblankLines; i++)
 		{
 			cvsFileWriter.write(newLine);
@@ -218,7 +227,7 @@ public class ExportReport
 
 				for (int i = 0; i < columnIndent; i++)
 				{
-					cvsFileWriter.write("" + delimiter);
+					cvsFileWriter.write(delimiter);
 				}
 				while (rowItr.hasNext())
 				{
@@ -231,7 +240,9 @@ public class ExportReport
 						tempStr = fName;
 					}
 					if (tempStr == null)
+					{
 						tempStr = "";
+					}
 					tempStr = tempStr.replaceAll("\"", "'");
 					tempStr = "\"" + tempStr + "\"";
 					String data = tempStr + delimiter;
@@ -271,7 +282,6 @@ public class ExportReport
 			throws IOException
 	{
 		//Writes the list of data into file 
-		String newLine = System.getProperty(("line.separator"));
 		for (int i = 0; i < noblankLines; i++)
 		{
 			temp.write(newLine);
@@ -287,16 +297,19 @@ public class ExportReport
 
 				for (int i = 0; i < columnIndent; i++)
 				{
-					temp.write("" + delimiter);
+					temp.write(delimiter);
 				}
 
 				while (rowItr.hasNext())
 				{
 					String tempStr = (String) rowItr.next();
 					if (tempStr == null)
+					{
 						tempStr = "";
+					}
 					tempStr = tempStr.replaceAll("\"", "'");
-					tempStr = "\"" + tempStr + "\"";
+					tempStr = new StringBuffer().append("\"").append(tempStr).append("\"")
+							.toString();
 					String data = tempStr + delimiter;
 					temp.write(data);
 				}
@@ -318,53 +331,75 @@ public class ExportReport
 			String outFilename = this.zipFileName;
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFilename));
 
-			for (Iterator iterator = files.iterator(); iterator.hasNext();)
+			for (Iterator<String> iterator = files.iterator(); iterator.hasNext();)
 			{
 				String fileName = (String) iterator.next();
-				File f = new File(fileName);
-				if (fileName.indexOf("csv") != -1)
+				File file = new File(fileName);
+				if (fileName.indexOf("csv") == -1)
 				{
-					BufferedReader bufRdr = new BufferedReader(new FileReader(fileName));
-					String line = null;
-					out.putNextEntry(new ZipEntry(fileName));
-					while ((line = bufRdr.readLine()) != null)
-					{
-						StringTokenizer st = new StringTokenizer(line, ",");
-						while (st.hasMoreTokens())
-						{
-							String s = st.nextToken();
-							out.write(s.getBytes(), 0, s.length());
-							s = ",";
-							out.write(s.getBytes(), 0, s.length());
-
-						}
-						String newLine = System.getProperty(("line.separator"));
-						out.write(newLine.getBytes(), 0, newLine.length());
-						System.out.println(newLine);
-					}
-					out.closeEntry();
-					bufRdr.close();
+					putFileToZip(buf, out, fileName);
 				}
 				else
 				{
-					FileInputStream in = new FileInputStream(fileName);
-					out.putNextEntry(new ZipEntry(fileName));
-					int len;
-					while ((len = in.read(buf)) > 0)
-					{
-						out.write(buf, 0, len);
-					}
-					out.closeEntry();
-					in.close();
+					putCSVFileToZip(out, fileName);
 				}
-				f.delete();
+				file.delete();
 			}
 			out.close();
 		}
-		catch (IOException e)
+		catch (IOException excp)
 		{
-			e.printStackTrace();
+			logger.error(excp.getMessage(), excp);
 		}
+	}
+
+	/**
+	 * @param buf
+	 * @param out
+	 * @param fileName
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void putFileToZip(byte[] buf, ZipOutputStream out, String fileName) throws IOException
+	{
+		FileInputStream in = new FileInputStream(fileName);
+		out.putNextEntry(new ZipEntry(fileName));
+		int len;
+		while ((len = in.read(buf)) > 0)
+		{
+			out.write(buf, 0, len);
+		}
+		out.closeEntry();
+		in.close();
+	}
+
+	/**
+	 * @param out
+	 * @param fileName
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void putCSVFileToZip(ZipOutputStream out, String fileName) throws IOException
+	{
+		BufferedReader bufRdr = new BufferedReader(new FileReader(fileName));
+		String line = null;
+		out.putNextEntry(new ZipEntry(fileName));
+		while ((line = bufRdr.readLine()) != null)
+		{
+			StringTokenizer tokenizer = new StringTokenizer(line, ",");
+			while (tokenizer.hasMoreTokens())
+			{
+				String token = tokenizer.nextToken();
+				out.write(token.getBytes(), 0, token.length());
+				token = ",";
+				out.write(token.getBytes(), 0, token.length());
+
+			}
+			out.write(newLine.getBytes(), 0, newLine.length());
+		}
+		out.closeEntry();
+		bufRdr.close();
 	}
 
 	/**
@@ -379,7 +414,7 @@ public class ExportReport
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		dao.openSession(null);
 
-		List<List<String>> dataList = dao.executeQuery(sql, null, false, null);
-		return dataList;
+		return (List<List<String>>) dao.executeQuery(sql, null, false, null);
+
 	}
 }
