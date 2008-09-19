@@ -45,9 +45,6 @@ public class AddNewAction extends Action
 	 * @return ActionForward
 	 * @exception Exception Generic exception
 	 * */
-	/* (non-Javadoc)
-	 * @see org.apache.struts.action.Action#execute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
@@ -70,8 +67,8 @@ public class AddNewAction extends Action
 	}
 
 	/**
-	 * Get session data like formBean,forwardTo etc. from session,create stack of AddNewSessionDataBean and set attribute in it,in case it's null.  
-	 * @param request HttpServletRequest
+	 * Return stack of session data bean that store current session.   
+	 * @param request HttpServletRequest to get  current session. 
 	 * @return Stack<AddNewSessionDataBean>
 	 */
 	private Stack<AddNewSessionDataBean> getStackBeanFromSession(HttpServletRequest request)
@@ -90,10 +87,10 @@ public class AddNewAction extends Action
 	}
 
 	/**
-	 * create AddNewSessiondataBean object,set attributes for ActionForm,forwardTo and addNewFor.
-	 * @param form ActionForm
-	 * @param request HttpServletRequest
-	 * @return AddNewSessionDataBean
+	 * create new session data bean object that contains data for new action.
+	 * @param form ActionForm 
+	 * @param request HttpServletRequest to get data required for new action.
+	 * @return AddNewSessionDataBean object.
 	 */
 	private AddNewSessionDataBean createNewSessionDataBean(ActionForm form,
 			HttpServletRequest request)
