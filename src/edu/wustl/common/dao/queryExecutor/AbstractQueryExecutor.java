@@ -258,6 +258,9 @@ public abstract class AbstractQueryExecutor
 						if (valueObj instanceof java.util.Date) // since all java.sql time 
 						//classes are derived from java.util.Date 
 						{
+                            // Srinath: next line is hack fix for bug 9618
+                            valueObj = resultSet.getTimestamp(i);
+                            
 							SimpleDateFormat formatter = new SimpleDateFormat(
 									Constants.DATE_PATTERN_MM_DD_YYYY + " "+Constants.TIME_PATTERN_HH_MM_SS);
 							value = formatter.format((java.util.Date) valueObj);
