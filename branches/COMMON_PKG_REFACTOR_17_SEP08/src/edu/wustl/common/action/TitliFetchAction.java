@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,17 +155,21 @@ public class TitliFetchAction extends Action
 			Name tableName = matchList.get(0).getTableName();
 			setAliasFor(tableName.toString(), request);
 			TableInterface table = Titli.getInstance().getDatabase(dbName).getTable(tableName);
+			Name identifier;
+			DataElement dataElement;
+			Condition condition;
+			SimpleConditionsNode simpleConditionsNode;
 			//for each match form a SimpleConditionsNode and add it to the collection
 			for (MatchInterface match : matchList)
 			{
-				Name identifier = new Name(Constants.IDENTIFIER);
+				identifier = new Name(Constants.IDENTIFIER);
 				ColumnInterface column = table.getColumn(identifier);
 				String value = match.getUniqueKeys().get(identifier);
-				DataElement dataElement = new DataElement(alias, Constants.IDENTIFIER, column
+				dataElement = new DataElement(alias, Constants.IDENTIFIER, column
 						.getType());
-				Condition condition = new Condition(dataElement, new Operator(Operator.EQUAL),
+				condition = new Condition(dataElement, new Operator(Operator.EQUAL),
 						value);
-				SimpleConditionsNode simpleConditionsNode = new SimpleConditionsNode(condition,
+				simpleConditionsNode = new SimpleConditionsNode(condition,
 						new Operator(Operator.OR));
 				simpleConditionsNodeCollection.add(simpleConditionsNode);
 			}
@@ -248,9 +251,9 @@ public class TitliFetchAction extends Action
 	 */
 	private void setIdentifierIndex(Query query)
 	{
-		Vector<String> tableAliasNames = new Vector<String>();
+		List<String> tableAliasNames = new ArrayList<String>();
 		tableAliasNames.add(alias);
-		Map tableMap = query.getIdentifierColumnIds(tableAliasNames);
+		Map<String,Integer> tableMap = query.getIdentifierColumnIds(tableAliasNames);
 		if (tableMap != null)
 		{
 			identifierIndex = Integer.parseInt(tableMap.get(alias).toString()) - Constants.ONE;
@@ -266,11 +269,11 @@ public class TitliFetchAction extends Action
 	private void setColumnNames(Query query, Map queryResultObjectDataMap,
 			SimpleQueryBizLogic simpleQueryBizLogic) throws DAOException
 	{
-		Set fromTables = query.getTableNamesSet();
+		Set<String> fromTables = query.getTableNamesSet();
 		query.setTableSet(fromTables);
 		simpleQueryBizLogic
 				.createQueryResultObjectData(fromTables, queryResultObjectDataMap, query);
-		List identifierColumnNames = new ArrayList();
+		List<String> identifierColumnNames = new ArrayList<String>();
 		identifierColumnNames = simpleQueryBizLogic.addObjectIdentifierColumnsToQuery(
 				queryResultObjectDataMap, query);
 		simpleQueryBizLogic.setDependentIdentifiedColumnIds(queryResultObjectDataMap, query);
