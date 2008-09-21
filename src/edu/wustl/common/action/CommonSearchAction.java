@@ -13,6 +13,7 @@ package edu.wustl.common.action;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,11 +72,13 @@ public class CommonSearchAction extends Action
 			if (identifier == null)
 			{
 				target = getPageOf(request);
-				request.setAttribute("forwardToHashMap", getForwordTohashMap(request));
-				return mapping.findForward(target);
+				request.setAttribute("forwardToHashMap", getForwordTohashMap(request));			
 			}
 		}
-		target = openPageInEdit(form, identifier, request);
+		if(target==null)
+		{
+			target = openPageInEdit(form, identifier, request);
+		}
 		//long endTime = System.currentTimeMillis();
 		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
 		return mapping.findForward(target);
@@ -85,7 +88,7 @@ public class CommonSearchAction extends Action
 	 * @param request HttpServletRequest
 	 * @return HashMap<String, Long>
 	 */
-	private HashMap<String, Long> getForwordTohashMap(HttpServletRequest request)
+	private Map<String, Long> getForwordTohashMap(HttpServletRequest request)
 	{
 		HashMap<String, Long> forwardToHashMap = new HashMap<String, Long>();
 		forwardToHashMap.put("collectionProtocolId", Long.valueOf(request
@@ -110,9 +113,9 @@ public class CommonSearchAction extends Action
 		String target = Constants.FAILURE;
 		try
 		{
-			AbstractDomainObjectFactory abstractDomainObjectFactory = (AbstractDomainObjectFactory) MasterFactory
+			AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
 					.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
-			String objName = abstractDomainObjectFactory.getDomainObjectName(abstractForm
+			String objName = absDomainObjFact.getDomainObjectName(abstractForm
 					.getFormId());
 			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 					Constants.SESSION_DATA);
