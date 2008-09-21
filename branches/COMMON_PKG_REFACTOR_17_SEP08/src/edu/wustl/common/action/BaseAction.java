@@ -53,14 +53,10 @@ public abstract class BaseAction extends Action
 		preExecute(mapping, form, request, response);
 		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
 		Object accessObj = request.getParameter(Constants.ACCESS);
-		if (!(sessionData != null && accessObj != null))
+		if (!(sessionData != null && accessObj != null) && getSessionData(request) == null)
 		{
-			/* The case of session time out */
-			if (getSessionData(request) == null)
-			{
 				//Forward to the Login
 				throw new UserNotAuthenticatedException();
-			}
 		}
 		setAttributeFromParameter(request, Constants.OPERATION);
 		setAttributeFromParameter(request, Constants.MENU_SELECTED);
@@ -146,14 +142,14 @@ public abstract class BaseAction extends Action
 	{
 		String submittedFor = (String) request.getAttribute(Constants.SUBMITTED_FOR);
 
-		String submittedForParameter = (String) request.getParameter(Constants.SUBMITTED_FOR);
+		String submittedForParam = (String) request.getParameter(Constants.SUBMITTED_FOR);
 
 		if ((Constants.SUBMITTED_FOR_ADD_NEW.equals(submittedFor)))
 		{
 			request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_ADD_NEW);
 		}
 
-		else if (Constants.SUBMITTED_FOR_ADD_NEW.equals(submittedForParameter))
+		else if (Constants.SUBMITTED_FOR_ADD_NEW.equals(submittedForParam))
 		{
 			if (Constants.SUBMITTED_FOR_DEFAULT.equals(submittedFor))
 			{
@@ -214,7 +210,7 @@ public abstract class BaseAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		ActionForward actionForward = null;
-		if (methodName.trim().length() > 0)
+		if (!"".equals(methodName))
 		{
 			Method method = getMethod(methodName, this.getClass());
 			if (method != null)
