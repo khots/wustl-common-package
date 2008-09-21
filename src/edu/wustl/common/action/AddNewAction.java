@@ -52,9 +52,9 @@ public class AddNewAction extends Action
 		try
 		{
 			logger.info("Started Add action");
-			AddNewSessionDataBean addNewSessionDataBean = createNewSessionDataBean(form, request);
+			AddNewSessionDataBean sessionDataBean = createNewSessionDataBean(form, request);
 			Stack<AddNewSessionDataBean> formBeanStack = getStackBeanFromSession(request);
-			formBeanStack.push(addNewSessionDataBean);
+			formBeanStack.push(sessionDataBean);
 			request.setAttribute(Constants.SUBMITTED_FOR, "AddNew");
 			actionForward = mapping.findForward(request.getParameter(Constants.ADD_NEW_FORWARD_TO));
 		}
@@ -74,7 +74,7 @@ public class AddNewAction extends Action
 	private Stack<AddNewSessionDataBean> getStackBeanFromSession(HttpServletRequest request)
 	{
 		HttpSession session = request.getSession();
-		Stack<AddNewSessionDataBean> formBeanStack = (Stack) session
+		Stack<AddNewSessionDataBean> formBeanStack = (Stack<AddNewSessionDataBean>) session
 				.getAttribute(Constants.FORM_BEAN_STACK);
 
 		if (formBeanStack == null)
@@ -95,10 +95,10 @@ public class AddNewAction extends Action
 	private AddNewSessionDataBean createNewSessionDataBean(ActionForm form,
 			HttpServletRequest request)
 	{
-		AddNewSessionDataBean addNewSessionDataBean = new AddNewSessionDataBean();
-		addNewSessionDataBean.setAbstractActionForm((AbstractActionForm) form);
-		addNewSessionDataBean.setForwardTo(request.getParameter(Constants.FORWARD_TO));
-		addNewSessionDataBean.setAddNewFor(request.getParameter(Constants.ADD_NEW_FOR));
-		return addNewSessionDataBean;
+		AddNewSessionDataBean sessionDataBean = new AddNewSessionDataBean();
+		sessionDataBean.setAbstractActionForm((AbstractActionForm) form);
+		sessionDataBean.setForwardTo(request.getParameter(Constants.FORWARD_TO));
+		sessionDataBean.setAddNewFor(request.getParameter(Constants.ADD_NEW_FOR));
+		return sessionDataBean;
 	}
 }
