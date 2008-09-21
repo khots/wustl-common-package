@@ -106,22 +106,22 @@ public class DomainObjectListAction extends SecureAction
 		List list;
 		IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties
 				.getValue("app.bizLogicFactory"), "getBizLogic", abstractForm.getFormId());
-		AbstractDomainObjectFactory abstractDomainObjectFactory = (AbstractDomainObjectFactory) MasterFactory
+		AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
 				.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
 		//If start page is to be shown retrieve the list from the database.
 
 		if (abstractForm.getFormId() == Constants.APPROVE_USER_FORM_ID)
 		{
 			String[] whereColumnNames = {"activityStatus", "activityStatus"};
-			String[] whereColumnConditions = {"=", "="};
+			String[] whereColCond = {"=", "="};
 			String[] whereColumnValues = {"New", "Pending"};
-			list = bizLogic.retrieve(abstractDomainObjectFactory.getDomainObjectName(abstractForm
-					.getFormId()), whereColumnNames, whereColumnConditions, whereColumnValues,
+			list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
+					.getFormId()), whereColumnNames, whereColCond, whereColumnValues,
 					Constants.OR_JOIN_CONDITION);
 		}
 		else
 		{
-			list = bizLogic.retrieve(abstractDomainObjectFactory.getDomainObjectName(abstractForm
+			list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
 					.getFormId()), "activityStatus", "Pending");
 		}
 		return list;
