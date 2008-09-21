@@ -88,18 +88,20 @@ public class SimpleQueryInterfaceAction extends SecureAction
 			throws DAOException, ClassNotFoundException
 	{
 		int counter = Integer.parseInt(simpleQueryInterfaceForm.getCounter());
+		Validator validator = new Validator();
+		NameValueBean nameValueBean;
+		List<NameValueBean> objectList;
 		for (int i = Constants.ONE; i <= counter; i++)
 		{
 			// Key of present object.
 			String key = "SimpleConditionsNode:" + i + "_Condition_DataElement_table";
 			String value = (String) simpleQueryInterfaceForm.getValue(key);
-			Validator validator = new Validator();
 			if (validator.isValidOption(value))
 			{
-				List columnNameValueBeanList = queryBizLogic.getColumnNames(value);
-				if (!columnNameValueBeanList.isEmpty())
+				List<NameValueBean> beanList = queryBizLogic.getColumnNames(value);
+				if (!beanList.isEmpty())
 				{
-					request.setAttribute("attributeNameList" + i, columnNameValueBeanList);
+					request.setAttribute("attributeNameList" + i, beanList);
 				}
 			}
 
@@ -118,14 +120,14 @@ public class SimpleQueryInterfaceAction extends SecureAction
 
 				if (nextOperatorValue != null && !"".equals(nextOperatorValue))
 				{
-					String objectNameValueBeanList = "objectList" + i;
+					String beanList = "objectList" + i;
 					String prevValueDisplayName = queryBizLogic.getDisplayName(value);
-					NameValueBean nameValueBean = new NameValueBean();
+					nameValueBean = new NameValueBean();
 					nameValueBean.setName(prevValueDisplayName);
 					nameValueBean.setValue(value);
-					List objectList = new ArrayList();
+					objectList = new ArrayList<NameValueBean>();
 					objectList.add(nameValueBean);
-					request.setAttribute(objectNameValueBeanList, objectList);
+					request.setAttribute(beanList, objectList);
 				}
 			}
 		}
@@ -149,38 +151,39 @@ public class SimpleQueryInterfaceAction extends SecureAction
 		String prevValue = (String) simpleQueryInterfaceForm.getValue(prevKey);
 		String calKey = "SimpleConditionsNode:" + index + "_showCalendar";
 		simpleQueryInterfaceForm.setShowCalendar(calKey, "");
-		if (prevValue != null)
-		{
-			Set nextTableNameList = queryBizLogic.getNextTableNames(prevValue);
-			if (!nextTableNameList.isEmpty())
-			{
-				String objectNameList = "objectList" + index;
-				request.setAttribute(objectNameList, nextTableNameList);
-				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
-			}
-		}
-		else
-		//If there is only one condition row.
+		if (prevValue == null)
 		{
 			String aliasName = request.getParameter(Constants.TABLE_ALIAS_NAME);
 			// Get all the table names.
-			Set objectNameValueBeanList = queryBizLogic.getAllTableNames(aliasName,
+			Set<NameValueBean> tableNameList = queryBizLogic.getAllTableNames(aliasName,
 					Constants.SIMPLE_QUERY_TABLES);
-			if (!objectNameValueBeanList.isEmpty())
+			if (!tableNameList.isEmpty())
 			{
-				request.setAttribute(Constants.OBJECT_NAME_LIST, objectNameValueBeanList);
+				request.setAttribute(Constants.OBJECT_NAME_LIST, tableNameList);
 				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
 			}
 
 			if ((aliasName != null) && (!"".equals(aliasName)))
 			{
 				request.setAttribute(Constants.TABLE_ALIAS_NAME, aliasName);
-				List columnNameValueBeanList = queryBizLogic.getColumnNames(aliasName);
-				if (!columnNameValueBeanList.isEmpty())
+				List<NameValueBean> columnNameList = queryBizLogic.getColumnNames(aliasName);
+				if (!columnNameList.isEmpty())
 				{
 					String attributeNameList = "attributeNameList1";
-					request.setAttribute(attributeNameList, columnNameValueBeanList);
+					request.setAttribute(attributeNameList, columnNameList);
 				}
+			}
+
+		}
+		else
+		//If there is only one condition row.
+		{
+			Set<NameValueBean> nextTableNameList = queryBizLogic.getNextTableNames(prevValue);
+			if (!nextTableNameList.isEmpty())
+			{
+				String objectNameList = "objectList" + index;
+				request.setAttribute(objectNameList, nextTableNameList);
+				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
 			}
 		}
 	}
