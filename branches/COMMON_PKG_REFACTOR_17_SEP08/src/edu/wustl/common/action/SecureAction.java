@@ -46,8 +46,8 @@ public abstract class SecureAction extends BaseAction
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		checkAddNewOperation(request);
-		ActionForward ac = executeSecureAction(mapping, form, request, response);
-		return ac;
+		return executeSecureAction(mapping, form, request, response);
+		
 	}
 
 	/**
@@ -89,8 +89,7 @@ public abstract class SecureAction extends BaseAction
 	 */
 	protected String getPrivilegeName(String actionClassName)
 	{
-		String privilegeName = Variables.privilegeDetailsMap.get(actionClassName);
-		return privilegeName;
+		return Variables.privilegeDetailsMap.get(actionClassName);
 	}
 
 	/**
