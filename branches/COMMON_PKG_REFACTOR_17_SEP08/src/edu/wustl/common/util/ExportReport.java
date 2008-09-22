@@ -25,6 +25,8 @@ import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.SqlConstants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -39,13 +41,11 @@ import edu.wustl.common.util.logger.Logger;
 
 public class ExportReport
 {
-
 	private BufferedWriter temp;
 	private String zipFileName;
 	private String path;
 	private BufferedWriter cvsFileWriter;
 	private String fileName;
-	private final String newLine = System.getProperty(("line.separator"));
 	private static org.apache.log4j.Logger logger = Logger.getLogger(ExportReport.class);
 
 	/**
@@ -118,20 +118,18 @@ public class ExportReport
 		Map<String, String> idFileNameMap = new HashMap<String, String>();
 		if (mainEntityIdsList != null && !mainEntityIdsList.isEmpty())
 		{
-			String sql = "SELECT catissue_report_content.IDENTIFIER,REPORT_DATA FROM catissue_report_content,catissue_report_textcontent "
-					+ " WHERE catissue_report_content.IDENTIFIER = catissue_report_textcontent.REPORT_ID "
-					+ " AND catissue_report_textcontent.REPORT_ID IN ( ";
+			StringBuffer sql=new StringBuffer(SqlConstants.SQL_REPORT_DATA);
 			for (Iterator iterator = mainEntityIdsList.iterator(); iterator.hasNext();)
 			{
 				String mainEntityId = (String) iterator.next();
-				sql = new StringBuffer().append(sql).append(mainEntityId).append(",").toString();
+				sql.append(mainEntityId).append(',');
 				String file = Constants.EXPORT_FILE_NAME_START + mainEntityId + ".txt";
 				files.add(path + file);
 				idFileNameMap.put(mainEntityId + ".txt", file);
 			}
-			sql = sql.substring(0, sql.lastIndexOf(','));
-			sql = sql + ")";
-			createDataFiles(sql);
+			sql = new StringBuffer(sql.substring(0, sql.lastIndexOf(",")));
+			sql.append(')');
+			createDataFiles(sql.toString());
 		}
 		createCSVFile(values, delimiter, noblankLines, columnIndent, idFileNameMap);
 		closeFile();
@@ -194,7 +192,7 @@ public class ExportReport
 			while ((aux = br.readLine()) != null)
 			{
 				strOut.append(aux);
-				strOut.append(newLine);
+				strOut.append(TextConstants.LINE_SEPARATOR);
 			}
 			out.write(strOut.toString());
 			out.close();
@@ -215,7 +213,7 @@ public class ExportReport
 	{
 		for (int i = 0; i < noblankLines; i++)
 		{
-			cvsFileWriter.write(newLine);
+			cvsFileWriter.write(TextConstants.LINE_SEPARATOR);
 		}
 		if (values != null)
 		{
@@ -241,14 +239,13 @@ public class ExportReport
 					}
 					if (tempStr == null)
 					{
-						tempStr = "";
+						tempStr = TextConstants.EMPTY_STRING;
 					}
 					tempStr = tempStr.replaceAll("\"", "'");
 					tempStr = "\"" + tempStr + "\"";
-					String data = tempStr + delimiter;
-					cvsFileWriter.write(data);
+					cvsFileWriter.write(tempStr + delimiter);
 				}
-				cvsFileWriter.write(newLine);
+				cvsFileWriter.write(TextConstants.LINE_SEPARATOR);
 			}
 		}
 	}
@@ -284,7 +281,7 @@ public class ExportReport
 		//Writes the list of data into file 
 		for (int i = 0; i < noblankLines; i++)
 		{
-			temp.write(newLine);
+			temp.write(TextConstants.LINE_SEPARATOR);
 		}
 
 		if (values != null)
@@ -305,18 +302,15 @@ public class ExportReport
 					String tempStr = (String) rowItr.next();
 					if (tempStr == null)
 					{
-						tempStr = "";
+						tempStr = TextConstants.EMPTY_STRING;
 					}
 					tempStr = tempStr.replaceAll("\"", "'");
-					tempStr = new StringBuffer().append("\"").append(tempStr).append("\"")
-							.toString();
-					String data = tempStr + delimiter;
-					temp.write(data);
+					tempStr = "\"" + tempStr + "\"";
+					temp.write(tempStr + delimiter);
 				}
-				temp.write(newLine);
+				temp.write(TextConstants.LINE_SEPARATOR);
 			}
 		}
-		//closeFile();
 	}
 
 	/**
@@ -325,19 +319,17 @@ public class ExportReport
 	 */
 	public void createZip(List<String> files)
 	{
-		byte[] buf = new byte[1024];
 		try
 		{
-			String outFilename = this.zipFileName;
-			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFilename));
-
+			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(this.zipFileName));
+			File file;	
 			for (Iterator<String> iterator = files.iterator(); iterator.hasNext();)
 			{
 				String fileName = (String) iterator.next();
-				File file = new File(fileName);
+				file = new File(fileName);
 				if (fileName.indexOf("csv") == -1)
 				{
-					putFileToZip(buf, out, fileName);
+					putFileToZip(out, fileName);
 				}
 				else
 				{
@@ -361,8 +353,9 @@ public class ExportReport
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private void putFileToZip(byte[] buf, ZipOutputStream out, String fileName) throws IOException
+	private void putFileToZip(ZipOutputStream out, String fileName) throws IOException
 	{
+		byte[] buf = new byte[Constants.ONE_KILO_BYTES];
 		FileInputStream in = new FileInputStream(fileName);
 		out.putNextEntry(new ZipEntry(fileName));
 		int len;
@@ -384,10 +377,11 @@ public class ExportReport
 	{
 		BufferedReader bufRdr = new BufferedReader(new FileReader(fileName));
 		String line = null;
+		StringTokenizer tokenizer;
 		out.putNextEntry(new ZipEntry(fileName));
 		while ((line = bufRdr.readLine()) != null)
 		{
-			StringTokenizer tokenizer = new StringTokenizer(line, ",");
+			tokenizer = new StringTokenizer(line, ",");
 			while (tokenizer.hasMoreTokens())
 			{
 				String token = tokenizer.nextToken();
@@ -396,7 +390,7 @@ public class ExportReport
 				out.write(token.getBytes(), 0, token.length());
 
 			}
-			out.write(newLine.getBytes(), 0, newLine.length());
+			out.write(TextConstants.LINE_SEPARATOR.getBytes(), 0, TextConstants.LINE_SEPARATOR.length());
 		}
 		out.closeEntry();
 		bufRdr.close();
@@ -413,7 +407,6 @@ public class ExportReport
 	{
 		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		dao.openSession(null);
-
 		return (List<List<String>>) dao.executeQuery(sql, null, false, null);
 
 	}
