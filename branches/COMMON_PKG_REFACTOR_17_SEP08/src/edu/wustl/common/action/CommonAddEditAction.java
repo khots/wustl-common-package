@@ -126,6 +126,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
+	 * return action error in case the user,in request is not authorized. 
 	 * @param request HttpServletRequest
 	 * @param excp UserNotAuthorizedException
 	 * @return ActionError
@@ -158,6 +159,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
+	 * return the  actual class name.
 	 * @param name String
 	 * @return String
 	 */
@@ -178,7 +180,7 @@ public class CommonAddEditAction extends Action
 	/**
 	 * @param abstractDomainObjectFactory AbstractDomainObjectFactory
 	 * @param abstractForm AbstractActionForm
-	 * @return String
+	 * @return object name.
 	 */
 	public String getObjectName(AbstractDomainObjectFactory abstractDomainObjectFactory,
 			AbstractActionForm abstractForm)
@@ -188,7 +190,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
-	 * @return AbstractDomainObjectFactory
+	 * @return  the object of AbstractDomainObjectFactory
 	 */
 	public AbstractDomainObjectFactory getAbstractDomainObjectFactory()
 	{
@@ -197,6 +199,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
+	 * get object required for all API,for query purpose.
 	 * @return QueryBizLogic
 	 * @throws BizLogicException biz logic exception
 	 */
@@ -218,6 +221,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
+	 * This method get data from form of current session and add it for further operation.
 	 * @param mapping ActionMapping
 	 * @param request HttpServletRequest
 	 * @param abstractForm AbstractActionForm
@@ -290,7 +294,7 @@ public class CommonAddEditAction extends Action
 							+ String.valueOf(abstractForm.isAddOperation()));
 					request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey);
 
-					//Changing operation attribute in parth specified in ForwardTo mapping, If AddNew activity started from Edit page
+					//Changing operation attribute in path specified in ForwardTo mapping, If AddNew activity started from Edit page
 					if ((sessionFormBean.getOperation().equals("edit")))
 					{
 						ActionForward editForward = new ActionForward();
@@ -344,6 +348,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
+	 * This method edit the current session data as per requirement and submit it to next action.
 	 * @param mapping ActionMapping
 	 * @param request HttpServletRequest
 	 * @param abstractForm AbstractActionForm
@@ -457,7 +462,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
-	 *
+	 * get session data from current session.
 	 * @param request HttpServletRequest
 	 * @return SessionDataBean
 	 */
@@ -481,7 +486,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
-	 * This method generates HashMap of data required to be forwarded if Form is submitted for ForwardTo request
+	 * This method generates HashMap of data required to be forwarded. 
 	 * @param abstractForm	Form submitted
 	 * @param abstractDomain	DomainObject Added/Edited
 	 * @return	HashMap of data required to be forwarded
