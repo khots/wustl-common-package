@@ -65,7 +65,7 @@ public class ApplicationFooterAction extends Action
 	}
 
 	/**
-	 *
+	 * Check whether the page title is empty or it contains any vulnerable character.
 	 * @param pageTitle page title like app.privacyNotice,app.contactUs...
 	 * @param fileNameKey key for file name
 	 * @return true if pageTitle and fileNameKey are valid or false
