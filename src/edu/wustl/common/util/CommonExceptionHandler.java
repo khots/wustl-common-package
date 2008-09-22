@@ -57,18 +57,18 @@ public class CommonExceptionHandler extends ExceptionHandler
 	*/
 	public String getErrorMsg(Exception ex)
 	{
-		String msg = "Exception was NULL";
+		StringBuffer msg = new StringBuffer("Exception was NULL");
 
 		if (ex != null)
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintWriter pw = new PrintWriter(baos, true);
 			ex.printStackTrace(pw);
-			msg = "Unhandled Exception occured in caTISSUE Core \n" + "Message: " + ex.getMessage()
-					+ "\n" + "StackTrace: " + baos.toString();
+			msg.append("Unhandled Exception occured in caTISSUE Core \n").append("Message: ").append(ex.getMessage())
+				.append("\nStackTrace: ").append(baos.toString());
 		}
 
-		return msg;
+		return msg.toString();
 
 	}
 
