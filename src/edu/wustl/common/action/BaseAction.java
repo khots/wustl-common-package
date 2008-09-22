@@ -67,6 +67,7 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
+	 * sets the URL of the application in proper format. 
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
 	 * @param request	HttpServletRequest
@@ -95,7 +96,7 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
-	 * Returns the current User authenticated by CSM Authentication.
+	 * Returns the current User authenticated by CSM Authentication from current session.
 	 * @param request HttpServletRequest
 	 * @return userName if SessionDataBean is not null
 	 */
@@ -111,7 +112,7 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
-	 *
+	 * get data from the curent session.
 	 * @param request HttpServletRequest
 	 * @return SessionDataBean from session
 	 */
@@ -179,6 +180,7 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
+	 * remove data from current session.
 	 * @param request HttpServletRequest
 	 */
 	private void removeFormBeanStack(HttpServletRequest request)
