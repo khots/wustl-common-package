@@ -51,7 +51,7 @@ public abstract class SecureAction extends BaseAction
 	}
 
 	/**
-	 *
+	 * Return,about next action to be performed.	
 	 * @param request HttpServletRequest
 	 * @param mapping ActionMapping
 	 * @return ActionForward
@@ -75,7 +75,7 @@ public abstract class SecureAction extends BaseAction
 	 * Returns the object id of the protection element that represents
 	 * the Action that is being requested for invocation.
 	 * @param request HttpServletRequest
-	 * @return String
+	 * @return object Id.
 	 */
 	protected String getObjectIdForSecureMethodAccess(HttpServletRequest request)
 	{
@@ -85,7 +85,7 @@ public abstract class SecureAction extends BaseAction
 	/**
 	 *
 	 * @param actionClassName String
-	 * @return String
+	 * @return the name of privilege assigned to user.
 	 */
 	protected String getPrivilegeName(String actionClassName)
 	{
@@ -108,7 +108,7 @@ public abstract class SecureAction extends BaseAction
 	/**
 	 *
 	 * @param form AbstractActionForm
-	 * @return String
+	 * @return null value for object Id.
 	 */
 	protected String getObjectId(AbstractActionForm form)
 	{

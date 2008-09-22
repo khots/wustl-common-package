@@ -45,7 +45,7 @@ public class LoginAction extends Action
 
 	/**
 	 * Overrides the execute method of Action class.
-	 * Initializes the various drop down fields in Institute.jsp Page.
+	 * perform the successful login of user.
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
 	 * @param request	HttpServletRequest
@@ -108,7 +108,7 @@ public class LoginAction extends Action
 	}
 
 	/**
-	 *
+	 * update the session with user details. 
 	 * @param request HttpServletRequest
 	 * @param loginName String loginName
 	 * @param validUser User validUser
@@ -129,7 +129,7 @@ public class LoginAction extends Action
 	}
 
 	/**
-	 *
+	 * save the error at the time of creation of user.
 	 * @param request HttpServletRequest
 	 * @param errorKey String
 	 */
@@ -141,7 +141,7 @@ public class LoginAction extends Action
 	}
 
 	/**
-	 *
+	 * Return the valid user with status active.	
 	 * @param loginName String
 	 * @return User
 	 * @throws DAOException Database exception
