@@ -1273,8 +1273,15 @@ public class SqlGenerator implements ISqlGenerator {
         } else if (operator.equals(RelationalOperator.EndsWith)) {
             value = "'%" + value + "'";
         }
-
-        return attributeName + " like " + value;
+        String str = "";
+        switch (getDatabaseSQLSettings().getDatabaseType()) 
+        {
+	        case MySQL :
+	            str = attributeName + " like " + value;
+	        case Oracle :
+	            str = "lower(" +attributeName+") like lower("+value +")";
+        }
+        return str;
     }
 
     /**
