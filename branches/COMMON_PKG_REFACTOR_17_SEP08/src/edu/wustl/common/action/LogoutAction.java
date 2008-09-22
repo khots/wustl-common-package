@@ -30,6 +30,7 @@ public class LogoutAction extends BaseAction
 	private org.apache.log4j.Logger logger = Logger.getLogger(LoginAction.class);
 
 	/**
+	 * perform the log out action for the user.
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
 	 * @param request	HttpServletRequest

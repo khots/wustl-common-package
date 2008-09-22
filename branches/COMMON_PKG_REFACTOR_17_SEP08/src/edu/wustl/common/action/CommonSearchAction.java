@@ -85,8 +85,9 @@ public class CommonSearchAction extends Action
 	}
 
 	/**
+	 * get data to be forwarded from request and add it in HashMap.
 	 * @param request HttpServletRequest
-	 * @return HashMap<String, Long>
+	 * @return HashMap
 	 */
 	private Map<String, Long> getForwordTohashMap(HttpServletRequest request)
 	{
@@ -101,11 +102,11 @@ public class CommonSearchAction extends Action
 	}
 
 	/**
-	 *
+	 * get the privileged data and display it for edit. 
 	 * @param form ActionForm
 	 * @param identifier Long
 	 * @param request HttpServletRequest
-	 * @return String
+	 * @return target page to be opened.
 	 */
 	private String openPageInEdit(ActionForm form, Long identifier, HttpServletRequest request)
 	{
@@ -157,6 +158,7 @@ public class CommonSearchAction extends Action
 	}
 
 	/**
+	 * save the Action errors in request.
 	 * @param request HttpServletRequest
 	 * @param key String
 	 * @param obj Object
@@ -170,9 +172,10 @@ public class CommonSearchAction extends Action
 	}
 
 	/**
+	 * set the next operation as target in request.
 	 * @param request HttpServletRequest
 	 * @param abstractForm AbstractActionForm
-	 * @return String target
+	 * @return the page got from request.
 	 */
 	private String getTarget(HttpServletRequest request, AbstractActionForm abstractForm)
 	{
@@ -185,6 +188,7 @@ public class CommonSearchAction extends Action
 	}
 
 	/**
+	 * get the current page from request.
 	 * @param request HttpServletRequest
 	 * @return String value of pageOf
 	 */

@@ -43,6 +43,7 @@ public class DomainObjectListAction extends SecureAction
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DomainObjectListAction.class);
 
 	/**
+	 * set the domain object list,along with other details in session.
 	 * @param mapping ActionMapping
 	 * @param form ActionForm
 	 * @param request HttpServletRequest
@@ -95,7 +96,7 @@ public class DomainObjectListAction extends SecureAction
 	}
 
 	/**
-	 *
+	 * add the domain object name having new and pending  activity status,in a list. 
 	 * @param abstractForm AbstractActionForm
 	 * @return List
 	 * @throws DAOException  database exception
