@@ -254,7 +254,7 @@ public class SimpleSearchAction extends BaseAction
 	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
 	 * @param session HttpSession
 	 * @param map Map
-	 * @return ActionForward
+	 * @return the next page to be displayed in case no results found.
 	 */
 	private ActionForward getActionForwardForNoResult(HttpServletRequest request,
 			SimpleQueryInterfaceForm simpleQueryInterfaceForm, HttpSession session, Map map)
@@ -286,7 +286,7 @@ public class SimpleSearchAction extends BaseAction
 	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
 	 * @param identifierIndex int
 	 * @param list List
-	 * @return ActionForward
+	 * @return next action to be taken in case of one row is being selected.
 	 */
 	private ActionForward getActionForwardForOneRow(
 			SimpleQueryInterfaceForm simpleQueryInterfaceForm, int identifierIndex, List list)
@@ -308,7 +308,7 @@ public class SimpleSearchAction extends BaseAction
 
 	/**
 	 * @param simpleConditionNodeCollection Collection<SimpleConditionsNode>
-	 * @return List<String>
+	 * @return List<String> containing the details of table,data from the condition specified.
 	 */
 	private List<String> getFieldList(Collection<SimpleConditionsNode> simpleConditionNodeCollection)
 	{
@@ -329,9 +329,10 @@ public class SimpleSearchAction extends BaseAction
 	}
 
 	/**
+	 * set the action and path of that action.
 	 * @param name String
 	 * @param path String
-	 * @return ActionForward
+	 * @return the action details.
 	 */
 	private ActionForward getActionForward(String name, String path)
 	{
