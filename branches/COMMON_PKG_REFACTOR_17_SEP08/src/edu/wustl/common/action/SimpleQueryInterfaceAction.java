@@ -1,5 +1,5 @@
 /**
- * <p>Title: SimpleQueryInterfaceAction Class>
+* <p>Title: SimpleQueryInterfaceAction Class>
  * <p>Description:	SimpleQueryInterfaceAction initializes the fields in the Simple Query Interface.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -40,12 +40,14 @@ public class SimpleQueryInterfaceAction extends SecureAction
 	private static org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceAction.class);
 
 	/**
+	 * get the query related data from request and set it in session.
 	 * Overrides the execute method of Action class.
+	 * set the query related data in session.
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
 	 * @param request	HttpServletRequest
 	 * @param response	HttpServletResponse
-	 * @return ActionForward
+	 * @return page to be processed next.
 	 * @exception Exception Generic exception
 	 */
 	public ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
@@ -77,6 +79,7 @@ public class SimpleQueryInterfaceAction extends SecureAction
 	}
 
 	/**
+	 * set the fields name required for processing the query is in request. 
 	 * @param request HttpServletRequest
 	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
 	 * @param queryBizLogic QueryBizLogic
@@ -134,6 +137,7 @@ public class SimpleQueryInterfaceAction extends SecureAction
 	}
 
 	/**
+	 * set the fields name required for processing the query, is in request for last counter.
 	 * @param request HttpServletRequest
 	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
 	 * @param queryBizLogic QueryBizLogic
