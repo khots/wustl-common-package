@@ -4,10 +4,13 @@ package edu.wustl.common.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import edu.common.dynamicextensions.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -18,50 +21,47 @@ import edu.wustl.common.util.logger.Logger;
 public class SendFile
 {
 
+	private static org.apache.log4j.Logger logger = Logger.getLogger(SendFile.class);
+
 	public static void sendFileToClient(HttpServletResponse response, String filePath,
 			String fileName, String contentType)
 	{
-		//Saves file on client end in the specified format.
-		try
+		if (filePath != null && (filePath.length()!=0))
 		{
-			if (filePath != null && (false == (filePath.length() == 0)))
+			File file = new File(filePath);
+			if (file.exists())
 			{
-				File f = new File(filePath);
-				if (f.exists())
+				response.setContentType(contentType);
+				response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName+ "\";");
+				response.setContentLength((int) file.length());
+				BufferedInputStream bis=null;
+				try
 				{
-					response.setContentType(contentType);
-					response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName
-							+ "\";");
-					response.setContentLength((int) f.length());
-					try
+					OutputStream os = response.getOutputStream();
+					bis = new BufferedInputStream(new FileInputStream(file));
+					int count;
+					byte buf[] = new byte[Constants.FOUR_KILO_BYTES];
+					while ((count = bis.read(buf)) > -1)
 					{
-						OutputStream os = response.getOutputStream();
-						BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
-						int count;
-						byte buf[] = new byte[4096];
-						while ((count = bis.read(buf)) > -1)
-						{
-							os.write(buf, 0, count);
-						}
-						os.flush();
-						bis.close();
-						f.delete();
+						os.write(buf, 0, count);
 					}
-					catch (Exception ex)
-					{
-						throw new Exception(ex.getMessage());
-					}
+					os.flush();
+					bis.close();
+					file.delete();
 				}
-				else
+				catch (FileNotFoundException ex)
 				{
-
-					throw new Exception("Sorry Cannot Download as fileName is null");
+					logger.error("Exception in method sendFileToClient:"+ex.getMessage(), ex);
+				}
+				catch (IOException ex)
+				{
+					logger.error("Exception in method sendFileToClient:"+ex.getMessage(), ex);
 				}
 			}
-		}
-		catch (Exception e)
-		{
-			Logger.out.error(e.getMessage(), e);
+			else
+			{
+				logger.error("Sorry Cannot Download as fileName is null");
+			}
 		}
 	}
 }
