@@ -34,11 +34,12 @@ public class TitliSearchAction extends Action
 	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchAction.class);
 
 	/**
+	 * perform the search action for the search string obtained from search form.
 	 * @param mapping the mapping
 	 * @param form the action form
 	 * @param request the request
 	 * @param response the response
-	 * @return action forward
+	 * @return the set table name and string to be searched.
 	 *
 	 */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
@@ -77,10 +78,11 @@ public class TitliSearchAction extends Action
 	}
 
 	/**
+	 * set the fetch action to be taken and path.
 	 * @param titliSearchForm TitliSearchForm
 	 * @param sortedResultMap SortedResultMapInterface
-	 * @return the created ActionForward
-	 * @throws Exception geniric exception
+	 * @return the set action and path. 
+	 * @throws Exception generic exception
 	 */
 	private ActionForward getActionForward(TitliSearchForm titliSearchForm,
 			SortedResultMapInterface sortedResultMap) throws Exception
