@@ -44,7 +44,7 @@ public class DBUtil {
     }
 
     public static Connection getConnection() throws HibernateException {
-        return HibernateUtil.getConnection();
+        return currentSession().connection();
     }
 
     public static void closeConnection() throws HibernateException {
