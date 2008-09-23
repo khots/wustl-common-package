@@ -6,7 +6,7 @@ package edu.wustl.common.util;
  */
 import edu.wustl.common.beans.NameValueBean;
 
-public class NameValueBeanValueComparator implements java.util.Comparator
+public class NameValueBeanValueComparator implements java.util.Comparator<Object>
 {
 
 	/* (non-Javadoc)
@@ -14,6 +14,7 @@ public class NameValueBeanValueComparator implements java.util.Comparator
 	 */
 	public int compare(Object arg0, Object arg1)
 	{
+		int diff=0;
 		if (arg0 instanceof NameValueBean && arg1 instanceof NameValueBean)
 		{
 			NameValueBean nvb1 = (NameValueBean) arg0;
@@ -21,10 +22,9 @@ public class NameValueBeanValueComparator implements java.util.Comparator
 			//Compare according to relevance counter
 			if (nvb1.getValue() != null && nvb2.getValue() != null)
 			{
-				return (new Long(Long.parseLong(nvb1.getValue().toString()))).compareTo(new Long(
-						Long.parseLong(nvb2.getValue())));
+				diff=(Long.valueOf(nvb1.getValue())).compareTo(Long.valueOf(nvb2.getValue()));
 			}
 		}
-		return 0;
+		return diff;
 	}
 }
