@@ -12,57 +12,87 @@ import java.util.Comparator;
  * @version 1.00
  * Created on July 26, 2007
  */
-public class KeyComparator implements Comparator
+public class KeyComparator implements Comparator<Object>
 {
 
 	public int compare(Object object1, Object object2)
 	{
+		int retValue;
 		int outer1 = 0, outer2 = 0, inner1 = 0, inner2 = 0;
 		String key1 = (String) object1;
 		String key2 = (String) object2;
 
-		int index1 = key1.indexOf("_");
+		int index1 = key1.indexOf('_');
 		if (index1 != -1)
 		{
-			String outerKey1 = key1.substring(0, index1);
-			outer1 = Integer.parseInt(outerKey1.substring(outerKey1.indexOf(":") + 1));
+			outer1 = getKey(key1, index1);
 		}
 
-		int index2 = key2.indexOf("_");
+		int index2 = key2.indexOf('_');
 		if (index2 != -1)
 		{
-			String outerKey2 = key2.substring(0, index2);
-			outer2 = Integer.parseInt(outerKey2.substring(outerKey2.indexOf(":") + 1));
+			outer2 = getKey(key2, index2);
 		}
 
 		if (outer1 > outer2)
-			return 1;
+		{
+			retValue=1;
+		}
 		else if (outer1 < outer2)
-			return -1;
+		{
+			retValue= -1;
+		}
 		else
 		{
 			String innerKey1 = key1.substring(index1 + 1);
-			index1 = innerKey1.indexOf("_");
+			index1 = innerKey1.indexOf('_');
 			if (index1 != -1)
 			{
-				innerKey1 = innerKey1.substring(0, index1);
-				inner1 = Integer.parseInt(innerKey1.substring(innerKey1.indexOf(":") + 1));
+				inner1=getKey(innerKey1,index1);
 			}
 
 			String innerKey2 = key2.substring(index2 + 1);
-			index2 = innerKey2.indexOf("_");
+			index2 = innerKey2.indexOf('_');
 			if (index2 != -1)
 			{
-				innerKey2 = innerKey2.substring(0, index2);
-				inner2 = Integer.parseInt(innerKey2.substring(innerKey2.indexOf(":") + 1));
+				inner2=getKey(innerKey2,index2);
 			}
-
-			if (inner1 > inner2)
-				return 1;
-			else if (inner1 == inner2)
-				return 0;
-			else
-				return -1;
+			retValue = getretValue(inner1, inner2);
 		}
+		return retValue;
+	}
+
+	/**
+	 * @param inner1
+	 * @param inner2
+	 * @return
+	 */
+	private int getretValue(int inner1, int inner2)
+	{
+		int retValue;
+		if (inner1 > inner2)
+		{
+			retValue=1;
+		}
+		else if (inner1 == inner2)
+		{
+			retValue=0;
+		}
+		else
+		{
+			retValue=-1;
+		}
+		return retValue;
+	}
+
+	/**
+	 * @param key1
+	 * @param index1
+	 * @return
+	 */
+	private int getKey(String key, int index)
+	{
+		String outerKey1 = key.substring(0, index);
+		return Integer.parseInt(outerKey1.substring(outerKey1.indexOf(':') + 1));
 	}
 }
