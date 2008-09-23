@@ -34,7 +34,7 @@ public class TitliInitialiseSearchAction extends Action
 	 * @param form the action form
 	 * @param request the request
 	 * @param response the response
-	 * @return action forward
+	 * @return success,in case of success of getting Instance.
 	 */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)

@@ -68,12 +68,12 @@ public class TitliFetchAction extends Action
 	private int identifierIndex;
 
 	/**
+	 * get the data from the form for searching and set it in request.
 	 * @param mapping the mapping
 	 * @param form the action form
 	 * @param request the request
 	 * @param response the response
-	 * @return action forward
-	 *
+	 * @return details of the next action to be taken.
 	 */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
@@ -125,7 +125,7 @@ public class TitliFetchAction extends Action
 	}
 
 	/**
-	 *
+	 *	set the name of the action and path to be performed.
 	 * @param name String
 	 * @param path String
 	 * @return ActionForward
@@ -247,6 +247,7 @@ public class TitliFetchAction extends Action
 	}
 
 	/**
+	 * set the columnId as identifier in  a map.
 	 * @param query Query
 	 */
 	private void setIdentifierIndex(Query query)
@@ -261,6 +262,7 @@ public class TitliFetchAction extends Action
 	}
 
 	/**
+	 * set the column details required for query,in a list.
 	 * @param query Query
 	 * @param queryResultObjectDataMap Map
 	 * @param simpleQueryBizLogic SimpleQueryBizLogic
@@ -285,7 +287,7 @@ public class TitliFetchAction extends Action
 
 	/**
 	 * @param simpleConditionsNodeCollection Collection<SimpleConditionsNode>
-	 * @return List<String> field List
+	 * @return List<String> field List containing all column details.
 	 */
 	private List<String> getFieldList(
 			Collection<SimpleConditionsNode> simpleConditionsNodeCollection)
@@ -309,7 +311,7 @@ public class TitliFetchAction extends Action
 
 	/**
 	 * @param session HttpSession
-	 * @return int records per page
+	 * @return no of records per page has been extracted.
 	 */
 	private int getRecordsPerPage(HttpSession session)
 	{
@@ -353,7 +355,7 @@ public class TitliFetchAction extends Action
 	/**
 	 *
 	 * @param request HttpServletRequest
-	 * @return SessionDataBean
+	 * @return session data.
 	 */
 	protected SessionDataBean getSessionData(HttpServletRequest request)
 	{

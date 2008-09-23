@@ -122,7 +122,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Returns the specifies the page associated with this form bean.
+	 * Returns specified page associated with this form bean.
 	 * @return
 	 */
 	public String getPageOf()
