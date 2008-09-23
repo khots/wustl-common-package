@@ -514,6 +514,7 @@ public class Constants
 	public static final String QUERY_SQL = "querySQL";
 
 	public static final String PRIVILEGE_TAG_NAME = "PRIVILEGE_ID";
+	public static final String BIRTH_DATE_TAG_NAME = "IS_BIRTH_DATE";
 	
 	//changes for titli
 	public static final String TABLE_TABLE_NAME_COLUMN = "TABLE_NAME";

@@ -25,6 +25,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.common.dynamicextensions.domain.Attribute;
+import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -60,6 +62,19 @@ public class Utility
             }
         }
         return PrivilegeType.ClassLevel;
+    }
+    
+    public static boolean getIsBirthDate(AttributeInterface attribute)
+    {    
+        Collection<TaggedValueInterface> taggedValueCollection = attribute.getTaggedValueCollection();
+        for (TaggedValueInterface tag : taggedValueCollection)
+        {  
+            if (Constants.BIRTH_DATE_TAG_NAME.equals(tag.getKey()) && tag.getValue().equalsIgnoreCase(Constants.TRUE))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

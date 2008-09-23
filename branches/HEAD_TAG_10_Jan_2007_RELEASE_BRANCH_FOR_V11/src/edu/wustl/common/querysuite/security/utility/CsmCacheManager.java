@@ -43,6 +43,7 @@ public class CsmCacheManager
 	public CsmCacheManager(Connection connection)
 	{
 		this.connection = connection;
+		validator = getValidatorInstance();
 	}
 	
 	private IValidator getValidatorInstance() 
@@ -110,14 +111,14 @@ public class CsmCacheManager
 					   isAuthorisedUser = isAuthorizedUser(readPrivilegeList,true);
 					   hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList,false);
 					}
-				}
-					
-				//If user is not authorized to read the data then remove all data related to this particular from row.
+				
+				 	
+		 		//If user is not authorized to read the data then remove all data related to this particular from row.
 				Vector identifiedColumnIdentifiers = queryResultObjectDataBean.getIdentifiedDataColumnIds();
 				Vector objectColumnIdentifiers = queryResultObjectDataBean.getObjectColumnIds();
-				removeUnauthorizedData(aList, isAuthorisedUser, hasPrivilegeOnIdentifiedData,
-						identifiedColumnIdentifiers, objectColumnIdentifiers, false);
-			}
+				removeUnauthorizedData(aList, isAuthorisedUser, hasPrivilegeOnIdentifiedData,queryResultObjectDataBean);
+				}
+			} 
 		}
 	}
 	
@@ -370,6 +371,25 @@ public class CsmCacheManager
 		else
 			return false;
 	}
+	
+	private void removeUnauthorizedData(List aList, Boolean isAuthorisedUser,
+			Boolean hasPrivilegeOnIdentifiedData,QueryResultObjectDataBean queryResultObjectDataBean)
+	{  
+		if (!isAuthorisedUser)
+		{
+			removeUnauthorizedFieldsData(aList,hasPrivilegeOnIdentifiedData,queryResultObjectDataBean);
+		}
+		else
+		{
+			//If user is not authorized to see identified data then replace identified column values by ##
+			if (!hasPrivilegeOnIdentifiedData)
+			{
+				removeUnauthorizedFieldsData(aList,hasPrivilegeOnIdentifiedData,queryResultObjectDataBean);
+			}
+		}
+	}
+	
+	
 
 	/**
 	 * This method will internally call removeUnauthorizedFieldsData depending on the value of isAuthorisedUser 
@@ -527,7 +547,6 @@ public class CsmCacheManager
 		
 		if(!isAuthorisedUser)
 		{
-			validator = getValidatorInstance();
 			if(validator != null)
 			{
 				isAuthorisedUser = validator.hasPrivilegeToView(sessionDataBean, entityId.toString(), permission);
@@ -629,6 +648,34 @@ public class CsmCacheManager
 				else
 					aList.set(((Integer) objectColumnIds.get(k)).intValue(), Constants.hashedOut);
 			}
+		}
+	}	
+	
+	private void removeUnauthorizedFieldsData(List aList,boolean removeOnlyIdentifiedData, QueryResultObjectDataBean queryResultObjectDataBean)
+	{
+		Vector objectColumnIds = new Vector();
+		boolean isAuthorizedUser = true;
+		if (!removeOnlyIdentifiedData) {
+			objectColumnIds.addAll(queryResultObjectDataBean
+					.getIdentifiedDataColumnIds());
+
+		} else {
+			objectColumnIds.addAll(queryResultObjectDataBean
+					.getObjectColumnIds());
+			isAuthorizedUser = false;
+		}
+		if (objectColumnIds != null) {
+			for (int k = 0; k < objectColumnIds.size(); k++) {
+				aList.set(((Integer) objectColumnIds.get(k)).intValue(),
+						Constants.hashedOut);
+			}
+		}
+
+		if (validator != null) {
+			List tqColumnMetadataList = queryResultObjectDataBean
+					.getTqColumnMetadataList();
+			validator.hasPrivilegeToViewTemporalColumn(tqColumnMetadataList,
+					aList, isAuthorizedUser);
 		}
 	}	
 }

@@ -3,7 +3,9 @@
  */
 package edu.wustl.common.beans;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -19,43 +21,48 @@ import edu.wustl.common.querysuite.security.PrivilegeType;
 public class QueryResultObjectDataBean 
 {
     
-    //Particular entity from query for which QueryResultObjectDataBean has to be set.
+    /*Entity from query for which QueryResultObjectDataBean has to be set.*/
      private EntityInterface entity;
      
-    //Main entity of entity.
+     /*Main entity of entity.*/
 	private EntityInterface mainEntity;
 	
-	//Index of Identifier column of main entity.
+	/*Index of Identifier column of main entity.*/
 	private int mainEntityIdentifierColumnId = -1;
 	
-	//Index of Identifier column of entity.
+	/*Index of Identifier column of entity.*/
 	private int entityId;
 	
-	//Privilege Type of entity (class level/object level/No privilege)
+	/*Privilege Type of entity (class level/object level/No privilege)*/
 	private PrivilegeType privilegeType;
 	
-	//If this entity has associated Identified data or not.
+	/*If this entity has associated Identified data or not.*/
 	private boolean hasAssociatedIdentifiedData ;
 	
-	//List of index  of identified data columns.
+	/*List of index  of identified data columns.*/
 	private Vector<Integer> IdentifiedDataColumnIds = new Vector<Integer>();
 	
-	//List of index  of object data columns.
+	/*List of index  of object data columns.*/
 	private Vector<Integer> objectColumnIds = new Vector<Integer>();
 	
-	//Map of index of identifier columns of all main entities that are present in query.
+	/*Map of index of identifier columns of all main entities that are present in query.*/
 	private Map<EntityInterface,Integer> entityIdIndexMap = new HashMap<EntityInterface, Integer>();
 	
-	//A boolean variable that will state if read denied could be possible on a object or not.
+	/*A boolean variable that will state if read denied could be possible on a object or not.*/
 	private boolean isReadDeniedObject = false;
 	
 	private String csmEntityName ;
 	
-	// A boolean variable that will state if the entity contains any attribute of data type : file.
+	/* A boolean variable that will state if the entity contains any attribute of data type : file.*/
 	private boolean isClobeType;
 	
-	// this map will have the key as the index of the file type attribute and value as its metadata
+	/* this map will have the key as the index of the file type attribute and value as its metadata*/
 	private Map<Integer, ?extends Object> fileTypeAtrributeIndexMetadataMap = new HashMap<Integer, Object>();
+	
+	/*
+	 * 
+	 */
+  private List tqColumnMetadataList = new ArrayList();
 	
 	/**
 	 * Returns entity.
@@ -281,6 +288,14 @@ public class QueryResultObjectDataBean
 	public void setFileTypeAtrributeIndexMetadataMap(
 			Map<Integer, ? extends Object> fileTypeAtrributeIndexMetadataMap) {
 		this.fileTypeAtrributeIndexMetadataMap = fileTypeAtrributeIndexMetadataMap;
+	}
+
+	public List getTqColumnMetadataList() {
+		return tqColumnMetadataList;
+	}
+
+	public void setTqColumnMetadataList(List tqColumnMetadataList) {
+		this.tqColumnMetadataList = tqColumnMetadataList;
 	}
 
 	
