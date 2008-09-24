@@ -85,7 +85,7 @@ public class SimpleSearchAction extends BaseAction
 		if (map.size() == 0)
 		{
 			map = (Map) session.getAttribute(Constants.SIMPLE_QUERY_MAP);
-			//Get the counter from the simple query map if set during configure action in the session object
+			//Get the counter from the simple query map if set during configure action in the session object.
 			counter = (String) map.get("counter");
 			//After retrieving the value of counter, remove from the map
 			map.remove("counter");
@@ -110,7 +110,8 @@ public class SimpleSearchAction extends BaseAction
 		String viewAliasName = (String) map
 				.get("SimpleConditionsNode:1_Condition_DataElement_table");
 		Query query = QueryFactory.getInstance().newQuery(Query.SIMPLE_QUERY, viewAliasName);
-		List aliasList = new ArrayList(); // List containing the Alias name of the Table name of the first condition element.
+		// List containing the Alias name of the Table name of the first condition element.
+		List aliasList = new ArrayList();
 		aliasList.add(viewAliasName);
 		List fromTablesList = new ArrayList();
 		simpleQueryBizLogic.handleStringAndDateConditions(simpleConditionNodeCollection,
@@ -185,9 +186,9 @@ public class SimpleSearchAction extends BaseAction
 		{
 			queryBizLogic.insertQuery(query.getString(), getSessionData(request));
 			hasConditionOnIdentifiedField = query.hasConditionOnIdentifiedField();
-			pagenatedResultData = query.execute(getSessionData(request), isSecureExecute,
+			pagenatedResultData = query.execute(getSessionData(request),isSecureExecute,
 					queryResultObjectDataMap, hasConditionOnIdentifiedField, 0, recordsPerPage);
-		}
+		}	
 		else
 		{
 			isSecureExecute = false;
@@ -225,10 +226,9 @@ public class SimpleSearchAction extends BaseAction
 		else
 		{
 			if ((list.size() == Constants.ONE)
-					&& (!Constants.PAGEOF_SIMPLE_QUERY_INTERFACE.equals(simpleQueryInterfaceForm
-							.getPageOf())))
-			{
-				return getActionForwardForOneRow(simpleQueryInterfaceForm, identifierIndex, list);
+					&& (!Constants.PAGEOF_SIMPLE_QUERY_INTERFACE.equals(simpleQueryInterfaceForm.getPageOf())))
+			{	
+     			return getActionForwardForOneRow(simpleQueryInterfaceForm, identifierIndex, list);
 			}
 			else
 			{
