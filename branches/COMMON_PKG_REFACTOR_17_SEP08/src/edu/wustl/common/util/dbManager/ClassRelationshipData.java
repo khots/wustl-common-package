@@ -32,12 +32,33 @@ public class ClassRelationshipData
 
 	 </set>
 	 */
+	/**
+	 * Name of class.
+	 */
 	private String className;
+	/**
+	 * Name of related class.
+	 */
 	private String relatedClassName;
+	/**
+	 * attribute signifying the role..
+	 */
 	private String roleAttribute;
+	/**
+	 * specify the type of relation
+	 */
 	private String relationType;
+	/**
+	 * specify the table
+	 */
 	private String relationTable;
+	/**
+	 * specify the key Id.
+	 */
 	private String keyId;
+	/**
+	 * specify role Id.
+	 */
 	private String roleId;
 
 	/* Default Constructor */
@@ -68,78 +89,102 @@ public class ClassRelationshipData
 
 	}
 
-	/* Returns the Class Name */
+	/**
+	 * return the name of class.
+	 */
 	public String getClassName()
 	{
 		return className;
 	}
-
+	/**
+	 * set the name of class.
+	 */
 	public void setClassName(String className)
 	{
 		this.className = className;
 	}
 
-	/* Returns the key Id */
+	/**
+	 * return the key id.
+	 */
 	public String getKeyId()
 	{
 		return keyId;
 	}
-
+	/**
+	 * set the key id.
+	 */
 	public void setKeyId(String keyId)
 	{
 		this.keyId = keyId;
 	}
-
-	/* Returns the Related Class Name which has relation with class */
+	/**
+	 * Returns the Related Class Name which has relation with class.
+	 */
 	public String getRelatedClassName()
 	{
 		return relatedClassName;
 	}
-
+	/**
+	 * set the Related Class Name which has relation with class.
+	 */
 	public void setRelatedClass(String relatedClassName)
 	{
 		this.relatedClassName = relatedClassName;
 	}
 
-	/* Returns the Table Name */
+	/**
+	 * Returns the table.
+	 */
 	public String getRelationTable()
 	{
 		return relationTable;
 	}
-
+	/**
+	 * set the table.
+	 */
 	public void setRelationTable(String relationTable)
 	{
 		this.relationTable = relationTable;
 	}
-
-	/* Returns the relation type i.e Many-To-Many or  One-To-Many*/
+	/**
+	 * Returns the relation type i.e Many-To-Many or  One-To-Many
+	 */
 	public String getRelationType()
 	{
 		return relationType;
 	}
-
+	/**
+	 * set the relation type i.e Many-To-Many or  One-To-Many
+	 */
 	public void setRelationType(String relationType)
 	{
 		this.relationType = relationType;
 	}
-
-	/* Returns the role attribute */
+	/**
+	 * Returns the attribute role
+	 */
 	public String getRoleAttribute()
 	{
 		return roleAttribute;
 	}
-
+	/**
+	 * set the attribute role
+	 */
 	public void setRoleAttribute(String roleAttribute)
 	{
 		this.roleAttribute = roleAttribute;
 	}
-
-	/* Returns the role Id */
+	/**
+	 * Returns the role Id
+	 */
 	public String getRoleId()
 	{
 		return roleId;
 	}
-
+	/**
+	 * set the role Id
+	 */
 	public void setRoleId(String roleId)
 	{
 		this.roleId = roleId;
@@ -174,12 +219,17 @@ public class ClassRelationshipData
 		int hashCode = 0;
 
 		if (className != null)
+		{	
 			hashCode += className.hashCode();
+		}	
 		if (relatedClassName != null)
+		{	
 			hashCode += relatedClassName.hashCode();
+		}	
 		if (roleAttribute != null)
+		{	
 			hashCode += roleAttribute.hashCode();
-
+		}	
 		return hashCode;
 	}
 }
