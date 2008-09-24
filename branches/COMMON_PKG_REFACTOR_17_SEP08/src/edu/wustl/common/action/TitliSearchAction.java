@@ -59,8 +59,8 @@ public class TitliSearchAction extends Action
 			titliSearchForm.setDisplaySearchString("TiTLi Search");
 			titliSearchForm.setDisplayStats("Found " + matchList.getNumberOfMatches()
 					+ " matches in " + matchList.getTimeTaken() + " seconds");
-
-			//if matches are from just one table, go directly to TitliFetchAction, skip TitliResultUpdatable.jsp
+			//if matches are from just one table, go directly to TitliFetchAction,
+			//skip TitliResultUpdatable.jsp
 			if (sortedResultMap.size() == Constants.ONE)
 			{
 				actionForward = getActionForward(titliSearchForm, sortedResultMap);
