@@ -18,19 +18,29 @@ import edu.wustl.common.exception.AssignDataException;
  */
 public class QueryColumnData extends AbstractDomainObject implements Serializable
 {
-
+	/**
+	 * identifier to identify the query.
+	 */
 	private long identifier;
-
+	/**
+	 * table data object for query.
+	 */
 	private QueryTableData tableData = new QueryTableData();
-
+	/**
+	 * Name of the column.
+	 */
 	private String columnName;
-
+	/**
+	 * Name of the display.
+	 */
 	private String displayName;
-
+	/**
+	 * Type of the column.
+	 */
 	private String columnType;
 
 	/**
-	 * Returns the id.
+	 * get identifier.
 	 * @hibernate.id name="identifier" column="IDENTIFIER" type="long" length="30"
 	 * unsaved-value="null" generator-class="native"
 	 * @hibernate.generator-param name="sequence" value="CATISSUE_INTF_COLUMN_DATA_SEQ"
@@ -42,6 +52,7 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 	}
 
 	/**
+	 * set the identifier.
 	 * @param identifier The identifier to set.
 	 */
 	public void setIdentifier(long identifier)
@@ -50,6 +61,7 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 	}
 
 	/**
+	 * get the object for table data.
 	 * @hibernate.many-to-one column="TABLE_ID" class="edu.wustl.common.domain.QueryTableData"
 	 * constrained="true"
 	 * @return Returns the tableData.
@@ -85,7 +97,7 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 
 	/**
 	 * @hibernate.property name="columnName" type="string" column="COLUMN_NAME" length="50"
-	 * @return Returns the tableName.
+	 * @return Returns the name of the column.
 	 */
 	public String getColumnName()
 	{
@@ -116,26 +128,24 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 	{
 		this.displayName = displayName;
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
+	/**
+	 * set the values from the ui form and set it into object.
+	 * @param abstractForm from where the data has to be retrieved.
 	 */
 	public void setAllValues(IValueObject abstractForm) throws AssignDataException
 	{
 		// TODO Auto-generated method stub
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#getId()
+	/**
+	 * @return Returns the Id.
 	 */
 	public Long getId()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setId(java.lang.Long)
+	/**
+	 * set the Id.
 	 */
 	public void setId(Long id)
 	{
