@@ -25,11 +25,13 @@ import org.hibernate.Hibernate;
 
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 public class MapDataParser
 {
 
+	private static org.apache.log4j.Logger logger = Logger.getLogger(MapDataParser.class);
 	private String packageName = "";
 	private Map bigMap = new HashMap();
 	private Collection dataList = new LinkedHashSet();
@@ -39,84 +41,67 @@ public class MapDataParser
 		this.packageName = packageName;
 	}
 
-	private Map createMap()
+	private Map<String,String> createMap()
 	{
-		Map map = new TreeMap();
-
+		Map<String,String> map = new TreeMap<String,String>();
 		map.put("DistributedItem:1_Specimen_id", "1");
 		map.put("DistributedItem:1_quantity", "100");
-		//		map.put("DistributedItem:1_unitSpan","mg");
-		//		map.put("DistributedItem:1_unit","mg");
 		map.put("DistributedItem:1_Specimen_className", "Tissue");
-
 		map.put("DistributedItem:2_Specimen_id", "2");
 		map.put("DistributedItem:2_quantity", "200");
-		//		map.put("DistributedItem:2_unitSpan","ml");
-		//		map.put("DistributedItem:2_unit","ml");
 		map.put("DistributedItem:2_Specimen_className", "Molecular");
-
-		//		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_pathologyStatus","Primary Tumor");
-		//		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_specimenType","Blood");
-		//		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_tissueSite","Adrenal-Cortex");
-		//		map.put("SpecimenRequirement#FluidSpecimenRequirement:1_quantityInMiliLiter","20");
-
-		//		map.put("CollectionProtocolEvent:1_clinicalStatus", "Pre-Opt");                       
-		//		map.put("CollectionProtocolEvent:1_studyCalendarEventPoint", "11.0");                 
-		//		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_tissueSite", "Lung");        
-		//		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_specimenType", "Blood");     
-		//		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_specimenClass", "Tissue");
-		//		map.put("CollectionProtocolEvent:1_SpecimenRequirement:1_quantityIn", "6");
-
-		//		map.put("CollectionProtocolEvent:2_studyCalendarEventPoint", "10.0");                 
-		//		map.put("CollectionProtocolEvent:2_clinicalStatus", "Pre-Opt");                       
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_specimenType", "Blood");     
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_tissueSite", "Kidney");      
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_specimenClass", "Fluid");    
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:1_quantityIn", "7");
-
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_tissueSite", "Brain");       
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_specimenType", "Gel");       
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_specimenClass", "Cell");     
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:2_quantityIn", "8");
-
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_tissueSite", "Lever");       
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_specimenType", "Cell");      
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_specimenClass", "Molecular");
-		//		map.put("CollectionProtocolEvent:2_SpecimenRequirement:3_quantityIn", "9");
-
 		return map;
 	}
 
 	private Object toObject(String str, Class type) throws Exception
 	{
+		Object obj;
 		if (type.equals(String.class))
-			return str;
+		{
+			obj=str;
+		}
 		else
 		{
-			if (str.trim().length() == 0)
-				return null;
-
-			if (type.equals(Long.class))
-				return new Long(str);
+			if (TextConstants.EMPTY_STRING.equals(str))
+			{
+				obj=null;
+			}
+			else if (type.equals(Long.class))
+			{
+				obj=Long.valueOf(str);
+			}
 			else if (type.equals(Double.class))
-				return new Double(str);
+			{
+				obj=Double.valueOf(str);
+			}
 			else if (type.equals(Float.class))
-				return new Float(str);
+			{
+				obj=Float.valueOf(str);
+			}
 			else if (type.equals(Integer.class))
-				return new Integer(str);
+			{
+				obj=Integer.valueOf(str);
+			}
 			else if (type.equals(Byte.class))
-				return new Integer(str);
+			{
+				obj=Integer.valueOf(str);
+			}
 			else if (type.equals(Short.class))
-				return new Integer(str);
+			{
+				obj=Integer.valueOf(str);
+			}
 			else if (type.equals(Table.class))
-				return new Table(str, str);
+			{
+				obj=new Table(str, str);
+			}
 			else if (type.equals(Boolean.class))
-				return new Boolean(str);
+			{
+				obj=Boolean.valueOf(str);
+			}
 			else if (type.equals(Date.class))
-				/** Added by kiran_pinnamaneni
-				 *  code reviewer abhijit_naik 
-				 */
-				return Utility.parseDate(str, Utility.datePattern(str));
+			{
+				obj=Utility.parseDate(str, Utility.datePattern(str));
+			}
 			else if (type.equals(Blob.class))
 			{
 				File file = new File(str);
@@ -126,57 +111,52 @@ public class MapDataParser
 				byte[] buff = new byte[(int) file.length()];
 				dis.readFully(buff);
 				dis.close();
-				return Hibernate.createBlob(buff);
-
+				obj=Hibernate.createBlob(buff);
 			}
 		}
-		return str;
+		obj=str;
+		return obj;
 	}
 
 	private Method findMethod(Class objClass, String methodName) throws Exception
 	{
-		Method method[] = objClass.getMethods();
+		Method methdName=null;
+		Method[] method = objClass.getMethods();
 		for (int i = 0; i < method.length; i++)
 		{
 			if (method[i].getName().equals(methodName))
-				return method[i];
+			{
+				methdName=method[i];
+				break;
+			}
 		}
-		return null;
+		return methdName;
 	}
 
-	//CollectionProtocolEvent:1.studyCalendarEventPoint, new Double(11)
 	private void parstData(Object parentObj, String str, String value, String parentKey)
 			throws Exception
 	{
-		StringTokenizer st = new StringTokenizer(str, "_");
+		StringTokenizer tokenizer = new StringTokenizer(str, "_");
 
-		int tokenCount = st.countTokens();
+		int tokenCount = tokenizer.countTokens();
 		if (tokenCount > 1)
 		{
-			String className = st.nextToken();
-			String mapKey = parentKey + "-" + str.substring(0, str.indexOf("_"));
+			String className = tokenizer.nextToken();
+			String mapKey = new StringBuffer(parentKey).append('-').append(str.substring(0, str.indexOf('_'))).toString();
 			Object obj = parseClassAndGetInstance(parentObj, className, mapKey);
 
 			if (tokenCount == 2)
 			{
-				String attrName = st.nextToken();
+				String attrName = tokenizer.nextToken();
 				String methodName = Utility.createAccessorMethodName(attrName, true);
-
 				Class objClass = obj.getClass();
-
-				Logger.out.debug("methodName " + methodName);
-				Logger.out.debug("objClass " + objClass);
-
 				Method method = findMethod(objClass, methodName);
-
-				Logger.out.debug("method parameter type " + method.getParameterTypes()[0]);
-				Object objArr[] = {toObject(value, method.getParameterTypes()[0])};
-
+				Object []objArr = {toObject(value, method.getParameterTypes()[0])};
 				method.invoke(obj, objArr);
 			}
 			else
 			{
-				int firstIndex = str.indexOf("_");
+				int firstIndex = str.indexOf('_');
 				className = str.substring(firstIndex + 1);
 				parstData(obj, className, value, mapKey);
 			}
@@ -186,84 +166,70 @@ public class MapDataParser
 	private Object parseClassAndGetInstance(Object parentObj, String str, String mapKey)
 			throws Exception
 	{
-		//map.put("CollectionProtocolEvent:1.SpecimenRequirement:1.specimenType", "Blood");
 		StringTokenizer innerST = new StringTokenizer(str, ":");
 		String className = "";
-
+		Object obj;
 		int count = innerST.countTokens();
-
 		if (count == 2) //Case obj is a collection
 		{
 			className = innerST.nextToken();
 			String index = innerST.nextToken();
-
 			Collection collection = null;
-
 			if (parentObj == null)
 			{
 				collection = dataList;
-
-				StringTokenizer st = new StringTokenizer(className, "#");
-				if (st.countTokens() > 1)
+				StringTokenizer tokenizer = new StringTokenizer(className, "#");
+				if (tokenizer.countTokens() > 1)
 				{
-					st.nextToken();
-					className = st.nextToken();
+					tokenizer.nextToken();
+					className = tokenizer.nextToken();
 				}
 			}
 			else
-			//SpecimenRequirement:1.specimenType", "Blood");
 			{
 				String collectionName = className;
-				StringTokenizer st = new StringTokenizer(className, "#");
-				if (st.countTokens() > 1)
+				StringTokenizer tokenizer = new StringTokenizer(className, "#");
+				if (tokenizer.countTokens() > 1)
 				{
-					collectionName = st.nextToken();
-					className = st.nextToken();
+					collectionName = tokenizer.nextToken();
+					className = tokenizer.nextToken();
 				}
 				collection = getCollectionObj(parentObj, collectionName);
 			}
 
-			return getObjFromList(collection, index, className, mapKey);
+			obj=getObjFromList(collection, index, className, mapKey);
 		}
 		else
-		//case map.put("CollectionProtocolEvent.studyCalendarEventPoint", new Double(11));
 		{
 			className = str;
-
-			StringTokenizer st = new StringTokenizer(className, "#");
-			if (st.countTokens() > 1)
+			StringTokenizer tokenizer = new StringTokenizer(className, "#");
+			if (tokenizer.countTokens() > 1)
 			{
-				className = st.nextToken();
+				className = tokenizer.nextToken();
 			}
-
 			Object retObj = Utility.getValueFor(parentObj, className);
-
-			//Change for API Search   --- Jitendra 06/10/2006
 			if (retObj == null)
 			{
 				retObj = Utility.setValueFor(parentObj, className, null);
 			}
-			return retObj;
+			obj=retObj;
 		}
+		return obj;
 	}
 
 	private Object getObjFromList(Collection coll, String index, String className, String mapKey)
 			throws Exception
 	{
 		Object obj = bigMap.get(mapKey);
-		if (obj != null)
+		if (obj == null)
 		{
-			return obj;
-		}
-		else
-		{
-			String fullyQualifiedClassName = packageName + "." + className;
-			Class aClass = Class.forName(fullyQualifiedClassName);
+			String qualifiedClassName = packageName + "." + className;
+			Class aClass = Class.forName(qualifiedClassName);
 			obj = aClass.newInstance();
 			coll.add(obj);
 			bigMap.put(mapKey, obj);
-			return obj;
 		}
+		return obj;
 	}
 
 	private Collection getCollectionObj(Object parentObj, String str) throws Exception
@@ -295,21 +261,19 @@ public class MapDataParser
 
 	public int parseKeyAndGetRowNo(String key)
 	{
-		int start = key.indexOf(":");
-		int end = key.indexOf("_");
-		int rowNo = Integer.parseInt(key.substring(start + 1, end));
-		return rowNo;
+		int start = key.indexOf(':');
+		int end = key.indexOf('_');
+		return Integer.parseInt(key.substring(start + 1, end));
+		
 	}
 
 	public static void main(String[] args) throws Exception
 	{
 		MapDataParser aMapDataParser = new MapDataParser("edu.wustl.catissuecore.domain");
 		Map map = aMapDataParser.createMap();
-		System.out.println(map);
 		//map = aMapDataParser.fixMap(map);
-		System.out.println(map);
 		Collection dataCollection = aMapDataParser.generateData(map);
-		System.out.println("Data: " + dataCollection);
+		logger.info(dataCollection);
 	}
 
 	public static void deleteRow(List list, Map map, String status)
@@ -321,36 +285,40 @@ public class MapDataParser
 	 * Returns boolean used for diabling/enabling checkbox in jsp Page and
 	 * rearranging rows
 	 */
-	public static void deleteRow(List list, Map map, String status, String outer)
+	public static void deleteRow(List<String> list, Map map, String status, String outer)
 	{
 
 		//whether delete button is clicked or not
-		//String status = request.getParameter("status");
+		boolean isDeleteClicked=true;
 		if (status == null)
 		{
-			status = Constants.FALSE;
+			isDeleteClicked=Boolean.getBoolean(Constants.FALSE);
+		}
+		else
+		{
+			isDeleteClicked=Boolean.getBoolean(status);
 		}
 
 		String text;
 		for (int k = 0; k < list.size(); k++)
 		{
 			text = (String) list.get(k);
-			String first = text.substring(0, text.indexOf(":"));
-			String second = text.substring(text.indexOf("_"));
+			String first = text.substring(0, text.indexOf(':'));
+			String second = text.substring(text.indexOf('_'));
 
 			//condition for creating ids for innerTable
 			boolean condition = false;
 			String third = "", fourth = "";
 
 			//checking whether key is inneTable'key or not
-			if (second.indexOf(":") != -1)
+			if (second.indexOf(':') != -1)
 			{
 				condition = true;
-				third = second.substring(0, second.indexOf(":"));
-				fourth = second.substring(second.lastIndexOf("_"));
+				third = second.substring(0, second.indexOf(':'));
+				fourth = second.substring(second.lastIndexOf('_'));
 			}
 
-			if (status.equals(Constants.TRUE))
+			if (isDeleteClicked)
 			{
 				Map values = map;
 
@@ -363,16 +331,10 @@ public class MapDataParser
 				{
 					String id = "";
 					String mapId = "";
-
 					//for innerTable key's rearrangement
 					if (condition)
 					{
-						if (outer != null)
-						{
-							id = first + ":" + outer + third + ":" + i + fourth;
-							mapId = first + ":" + outer + third + ":" + innerCount + fourth;
-						}
-						else
+						if (outer == null)
 						{
 							//for outer key's rearrangement
 							for (int j = 1; j <= values.size(); j++)
@@ -388,9 +350,13 @@ public class MapDataParser
 								}
 							}
 						}
+						else
+						{
+							id = first + ":" + outer + third + ":" + i + fourth;
+							mapId = first + ":" + outer + third + ":" + innerCount + fourth;
+						}
 
 					}
-
 					else
 					{
 						id = first + ":" + i + second;
