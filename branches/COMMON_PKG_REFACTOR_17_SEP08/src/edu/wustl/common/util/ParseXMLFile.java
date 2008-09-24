@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.common.util.global.TextConstants;
 
 /**
  * This class is used for parsing the XML file and put the parsed elements to HashMaps 
@@ -44,10 +46,23 @@ public class ParseXMLFile
 	/**
 	 * Variables declared by Pratibha
 	 */
-	private Map<String, ArrayList<String>> nonEnumDataTypeToConditionMap = new HashMap<String, ArrayList<String>>();
-	private Map<String, String> nonEnumDataTypeToComponentMap = new HashMap<String, String>();
-	private Map<String, ArrayList<String>> enumDataTypeToConditionMap = new HashMap<String, ArrayList<String>>();
-	private Map<String, String> enumDataTypeToComponentMap = new HashMap<String, String>();
+	/**
+	 * non enum data type to contition map
+	 */
+	private Map<String, ArrayList<String>> nedtCondMap = new HashMap<String, ArrayList<String>>();
+	/**
+	 * non enum data type to component map
+	 */
+	private Map<String, String> nedtCompMap = new HashMap<String, String>();
+	
+	/**
+	 * enum data type to condition map
+	 */
+	private Map<String, ArrayList<String>> edtCondMap = new HashMap<String, ArrayList<String>>();
+	/**
+	 * enum data type to component map
+	 */
+	private Map<String, String> edtompMap = new HashMap<String, String>();
 
 	/**
 	 * Constructor for parsing the XML file. 
@@ -77,6 +92,7 @@ public class ParseXMLFile
 	private String getElementValue(Node elem)
 	{
 		Node child;
+		String eleValue=TextConstants.EMPTY_STRING;
 		if (elem != null)
 		{
 			if (elem.hasChildNodes())
@@ -85,12 +101,12 @@ public class ParseXMLFile
 				{
 					if (child.getNodeType() == Node.TEXT_NODE)
 					{
-						return child.getNodeValue();
+						eleValue=child.getNodeValue();
 					}
 				}
 			}
 		}
-		return "";
+		return eleValue;
 	}
 
 	/**
@@ -114,15 +130,15 @@ public class ParseXMLFile
 				{
 					// Get all its children nodes and store corresponding details into the appropriate data-strutures
 					NodeList dataTypeNodes = child.getChildNodes();
-					readDataTypeDetailsForAllNode(dataTypeNodes, nonEnumDataTypeToConditionMap,
-							nonEnumDataTypeToComponentMap);
+					readDataTypeDetailsForAllNode(dataTypeNodes, nedtCondMap,
+							nedtCompMap);
 				}
 				else
 				{
 					//	Get all its children nodes and store corresponding details into the appropriate data-strutures
 					NodeList dataTypeNodes = child.getChildNodes();
-					readDataTypeDetailsForAllNode(dataTypeNodes, enumDataTypeToConditionMap,
-							enumDataTypeToComponentMap);
+					readDataTypeDetailsForAllNode(dataTypeNodes, edtCondMap,
+							edtompMap);
 				}
 			}
 		}
@@ -131,12 +147,12 @@ public class ParseXMLFile
 	/**
 	 * Method to get condition list and component associated with it
 	 * @param dataTypeNodes
-	 * @param dataTypeToConditionMap
-	 * @param dataTypeToComponentMap
+	 * @param dataTypeToCondMap
+	 * @param dataTypeToCompMap
 	 */
 	private void readDataTypeDetailsForAllNode(NodeList dataTypeNodes,
-			Map<String, ArrayList<String>> dataTypeToConditionMap,
-			Map<String, String> dataTypeToComponentMap)
+			Map<String, ArrayList<String>> dataTypeToCondMap,
+			Map<String, String> dataTypeToCompMap)
 	{
 		for (int i = 0; i < dataTypeNodes.getLength(); i++)
 		{
@@ -153,7 +169,7 @@ public class ParseXMLFile
 					Node node = childNodes.item(childCnt);
 					if (node.getNodeType() == Node.ELEMENT_NODE)
 					{
-						if (true == node.getNodeName().equalsIgnoreCase("conditions"))
+						if (node.getNodeName().equalsIgnoreCase("conditions"))
 						{
 							ArrayList<String> conditionList = new ArrayList<String>();
 							NodeList nodeConditions = node.getChildNodes();
@@ -174,11 +190,11 @@ public class ParseXMLFile
 									}
 								}
 							}
-							dataTypeToConditionMap.put(nodeType, conditionList);
+							dataTypeToCondMap.put(nodeType, conditionList);
 						}
-						else if (true == node.getNodeName().equalsIgnoreCase("components"))// Read component details
+						else if (node.getNodeName().equalsIgnoreCase("components"))// Read component details
 						{
-							dataTypeToComponentMap.put(nodeType, getElementValue(node));
+							dataTypeToCompMap.put(nodeType, getElementValue(node));
 						}
 					}
 				}
@@ -197,7 +213,7 @@ public class ParseXMLFile
 		Document doc = null;
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		docBuilderFactory.setIgnoringElementContentWhitespace(true);
-		try
+		try 
 		{
 			docBuilderFactory.setIgnoringComments(true);
 			docBuilderFactory.setIgnoringElementContentWhitespace(true);
@@ -234,22 +250,22 @@ public class ParseXMLFile
 
 	public String getNonEnumClassName(String dataTypeString)
 	{
-		return nonEnumDataTypeToComponentMap.get(dataTypeString);
+		return nedtCompMap.get(dataTypeString);
 	}
 
 	public String getEnumClassName(String dataTypeString)
 	{
-		return enumDataTypeToComponentMap.get(dataTypeString);
+		return edtompMap.get(dataTypeString);
 	}
 
-	public ArrayList<String> getEnumConditionList(String dataTypeString)
+	public List<String> getEnumConditionList(String dataTypeString)
 	{
-		return enumDataTypeToConditionMap.get(dataTypeString);
+		return edtCondMap.get(dataTypeString);
 	}
 
-	public ArrayList<String> getNonEnumConditionList(String dataTypeString)
+	public List<String> getNonEnumConditionList(String dataTypeString)
 	{
-		return nonEnumDataTypeToConditionMap.get(dataTypeString);
+		return nedtCondMap.get(dataTypeString);
 	}
 
 }
