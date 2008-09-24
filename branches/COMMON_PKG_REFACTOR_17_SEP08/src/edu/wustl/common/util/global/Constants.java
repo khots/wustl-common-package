@@ -545,4 +545,5 @@ public class Constants
 	public static final int ONE = 1;
 	public static final int INITIALIZE = -1;
 	public static final int ONE_KILO_BYTES=1024;
+	public static final int FOUR_KILO_BYTES=4096;
 }
