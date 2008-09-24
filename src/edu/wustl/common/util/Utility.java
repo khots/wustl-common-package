@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1101,6 +1102,29 @@ public class Utility
 			cpIdsList.add(identifier);
 		}
 		return cpIdsList;
+	}
+
+	/**
+	 * This method returns records per page from session
+	 * @param session HttpSession
+	 * @return no of records per page has been extracted.
+	 */
+	public static int getRecordsPerPage(HttpSession session)
+	{
+		int recordsPerPage;
+		String recordsPerPageSessionValue = (String) session
+				.getAttribute(Constants.RESULTS_PER_PAGE);
+		if (recordsPerPageSessionValue == null)
+		{
+			recordsPerPage = Integer.parseInt(XMLPropertyHandler
+					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
+			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage + "");
+		}
+		else
+		{
+			recordsPerPage = Integer.parseInt(recordsPerPageSessionValue);
+		}
+		return recordsPerPage;
 	}
 
 }
