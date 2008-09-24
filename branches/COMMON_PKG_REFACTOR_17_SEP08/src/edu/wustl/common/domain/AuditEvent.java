@@ -25,7 +25,7 @@ public class AuditEvent implements java.io.Serializable
 	private Date timestamp = Calendar.getInstance().getTime();
 
 	/**
-	 * User who performs the event.
+	 *  Id of the User who performs the event.
 	 */
 	private Long userId;
 
@@ -88,7 +88,7 @@ public class AuditEvent implements java.io.Serializable
 
 	/**
 	 * @hibernate.property name="userId" type="long" column="USER_ID"
-	 * @return Returns the userId.
+	 * @return Returns the Id of the user who performs the event.
 	 */
 	public Long getUserId()
 	{
@@ -96,7 +96,7 @@ public class AuditEvent implements java.io.Serializable
 	}
 
 	/**
-	 * @param userId The userId to set.
+	 * @param userId, set the Id of the user.
 	 */
 	public void setUserId(Long userId)
 	{
@@ -126,6 +126,7 @@ public class AuditEvent implements java.io.Serializable
 	}
 
 	/**
+	 * get the Ip address.
 	 * @hibernate.property name="ipAddress" type="string"
 	 * column="IP_ADDRESS" length="20" 
 	 **/
@@ -133,13 +134,18 @@ public class AuditEvent implements java.io.Serializable
 	{
 		return ipAddress;
 	}
-
+	/**
+	 * set the Ip address.
+	 * @hibernate.property name="ipAddress" type="string"
+	 * column="IP_ADDRESS" length="20" 
+	 **/
 	public void setIpAddress(String ipAddress)
 	{
 		this.ipAddress = ipAddress;
 	}
 
 	/**
+	 * return the collection where audit event is added.
 	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
@@ -148,7 +154,12 @@ public class AuditEvent implements java.io.Serializable
 	{
 		return auditEventLogCollection;
 	}
-
+	/**
+	 * set the vlue in audit event collection.
+	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
+	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
+	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
+	 */
 	public void setAuditEventLogCollection(Collection<AuditEventLog> auditEventLogCollection)
 	{
 		this.auditEventLogCollection = auditEventLogCollection;
