@@ -44,8 +44,10 @@ public class DAOException extends Exception
 		Logger.out.error("Exception in Authorization: " + e.getMessage(), e);
 		String message = "Security Exception: " + e.getMessage();
 		if (e.getCause() != null)
+		{	
 			message = message + " : " + e.getCause().getMessage();
 		this.setMessage(message);
+		}
 	}
 
 	/**
@@ -72,33 +74,41 @@ public class DAOException extends Exception
 	{
 		this.wrapException = wrapException;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#printStackTrace()
-	 */
+	/**
+	 * Return the Stack containing details of the exception.
+	 */	
 	public void printStackTrace()
 	{
 		super.printStackTrace();
 		if (wrapException != null)
+		{	
 			wrapException.printStackTrace();
+		}	
 	}
-
+	/**
+	 * Return the Stack containing details of the exception.
+	 */	
 	public void printStackTrace(PrintWriter thePrintWriter)
 	{
 		super.printStackTrace(thePrintWriter);
 		if (wrapException != null)
+		{	
 			wrapException.printStackTrace(thePrintWriter);
+		}	
 	}
-
+	/**
+	 * Return the Stack containing details of the exception.
+	 */	
 	public void printStackTrace(PrintStream thePrintStream)
 	{
 		super.printStackTrace(thePrintStream);
 		if (wrapException != null)
+		{	
 			wrapException.printStackTrace(thePrintStream);
+		}	
 	}
-
 	/**
-	 * @return Returns the message.
+	 * @return the message.
 	 */
 	public String getMessage()
 	{
@@ -106,7 +116,7 @@ public class DAOException extends Exception
 	}
 
 	/**
-	 * @param message The message to set.
+	 * @param The message to set.
 	 */
 	public void setMessage(String message)
 	{
@@ -114,7 +124,7 @@ public class DAOException extends Exception
 	}
 
 	/**
-	 * @return Returns the supportingMessage.
+	 * @return the supporting message.
 	 */
 	public String getSupportingMessage()
 	{
@@ -122,7 +132,7 @@ public class DAOException extends Exception
 	}
 
 	/**
-	 * @param supportingMessage The supportingMessage to set.
+	 * @param supporting message The supporting message to set.
 	 */
 	public void setSupportingMessage(String supportingMessage)
 	{
