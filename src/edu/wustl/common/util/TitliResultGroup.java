@@ -12,14 +12,10 @@ import java.util.Map;
 import titli.controller.Name;
 import titli.controller.interfaces.ColumnInterface;
 import titli.controller.interfaces.MatchInterface;
-import titli.controller.interfaces.MatchListInterface;
 import titli.controller.interfaces.ResultGroupInterface;
 import titli.controller.interfaces.TableInterface;
-import titli.controller.interfaces.TitliInterface;
-import titli.model.Titli;
 import titli.model.TitliException;
 import titli.model.fetch.TitliFetchException;
-import edu.wustl.common.util.global.Constants;
 
 /**
  * @author Juber Patel
@@ -33,7 +29,7 @@ public class TitliResultGroup
 	private String label;
 	private List<String> columnList;
 	private List<List<String>> dataList;
-	private Iterator<MatchInterface> it;
+	private Iterator<MatchInterface> iterator;
 
 	/**
 	 * the constructor
@@ -50,7 +46,7 @@ public class TitliResultGroup
 	 * @return the "page of" string for the table associated with this group
 	 * @throws Exception if problems occur
 	 */
-	public String getPageOf() throws Exception
+	public String getPageOf() throws TitliException
 	{
 		if (pageOf == null)
 		{
@@ -65,7 +61,7 @@ public class TitliResultGroup
 	 * @return the label for the table associated with this group
 	 * @throws Exception if problems occur
 	 */
-	public String getLabel() throws Exception
+	public String getLabel() throws TitliException
 	{
 		if (label == null)
 		{
@@ -94,19 +90,14 @@ public class TitliResultGroup
 		if (columnList == null)
 		{
 			columnList = new ArrayList<String>();
-
 			TableInterface table = null;
 			table = group.getMatchList().get(0).fetch().getTable();
-
 			for (Name column : table.getColumns().keySet())
 			{
 				columnList.add(column.toString());
 			}
-
 		}
-
 		return columnList;
-
 	}
 
 	/**
@@ -124,11 +115,8 @@ public class TitliResultGroup
 			for (MatchInterface match : group.getMatchList())
 			{
 				List<String> dataRow = new ArrayList<String>();
-
 				Map<ColumnInterface, String> columns = null;
-
 				columns = match.fetch().getColumnMap();
-
 				//populate the data row
 				for (String value : columns.values())
 				{
@@ -138,55 +126,41 @@ public class TitliResultGroup
 				//add the row to the data list
 				dataList.add(dataRow);
 			}
-
 		}
-
 		return dataList;
-
 	}
 
 	/**
 	 * get the data list for next n records
 	 * this method was spcifically added for the pagination requirement 
 	 * that only the rercords required to display the current page should be fetched  
-	 * @param n number of records
+	 * @param num number of records
 	 * @return the data list for next n records
 	 * @throws TitliFetchException if problems occur
 	 */
-	public List<List<String>> getNext(int n) throws TitliFetchException
+	public List<List<String>> getNext(int num) throws TitliFetchException
 	{
 		List<List<String>> data = new ArrayList<List<String>>();
-
-		if (it == null)
+		if (iterator == null)
 		{
-			it = group.getMatchList().iterator();
+			iterator = group.getMatchList().iterator();
 		}
-
-		for (int i = 0; i < n; i++)
+		
+		List<String> dataRow;
+		for (int i = 0; i < num && iterator.hasNext(); i++)
 		{
-			if (!it.hasNext())
-			{
-				return data;
-			}
-
-			MatchInterface match = it.next();
-
-			List<String> dataRow = new ArrayList<String>();
-
+			MatchInterface match = iterator.next();
+			dataRow = new ArrayList<String>();
 			Map<ColumnInterface, String> columns = null;
-
 			columns = match.fetch().getColumnMap();
-
 			//populate the data row
 			for (String value : columns.values())
 			{
 				dataRow.add(value);
 			}
-
 			//add the row to the data list
 			dataList.add(dataRow);
 		}
-
 		return data;
 	}
 
@@ -198,44 +172,10 @@ public class TitliResultGroup
 	 */
 	public boolean hasMore()
 	{
-		if (it == null)
+		if (iterator == null)
 		{
-			it = group.getMatchList().iterator();
+			iterator = group.getMatchList().iterator();
 		}
-
-		return it.hasNext();
-
+		return iterator.hasNext();
 	}
-
-	//	working well
-	/**
-	 * @param args command line arguments
-	 * @throws Exception if problems occur
-	 * 
-	 */
-	public static void main(String[] args) throws Exception
-	{
-		MatchListInterface matches = null;
-
-		try
-		{
-			TitliInterface titli = Titli.getInstance();
-			//titli.index();
-			matches = titli.search("m*");
-		}
-		catch (TitliException e)
-		{
-			System.out.println(e + "\n" + e.getCause());
-			System.exit(0);
-		}
-
-		TitliResultGroup group = new TitliResultGroup(matches.getSortedResultMap().get(
-				new Name("catissue_institution")));
-
-		System.out.println(group.getColumnList().indexOf(Constants.IDENTIFIER));
-		System.out.println(group.getDataList());
-		System.out.println(group.getNativeGroup().getNumberOfMatches());
-		//System.out.println(group.getPageOf());
-	}
-
 }
