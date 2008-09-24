@@ -41,13 +41,18 @@ public class AuditEventDetails implements java.io.Serializable
 	{
 		return elementName;
 	}
-
+	/**
+	 * set the element name.
+	 * @hibernate.property name="elementName" type="string"
+	 * column="ELEMENT_NAME" length="150" 
+	 **/
 	public void setElementName(String elementName)
 	{
 		this.elementName = elementName;
 	}
 
 	/**
+	 * return previous value.
 	 * @hibernate.property name="previousValue" type="string"
 	 * column="PREVIOUS_VALUE" length="150" 
 	 **/
@@ -55,13 +60,18 @@ public class AuditEventDetails implements java.io.Serializable
 	{
 		return previousValue;
 	}
+	/**
+	 * set the previous value.
+	 * @hibernate.property name="previousValue" type="string"
+	 * column="PREVIOUS_VALUE" length="150" 
+	 **/
 
 	public void setPreviousValue(String previousValue)
 	{
 		this.previousValue = previousValue;
 	}
 
-	/**
+	/* return current value
 	 * @hibernate.property name="currentValue" type="string"
 	 * column="CURRENT_VALUE" length="500" 
 	 **/
@@ -69,6 +79,10 @@ public class AuditEventDetails implements java.io.Serializable
 	{
 		return currentValue;
 	}
+	/* set the current value
+	 * @hibernate.property name="currentValue" type="string"
+	 * column="CURRENT_VALUE" length="500" 
+	 **/
 
 	public void setCurrentValue(String currentValue)
 	{
@@ -76,7 +90,9 @@ public class AuditEventDetails implements java.io.Serializable
 	}
 
 	/**
-	 * @hibernate.many-to-one column="AUDIT_EVENT_LOG_ID"  class="edu.wustl.common.domain.AuditEventLog" constrained="true"
+	 * get the audit event log object.
+	 * @hibernate.many-to-one column="AUDIT_EVENT_LOG_ID"
+	 * class="edu.wustl.common.domain.AuditEventLog" constrained="true"
 	 * @see #setParticipant(Site)
 	 */
 	public AuditEventLog getAuditEventLog()
@@ -85,6 +101,7 @@ public class AuditEventDetails implements java.io.Serializable
 	}
 
 	/**
+	 * set the value of audit event in audit event log.
 	 * @param auditEventLog The auditEventLog to set.
 	 */
 	public void setAuditEventLog(AuditEventLog auditEventLog)
@@ -97,17 +114,23 @@ public class AuditEventDetails implements java.io.Serializable
 		int hashCode = 0;
 
 		if (id != null)
+		{
 			hashCode += id.intValue();
+		}
 		if (elementName != null)
+		{	
 			hashCode += elementName.hashCode();
+		}	
 		if (previousValue != null)
+		{	
 			hashCode += previousValue.hashCode();
+		}	
 		if (currentValue != null)
+		{	
 			hashCode += currentValue.hashCode();
-
+		}	
 		return hashCode;
 	}
-
 	public String toString()
 	{
 		return "Id " + id + " " + "ElementName " + elementName + " " + "PreviousValue "
@@ -119,11 +142,11 @@ public class AuditEventDetails implements java.io.Serializable
 		//		if(obj instanceof AuditEventDetails)
 		//		{
 		//			AuditEventDetails auditEventDetails = (AuditEventDetails)obj;
-		//			if(this.id.equals(auditEventDetails.id) && 
-		//					this.elementName.equals(auditEventDetails.elementName) &&
-		//					this.previousValue.equals(auditEventDetails.previousValue) &&
-		//					this.currentValue.equals(auditEventDetails.currentValue))
-		//				return true;
+		//           if(this.id.equals(auditEventDetails.id) && 
+		//		       this.elementName.equals(auditEventDetails.elementName) &&
+		//	             this.previousValue.equals(auditEventDetails.previousValue) &&
+		//		           this.currentValue.equals(auditEventDetails.currentValue))
+		//	     return true;
 		//		}
 		return false;
 	}
