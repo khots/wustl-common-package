@@ -62,7 +62,8 @@ public abstract class BaseAction extends Action
 		setAttributeFromParameter(request, Constants.MENU_SELECTED);
 		ActionForward actionForward = executeAction(mapping, form, request, response);
 		//long endTime = System.currentTimeMillis();
-		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() 
+		//+ " : " + (endTime - startTime));
 		return actionForward;
 	}
 
@@ -136,7 +137,8 @@ public abstract class BaseAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 	/**
-	 * This function checks call to the action and sets/removes required attributes if AddNew or ForwardTo activity is executing.
+	 * This function checks call to the action and sets/removes required attributes
+	 *  if AddNew or ForwardTo activity is executing.
 	 * @param request - HTTPServletRequest calling the action
 	 */
 	protected void checkAddNewOperation(HttpServletRequest request)
@@ -193,11 +195,13 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
-	 * This method calls the specified method passed as parameter. This allows us to have different entry points
+	 * This method calls the specified method passed as parameter 
+	 * This allows us to have different entry points.
 	 * to an action class. To use this method,
 	 * 1. pass the methodname as parameter in some request variable
-	 * 2. in your executeAction/executeSecureAction method, get the parameter passed and pass it to this method.
-	 * 3. the control will directly go to the methodname of the class that you specified.
+	 * 2. in your executeAction/executeSecureAction method, get the parameter passed 
+	 * and pass it to this method.
+	 * 3. the control will directly go to the method name of the class that you specified.
 	 * This way you can reuse the same action multiple times.
 	 *
 	 * @param methodName - name of the method to be called
