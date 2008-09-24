@@ -62,7 +62,7 @@ public final class TitliTableMapper
 			}
 			catch (ParserConfigurationException e)
 			{
-				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,e);
+				logger.error("Could not locate a JAXP parser: "+TextConstants.TITLI_TABLE_MAPPING_FILE,e);
 			}
 			catch (SAXException e)
 			{
