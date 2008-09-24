@@ -164,7 +164,7 @@ public class SimpleQueryInterfaceAction extends SecureAction
 			if (!tableNameList.isEmpty())
 			{
 				request.setAttribute(Constants.OBJECT_NAME_LIST, tableNameList);
-				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
+				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST,Constants.ATTRIBUTE_NAME_ARRAY);
 			}
 
 			if ((aliasName != null) && (!"".equals(aliasName)))
@@ -187,7 +187,7 @@ public class SimpleQueryInterfaceAction extends SecureAction
 			{
 				String objectNameList = "objectList" + index;
 				request.setAttribute(objectNameList, nextTableNameList);
-				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST, Constants.ATTRIBUTE_NAME_ARRAY);
+				request.setAttribute(Constants.ATTRIBUTE_NAME_LIST,Constants.ATTRIBUTE_NAME_ARRAY);
 			}
 		}
 	}
