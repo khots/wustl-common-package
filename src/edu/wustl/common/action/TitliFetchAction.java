@@ -47,6 +47,7 @@ import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.SimpleQuery;
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.TitliResultGroup;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -220,7 +221,7 @@ public class TitliFetchAction extends Action
 			query.setResultView(selectDataElements);
 			setColumnNames(query, queryResultObjectDataMap, simpleQueryBizLogic);
 			setIdentifierIndex(query);
-			int recordsPerPage = getRecordsPerPage(session);
+			int recordsPerPage = Utility.getRecordsPerPage(session);
 			PagenatedResultData pagenatedResultData = query.execute(getSessionData(request), true,
 					queryResultObjectDataMap, query.hasConditionOnIdentifiedField(), 0,
 					recordsPerPage);
@@ -309,29 +310,6 @@ public class TitliFetchAction extends Action
 		}
 		return fieldList;
 	}
-
-	/**
-	 * @param session HttpSession
-	 * @return no of records per page has been extracted.
-	 */
-	private int getRecordsPerPage(HttpSession session)
-	{
-		int recordsPerPage;
-		String recordsPerPageSessionValue = (String) session
-				.getAttribute(Constants.RESULTS_PER_PAGE);
-		if (recordsPerPageSessionValue == null)
-		{
-			recordsPerPage = Integer.parseInt(XMLPropertyHandler
-					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
-			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage + "");
-		}
-		else
-		{
-			recordsPerPage = Integer.parseInt(recordsPerPageSessionValue);
-		}
-		return recordsPerPage;
-	}
-
 	/**
 	 * get the alias for the give table name from appropriate database table
 	 * @param tableName the table name for which to get the alias

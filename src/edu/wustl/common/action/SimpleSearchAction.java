@@ -43,6 +43,7 @@ import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.SimpleQuery;
 import edu.wustl.common.query.Table;
 import edu.wustl.common.util.MapDataParser;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -153,19 +154,7 @@ public class SimpleSearchAction extends BaseAction
 				ApplicationProperties.getValue("app.bizLogicFactory"), "getBizLogic",
 				Constants.QUERY_INTERFACE_ID);
 		int identifierIndex = 0;
-		int recordsPerPage;
-		String recordsPerPageSessionValue = (String) session
-				.getAttribute(Constants.RESULTS_PER_PAGE);
-		if (recordsPerPageSessionValue == null)
-		{
-			recordsPerPage = Integer.parseInt(XMLPropertyHandler
-					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
-			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage + "");
-		}
-		else
-		{
-			recordsPerPage = Integer.parseInt(recordsPerPageSessionValue);
-		}
+		int recordsPerPage=Utility.getRecordsPerPage(session);		
 		PagenatedResultData pagenatedResultData = null;
 		boolean isSecureExecute = getSessionData(request).isSecurityRequired();
 		boolean hasConditionOnIdentifiedField;
