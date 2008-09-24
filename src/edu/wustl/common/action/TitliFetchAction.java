@@ -96,13 +96,12 @@ public class TitliFetchAction extends Action
 			{
 				String pageOf = resultGroup.getPageOf();
 				List row = (List) (dataList.get(0));
-				String path = new StringBuffer().append(Constants.SEARCH_OBJECT_ACTION).append("?")
-						.append(Constants.PAGEOF).append("=").append(pageOf).append("&").append(
-								Constants.OPERATION).append("=").append(Constants.SEARCH).append(
-								"&").append(Constants.SYSTEM_IDENTIFIER).append("=").append(
-								(String) (row.get(id))).toString();
+				String path = new StringBuffer().append(Constants.SEARCH_OBJECT_ACTION).append("?").
+				append(Constants.PAGEOF).append("=").append(pageOf).append("&").append(
+				Constants.OPERATION).append("=").append(Constants.SEARCH).append("&").
+				append(Constants.SYSTEM_IDENTIFIER).append("=").append((String) (row.get(id))).toString();
 				actionForward = getActionForward(Constants.TITLI_SINGLE_RESULT, path);
-			}
+			}	
 			else
 			{
 				request.setAttribute(Constants.PAGEOF, resultGroup.getPageOf());
@@ -142,7 +141,8 @@ public class TitliFetchAction extends Action
 	 * Create a collection of SimpleConditionsNode as needed to create SimpleQuery
 	 * @param resultGroup TitliResultGroup the result group for the selected table
 	 * @param request HttpServletRequest
-	 * @return Collection<SimpleConditionsNode> a collection of SimpleConditionsNode as needed to create SimpleQuery
+	 * @return Collection<SimpleConditionsNode> a collection of SimpleConditionsNode
+	 * as needed to create SimpleQuery.
 	 */
 	Collection<SimpleConditionsNode> getSimpleConditionsNodeCollecton(TitliResultGroup resultGroup,
 			HttpServletRequest request)
@@ -191,9 +191,10 @@ public class TitliFetchAction extends Action
 	}
 
 	/**
-	 * Create SimpleQuery from the given collection of SimpleConditionsNode, execute it and get the resultant data list
+	 * Create SimpleQuery from the given collection of SimpleConditionsNode,
+	 * execute it and get the resultant data list
 	 * @param simpleConditionsNodeCollection Collection<SimpleConditionsNode>
-	 * @param request the servlet request
+	 * @param request the servlet request.
 	 *
 	 */
 	private void setDataAndColumnLists(
