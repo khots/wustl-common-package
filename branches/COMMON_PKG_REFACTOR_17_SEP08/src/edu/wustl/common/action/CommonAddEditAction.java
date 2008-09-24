@@ -121,7 +121,8 @@ public class CommonAddEditAction extends Action
 			logger.error(excp.getMessage(), excp);
 		}
 		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() 
+		//+ " : " + (endTime - startTime));
 		return mapping.findForward(target);
 	}
 
@@ -270,8 +271,8 @@ public class CommonAddEditAction extends Action
 					AbstractActionForm sessionFormBean = addNewSessionDataBean
 							.getAbstractActionForm();
 					String forwardTo = addNewSessionDataBean.getForwardTo();
-					sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(),
-							abstractDomain.getId());
+					sessionFormBean.setAddNewObjectIdentifier(
+							addNewSessionDataBean.getAddNewFor(),abstractDomain.getId());
 					sessionFormBean.setMutable(false);
 					if (formBeanStack.isEmpty())
 					{
@@ -294,7 +295,8 @@ public class CommonAddEditAction extends Action
 							+ String.valueOf(abstractForm.isAddOperation()));
 					request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey);
 
-					//Changing operation attribute in path specified in ForwardTo mapping, If AddNew activity started from Edit page
+					//Changing operation attribute in path specified in ForwardTo mapping,
+					//If AddNew activity started from Edit page
 					if ((sessionFormBean.getOperation().equals("edit")))
 					{
 						ActionForward editForward = new ActionForward();
@@ -312,8 +314,8 @@ public class CommonAddEditAction extends Action
 					target = new String(Constants.FAILURE);
 
 					ActionErrors errors = new ActionErrors();
-					ActionError error = new ActionError("errors.item.unknown", AbstractDomainObject
-							.parseClassName(objectName));
+					ActionError error = new ActionError(
+							"errors.item.unknown", AbstractDomainObject.parseClassName(objectName));
 					errors.add(ActionErrors.GLOBAL_ERROR, error);
 					saveErrors(request, errors);
 				}
@@ -391,7 +393,8 @@ public class CommonAddEditAction extends Action
 
 			// -- Direct to Main Menu if record is disabled
 			if ((abstractForm.getActivityStatus() != null)
-					&& (Constants.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus())))
+					&& (Constants.ACTIVITY_STATUS_DISABLED.
+							equals(abstractForm.getActivityStatus())))
 			{
 				String moveTo = abstractForm.getOnSubmit();
 				ActionForward reDirectForward = new ActionForward();
@@ -425,7 +428,8 @@ public class CommonAddEditAction extends Action
 				String forwardTo = abstractForm.getForwardTo();
 				target = forwardTo;
 			}
-			// Forward the page to edit success in the Advance query search if the edit is through Object view of Advance Search
+			// Forward the page to edit success in the Advance query search 
+			//if the edit is through Object view of Advance Search.
 			String pageOf = (String) request.getParameter(Constants.PAGEOF);
 			if (pageOf != null)
 			{
