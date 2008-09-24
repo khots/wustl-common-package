@@ -32,20 +32,21 @@ public class SendFile
 			if (file.exists())
 			{
 				response.setContentType(contentType);
-				response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName+ "\";");
+				response.setHeader("Content-Disposition", "attachment;filename=\""
+						+ fileName+ "\";");
 				response.setContentLength((int) file.length());
 				BufferedInputStream bis=null;
 				try
 				{
-					OutputStream os = response.getOutputStream();
+					OutputStream opstream = response.getOutputStream();
 					bis = new BufferedInputStream(new FileInputStream(file));
 					int count;
 					byte buf[] = new byte[Constants.FOUR_KILO_BYTES];
 					while ((count = bis.read(buf)) > -1)
 					{
-						os.write(buf, 0, count);
+						opstream.write(buf, 0, count);
 					}
-					os.flush();
+					opstream.flush();
 					bis.close();
 					file.delete();
 				}
