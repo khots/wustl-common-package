@@ -87,20 +87,18 @@ public class SimpleSearchAction extends BaseAction
 			map = (Map) session.getAttribute(Constants.SIMPLE_QUERY_MAP);
 			//Get the counter from the simple query map if set during configure action in the session object.
 			counter = (String) map.get("counter");
-			//After retrieving the value of counter, remove from the map
+			//After retrieving the value of counter, remove from the map.
 			map.remove("counter");
 		}
 		if (originalQueryObject == null && originalCounter == null)
-		{
+		{	
 			if (map != null && counter != null)
 			{
 				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT, new HashMap(map));
 				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_COUNTER, counter);
 			}
 		}
-
 		session.setAttribute(Constants.SIMPLE_QUERY_MAP, map);
-
 		MapDataParser parser = new MapDataParser("edu.wustl.common.query");
 		Collection simpleConditionNodeCollection = parser.generateData(map, true);
 		List fieldList = new ArrayList();
