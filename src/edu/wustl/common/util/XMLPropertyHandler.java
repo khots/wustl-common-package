@@ -1,6 +1,7 @@
 /**
  * <p>Title:XMLPropertyHandler Class>
- * <p>Description:This class parses from caTissue_Properties.xml(includes properties name & value pairs) file using DOM parser.</p>
+ * <p>Description:This class parses from caTissue_Properties.xml(includes properties name & value pairs) 
+ * file using DOM parser.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
  * @author Tapan Sahoo
@@ -16,14 +17,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -34,47 +33,34 @@ import edu.wustl.common.util.logger.Logger;
 public class XMLPropertyHandler
 {
 
+	private static org.apache.log4j.Logger logger = Logger.getLogger(XMLPropertyHandler.class);
 	private static Document document = null;
-
-	public static void main(String[] args) throws Exception
+	
+	public static void init(String path) throws SAXException,IOException,ParserConfigurationException
 	{
-		Variables.applicationHome = System.getProperty("user.dir");
-		Logger.out = org.apache.log4j.Logger.getLogger("");
-		PropertyConfigurator.configure("Logger.properties");
-
-		XMLPropertyHandler.init("caTissueCore_Properties.xml");
-
-		String propertyValue1 = XMLPropertyHandler.getValue("server.port");
-		Logger.out.debug("" + propertyValue1);
-	}
-
-	public static void init(String path) throws Exception
-	{
-		Logger.out.debug("path.........................." + path);
+		logger.info("path" + path);
 		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 		try
 		{
-			DocumentBuilder dbuilder = dbfactory.newDocumentBuilder();// throws
-			// ParserConfigurationException
+			DocumentBuilder dbuilder = dbfactory.newDocumentBuilder();
 			if (path != null)
 			{
 				document = dbuilder.parse(path);
-				// throws SAXException,IOException,IllegalArgumentException(if path is null
 			}
 		}
 		catch (SAXException e)
 		{
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 		catch (IOException e)
 		{
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 		catch (ParserConfigurationException e)
 		{
-			Logger.out.error("Could not locate a JAXP parser: " + e.getMessage(), e);
+			logger.error("Could not locate a JAXP parser: " + e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -89,50 +75,55 @@ public class XMLPropertyHandler
 
 	public static String getValue(String propertyName)
 	{
-		// it gives the rootNode of the xml file
+		String value=null;
 		Element root = document.getDocumentElement();
-
 		NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++)
 		{
 			Node child = children.item(i);
-
 			if (child instanceof Element)
 			{
-				// it gives the subchild nodes in the xml file(name & value)
-				NodeList subChildNodes = child.getChildNodes();
-
-				boolean isNameFound = false;
-				//Logger.out.debug("subchildNodes : "+subChildNodes.getLength()); 
-				for (int j = 0; j < subChildNodes.getLength(); j++)
-				{
-					Node subchildNode = subChildNodes.item(j);
-					String subNodeName = subchildNode.getNodeName();
-					//Logger.out.debug("subnodeName : "+subNodeName);
-					if (subNodeName.equals("name"))
-					{
-						String pName = (String) subchildNode.getFirstChild().getNodeValue();
-						//Logger.out.debug("pName : "+pName);
-						if (propertyName.equals(pName))
-						{
-							//Logger.out.debug("pName : "+pName);
-							isNameFound = true;
-						}
-					}
-
-					if (isNameFound && subNodeName.equals("value"))
-					{
-						//Check for null
-						String pValue = "";
-						if (subchildNode != null && subchildNode.getFirstChild() != null)
-						{
-							pValue = (String) subchildNode.getFirstChild().getNodeValue();
-						}
-						return pValue;
-					}
-				}
+				value = extractValue(propertyName, child);
 			}
 		}
-		return null;
+		return value;
+	}
+
+	/**
+	 * This method extract value from a child.
+	 * @param propertyName
+	 * @param value
+	 * @param child
+	 * @return
+	 */
+	private static String extractValue(String propertyName, Node child)
+	{
+		NodeList subChildNodes = child.getChildNodes();
+		boolean isNameFound = false;
+		String value=null;
+		for (int j = 0; j < subChildNodes.getLength(); j++)
+		{
+			Node subchildNode = subChildNodes.item(j);
+			String subNodeName = subchildNode.getNodeName();
+			if ("name".equals(subNodeName))
+			{
+				String pName = (String) subchildNode.getFirstChild().getNodeValue();
+				if (propertyName.equals(pName))
+				{
+					isNameFound = true;
+				}
+			}
+
+			if (isNameFound && "value".equals(subNodeName))
+			{
+				String pValue = "";
+				if (subchildNode != null && subchildNode.getFirstChild() != null)
+				{
+					pValue = (String) subchildNode.getFirstChild().getNodeValue();
+				}
+				value=pValue;
+			}
+		}
+		return value;
 	}
 }
