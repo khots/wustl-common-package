@@ -16,7 +16,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.wustl.common.util.global.TextConstants;
+import edu.wustl.common.util.logger.Logger;
+
 import titli.controller.Name;
+import titli.model.TitliException;
 
 /**
  * This class reads the mapping  xml file and gets the tree into the memory
@@ -28,6 +32,7 @@ import titli.controller.Name;
 public final class TitliTableMapper
 {
 
+	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliTableMapper.class);
 	/**
 	 * the only instance of this class
 	 */
@@ -45,48 +50,33 @@ public final class TitliTableMapper
 	 */
 	private TitliTableMapper()
 	{
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream(
-				"titli-table-mapping.xml");
-
-		/*
-		InputStream in=null;
-		try
-		{
-			in = new FileInputStream("E:/juber/workspace/catissuecore/WEB-INF/src/titli-table-mapping.xml");
-		}
-		catch (FileNotFoundException e1)
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
-
+		InputStream inputStream = Thread.currentThread().getContextClassLoader()
+								.getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
 		DocumentBuilder builder = null;
-
 		try
 		{
-			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			document = builder.parse(in);
-			in.close();
-		}
-		catch (SAXException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try
+			{
+				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				document = builder.parse(inputStream);
+			}
+			catch (ParserConfigurationException e)
+			{
+				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,e);
+			}
+			catch (SAXException e)
+			{
+				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,e);
+			}
+			finally
+			{
+				inputStream.close();
+			}
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in TitliTableMapper ",e);
 		}
-
 	}
 
 	/**
@@ -99,7 +89,6 @@ public final class TitliTableMapper
 		{
 			mapper = new TitliTableMapper();
 		}
-
 		return mapper;
 	}
 
@@ -109,34 +98,25 @@ public final class TitliTableMapper
 	 * @return the table name
 	 * @throws Exception if problems occur
 	 */
-	public String getLabel(Name tableName) throws Exception
+	public String getLabel(Name tableName) throws TitliException
 	{
 		String label = tableName.toString();
-
-		Element root = null;
-		root = document.getDocumentElement();
-
+		Element root =document.getDocumentElement();
 		if (root == null)
 		{
-			throw new Exception("Tilti table mapping file can not be read");
+			throw new TitliException("Tilti table mapping file can not be read:"+root);
 		}
-
 		NodeList nodeList = root.getElementsByTagName("mapping");
-
 		int length = nodeList.getLength();
-
 		for (int i = 0; i < length; i++)
 		{
 			Element element = (Element) (nodeList.item(i));
-
 			if (new Name(element.getAttribute("table")).equals(tableName))
 			{
 				label = element.getAttribute("label");
 				break;
 			}
-
 		}
-
 		return label;
 	}
 
@@ -148,25 +128,18 @@ public final class TitliTableMapper
 	public String getPageOf(String label)
 	{
 		String pageOf = null;
-
 		Element root = document.getDocumentElement();
-
 		NodeList nodeList = root.getElementsByTagName("mapping");
-
 		int length = nodeList.getLength();
-
 		for (int i = 0; i < length; i++)
 		{
 			Element element = (Element) (nodeList.item(i));
-
 			if (element.getAttribute("label").equals(label))
 			{
 				pageOf = element.getAttribute("pageOf");
 				break;
 			}
-
 		}
-
 		return pageOf;
 	}
 
@@ -178,43 +151,18 @@ public final class TitliTableMapper
 	public Name getTable(String label)
 	{
 		Name table = null;
-
 		Element root = document.getDocumentElement();
-
 		NodeList nodeList = root.getElementsByTagName("mapping");
-
 		int length = nodeList.getLength();
-
 		for (int i = 0; i < length; i++)
 		{
 			Element element = (Element) (nodeList.item(i));
-
 			if (element.getAttribute("label").equals(label))
 			{
 				table = new Name(element.getAttribute("table"));
 				break;
 			}
-
 		}
-
 		return table;
-
 	}
-
-	/**
-	 * 
-	 * @param args args for main
-	 * @throws Exception if problems occur
-	 */
-	public static void main(String[] args) throws Exception
-	{
-
-		TitliTableMapper tableMapper = TitliTableMapper.getInstance();
-
-		//System.out.println(mapper.getPageOf("Cancer Research Group"));
-		System.out.println(mapper.getLabel(new Name("catissue_institution")));
-		System.out.println(mapper.getTable("Specimen Collection Group"));
-
-	}
-
 }
