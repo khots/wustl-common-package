@@ -64,7 +64,7 @@ public class CommonExceptionHandler extends ExceptionHandler
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintWriter pw = new PrintWriter(baos, true);
 			ex.printStackTrace(pw);
-			msg.append("Unhandled Exception occured in caTISSUE Core \n").append("Message: ").append(ex.getMessage())
+			msg.append("Unhandled Exception occured in caTISSUE Core \nMessage: ").append(ex.getMessage())
 				.append("\nStackTrace: ").append(baos.toString());
 		}
 
