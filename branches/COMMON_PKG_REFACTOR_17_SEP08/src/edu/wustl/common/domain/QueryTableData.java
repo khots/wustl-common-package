@@ -19,13 +19,21 @@ import edu.wustl.common.exception.AssignDataException;
 public class QueryTableData extends AbstractDomainObject implements Serializable
 {
 	private static final long serialVersionUID = 731008569234191793L;
-
+	/**
+	 * identifier to identify the query.
+	 */
 	private long identifier;
-
+	/**
+	 * Name of the table.
+	 */
 	private String tableName;
-
+	/**
+	 * display name of the table.
+	 */
 	private String displayName;
-
+	/**
+	 * Name of the alias.
+	 */
 	private String aliasName;
 
 	/**
@@ -47,7 +55,6 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
 	}
 
 	/**
-	 * Returns the id.
 	 * @hibernate.id name="identifier" column="TABLE_ID" type="long" length="30"
 	 * unsaved-value="null" generator-class="native"
 	 * @hibernate.generator-param name="sequence" value="CATISSUE_QUERY_TABLE_DATA_SEQ"
@@ -67,7 +74,7 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
 	}
 
 	/**
-	 * Returns the name of this table.
+	 * Returns the name of the table.
 	 * @hibernate.property name="tableName" type="string" column="TABLE_NAME" length="50"
 	 * @return Returns the tableName.
 	 */
@@ -86,7 +93,7 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
 
 	/**
 	 * @hibernate.property name="aliasName" type="string" column="ALIAS_NAME" length="50"
-	 * @return Returns the aliasName.
+	 * @return Returns the name of alias.
 	 */
 	public String getAliasName()
 	{
@@ -100,26 +107,24 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
 	{
 		this.aliasName = aliasName;
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setAllValues(edu.wustl.catissuecore.actionForm.AbstractActionForm)
-	 */
+	/**
+	 * set the values from the ui form and set it into object.
+	 * @param abstractForm from where the data has to be retrieved.
+	 */	
 	public void setAllValues(IValueObject abstractForm) throws AssignDataException
 	{
 		// TODO Auto-generated method stub
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#getId()
+	/**
+	 * @return Returns the Id.
 	 */
 	public Long getId()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.domain.AbstractDomainObject#setId(java.lang.Long)
+	/**
+	 * set the Id.
 	 */
 	public void setId(Long id)
 	{
