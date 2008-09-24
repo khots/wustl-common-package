@@ -72,7 +72,7 @@ public class CommonSearchAction extends Action
 			if (identifier == null)
 			{
 				target = getPageOf(request);
-				request.setAttribute("forwardToHashMap", getForwordTohashMap(request));			
+				request.setAttribute("forwardToHashMap", getForwordTohashMap(request));
 			}
 		}
 		if(target==null)
@@ -80,7 +80,8 @@ public class CommonSearchAction extends Action
 			target = openPageInEdit(form, identifier, request);
 		}
 		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : " + (endTime - startTime));
+		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() 
+		//+ " : " + (endTime - startTime));
 		return mapping.findForward(target);
 	}
 
@@ -130,7 +131,7 @@ public class CommonSearchAction extends Action
 			if (!hasPrivilege)
 			{
 				throw new DAOException(
-						"Access denied ! User does not have privilege to view this information.");
+				"Access denied ! User does not have privilege to view this information.");
 			}
 
 			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
