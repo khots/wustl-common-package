@@ -34,9 +34,9 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 	}
 
 	/**
-	 * Parses the fully qualified classname and returns only the classname.
+	 * Parses the fully qualified class  name and returns only the class name.
 	 * @param qualifiedName The fully qualified classname. 
-	 * @return The classname.
+	 * @return The qualified class name.
 	 */
 	public static String parseClassName(String qualifiedName)
 	{
@@ -51,11 +51,15 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 		}
 		return className;
 	}
-
-	//  public abstract void setAllValues(AbstractActionForm abstractForm) throws AssignDataException;
 	/**
 	 * Copies all values from the AbstractForm object
 	 * @param abstractForm The AbstractForm object
+	 */
+	//  public abstract void setAllValues(AbstractActionForm abstractForm) throws AssignDataException;
+	
+	/**
+	 * Copies all values from the AbstractForm object and set it in relevant variable.
+	 * @param valueObject The IValueObject.
 	 */
 	public abstract void setAllValues(IValueObject valueObject) throws AssignDataException;
 
@@ -74,8 +78,8 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 	public abstract void setId(Long id);
 
 	/**
-	 * Returns message label to display on success add or edit
-	 * @return String
+	 * Returns message label to display on success of add or edit
+	 * @return message. 
 	 */
 	public String getMessageLabel()
 	{
