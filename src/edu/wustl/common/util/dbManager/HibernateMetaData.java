@@ -127,26 +127,36 @@ public class HibernateMetaData
 		}
 		return persistentClass.getMappedClass();
 	}
-
+	/**
+	 * Return the table name of the object passed.
+	 */
 	public static String getTableName(Class classObj)
 	{
 
 		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
 		if (tbl != null)
+		{	
 			return tbl.getName();
+		}	
 		return "";
-
+		
 	}
-
+	/**
+	 * Return the root table name for the object passed.
+	 */
 	public static String getRootTableName(Class classObj)
 	{
 		Table tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
 		if (tbl != null)
+		{	
 			return tbl.getName();
+		}	
 		return "";
 
 	}
-
+	/**
+	 * Return the class name for the table name passed.
+	 */
 	public static String getClassName(String tableName)
 	{
 		Iterator it = cfg.getClassMappings();
@@ -162,7 +172,9 @@ public class HibernateMetaData
 
 		return "";
 	}
-
+	/**
+	 * Return the column name for the object and attribute passed.
+	 */
 	public static String getColumnName(Class classObj, String attributeName)
 	{
 		//Logger.out.debug("classObj, String attributeName "+classObj+" "+attributeName);
@@ -202,7 +214,9 @@ public class HibernateMetaData
 
 		return "";
 	}
-
+	/**
+	 * Return the database name.
+	 */
 	public static String getDataBaseName()
 	{
 		String dbName = "";
@@ -221,17 +235,16 @@ public class HibernateMetaData
 		}
 		return dbName;
 	}
-
+	/**
+	 * Return data of the object passed.
+	 */
 	public static void getDATA(Class classObj)
 	{
-		org.hibernate.mapping.Collection coll = cfg
-				.getCollectionMapping("edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
-		//System.out.println(map);
-
+		org.hibernate.mapping.Collection coll = cfg.getCollectionMapping(
+		  "edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
 		System.out.println(coll.getCollectionTable().getName());
 		System.out.println(coll.getTable().getName());
-		//System.out.println();
-
+		
 		Iterator it = coll.getColumnIterator();
 
 		while (it.hasNext())
@@ -246,7 +259,6 @@ public class HibernateMetaData
 	 * This Function finds all the relations in i.e Many-To-Many and One-To-Many
 	 * All the relations are kept in HashMap where key is formed as table1@table2@table_name@attributeName
 	 * and value is Many-To-Many or One-To-Many
-	 *
 	 * @return Map
 	 */
 	private static void findRelations()
@@ -271,7 +283,8 @@ public class HibernateMetaData
 		}
 		catch (Exception e)
 		{
-			//This line is commented because logger when not initialized properly throws NullPointerException
+			//This line is commented because logger when not initialized
+			//properly throws NullPointerException.
 			//Logger.out.info("Error occured in fildAllRelations Function:"+e);
 		}
 
@@ -279,7 +292,7 @@ public class HibernateMetaData
 
 	/**This function saves the relation data in HashSet.
 	 * @param col this is the collection which contains all data
-	 * @param rel_type this is Many-To-Many ot Many-To-One
+	 * @param rel_type this is Many-To-Many to Many-To-One
 	 * @throws Exception
 	 */
 	private static void saveRelations(Collection col, String rel_type) throws Exception
@@ -336,6 +349,12 @@ public class HibernateMetaData
 		}
 		return false;
 	}
+	/** This function returns the relation between the classes passed.
+	 *
+	 * @param classObj1
+	 * @param classObj2
+	 * @return the relation.
+	 */
 
 	public static ClassRelationshipData getClassRelationshipData(Class classObj1, Class classObj2,
 			String roleAttributeName)
@@ -378,13 +397,10 @@ public class HibernateMetaData
 		return null;
 	}
 
-	/** This function returns the attributeName related to classObj1 and classObj2
-	 *
+	/** This function returns the qualified attributeName related to classObj1 and classObj2
 	 * @param classObj1
 	 * @param classObj2
 	 * @return attName
-
-		getFullyQulifiedRoleAttrName
 	 */
 	public static String getFullyQualifiedRoleAttName(Class classObj1, Class classObj2,
 			String attName)
@@ -423,7 +439,7 @@ public class HibernateMetaData
 		return "";
 	}
 
-	/** This function returns the role Id
+	/** This function returns the key Id of role, for the attribute passed.
 	 * from hibernate mapping and returns the value
 	 * @param attributeName
 	 * @return roleKeyId
@@ -444,6 +460,7 @@ public class HibernateMetaData
 	//Mandar:26-apr-06 start
 	//	Mandar : 26-Apr-06 : 872 : Column width
 	/**
+	 * Return the column width for the parameters class and attribute. 
 	 * @param classObj Name of the class.
 	 * @param attributeName Name of the attribute.
 	 * @return The width of the column. Returns width of the column or zero.
@@ -470,7 +487,7 @@ public class HibernateMetaData
 	} // getColumnWidth
 
 	/**
-	 * This method will return domain object from proxy Object
+	 * This method will return proxy object from domain Object.
 	 * @param domainObject
 	 * @return domain Object
 	 */
@@ -486,7 +503,10 @@ public class HibernateMetaData
 		return domainObject;
 	}
 
-	//	Mandar:26-apr-06 end
+	//	Mandar:26-Apr-06 end
+	/** 
+	 * This function configure the properties file.
+	 */
 
 	public static void main(String[] args) throws Exception
 	{
