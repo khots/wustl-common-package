@@ -17,7 +17,7 @@ import edu.wustl.common.util.global.Variables;
  * Description: Utility class provides database specific utilities methods
  * </p>
  * Copyright: Copyright (c) year Company: Washington University, School of
- * Medicine, St. Louis.
+ * Medicine, St.Louis.
  * 
  * @author Kapil Kaveeshwar
  * @version 1.00
@@ -48,12 +48,16 @@ public class DBUtil
 	{
 		HibernateUtil.closeSession();
 	}
-
+	/**
+	 * Get the connection.
+	 */
 	public static Connection getConnection() throws HibernateException
 	{
 		return HibernateUtil.getConnection();
 	}
-
+	/**
+	 * Close the connection.
+	 */
 	public static void closeConnection() throws HibernateException
 	{
 		HibernateUtil.closeSession();
@@ -82,7 +86,9 @@ public class DBUtil
 			session.close();
 		}
 	}
-
+	/**
+	 * Get the clean session.
+	 */
 	public static Session getCleanSession() throws BizLogicException
 	{
 		Session session = null;
