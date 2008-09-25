@@ -34,37 +34,37 @@ public class CommonExceptionHandler extends ExceptionHandler
 	/* (non-Javadoc)
 	 * @see org.apache.struts.action.ExceptionHandler#execute(java.lang.Exception, org.apache.struts.config.ExceptionConfig, org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */	
-	public ActionForward execute(Exception ex, ExceptionConfig exConfig, ActionMapping mapping,
+	public ActionForward execute(Exception exception, ExceptionConfig exConfig, ActionMapping mapping,
 			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException
 	{
-		String errorMessage = getErrorMsg(ex);
-		logger.error(errorMessage, ex);
+		String errorMessage = getErrorMsg(exception);
+		logger.error(errorMessage, exception);
 		/** Modified by amit_doshi
 		*  code reviewer abhijit_naik 
 		*/
 		request.getSession().setAttribute(
 				Constants.ERROR_DETAIL,
 				"Unhandled Exception occured in " + Variables.applicationName + " : "
-						+ ex.getMessage());
-		return super.execute(ex, exConfig, mapping, formInstance, request, response);
+						+ exception.getMessage());
+		return super.execute(exception, exConfig, mapping, formInstance, request, response);
 
 	}
 
 	/**
-	* @param ex the Exception.
+	* @param exception the Exception.
 	* @return the string of the error message.
 	*/
-	public String getErrorMsg(Exception ex)
+	public String getErrorMsg(Exception exception)
 	{
 		StringBuffer msg = new StringBuffer("Exception was NULL");
 
-		if (ex != null)
+		if (exception != null)
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			PrintWriter pw = new PrintWriter(baos, true);
-			ex.printStackTrace(pw);
-			msg.append("Unhandled Exception occured in caTISSUE Core \nMessage: ").append(ex.getMessage())
+			PrintWriter printWriter = new PrintWriter(baos, true);
+			exception.printStackTrace(printWriter);
+			msg.append("Unhandled Exception occured in caTISSUE Core \nMessage: ").append(exception.getMessage())
 				.append("\nStackTrace: ").append(baos.toString());
 		}
 
