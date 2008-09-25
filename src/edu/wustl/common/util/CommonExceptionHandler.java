@@ -31,8 +31,14 @@ public class CommonExceptionHandler extends ExceptionHandler
 {
 
 	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonExceptionHandler.class);
-	/* (non-Javadoc)
-	 * @see org.apache.struts.action.ExceptionHandler#execute(java.lang.Exception, org.apache.struts.config.ExceptionConfig, org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	/**
+	 * Retrieve the error details from request and set it in session.
+	 * @param exception the Exception.
+	 * @param ActionMapping mapping
+	 * @param ActionForm formInstance
+	 * @param HttpServletRequest request
+	 * @param HttpServletResponse response
+	 * @return the output of execute method.
 	 */	
 	public ActionForward execute(Exception exception, ExceptionConfig exConfig, ActionMapping mapping,
 			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
