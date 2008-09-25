@@ -108,7 +108,8 @@ public class AuditEventLog implements java.io.Serializable
 
 	/**
 	 * get the audit event object.
-	 * @hibernate.many-to-one column="AUDIT_EVENT_ID"  class="edu.wustl.common.domain.AuditEvent" constrained="true"
+	 * @hibernate.many-to-one column="AUDIT_EVENT_ID"  
+	 * class="edu.wustl.common.domain.AuditEvent" constrained="true"
 	 * @see #setParticipant(Site)
 	 */
 	public AuditEvent getAuditEvent()
