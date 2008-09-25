@@ -28,11 +28,8 @@ import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AuditException;
-import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
@@ -201,43 +198,24 @@ public class HibernateDAOImpl implements HibernateDAO
     public void insert(Object obj, SessionDataBean sessionDataBean,
             boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
     {
-    	//Logger.out.info("inser call---------------------");
-        boolean isAuthorized = true;
-        
-        try
-        {
         /**
 		* Now, Authorizations on Objects will be done in corresponding biz logic 
 		* for the Object through DefaultBizLogic's 'isAuthorized' method
 		* For this version, each Project will have to provide its implementation
 		* for objects which require secured access 
-		* By Default :: we return as 'true' i.e. user authorized
+		* So, no authorization checks here
 		*/   
-            if(isAuthorized)
-            {
-                session.save(obj);
-                if (obj instanceof Auditable && isAuditable)
-                    auditManager.compare((Auditable) obj, null, "INSERT");
-                isUpdated = true;
-            }
-            else
-            {
-                throw new UserNotAuthorizedException("Not Authorized to insert");
-            }
-        }
-        catch (HibernateException hibExp)
-        {
-            throw handleError("", hibExp);
-        }
-        catch (AuditException hibExp)
-        {
-            throw handleError("", hibExp);
-        }
-        catch( SMException smex)
-        {
-            throw handleError("", smex);
-        }
-        
+        session.save(obj);
+        if (obj instanceof Auditable && isAuditable)
+			try 
+        	{
+				auditManager.compare((Auditable) obj, null, "INSERT");
+			} 
+        	catch (AuditException hibExp) 
+        	{
+                throw handleError("", hibExp);
+			}
+        isUpdated = true;           
     }
     
     
@@ -284,48 +262,16 @@ public class HibernateDAOImpl implements HibernateDAO
      */
     public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
     {
-    	boolean isAuthorized = true;
-        try
-        {
        /**
 		* Now, Authorizations on Objects will be done in corresponding biz logic 
 		* for the Object through DefaultBizLogic's 'isAuthorized' method
 		* For this version, each Project will have to provide its implementation
 		* for objects which require secured access 
-		* By Default :: we return as 'true' i.e. user authorized
+		* So, no authorization checks here
 		*/   
-            
-            if(isAuthorized)
-            {
-                session.update(obj);
-    //                Object oldObj = retrieve(obj.getClass().getName(), ((Auditable)obj).getId());
-    //                if (obj instanceof Auditable && isAuditable)
-    //                auditManager.compare((Auditable) obj, (Auditable)oldObj, "UPDATE");
-                isUpdated = true;
-                
-            }
-            else
-            {
-                throw new UserNotAuthorizedException("Not Authorized to update");
-            }
-        }
-        catch (HibernateException hibExp)
-        {
-            //Logger.out.error(hibExp.getMessage(), hibExp);
-            //throw new DAOException("Error in update", hibExp);
-        	throw handleError("", hibExp);
-        }
-//        catch (AuditException hibExp)
-//        {
-//            throw handleError("", hibExp);
-//        }
-        catch (SMException smex)
-        {
-            //Logger.out.error(smex.getMessage(), smex);
-            //throw new DAOException("Error in update", smex);
-        	throw handleError("", smex);
-        }
-       
+
+    	session.update(obj);
+        isUpdated = true;       
     }
 
     
