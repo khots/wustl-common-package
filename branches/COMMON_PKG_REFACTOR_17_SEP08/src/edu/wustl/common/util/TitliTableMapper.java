@@ -50,8 +50,8 @@ public final class TitliTableMapper
 	 */
 	private TitliTableMapper()
 	{
-		InputStream inputStream = Thread.currentThread().getContextClassLoader()
-								.getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
+		InputStream inputStream = this.getClass().getClassLoader().
+									getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
 		DocumentBuilder builder = null;
 			try
 			{
