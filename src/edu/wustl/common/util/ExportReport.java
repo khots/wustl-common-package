@@ -170,18 +170,18 @@ public class ExportReport
 	private void createFile(List columnList) throws SQLException, IOException
 	{
 		CLOB clob;
-		BufferedReader br;
+		BufferedReader bufferReader;
 		if (!columnList.isEmpty())
 		{
 			if (columnList.get(1) instanceof CLOB)
 			{
 				clob = (CLOB) columnList.get(1);
-				br = new BufferedReader(clob.getCharacterStream());
+				bufferReader = new BufferedReader(clob.getCharacterStream());
 			}
 			else
 			{
 				String data = (String) columnList.get(1);
-				br = new BufferedReader(new StringReader(data));
+				bufferReader = new BufferedReader(new StringReader(data));
 			}
 			String mainEntityId = (String) columnList.get(0);
 			String dataFileName = path + Constants.EXPORT_FILE_NAME_START + mainEntityId + ".txt";
@@ -189,7 +189,7 @@ public class ExportReport
 			FileWriter out = new FileWriter(outFile);
 			StringBuffer strOut = new StringBuffer();
 			String aux;
-			while ((aux = br.readLine()) != null)
+			while ((aux = bufferReader.readLine()) != null)
 			{
 				strOut.append(aux);
 				strOut.append(TextConstants.LINE_SEPARATOR);
@@ -356,15 +356,15 @@ public class ExportReport
 	private void putFileToZip(ZipOutputStream out, String fileName) throws IOException
 	{
 		byte[] buf = new byte[Constants.ONE_KILO_BYTES];
-		FileInputStream in = new FileInputStream(fileName);
+		FileInputStream inputReader = new FileInputStream(fileName);
 		out.putNextEntry(new ZipEntry(fileName));
 		int len;
-		while ((len = in.read(buf)) > 0)
+		while ((len = inputReader.read(buf)) > 0)
 		{
 			out.write(buf, 0, len);
 		}
 		out.closeEntry();
-		in.close();
+		inputReader.close();
 	}
 
 	/**
