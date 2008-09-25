@@ -36,12 +36,12 @@ public final class TitliTableMapper
 	/**
 	 * the only instance of this class
 	 */
-	private static TitliTableMapper mapper;
+	private static TitliTableMapper mapper = new TitliTableMapper();
 
 	/**
 	 * the in-memory document constructed from the xml file
 	 */
-	private Document document;
+	private Document document=null;
 
 	/**
 	 * the private constructor for singleton behaviour
@@ -53,41 +53,46 @@ public final class TitliTableMapper
 		InputStream inputStream = Thread.currentThread().getContextClassLoader()
 								.getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
 		DocumentBuilder builder = null;
-		try
-		{
 			try
 			{
+
 				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				document = builder.parse(inputStream);
 			}
-			catch (ParserConfigurationException e)
+			catch(IOException exception)
 			{
-				logger.error("Could not locate a JAXP parser: "+TextConstants.TITLI_TABLE_MAPPING_FILE,e);
+				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
 			}
-			catch (SAXException e)
+			catch (ParserConfigurationException exception)
 			{
-				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,e);
+				logger.error("Could not locate a JAXP parser:"+TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
+			}
+			catch (SAXException exception)
+			{
+				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
 			}
 			finally
 			{
-				inputStream.close();
+				try
+				{
+					inputStream.close();
+				}
+				catch (IOException e)
+				{
+					logger.error("Exception in TitliTableMapper ",e);
+				}
 			}
-		}
-		catch (IOException e)
-		{
-			logger.error("Exception in TitliTableMapper ",e);
-		}
 	}
 
 	/**
 	 * get the only instance of this class
 	 * @return the only instance of this class
 	 */
-	public static TitliTableMapper getInstance()
+	public static TitliTableMapper getInstance()throws TitliException
 	{
-		if (mapper == null)
+		if(null==mapper.document)
 		{
-			mapper = new TitliTableMapper();
+			throw new TitliException("Can not create instance, error in ");
 		}
 		return mapper;
 	}
@@ -102,16 +107,12 @@ public final class TitliTableMapper
 	{
 		String label = tableName.toString();
 		Element root =document.getDocumentElement();
-		if (root == null)
-		{
-			throw new TitliException("Tilti table mapping file can not be read:"+root);
-		}
 		NodeList nodeList = root.getElementsByTagName("mapping");
 		int length = nodeList.getLength();
 		for (int i = 0; i < length; i++)
 		{
 			Element element = (Element) (nodeList.item(i));
-			if (new Name(element.getAttribute("table")).equals(tableName))
+			if (element.getAttribute("table").trim().equals(label))
 			{
 				label = element.getAttribute("label");
 				break;
