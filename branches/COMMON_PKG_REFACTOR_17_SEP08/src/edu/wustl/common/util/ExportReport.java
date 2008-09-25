@@ -30,9 +30,9 @@ import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * This class for creating a file with a given list of data.
+ * This class is for creating a file with a given list of data.
  * It creates the file according to delimeter specified.
- * For eg: if comma is the delimter specified then a CSV file is created. 
+ * For eg: if comma is the delimiter specified then a CSV file is created. 
  * @author Poornima Govindrao
  * @author deepti_shelar
  * @author Supriya Dankh
@@ -49,7 +49,6 @@ public class ExportReport
 	private static org.apache.log4j.Logger logger = Logger.getLogger(ExportReport.class);
 
 	/**
-	 * 
 	 * @param fileName
 	 * @throws IOException
 	 */
@@ -61,9 +60,8 @@ public class ExportReport
 	/**
 	 * This method creates the file according to delimeter specified, without any indentation
 	 * for the any row and no blank lines are inserted before start of values.
-	 * 
-	 * @param values
-	 * @param delimiter
+	 * @param values List
+	 * @param delimiter delimiter
 	 * @throws IOException
 	 */
 	public void writeData(List values, String delimiter) throws IOException
@@ -88,7 +86,7 @@ public class ExportReport
 	}
 
 	/**
-	 * 
+	 * This method writes data of parameters passed to zip file.
 	 * @param values
 	 * @param delimiter
 	 * @param mainEntityIdsList
@@ -105,7 +103,7 @@ public class ExportReport
 	 * The file is according to delimeter specified.
 	 * 
 	 * @param values values list. It is List of List. 
-	 * @param delimiter delimiter used for separting individaul fields.
+	 * @param delimiter delimiter used for separating individual fields.
 	 * @param noblankLines No of blank lines added before values
 	 * @param columnIndent No columns that will be left blank for values
 	 * @param mainEntityIdsList list of main entity ids : required in case of file exports.
@@ -163,7 +161,8 @@ public class ExportReport
 	}
 
 	/**
-	 * @param columnList
+	 * write the column details in created file.
+	 * @param columnList containing list of columns.
 	 * @throws SQLException
 	 * @throws IOException
 	 */
@@ -268,7 +267,6 @@ public class ExportReport
 
 	/**
 	 * This method creates the file according to delimeter specified.
-	 * 
 	 * @param values values list. It is List of List. 
 	 * @param delimiter delimiter used for separting individaul fields.
 	 * @param noblankLines No of blank lines added before values
@@ -314,8 +312,8 @@ public class ExportReport
 	}
 
 	/**
-	 * Creates a zip file , contains a csv and other txt files
-	 * @param files files to be compressed
+	 * Creates a zip file , contains a csv and other text files
+	 * @param files files to be compressed.
 	 */
 	public void createZip(List<String> files)
 	{
@@ -346,10 +344,11 @@ public class ExportReport
 	}
 
 	/**
+	 * Zip the file passed as parameter. 
 	 * @param buf
 	 * @param out
 	 * @param fileName
-	 * @return
+	 * @return void
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -368,6 +367,7 @@ public class ExportReport
 	}
 
 	/**
+	 * Zip the file passed as parameter.
 	 * @param out
 	 * @param fileName
 	 * @throws FileNotFoundException
@@ -399,7 +399,7 @@ public class ExportReport
 	/**
 	 * Executes sql and returns data list. 
 	 * @param sql
-	 * @return
+	 * @return List containing data list as output.
 	 * @throws DAOException
 	 * @throws ClassNotFoundException
 	 */
