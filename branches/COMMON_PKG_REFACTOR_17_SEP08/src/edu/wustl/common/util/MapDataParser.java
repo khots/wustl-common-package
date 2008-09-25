@@ -8,8 +8,10 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Blob;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -32,13 +34,16 @@ public class MapDataParser
 {
 
 	private static org.apache.log4j.Logger logger = Logger.getLogger(MapDataParser.class);
-	private String packageName = "";
-	private Map bigMap = new HashMap();
-	private Collection dataList = new LinkedHashSet();
+	private String packageName;
+	private Map bigMap;
+	private Collection dataList;
 
 	public MapDataParser(String packageName)
 	{
 		this.packageName = packageName;
+		bigMap = new HashMap();
+		dataList = new LinkedHashSet();
+		
 	}
 
 	private Map<String,String> createMap()
@@ -53,7 +58,7 @@ public class MapDataParser
 		return map;
 	}
 
-	private Object toObject(String str, Class type) throws Exception
+	private Object toObject(String str, Class type) throws ParseException, IOException
 	{
 		Object obj;
 		if (type.equals(String.class))
@@ -104,18 +109,28 @@ public class MapDataParser
 			}
 			else if (type.equals(Blob.class))
 			{
-				File file = new File(str);
-				DataInputStream dis = new DataInputStream(new BufferedInputStream(
-						new FileInputStream(file)));
-
-				byte[] buff = new byte[(int) file.length()];
-				dis.readFully(buff);
-				dis.close();
-				obj=Hibernate.createBlob(buff);
+				obj=getBllobObject(str);
 			}
 		}
 		obj=str;
 		return obj;
+	}
+
+	/**
+	 * @param str
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private Object getBllobObject(String str) throws IOException
+	{
+		File file = new File(str);
+		DataInputStream dis = new DataInputStream(new BufferedInputStream(
+				new FileInputStream(file)));
+
+		byte[] buff = new byte[(int) file.length()];
+		dis.readFully(buff);
+		dis.close();
+		return Hibernate.createBlob(buff);
 	}
 
 	private Method findMethod(Class objClass, String methodName) throws Exception
@@ -142,7 +157,8 @@ public class MapDataParser
 		if (tokenCount > 1)
 		{
 			String className = tokenizer.nextToken();
-			String mapKey = new StringBuffer(parentKey).append('-').append(str.substring(0, str.indexOf('_'))).toString();
+			String mapKey = new StringBuffer(parentKey).append('-').append(str.substring(0, str.indexOf('_')))
+									.toString();
 			Object obj = parseClassAndGetInstance(parentObj, className, mapKey);
 
 			if (tokenCount == 2)
@@ -355,7 +371,6 @@ public class MapDataParser
 							id = first + ":" + outer + third + ":" + i + fourth;
 							mapId = first + ":" + outer + third + ":" + innerCount + fourth;
 						}
-
 					}
 					else
 					{
