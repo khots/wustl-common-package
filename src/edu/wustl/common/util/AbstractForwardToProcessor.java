@@ -16,7 +16,7 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
 
 /**
- * AbstractForwardToProcessor populates data required for ForwardTo activity
+ * This method populates data required for ForwardTo activity
  * @author Krunal Thakkar
  */
 public abstract class AbstractForwardToProcessor

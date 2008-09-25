@@ -19,7 +19,11 @@ public class HibernateUtility
 {
 
 	public static final String GET_PARAMETERIZED_QUERIES_DETAILS = "getParameterizedQueriesDetails";
-
+	/** This method add details of query in a list
+	 * @param queryName
+	 * @param List<Object> values
+	 * @return List containing details of query.
+	 */
 	public static Collection executeHQL(String queryName, List<Object> values)
 			throws HibernateException
 	{
@@ -34,8 +38,8 @@ public class HibernateUtility
 				{
 					Object value = values.get(counter);
 					String objectType = value.getClass().getName();
-					String onlyClassName = objectType.substring(objectType.lastIndexOf(".") + 1,
-							objectType.length());
+					String onlyClassName = objectType.substring(objectType.lastIndexOf(".") 
+							+ 1,objectType.length());
 					if (onlyClassName.equals("String"))
 					{
 						query.setString(counter, (String) value);
@@ -58,7 +62,10 @@ public class HibernateUtility
 			DBUtil.closeSession();
 		}
 	}
-
+	/** 
+	 * Return the output of execution of query.
+	 * @param queryName
+	 */
 	public static Collection executeHQL(String queryName) throws HibernateException
 	{
 		return executeHQL(queryName, null);
