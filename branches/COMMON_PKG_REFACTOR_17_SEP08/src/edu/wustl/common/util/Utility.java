@@ -9,6 +9,7 @@ package edu.wustl.common.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,6 +48,7 @@ import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
@@ -60,6 +62,10 @@ public class Utility
 {
 
 	/**
+	 * logger -Generic Logger
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(Utility.class);
+	/**
 	 * Parses the string format of date in the given format and returns the Data object.
 	 * @param date the string containing date.
 	 * @param pattern the pattern in which the date is present.
@@ -68,29 +74,25 @@ public class Utility
 	 */
 	public static Date parseDate(String date, String pattern) throws ParseException
 	{
-		if (date != null && !date.trim().equals(""))
+		Date dateObj=null;
+		if (date != null && !date.trim().equals(TextConstants.EMPTY_STRING))
 		{
 			try
 			{
 				SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-				Date dateObj = dateFormat.parse(date);
-				return dateObj;
+				dateObj = dateFormat.parse(date);
 			}
-			catch (Exception e)
+			catch (ParseException e)
 			{
-				/* Bug id: 4205
-				patch id: 4205_1*/
-				if (pattern == null || pattern.equals(""))
+				if (pattern == null || TextConstants.EMPTY_STRING.equals(pattern))
 				{
-					pattern = Constants.DATE_PATTERN_MM_DD_YYYY;
+					throw new ParseException( new StringBuffer("Date '")
+					.append(date).append("' is not in format of ")
+					.append(Constants.DATE_PATTERN_MM_DD_YYYY).toString(), 0);
 				}
-				throw new ParseException("Date '" + date + "' is not in format of " + pattern, 0);
 			}
 		}
-		else
-		{
-			return null;
-		}
+		return dateObj;
 	}
 
 	/**
@@ -166,7 +168,7 @@ public class Utility
 		}
 		catch (Exception exp)
 		{
-			Logger.out.error("Utility.datePattern() : exp : " + exp);
+			logger.error("No pattern for date:" +strDate,exp);
 		}
 		/*if(dtSep.trim().length()>0)
 		    datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";*/
@@ -194,13 +196,11 @@ public class Utility
 		}
 		catch(Exception exp)
 		{
-			Logger.out.error("Utility.datePattern() : exp : " + exp);
+			logger.error("Utility.datePattern() : exp : " + exp);
 		}
 		if(dtSep.trim().length()>0)
 		        datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
 		}*/
-
-		Logger.out.debug("datePattern returned : " + datePattern);
 		return datePattern;
 	}
 
@@ -242,33 +242,39 @@ public class Utility
 
 		//create the setter method for the attribute.
 		String methodName = Utility.createAccessorMethodName(attrName, true);
-		Class objClass = obj.getClass();
-		Method method = findMethod(objClass, methodName);
-		if (attrValue == null)
+		Method method = findMethod(obj.getClass(), methodName);
+		Object object=attrValue;
+		if (object == null)
 		{
-			attrValue = method.getParameterTypes()[0].newInstance();
+			object = method.getParameterTypes()[0].newInstance();
 		}
-		Object objArr[] = {attrValue};
+		Object objArr[] = {object};
 		//set the newInstance to the setter nethod of parent obj
 		method.invoke(obj, objArr);
-		return attrValue;
+		return object;
 
 	}
 
 	private static Method findMethod(Class objClass, String methodName) throws Exception
 	{
-		Method method[] = objClass.getMethods();
-		for (int i = 0; i < method.length; i++)
+		Method []methods = objClass.getMethods();
+		Method method=null;
+		for (int i = 0; i < methods.length; i++)
 		{
-			if (method[i].getName().equals(methodName))
-				return method[i];
+			if (methods[i].getName().equals(methodName))
+			{
+				method= methods[i];
+				break;
+			}
 		}
-		return null;
+		return method;
 	}
 
-	public static Object getValueFor(Object obj, Method method) throws Exception
+	public static Object getValueFor(Object obj, Method method) 
+				throws IllegalAccessException, InvocationTargetException
 	{
 		return method.invoke(obj, new Object[0]);
+
 	}
 
 	/**
@@ -280,52 +286,52 @@ public class Utility
 		StringBuffer arrayStr = new StringBuffer();
 		for (int i = 0; i < objectIds.length; i++)
 		{
-			arrayStr.append(objectIds[i].toString() + ",");
+			arrayStr.append(objectIds[i].toString()).append(',');
 		}
 		return arrayStr.toString();
 	}
 
-	public static Class getClassObject(String fullyQualifiedClassName)
+	/**
+	 * @param fullClassName Full qualified name
+	 * @return
+	 */
+	public static Class getClassObject(String fullClassName)
 	{
 		Class className = null;
 		try
 		{
-			className = Class.forName(fullyQualifiedClassName);
+			className = Class.forName(fullClassName);
 		}
 		catch (ClassNotFoundException classNotExcp)
 		{
-			return null;
+			logger.warn("Didn't find any class as "+fullClassName,classNotExcp);
 		}
 
 		return className;
 	}
 
 	/**
-	 * Changes the format of the string compatible to Grid Format, 
+	 * Changes the format of the string compatible to Grid Format,
 	 * removing escape characters and special characters from the string
 	 * @param obj - Unformatted obj to be printed in Grid Format
 	 * @return obj - Foratted obj to print in Grid Format
 	 */
 	public static Object toGridFormat(Object obj)
 	{
+		Object retObj=obj;
 		if (obj instanceof String)
 		{
-			String objString = (String) obj;
 			StringBuffer tokenedString = new StringBuffer();
-
-			StringTokenizer tokenString = new StringTokenizer(objString, "\n\r\f");
-
+			StringTokenizer tokenString = new StringTokenizer((String) obj, "\n\r\f");
 			while (tokenString.hasMoreTokens())
 			{
-				tokenedString.append(tokenString.nextToken() + " ");
+				tokenedString.append(tokenString.nextToken()).append(' ');
 			}
-
 			String gridFormattedStr = new String(tokenedString);
-
-			obj = gridFormattedStr.replaceAll("\"", "\\\\\"");
+			retObj = gridFormattedStr.replaceAll("\"", "\\\\\"");
 		}
 
-		return obj;
+		return retObj;
 	}
 
 	public static boolean isNull(Object obj)
@@ -387,7 +393,7 @@ public class Utility
 		String firstChar = (attributeName.charAt(0) + "").toLowerCase();
 		attributeName = firstChar + attributeName.substring(1);
 
-		Logger.out.debug("attributeName <" + attributeName + ">");
+		logger.debug("attributeName <" + attributeName + ">");
 
 		return attributeName;
 	}
@@ -479,16 +485,16 @@ public class Utility
 		objClassName = objClassName.substring((objClassName.lastIndexOf(".") + 1), (objClassName
 				.length()));
 
-		Logger.out.debug("ClassName in getFormBean()---------->" + objClassName);
+		logger.debug("ClassName in getFormBean()---------->" + objClassName);
 
 		String classNameFirstCharacter = objClassName.substring(0, 1);
 
-		Logger.out.debug("FirstCharacter of ClassName-------------->" + classNameFirstCharacter);
+		logger.debug("FirstCharacter of ClassName-------------->" + classNameFirstCharacter);
 
 		String formBeanName = classNameFirstCharacter.toLowerCase()
 				+ objClassName.substring(1, (objClassName.length()));
 
-		Logger.out.debug("FormBeanName in getFormBean()--------------->" + formBeanName);
+		logger.debug("FormBeanName in getFormBean()--------------->" + formBeanName);
 
 		return formBeanName;
 	}
@@ -531,7 +537,7 @@ public class Utility
 
 	public static Long[] toLongArray(Collection collection)
 	{
-		Logger.out.debug(collection.toArray().getClass().getName());
+		logger.debug(collection.toArray().getClass().getName());
 
 		Long obj[] = new Long[collection.size()];
 
@@ -540,7 +546,7 @@ public class Utility
 		while (it.hasNext())
 		{
 			obj[index] = (Long) it.next();
-			Logger.out.debug("obj[index] " + obj[index].getClass().getName());
+			logger.debug("obj[index] " + obj[index].getClass().getName());
 			index++;
 		}
 		return obj;
@@ -616,7 +622,7 @@ public class Utility
 	 */
 	public static void setApplicationURL(String requestURL)
 	{
-		Logger.out.debug("17-Apr-06 : requestURL : " + requestURL);
+		logger.debug("17-Apr-06 : requestURL : " + requestURL);
 		// Mandar : 17-Apr-06 : 1667 : caTissuecore Application URL is displayed as "/"
 		String ourUrl = "";
 		try
@@ -624,16 +630,16 @@ public class Utility
 			URL aURL = new URL(requestURL);
 			ourUrl = aURL.getProtocol() + "://" + aURL.getAuthority() + aURL.getPath();
 			ourUrl = ourUrl.substring(0, ourUrl.lastIndexOf("/"));
-			Logger.out.debug("Application URL Generated : " + ourUrl);
+			logger.debug("Application URL Generated : " + ourUrl);
 		}
 		catch (MalformedURLException urlExp)
 		{
-			Logger.out.error(urlExp.getMessage(), urlExp);
+			logger.error(urlExp.getMessage(), urlExp);
 		}
 		if (Variables.catissueURL != null && Variables.catissueURL.trim().length() == 0)
 		{
 			Variables.catissueURL = ourUrl;
-			Logger.out.debug("Application URL set: " + Variables.catissueURL);
+			logger.debug("Application URL set: " + Variables.catissueURL);
 		}
 	}//setApplicationURL()
 
@@ -680,7 +686,7 @@ public class Utility
 		}
 		else
 		{
-			Logger.out.debug("Utility.initCap : - String provided is either empty or null" + str);
+			logger.debug("Utility.initCap : - String provided is either empty or null" + str);
 		}
 
 		return retStr;
@@ -698,7 +704,7 @@ public class Utility
 	{
 		String columnLength = toString(new Integer((HibernateMetaData.getColumnWidth(className,
 				attributeName))));
-		Logger.out.debug(className.getName() + " : " + attributeName + " : " + columnLength);
+		logger.debug(className.getName() + " : " + attributeName + " : " + columnLength);
 		return columnLength;
 	}
 
@@ -848,7 +854,7 @@ public class Utility
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e);
+			logger.error(e);
 			Calendar calendar = Calendar.getInstance();
 			return calendar;
 		}
@@ -1008,19 +1014,19 @@ public class Utility
 		}
 		catch (ParserConfigurationException excp)
 		{
-			Logger.out.error(excp.getMessage(), excp);
+			logger.error(excp.getMessage(), excp);
 		}
 		catch (SAXException excp)
 		{
-			Logger.out.error(excp.getMessage(), excp);
+			logger.error(excp.getMessage(), excp);
 		}
 		catch (IOException excp)
 		{
-			Logger.out.error(excp.getMessage(), excp);
+			logger.error(excp.getMessage(), excp);
 		}
 		catch (Exception excp)
 		{
-			Logger.out.error(excp.getMessage(), excp);
+			logger.error(excp.getMessage(), excp);
 		}
 	}
 
