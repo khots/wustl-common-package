@@ -43,13 +43,12 @@ public class TitliInitialiseSearchAction extends Action
 		try
 		{
 			Titli.getInstance();
+			TitliTableMapper.getInstance();
 		}
 		catch (TitliException e)
 		{
 			logger.error("TitliException in InitialiseTitliSearchAction : " + e.getMessage(), e);
 		}
-
-		TitliTableMapper.getInstance();
 		return mapping.findForward(Constants.SUCCESS);
 	}
 }
