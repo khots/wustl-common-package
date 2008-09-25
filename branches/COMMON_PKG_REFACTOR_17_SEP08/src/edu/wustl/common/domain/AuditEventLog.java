@@ -35,7 +35,7 @@ public class AuditEventLog implements java.io.Serializable
 	/**
 	 * collection that contains details of event audit.
 	 */
-	private Collection<AuditEventDetails> auditEventDetailsCollection = new HashSet<AuditEventDetails>();
+	private Collection<AuditEventDetails> auditEventDetailsCollcetion = new HashSet<AuditEventDetails>();
 
 	/**
 	 * get the id.
