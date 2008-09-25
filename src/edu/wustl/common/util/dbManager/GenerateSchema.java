@@ -26,7 +26,9 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
  */
 public class GenerateSchema
 {
-
+	/**
+	 * Configuring the properties file.
+	 */
 	public static void main(String[] args) throws HibernateException, IOException, Exception
 	{
 		boolean isToPrintOnConsole = false;
@@ -45,7 +47,7 @@ public class GenerateSchema
 				isToExecuteOnDB = false;
 			}
 		}
-
+		
 		File file = new File("db.properties");
 		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
 		Properties p = new Properties();
