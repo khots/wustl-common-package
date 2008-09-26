@@ -18,6 +18,11 @@ import edu.wustl.common.exception.AssignDataException;
  */
 public class QueryColumnData extends AbstractDomainObject implements Serializable
 {
+
+	/**
+	 * serialVersionUID serial version UID for serialization
+	 */
+	private static final long serialVersionUID = -4180953341688220631L;
 	/**
 	 * identifier to identify the query.
 	 */
