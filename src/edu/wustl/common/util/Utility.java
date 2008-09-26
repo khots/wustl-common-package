@@ -209,7 +209,9 @@ public class Utility
 		String firstChar = attr.substring(0, 1);
 		String str = "get";
 		if (isSetter)
+		{
 			str = "set";
+		}
 		return str + firstChar.toUpperCase() + attr.substring(1);
 	}
 
@@ -336,10 +338,12 @@ public class Utility
 
 	public static boolean isNull(Object obj)
 	{
+		boolean isNull=false;
 		if (obj == null)
-			return true;
-		else
-			return false;
+		{
+			isNull= true;
+		}
+		return isNull;
 	}
 
 	/**
@@ -371,7 +375,9 @@ public class Utility
 		Object newObjectArr[] = new Object[array.length + 1];
 
 		if (array instanceof String[])
+		{
 			newObjectArr = new String[array.length + 1];
+		}
 
 		for (int i = 0; i < array.length; i++)
 		{
@@ -424,7 +430,7 @@ public class Utility
 	{
 		try
 		{
-			return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf(".") + 1);
+			return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1);
 		}
 		catch (Exception e)
 		{
@@ -439,10 +445,12 @@ public class Utility
 
 	/**
 	 * To Create the attribute name for HQL select part.
-	 * If the  selectColumnName is in format "elements(<attributeName>)" then it will return String as "elments(<className>.<AttributeName>)" 
+	 * If the  selectColumnName is in format "elements(<attributeName>)" then it will return String
+	 * as *  "elments(<className>.<AttributeName>)" 
 	 * else it will return String in format "<className>.<AttributeName>"
 	 * @param className The className
-	 * @param selectColumnName The select column name passed to form HQL. either in format "elements(<attributeName>)" or "<AttributeName>"
+	 * @param selectColumnName The select column name passed to form HQL. either in format
+	 *  "elements(<attributeName>)" or "<AttributeName>"
 	 * @return The Select column name for the HQL.
 	 */
 	public static String createAttributeNameForHQL(String className, String selectColumnName)
@@ -451,7 +459,7 @@ public class Utility
 		// Check whether the select Column start with "elements" & ends with ")" or not
 		if (isColumnNameContainsElements(selectColumnName))
 		{
-			int startIndex = selectColumnName.indexOf("(") + 1;
+			int startIndex = selectColumnName.indexOf('(') + 1;
 			attribute = selectColumnName.substring(0, startIndex) + className + "."
 					+ selectColumnName.substring(startIndex);
 		}
@@ -469,8 +477,8 @@ public class Utility
 	 */
 	public static boolean isColumnNameContainsElements(String columnName)
 	{
-		columnName = columnName.toLowerCase().trim();
-		return columnName.startsWith(ELEMENTS) && columnName.endsWith(")");
+		String colName=columnName.toLowerCase().trim();
+		return colName.startsWith(ELEMENTS) && colName.endsWith(")");
 	}
 
 	/**
@@ -482,7 +490,7 @@ public class Utility
 	{
 		String objClassName = obj.getClass().toString();
 
-		objClassName = objClassName.substring((objClassName.lastIndexOf(".") + 1), (objClassName
+		objClassName = objClassName.substring((objClassName.lastIndexOf('.') + 1), (objClassName
 				.length()));
 
 		logger.debug("ClassName in getFormBean()---------->" + objClassName);
@@ -520,7 +528,9 @@ public class Utility
 	public static String toString(Object obj)
 	{
 		if (obj == null)
+		{
 			return "";
+		}
 
 		return obj.toString();
 	}
@@ -587,7 +597,9 @@ public class Utility
 	{
 		double value = 0;
 		if (obj == null)
+		{
 			return value;
+		}
 		else
 		{
 			Double dblObj = (Double) obj;
@@ -609,9 +621,13 @@ public class Utility
 			val = obj.toString();
 		}
 		if ((val != null && !(val.equals("0"))) && !(val.equals("")))
+		{
 			return true;
+		}
 		else
+		{
 			return false;
+		}
 
 	}
 
@@ -629,7 +645,7 @@ public class Utility
 		{
 			URL aURL = new URL(requestURL);
 			ourUrl = aURL.getProtocol() + "://" + aURL.getAuthority() + aURL.getPath();
-			ourUrl = ourUrl.substring(0, ourUrl.lastIndexOf("/"));
+			ourUrl = ourUrl.substring(0, ourUrl.lastIndexOf('/'));
 			logger.debug("Application URL Generated : " + ourUrl);
 		}
 		catch (MalformedURLException urlExp)
@@ -702,7 +718,7 @@ public class Utility
 	 */
 	public static String getColumnWidth(Class className, String attributeName)
 	{
-		String columnLength = toString(new Integer((HibernateMetaData.getColumnWidth(className,
+		String columnLength = toString(Integer.valueOf((HibernateMetaData.getColumnWidth(className,
 				attributeName))));
 		logger.debug(className.getName() + " : " + attributeName + " : " + columnLength);
 		return columnLength;
@@ -732,17 +748,17 @@ public class Utility
 	public static String removeSpecialCharactersFromString(String str)
 	{
 		String regexExpression = "[\\p{Punct}\\s]";
-		str = str.replaceAll(regexExpression, "");
-		return str;
+		return str.replaceAll(regexExpression, "");
 	}
 
 	/**
-	 * Returns the label for objects name. It compares ascii value of each char for lower or upper case and then forms a capitalized lebel. 
+	 * Returns the label for objects name. It compares ascii value of each char for lower or upper case and 
+	 * then forms a capitalized lebel. 
 	 * eg firstName is converted to First Name
 	 * @param objectName name of the attribute
 	 * @return capitalized label
 	 */
-	static public String getDisplayLabel(String objectName)
+	public static String getDisplayLabel(String objectName)
 	{
 		String attrLabel = "";
 		boolean isPreviousLetterLowerCase = false;
@@ -1009,7 +1025,6 @@ public class Utility
 				}
 
 				privilegeGroupingMap.put(globalListKey, globalPrivilegesList);
-				System.out.println(privilegeGroupingMap.size());
 			}
 		}
 		catch (ParserConfigurationException excp)
@@ -1070,7 +1085,7 @@ public class Utility
 	{
 		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
 		{
-			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, new Integer(identifier
+			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, Integer.valueOf(identifier
 					.toString()));
 			JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 			try
