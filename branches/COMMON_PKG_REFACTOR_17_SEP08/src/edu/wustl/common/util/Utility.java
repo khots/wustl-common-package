@@ -116,8 +116,8 @@ public class Utility
 		boolean result = true;
 		try
 		{
-			Pattern re = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
-			Matcher mat = re.matcher(strDate);
+			Pattern regExp = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
+			Matcher mat = regExp.matcher(strDate);
 			result = mat.matches();
 
 			if (result)
@@ -129,8 +129,8 @@ public class Utility
 			// check for  / separator
 			if (!result)
 			{
-				re = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
-				mat = re.matcher(strDate);
+				regExp = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
+				mat = regExp.matcher(strDate);
 				result = mat.matches();
 				//System.out.println("is Valid Date Pattern : / : "+result);
 				if (result)
@@ -142,8 +142,8 @@ public class Utility
 
 			if (!result)
 			{
-				re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
-				mat = re.matcher(strDate);
+				regExp = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
+				mat = regExp.matcher(strDate);
 				result = mat.matches();
 
 				if (result)
@@ -156,8 +156,8 @@ public class Utility
 			// check for  / separator
 			if (!result)
 			{
-				re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
-				mat = re.matcher(strDate);
+				regExp = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
+				mat = regExp.matcher(strDate);
 				result = mat.matches();
 				if (result)
 				{
@@ -423,18 +423,18 @@ public class Utility
 
 	/**
 	 * Parses the fully qualified classname and returns only the classname.
-	 * @param fullyQualifiedName The fully qualified classname. 
+	 * @param qualifiedName The fully qualified classname. 
 	 * @return The classname.
 	 */
-	public static String parseClassName(String fullyQualifiedName)
+	public static String parseClassName(String qualifiedName)
 	{
 		try
 		{
-			return fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf('.') + 1);
+			return qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
 		}
 		catch (Exception e)
 		{
-			return fullyQualifiedName;
+			return qualifiedName;
 		}
 	}
 
@@ -489,21 +489,10 @@ public class Utility
 	public static String getFormBeanName(Object obj)
 	{
 		String objClassName = obj.getClass().toString();
-
-		objClassName = objClassName.substring((objClassName.lastIndexOf('.') + 1), (objClassName
-				.length()));
-
-		logger.debug("ClassName in getFormBean()---------->" + objClassName);
-
-		String classNameFirstCharacter = objClassName.substring(0, 1);
-
-		logger.debug("FirstCharacter of ClassName-------------->" + classNameFirstCharacter);
-
-		String formBeanName = classNameFirstCharacter.toLowerCase()
+		objClassName = objClassName.substring((objClassName.lastIndexOf('.') + 1),(objClassName.length()));
+		String classNamefstChar = objClassName.substring(0, 1);
+		String formBeanName = classNamefstChar.toLowerCase()
 				+ objClassName.substring(1, (objClassName.length()));
-
-		logger.debug("FormBeanName in getFormBean()--------------->" + formBeanName);
-
 		return formBeanName;
 	}
 
@@ -515,14 +504,14 @@ public class Utility
 	 */
 	public static String parseDateToString(Date date, String pattern)
 	{
-		String d = "";
+		String dateStr = TextConstants.EMPTY_STRING;
 		//TODO Check for null
 		if (date != null)
 		{
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-			d = dateFormat.format(date);
+			dateStr = dateFormat.format(date);
 		}
-		return d;
+		return dateStr;
 	}
 
 	public static String toString(Object obj)
@@ -552,10 +541,10 @@ public class Utility
 		Long obj[] = new Long[collection.size()];
 
 		int index = 0;
-		Iterator it = collection.iterator();
-		while (it.hasNext())
+		Iterator iterator = collection.iterator();
+		while (iterator.hasNext())
 		{
-			obj[index] = (Long) it.next();
+			obj[index] = (Long) iterator.next();
 			logger.debug("obj[index] " + obj[index].getClass().getName());
 			index++;
 		}
@@ -760,8 +749,8 @@ public class Utility
 	 */
 	public static String getDisplayLabel(String objectName)
 	{
-		String attrLabel = "";
-		boolean isPreviousLetterLowerCase = false;
+		StringBuffer attrLabel = new StringBuffer();
+		boolean isPrevLetLCase = false;
 		int len = objectName.length();
 		for (int i = 0; i < len; i++)
 		{
@@ -771,11 +760,11 @@ public class Utility
 			{
 				if (i == 0)
 				{
-					attrLabel = attrLabel + "" + attrChar;
+					attrLabel.append(attrChar);
 				}
 				else
 				{
-					attrLabel = attrLabel + " " + attrChar;
+					attrLabel.append(' ').append(attrChar);
 				}
 				for (int k = i + 1; k < len; k++)
 				{
@@ -783,21 +772,21 @@ public class Utility
 					asciiValue = attrChar;
 					if (asciiValue >= 65 && asciiValue <= 90)
 					{
-						if (isPreviousLetterLowerCase)
+						if (isPrevLetLCase)
 						{
-							attrLabel = attrLabel + " " + attrChar;
-							isPreviousLetterLowerCase = false;
+							attrLabel.append(' ').append(attrChar);
+							isPrevLetLCase = false;
 						}
 						else
 						{
-							attrLabel = attrLabel + attrChar;
+							attrLabel.append(attrChar);
 						}
 						i++;
 					}
 					else
 					{
-						isPreviousLetterLowerCase = true;
-						attrLabel = attrLabel + attrChar;
+						isPrevLetLCase = true;
+						attrLabel.append(attrChar);
 						i++;
 					}
 				}
@@ -807,15 +796,15 @@ public class Utility
 				if (i == 0)
 				{
 					int capitalAsciiValue = asciiValue - 32;
-					attrLabel = attrLabel + (char) capitalAsciiValue;
+					attrLabel.append(capitalAsciiValue);
 				}
 				else
 				{
-					attrLabel = attrLabel + attrChar;
+					attrLabel.append(attrChar);
 				}
 			}
 		}
-		return attrLabel;
+		return attrLabel.toString();
 	}
 
 	/**
@@ -931,8 +920,8 @@ public class Utility
 
 	public static void initializePrivilegesMap()
 	{
-		Map<String, String> privilegeDetailsMap = Variables.privilegeDetailsMap;
-		Map<String, List<NameValueBean>> privilegeGroupingMap = Variables.privilegeGroupingMap;
+		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
+		Map<String, List<NameValueBean>> privGroupMap = Variables.privilegeGroupingMap;
 
 		try
 		{
@@ -963,23 +952,23 @@ public class Utility
 					String key = new String(element.getAttribute("key"));
 					String value = new String(element.getAttribute("value"));
 
-					privilegeDetailsMap.put(key, value);
+					privDetMap.put(key, value);
 				}
 
 				NodeList nodeList1 = root.getElementsByTagName("siteMapping");
 				int length1 = nodeList1.getLength();
 				String siteListKey = "SITE";
-				List<NameValueBean> sitePrivilegesList = new ArrayList<NameValueBean>();
+				List<NameValueBean> sitePrivList = new ArrayList<NameValueBean>();
 
 				for (int counter = 0; counter < length1; counter++)
 				{
 					Element element = (Element) (nodeList1.item(counter));
 					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
 							new String(element.getAttribute("id")));
-					sitePrivilegesList.add(nmv);
+					sitePrivList.add(nmv);
 				}
 
-				privilegeGroupingMap.put(siteListKey, sitePrivilegesList);
+				privGroupMap.put(siteListKey, sitePrivList);
 
 				NodeList nodeList2 = root.getElementsByTagName("collectionProtocolMapping");
 				int length2 = nodeList2.getLength();
@@ -994,37 +983,37 @@ public class Utility
 					cpPrivilegesList.add(nmv);
 				}
 
-				privilegeGroupingMap.put(cpListKey, cpPrivilegesList);
+				privGroupMap.put(cpListKey, cpPrivilegesList);
 
 				NodeList nodeList3 = root.getElementsByTagName("scientistMapping");
 				int length3 = nodeList3.getLength();
 				String scientistListKey = "SCIENTIST";
-				List<NameValueBean> scientistPrivilegesList = new ArrayList<NameValueBean>();
+				List<NameValueBean> sintstPrivList = new ArrayList<NameValueBean>();
 
 				for (int counter = 0; counter < length3; counter++)
 				{
 					Element element = (Element) (nodeList3.item(counter));
 					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
 							new String(element.getAttribute("id")));
-					scientistPrivilegesList.add(nmv);
+					sintstPrivList.add(nmv);
 				}
 
-				privilegeGroupingMap.put(scientistListKey, scientistPrivilegesList);
+				privGroupMap.put(scientistListKey, sintstPrivList);
 
 				NodeList nodeList4 = root.getElementsByTagName("globalMapping");
 				int length4 = nodeList4.getLength();
 				String globalListKey = "GLOBAL";
-				List<NameValueBean> globalPrivilegesList = new ArrayList<NameValueBean>();
+				List<NameValueBean> globalPrivList = new ArrayList<NameValueBean>();
 
 				for (int counter = 0; counter < length4; counter++)
 				{
 					Element element = (Element) (nodeList4.item(counter));
 					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
 							new String(element.getAttribute("id")));
-					globalPrivilegesList.add(nmv);
+					globalPrivList.add(nmv);
 				}
 
-				privilegeGroupingMap.put(globalListKey, globalPrivilegesList);
+				privGroupMap.put(globalListKey, globalPrivList);
 			}
 		}
 		catch (ParserConfigurationException excp)
@@ -1133,9 +1122,9 @@ public class Utility
 	public static int getRecordsPerPage(HttpSession session)
 	{
 		int recordsPerPage;
-		String recordsPerPageSessionValue = (String) session
+		String recPerPageSessVal = (String) session
 				.getAttribute(Constants.RESULTS_PER_PAGE);
-		if (recordsPerPageSessionValue == null)
+		if (recPerPageSessVal == null)
 		{
 			recordsPerPage = Integer.parseInt(XMLPropertyHandler
 					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
@@ -1143,7 +1132,7 @@ public class Utility
 		}
 		else
 		{
-			recordsPerPage = Integer.parseInt(recordsPerPageSessionValue);
+			recordsPerPage = Integer.parseInt(recPerPageSessVal);
 		}
 		return recordsPerPage;
 	}
