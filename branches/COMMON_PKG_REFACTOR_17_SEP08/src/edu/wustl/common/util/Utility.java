@@ -379,10 +379,7 @@ public class Utility
 			newObjectArr = new String[array.length + 1];
 		}
 
-		for (int i = 0; i < array.length; i++)
-		{
-			newObjectArr[i] = array[i];
-		}
+		System.arraycopy(array, 0, newObjectArr, 0, array.length);
 		newObjectArr[newObjectArr.length - 1] = obj;
 		return newObjectArr;
 	}
@@ -398,9 +395,6 @@ public class Utility
 
 		String firstChar = (attributeName.charAt(0) + "").toLowerCase();
 		attributeName = firstChar + attributeName.substring(1);
-
-		logger.debug("attributeName <" + attributeName + ">");
-
 		return attributeName;
 	}
 
@@ -428,14 +422,17 @@ public class Utility
 	 */
 	public static String parseClassName(String qualifiedName)
 	{
+		String className=qualifiedName;
 		try
 		{
-			return qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+			className=qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
 		}
 		catch (Exception e)
 		{
-			return qualifiedName;
+			className=qualifiedName;
+			logger.warn("Not able to parse class name:"+qualifiedName);
 		}
+		return className;
 	}
 
 	/**
@@ -516,12 +513,13 @@ public class Utility
 
 	public static String toString(Object obj)
 	{
-		if (obj == null)
+		String retValue=TextConstants.EMPTY_STRING;
+		if (obj!= null)
 		{
-			return "";
+			retValue=obj.toString();
 		}
 
-		return obj.toString();
+		return retValue;
 	}
 
 	public static String[] getTime(Date date)
@@ -585,16 +583,11 @@ public class Utility
 	public static double toDouble(Object obj)
 	{
 		double value = 0;
-		if (obj == null)
+		if (obj!= null)		
 		{
-			return value;
+			value = ((Double) obj).doubleValue();
 		}
-		else
-		{
-			Double dblObj = (Double) obj;
-			value = dblObj.doubleValue();
-			return value;
-		}
+		return value;
 	}
 
 	/**
@@ -605,19 +598,16 @@ public class Utility
 	{
 		Object obj = map.get(key);
 		String val = null;
+		boolean isPersistedValue=false;
 		if (obj != null)
 		{
 			val = obj.toString();
 		}
 		if ((val != null && !(val.equals("0"))) && !(val.equals("")))
 		{
-			return true;
+			isPersistedValue= true;
 		}
-		else
-		{
-			return false;
-		}
-
+		return isPersistedValue;
 	}
 
 	//	Mandar 17-Apr-06 Bugid : 1667 :- URL is incomplete displays /.
@@ -814,12 +804,12 @@ public class Utility
 	 */
 	public static String getDisplayNameForColumn(AttributeInterface attribute)
 	{
-		String columnDisplayName = "";
+		StringBuffer columnDisplayName = new StringBuffer();
 		String className = parseClassName(attribute.getEntity().getName());
 		className = getDisplayLabel(className);
 		String attributeLabel = getDisplayLabel(attribute.getName());
-		columnDisplayName = className + " : " + attributeLabel;
-		return columnDisplayName;
+		columnDisplayName.append(className).append(" : ").append(attributeLabel);
+		return columnDisplayName.toString();
 	}
 
 	private static String pattern = "MM-dd-yyyy";
@@ -849,34 +839,25 @@ public class Utility
 
 	private static Calendar getCalendar(String date, String pattern)
 	{
+		Calendar calendar;
 		try
 		{
 			SimpleDateFormat dateformat = new SimpleDateFormat(pattern);
 			Date givenDate = dateformat.parse(date);
-			Calendar calendar = Calendar.getInstance();
+			calendar = Calendar.getInstance();
 			calendar.setTime(givenDate);
-			return calendar;
 		}
-		catch (Exception e)
+		catch (ParseException exception)
 		{
-			logger.error(e);
-			Calendar calendar = Calendar.getInstance();
-			return calendar;
+			logger.error("exception in getCalendar: date="+date,exception);
+			calendar = Calendar.getInstance();
 		}
+		return calendar;
 	}
 
-	//	public static void main(String[] args) {
-	//	
-	//		System.out.println(getDisplayLabelForUnderscore("Read Only"));
-	//	}
 	public static String getDisplayLabelForUnderscore(String objectName)
-	{
-		/*if(objectName.equals("PHI_ACCESS"))
-		{
-			return ApplicationProperties.getValue(objectName);
-		}*/
-
-		String attrLabel = "";
+	{		
+		StringBuffer attrLabel = new StringBuffer();
 		int len = objectName.length();
 		for (int i = 0; i < len; i++)
 		{
@@ -887,12 +868,12 @@ public class Utility
 			{
 				if (i == 0 || objectName.charAt(i - 1) == 95 || objectName.charAt(i - 1) == 32)
 				{
-					attrLabel = attrLabel + "" + attrChar;
+					attrLabel.append(attrChar);
 				}
 				else
 				{
 					asciiValueCurrent = asciiValueCurrent + 32;
-					attrLabel = attrLabel + "" + (char) asciiValueCurrent;
+					attrLabel.append(asciiValueCurrent);
 				}
 			}
 			else if (asciiValueCurrent == 95)
@@ -903,15 +884,15 @@ public class Utility
 				}
 				else
 				{
-					attrLabel = attrLabel + " ";
+					attrLabel.append(' ');
 				}
 			}
 			else
 			{
-				attrLabel = attrLabel + "" + attrChar;
+				attrLabel.append(attrChar);
 			}
 		}
-		return attrLabel;
+		return attrLabel.toString();
 	}
 
 	/**
@@ -949,8 +930,8 @@ public class Utility
 				for (int counter = 0; counter < length; counter++)
 				{
 					Element element = (Element) (nodeList.item(counter));
-					String key = new String(element.getAttribute("key"));
-					String value = new String(element.getAttribute("value"));
+					String key = element.getAttribute("key");
+					String value = element.getAttribute("value");
 
 					privDetMap.put(key, value);
 				}
@@ -959,12 +940,12 @@ public class Utility
 				int length1 = nodeList1.getLength();
 				String siteListKey = "SITE";
 				List<NameValueBean> sitePrivList = new ArrayList<NameValueBean>();
-
+				NameValueBean nmv = new NameValueBean();
 				for (int counter = 0; counter < length1; counter++)
 				{
 					Element element = (Element) (nodeList1.item(counter));
-					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
-							new String(element.getAttribute("id")));
+					nmv.setName(element.getAttribute("name"));
+					nmv.setValue(element.getAttribute("id"));
 					sitePrivList.add(nmv);
 				}
 
@@ -974,12 +955,12 @@ public class Utility
 				int length2 = nodeList2.getLength();
 				String cpListKey = "CP";
 				List<NameValueBean> cpPrivilegesList = new ArrayList<NameValueBean>();
-
+				nmv = new NameValueBean();	
 				for (int counter = 0; counter < length2; counter++)
 				{
 					Element element = (Element) (nodeList2.item(counter));
-					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
-							new String(element.getAttribute("id")));
+					nmv.setName(element.getAttribute("name"));
+					nmv.setValue(element.getAttribute("id"));
 					cpPrivilegesList.add(nmv);
 				}
 
@@ -989,12 +970,12 @@ public class Utility
 				int length3 = nodeList3.getLength();
 				String scientistListKey = "SCIENTIST";
 				List<NameValueBean> sintstPrivList = new ArrayList<NameValueBean>();
-
+				nmv = new NameValueBean();
 				for (int counter = 0; counter < length3; counter++)
 				{
 					Element element = (Element) (nodeList3.item(counter));
-					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
-							new String(element.getAttribute("id")));
+					nmv.setName(element.getAttribute("name"));
+					nmv.setValue(element.getAttribute("id"));
 					sintstPrivList.add(nmv);
 				}
 
@@ -1004,12 +985,12 @@ public class Utility
 				int length4 = nodeList4.getLength();
 				String globalListKey = "GLOBAL";
 				List<NameValueBean> globalPrivList = new ArrayList<NameValueBean>();
-
+				nmv = new NameValueBean();
 				for (int counter = 0; counter < length4; counter++)
 				{
 					Element element = (Element) (nodeList4.item(counter));
-					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")),
-							new String(element.getAttribute("id")));
+					nmv.setName(element.getAttribute("name"));
+					nmv.setValue(element.getAttribute("id"));
 					globalPrivList.add(nmv);
 				}
 
@@ -1070,8 +1051,9 @@ public class Utility
 	}
 
 	public static List getCPIdsList(String objName, Long identifier,
-			SessionDataBean sessionDataBean, List cpIdsList)
+			SessionDataBean sessionDataBean, List<Long> cpIdsList)
 	{
+		List<Long> idList=null;
 		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
 		{
 			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, Integer.valueOf(identifier
@@ -1081,19 +1063,24 @@ public class Utility
 			{
 				jdbcDao.openSession(sessionDataBean);
 
-				List<List> list = null;
+				List<List<Long>> list = null;
 				list = jdbcDao.executeQuery(cpQuery, sessionDataBean, false, null);
 				if (list != null && !list.isEmpty())
 				{
-					for (List list1 : list)
+					for (List<Long> list1 : list)
 					{
 						cpIdsList.add(Long.valueOf(list1.get(0).toString()));
 					}
 				}
+				idList=cpIdsList;
 			}
-			catch (Exception e)
+			catch (DAOException daoException)
 			{
-				return null;
+				logger.debug("DAOException in getCPIdsList");
+			}
+			catch(ClassNotFoundException cnfException)
+			{
+				logger.debug("ClassNotFoundException in getCPIdsList");
 			}
 			finally
 			{
@@ -1103,15 +1090,16 @@ public class Utility
 				}
 				catch (DAOException e)
 				{
-					e.printStackTrace();
+					logger.debug("Not able to close JDBCDAO connection");
 				}
 			}
 		}
 		else
 		{
 			cpIdsList.add(identifier);
+			idList=cpIdsList;
 		}
-		return cpIdsList;
+		return idList;
 	}
 
 	/**
