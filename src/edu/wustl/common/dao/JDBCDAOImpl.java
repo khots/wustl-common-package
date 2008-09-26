@@ -53,7 +53,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	/**
 	 * This method will be used to establish the session with the database.
 	 * Declared in AbstractDAO class.
-	 * 
+	 *
 	 * @throws DAOException
 	 */
 	public void openSession(SessionDataBean sessionDataBean) throws DAOException
@@ -130,8 +130,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * Rollback all the changes after last commit. 
-	 * Declared in AbstractDAO class. 
+	 * Rollback all the changes after last commit.
+	 * Declared in AbstractDAO class.
 	 * @throws DAOException
 	 */
 	public void rollback()
@@ -159,7 +159,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * Returns the ResultSet containing all the rows in the table represented in sourceObjectName. 
+	 * Returns the ResultSet containing all the rows in the table represented in sourceObjectName.
 	 * @param sourceObjectName The table name.
 	 * @return The ResultSet containing all the rows in the table represented in sourceObjectName.
 	 * @throws ClassNotFoundException
@@ -171,11 +171,11 @@ public class JDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * Returns the ResultSet containing all the rows according to the columns specified 
+	 * Returns the ResultSet containing all the rows according to the columns specified
 	 * from the table represented in sourceObjectName.
 	 * @param sourceObjectName The table name.
 	 * @param selectColumnName The column names in select clause.
-	 * @return The ResultSet containing all the rows according to the columns specified 
+	 * @return The ResultSet containing all the rows according to the columns specified
 	 * from the table represented in sourceObjectName.
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
@@ -186,12 +186,12 @@ public class JDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * Returns the ResultSet containing all the rows according to the columns specified 
+	 * Returns the ResultSet containing all the rows according to the columns specified
 	 * from the table represented in sourceObjectName.
 	 * @param sourceObjectName The table name.
 	 * @param selectColumnName The column names in select clause.
 	 * @param onlyDistictRows true if only distict rows should be selected
-	 * @return The ResultSet containing all the rows according to the columns specified 
+	 * @return The ResultSet containing all the rows according to the columns specified
 	 * from the table represented in sourceObjectName.
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
@@ -208,7 +208,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
 	 * @param selectColumnName An array of field names in select clause.
 	 * @param whereColumnName An array of field names in where clause.
-	 * @param whereColumnCondition The comparision condition for the field values. 
+	 * @param whereColumnCondition The comparision condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
 	 * @param onlyDistictRows true if only distict rows should be selected
@@ -286,7 +286,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
 	 * @param selectColumnName An array of field names in select clause.
 	 * @param whereColumnName An array of field names in where clause.
-	 * @param whereColumnCondition The comparision condition for the field values. 
+	 * @param whereColumnCondition The comparision condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
 	 * @param The session object.
@@ -341,7 +341,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		return executeQuery(query,sessionDataBean,isSecureExecute,hasConditionOnIdentifiedField,queryResultObjectDataMap,-1,-1).getResult();
 	}
 
-	
+
 	/**
 	 * @see edu.wustl.common.dao.JDBCDAO#executeQuery(java.lang.String, edu.wustl.common.beans.SessionDataBean, boolean, boolean, java.util.Map, int, int)
 	 */
@@ -374,8 +374,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @param isSecureExecute
 	 * @param hasConditionOnIdentifiedField
 	 * @param queryResultObjectDataMap
-	 * @param startIndex The offset value, from which the result will be returned. 
-	 * 		This will be used for pagination purpose, 
+	 * @param startIndex The offset value, from which the result will be returned.
+	 * 		This will be used for pagination purpose,
 	 * @param noOfRecords
 	 * @return
 	 * @throws DAOException
@@ -422,7 +422,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			// Date sqlDate = new Date(date.getTime());
 
 			//Logger.out.debug("Column date value: " + date);
-			if (value.toString().equals("") == false)
+			if (value != null && value.toString().equals("") == false)
 			{
 				//Logger.out.debug("Return true: " + value);
 				return t;
@@ -435,14 +435,14 @@ public class JDBCDAOImpl implements JDBCDAO
 		return null;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
 	 */
 	public void insert(String tableName, List columnValues) throws DAOException, SQLException{
 		insert(tableName,columnValues,null);
 	}
-	
+
 	/**
 	 * @param tableName
 	 * @param columnValues
@@ -460,11 +460,11 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Make a list of Date columns
 		List dateColumns = new ArrayList();
 		List numberColumns = new ArrayList();
-		
+
 		//added by Kunal
 		List<String> columnNames_t;
 		if(columnNames!=null && columnNames.length > 0){
-			columnNames_t = columnNames[0];			
+			columnNames_t = columnNames[0];
 		}
 		else
 		{
@@ -474,8 +474,8 @@ public class JDBCDAOImpl implements JDBCDAO
 				columnNames_t.add(metaData.getColumnName(i));
 			}
 		}
-		 
-		
+
+
 		 /** Name : Aarti Sharma
 		 * Reviewer: Prafull Kadam
 		 * Bug ID: 4126
@@ -485,7 +485,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		 * Tinyint datatype is used as a replacement for boolean in MySQL.
 		 */
 		List tinyIntColumns = new ArrayList();
-				
+
 		for (int i = 1; i <= metaData.getColumnCount(); i++)
 		{
 			String type = metaData.getColumnTypeName(i);
@@ -495,13 +495,13 @@ public class JDBCDAOImpl implements JDBCDAO
 				numberColumns.add(new Integer(i));
 			if (type.equals("TINYINT"))
 				tinyIntColumns.add(new Integer(i));
-			
+
 		}
 
 		resultSet.close();
 		statement.close();
 		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + "(");
-		
+
 		Iterator<String> columnIterator = columnNames_t.iterator();
 		while(columnIterator.hasNext()){
 			query.append(columnIterator.next());
@@ -511,12 +511,12 @@ public class JDBCDAOImpl implements JDBCDAO
 				query.append(") values(");
 			}
 		}
-		
-		
-		
+
+
+
 		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
 		//Changed implementation with column names
-		
+
 		int i;
 
 		Iterator it = columnValues.iterator();
@@ -543,7 +543,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				 * Please refer bug 3576
 				 */
 
-				if (dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+				if (obj != null && dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
 				{
 					java.util.Date date = null;
 					try {
@@ -561,12 +561,12 @@ public class JDBCDAOImpl implements JDBCDAO
 				 * See also: 4126_1
 				 * Desciption: If the value of the column is true set 1 in the statement else set 0.
 				 * This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-				 * If this is not done then all values will be set as 0 
+				 * If this is not done then all values will be set as 0
 				 * irrespective of whether the value is true or false.
 				 */
 				else if (tinyIntColumns.contains(new Integer(i + 1)))
 				{
-					if(obj.equals("true") || obj.equals("TRUE"))
+					if(obj!= null && obj.equals("true") || obj.equals("TRUE"))
 					{
 						stmt.setObject(i+1, 1);
 					}
@@ -585,7 +585,7 @@ public class JDBCDAOImpl implements JDBCDAO
 					}
 					else
 					{
-						if (numberColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+						if (obj != null && numberColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
 						{
 							stmt.setObject(i + 1, new Integer(-1));
 						}
@@ -616,7 +616,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			}
 		}
 	}
-	
+
 	/**
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.AbstractDAO#update(java.lang.Object, SessionDataBean, boolean, boolean, boolean)
@@ -788,6 +788,6 @@ public class JDBCDAOImpl implements JDBCDAO
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
+
 }
