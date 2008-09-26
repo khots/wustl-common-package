@@ -362,9 +362,11 @@ public class Utility
 		}
 		catch (InstantiationException instExp)
 		{
+			logger.debug("Can not create instance of class:"+className,instExp);
 		}
 		catch (IllegalAccessException illAccExp)
 		{
+			logger.debug("Can not create instance of class:"+className,illAccExp);
 		}
 
 		return object;
@@ -903,30 +905,19 @@ public class Utility
 	{
 		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
 		Map<String, List<NameValueBean>> privGroupMap = Variables.privilegeGroupingMap;
-
 		try
 		{
 			InputStream inputXmlFile = Utility.class.getClassLoader().getResourceAsStream(
-					"PermissionMapDetails.xml");
-
+				TextConstants.PERMSN_MAP_DET_FILE);
 			if (inputXmlFile != null)
 			{
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
 				Document doc = builder.parse(inputXmlFile);
-
 				Element root = null;
 				root = doc.getDocumentElement();
-
-				if (root == null)
-				{
-					throw new Exception("file can not be read");
-				}
-
 				NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
-
 				int length = nodeList.getLength();
-
 				for (int counter = 0; counter < length; counter++)
 				{
 					Element element = (Element) (nodeList.item(counter));
@@ -935,86 +926,48 @@ public class Utility
 
 					privDetMap.put(key, value);
 				}
+				privGroupMap.put("SITE", getPriviligesList(root,"siteMapping"));
+				privGroupMap.put("CP", getPriviligesList(root,"collectionProtocolMapping"));
+				privGroupMap.put("SCIENTIST", getPriviligesList(root,"scientistMapping"));
+				privGroupMap.put("GLOBAL", getPriviligesList(root,"globalMapping"));
 
-				NodeList nodeList1 = root.getElementsByTagName("siteMapping");
-				int length1 = nodeList1.getLength();
-				String siteListKey = "SITE";
-				List<NameValueBean> sitePrivList = new ArrayList<NameValueBean>();
-				NameValueBean nmv = new NameValueBean();
-				for (int counter = 0; counter < length1; counter++)
-				{
-					Element element = (Element) (nodeList1.item(counter));
-					nmv.setName(element.getAttribute("name"));
-					nmv.setValue(element.getAttribute("id"));
-					sitePrivList.add(nmv);
-				}
-
-				privGroupMap.put(siteListKey, sitePrivList);
-
-				NodeList nodeList2 = root.getElementsByTagName("collectionProtocolMapping");
-				int length2 = nodeList2.getLength();
-				String cpListKey = "CP";
-				List<NameValueBean> cpPrivilegesList = new ArrayList<NameValueBean>();
-				nmv = new NameValueBean();	
-				for (int counter = 0; counter < length2; counter++)
-				{
-					Element element = (Element) (nodeList2.item(counter));
-					nmv.setName(element.getAttribute("name"));
-					nmv.setValue(element.getAttribute("id"));
-					cpPrivilegesList.add(nmv);
-				}
-
-				privGroupMap.put(cpListKey, cpPrivilegesList);
-
-				NodeList nodeList3 = root.getElementsByTagName("scientistMapping");
-				int length3 = nodeList3.getLength();
-				String scientistListKey = "SCIENTIST";
-				List<NameValueBean> sintstPrivList = new ArrayList<NameValueBean>();
-				nmv = new NameValueBean();
-				for (int counter = 0; counter < length3; counter++)
-				{
-					Element element = (Element) (nodeList3.item(counter));
-					nmv.setName(element.getAttribute("name"));
-					nmv.setValue(element.getAttribute("id"));
-					sintstPrivList.add(nmv);
-				}
-
-				privGroupMap.put(scientistListKey, sintstPrivList);
-
-				NodeList nodeList4 = root.getElementsByTagName("globalMapping");
-				int length4 = nodeList4.getLength();
-				String globalListKey = "GLOBAL";
-				List<NameValueBean> globalPrivList = new ArrayList<NameValueBean>();
-				nmv = new NameValueBean();
-				for (int counter = 0; counter < length4; counter++)
-				{
-					Element element = (Element) (nodeList4.item(counter));
-					nmv.setName(element.getAttribute("name"));
-					nmv.setValue(element.getAttribute("id"));
-					globalPrivList.add(nmv);
-				}
-
-				privGroupMap.put(globalListKey, globalPrivList);
 			}
 		}
 		catch (ParserConfigurationException excp)
 		{
-			logger.error(excp.getMessage(), excp);
+			logger.error("Not able to parse the file"+TextConstants.PERMSN_MAP_DET_FILE, excp);
 		}
 		catch (SAXException excp)
 		{
-			logger.error(excp.getMessage(), excp);
+			logger.error("Not able to parse the file"+TextConstants.PERMSN_MAP_DET_FILE, excp);
 		}
 		catch (IOException excp)
 		{
-			logger.error(excp.getMessage(), excp);
-		}
-		catch (Exception excp)
-		{
-			logger.error(excp.getMessage(), excp);
+			logger.error("Not able to parse the file"+TextConstants.PERMSN_MAP_DET_FILE, excp);
 		}
 	}
 
+	/**
+	 * returns Privilege List
+	 * @param root
+	 * @param tagName
+	 * @return
+	 */
+	private static List<NameValueBean> getPriviligesList(Element root, String tagName)
+	{
+		NodeList nodeList1 = root.getElementsByTagName(tagName);				
+		int length1 = nodeList1.getLength();				
+		List<NameValueBean> sitePrivList = new ArrayList<NameValueBean>();
+		NameValueBean nmv = new NameValueBean();
+		for (int counter = 0; counter < length1; counter++)
+		{
+			Element element = (Element) (nodeList1.item(counter));
+			nmv = new NameValueBean(element.getAttribute("name"),element.getAttribute("id"));
+			sitePrivList.add(nmv);
+		}
+		return sitePrivList;
+	}
+	
 	/**
 	 * For MSR changes
 	 */
