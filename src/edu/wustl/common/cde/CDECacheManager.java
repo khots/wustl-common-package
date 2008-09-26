@@ -19,9 +19,11 @@ import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.cde.xml.XMLPermissibleValueType;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.EmailHandler;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.common.exception.CDEException;
 
 /**
  * @author kapil_kaveeshwar
@@ -37,8 +39,9 @@ public class CDECacheManager
 	 * The refresh() method accepts the XMLCDEs map and iterates through the map. A CDE is downloaded from the server and 
 	 * depending on the XMLCDEs object configuration, it is stored in the database. An email is sent to the administrator regarding the download status
 	 * of the CDEs. The errors if generated are reported to the administrator by email.
+	 * @throws CDEException 
 	 */
-	public void refresh(Map cdeXMLMAP)
+	public void refresh(Map cdeXMLMAP) throws CDEException
 	{
 		Logger.out.info("Initializing CDE Cache Manager");
 		CDEDownloader cdeDownloader = null;
@@ -58,8 +61,7 @@ public class CDECacheManager
 
 			Logger.out.error(exp.getMessage(), exp);
 			//Send the error logs to administrator.
-			sendCDEDownloadStatusEmail(errorLogs);
-			return;
+			throw new CDEException(sendCDEDownloadStatusEmail(errorLogs));
 		}
 
 		Set xmlCDEMapKeySet = cdeXMLMAP.keySet();
@@ -88,7 +90,7 @@ public class CDECacheManager
 		}
 
 		// Send the errors logs while downloading the CDEs to the administrator.
-		sendCDEDownloadStatusEmail(errorLogs);
+		//sendCDEDownloadStatusEmail(errorLogs);
 
 		//Inserting the downloaded CDEs into database.
 		CDEBizLogic cdeBizLogic = new CDEBizLogic();
@@ -118,13 +120,26 @@ public class CDECacheManager
 	 * Sends an email containing the error logs occured while downloading the CDEs to the administrator.
 	 * @param errorLogs The list of errors.
 	 */
-	private void sendCDEDownloadStatusEmail(List errorLogs)
+	private String sendCDEDownloadStatusEmail(List errorLogs)
 	{
+		StringBuffer body = new StringBuffer();
 		if (!errorLogs.isEmpty())
 		{
-			EmailHandler emailHandler = new EmailHandler();
-			emailHandler.sendCDEDownloadStatusEmail(errorLogs);
+			body.append(TextConstants.TWO_LINE_BREAK).append("Dear Administrator,")
+			.append(TextConstants.TWO_LINE_BREAK)
+			.append(ApplicationProperties.getValue("email.cdeDownload.body.start"))
+			.append(TextConstants.TWO_LINE_BREAK);
+
+		Iterator<String> iterator = errorLogs.iterator();
+		while (iterator.hasNext())
+		{
+			body.append(iterator.next())
+					.append(TextConstants.TWO_LINE_BREAK);
 		}
+
+		body.append(ApplicationProperties.getValue("email.catissuecore.team"));;
+		}
+		return body.toString();
 	}
 
 	/**
