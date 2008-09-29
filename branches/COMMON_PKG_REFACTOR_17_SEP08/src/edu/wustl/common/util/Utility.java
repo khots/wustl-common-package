@@ -504,7 +504,6 @@ public class Utility
 	public static String parseDateToString(Date date, String pattern)
 	{
 		String dateStr = TextConstants.EMPTY_STRING;
-		//TODO Check for null
 		if (date != null)
 		{
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -534,18 +533,16 @@ public class Utility
 		return time;
 	}
 
-	public static Long[] toLongArray(Collection collection)
+	public static Long[] toLongArray(Collection<Long> collection)
 	{
-		logger.debug(collection.toArray().getClass().getName());
 
 		Long obj[] = new Long[collection.size()];
 
 		int index = 0;
-		Iterator iterator = collection.iterator();
+		Iterator<Long> iterator = collection.iterator();
 		while (iterator.hasNext())
 		{
 			obj[index] = (Long) iterator.next();
-			logger.debug("obj[index] " + obj[index].getClass().getName());
 			index++;
 		}
 		return obj;
@@ -605,23 +602,20 @@ public class Utility
 		{
 			val = obj.toString();
 		}
-		if ((val != null && !(val.equals("0"))) && !(val.equals("")))
+		if ((val != null && !(TextConstants.STR_ZERO.equals(val))) && !(TextConstants.EMPTY_STRING.equals(val)))
 		{
 			isPersistedValue= true;
 		}
 		return isPersistedValue;
 	}
 
-	//	Mandar 17-Apr-06 Bugid : 1667 :- URL is incomplete displays /.
 	/**
 	 * @param requestURL URL generated from the request.
 	 * Sets the application URL in the Variables class after generating it in proper format.
 	 */
 	public static void setApplicationURL(String requestURL)
 	{
-		logger.debug("17-Apr-06 : requestURL : " + requestURL);
-		// Mandar : 17-Apr-06 : 1667 : caTissuecore Application URL is displayed as "/"
-		String ourUrl = "";
+		String ourUrl = TextConstants.EMPTY_STRING;
 		try
 		{
 			URL aURL = new URL(requestURL);
@@ -638,7 +632,7 @@ public class Utility
 			Variables.catissueURL = ourUrl;
 			logger.debug("Application URL set: " + Variables.catissueURL);
 		}
-	}//setApplicationURL()
+	}
 
 	/**
 	 * @param selectedMenuID Menu that is clicked
@@ -651,7 +645,7 @@ public class Utility
 	public static String setSelectedMenuItem(int selectedMenuID, int currentMenuID,
 			String normalMenuClass, String selectedMenuClass, String menuHoverClass)
 	{
-		String returnStr = "";
+		String returnStr = TextConstants.EMPTY_STRING;
 		if (selectedMenuID == currentMenuID)
 		{
 			returnStr = "<td class=\"" + selectedMenuClass
@@ -674,7 +668,7 @@ public class Utility
 	 */
 	public static String initCap(String str)
 	{
-		String retStr = "";
+		String retStr = TextConstants.EMPTY_STRING;
 		if (str != null && str.trim().length() > 0)
 		{
 			String firstCharacter = str.substring(0, 1);
@@ -699,13 +693,9 @@ public class Utility
 	 */
 	public static String getColumnWidth(Class className, String attributeName)
 	{
-		String columnLength = toString(Integer.valueOf((HibernateMetaData.getColumnWidth(className,
-				attributeName))));
-		logger.debug(className.getName() + " : " + attributeName + " : " + columnLength);
-		return columnLength;
-	}
+		return Integer.toString((HibernateMetaData.getColumnWidth(className,attributeName)));
 
-	//Mandar 17-Apr-06 Bugid : 1667 : end
+	}
 
 	/**
 	 * To sort the Tree nodes based on the comparators overidden by the TreeNodeImpl object.
@@ -748,7 +738,7 @@ public class Utility
 		{
 			char attrChar = objectName.charAt(i);
 			int asciiValue = attrChar;
-			if (asciiValue >= 65 && asciiValue <= 90)
+			if (asciiValue >= Constants.CONST_A && asciiValue <= Constants.CONST_Z)
 			{
 				if (i == 0)
 				{
@@ -762,7 +752,7 @@ public class Utility
 				{
 					attrChar = objectName.charAt(k);
 					asciiValue = attrChar;
-					if (asciiValue >= 65 && asciiValue <= 90)
+					if (asciiValue >= Constants.CONST_A && asciiValue <= Constants.CONST_Z)
 					{
 						if (isPrevLetLCase)
 						{
@@ -787,7 +777,7 @@ public class Utility
 			{
 				if (i == 0)
 				{
-					int capitalAsciiValue = asciiValue - 32;
+					int capitalAsciiValue = asciiValue - Constants.CONST_SPACE;
 					attrLabel.append(capitalAsciiValue);
 				}
 				else
@@ -818,25 +808,17 @@ public class Utility
 
 	public static int getMonth(String date)
 	{
-		int month = 0;
-
-		month = getCalendar(date, pattern).get(Calendar.MONTH);
-		month = month + 1;
-		return month;
+		return  getCalendar(date, pattern).get(Calendar.MONTH) + 1;
 	}
 
 	public static int getDay(String date)
 	{
-		int day = 0;
-		day = getCalendar(date, pattern).get(Calendar.DAY_OF_MONTH);
-		return day;
+		return  getCalendar(date, pattern).get(Calendar.DAY_OF_MONTH);
 	}
 
 	public static int getYear(String date)
 	{
-		int year = 0;
-		year = getCalendar(date, pattern).get(Calendar.YEAR);
-		return year;
+		return getCalendar(date, pattern).get(Calendar.YEAR);
 	}
 
 	private static Calendar getCalendar(String date, String pattern)
@@ -866,19 +848,19 @@ public class Utility
 			char attrChar = objectName.charAt(i);
 			int asciiValueCurrent = attrChar;
 
-			if (asciiValueCurrent >= 65 && asciiValueCurrent <= 90)
+			if (asciiValueCurrent >= Constants.CONST_A && asciiValueCurrent <= Constants.CONST_Z)
 			{
-				if (i == 0 || objectName.charAt(i - 1) == 95 || objectName.charAt(i - 1) == 32)
+				if (i == 0 || objectName.charAt(i - 1) == 95 || objectName.charAt(i - 1) == Constants.CONST_SPACE)
 				{
 					attrLabel.append(attrChar);
 				}
 				else
 				{
-					asciiValueCurrent = asciiValueCurrent + 32;
+					asciiValueCurrent = asciiValueCurrent + Constants.CONST_SPACE;
 					attrLabel.append(asciiValueCurrent);
 				}
 			}
-			else if (asciiValueCurrent == 95)
+			else if (asciiValueCurrent == Constants.CONST_UNDERSCORE)
 			{
 				if (i == 0 || i == len - 1)
 				{
@@ -979,27 +961,11 @@ public class Utility
 		List<NameValueBean> list2 = Variables.privilegeGroupingMap.get("CP");
 		List<NameValueBean> list3 = Variables.privilegeGroupingMap.get("SCIENTIST");
 		List<NameValueBean> list4 = Variables.privilegeGroupingMap.get("GLOBAL");
-
-		for (NameValueBean nmv : list1)
-		{
-			allPrivileges.add(nmv);
-		}
-
-		for (NameValueBean nmv : list2)
-		{
-			allPrivileges.add(nmv);
-		}
-
-		for (NameValueBean nmv : list3)
-		{
-			allPrivileges.add(nmv);
-		}
-
-		for (NameValueBean nmv : list4)
-		{
-			allPrivileges.add(nmv);
-		}
-
+		
+		allPrivileges.addAll(list1);
+		allPrivileges.addAll(list2);
+		allPrivileges.addAll(list3);
+		allPrivileges.addAll(list4);
 		return allPrivileges;
 	}
 
