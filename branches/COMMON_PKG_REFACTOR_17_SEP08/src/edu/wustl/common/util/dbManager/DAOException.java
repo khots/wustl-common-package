@@ -15,7 +15,16 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class DAOException extends Exception
 {
+	/**
+	 * serialVersionUID for serialization
+	 */
+	private static final long serialVersionUID = 8370981231082627671L;
 
+	/**
+	 * logger - generic logger
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOException.class);
+	
 	private Exception wrapException;
 
 	/**
@@ -33,19 +42,19 @@ public class DAOException extends Exception
 		this(message, null);
 	}
 
-	public DAOException(Exception ex)
+	public DAOException(Exception exception)
 	{
-		this("", ex);
+		this("", exception);
 	}
 
-	public DAOException(SMException e)
+	public DAOException(SMException exception)
 	{
-		this("", e);
-		Logger.out.error("Exception in Authorization: " + e.getMessage(), e);
-		String message = "Security Exception: " + e.getMessage();
-		if (e.getCause() != null)
-		{	
-			message = message + " : " + e.getCause().getMessage();
+		this("", exception);
+		logger.error("Exception in Authorization: " + exception.getMessage(), exception);
+		String message = "Security Exception: " + exception.getMessage();
+		if (exception.getCause() != null)
+		{
+			message = message + " : " + exception.getCause().getMessage();
 		this.setMessage(message);
 		}
 	}
@@ -70,7 +79,7 @@ public class DAOException extends Exception
 	/**
 	 * @param wrapException The wrapException to set.
 	 */
-	private void setWrapException(Exception wrapException)
+	public void setWrapException(Exception wrapException)
 	{
 		this.wrapException = wrapException;
 	}

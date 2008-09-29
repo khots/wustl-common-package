@@ -197,6 +197,7 @@ public class ClassRelationshipData
 	 */
 	public boolean equals(Object obj)
 	{
+		boolean isEqual=false;
 		if (obj != null && obj instanceof ClassRelationshipData)
 		{
 			ClassRelationshipData crd = (ClassRelationshipData) obj;
@@ -205,10 +206,10 @@ public class ClassRelationshipData
 					&& this.getRoleAttribute().equals(crd.getRoleAttribute()))
 
 			{
-				return true;
+				isEqual=true;
 			}
 		}
-		return false;
+		return isEqual;
 	}
 
 	/** This function returns the hashCode value for the object which invoked this method
@@ -216,20 +217,20 @@ public class ClassRelationshipData
 	 */
 	public int hashCode()
 	{
-		int hashCode = 0;
+		return getHashValue(className)+getHashValue(relatedClassName)+getHashValue(roleAttribute);
+	}
 
-		if (className != null)
-		{	
-			hashCode += className.hashCode();
-		}	
-		if (relatedClassName != null)
-		{	
-			hashCode += relatedClassName.hashCode();
-		}	
-		if (roleAttribute != null)
-		{	
-			hashCode += roleAttribute.hashCode();
-		}	
-		return hashCode;
+	/**
+	 * @param prop String -property of this class
+	 * @return int -0 if property is null or hash code of that property
+	 */
+	private int getHashValue(String prop)
+	{
+		int hashValue=0;
+		if(null!=prop)
+		{
+			hashValue=prop.hashCode();
+		}
+		return hashValue;
 	}
 }
