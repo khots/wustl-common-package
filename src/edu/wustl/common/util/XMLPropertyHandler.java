@@ -94,7 +94,7 @@ public class XMLPropertyHandler
 	 * @param propertyName
 	 * @param value
 	 * @param child
-	 * @return
+	 * @return name of property.
 	 */
 	private static String extractValue(String propertyName, Node child)
 	{
