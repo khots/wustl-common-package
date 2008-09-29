@@ -33,6 +33,9 @@ import edu.wustl.common.util.logger.Logger;
 public class ApplicationFooterAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationFooterAction.class);
 
 	/**

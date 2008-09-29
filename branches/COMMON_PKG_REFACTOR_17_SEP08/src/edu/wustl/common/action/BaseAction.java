@@ -31,6 +31,9 @@ import edu.wustl.common.util.logger.Logger;
 public abstract class BaseAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(BaseAction.class);
 
 	/**
@@ -62,13 +65,13 @@ public abstract class BaseAction extends Action
 		setAttributeFromParameter(request, Constants.MENU_SELECTED);
 		ActionForward actionForward = executeAction(mapping, form, request, response);
 		//long endTime = System.currentTimeMillis();
-		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() 
+		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName()
 		//+ " : " + (endTime - startTime));
 		return actionForward;
 	}
 
 	/**
-	 * sets the URL of the application in proper format. 
+	 * sets the URL of the application in proper format.
 	 * @param mapping	ActionMapping
 	 * @param form	ActionForm
 	 * @param request	HttpServletRequest
@@ -195,11 +198,11 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
-	 * This method calls the specified method passed as parameter 
+	 * This method calls the specified method passed as parameter.
 	 * This allows us to have different entry points.
 	 * to an action class. To use this method,
-	 * 1. pass the methodname as parameter in some request variable
-	 * 2. in your executeAction/executeSecureAction method, get the parameter passed 
+	 * 1. pass the method name as parameter in some request variable
+	 * 2. in your executeAction/executeSecureAction method, get the parameter passed.
 	 * and pass it to this method.
 	 * 3. the control will directly go to the method name of the class that you specified.
 	 * This way you can reuse the same action multiple times.
@@ -221,7 +224,7 @@ public abstract class BaseAction extends Action
 			Method method = getMethod(methodName, this.getClass());
 			if (method != null)
 			{
-				Object args[] = {mapping, form, request, response};
+				Object[] args = {mapping, form, request, response};
 				actionForward = (ActionForward) method.invoke(this, args);
 			}
 		}
