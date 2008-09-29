@@ -3,9 +3,7 @@ package edu.wustl.common.util.dbManager;
 
 /**This class contains all the relationship related data i.e className, relatedClass,
  * relationshipType.
- * 
  * @author vaishali_khandelwal
- *
  */
 public class ClassRelationshipData
 {
@@ -13,7 +11,6 @@ public class ClassRelationshipData
 	/*
 	 Explanation of variables
 	 consider Following block from Specimen.hbm.xml
-	
 	 <set
 	 name="biohazardCollection" -------------------------> Attribute Name
 	 table="CATISSUE_SPECIMEN_BIOHZ_REL" ----------------> Table Name
@@ -45,11 +42,11 @@ public class ClassRelationshipData
 	 */
 	private String roleAttribute;
 	/**
-	 * specify the type of relation
+	 * specify the type of relation.
 	 */
 	private String relationType;
 	/**
-	 * specify the table
+	 * specify the table.
 	 */
 	private String relationTable;
 	/**
@@ -61,13 +58,24 @@ public class ClassRelationshipData
 	 */
 	private String roleId;
 
-	/* Default Constructor */
+	/**
+	 * Default Constructor.
+	 */
 	public ClassRelationshipData()
 	{
 
 	}
 
-	/* Full Constructor */
+	/**
+	 * Full parameterized Constructor.
+	 * @param className class name.
+	 * @param relatedClassName related class name.
+	 * @param roleAttribute attribute for role.
+	 * @param relationType type of relation.
+	 * @param relationTable table of relation.
+	 * @param keyId key id.
+	 * @param roleId id for role.
+	 */
 	public ClassRelationshipData(String className, String relatedClassName, String roleAttribute,
 			String relationType, String relationTable, String keyId, String roleId)
 	{
@@ -80,7 +88,12 @@ public class ClassRelationshipData
 		this.roleId = roleId;
 	}
 
-	/* Minimal Constructor */
+	/**
+	 * Minimal Constructor.
+	 * @param className class name.
+	 * @param relatedClassName related class name.
+	 * @param roleAttribute attribute for role.
+	 */
 	public ClassRelationshipData(String className, String relatedClassName, String roleAttribute)
 	{
 		this.className = className;
@@ -90,14 +103,16 @@ public class ClassRelationshipData
 	}
 
 	/**
-	 * return the name of class.
+	 * @return the name of class.
 	 */
 	public String getClassName()
 	{
 		return className;
 	}
+
 	/**
 	 * set the name of class.
+	 * @param className class name.
 	 */
 	public void setClassName(String className)
 	{
@@ -105,28 +120,33 @@ public class ClassRelationshipData
 	}
 
 	/**
-	 * return the key id.
+	 * @return the key id.
 	 */
 	public String getKeyId()
 	{
 		return keyId;
 	}
+
 	/**
 	 * set the key id.
+	 * @param keyId key id.
 	 */
 	public void setKeyId(String keyId)
 	{
 		this.keyId = keyId;
 	}
+
 	/**
-	 * Returns the Related Class Name which has relation with class.
+	 * @return the Related Class Name which has relation with class.
 	 */
 	public String getRelatedClassName()
 	{
 		return relatedClassName;
 	}
+
 	/**
 	 * set the Related Class Name which has relation with class.
+	 * @param relatedClassName related class name.
 	 */
 	public void setRelatedClass(String relatedClassName)
 	{
@@ -134,56 +154,67 @@ public class ClassRelationshipData
 	}
 
 	/**
-	 * Returns the table.
+	 * @return the table.
 	 */
 	public String getRelationTable()
 	{
 		return relationTable;
 	}
+
 	/**
 	 * set the table.
+	 * @param relationTable table of relation.
 	 */
 	public void setRelationTable(String relationTable)
 	{
 		this.relationTable = relationTable;
 	}
+
 	/**
-	 * Returns the relation type i.e Many-To-Many or  One-To-Many
+	 * @return the relation type i.e Many-To-Many or  One-To-Many.
 	 */
 	public String getRelationType()
 	{
 		return relationType;
 	}
+
 	/**
-	 * set the relation type i.e Many-To-Many or  One-To-Many
+	 * set the relation type i.e Many-To-Many or  One-To-Many.
+	 * @param relationType type of relation.
 	 */
 	public void setRelationType(String relationType)
 	{
 		this.relationType = relationType;
 	}
+
 	/**
-	 * Returns the attribute role
+	 * @return the attribute role.
 	 */
 	public String getRoleAttribute()
 	{
 		return roleAttribute;
 	}
+
 	/**
-	 * set the attribute role
+	 * set the attribute role.
+	 * @param roleAttribute attribute role.
 	 */
 	public void setRoleAttribute(String roleAttribute)
 	{
 		this.roleAttribute = roleAttribute;
 	}
+
 	/**
-	 * Returns the role Id
+	 * @return the role Id.
 	 */
 	public String getRoleId()
 	{
 		return roleId;
 	}
+
 	/**
-	 * set the role Id
+	 * set the role Id.
+	 * @param roleId id for role.
 	 */
 	public void setRoleId(String roleId)
 	{
@@ -191,9 +222,11 @@ public class ClassRelationshipData
 	}
 
 	/** This function checks weather obj is equal to the obj which invoked this method.
-	 * For equality checking we are using Class Name, Related Class Name and Role Attribute Name because 
+	 * For equality checking we are using Class Name, Related Class Name and Role Attribute Name because
 	 * these three variables will be unique for any relationship.
 	 * @param obj the object for which equality is checked.
+	 * @return boolean
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj)
 	{
@@ -212,14 +245,13 @@ public class ClassRelationshipData
 		return isEqual;
 	}
 
-	/** This function returns the hashCode value for the object which invoked this method
+	/** This function returns the hashCode value for the object which invoked this method.
 	 * 	@return int - hash code value
 	 */
 	public int hashCode()
 	{
 		return getHashValue(className)+getHashValue(relatedClassName)+getHashValue(roleAttribute);
 	}
-
 	/**
 	 * @param prop String -property of this class
 	 * @return int -0 if property is null or hash code of that property
