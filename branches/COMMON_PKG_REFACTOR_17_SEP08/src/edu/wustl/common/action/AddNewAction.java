@@ -33,6 +33,9 @@ import edu.wustl.common.util.logger.Logger;
 public class AddNewAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
 
 	/**
@@ -67,9 +70,9 @@ public class AddNewAction extends Action
 	}
 
 	/**
-	 * Return stack of session data bean that store current session.   
-	 * @param request HttpServletRequest to get  current session. 
-	 * @return Stack<AddNewSessionDataBean>
+	 * Return stack of session data bean that store current session.
+	 * @param request HttpServletRequest to get  current session.
+	 * @return Stack of type AddNewSessionDataBean.
 	 */
 	private Stack<AddNewSessionDataBean> getStackBeanFromSession(HttpServletRequest request)
 	{
@@ -88,7 +91,7 @@ public class AddNewAction extends Action
 
 	/**
 	 * create new session data bean object that contains data for new action.
-	 * @param form ActionForm 
+	 * @param form ActionForm.
 	 * @param request HttpServletRequest to get data required for new action.
 	 * @return AddNewSessionDataBean object.
 	 */
