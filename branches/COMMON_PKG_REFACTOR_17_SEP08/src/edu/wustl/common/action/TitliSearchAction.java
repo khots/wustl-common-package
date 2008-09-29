@@ -24,13 +24,16 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * perform Titli Search
+ * perform Titli Search.
  * @author Juber Patel
  *
  */
 public class TitliSearchAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchAction.class);
 
 	/**
@@ -81,7 +84,7 @@ public class TitliSearchAction extends Action
 	 * set the fetch action to be taken and path.
 	 * @param titliSearchForm TitliSearchForm
 	 * @param sortedResultMap SortedResultMapInterface
-	 * @return the set action and path. 
+	 * @return the set action and path.
 	 * @throws Exception generic exception
 	 */
 	private ActionForward getActionForward(TitliSearchForm titliSearchForm,

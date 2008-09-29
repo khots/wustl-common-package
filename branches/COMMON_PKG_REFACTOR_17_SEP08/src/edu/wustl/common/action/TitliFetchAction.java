@@ -53,18 +53,36 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * show the records from the selected entity
+ * show the records from the selected entity.
  * @author Juber Patel
  *
  */
 public class TitliFetchAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliFetchAction.class);
+	/**
+	 * alias String alias name of column.
+	 */
 	private String alias;
+	/**
+	 * dataList List contains list of data.
+	 */
 	private List dataList;
+	/**
+	 * columnNames List of type String contains name of columns.
+	 */
 	private List<String> columnNames;
+	/**
+	 * id int.
+	 */
 	private int id;
+	/**
+	 * identifierIndex int - identify index of columns.
+	 */
 	private int identifierIndex;
 
 	/**
@@ -101,7 +119,7 @@ public class TitliFetchAction extends Action
 				Constants.OPERATION).append("=").append(Constants.SEARCH).append("&").
 				append(Constants.SYSTEM_IDENTIFIER).append("=").append((String) (row.get(id))).toString();
 				actionForward = getActionForward(Constants.TITLI_SINGLE_RESULT, path);
-			}	
+			}
 			else
 			{
 				request.setAttribute(Constants.PAGEOF, resultGroup.getPageOf());
@@ -138,10 +156,10 @@ public class TitliFetchAction extends Action
 	}
 
 	/**
-	 * Create a collection of SimpleConditionsNode as needed to create SimpleQuery
+	 * Create a collection of SimpleConditionsNode as needed to create SimpleQuery.
 	 * @param resultGroup TitliResultGroup the result group for the selected table
 	 * @param request HttpServletRequest
-	 * @return Collection<SimpleConditionsNode> a collection of SimpleConditionsNode
+	 * @return Collection of type SimpleConditionsNode, a collection of SimpleConditionsNode
 	 * as needed to create SimpleQuery.
 	 */
 	Collection<SimpleConditionsNode> getSimpleConditionsNodeCollecton(TitliResultGroup resultGroup,
@@ -192,8 +210,8 @@ public class TitliFetchAction extends Action
 
 	/**
 	 * Create SimpleQuery from the given collection of SimpleConditionsNode,
-	 * execute it and get the resultant data list
-	 * @param simpleConditionsNodeCollection Collection<SimpleConditionsNode>
+	 * execute it and get the resultant data list.
+	 * @param simpleConditionsNodeCollection Collection of type SimpleConditionsNode.
 	 * @param request the servlet request.
 	 *
 	 */
@@ -287,8 +305,8 @@ public class TitliFetchAction extends Action
 	}
 
 	/**
-	 * @param simpleConditionsNodeCollection Collection<SimpleConditionsNode>
-	 * @return List<String> field List containing all column details.
+	 * @param simpleConditionsNodeCollection Collection of type SimpleConditionsNode.
+	 * @return List of type String field List containing all column details.
 	 */
 	private List<String> getFieldList(
 			Collection<SimpleConditionsNode> simpleConditionsNodeCollection)
@@ -310,7 +328,7 @@ public class TitliFetchAction extends Action
 		return fieldList;
 	}
 	/**
-	 * get the alias for the give table name from appropriate database table
+	 * get the alias for the give table name from appropriate database table.
 	 * @param tableName the table name for which to get the alias
 	 * @param request HttpServletRequest
 	 * @throws DAOException database exception

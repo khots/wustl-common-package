@@ -19,7 +19,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * Initialize Titli Search
+ * Initialize Titli Search.
  *
  * @author Juber Patel
  *
@@ -27,6 +27,9 @@ import edu.wustl.common.util.logger.Logger;
 public class TitliInitialiseSearchAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliInitialiseSearchAction.class);
 
 	/**
