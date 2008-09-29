@@ -35,17 +35,18 @@ public class DAOException extends Exception
 
 	public DAOException(Exception ex)
 	{
-		this("", ex);
+		this(ex.getMessage(),ex);
 	}
-	
-	public DAOException(SMException e)
+
+	/**
+	 * Constructs DAOException object with SMEException object.
+	 * @param exception SMException object.
+	 */
+	public DAOException(final SMException exception)
 	{
-		this("", e);
-		Logger.out.error("Exception in Authorization: " + e.getMessage(), e);
-		String message = "Security Exception: " + e.getMessage();
-		if (e.getCause() != null)
-			message = message + " : " + e.getCause().getMessage();
-		this.setMessage(message);
+		this("Security Exception: " + exception.getMessage(), exception);
+
+//		Logger.out.error("Exception in Authorization: " + e.getMessage(), e);
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class DAOException extends Exception
 	 */
 	public DAOException(String message, Exception wrapException)
 	{
-		super(message);
+		super(message, wrapException);
 		this.wrapException = wrapException;
 	}
 
