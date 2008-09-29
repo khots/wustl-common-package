@@ -29,6 +29,12 @@ public class GenerateSchema
 	/**
 	 * Configuring the properties file.
 	 */
+	/**
+	 * @param args String[] arguements.
+	 * @throws HibernateException exception of Hibernate.
+	 * @throws IOException exception of I/O.
+	 * @throws Exception generic exception.
+	 */
 	public static void main(String[] args) throws HibernateException, IOException, Exception
 	{
 		boolean isToPrintOnConsole = false;
@@ -47,7 +53,7 @@ public class GenerateSchema
 				isToExecuteOnDB = false;
 			}
 		}
-		
+
 		File file = new File("db.properties");
 		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
 		Properties p = new Properties();
