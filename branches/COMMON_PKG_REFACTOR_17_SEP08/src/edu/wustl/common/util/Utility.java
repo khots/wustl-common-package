@@ -850,7 +850,8 @@ public class Utility
 
 			if (asciiValueCurrent >= Constants.CONST_A && asciiValueCurrent <= Constants.CONST_Z)
 			{
-				if (i == 0 || objectName.charAt(i - 1) == 95 || objectName.charAt(i - 1) == Constants.CONST_SPACE)
+				if (i == 0 || objectName.charAt(i - 1) == Constants.CONST_UNDERSCORE || 
+						objectName.charAt(i - 1) == Constants.CONST_SPACE)
 				{
 					attrLabel.append(attrChar);
 				}
