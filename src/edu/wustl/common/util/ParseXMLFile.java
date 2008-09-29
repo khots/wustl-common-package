@@ -32,6 +32,7 @@ import edu.wustl.common.util.global.TextConstants;
  * @author Kaushal Kumar
  * @version 1.0
  */
+
 public class ParseXMLFile
 {
 
@@ -40,14 +41,13 @@ public class ParseXMLFile
 	/**
 	 * XML file (to be parsed) with complete path.
 	 */
-	/*
-		private final String xmlFileName = "conf/dynamicUI.xml";*/
+	/* private final String xmlFileName = "conf/dynamicUI.xml";*/
 
 	/**
 	 * Variables declared by Pratibha
 	 */
 	/**
-	 * non enum data type to contition map
+	 * non enum data type to condition map
 	 */
 	private Map<String, ArrayList<String>> nedtCondMap = new HashMap<String, ArrayList<String>>();
 	/**
@@ -66,7 +66,6 @@ public class ParseXMLFile
 
 	/**
 	 * Constructor for parsing the XML file. 
-	 *
 	 */
 	protected ParseXMLFile(String path) throws CheckedException
 	{
@@ -75,6 +74,11 @@ public class ParseXMLFile
 		readDynamicUIComponents(root);
 	}
 
+	/**
+	 * @param path of the file.
+	 * @return instance of ParseXMLFile.
+	 * @throws CheckedException
+	 */
 	public static ParseXMLFile getInstance(String path) throws CheckedException
 	{
 		if (instance == null)
@@ -85,9 +89,9 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * This method return the Element value of any particular node
-	 * @param elem
-	 * @return string
+	 * This method return the child node of any particular node.
+	 * @param elem node
+	 * @return element value
 	 */
 	private String getElementValue(Node elem)
 	{
@@ -111,34 +115,34 @@ public class ParseXMLFile
 
 	/**
 	 * Method to read dynamic UI component details from xml and populate UI accordingly
-	 * @param node root node to parse
+	 * @param node root node to parse.
 	 */
 	private void readDynamicUIComponents(Node node)
 	{
 
-		// This node list will return two childrens 
+		// This node list will return two children. 
 		// 1. non-enumerated
 		// 2. enumerated
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++)
 		{
 			Node child = children.item(i);
-			// Check if node is non-enumberated
+			// Check if node is non-enumerated
 			if (child.getNodeType() == Node.ELEMENT_NODE)
 			{
 				if (child.getNodeName().equalsIgnoreCase("non-enumerated"))
 				{
-					// Get all its children nodes and store corresponding details into the appropriate data-strutures
+					/* Get all its children nodes and store corresponding details into the 
+					appropriate data-structures.*/
 					NodeList dataTypeNodes = child.getChildNodes();
-					readDataTypeDetailsForAllNode(dataTypeNodes, nedtCondMap,
-							nedtCompMap);
+					readDataTypeDetailsForAllNode(dataTypeNodes, nedtCondMap,nedtCompMap);
 				}
 				else
 				{
-					//	Get all its children nodes and store corresponding details into the appropriate data-strutures
+					/*Get all its children nodes and store corresponding details into the 
+					appropriate data-structures.*/
 					NodeList dataTypeNodes = child.getChildNodes();
-					readDataTypeDetailsForAllNode(dataTypeNodes, edtCondMap,
-							edtompMap);
+					readDataTypeDetailsForAllNode(dataTypeNodes, edtCondMap,edtompMap);
 				}
 			}
 		}
@@ -183,8 +187,7 @@ public class ParseXMLFile
 									{
 										if (displayNodes.item(j).getNodeType() == Node.ELEMENT_NODE)
 										{
-											conditionList
-													.add(getElementValue(displayNodes.item(j)));
+											conditionList.add(getElementValue(displayNodes.item(j)));
 											break;
 										}
 									}
@@ -248,21 +251,38 @@ public class ParseXMLFile
 		return doc;
 	}
 
+	/**
+	 * @param dataTypeString
+	 * @return non enumerated class name.
+	 */
 	public String getNonEnumClassName(String dataTypeString)
 	{
 		return nedtCompMap.get(dataTypeString);
 	}
-
+	
+	/**
+	 * This method returns the enumerated class name.
+	 * @param dataTypeString
+	 * @return enum class name.
+	 */
 	public String getEnumClassName(String dataTypeString)
 	{
 		return edtompMap.get(dataTypeString);
 	}
 
+	/**
+	 * @param dataTypeString
+	 * @return list of enumerated conditions.
+	 */
 	public List<String> getEnumConditionList(String dataTypeString)
 	{
 		return edtCondMap.get(dataTypeString);
 	}
 
+	/**
+	 * @param dataTypeString
+	 * @return list of non enumerated conditions.
+	 */
 	public List<String> getNonEnumConditionList(String dataTypeString)
 	{
 		return nedtCondMap.get(dataTypeString);
