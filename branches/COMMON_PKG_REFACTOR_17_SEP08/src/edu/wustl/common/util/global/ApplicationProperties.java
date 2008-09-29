@@ -28,6 +28,10 @@ public class ApplicationProperties
 
 	}
 
+	/**
+	 * @param theKey
+	 * @return the value of key.
+	 */
 	public static String getValue(String theKey)
 	{
 		String val = "";
@@ -74,7 +78,6 @@ public class ApplicationProperties
 
 	/**
 	 * This method should be used when you want to customize error message with single replacement parameter
-	 * 
 	 * @param theKey - error key
 	 * @param placeHolders - replacement Strings
 	 * @return - complete error message
