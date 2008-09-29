@@ -37,6 +37,9 @@ import edu.wustl.common.util.logger.Logger;
 public class SimpleQueryInterfaceAction extends SecureAction
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceAction.class);
 
 	/**
@@ -79,7 +82,7 @@ public class SimpleQueryInterfaceAction extends SecureAction
 	}
 
 	/**
-	 * set the fields name required for processing the query is in request. 
+	 * set the fields name required for processing the query is in request.
 	 * @param request HttpServletRequest
 	 * @param simpleQueryInterfaceForm SimpleQueryInterfaceForm
 	 * @param queryBizLogic QueryBizLogic

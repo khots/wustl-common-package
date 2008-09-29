@@ -46,6 +46,9 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonSearchAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonSearchAction.class);
 
 	/**
@@ -80,7 +83,7 @@ public class CommonSearchAction extends Action
 			target = openPageInEdit(form, identifier, request);
 		}
 		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() 
+		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName()
 		//+ " : " + (endTime - startTime));
 		return mapping.findForward(target);
 	}
@@ -103,7 +106,7 @@ public class CommonSearchAction extends Action
 	}
 
 	/**
-	 * get the privileged data and display it for edit. 
+	 * get the privileged data and display it for edit.
 	 * @param form ActionForm
 	 * @param identifier Long
 	 * @param request HttpServletRequest

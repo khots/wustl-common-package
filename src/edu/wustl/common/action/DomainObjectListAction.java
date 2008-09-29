@@ -40,6 +40,9 @@ import edu.wustl.common.util.logger.Logger;
 public class DomainObjectListAction extends SecureAction
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DomainObjectListAction.class);
 
 	/**
@@ -96,7 +99,7 @@ public class DomainObjectListAction extends SecureAction
 	}
 
 	/**
-	 * add the domain object name having new and pending  activity status,in a list. 
+	 * add the domain object name having new and pending  activity status,in a list.
 	 * @param abstractForm AbstractActionForm
 	 * @return List
 	 * @throws DAOException  database exception
