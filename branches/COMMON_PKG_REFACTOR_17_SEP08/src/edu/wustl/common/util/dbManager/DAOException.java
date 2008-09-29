@@ -16,37 +16,49 @@ import edu.wustl.common.util.logger.Logger;
 public class DAOException extends Exception
 {
 	/**
-	 * serialVersionUID for serialization
+	 * serialVersionUID for serialization.
 	 */
 	private static final long serialVersionUID = 8370981231082627671L;
 
 	/**
-	 * logger - generic logger
+	 * logger - generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOException.class);
-	
+
+	/**
+	 * wrapException Exception to wrap the exception.
+	 */
 	private Exception wrapException;
 
 	/**
-	 *  message initialised with super.getMessage()
+	 *  message initialised with super.getMessage().
 	 */
 	private String message = super.getMessage();
 
 	/**
-	 *  message which is used as supporting message to the main message
+	 *  message which is used as supporting message to the main message.
 	 */
 	private String supportingMessage;
 
+	/**
+	 * @param message String for DAO exception.
+	 */
 	public DAOException(String message)
 	{
 		this(message, null);
 	}
 
+	/**
+	 * @param exception Exception for DAO exception.
+	 */
 	public DAOException(Exception exception)
 	{
 		this("", exception);
 	}
 
+	/**
+	 * @param exception SMException for security.
+	 */
 	public DAOException(SMException exception)
 	{
 		this("", exception);
@@ -61,6 +73,10 @@ public class DAOException extends Exception
 
 	/**
 	 * @param wrapException The wrapException to set.
+	 */
+	/**
+	 * @param message String message of exception.
+	 * @param wrapException Exception.
 	 */
 	public DAOException(String message, Exception wrapException)
 	{
@@ -85,36 +101,37 @@ public class DAOException extends Exception
 	}
 	/**
 	 * Return the Stack containing details of the exception.
-	 */	
+	 */
 	public void printStackTrace()
 	{
 		super.printStackTrace();
 		if (wrapException != null)
-		{	
+		{
 			wrapException.printStackTrace();
-		}	
+		}
 	}
 	/**
-	 * Return the Stack containing details of the exception.
-	 */	
+	 * @param thePrintWriter PrintWriter Stack containing details of the exception.
+	 */
 	public void printStackTrace(PrintWriter thePrintWriter)
 	{
 		super.printStackTrace(thePrintWriter);
 		if (wrapException != null)
-		{	
+		{
 			wrapException.printStackTrace(thePrintWriter);
-		}	
+		}
 	}
 	/**
-	 * Return the Stack containing details of the exception.
-	 */	
+	 * @param thePrintStream PrintStream Stack containing details of the exception.
+	 * @see java.lang.Throwable#printStackTrace(java.io.PrintStream)
+	 */
 	public void printStackTrace(PrintStream thePrintStream)
 	{
 		super.printStackTrace(thePrintStream);
 		if (wrapException != null)
-		{	
+		{
 			wrapException.printStackTrace(thePrintStream);
-		}	
+		}
 	}
 	/**
 	 * @return the message.
@@ -125,7 +142,7 @@ public class DAOException extends Exception
 	}
 
 	/**
-	 * @param The message to set.
+	 * @param message The message to set.
 	 */
 	public void setMessage(String message)
 	{
@@ -141,7 +158,7 @@ public class DAOException extends Exception
 	}
 
 	/**
-	 * @param supporting message The supporting message to set.
+	 * @param supportingMessage String The supporting message to set.
 	 */
 	public void setSupportingMessage(String supportingMessage)
 	{
