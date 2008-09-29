@@ -18,7 +18,7 @@ import edu.wustl.common.util.global.Variables;
  * </p>
  * Copyright: Copyright (c) year Company: Washington University, School of
  * Medicine, St.Louis.
- * 
+ *
  * @author Kapil Kaveeshwar
  * @version 1.00
  */
@@ -32,9 +32,8 @@ public class DBUtil
 	}
 
 	/**
-	 * Follows the singleton pattern and returns only current opened session.
-	 * 
-	 * @return Returns the current db session.
+	 * @return Session only current opened session.
+	 * @throws HibernateException exception about Hibernate.
 	 */
 	public static Session currentSession() throws HibernateException
 	{
@@ -43,20 +42,25 @@ public class DBUtil
 
 	/**
 	 * Close the currently opened session.
+	 * @throws HibernateException exception of Hibernate.
 	 */
 	public static void closeSession() throws HibernateException
 	{
 		HibernateUtil.closeSession();
 	}
+
 	/**
-	 * Get the connection.
+	 * @return Connection get the connection.
+	 * @throws HibernateException exception of Hibernate.
 	 */
 	public static Connection getConnection() throws HibernateException
 	{
 		return HibernateUtil.getConnection();
 	}
+
 	/**
 	 * Close the connection.
+	 * @throws HibernateException exception of Hibernate.
 	 */
 	public static void closeConnection() throws HibernateException
 	{
@@ -67,11 +71,11 @@ public class DBUtil
 	 * This method opens a new session, loads an object with given class and Id,
 	 * and closes the session. This method should be used only when an object is
 	 * to be opened in separate session.
-	 * 
+	 *
 	 * @param objectClass class of the object
 	 * @param identifier id of the object
 	 * @return object
-	 * @throws HibernateException
+	 * @throws HibernateException exception of Hibernate.
 	 */
 	public static Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
 	{
@@ -86,8 +90,10 @@ public class DBUtil
 			session.close();
 		}
 	}
+
 	/**
-	 * Get the clean session.
+	 * @return Session details of session.
+	 * @throws BizLogicException exception of BizLogic.
 	 */
 	public static Session getCleanSession() throws BizLogicException
 	{
