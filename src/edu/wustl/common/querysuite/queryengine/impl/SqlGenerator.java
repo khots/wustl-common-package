@@ -147,6 +147,7 @@ public class SqlGenerator implements ISqlGenerator {
     // List<Map<Long, Map<AttributeInterface, String>>> columnMapList;
     private int treeNo; // this count represents number of output trees formed.
     private Map<AttributeInterface,String> attributeColumnNameMap = new HashMap<AttributeInterface, String>();
+    private boolean containsCLOBTypeColumn = false;
     /**
      * Default Constructor to instantiate SQL generator object.
      */
@@ -401,9 +402,17 @@ public class SqlGenerator implements ISqlGenerator {
         selectIndex = 0;
         // columnMapList = new
         // ArrayList<Map<Long,Map<AttributeInterface,String>>>();
-        String selectAttribute = "Select distinct ";
+        String selectAttribute = "";
         for (OutputTreeDataNode rootOutputTreeNode : rootOutputTreeNodeList) {
             selectAttribute += getSelectAttributes(rootOutputTreeNode);
+        }
+        //Deepti : added quick fix for bug 6950. Add distinct only when columns do not include CLOB type.
+        if(containsCLOBTypeColumn)
+        { 
+        	selectAttribute = "Select "+ selectAttribute;
+        }else
+        {
+        	selectAttribute = "Select distinct "+ selectAttribute;
         }
         return removeLastComma(selectAttribute);
     }
@@ -441,6 +450,10 @@ public class SqlGenerator implements ISqlGenerator {
                     displayNameForColumn));
             attributeColumnNameMap.put(attribute, columnAliasName);
             selectIndex++;
+            if("file".equalsIgnoreCase(attribute.getDataType()))
+            {
+            	containsCLOBTypeColumn = true;
+            }
         }
         List<OutputTreeDataNode> children = treeNode.getChildren();
         for (OutputTreeDataNode childTreeNode : children) {
