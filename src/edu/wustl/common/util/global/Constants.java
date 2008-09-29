@@ -546,4 +546,8 @@ public class Constants
 	public static final int INITIALIZE = -1;
 	public static final int ONE_KILO_BYTES=1024;
 	public static final int FOUR_KILO_BYTES=4096;
+	public static final int CONST_A=65;
+	public static final int CONST_Z=90;
+	public static final int CONST_SPACE=32;
+	public static final int CONST_UNDERSCORE=32;
 }
