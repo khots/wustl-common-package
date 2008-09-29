@@ -56,6 +56,9 @@ import edu.wustl.common.util.logger.Logger;
 public class SimpleSearchAction extends BaseAction
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceAction.class);
 
 	/**
@@ -91,7 +94,7 @@ public class SimpleSearchAction extends BaseAction
 			map.remove("counter");
 		}
 		if (originalQueryObject == null && originalCounter == null)
-		{	
+		{
 			if (map != null && counter != null)
 			{
 				session.setAttribute(Constants.ORIGINAL_SIMPLE_QUERY_OBJECT, new HashMap(map));
@@ -153,7 +156,7 @@ public class SimpleSearchAction extends BaseAction
 				ApplicationProperties.getValue("app.bizLogicFactory"), "getBizLogic",
 				Constants.QUERY_INTERFACE_ID);
 		int identifierIndex = 0;
-		int recordsPerPage=Utility.getRecordsPerPage(session);		
+		int recordsPerPage=Utility.getRecordsPerPage(session);
 		PagenatedResultData pagenatedResultData = null;
 		boolean isSecureExecute = getSessionData(request).isSecurityRequired();
 		boolean hasConditionOnIdentifiedField;
@@ -174,7 +177,7 @@ public class SimpleSearchAction extends BaseAction
 			hasConditionOnIdentifiedField = query.hasConditionOnIdentifiedField();
 			pagenatedResultData = query.execute(getSessionData(request),isSecureExecute,
 					queryResultObjectDataMap, hasConditionOnIdentifiedField, 0, recordsPerPage);
-		}	
+		}
 		else
 		{
 			isSecureExecute = false;
@@ -213,7 +216,7 @@ public class SimpleSearchAction extends BaseAction
 		{
 			if ((list.size() == Constants.ONE)
 					&& (!Constants.PAGEOF_SIMPLE_QUERY_INTERFACE.equals(simpleQueryInterfaceForm.getPageOf())))
-			{	
+			{
      			return getActionForwardForOneRow(simpleQueryInterfaceForm, identifierIndex, list);
 			}
 			else
@@ -293,8 +296,8 @@ public class SimpleSearchAction extends BaseAction
 	}
 
 	/**
-	 * @param simpleConditionNodeCollection Collection<SimpleConditionsNode>
-	 * @return List<String> containing the details of table,data from the condition specified.
+	 * @param simpleConditionNodeCollection Collection of type SimpleConditionsNode.
+	 * @return List of type String containing the details of table,data from the condition specified.
 	 */
 	private List<String> getFieldList(Collection<SimpleConditionsNode> simpleConditionNodeCollection)
 	{

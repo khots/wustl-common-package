@@ -47,7 +47,7 @@ public abstract class SecureAction extends BaseAction
 	{
 		checkAddNewOperation(request);
 		return executeSecureAction(mapping, form, request, response);
-		
+
 	}
 
 	/**

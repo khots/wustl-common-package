@@ -60,6 +60,9 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonAddEditAction extends Action
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonAddEditAction.class);
 
 	/**
@@ -121,13 +124,13 @@ public class CommonAddEditAction extends Action
 			logger.error(excp.getMessage(), excp);
 		}
 		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() 
+		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName()
 		//+ " : " + (endTime - startTime));
 		return mapping.findForward(target);
 	}
 
 	/**
-	 * return action error in case the user,in request is not authorized. 
+	 * return action error in case the user,in request is not authorized.
 	 * @param request HttpServletRequest
 	 * @param excp UserNotAuthorizedException
 	 * @return ActionError
@@ -428,7 +431,7 @@ public class CommonAddEditAction extends Action
 				String forwardTo = abstractForm.getForwardTo();
 				target = forwardTo;
 			}
-			// Forward the page to edit success in the Advance query search 
+			// Forward the page to edit success in the Advance query search
 			//if the edit is through Object view of Advance Search.
 			String pageOf = (String) request.getParameter(Constants.PAGEOF);
 			if (pageOf != null)
@@ -490,7 +493,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
-	 * This method generates HashMap of data required to be forwarded. 
+	 * This method generates HashMap of data required to be forwarded.
 	 * @param abstractForm	Form submitted
 	 * @param abstractDomain	DomainObject Added/Edited
 	 * @return	HashMap of data required to be forwarded
@@ -509,7 +512,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
-	 * This method generates HashMap of data required to be forwarded if Form is submitted for Print request
+	 * This method generates HashMap of data required to be forwarded if Form is submitted for Print request.
 	 * @param abstractForm	Form submitted
 	 * @param abstractDomain	DomainObject Added/Edited
 	 * @return	HashMap of data required to be forwarded
@@ -528,7 +531,7 @@ public class CommonAddEditAction extends Action
 	}
 
 	/**
-	 * This method will add the success message into ActionMessages object
+	 * This method will add the success message into ActionMessages object.
 	 * @param messages ActionMessages
 	 * @param abstractDomain AbstractDomainObject
 	 * @param addoredit String
