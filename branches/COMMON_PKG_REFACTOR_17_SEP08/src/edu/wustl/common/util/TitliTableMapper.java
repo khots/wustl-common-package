@@ -122,7 +122,7 @@ public final class TitliTableMapper
 	}
 
 	/**
-	 * get the pageOf string corresponding to the specified label
+	 * get the string containing page details corresponding to the specified label.
 	 * @param label the label
 	 * @return the pageOf string
 	 */
@@ -145,7 +145,7 @@ public final class TitliTableMapper
 	}
 
 	/**
-	 * get the table name corrsponding to the specified label
+	 * get the table name corresponding to the specified label.
 	 * @param label the label
 	 * @return the table name
 	 */
