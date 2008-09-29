@@ -5,6 +5,7 @@
 package edu.wustl.common.util;
 
 /**
+ * Interface for storing the roles of users. 
  * @author Srinivasarao_Vassadi
  *
  */
