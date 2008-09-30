@@ -218,15 +218,16 @@ public class JDBCDAOImpl implements JDBCDAO
 	{
 		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		List list = null;
+		String condition;
 
 		try
 		{
 			StringBuffer query = new StringBuffer("SELECT ");
-
+			
 			if (joinCondition == null)
-			{
-				joinCondition = Constants.AND_JOIN_CONDITION;
-			}
+				condition = Constants.AND_JOIN_CONDITION;
+			else 
+				condition = joinCondition;
 
 			//Prepares the select clause of the query.
 			if ((selectColumnName != null) && (selectColumnName.length > 0))
@@ -265,7 +266,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				{
 					query.append(sourceObjectName + "." + whereColumnName[i] + " "
 							+ whereColumnCondition[i] + " " + whereColumnValue[i]);
-					query.append(" " + joinCondition + " ");
+					query.append(" " + condition + " ");
 				}
 				query.append(sourceObjectName + "." + whereColumnName[i] + " "
 						+ whereColumnCondition[i] + " " + whereColumnValue[i]);
@@ -464,11 +465,10 @@ public class JDBCDAOImpl implements JDBCDAO
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(sql.toString());
 		ResultSetMetaData metaData = resultSet.getMetaData();
-		//Make a list of Date columns
+		
 		List dateColumns = new ArrayList();
 		List numberColumns = new ArrayList();
 
-		//added by Kunal
 		List<String> columnNames_t;
 		if (columnNames != null && columnNames.length > 0)
 		{
@@ -483,27 +483,11 @@ public class JDBCDAOImpl implements JDBCDAO
 			}
 		}
 
-		/** Name : Aarti Sharma
-		* Reviewer: Prafull Kadam
-		* Bug ID: 4126
-		* Patch ID: 4126_1
-		* See also: 4126_2
-		* Desciption: Make a list of tinyint columns.
+		/* Desciption: Make a list of tinyint columns.
 		* Tinyint datatype is used as a replacement for boolean in MySQL.
 		*/
 		List tinyIntColumns = new ArrayList();
-
-		for (int i = 1; i <= metaData.getColumnCount(); i++)
-		{
-			String type = metaData.getColumnTypeName(i);
-			if (type.equals("DATE"))
-				dateColumns.add(new Integer(i));
-			if (type.equals("NUMBER"))
-				numberColumns.add(new Integer(i));
-			if (type.equals("TINYINT"))
-				tinyIntColumns.add(new Integer(i));
-
-		}
+		updateColumns(metaData,dateColumns,tinyIntColumns,numberColumns);
 
 		resultSet.close();
 		statement.close();
@@ -525,9 +509,7 @@ public class JDBCDAOImpl implements JDBCDAO
 
 		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
 		//Changed implementation with column names
-
-		int i;
-
+	
 		Iterator it = columnValues.iterator();
 		while (it.hasNext())
 		{
@@ -544,71 +526,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		try
 		{
 			stmt = connection.prepareStatement(query.toString());
-			for (i = 0; i < columnValues.size(); i++)
-			{
-				Object obj = columnValues.get(i);
-				/**
-				 * For Number -1 is used as MarkUp data For Date 1-1-9999 is used as markUp data.
-				 * Please refer bug 3576
-				 */
-
-				if (dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
-				{
-					java.util.Date date = null;
-					try
-					{
-						date = Utility.parseDate("1-1-9999", "mm-dd-yyyy");
-					}
-					catch (ParseException e)
-					{
-						e.printStackTrace();
-					}
-					Date sqlDate = new Date(date.getTime());
-					stmt.setDate(i + 1, sqlDate);
-				}
-				/** Name : Aarti Sharma
-				* Reviewer:  Prafull Kadam
-				* Bug ID: 4126
-				* Patch ID: 4126_2
-				* See also: 4126_1
-				* Desciption: If the value of the column is true set 1 in the statement else set 0.
-				* This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-				* If this is not done then all values will be set as 0 
-				* irrespective of whether the value is true or false.
-				*/
-				else if (tinyIntColumns.contains(new Integer(i + 1)))
-				{
-					if (obj.equals("true") || obj.equals("TRUE"))
-					{
-						stmt.setObject(i + 1, 1);
-					}
-					else
-					{
-						stmt.setObject(i + 1, 0);
-					}
-				}
-				else
-				{
-					Timestamp date = isColumnValueDate(obj);
-					if (date != null)
-					{
-						stmt.setObject(i + 1, date);
-						//Logger.out.debug("t.toString(): " + "---" + date);
-					}
-					else
-					{
-						if (numberColumns.contains(new Integer(i + 1))
-								&& obj.toString().equals("##"))
-						{
-							stmt.setObject(i + 1, new Integer(-1));
-						}
-						else
-						{
-							stmt.setObject(i + 1, obj);
-						}
-					}
-				}
-			}
+			getPreparedStatement(stmt,dateColumns,tinyIntColumns,numberColumns,columnValues);
 			stmt.executeUpdate();
 		}
 		catch (SQLException sqlExp)
@@ -803,6 +721,95 @@ public class JDBCDAOImpl implements JDBCDAO
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private void getPreparedStatement(PreparedStatement stmt,List dateColumns,List tinyIntColumns,List numberColumns,List columnValues) throws SQLException
+	{
+		for (int i = 0; i < columnValues.size(); i++)
+		{
+			Object obj = columnValues.get(i);
+			/**
+			 * For Number -1 is used as MarkUp data For Date 1-1-9999 is used as markUp data.
+			 * Please refer bug 3576
+			 */
+
+			if (dateColumns.contains(Integer.valueOf((i + 1))) && obj.toString().equals("##"))
+			{
+				java.util.Date date = null;
+				try
+				{
+					date = Utility.parseDate("1-1-9999", "mm-dd-yyyy");
+				}
+				catch (ParseException e)
+				{
+					e.printStackTrace();
+				}
+				Date sqlDate = new Date(date.getTime());
+				stmt.setDate(i + 1, sqlDate);
+			}
+			
+			/**
+			* Desciption: If the value of the column is true set 1 in the statement else set 0.
+			* This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
+			* If this is not done then all values will be set as 0 
+			* irrespective of whether the value is true or false.
+			*/
+			else if (tinyIntColumns.contains(Integer.valueOf((i + 1))))
+			{
+				if (obj.equals("true") || obj.equals("TRUE"))
+				{
+					stmt.setObject(i + 1, 1);
+				}
+				else
+				{
+					stmt.setObject(i + 1, 0);
+				}
+			}
+			else
+			{
+				Timestamp date = isColumnValueDate(obj);
+				if (date != null)
+				{
+					stmt.setObject(i + 1, date);
+					//Logger.out.debug("t.toString(): " + "---" + date);
+				}
+				else
+				{
+					if (numberColumns.contains(Integer.valueOf(i + 1))
+							&& obj.toString().equals("##"))
+					{
+						stmt.setObject(i + 1,Integer.valueOf(-1));
+					}
+					else
+					{
+						stmt.setObject(i + 1, obj);
+					}
+				}
+			}
+		}
+	}
+	
+	private void updateColumns(ResultSetMetaData metaData,List dateColumns,List tinyIntColumns,List numberColumns) throws SQLException
+	{
+		
+		for (int i = 1; i <= metaData.getColumnCount(); i++)
+		{
+			String type = metaData.getColumnTypeName(i);
+			if ("DATE".equals(type))
+			{
+				dateColumns.add(Integer.valueOf(i));
+			}	
+			if ("NUMBER".equals(type))
+			{
+				numberColumns.add(Integer.valueOf(i));
+			}
+			if ("TINYINT".equals(type))
+			{	
+				tinyIntColumns.add(Integer.valueOf(i));
+			}
+
+		}
+		
 	}
 
 }
