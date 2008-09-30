@@ -66,8 +66,9 @@ public class InheritanceUtils implements InheritanceUtilsInterface
 	 * @param attribute Attribute for which actual attribute is expected.
 	 * @return The actual attribute
 	 */
-	public AttributeInterface getActualAttribute(AttributeInterface attribute)
+	public AttributeInterface getActualAttribute(AttributeInterface attributeInteface)
 	{
+		AttributeInterface attribute = attributeInteface;
 		EntityInterface parentEntity = attribute.getEntity().getParentEntity();
 		while (parentEntity != null)
 		{

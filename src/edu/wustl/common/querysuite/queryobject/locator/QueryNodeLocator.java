@@ -207,7 +207,6 @@ public class QueryNodeLocator
 			Position position = positionMap2.get(expId);
 			String name = constraints2.getExpression(expId).getQueryEntity()
 					.getDynamicExtensionsEntity().getName();
-			System.out.println(expId + "." + name + ":" + position.getX() + "," + position.getY());
 		}
 	}
 

@@ -2121,16 +2121,16 @@ public class SqlGenerator implements ISqlGenerator
 	private String getSelectForOutputTerms(List<IOutputTerm> terms)
 	{
 		outputTermsColumns = new HashMap<String, IOutputTerm>();
-		StringBuffer s = new StringBuffer();
+		StringBuffer stringBuff = new StringBuffer();
 		for (IOutputTerm term : terms)
 		{
 			String termString = "(" + getTermString(term.getTerm()) + ")";
 			termString = modifyForTimeInterval(termString, term.getTimeInterval());
 			String columnName = COLUMN_NAME + selectIndex++;
-			s.append(termString + " " + columnName + " ,");
+			stringBuff.append(termString + " " + columnName + " ,");
 			outputTermsColumns.put(columnName, term);
 		}
-		return removeLastComma(s.toString());
+		return removeLastComma(stringBuff.toString());
 	}
 
 	private String modifyForTimeInterval(String modifiedStringVal, TimeInterval<?> timeInterval)
