@@ -283,7 +283,7 @@ public abstract class AbstractQueryExecutor
 				//on the record's identified data.
 				//If user does not have privilege don't add the record to results list
 				//bug#1413
-				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
+				if (Constants.SWITCH_SECURITY && hasConditionOnIdentifiedField && isSecureExecute)
 				{
 					boolean hasPrivilegeOnIdentifiedData = cacheManager
 							.hasPrivilegeOnIdentifiedDataForSimpleSearch(sessionDataBean,
@@ -294,7 +294,7 @@ public abstract class AbstractQueryExecutor
 				}
 
 				//Aarti: Checking object level privileges on each record
-				if (Constants.switchSecurity && isSecureExecute)
+				if (Constants.SWITCH_SECURITY && isSecureExecute)
 				{
 					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
 					{
@@ -306,7 +306,7 @@ public abstract class AbstractQueryExecutor
 			}
 			else
 			{
-				if (Constants.switchSecurity && hasConditionOnIdentifiedField && isSecureExecute)
+				if (Constants.SWITCH_SECURITY && hasConditionOnIdentifiedField && isSecureExecute)
 				{
 					boolean hasPrivilegeOnIdentifiedData = cacheManager
 							.hasPrivilegeOnIdentifiedData(sessionDataBean,
@@ -316,7 +316,7 @@ public abstract class AbstractQueryExecutor
 				}
 
 				//Aarti: Checking object level privileges on each record
-				if (Constants.switchSecurity && isSecureExecute)
+				if (Constants.SWITCH_SECURITY && isSecureExecute)
 				{
 					if (sessionDataBean != null & sessionDataBean.isSecurityRequired())
 					{

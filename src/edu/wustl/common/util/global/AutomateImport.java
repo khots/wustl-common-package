@@ -211,7 +211,6 @@ public class AutomateImport
 			url = "jdbc:oracle:thin:@" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER
 					+ ":" + DATABASE_NAME;
 		}
-		System.out.println("URL : " + url);
 		connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
 		return connection;
 	}
@@ -228,7 +227,6 @@ public class AutomateImport
 		Statement stmt;
 		try
 		{
-			System.out.println("Loding File : " + filename + " to table : " + tableName);
 			stmt = conn
 					.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			String query = "LOAD DATA LOCAL INFILE '" + filename + "' INTO TABLE " + tableName
@@ -258,7 +256,6 @@ public class AutomateImport
 			{
 				file.delete();
 			}
-			System.out.println("Exporting table data : " + tableName + " to file : " + fileName);
 			stmt = conn
 					.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			String query = "SELECT * INTO OUTFILE '" + fileName
@@ -300,7 +297,6 @@ public class AutomateImport
 	{
 		String cmd = "sqlldr " + DATABASE_USERNAME + "/" + DATABASE_PASSWORD + "@"
 				+ ORACLE_TNS_NAME + " control=" + fileName;
-		System.out.println("Running script: " + cmd);
 		Runtime rt = Runtime.getRuntime();
 		Process proc = rt.exec(cmd);
 		// any error message?
@@ -312,7 +308,6 @@ public class AutomateImport
 		outputGobbler.start();
 		proc.waitFor();
 
-		System.out.println("Executed control file : " + fileName);
 	}
 
 	/**
@@ -340,8 +335,6 @@ public class AutomateImport
 		bw.write(value + columnName);
 		bw.flush();
 		bw.close();
-		System.out.println(value);
-		System.out.println("Exporting table data : " + tableName + " to file : " + ctlFileName);
 	}
 
 	/**
@@ -415,21 +408,6 @@ class StreamGobbler extends Thread
 		this.is = is;
 	}
 
-	public void run()
-	{
-		try
-		{
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-
-			while ((line = br.readLine()) != null)
-				System.out.println(line);
-		}
-		catch (IOException ioe)
-		{
-			ioe.printStackTrace();
-		}
-	}
+	
 
 }
