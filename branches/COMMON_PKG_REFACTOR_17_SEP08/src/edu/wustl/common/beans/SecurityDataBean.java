@@ -9,7 +9,6 @@
 
 package edu.wustl.common.beans;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,11 +23,11 @@ import java.util.Set;
 public class SecurityDataBean
 {
 
-	String user = new String();
-	Set group = new HashSet();
-	String roleName = new String();
-	String groupName = new String();
-	String protectionGroupName = new String();
+	private String user;
+	private Set group;
+	private String roleName;
+	private String groupName;
+	private String protectionGroupName;
 
 	/**
 	 * @return Returns the protectionGroupName.
