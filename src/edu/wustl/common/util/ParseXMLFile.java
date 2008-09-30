@@ -36,7 +36,6 @@ import edu.wustl.common.util.global.TextConstants;
 public class ParseXMLFile
 {
 
-	private static ParseXMLFile instance = null;
 
 	/**
 	 * XML file (to be parsed) with complete path.
@@ -81,11 +80,7 @@ public class ParseXMLFile
 	 */
 	public static ParseXMLFile getInstance(String path) throws CheckedException
 	{
-		if (instance == null)
-		{
-			instance = new ParseXMLFile(path);
-		}
-		return instance;
+		return new ParseXMLFile(path);		
 	}
 
 	/**
@@ -195,7 +190,8 @@ public class ParseXMLFile
 							}
 							dataTypeToCondMap.put(nodeType, conditionList);
 						}
-						else if (node.getNodeName().equalsIgnoreCase("components"))// Read component details
+						// Read component details
+						else if (node.getNodeName().equalsIgnoreCase("components"))
 						{
 							dataTypeToCompMap.put(nodeType, getElementValue(node));
 						}
@@ -224,7 +220,7 @@ public class ParseXMLFile
 		}
 		catch (ParserConfigurationException e)
 		{
-			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.UN_XXXX); // TODO put proper error code.
+			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.UN_XXXX);
 		}
 		File sourceFile = new File(fileName);
 		try
