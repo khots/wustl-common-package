@@ -228,8 +228,8 @@ public class CsmCacheManager
 				hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList, false);
 			}
 			//If user is not authorized to read the data then remove all data related to this particular from row.
-			Vector identifiedColumnIdentifiers = queryResultObjectData.getIdentifiedDataColumnIds();
-			Vector objectColumnIdentifiers = queryResultObjectData.getDependentColumnIds();
+			List identifiedColumnIdentifiers = queryResultObjectData.getIdentifiedDataColumnIds();
+			List objectColumnIdentifiers = queryResultObjectData.getDependentColumnIds();
 			removeUnauthorizedData(aList, isAuthorisedUser, hasPrivilegeOnIdentifiedData,
 					identifiedColumnIdentifiers, objectColumnIdentifiers, true);
 		}
@@ -383,8 +383,8 @@ public class CsmCacheManager
 	 * @param queryResultObjectDataBean
 	 */
 	private void removeUnauthorizedData(List aList, Boolean isAuthorisedUser,
-			Boolean hasPrivilegeOnIdentifiedData, Vector identifiedColumnIdentifiers,
-			Vector objectColumnIdentifiers, boolean isSimpleSearch)
+			Boolean hasPrivilegeOnIdentifiedData, List identifiedColumnIdentifiers,
+			List objectColumnIdentifiers, boolean isSimpleSearch)
 	{
 		if (!isAuthorisedUser)
 		{
@@ -612,8 +612,8 @@ public class CsmCacheManager
 	 * @param queryResultObjectData
 	 * @param removeOnlyIdentifiedData
 	 */
-	private void removeUnauthorizedFieldsData(List aList, Vector identifiedColumnIdentifiers,
-			Vector objectColumnIdentifiers, boolean removeOnlyIdentifiedData, boolean isSimpleSearch)
+	private void removeUnauthorizedFieldsData(List aList, List identifiedColumnIdentifiers,
+			List objectColumnIdentifiers, boolean removeOnlyIdentifiedData, boolean isSimpleSearch)
 	{
 
 		Vector objectColumnIds = new Vector();
