@@ -519,12 +519,10 @@ public class PrivilegeUtility
 	}
 
 	/**
-	 * Returns the Authorization Manager for the caTISSUE Core. This method
-	 * follows the singleton pattern so that only one AuthorizationManager is
-	 * created.
-	 * 
-	 * @return @throws
-	 *         CSException
+	 * Returns the Authorization Manager for the caTISSUE Core. This method follows 
+	 * the singleton pattern so that only one AuthorizationManager is created.
+	 * @return AuthorizationManager
+	 * @throws CSException common security exception
 	 */
 	protected AuthorizationManager getAuthorizationManager() throws CSException
 	{
@@ -737,9 +735,9 @@ public class PrivilegeUtility
 	 * This method assigns user identified by userId, roles identified by roles
 	 * on protectionGroup
 	 * 
-	 * @param userId
-	 * @param roles
-	 * @param protectionGroup
+	 * @param userId user id
+	 * @param roles roles
+	 * @param protectionGroup operation
 	 * @throws SMException
 	 */
 	public void assignUserRoleToProtectionGroup(Long userId, Set roles,
@@ -757,7 +755,6 @@ public class PrivilegeUtility
 		ProtectionGroupRoleContext protectionGroupRoleContext;
 		Iterator it;
 		Set aggregatedRoles = new HashSet();
-		String[] roleIds = null;
 		try
 		{
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
@@ -777,27 +774,8 @@ public class PrivilegeUtility
 					break;
 				}
 			}
-
-			// if the operation is assign, add the roles to be assigned.
-			if (assignOperation == Constants.PRIVILEGE_ASSIGN)
-			{
-				aggregatedRoles.addAll(roles);
-			}
-			else
-			// if the operation is de-assign, remove the roles to be de-assigned.
-			{
-				Set newaggregateRoles = removeRoles(aggregatedRoles, roles);
-				aggregatedRoles = newaggregateRoles;
-			}
-
-			roleIds = new String[aggregatedRoles.size()];
-			Iterator roleIt = aggregatedRoles.iterator();
-
-			for (int i = 0; roleIt.hasNext(); i++)
-			{
-				roleIds[i] = String.valueOf(((Role) roleIt.next()).getId());
-			}
-
+			aggregatedRoles = addRemoveRoles(roles, assignOperation, aggregatedRoles);
+			String[] roleIds = getRoleIds(aggregatedRoles);
 			userProvisioningManager.assignUserRoleToProtectionGroup(String.valueOf(userId),
 					roleIds, String.valueOf(protectionGroup.getProtectionGroupId()));
 
@@ -807,6 +785,46 @@ public class PrivilegeUtility
 			Logger.out.debug("Could not assign user role to protection group", csex);
 			throw new SMException("Could not assign user role to protection group", csex);
 		}
+	}
+
+	/**
+	 * This method returns array of rile id.
+	 * @param aggregatedRoles Set of roles 
+	 * @return array of role ids
+	 */
+	private String[] getRoleIds(Set aggregatedRoles)
+	{
+		String[] roleIds = null;
+		roleIds = new String[aggregatedRoles.size()];
+		Iterator roleIt = aggregatedRoles.iterator();
+
+		for (int i = 0; roleIt.hasNext(); i++)
+		{
+			roleIds[i] = String.valueOf(((Role) roleIt.next()).getId());
+		}
+		return roleIds;
+	}
+
+	/**
+	 * @param roles roles.
+	 * @param assignOperation operation
+	 * @param aggregatedRoles list of roles
+	 * @return
+	 */
+	private Set addRemoveRoles(Set roles, boolean assignOperation, Set aggregatedRoles)
+	{
+		// if the operation is assign, add the roles to be assigned.
+		if (assignOperation == Constants.PRIVILEGE_ASSIGN)
+		{
+			aggregatedRoles.addAll(roles);
+		}
+		else
+		// if the operation is de-assign, remove the roles to be de-assigned.
+		{
+			Set newaggregateRoles = removeRoles(aggregatedRoles, roles);
+			aggregatedRoles = newaggregateRoles;
+		}
+		return aggregatedRoles;
 	}
 
 	private Set removeRoles(Set fromSet, Set toSet)
@@ -931,8 +949,7 @@ public class PrivilegeUtility
 		Set protectionGroupRoleContextSet = null;
 		ProtectionGroupRoleContext protectionGroupRoleContext = null;
 		Iterator it;
-		Set aggregatedRoles = new HashSet();
-		String[] roleIds = null;
+		Set aggregatedRoles = new HashSet();		
 		Role role;
 		try
 		{
@@ -973,28 +990,8 @@ public class PrivilegeUtility
 				}
 			}
 
-			// if the operation is assign, add the roles to be assigned.
-			if (assignOperation == Constants.PRIVILEGE_ASSIGN)
-			{
-				aggregatedRoles.addAll(roles);
-			}
-			else
-			// if the operation is de-assign, remove the roles to be de-assigned.
-			{
-				Set newaggregateRoles = removeRoles(aggregatedRoles, roles);
-				aggregatedRoles = newaggregateRoles;
-			}
-
-			roleIds = new String[aggregatedRoles.size()];
-			Iterator roleIt = aggregatedRoles.iterator();
-
-			for (int i = 0; roleIt.hasNext(); i++)
-			{
-				role = (Role) roleIt.next();
-				Logger.out.debug(" Role " + i + 1 + " " + role.getName());
-				roleIds[i] = String.valueOf(role.getId());
-			}
-
+			aggregatedRoles = addRemoveRoles(roles, assignOperation, aggregatedRoles);
+			String[] roleIds = getRoleIds(aggregatedRoles);
 			userProvisioningManager.assignGroupRoleToProtectionGroup(String.valueOf(protectionGroup
 					.getProtectionGroupId()), String.valueOf(groupId), roleIds);
 
