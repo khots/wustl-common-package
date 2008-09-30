@@ -26,9 +26,9 @@ public class PagenationTag extends TagSupport
 	protected String prevPage = null;
 	protected int totalResults = 1000;
 	protected int numResultsPerPage = 15;
-	protected int m_pageLinkStart = 1;
-	protected int m_pageLinkEnd = 10;
-	protected boolean m_showNext;
+	protected int mpageLinkStart = 1;
+	protected int mpageLinkEnd = 10;
+	protected boolean mshowNext;
 	protected String searchTerm = null;
 	protected String searchTermValues = null;
 	protected String[] selectedOrgs = null;
@@ -43,7 +43,7 @@ public class PagenationTag extends TagSupport
 	{
 		try
 		{
-			m_showNext = true;
+			mshowNext = true;
 			JspWriter out = pageContext.getOut();
 			if (getPageName().equals("SpreadsheetView.do")) //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp) 
 			{
@@ -57,13 +57,13 @@ public class PagenationTag extends TagSupport
 			if (pageNum > numLinks)
 			{
 				if (pageNum % numLinks != 0)
-					m_pageLinkStart = ((pageNum / numLinks) * numLinks + 1);
+					mpageLinkStart = ((pageNum / numLinks) * numLinks + 1);
 				else
-					m_pageLinkStart = (pageNum - numLinks) + 1;
+					mpageLinkStart = (pageNum - numLinks) + 1;
 			}
 			else
 				//For first time or for PageNum < 10.
-				m_pageLinkStart = 1;
+				mpageLinkStart = 1;
 
 			//Set the values of the ending Links on the Page.
 			//This checks if number of Results left in the arrayList is less than numResults i.e. showNext==zero
@@ -73,38 +73,38 @@ public class PagenationTag extends TagSupport
 			//           System.out.println(" totalResults "+totalResults+" numResultsPerPage =  "+numResultsPerPage+"  ");
 			if (numResultsPerPage == Integer.MAX_VALUE) // If user has opted to view all Records on this page.
 			{
-				m_pageLinkStart = 1;
-				m_pageLinkEnd = 1;
-				m_showNext = false;
+				mpageLinkStart = 1;
+				mpageLinkEnd = 1;
+				mshowNext = false;
 				resultLowRange = 1;
 				resultHighRange = totalResults;
 			}
 			else
 			{
-				if ((totalResults - ((m_pageLinkStart - 1) * numResultsPerPage)) >= numResultsPerPage
+				if ((totalResults - ((mpageLinkStart - 1) * numResultsPerPage)) >= numResultsPerPage
 						* numLinks)
 				{
-					m_pageLinkEnd = m_pageLinkStart + (numLinks - 1);
+					mpageLinkEnd = mpageLinkStart + (numLinks - 1);
 
 				}
 				else
 				{
-					if ((totalResults - (m_pageLinkStart * numResultsPerPage)) > 0)
+					if ((totalResults - (mpageLinkStart * numResultsPerPage)) > 0)
 					{
 						if (totalResults % numResultsPerPage == 0)
 						{
-							m_pageLinkEnd = (m_pageLinkStart + (totalResults - (m_pageLinkStart * numResultsPerPage))
+							mpageLinkEnd = (mpageLinkStart + (totalResults - (mpageLinkStart * numResultsPerPage))
 									/ numResultsPerPage);
 						}
 						else
 						{
-							m_pageLinkEnd = (m_pageLinkStart + (totalResults - (m_pageLinkStart * numResultsPerPage))
+							mpageLinkEnd = (mpageLinkStart + (totalResults - (mpageLinkStart * numResultsPerPage))
 									/ numResultsPerPage) + 1;
 						}
 					}
 					else
 					{
-						m_pageLinkEnd = (m_pageLinkStart + (totalResults - (m_pageLinkStart * numResultsPerPage))
+						mpageLinkEnd = (mpageLinkStart + (totalResults - (mpageLinkStart * numResultsPerPage))
 								/ numResultsPerPage);
 
 					}
@@ -121,9 +121,9 @@ public class PagenationTag extends TagSupport
 
 				}
 
-				if ((m_pageLinkEnd * numResultsPerPage >= totalResults))
+				if ((mpageLinkEnd * numResultsPerPage >= totalResults))
 				{
-					m_showNext = false;
+					mshowNext = false;
 				}
 
 				resultLowRange = (pageNum - 1) * numResultsPerPage + 1;
@@ -170,7 +170,7 @@ public class PagenationTag extends TagSupport
 
 				out
 						.println("<td>Records Per Page <select name=\"recordPerPage\" size=\"1\" onChange=\"javascript:changeRecordPerPage("
-								+ (m_pageLinkStart)
+								+ (mpageLinkStart)
 								+ ",this,'"
 								+ pageName
 								+ "')\""
@@ -191,9 +191,9 @@ public class PagenationTag extends TagSupport
 			}
 			//Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. end
 
-			if ((m_pageLinkEnd) > numLinks)
+			if ((mpageLinkEnd) > numLinks)
 			{
-				out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + (m_pageLinkStart - 1)
+				out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + (mpageLinkStart - 1)
 						+ "," + numResultsPerPage + ",'" + prevPage + "','" + pageName + "')"
 						+ "\"> &lt;&lt;  </a></td>");
 			}
@@ -203,8 +203,8 @@ public class PagenationTag extends TagSupport
 				out.print("<td align=\"CENTER\">&nbsp;</td>");
 			}
 
-			int i = m_pageLinkStart;
-			for (i = m_pageLinkStart; i <= m_pageLinkEnd; i++)
+			int i = mpageLinkStart;
+			for (i = mpageLinkStart; i <= mpageLinkEnd; i++)
 			{
 				if (i != pageNum)
 				{
@@ -217,7 +217,7 @@ public class PagenationTag extends TagSupport
 					out.print("<td align=\"CENTER\">" + i + " </td>");
 				}
 			}
-			if (m_showNext == true)
+			if (mshowNext == true)
 			{
 				out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + i + ","
 						+ numResultsPerPage + ",'" + prevPage + "','" + pageName + "')"

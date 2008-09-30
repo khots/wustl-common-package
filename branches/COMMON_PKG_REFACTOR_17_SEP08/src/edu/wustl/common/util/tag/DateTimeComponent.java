@@ -448,59 +448,59 @@ public class DateTimeComponent extends TagSupport
 
 		if (Utility.isNull(month))
 		{
-			month = new Integer((Calendar.getInstance().get(Calendar.MONTH)) + 1);
+			month = Integer.valueOf((Calendar.getInstance().get(Calendar.MONTH)) + 1);
 		}
 		if (Utility.isNull(day))
 		{
-			day = new Integer(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+			day = Integer.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 		}
 		if (Utility.isNull(year))
 		{
-			year = new Integer(Calendar.getInstance().get(Calendar.YEAR));
+			year = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 		}
 		if (Utility.isNull(pattern))
 		{
-			pattern = new String("MM-dd-yyyy");
+			pattern = "MM-dd-yyyy";
 		}
 		if (Utility.isNull(displayTime))
 		{
-			displayTime = new Boolean(false);
+			displayTime =Boolean.FALSE;
 		}
 		if (Utility.isNull(hour))
 		{
-			hour = new Integer(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+			hour = Integer.valueOf(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
 		}
 		if (Utility.isNull(minutes))
 		{
-			minutes = new Integer(Calendar.getInstance().get(Calendar.MINUTE));
+			minutes = Integer.valueOf(Calendar.getInstance().get(Calendar.MINUTE));
 		}
 		if (Utility.isNull(startYear))
 		{
-			startYear = new Integer(1900);
+			startYear = Integer.valueOf(1900);
 		}
 		if (Utility.isNull(endYear))
 		{
-			endYear = new Integer(2020);
+			endYear = Integer.valueOf(2020);
 		}
 		if (Utility.isNull(iconComment))
 		{
-			iconComment = new String("This is a Calendar");
+			iconComment = "This is a Calendar";
 		}
 		if (Utility.isNull(value))
 		{
-			value = new String("");
+			value ="";
 		}
 		if (Utility.isNull(styleClass))
 		{
-			styleClass = new String("");
+			styleClass = "";
 		}
 		if (Utility.isNull(size))
 		{
-			size = new Integer(15);
+			size = Integer.valueOf(15);
 		}
 		if (Utility.isNull(disabled))
 		{
-			disabled = new Boolean(false);
+			disabled = Boolean.FALSE;
 		}
 
 	}
