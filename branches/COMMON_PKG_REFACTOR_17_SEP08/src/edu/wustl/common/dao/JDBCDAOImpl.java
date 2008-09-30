@@ -352,7 +352,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			throws ClassNotFoundException, DAOException
 	{
 		//Aarti: Security checks
-		if (Constants.switchSecurity && isSecureExecute)
+		if (Constants.SWITCH_SECURITY && isSecureExecute)
 		{
 			if (sessionDataBean == null)
 			{

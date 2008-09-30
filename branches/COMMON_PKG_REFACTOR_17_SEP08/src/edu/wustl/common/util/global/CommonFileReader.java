@@ -30,7 +30,6 @@ public class CommonFileReader
 			e.printStackTrace();
 		}
 
-		System.out.println("Data : " + buffer.toString());
 		return buffer.toString();
 	}
 

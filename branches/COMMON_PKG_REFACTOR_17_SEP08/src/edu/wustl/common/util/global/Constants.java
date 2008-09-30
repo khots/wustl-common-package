@@ -168,7 +168,7 @@ public class Constants
 	public static final String OR_JOIN_CONDITION = "OR";
 	public static final String ACTIVITY_STATUS = "activityStatus";
 
-	public static final boolean switchSecurity = true;
+	public static final boolean SWITCH_SECURITY = true;
 
 	public static final String EDIT = "edit";
 

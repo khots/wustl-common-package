@@ -483,7 +483,7 @@ public class PasswordManager
 				int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
 						.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
 				List<String> placeHolders = new ArrayList<String>();
-				placeHolders.add(new Integer(minimumPasswordLength).toString());
+				placeHolders.add(Integer.valueOf(minimumPasswordLength).toString());
 				errMsg = ApplicationProperties.getValue("errors.newPassword.length", placeHolders);
 				break;
 			case FAIL_SAME_AS_OLD :
@@ -516,18 +516,18 @@ public class PasswordManager
 	{
 		String pwd = "admin";
 		String encodedPWD = encrypt(pwd);
-		System.out.println("encodedPWD:" + encodedPWD + ":");
+		//System.out.println("encodedPWD:" + encodedPWD + ":");
 
-		System.out.println(decrypt("xa2ImfuLjjZavG8j0xzkLA=="));
-		System.out.println("old decoding:" + decode("614164576d65696c6e63"));
+		//System.out.println(decrypt("xa2ImfuLjjZavG8j0xzkLA=="));
+		//System.out.println("old decoding:" + decode("614164576d65696c6e63"));
 		//Mandar 08-May-06
 		if (args.length > 1)
 		{
 			String filename = args[0];
 			String password = args[1];
 			encodedPWD = encrypt(password);
-			System.out.println("Filename : " + filename + " : password : " + password
-					+ " : encoded" + encodedPWD);
+			//System.out.println("Filename : " + filename + " : password : " + password
+				//	+ " : encoded" + encodedPWD);
 			writeToFile(filename, encodedPWD);
 		}
 	}
@@ -551,7 +551,7 @@ public class PasswordManager
 		}
 		catch (Exception ioe)
 		{
-			System.out.println("Error : " + ioe);
+			ioe.printStackTrace();
 		}
 	} // writeToFile
 }

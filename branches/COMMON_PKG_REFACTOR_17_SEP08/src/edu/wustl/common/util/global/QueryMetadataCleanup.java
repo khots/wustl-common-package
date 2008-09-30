@@ -42,7 +42,6 @@ public class QueryMetadataCleanup
 	{
 		if (args.length != 4)
 		{
-			System.out.println("Incorrect no of Parameners !!!");
 			throw new RuntimeException("Incorrect no of Parameners !!!");
 		}
 		try
@@ -51,8 +50,6 @@ public class QueryMetadataCleanup
 			writer = new BufferedWriter(new FileWriter("./MetadataCleanupLog.txt"));
 			cleanup();
 			writer.close();
-			System.out
-					.println("Please refer MetadataCleanupLog.txt for the paths/association removed from database.");
 		}
 		catch (Exception e)
 		{

@@ -46,9 +46,6 @@ public class PasswordEncrypter
 	public static void main(String[] args)
 	{
 
-		System.out
-				.println("Encrypting password for the following tables: csm_user & catissue_password");
-		System.out.println("Configuring Database Connection Parameters");
 		configureDBConnection(args);
 
 		try
@@ -57,12 +54,12 @@ public class PasswordEncrypter
 			Connection connection = getConnection();
 
 			//Encrypting password for csm_user table
-			System.out.println("Encrypting passwords for csm_user table...");
+		
 			String sql = "SELECT " + CSM_DATABASE_TABLE_NAME + ".* FROM " + CSM_DATABASE_TABLE_NAME;
 			updatePasswords(connection, sql);
 
 			//Encrypting password for catissue_password table
-			System.out.println("Encrypting passwords for catissue_password table...");
+		
 			sql = "SELECT " + CATISSUE_DATABASE_TABLE_NAME + ".* FROM "
 					+ CATISSUE_DATABASE_TABLE_NAME;
 			updatePasswords(connection, sql);
@@ -137,11 +134,11 @@ public class PasswordEncrypter
 			DATABASE_USERNAME = args[4];
 			DATABASE_PASSWORD = args[5];
 			DATABASE_DRIVER = args[6];
-			printDBInfo();
+			//printDBInfo();
 		}
 		else
 		{
-			System.out.println("Incorrect number of parameters!");
+			
 			throw new RuntimeException("Incorrect number of parameters!!!!");
 		}
 	}
@@ -149,7 +146,7 @@ public class PasswordEncrypter
 	/**
 	 * Printing the Configuration info for database.
 	 */
-	private static void printDBInfo()
+	/*private static void printDBInfo()
 	{
 		System.out.println("DATABASE_SERVER_NAME        : " + DATABASE_SERVER_NAME);
 		System.out.println("DATABASE_SERVER_PORT_NUMBER : " + DATABASE_SERVER_PORT_NUMBER);
@@ -159,7 +156,7 @@ public class PasswordEncrypter
 		System.out.println("CSM_DATABASE_TABLE_NAME     : " + CSM_DATABASE_TABLE_NAME);
 		System.out.println("CATISSUE_DATABASE_TABLE_NAME: " + CATISSUE_DATABASE_TABLE_NAME);
 		System.out.println("DATABASE_TABLE_FIELD_NAME   : " + DATABASE_TABLE_FIELD_NAME);
-	}
+	}*/
 
 	/**
 	 * This method will create a database connection using configuration info.
@@ -184,7 +181,6 @@ public class PasswordEncrypter
 			url = "jdbc:oracle:thin:@" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER
 					+ ":" + DATABASE_NAME;
 		}
-		System.out.println("URL : " + url);
 		connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
 		return connection;
 	}
