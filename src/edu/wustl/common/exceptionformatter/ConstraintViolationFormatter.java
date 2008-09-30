@@ -20,6 +20,7 @@ import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
+import gov.nih.nci.security.exceptions.CSTransactionException;
 
 public class ConstraintViolationFormatter implements ExceptionFormatter
 {
@@ -38,11 +39,11 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 
 		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
 		{
-			errMessage = MySQLformatMessage(objExcp, args); // method for MYSQL Database
+			errMessage = mySQLformatMessage(objExcp, args); // method for MYSQL Database
 		}
 		else
 		{
-			errMessage = OracleformatMessage(objExcp, args); // method for ORACLE Database
+			errMessage = oracleformatMessage(objExcp, args); // method for ORACLE Database
 		}
 
 		if (errMessage == null)
@@ -52,13 +53,13 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		return errMessage;
 	}
 
-	private String OracleformatMessage(Exception objExcp, Object[] args)
+	private String oracleformatMessage(Exception excp, Object[] args)
 	{
 		String tableName = "";
 		String columnName = "";
 		String formattedErrMsg = null; // Formatted Error Message return by this method
-		Logger.out.debug(objExcp.getClass().getName());
-		if (objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
+		Exception objExcp = excp;
+		if (excp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
 		{
 
 			objExcp = (Exception) objExcp.getCause();
@@ -120,9 +121,10 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		return formattedErrMsg;
 	}
 
-	private String MySQLformatMessage(Exception objExcp, Object[] args)
+	private String mySQLformatMessage(Exception excp, Object[] args)
 	{
-		Logger.out.debug(objExcp.getClass().getName());
+		Logger.out.debug(excp.getClass().getName());
+		Exception objExcp = excp;
 		if (objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
 		{
 
@@ -142,7 +144,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		else
 		{
 			Logger.out.debug("Table Name not specified");
-			tableName = new String("Unknown Table");
+			tableName = "Unknown Table";
 		}
 		Logger.out.debug("Table Name:" + tableName);
 		dispTableName = tableName;
@@ -161,48 +163,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		try
 		{
 			//get Class name from message "could not insert [classname]"
-			ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
-			String message = cEX.getMessage();
-			Logger.out.debug("message :" + message);
-			int startIndex = message.indexOf("[");
-
-			/**
-			 * Name : kalpana thakur
-			 * Reviewer Name : Vaishali
-			 * Bug ID: 4926
-			 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
-			*/
-
-			int endIndex = message.indexOf("#");
-			if (endIndex == -1)
-			{
-				endIndex = message.indexOf("]");
-			}
-			String className = message.substring((startIndex + 1), endIndex);
-			Logger.out.debug("ClassName: " + className);
-			Class classObj = Class.forName(className);
-			// get table name from class 
-			tableName = HibernateMetaData.getRootTableName(classObj);
-
-			/**
-			 * Name : kalpana thakur
-			 * Reviewer Name : Vaishali
-			 * Bug ID: 6034
-			 * Description:To retrive the appropriate tablename checking the SQL"
-			*/
-
-			if (!(cEX.getSQL().contains(tableName)))
-			{
-				tableName = HibernateMetaData.getTableName(classObj);
-			}
-
-		}
-		catch (Exception e)
-		{
-			Logger.out.error(e.getMessage(), e);
-		}
-		try
-		{
+			tableName = getTableNameFromMessage(tableName,objExcp);
 			// Generate Error Message by appending all messages of previous cause Exceptions
 			String sqlMessage = generateErrorMessage(objExcp);
 
@@ -330,5 +291,45 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		{
 			return ex.getMessage();
 		}
+	}
+	
+	private String getTableNameFromMessage(String nameOfTable,Exception objExcp) throws ClassNotFoundException
+	{
+		String tableName = nameOfTable;
+		ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
+		String message = cEX.getMessage();
+		Logger.out.debug("message :" + message);
+		int startIndex = message.indexOf("[");
+
+		/**
+		 * Name : kalpana thakur
+		 * Reviewer Name : Vaishali
+		 * Bug ID: 4926
+		 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
+		*/
+
+		int endIndex = message.indexOf("#");
+		if (endIndex == -1)
+		{
+			endIndex = message.indexOf("]");
+		}
+		String className = message.substring((startIndex + 1), endIndex);
+		Logger.out.debug("ClassName: " + className);
+		Class classObj = Class.forName(className);
+		// get table name from class 
+		tableName = HibernateMetaData.getRootTableName(classObj);
+
+		/**
+		 * Name : kalpana thakur
+		 * Reviewer Name : Vaishali
+		 * Bug ID: 6034
+		 * Description:To retrive the appropriate tablename checking the SQL"
+		*/
+
+		if (!(cEX.getSQL().contains(tableName)))
+		{
+			tableName = HibernateMetaData.getTableName(classObj);
+		}
+		return tableName;
 	}
 }
