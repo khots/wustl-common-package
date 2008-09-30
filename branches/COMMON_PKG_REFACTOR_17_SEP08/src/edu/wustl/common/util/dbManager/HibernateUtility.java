@@ -1,6 +1,3 @@
-/**
- * 
- */
 
 package edu.wustl.common.util.dbManager;
 
@@ -18,12 +15,17 @@ import org.hibernate.Session;
 public class HibernateUtility
 {
 
-	public static final String GET_PARAMETERIZED_QUERIES_DETAILS = "getParameterizedQueriesDetails";
-	/** This method add details of query in a list
-	 * @param queryName
-	 * @param List<Object> values
-	 * @return List containing details of query.
+	/**
+	 * GET_PARAMETERIZED_QUERIES_DETAILS String details of parameterized queries.
 	 */
+	public static final String GET_PARAMETERIZED_QUERIES_DETAILS = "getParameterizedQueriesDetails";
+	/** This method add details of query in a list.
+	 * @param queryName String name of query.
+	 * @param values List of type Object object list.
+	 * @return Collection containing details of query.
+	 * @throws HibernateException exception of Hibernate.
+	 */
+
 	public static Collection executeHQL(String queryName, List<Object> values)
 			throws HibernateException
 	{
@@ -38,7 +40,7 @@ public class HibernateUtility
 				{
 					Object value = values.get(counter);
 					String objectType = value.getClass().getName();
-					String onlyClassName = objectType.substring(objectType.lastIndexOf(".") 
+					String onlyClassName = objectType.substring(objectType.lastIndexOf(".")
 							+ 1,objectType.length());
 					if (onlyClassName.equals("String"))
 					{
@@ -62,9 +64,11 @@ public class HibernateUtility
 			DBUtil.closeSession();
 		}
 	}
-	/** 
+	/**
 	 * Return the output of execution of query.
-	 * @param queryName
+	 * @param queryName String name of query.
+	 * @return Collection containing output of execution of query.
+	 * @throws HibernateException exception of Hibernate.
 	 */
 	public static Collection executeHQL(String queryName) throws HibernateException
 	{
