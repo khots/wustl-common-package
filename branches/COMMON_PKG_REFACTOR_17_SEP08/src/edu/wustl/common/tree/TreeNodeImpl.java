@@ -8,6 +8,8 @@
 package edu.wustl.common.tree;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -37,7 +39,7 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/**
 	 * List of child nodes.
 	 */
-	Vector childNodes = new Vector();
+	List childNodes = new ArrayList();
 
 	/**
 	 * Default Constructor.
@@ -106,7 +108,7 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/**
 	 * @return Returns the childNodes.
 	 */
-	public Vector getChildNodes()
+	public List getChildNodes()
 	{
 		return childNodes;
 	}
@@ -114,7 +116,7 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/**
 	 * @param childNodes The childNodes to set.
 	 */
-	public void setChildNodes(Vector childNodes)
+	public void setChildNodes(List childNodes)
 	{
 		this.childNodes = childNodes;
 	}
@@ -159,11 +161,12 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	 */
 	public String toString()
 	{
+		String value = this.value;
 		if (this.identifier.longValue() != 0)
 		{
-			return this.value + " : " + this.identifier;
+			value = this.value + " : " + this.identifier;
 		}
 
-		return this.value;
+		return value;
 	}
 }

@@ -321,13 +321,11 @@ public class DateTimeComponent extends TagSupport
 		if (Utility.isNull(name))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is null"));
-			System.out.println("Name attribute is null");
 			result = false;
 		}
 		else if (name.trim().length() == 0)
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is empty"));
-			System.out.println("Name attribute is empty");
 			result = false;
 		}
 
@@ -335,13 +333,11 @@ public class DateTimeComponent extends TagSupport
 		if (Utility.isNull(id))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is null"));
-			System.out.println("ID attribute is null");
 			result = false;
 		}
 		else if (id.trim().length() == 0)
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is empty"));
-			System.out.println("ID attribute is empty");
 			result = false;
 		}
 
@@ -349,13 +345,11 @@ public class DateTimeComponent extends TagSupport
 		if (Utility.isNull(formName))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is null"));
-			System.out.println("formName attribute is null");
 			result = false;
 		}
 		else if (formName.trim().length() == 0)
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is empty"));
-			System.out.println("formName attribute is empty");
 			result = false;
 		}
 
@@ -417,7 +411,6 @@ public class DateTimeComponent extends TagSupport
 		output = output + "</SCRIPT>";
 		output = output + "</DIV>";
 
-		System.out.println(output);
 		return output;
 		/*
 		<A onclick="showCalendar(2006,7,25,'MM/dd/yyyy','newsForm','date',event,1901,2099);" href="javascript://">
@@ -442,9 +435,9 @@ public class DateTimeComponent extends TagSupport
 
 		if (value.trim().length() > 0)
 		{
-			Integer specimenYear = new Integer(Utility.getYear(value));
-			Integer specimenMonth = new Integer(Utility.getMonth(value));
-			Integer specimenDay = new Integer(Utility.getDay(value));
+			Integer specimenYear = Integer.valueOf(Utility.getYear(value));
+			Integer specimenMonth = Integer.valueOf(Utility.getMonth(value));
+			Integer specimenDay = Integer.valueOf(Utility.getDay(value));
 			day = specimenDay.intValue();
 			month = specimenMonth.intValue();
 			year = specimenYear.intValue();

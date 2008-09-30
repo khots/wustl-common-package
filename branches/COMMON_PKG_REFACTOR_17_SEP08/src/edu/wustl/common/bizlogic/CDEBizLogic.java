@@ -11,13 +11,12 @@
 package edu.wustl.common.bizlogic;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
-
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.cde.CDE;
@@ -127,33 +126,33 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	 */
 	private List getTreeNodeList(TreeNode parentTreeNode, Set permissibleValueSet)
 	{
-		Vector treeNodeVector = new Vector();
-		if (permissibleValueSet == null)
-			return null;
-
-		Iterator iterator = permissibleValueSet.iterator();
-		while (iterator.hasNext())
-		{
-			PermissibleValueImpl permissibleValueImpl = (PermissibleValueImpl) iterator.next();
-			CDETreeNode treeNode = new CDETreeNode(permissibleValueImpl.getIdentifier(),
-					permissibleValueImpl.getValue());
-			treeNode.setParentNode(parentTreeNode);
-			treeNode.setCdeName(((CDETreeNode) parentTreeNode).getCdeName());
-			List subPermissibleValues = getTreeNodeList(treeNode, permissibleValueImpl
-					.getSubPermissibleValues());
-			if (subPermissibleValues != null)
+		List treeNodeList = new ArrayList();
+		if (permissibleValueSet != null)
+		{	
+			Iterator iterator = permissibleValueSet.iterator();
+			while (iterator.hasNext())
 			{
-				//Bug-2717: For sorting  
-				Collections.sort(subPermissibleValues);
-				treeNode.setChildNodes(subPermissibleValues);
+				PermissibleValueImpl permissibleValueImpl = (PermissibleValueImpl) iterator.next();
+				CDETreeNode treeNode = new CDETreeNode(permissibleValueImpl.getIdentifier(),
+						permissibleValueImpl.getValue());
+				treeNode.setParentNode(parentTreeNode);
+				treeNode.setCdeName(((CDETreeNode) parentTreeNode).getCdeName());
+				List subPermissibleValues = getTreeNodeList(treeNode, permissibleValueImpl
+						.getSubPermissibleValues());
+				if (subPermissibleValues != null && !subPermissibleValues.isEmpty())
+				{
+					//Bug-2717: For sorting  
+					Collections.sort(subPermissibleValues);
+					treeNode.setChildNodes(subPermissibleValues);
+				}
+	
+				treeNodeList.add(treeNode);
+				//Bug-2717: For sorting
+				Collections.sort(treeNodeList);
 			}
-
-			treeNodeVector.add(treeNode);
-			//Bug-2717: For sorting
-			Collections.sort(treeNodeVector);
 		}
 
-		return treeNodeVector;
+		return treeNodeList;
 	}
 
 	/**
@@ -188,7 +187,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	/* (non-Javadoc)
 	 * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface#getTreeViewData(edu.wustl.common.beans.SessionDataBean, java.util.Map)
 	 */
-	public Vector getTreeViewData(SessionDataBean sessionData, Map map, List list)
+	public List getTreeViewData(SessionDataBean sessionData, Map map, List list)
 			throws DAOException
 	{
 
