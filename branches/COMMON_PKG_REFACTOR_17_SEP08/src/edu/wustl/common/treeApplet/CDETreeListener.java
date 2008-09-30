@@ -64,7 +64,7 @@ public class CDETreeListener implements MouseInputListener
 
 					//Set the values in the parent window.
 					Applet applet = this.appletContext.getApplet(Constants.TREE_APPLET_NAME);
-					System.out.println("applet name " + applet);
+					
 					//Kapil: MAC ISSUE JDK 1.3.1	    			
 					JSObject window = JSObject.getWindow(applet);
 					//commented as this will set in MouseClick
@@ -76,7 +76,7 @@ public class CDETreeListener implements MouseInputListener
 					{
 						return;
 					}
-					String setValue = new String();
+					String setValue;
 					//Poornima:Make the Category nodes non-clickable if child exists. Refer to Bug 1718
 					if (treeNode.getChildNodes() == null || treeNode.getChildNodes().size() == 0)
 					{

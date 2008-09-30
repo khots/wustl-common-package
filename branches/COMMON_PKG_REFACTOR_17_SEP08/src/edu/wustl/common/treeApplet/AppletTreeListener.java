@@ -33,7 +33,7 @@ public abstract class AppletTreeListener implements MouseInputListener
 	/**
 	 * String to store the return value of setParentWindowValue() javascript function
 	 */
-	protected String setValue = new String();
+	protected String setValue;
 
 	/**
 	 * Corresponds to an applet environment.
@@ -75,8 +75,7 @@ public abstract class AppletTreeListener implements MouseInputListener
 
 					//Set the values in the parent window.
 					applet = this.appletContext.getApplet(Constants.TREE_APPLET_NAME);
-					System.out.println("applet name " + applet);
-
+					
 					//commented as this will set in MouseClick
 					propertyName = applet.getParameter(Constants.PROPERTY_NAME);
 
@@ -101,34 +100,20 @@ public abstract class AppletTreeListener implements MouseInputListener
 
 	public abstract void displayClickedSpecimenNode();
 
-	public void mousePressed(MouseEvent arg0)
-	{
+	public abstract void mousePressed(MouseEvent arg0);
+	
+	public abstract void mouseReleased(MouseEvent arg0);
+	
 
-	}
+	public abstract void mouseEntered(MouseEvent arg0);
+	
 
-	public void mouseReleased(MouseEvent arg0)
-	{
+	public abstract void mouseExited(MouseEvent arg0);
+	
+	public abstract void mouseDragged(MouseEvent arg0);
+	
 
-	}
-
-	public void mouseEntered(MouseEvent arg0)
-	{
-
-	}
-
-	public void mouseExited(MouseEvent arg0)
-	{
-
-	}
-
-	public void mouseDragged(MouseEvent arg0)
-	{
-
-	}
-
-	public void mouseMoved(MouseEvent arg0)
-	{
-
-	}
+	public abstract void mouseMoved(MouseEvent arg0);
+	
 
 }

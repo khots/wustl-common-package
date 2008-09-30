@@ -61,12 +61,11 @@ public class TreeApplet extends JApplet
 
 			String pageOf = this.getParameter(Constants.PAGEOF);
 			String storageContainerName = this.getParameter(Constants.STORAGE_CONTAINER);
-			System.out.println("storageContainerName-->" + storageContainerName);
 			String storageContainerType = null, propertyName = null, cdeName = null, specimenType = null, specimenClass = null;
 			int treeType = Constants.TISSUE_SITE_TREE_ID;
 
 			//Sri: Added for selecting node in the storage tree
-			Long selectedNode = new Long(0);
+			Long selectedNode = Long.valueOf(0);
 			String position = null;
 			if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION))
 			{
@@ -94,8 +93,6 @@ public class TreeApplet extends JApplet
 			}
 
 			String session_id = this.getParameter("session_id");
-			System.out.println("session_id " + session_id);
-
 			// If storage container tree, take care of positions and parent container
 			// ID edit boxes.
 			if (treeType == Constants.STORAGE_CONTAINER_TREE_ID)
@@ -151,7 +148,6 @@ public class TreeApplet extends JApplet
 						+ URLEncoder.encode(specimenClass);
 			}
 
-			System.out.println("URL......................................" + urlSuffix);
 			URL dataURL = new URL(protocol, host, port, urlSuffix);
 
 			//Establish connection with the TreeDataAction and get the JTree object.
@@ -159,10 +155,8 @@ public class TreeApplet extends JApplet
 			connection.setUseCaches(false);
 
 			in = new ObjectInputStream(connection.getInputStream());
-			System.out.println("After Connection......................................");
 			JTree tree = new JTree();
 			List disableSpecimenIdsList = null;
-			System.out.println("PageOf : " + pageOf);
 			Vector treeDataVector = null;
 			if (pageOf.equals(Constants.PAGEOF_STORAGE_LOCATION)
 					|| pageOf.equals(Constants.PAGEOF_SPECIMEN)
@@ -265,9 +259,7 @@ public class TreeApplet extends JApplet
 			//Put the tree panel on the Applet.
 			//Kapil: MAC ISSUE JDK 1.3.1
 			contentPane.add(treePanel, BorderLayout.CENTER);
-			System.out.println("25Aug06 : Tree set");
-
-			if (tempList.size() != 0)
+			if (tempList.size() > 0 && !tempList.isEmpty())
 			{
 				urlSuffix = applicationPath + Constants.SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION
 						+ "?" + Constants.SYSTEM_IDENTIFIER + "=" + tempList.get(0) + "&"
@@ -278,7 +270,7 @@ public class TreeApplet extends JApplet
 
 			//Sri: Pass the position of the container to the next level
 			// This is used to auto select the node
-			if (false == selectedNode.equals(new Long(0)))
+			if (false == selectedNode.equals(Long.valueOf(0)))
 			{
 				urlSuffix = applicationPath + Constants.SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION
 						+ ";jsessionid=" + session_id + "?" + Constants.SYSTEM_IDENTIFIER + "="

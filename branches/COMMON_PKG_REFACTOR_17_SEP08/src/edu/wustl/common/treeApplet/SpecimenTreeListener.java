@@ -1,6 +1,8 @@
 
 package edu.wustl.common.treeApplet;
 
+import java.awt.event.MouseEvent;
+
 import edu.wustl.common.tree.SpecimenTreeNode;
 import edu.wustl.common.util.global.Constants;
 
@@ -67,6 +69,48 @@ public class SpecimenTreeListener extends AppletTreeListener
 			return;
 		}
 
+	}
+
+	
+	public void mouseDragged(MouseEvent arg0)
+	{
+		
+		
+	}
+
+	
+	public void mouseEntered(MouseEvent arg0)
+	{
+		
+		
+	}
+
+	
+	public void mouseExited(MouseEvent arg0)
+	{
+		
+		
+	}
+
+	
+	public void mouseMoved(MouseEvent arg0)
+	{
+		
+		
+	}
+
+	
+	public void mousePressed(MouseEvent arg0)
+	{
+		
+		
+	}
+
+	
+	public void mouseReleased(MouseEvent arg0)
+	{
+		
+		
 	}
 
 }
