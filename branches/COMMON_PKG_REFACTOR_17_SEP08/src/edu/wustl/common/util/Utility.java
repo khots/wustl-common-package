@@ -701,7 +701,7 @@ public class Utility
 	 * To sort the Tree nodes based on the comparators overidden by the TreeNodeImpl object.
 	 * @param nodes reference to the Vector containing object of class implementing TreeNodeImpl class.
 	 */
-	public static void sortTreeVector(Vector nodes)
+	public static void sortTreeVector(List nodes)
 	{
 		Collections.sort(nodes);
 		for (int i = 0; i < nodes.size(); i++)

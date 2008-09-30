@@ -43,7 +43,7 @@ public class AbstractBizLogicFactory
 
 			//Invokes getBizLogic method using reflection API.
 			Class[] parameterTypes = new Class[]{int.class};
-			Object[] parameterValues = new Object[]{new Integer(formId)};
+			Object[] parameterValues = new Object[]{Integer.valueOf(formId)};
 
 			Method getBizLogicMethod = bizLogicFactoryClass.getMethod(methodName, parameterTypes);
 			bizLogic = (IBizLogic) getBizLogicMethod.invoke(bizLogicFactory, parameterValues);
