@@ -13,6 +13,7 @@ package edu.wustl.common.tree;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JTree;
@@ -222,7 +223,7 @@ public class GenerateTree
 	 * @param parentNode the parent node.
 	 * @param childNodes the child nodes.
 	 */
-	private void createHierarchy(DefaultMutableTreeNode parentNode, Vector childNodes)
+	private void createHierarchy(DefaultMutableTreeNode parentNode, List childNodes)
 	{
 		Iterator iterator = childNodes.iterator();
 		while (iterator.hasNext())

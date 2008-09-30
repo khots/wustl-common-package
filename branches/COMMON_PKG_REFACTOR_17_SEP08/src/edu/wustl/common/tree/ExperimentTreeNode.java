@@ -50,7 +50,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	public ExperimentTreeNode(Long id, String name)
 	{
 		setIdentifier(id);
-		setName(name);
+		this.name = name;
 	}
 
 	/**

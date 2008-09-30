@@ -67,7 +67,7 @@ public class DAOException extends Exception
 		if (exception.getCause() != null)
 		{
 			message = message + " : " + exception.getCause().getMessage();
-		this.setMessage(message);
+		this.message = message;
 		}
 	}
 
