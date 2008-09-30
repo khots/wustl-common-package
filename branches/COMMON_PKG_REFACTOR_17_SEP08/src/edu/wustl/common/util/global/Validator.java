@@ -767,8 +767,8 @@ public class Validator
 
 	/**
 	 * Returns true if enumerated value is valid else false.
-	 * @param list the list of enumerated values.
-	 * @param value the value that is to be checked.
+	 * @param list List the list of enumerated values.
+	 * @param value String the value that is to be checked.
 	 * @return true if enumerated value is valid else false.
 	 */
 	public static boolean isEnumeratedValue(List list, String value)
@@ -777,16 +777,7 @@ public class Validator
 
 		if (list != null && value != null)
 		{
-			for (int i = 1; i < list.size(); i++)
-			{
-				NameValueBean bean = (NameValueBean) list.get(i);
-
-				if (value.equals(bean.getValue()))
-				{
-					isValid = true;
-					break;
-				}
-			}
+			isValid = isValueInList(list, value);
 		}
 
 		return isValid;
@@ -794,8 +785,30 @@ public class Validator
 
 	/**
 	 * Returns true if enumerated value is valid else false.
-	 * @param list the list of enumerated values.
-	 * @param value the value that is to be checked.
+	 * @param list List - list of object NameValueBean
+	 * @param value String the value that is to be checked.
+	 * @return true if enumerated value is valid else false.
+	 */
+	private static boolean isValueInList(List list, String value)
+	{
+		boolean isValid = false;
+		for (int i = 1; i < list.size(); i++)
+		{
+			NameValueBean bean = (NameValueBean) list.get(i);
+
+			if (value.equals(bean.getValue()))
+			{
+				isValid = true;
+				break;
+			}
+		}
+		return isValid;
+	}
+
+	/**
+	 * Returns true if enumerated value is valid else false.
+	 * @param list String[] the list of enumerated values.
+	 * @param value String the value that is to be checked.
 	 * @return true if enumerated value is valid else false.
 	 */
 	public static boolean isEnumeratedValue(String[] list, String value)
@@ -813,14 +826,13 @@ public class Validator
 				}
 			}
 		}
-
 		return isValid;
 	}
 
 	/**
 	 * Returns true if enumerated value is valid or null else false.
-	 * @param list the list of enumerated values.
-	 * @param value the value that is to be checked.
+	 * @param list List - the list of enumerated values.
+	 * @param value String - the value that is to be checked.
 	 * @return true if enumerated value is valid or null else false.
 	 */
 	public static boolean isEnumeratedOrNullValue(List list, String value)
@@ -833,45 +845,27 @@ public class Validator
 		}
 		else if (list != null)
 		{
-			for (int i = 1; i < list.size(); i++)
-			{
-				NameValueBean bean = (NameValueBean) list.get(i);
-
-				if (value.equals(bean.getValue()))
-				{
-					isValid = true;
-					break;
-				}
-			}
+			isValid = isValueInList(list, value);
 		}
-
 		return isValid;
 	}
 
 	/**
 	 * Returns true if enumerated value is valid or null else false.
-	 * @param list the list of enumerated values.
-	 * @param value the value that is to be checked.
+	 * @param list String[]- the list of enumerated values.
+	 * @param value String -the value that is to be checked.
 	 * @return true if enumerated value is valid or null else false.
 	 */
 	public static boolean isEnumeratedOrNullValue(String[] list, String value)
 	{
 		boolean isValid = false;
-
 		if (value == null)
 		{
-			return true;
+			isValid=true;
 		}
 		else if (list != null)
 		{
-			for (int i = 1; i < list.length; i++)
-			{
-				if (value.equals(list[i]))
-				{
-					isValid = true;
-					break;
-				}
-			}
+			isValid=isEnumeratedValue(list, value);
 		}
 
 		return isValid;
