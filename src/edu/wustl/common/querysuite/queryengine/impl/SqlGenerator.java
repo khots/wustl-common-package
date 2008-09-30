@@ -453,11 +453,12 @@ public class SqlGenerator implements ISqlGenerator
 
 	private String removeLastComma(String select)
 	{
+		String result =  select;
 		if (select.endsWith(" ,"))
 		{
-			select = select.substring(0, select.length() - 2);
+			result = select.substring(0, select.length() - 2);
 		}
-		return select;
+		return result;
 	}
 
 	/**
@@ -516,12 +517,12 @@ public class SqlGenerator implements ISqlGenerator
 	{
 		StringBuffer buffer = new StringBuffer("");
 		int parentExpressionId = expression.getExpressionId();
-
+		String alias = leftAlias;
 		if (processedAlias.isEmpty()) // this will be true only for root node.
 		{
 			EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
-			leftAlias = getAliasName(expression);
-			buffer.append("From " + leftEntity.getTableProperties().getName() + " " + leftAlias);
+			alias = getAliasName(expression);
+			buffer.append("From " + leftEntity.getTableProperties().getName() + " " + alias);
 
 			createFromPartForDerivedEntity(expression, buffer);
 		}
@@ -530,7 +531,7 @@ public class SqlGenerator implements ISqlGenerator
 		processedAlias.add(parentExpressionAliasAppender);
 
 		// Processing children
-		buffer.append(processChildExpressions(leftAlias, processedAlias, expression));
+		buffer.append(processChildExpressions(alias, processedAlias, expression));
 		return buffer.toString();
 	}
 
@@ -1142,23 +1143,24 @@ public class SqlGenerator implements ISqlGenerator
 	private int attachOperandSQL(StringBuffer buffer, int currentNestingCounter, String operandSQL,
 			int nestingNumber)
 	{
-		if (currentNestingCounter < nestingNumber)
+		int nestingCounter = currentNestingCounter;
+		if (nestingCounter < nestingNumber)
 		{
-			buffer.append(getParenthesis(nestingNumber - currentNestingCounter, "("));
-			currentNestingCounter = nestingNumber;
+			buffer.append(getParenthesis(nestingNumber - nestingCounter, "("));
+			nestingCounter = nestingNumber;
 			buffer.append(operandSQL);
 		}
-		else if (currentNestingCounter > nestingNumber)
+		else if (nestingCounter > nestingNumber)
 		{
 			buffer.append(operandSQL);
-			buffer.append(getParenthesis(currentNestingCounter - nestingNumber, ")"));
-			currentNestingCounter = nestingNumber;
+			buffer.append(getParenthesis(nestingCounter - nestingNumber, ")"));
+			nestingCounter = nestingNumber;
 		}
 		else
 		{
 			buffer.append(operandSQL);
 		}
-		return currentNestingCounter;
+		return nestingCounter;
 	}
 
 	/**
@@ -1608,10 +1610,11 @@ public class SqlGenerator implements ISqlGenerator
 	 * @throws SqlException when there is problem with the values, for Ex.
 	 *             unable to parse date/integer/double etc.
 	 */
-	String modifyValueforDataType(String value, AttributeTypeInformationInterface dataType)
+	String modifyValueforDataType(String dateValue, AttributeTypeInformationInterface dataType)
 			throws SqlException
 	{
 
+		String value = dateValue;
 		if (dataType instanceof StringTypeInformationInterface)// for data type
 		// String it will be enclosed in single quote.
 		{
@@ -2130,14 +2133,14 @@ public class SqlGenerator implements ISqlGenerator
 		return removeLastComma(s.toString());
 	}
 
-	private String modifyForTimeInterval(String termString, TimeInterval<?> timeInterval)
+	private String modifyForTimeInterval(String modifiedStringVal, TimeInterval<?> timeInterval)
 	{
-		if (timeInterval == null)
+		String termString = modifiedStringVal;
+		if (timeInterval != null)
 		{
-			return termString;
+		  termString = termString + "/" + timeInterval.numSeconds();
+		  termString = "ROUND(" + termString + ")";
 		}
-		termString = termString + "/" + timeInterval.numSeconds();
-		termString = "ROUND(" + termString + ")";
 		return termString;
 	}
 
