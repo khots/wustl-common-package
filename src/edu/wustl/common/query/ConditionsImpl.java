@@ -20,10 +20,8 @@ public abstract class ConditionsImpl
 
 	}
 
-	public void formatTree()
-	{
-
-	}
+	public abstract void formatTree();
+	
 
 	/**
 	 * Returns String representation of itself 

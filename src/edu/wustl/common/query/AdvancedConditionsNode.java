@@ -18,7 +18,7 @@ public class AdvancedConditionsNode
 	/**
 	 * Object of the conditions in this node
 	 */
-	private String objectName = new String();
+	private String objectName;
 
 	/**
 	 * Vector of Condition objects that are on object identified by objectName

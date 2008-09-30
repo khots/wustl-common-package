@@ -87,7 +87,7 @@ public class Condition
 		}
 		else
 		{
-			newValue = new String(value);
+			newValue = value;
 		}
 
 		if (newOperator.equals(Operator.STARTS_WITH))
