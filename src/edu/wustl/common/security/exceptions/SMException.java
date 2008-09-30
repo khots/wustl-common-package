@@ -1,10 +1,6 @@
-
 package edu.wustl.common.security.exceptions;
 
 /**
- * 
- *<p>Title: </p>
- *<p>Description:  </p>
  *<p>Copyright: (c) Washington University, School of Medicine 2005</p>
  *<p>Company: Washington University, School of Medicine, St. Louis.</p>
  *@author Aarti Sharma
