@@ -182,9 +182,9 @@ public interface UnmarshallingContext extends NamespaceContext
 	Locator getLocator();
 
 	/**
-	 * Reports an error to the user, and asks if s/he wants
-	 * to recover. If the canRecover flag is false, regardless
-	 * of the client instruction, an exception will be thrown.
+	 * Reports an error to the user, and asks if s/he wants to recover.
+	 * If the canRecover flag is false, regardless of the client instruction,
+	 * an exception will be thrown.
 	 * 
 	 * Only if the flag is true and the user wants to recover from an error,
 	 * the method returns normally.
