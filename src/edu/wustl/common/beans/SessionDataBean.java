@@ -21,14 +21,14 @@ package edu.wustl.common.beans;
 public class SessionDataBean
 {
 
-	private String firstName = new String();
-	private String lastName = new String();
+	private String firstName;
+	private String lastName;
 
-	private String csmUserId = new String();
-	private String userName = new String();
-	private String ipAddress = new String();
+	private String csmUserId;
+	private String userName;
+	private String ipAddress;
 	private Long userId = null;
-	private boolean securityRequired = new Boolean(false);
+	private boolean securityRequired =Boolean.FALSE;
 	private boolean isAdmin = false;
 
 	public boolean isAdmin()

@@ -20,8 +20,8 @@ public class AddNewSessionDataBean
 {
 
 	private AbstractActionForm abstractActionForm;
-	private String forwardTo = new String();
-	private String addNewFor = new String();
+	private String forwardTo;
+	private String addNewFor;
 
 	/**
 	 * @return Returns abstractActionForm
