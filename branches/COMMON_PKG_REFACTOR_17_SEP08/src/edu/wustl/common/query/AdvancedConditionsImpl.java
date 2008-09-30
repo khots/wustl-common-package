@@ -28,7 +28,7 @@ public class AdvancedConditionsImpl extends ConditionsImpl
 
 	private int level = 1;
 
-	private String parentObject = new String();
+	private String parentObject;
 
 	public AdvancedConditionsImpl()
 	{

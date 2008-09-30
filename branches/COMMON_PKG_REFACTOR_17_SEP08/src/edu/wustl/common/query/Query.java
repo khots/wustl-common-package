@@ -64,7 +64,7 @@ public abstract class Query
 	 * Parent object of the queryStartObject i.e. the object from which the
 	 * queryStartObject is derived
 	 */
-	private String parentOfQueryStartObject = new String();
+	private String parentOfQueryStartObject;
 
 	/**
 	 * Set of tables that should be included in FROM part of query
@@ -90,7 +90,7 @@ public abstract class Query
 	//Aarti: Commented the following code since its never being called
 	//	protected boolean isParentDerivedSpecimen = false;
 
-	private String activityStatusConditions = new String();
+	private String activityStatusConditions ;
 
 	/**
 	 * Operation between all children under the parent of this query
@@ -1053,7 +1053,7 @@ public abstract class Query
 					{
 						continue;
 					}
-					columnIds.add(new Integer(i + 1));
+					columnIds.add(Integer.valueOf(i + 1));
 					Logger.out.debug("tableAlias:" + tableAlias + " columnId:" + (i + 1));
 				}
 			}
@@ -1103,7 +1103,7 @@ public abstract class Query
 						{
 							Logger.out.debug(" identifiedData.contains(dataElementFieldName)***** "
 									+ identifiedData.contains(dataElementFieldName));
-							columnIds.add(new Integer(i + 1));
+							columnIds.add(Integer.valueOf(i + 1));
 							Logger.out.debug("tableAlias:" + tableAlias + " Identified column:"
 									+ dataElementFieldName + " Identified columnId:" + (i + 1));
 						}
@@ -1148,7 +1148,7 @@ public abstract class Query
 				if (dataElementTableName.equals(tableAlias)
 						&& dataElementFieldName.equals(Constants.IDENTIFIER))
 				{
-					columnIdsMap.put(tableAlias, new Integer(i + 1));
+					columnIdsMap.put(tableAlias, Integer.valueOf(i + 1));
 					Logger.out
 							.debug("tableAlias:" + tableAlias + " Identifier columnId:" + (i + 1));
 					break;
@@ -1158,7 +1158,7 @@ public abstract class Query
 			{
 				identifierDataElement = new DataElement(tableAlias, Constants.IDENTIFIER);
 				this.resultView.add(identifierDataElement);
-				columnIdsMap.put(tableAlias, new Integer(resultView.size()));
+				columnIdsMap.put(tableAlias,Integer.valueOf(resultView.size()));
 				Logger.out.debug("tableAlias:" + tableAlias + " Added Identifier columnId:"
 						+ resultView.size());
 			}

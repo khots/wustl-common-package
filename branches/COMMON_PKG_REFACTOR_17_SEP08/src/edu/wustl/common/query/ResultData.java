@@ -29,13 +29,18 @@ public class ResultData
 	/**
 	 * Query results temporary table.
 	 */
-	private String tmpResultsTableName = new String();
+	private String tmpResultsTableName;
 
-	public List getSpreadsheetViewData(String[] whereColumnName, String[] whereColumnValue,
-			String[] whereColumnCondition, String[] columnList, SessionDataBean sessionDataBean,
+	public List getSpreadsheetViewData(String[] whereColName, String[] whereColValue,
+			String[] whereColCondition, String[] columnList, SessionDataBean sessionDataBean,
 			int securityParam)
 	{
 
+		String[] whereColumnName = whereColName;
+		String[] whereColumnCondition = whereColCondition;
+		 String[] whereColumnValue = whereColValue;
+		
+		
 		tmpResultsTableName = Constants.QUERY_RESULTS_TABLE + "_" + sessionDataBean.getUserId();
 
 		if (whereColumnName[0].equals(Constants.ROOT))

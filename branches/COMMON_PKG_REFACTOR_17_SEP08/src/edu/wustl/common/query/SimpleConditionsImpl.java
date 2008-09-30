@@ -240,4 +240,11 @@ public class SimpleConditionsImpl extends ConditionsImpl
 		return hasConditionOnIdentifiedField;
 	}
 
+	@Override
+	public void formatTree()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

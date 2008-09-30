@@ -31,12 +31,12 @@ public class QueryTreeNodeMap
 	 */
 	public QueryTreeNodeMap()
 	{
-		nodeMap.put(new Integer(0), "Root");
-		nodeMap.put(new Integer(1), "Participant");
-		nodeMap.put(new Integer(2), "Accession");
-		nodeMap.put(new Integer(3), "Specimen");
-		nodeMap.put(new Integer(4), "Segment");
-		nodeMap.put(new Integer(5), "Sample");
+		nodeMap.put(Integer.valueOf(0), "Root");
+		nodeMap.put(Integer.valueOf(1), "Participant");
+		nodeMap.put(Integer.valueOf(2), "Accession");
+		nodeMap.put(Integer.valueOf(3), "Specimen");
+		nodeMap.put(Integer.valueOf(4), "Segment");
+		nodeMap.put(Integer.valueOf(5), "Sample");
 	}
 
 	/**
@@ -46,6 +46,6 @@ public class QueryTreeNodeMap
 	 */
 	public String getNodeName(int level)
 	{
-		return (String) nodeMap.get(new Integer(level));
+		return (String) nodeMap.get(Integer.valueOf(level));
 	}
 }
