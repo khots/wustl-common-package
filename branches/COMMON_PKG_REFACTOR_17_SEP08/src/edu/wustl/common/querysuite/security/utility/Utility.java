@@ -62,7 +62,7 @@ public class Utility
 		Map<IExpression, Collection<ICondition>> allSelectedConditions = QueryUtility
 				.getAllSelectedConditions(query);
 		Collection<Collection<ICondition>> values = allSelectedConditions.values();
-		Boolean trueValue = new Boolean(true);
+		Boolean trueValue = Boolean.TRUE;
 		for (Collection<ICondition> conditions : values)
 		{
 			for (ICondition condition : conditions)
@@ -88,8 +88,8 @@ public class Utility
 	{
 		List<String> queryReadDeniedObjectsList = new ArrayList<String>();
 		Map<String, String> entityCSSqlMap = new HashMap<String, String>();
-		String mainProtocolClassName = new String();
-		String validatorClassname = new String();
+		String mainProtocolClassName = "";
+		String validatorClassname = "";
 		File file = new File(Variables.applicationHome + System.getProperty("file.separator")
 				+ "WEB-INF" + System.getProperty("file.separator") + "classes"
 				+ System.getProperty("file.separator") + Constants.CSM_PROPERTY_FILE);
