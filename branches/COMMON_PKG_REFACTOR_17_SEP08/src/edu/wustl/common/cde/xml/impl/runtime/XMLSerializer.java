@@ -102,32 +102,32 @@ public interface XMLSerializer
 	 * 
 	 * <pre>
 	 * c.startAttribute();
-	 * c.text("abc");
-	 * c.text("def");
+	 * c.text("abcd");
+	 * c.text("defg");
 	 * c.endAttribute("","foo");
 	 * </pre>
 	 * 
-	 * will generate foo="abc def".
+	 * will generate foo="abcd defg".
 	 * 
 	 * <p>
 	 * Similarly, this method can be called after the endAttributes
 	 * method to marshal texts inside elements. The same rule about
 	 * multiple invokations apply to this case, too. For example,
-	 * 
+	 *
 	 * <pre>
 	 * c.startElement("","foo");
 	 * c.endNamespaceDecls();
 	 * c.endAttributes();
-	 * c.text("abc");
-	 * c.text("def");
-	 *   c.startElement("","bar");
-	 *   c.endAttributes();
-	 *   c.endElement();
-	 * c.text("ghi");
+	 * c.text("abcd");
+	 * c.text("defg");
+	 * c.startElement("","bar");
+	 * c.endAttributes();
+	 * c.endElement();
+	 * c.text("ghij");
 	 * c.endElement();
 	 * </pre>
-	 * 
-	 * will generate <code>&lt;foo>abc def&lt;bar/>ghi&lt;/foo></code>.
+	 *
+	 * will generate <code>&lt;foo>abcd defg&lt;bar/>ghij&lt;/foo></code>.
 	 */
 	void text(String text, String fieldName) throws SAXException;
 
