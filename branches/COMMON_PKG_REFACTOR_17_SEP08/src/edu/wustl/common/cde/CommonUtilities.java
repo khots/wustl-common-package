@@ -32,7 +32,7 @@ public class CommonUtilities
 	{
 		try
 		{
-			Integer i = new Integer(num);
+			Integer i = Integer.valueOf(num);
 			if ((min < max))
 			{
 				int z = i.intValue();
