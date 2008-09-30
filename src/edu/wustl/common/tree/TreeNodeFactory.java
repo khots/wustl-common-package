@@ -34,10 +34,10 @@ public class TreeNodeFactory
 				treeNode = new CDETreeNode(null, cdeName);
 				break;
 			case Constants.STORAGE_CONTAINER_TREE_ID :
-				treeNode = new StorageContainerTreeNode(new Long(0), null, Constants.CATISSUE_CORE);
+				treeNode = new StorageContainerTreeNode(Long.valueOf(0), null, Constants.CATISSUE_CORE);
 				break;
 			case Constants.QUERY_RESULTS_TREE_ID :
-				treeNode = new AdvanceQueryTreeNode(new Long(0), Constants.ROOT, Constants.ALL);
+				treeNode = new AdvanceQueryTreeNode(Long.valueOf(0), Constants.ROOT, Constants.ALL);
 				break;
 			//Added By Ramya.
 			//To display specimen tree hierarchy.
@@ -45,7 +45,7 @@ public class TreeNodeFactory
 				treeNode = new SpecimenTreeNode(null, Constants.SPECIMEN_TREE_ROOT_NAME);
 				break;
 			case Constants.EXPERIMETN_TREE_ID :
-				treeNode = new ExperimentTreeNode(new Long(0), "My Experiments");
+				treeNode = new ExperimentTreeNode(Long.valueOf(0), "My Experiments");
 				((ExperimentTreeNode) treeNode).setExperimentGroup(true);
 				break;
 

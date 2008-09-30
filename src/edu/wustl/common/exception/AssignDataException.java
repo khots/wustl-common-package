@@ -47,13 +47,6 @@ public class AssignDataException extends Exception
 
 	public static void main(String[] args)
 	{
-		String str = "%a";
-
-		if (str.endsWith("%"))
-		{
-
-		}
-		else
-			System.out.println("NOT WITH");
+						
 	}
 }

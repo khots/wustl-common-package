@@ -77,9 +77,6 @@ public class HibernateMetaData
 		while (it.hasNext())
 		{
 			Subclass subClass = (Subclass) it.next();
-
-			System.out.println(subClass.getClass().getName());
-			//System.out.println("Name "+subClass.getName());
 			list.add(subClass.getClassName());
 		}
 		return list;
@@ -264,16 +261,12 @@ public class HibernateMetaData
 	{
 		org.hibernate.mapping.Collection coll = cfg.getCollectionMapping(
 		  "edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
-		System.out.println(coll.getCollectionTable().getName());
-		System.out.println(coll.getTable().getName());
-
+		
 		Iterator it = coll.getColumnIterator();
-
 		while (it.hasNext())
 		{
 			//org.hibernate.mapping.Set set = (org.hibernate.mapping.Set)it.next();
-			System.out.println(it.next());
-
+		
 		}
 	}
 
@@ -543,7 +536,5 @@ public class HibernateMetaData
 		Logger.out.debug("here");
 
 		DBUtil.currentSession();
-		System.out.println(mappings.size());
-
 	}
 }
