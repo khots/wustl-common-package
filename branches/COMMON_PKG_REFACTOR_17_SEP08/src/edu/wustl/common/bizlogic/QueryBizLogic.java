@@ -1102,20 +1102,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select sum(AVAILABLE_QUANTITY) from CATISSUE_SPECIMEN specimen join"
 				+ " catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier"
 				+ " where absspec.SPECIMEN_CLASS='" + specimanType + "'";
-		try
-		{
-			List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-			if (!list.isEmpty())
-			{
-				List rowList = (List) list.get(0);
-				prevValueDisplayName = (String) rowList.get(0);
-			}
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
-		}
+		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO,sql);
 		return prevValueDisplayName;
 	}
 
