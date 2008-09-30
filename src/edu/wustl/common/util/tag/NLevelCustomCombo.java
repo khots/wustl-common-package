@@ -32,6 +32,11 @@ public class NLevelCustomCombo extends TagSupport
 {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * a datastructure of type Map of Map of ... of List.
 	 * This forms a hierarchy of data. The depth of this tree hierarchy decides
 	 * the number of combos used to display this complex data structure.
@@ -133,7 +138,6 @@ public class NLevelCustomCombo extends TagSupport
 		initOptionalAttributes();
 		if (validate() == false)
 		{
-			System.out.println("invalid tag attributes -> " + numberOfCombosNeeded);
 			return SKIP_BODY;
 		}
 
@@ -551,16 +555,6 @@ public class NLevelCustomCombo extends TagSupport
 				comboCounter++;
 			}
 		}
-	}
-
-	private void print(String[] strArray)
-	{
-		System.out.println("-------------" + strArray.length + "-----------");
-		for (int i = 0; i < strArray.length; i++)
-		{
-			System.out.println(i + " : " + strArray[i]);
-		}
-		System.out.println("----------------------------------------------");
 	}
 
 	/**

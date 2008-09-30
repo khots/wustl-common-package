@@ -70,8 +70,9 @@ public class ScriptGenerator
 	 * @param map Java Map datastructure.
 	 * @return depth of the map.
 	 */
-	public static int depthOfMap(Map map)
+	public static int depthOfMap(Map mapval)
 	{
+		Map map = mapval;
 		int depth = 0;
 		while (map instanceof Map)
 		{
@@ -100,8 +101,9 @@ public class ScriptGenerator
 	 * @param keyValue key from which we got this obj value, for outer map it is empty.
 	 * @return String equivalent of javascript code. 
 	 */
-	public static String getVarInStringForm(Object obj, int depth, String keyValue, String rowNumber)
+	public static String getVarInStringForm(Object obj, int depthval, String keyValue, String rowNumber)
 	{
+		int depth = depthval;
 		String returner = "";
 		String varName = "dataTable_" + rowNumber + "_";
 		depth++;
@@ -174,8 +176,7 @@ public class ScriptGenerator
 
 		//int maxDepth = depthOfMap(containerMap);
 		String result = getJSEquivalentFor(fourthMap, "1");
-		System.out.println("\n\nresult \n" + result);
-		System.out.println("\n\ncontainerMap " + fourthMap);
+		
 	}
 
 	public static void main(String args[])
@@ -206,7 +207,6 @@ public class ScriptGenerator
 
 		//int maxDepth = depthOfMap(containerMap);
 		String result = getJSEquivalentFor(fourthMap, "1");
-		System.out.println("\n\nresult \n" + result);
-		System.out.println("\n\ncontainerMap " + fourthMap);
+	
 	}
 }
