@@ -230,11 +230,11 @@ public class PrivilegeCache
 	public boolean hasPrivilege(String objectId, String privilegeName)
 	{
 		boolean isAuthorized = false;
-
+/*
 		if (objectId.contains("edu.wustl.catissuecore.domain.User_"))
 		{
 			System.out.println("checking privileges for " + objectId);
-		}
+		}*/
 
 		BitSet bitSet = privilegeMap.get(objectId);
 
@@ -479,8 +479,9 @@ public class PrivilegeCache
 	 * @throws SMException
 	 */
 	private void assignPrivilegeToUser(String privilegeName, Class objectType, Long[] objectIds,
-			Long userId, boolean assignOperation) throws SMException
+			Long userId, boolean assignOp) throws SMException
 	{
+		boolean assignOperation = assignOp;
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
 
 		Logger.out.debug("In assignPrivilegeToUser...");

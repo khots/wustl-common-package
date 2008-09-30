@@ -811,8 +811,10 @@ public class PrivilegeUtility
 	 * @param aggregatedRoles list of roles
 	 * @return
 	 */
-	private Set addRemoveRoles(Set roles, boolean assignOperation, Set aggregatedRoles)
+	private Set addRemoveRoles(Set roles, boolean assignOperation, Set aggrRoles)
 	{
+		Set aggregatedRoles = aggrRoles;
+		
 		// if the operation is assign, add the roles to be assigned.
 		if (assignOperation == Constants.PRIVILEGE_ASSIGN)
 		{

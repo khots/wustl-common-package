@@ -99,13 +99,13 @@ public class ResponseServlet extends HttpServlet
 		else if (operation.equals(Constants.LOGIN))
 		{
 			httpMessage.setResponseStatus(Constants.SUCCESS);
-			httpMessage.addMessage(new String("Successful Login"));
+			httpMessage.addMessage("Successful Login");
 			httpMessage.setSessionId(req.getSession(true).getId());
 		}
 		else if (operation.equals(Constants.LOGOUT))
 		{
 			httpMessage.setResponseStatus(Constants.SUCCESS);
-			httpMessage.addMessage(new String("Successful Logout"));
+			httpMessage.addMessage("Successful Logout");
 			httpMessage.setSessionId(null);
 		}
 

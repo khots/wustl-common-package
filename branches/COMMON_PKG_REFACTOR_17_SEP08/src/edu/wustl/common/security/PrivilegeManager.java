@@ -281,8 +281,9 @@ public class PrivilegeManager
 	 * @throws SMException
 	 */
 	private void assignPrivilegeToGroup(String privilegeName, Class objectType, Long[] objectIds,
-			String roleId, boolean assignOperation) throws SMException
+			String roleId, boolean assignOp) throws SMException
 	{
+		boolean assignOperation = assignOp;
 		PrivilegeUtility utility = new PrivilegeUtility();
 
 		Logger.out.debug("privilegeName:" + privilegeName + " objectType:" + objectType

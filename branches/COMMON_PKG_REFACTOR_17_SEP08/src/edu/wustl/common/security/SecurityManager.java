@@ -1311,7 +1311,7 @@ public class SecurityManager implements Permissions
 		Iterator keyIterator = keySet.iterator();
 		QueryResultObjectData queryResultObjectData2;
 		QueryResultObjectData queryResultObjectData3;
-		Vector queryObjects;
+		List queryObjects;
 		Map columnIdsMap = new HashMap();
 
 		//Aarti: For all objects in objectIdentifiers check permission on the
@@ -1436,7 +1436,7 @@ public class SecurityManager implements Permissions
 
 		Logger.out.debug(" Table:" + queryResultObjectData3.getAliasName()
 				+ " removeOnlyIdentifiedData:" + removeOnlyIdentifiedData);
-		Vector objectColumnIds;
+		List objectColumnIds;
 
 		//If removeOnlyIdentifiedData is true then get Identified data column
 		// ids
