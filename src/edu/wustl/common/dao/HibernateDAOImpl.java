@@ -421,35 +421,10 @@ public class HibernateDAOImpl implements HibernateDAO
 		try
 		{
 			StringBuffer sqlBuff = new StringBuffer();
-
 			String className = Utility.parseClassName(sourceObjectName);
 
-			//Logger.out.debug("***********className:"+className);
-			if (selectColumnName != null && selectColumnName.length > 0)
-			{
-				sqlBuff.append("Select ");
-
-				//Added by Aarti 
-				//--------------------------------
-				//                if(sourceObjectName.equals(Site.class.getName()))
-				//                {
-				//                    sqlBuff.append(className + "." + Constants.SYSTEM_IDENTIFIER);
-				//                    sqlBuff.append(", ");
-				//                }
-				//---------------------------------
-				for (int i = 0; i < selectColumnName.length; i++)
-				{
-					sqlBuff.append(Utility
-							.createAttributeNameForHQL(className, selectColumnName[i]));
-					if (i != selectColumnName.length - 1)
-					{
-						sqlBuff.append(", ");
-					}
-				}
-				sqlBuff.append(" ");
-			}
-			//Logger.out.debug(" String : "+sqlBuff.toString());
-
+			generateSelectBlock(selectColumnName,sqlBuff,className);
+						
 			Query query = null;
 			sqlBuff.append("from " + sourceObjectName + " " + className);
 			//Logger.out.debug(" String : "+sqlBuff.toString());
@@ -458,78 +433,9 @@ public class HibernateDAOImpl implements HibernateDAO
 					&& (whereColumnCondition != null && whereColumnCondition.length == whereColumnName.length)
 					&& (whereColumnValue != null))
 			{
-				if (joinCondition == null)
-					joinCondition = Constants.AND_JOIN_CONDITION;
-
-				sqlBuff.append(" where ");
-
-				//Adds the column name and search condition in where clause. 
-				for (int i = 0; i < whereColumnName.length; i++)
-				{
-					sqlBuff.append(className + "." + whereColumnName[i] + " ");
-					if (whereColumnCondition[i].indexOf("in") != -1)
-					{
-						sqlBuff.append(whereColumnCondition[i] + "(  ");
-						Object valArr[] = (Object[]) whereColumnValue[i];
-						for (int j = 0; j < valArr.length; j++)
-						{
-							//Logger.out.debug(sqlBuff);
-							sqlBuff.append("? ");
-							if ((j + 1) < valArr.length)
-								sqlBuff.append(", ");
-						}
-						sqlBuff.append(") ");
-					}
-					else if (whereColumnCondition[i].indexOf("is not null") != -1)
-					{
-						sqlBuff.append(whereColumnCondition[i]);
-					}
-					else if (whereColumnCondition[i].indexOf("is null") != -1)
-					{
-						sqlBuff.append(whereColumnCondition[i]);
-					}
-					else
-					{
-						sqlBuff.append(whereColumnCondition[i] + " ? ");
-					}
-
-					if (i < (whereColumnName.length - 1))
-						sqlBuff.append(" " + joinCondition + " ");
-				}
-
-				//Logger.out.debug(sqlBuff.toString());
-
-				query = session.createQuery(sqlBuff.toString());
-
-				int index = 0;
-				//Adds the column values in where clause
-				for (int i = 0; i < whereColumnValue.length; i++)
-				{
-					//Logger.out.debug("whereColumnValue[i]. " + whereColumnValue[i]);
-					if (whereColumnCondition[i].equals("is null")
-							|| whereColumnCondition[i].equals("is not null"))
-					{
-					}
-					else
-					{
-
-						Object obj = whereColumnValue[i];
-						if (obj instanceof Object[])
-						{
-							Object[] valArr = (Object[]) obj;
-							for (int j = 0; j < valArr.length; j++)
-							{
-								query.setParameter(index, valArr[j]);
-								index++;
-							}
-						}
-						else
-						{
-							query.setParameter(index, obj);
-							index++;
-						}
-					}
-				}
+				query = generateWhereBlock(sourceObjectName, selectColumnName,
+						whereColumnName,  whereColumnCondition,  whereColumnValue,
+						joinCondition,query ,sqlBuff,className);
 			}
 			else
 			{
@@ -632,10 +538,10 @@ public class HibernateDAOImpl implements HibernateDAO
 
 		String objClassName = objClass.getName();
 		String simpleName = objClass.getSimpleName();
-		attributeName = Utility.createAttributeNameForHQL(simpleName, attributeName);
+		String nameOfAttribute = Utility.createAttributeNameForHQL(simpleName, attributeName);
 
 		StringBuffer queryStringBuffer = new StringBuffer();
-		queryStringBuffer.append("Select ").append(simpleName).append(".").append(attributeName)
+		queryStringBuffer.append("Select ").append(simpleName).append(".").append(nameOfAttribute)
 				.append(" from ").append(objClassName).append(" ").append(simpleName).append(
 						" where ").append(simpleName).append(".").append(
 						Constants.SYSTEM_IDENTIFIER).append("=").append(id);
@@ -700,6 +606,111 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 
 		return attribute;
+	}
+	
+	private void generateSelectBlock(String[] selectColumnName,StringBuffer sqlBuff,String className)
+	{
+//		Logger.out.debug("***********className:"+className);
+		if (selectColumnName != null && selectColumnName.length > 0)
+		{
+			sqlBuff.append("Select ");
+
+			for (int i = 0; i < selectColumnName.length; i++)
+			{
+				sqlBuff.append(Utility
+						.createAttributeNameForHQL(className, selectColumnName[i]));
+				if (i != selectColumnName.length - 1)
+				{
+					sqlBuff.append(", ");
+				}
+			}
+			sqlBuff.append(" ");
+		}
+	}
+	
+	private Query generateWhereBlock(String sourceObjectName, String[] selectColumnName,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition,Query query,StringBuffer sqlBuff,String className)
+	{
+
+		String condition;
+		Query sqlQuery = query;
+		if (joinCondition == null)
+			condition = Constants.AND_JOIN_CONDITION;
+		else 
+			condition = joinCondition;
+
+		sqlBuff.append(" where ");
+
+		//Adds the column name and search condition in where clause. 
+		for (int i = 0; i < whereColumnName.length; i++)
+		{
+			sqlBuff.append(className + "." + whereColumnName[i] + " ");
+			if (whereColumnCondition[i].indexOf("in") != -1)
+			{
+				sqlBuff.append(whereColumnCondition[i] + "(  ");
+				Object valArr[] = (Object[]) whereColumnValue[i];
+				for (int j = 0; j < valArr.length; j++)
+				{
+					//Logger.out.debug(sqlBuff);
+					sqlBuff.append("? ");
+					if ((j + 1) < valArr.length)
+						sqlBuff.append(", ");
+				}
+				sqlBuff.append(") ");
+			}
+			else if (whereColumnCondition[i].indexOf("is not null") != -1)
+			{
+				sqlBuff.append(whereColumnCondition[i]);
+			}
+			else if (whereColumnCondition[i].indexOf("is null") != -1)
+			{
+				sqlBuff.append(whereColumnCondition[i]);
+			}
+			else
+			{
+				sqlBuff.append(whereColumnCondition[i] + " ? ");
+			}
+
+			if (i < (whereColumnName.length - 1))
+				sqlBuff.append(" " + condition + " ");
+		}
+
+		//Logger.out.debug(sqlBuff.toString());
+
+		sqlQuery = session.createQuery(sqlBuff.toString());
+
+		int index = 0;
+		//Adds the column values in where clause
+		for (int i = 0; i < whereColumnValue.length; i++)
+		{
+			//Logger.out.debug("whereColumnValue[i]. " + whereColumnValue[i]);
+			if (whereColumnCondition[i].equals("is null")
+					|| whereColumnCondition[i].equals("is not null"))
+			{
+			}
+			else
+			{
+
+				Object obj = whereColumnValue[i];
+				if (obj instanceof Object[])
+				{
+					Object[] valArr = (Object[]) obj;
+					for (int j = 0; j < valArr.length; j++)
+					{
+						sqlQuery.setParameter(index, valArr[j]);
+						index++;
+					}
+				}
+				else
+				{
+					sqlQuery.setParameter(index, obj);
+					index++;
+				}
+			}
+		}
+	
+		return sqlQuery;
 	}
 
 }

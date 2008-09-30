@@ -64,9 +64,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
-	 * @param sessionDataBean TODO
+	 * @param sessionDataBean 
 	 * @throws DAOException
-	 * @throws UserNotAuthorizedException TODO
+	 * @throws UserNotAuthorizedException 
 	 */
 	protected abstract void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException;
@@ -100,7 +100,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
 	 * @throws DAOException
-	 * @throws UserNotAuthorizedException TODO
+	 * @throws UserNotAuthorizedException 
 	 */
 	protected abstract void delete(Object obj, DAO dao) throws DAOException,
 			UserNotAuthorizedException;
@@ -120,9 +120,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * Updates an objects into the database.
 	 * @param obj The object to be updated into the database. 
-	 * @param sessionDataBean TODO
+	 * @param sessionDataBean
 	 * @throws DAOException
-	 * @throws UserNotAuthorizedException TODO
+	 * @throws UserNotAuthorizedException 
 	 */
 	protected abstract void update(DAO dao, Object obj, Object oldObj,
 			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
@@ -476,7 +476,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
+				
 				throw new BizLogicException();
 			}
 			long endTime = System.currentTimeMillis();
@@ -530,7 +530,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
 				//throw new BizLogicException(ex.getMessage(), ex);
 			}
-			//TODO ERROR Handling
+			
 			throw new BizLogicException(ex.getMessage(), ex);
 		}
 		finally
