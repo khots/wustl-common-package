@@ -236,7 +236,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			t = s.beginTransaction();
 
 			ProtectionGroup protectionGroup = (ProtectionGroup) this.getObjectByPrimaryKey(s,
-					ProtectionGroup.class, new Long(protectionGroupId));
+					ProtectionGroup.class, Long.valueOf(protectionGroupId));
 
 			for (int i = 0; i < protectionElementIds.length; i++)
 			{
@@ -306,7 +306,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		{
 			s = HibernateSessionFactoryHelper.getAuditSession(sf);
 
-			User user = (User) this.getObjectByPrimaryKey(s, User.class, new Long(userId));
+			User user = (User) this.getObjectByPrimaryKey(s, User.class, Long.valueOf(userId));
 			groups = user.getGroups();
 			List list = new ArrayList();
 			Iterator toSortIterator = groups.iterator();
