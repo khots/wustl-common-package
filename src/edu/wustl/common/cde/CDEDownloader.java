@@ -33,9 +33,9 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 public class CDEDownloader
 {
 
-	public static int MAX_SERVER_CONNECT_ATTEMPTS = Integer.parseInt(ApplicationProperties
+	public static int maxServerConnectAttempts = Integer.parseInt(ApplicationProperties
 			.getValue("max.server.connect.attempts"));
-	public static int MAX_CDE_DOWNLOAD_ATTEMPTS = Integer.parseInt(ApplicationProperties
+	public static int maxCDEDownloadAttempts = Integer.parseInt(ApplicationProperties
 			.getValue("max.cde.download.attempts"));
 	private ApplicationService appService;
 
@@ -73,7 +73,7 @@ public class CDEDownloader
 		init();
 
 		int connectAttempts = 0;
-		while (connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS)
+		while (connectAttempts < maxServerConnectAttempts)
 		{
 			try
 			{
@@ -105,7 +105,7 @@ public class CDEDownloader
 		Logger.out.info("Downloading CDE " + xmlCDE.getName());
 
 		int downloadAttempts = 0;
-		while (downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS)
+		while (downloadAttempts < maxCDEDownloadAttempts)
 		{
 			try
 			{
@@ -139,7 +139,7 @@ public class CDEDownloader
 
 		if (loadByPublicID)
 		{
-			dataElementQuery.setPublicID(new Long(xmlCDE.getPublicId()));
+			dataElementQuery.setPublicID(Long.valueOf(xmlCDE.getPublicId()));
 		} // loadByPublicID = true
 		else
 		{

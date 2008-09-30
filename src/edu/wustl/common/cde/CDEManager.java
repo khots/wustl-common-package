@@ -225,9 +225,10 @@ public class CDEManager
 		return buff.toString();
 	}
 
-	private List loadPermissibleValue(PermissibleValue permissibleValue, boolean isParentFound,
+	private List loadPermissibleValue(PermissibleValue permissibleValue, boolean isPrntFound,
 			String value)
 	{
+		boolean isParentFound = isPrntFound;
 		List pvList = new ArrayList();
 
 		if (isParentFound)

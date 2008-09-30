@@ -14,7 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 /*
- * $Id: Main.java,v 1.1.18.1 2008/09/18 07:31:19 ravi_kumar Exp $
+ * $Id: Main.java,v 1.1.18.2 2008/09/30 13:49:45 Kalpana_Thakur Exp $
  *
  * Copyright 2003 Sun Microsystems, Inc. All Rights Reserved.
  * 
@@ -72,21 +72,21 @@ public class Main
 	{
 		// display the cdeojb
 
-		System.out.println("NAME : \t" + cdeojb.getName());
+		/*System.out.println("NAME : \t" + cdeojb.getName());
 		System.out.println("PUBLICID : \t" + cdeojb.getPublicId());
 		System.out.println("CACHE : \t" + cdeojb.isCache());
 		System.out.println("LAZYLOADING : \t" + cdeojb.isLazyLoading());
-
+*/
 		java.util.List l2 = cdeojb.getXMLPermissibleValues();
 		if (!l2.isEmpty())
 		{
 			XMLPermissibleValueType pvt = (XMLPermissibleValueType) l2.get(0);
-			displayPV(pvt);
+		//	displayPV(pvt);
 		}
-		System.out.println("\n\t----------------------------------------");
+		
 	} //displayCde
 
-	public static void displayPV(XMLPermissibleValueType pvt)
+	/*public static void displayPV(XMLPermissibleValueType pvt)
 	{
 		System.out.println("\tEVS Term: " + pvt.getEvsTerminology());
 		System.out.println("\tConcept Code: " + pvt.getConceptCode());
@@ -94,7 +94,7 @@ public class Main
 		System.out.println("\tTree Depth: " + pvt.getDepthOfHierarchyTree());
 
 	} // displayPV
-
+*/
 } // class
 
 // --------------------------------------------------------
