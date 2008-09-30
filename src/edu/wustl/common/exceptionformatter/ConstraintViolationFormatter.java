@@ -9,6 +9,7 @@ package edu.wustl.common.exceptionformatter;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -127,7 +128,6 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		Exception objExcp = excp;
 		if (objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
 		{
-
 			objExcp = (Exception) objExcp.getCause();
 			Logger.out.debug(objExcp);
 		}
@@ -135,8 +135,8 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		String tableName = null; // stores Table_Name for which column name to be found 
 		String columnName = null; //stores Column_Name of table  
 		String formattedErrMsg = null; // Formatted Error Message return by this method
-
 		Connection connection = null;
+
 		if (args[0] != null)
 		{
 			tableName = (String) args[0];
@@ -198,50 +198,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 
 			//  Get a description of the given table's indices and statistics
 			ResultSet rs = dbmd.getIndexInfo(connection.getCatalog(), null, tableName, true, false);
-
-			HashMap indexDetails = new HashMap();
-			StringBuffer columnNames = new StringBuffer("");
-			int indexCount = 1;
-			String constraintVoilated = "";
-			while (rs.next())
-			{
-				// In this loop, all the indexes are stored as key of the HashMap
-				// and the column names are stored as value.
-				Logger.out.debug("Key: " + indexCount);
-				if (key == indexCount)
-				{
-					constraintVoilated = rs.getString("INDEX_NAME");
-					Logger.out.debug("Constraint: " + constraintVoilated);
-					found = true; // column name for given key index found
-					//break;
-				}
-				StringBuffer temp = (StringBuffer) indexDetails.get(rs.getString("INDEX_NAME"));
-				if (temp != null)
-				{
-					temp.append(rs.getString("COLUMN_NAME"));
-					temp.append(",");
-					indexDetails.remove(rs.getString("INDEX_NAME"));
-					indexDetails.put(rs.getString("INDEX_NAME"), temp);
-					Logger.out.debug("Column :" + temp.toString());
-				}
-				else
-				{
-					temp = new StringBuffer(rs.getString("COLUMN_NAME"));
-					//temp.append(rs.getString("COLUMN_NAME"));
-					temp.append(",");
-					indexDetails.put(rs.getString("INDEX_NAME"), temp);
-				}
-
-				indexCount++; // increment record count*/
-			}
-			Logger.out.debug("out of loop");
-			if (found)
-			{
-				columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
-				columnName = columnNames.toString();
-				Logger.out.debug("Column Name: " + columnNames.toString());
-				Logger.out.debug("Constraint: " + constraintVoilated);
-			}
+			StringBuffer columnNames = getColumnInfo(rs,key);
 			rs.close();
 
 			// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
@@ -331,5 +288,54 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			tableName = HibernateMetaData.getTableName(classObj);
 		}
 		return tableName;
+	}
+	
+	private StringBuffer getColumnInfo(ResultSet rs,int key) throws SQLException
+	{
+		HashMap indexDetails = new HashMap();
+		StringBuffer columnNames = new StringBuffer("");
+		int indexCount = 1;
+		String constraintVoilated = "";
+		boolean found = false;
+		
+		while (rs.next())
+		{
+			// In this loop, all the indexes are stored as key of the HashMap
+			// and the column names are stored as value.
+			Logger.out.debug("Key: " + indexCount);
+			if (key == indexCount)
+			{
+				constraintVoilated = rs.getString("INDEX_NAME");
+				Logger.out.debug("Constraint: " + constraintVoilated);
+				found = true; // column name for given key index found
+				//break;
+			}
+			StringBuffer temp = (StringBuffer) indexDetails.get(rs.getString("INDEX_NAME"));
+			if (temp != null)
+			{
+				temp.append(rs.getString("COLUMN_NAME"));
+				temp.append(",");
+				indexDetails.remove(rs.getString("INDEX_NAME"));
+				indexDetails.put(rs.getString("INDEX_NAME"), temp);
+				Logger.out.debug("Column :" + temp.toString());
+			}
+			else
+			{
+				temp = new StringBuffer(rs.getString("COLUMN_NAME"));
+				//temp.append(rs.getString("COLUMN_NAME"));
+				temp.append(",");
+				indexDetails.put(rs.getString("INDEX_NAME"), temp);
+			}
+
+			indexCount++; // increment record count*/
+		}
+		Logger.out.debug("out of loop");
+		if (found)
+		{
+			columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
+			Logger.out.debug("Column Name: " + columnNames.toString());
+			Logger.out.debug("Constraint: " + constraintVoilated);
+		}
+		return columnNames;
 	}
 }
