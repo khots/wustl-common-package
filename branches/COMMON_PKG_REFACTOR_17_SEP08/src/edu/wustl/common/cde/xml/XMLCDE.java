@@ -103,14 +103,12 @@ public interface XMLCDE
 	void setPublicId(java.lang.String value);
 
 	/**
-	 * Gets the value of the lazyLoading property.
-	 * 
+	 * Get the value of the lazyLoading property.
 	 */
 	boolean isLazyLoading();
 
 	/**
-	 * Sets the value of the lazyLoading property.
-	 * 
+	 * Set the value of the lazyLoading property.
 	 */
 	void setLazyLoading(boolean value);
 
