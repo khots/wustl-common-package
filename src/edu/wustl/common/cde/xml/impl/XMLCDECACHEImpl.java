@@ -221,23 +221,23 @@ public class XMLCDECACHEImpl extends edu.wustl.common.cde.xml.impl.XMLCDECacheTy
 		public void leaveElement(java.lang.String ___uri, java.lang.String ___local,
 				java.lang.String ___qname) throws org.xml.sax.SAXException
 		{
-			int attIdx;
+			int attIndx;
 			outer : while (true)
 			{
 				switch (state)
 				{
 					case 1 :
-						attIdx = context.getAttribute("", "lazyLoading");
-						if (attIdx >= 0)
+						attIndx = context.getAttribute("", "lazyLoading");
+						if (attIndx >= 0)
 						{
-							context.consumeAttribute(attIdx);
+							context.consumeAttribute(attIndx);
 							context.getCurrentHandler().leaveElement(___uri, ___local, ___qname);
 							return;
 						}
-						attIdx = context.getAttribute("", "refreshTime");
-						if (attIdx >= 0)
+						attIndx = context.getAttribute("", "refreshTime");
+						if (attIndx >= 0)
 						{
-							context.consumeAttribute(attIdx);
+							context.consumeAttribute(attIndx);
 							context.getCurrentHandler().leaveElement(___uri, ___local, ___qname);
 							return;
 						}
