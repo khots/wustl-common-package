@@ -82,9 +82,9 @@ public class SendEmail
 
 	/**
 	 * Used to send the mail with given parameters.
-	 * @param to "To" Address for sending the mail
-	 * @param cc "CC" Address for sending the mail
-	 * @param bcc "BCC" Address for sending the mail
+	 * @param to "To" List of address for sending the mail
+	 * @param cc "CC" List of address for sending the mail
+	 * @param bcc "BCC" List of address for sending the mail
 	 * @param from "From" Address for sending the mail
 	 * @param host "Host" from where to send the mail
 	 * @param subject "Subject" of the mail
