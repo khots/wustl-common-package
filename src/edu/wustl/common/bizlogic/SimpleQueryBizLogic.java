@@ -173,9 +173,9 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 	 * TO create The Order by Attribute list & set it into the Query object.
 	 * @param fromTables The From tables present in the from part of the Query.
 	 * @param query The reference to the Query object.
-	 * @throws DAOException 
+	 * @throws Exception 
 	 */
-	public void createOrderByListInQuery(Set fromTables, Query query) throws DAOException
+	public void createOrderByListInQuery(Set fromTables, Query query) throws Exception
 	{
 		// getting main Query object present in the fromTables set & storing it in mainObjectsOfQuery.
 		List<String> mainObjectsOfQuery = QueryBizLogic.getMainObjectsOfQuery();
@@ -199,7 +199,7 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		}
 
 		if (!relatedObjectAliases.isEmpty())
-			throw new RuntimeException("Problem in creating Order by Attributes !!!!!");
+			throw new Exception("Problem in creating Order by Attributes !!!!!");
 	}
 
 	/**
@@ -448,17 +448,8 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 			Logger.out.debug("DATA ELEMENT SQL : " + sql);
 
 			List list = jdbcDao.executeQuery(sql, null, false, null);
-			String nameSql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
-					+ parentTableAliasName + "'";
-			List nameList = jdbcDao.executeQuery(nameSql, null, false, null);
-			String tableDisplayName = "";
-			if (!nameList.isEmpty())
-			{
-				List rowNameList = (List) nameList.get(0);
-				tableDisplayName = (String) rowNameList.get(0);
-			}
-			Logger.out.debug("tableDisplayName in getviewelements:" + tableDisplayName);
-			Logger.out.debug("list.size()************************" + list.size());
+			String tableDisplayName = getTableDisplayName(jdbcDao, parentTableAliasName);
+			
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext())
 			{
@@ -576,17 +567,9 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 				Logger.out.debug("DATA ELEMENT SQL : " + sql);
 
 				List list = jdbcDao.executeQuery(sql, null, false, null);
-				String nameSql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
-						+ aliasName + "'";
-				List nameList = jdbcDao.executeQuery(nameSql, null, false, null);
-				String tableDisplayName = "";
-				if (!nameList.isEmpty())
-				{
-					List rowNameList = (List) nameList.get(0);
-					tableDisplayName = (String) rowNameList.get(0);
-				}
-				Logger.out.debug("tableDisplayName in getviewelements:" + tableDisplayName);
-				Logger.out.debug("list.size()************************" + list.size());
+				
+				String tableDisplayName = getTableDisplayName(jdbcDao,aliasName);
+				
 				Iterator iterator = list.iterator();
 				while (iterator.hasNext())
 				{
@@ -949,5 +932,19 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 		String tableName = HibernateMetaData.getTableName(theClass);
 		String aliasName = getAliasName(tableName);
 		return aliasName;
+	}
+	
+	private String getTableDisplayName(JDBCDAO jdbcDao,String aliasName) throws ClassNotFoundException, DAOException
+	{
+			String nameSql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
+				+ aliasName + "'";
+		List nameList = jdbcDao.executeQuery(nameSql, null, false, null);
+		String tableDisplayName = "";
+		if (!nameList.isEmpty())
+		{
+			List rowNameList = (List) nameList.get(0);
+			tableDisplayName = (String) rowNameList.get(0);
+		}
+		return tableDisplayName;
 	}
 }

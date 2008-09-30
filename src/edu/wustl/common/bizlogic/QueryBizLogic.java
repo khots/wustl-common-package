@@ -1031,20 +1031,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join catissue_abstract_specimen absspec "
 				+ " on specimen.identifier=absspec.identifier where absspec.SPECIMEN_CLASS = '"
 				+ specimanType + "' and specimen.COLLECTION_STATUS = 'Collected'";
-		try
-		{
-			List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-			if (!list.isEmpty())
-			{
-				List rowList = (List) list.get(0);
-				prevValueDisplayName = (String) rowList.get(0);
-			}
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
-		}
+		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO,sql);
 		return prevValueDisplayName;
 	}
 
@@ -1187,19 +1174,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join "
 				+ "catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier "
 				+ "where specimen.COLLECTION_STATUS='Collected'";
-		try
-		{
-			List list = jdbcDAO.executeQuery(sql, null, false, null);
-			if (!list.isEmpty())
-			{
-				List rowList = (List) list.get(0);
-				prevValueDisplayName = (String) rowList.get(0);
-			}
-		}
-		catch (DAOException e)
-		{
-			e.printStackTrace();
-		}
+		
+		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO,sql); 
 		return prevValueDisplayName;
 	}
 
@@ -1224,23 +1200,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select max(identifier) from catissue_audit_event where USER_ID='" + userId
 				+ "'";
 
-		List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-		if (!list.isEmpty())
-		{
-
-			List columnList = (List) list.get(0);
-			if (!columnList.isEmpty())
-			{
-				String str = (String) columnList.get(0);
-				if (!str.equals(""))
-				{
-					no = Long.parseLong(str);
-
-				}
-			}
-		}
-
+		no = getQueryNumber(jdbcDAO,sql);
+		
 		String sqlForQueryLog = "insert into catissue_audit_event_query_log(QUERY_DETAILS,AUDIT_EVENT_ID) values ('"
 				+ sqlQuery1 + "','" + no + "')";
 		jdbcDAO.executeUpdate(sqlForQueryLog);
@@ -1291,23 +1252,8 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		long queryNo = 1;
 		sql = "select CATISSUE_AUDIT_EVENT_QUERY_SEQ.nextVal from dual";
-
-		list = jdbcDAO.executeQuery(sql, null, false, null);
-
-		if (!list.isEmpty())
-		{
-
-			List columnList = (List) list.get(0);
-			if (!columnList.isEmpty())
-			{
-				String str = (String) columnList.get(0);
-				if (!str.equals(""))
-				{
-					queryNo = Long.parseLong(str);
-
-				}
-			}
-		}
+		queryNo = getQueryNumber(jdbcDAO, sql);
+		
 		String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
 				+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
 		jdbcDAO.executeUpdate(sqlForQueryLog);
@@ -1432,5 +1378,46 @@ public class QueryBizLogic extends DefaultBizLogic
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
 		return list;
+	}
+	
+	private Long getQueryNumber(JDBCDAO jdbcDAO,String sql) throws ClassNotFoundException, DAOException
+	{
+		List list = jdbcDAO.executeQuery(sql, null, false, null);
+		long queryNo = 1;
+		if (!list.isEmpty())
+		{
+
+			List columnList = (List) list.get(0);
+			if (!columnList.isEmpty())
+			{
+				String str = (String) columnList.get(0);
+				if (!str.equals(""))
+				{
+					queryNo = Long.parseLong(str);
+
+				}
+			}
+		}
+		return queryNo;
+	}
+	
+	private String getPrevValueDisplayName(JDBCDAO jdbcDAO,String sql) throws ClassNotFoundException
+	{
+		String prevValueDisplayName = "0";
+		try
+		{
+			List list = jdbcDAO.executeQuery(sql, null, false, null);
+
+			if (!list.isEmpty())
+			{
+				List rowList = (List) list.get(0);
+				prevValueDisplayName = (String) rowList.get(0);
+			}
+		}
+		catch (DAOException e)
+		{
+			e.printStackTrace();
+		}
+		return prevValueDisplayName;
 	}
 }
