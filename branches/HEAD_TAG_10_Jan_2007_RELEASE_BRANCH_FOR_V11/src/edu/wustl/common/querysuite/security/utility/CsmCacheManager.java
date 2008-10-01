@@ -377,14 +377,14 @@ public class CsmCacheManager
 	{  
 		if (!isAuthorisedUser)
 		{
-			removeUnauthorizedFieldsData(aList,hasPrivilegeOnIdentifiedData,queryResultObjectDataBean);
+			removeUnauthorizedFieldsData(aList,false,queryResultObjectDataBean);
 		}
 		else
 		{
 			//If user is not authorized to see identified data then replace identified column values by ##
 			if (!hasPrivilegeOnIdentifiedData)
 			{
-				removeUnauthorizedFieldsData(aList,hasPrivilegeOnIdentifiedData,queryResultObjectDataBean);
+				removeUnauthorizedFieldsData(aList,true,queryResultObjectDataBean);
 			}
 		}
 	}
@@ -657,12 +657,13 @@ public class CsmCacheManager
 		boolean isAuthorizedUser = true;
 		if (!removeOnlyIdentifiedData) {
 			objectColumnIds.addAll(queryResultObjectDataBean
-					.getIdentifiedDataColumnIds());
+					.getObjectColumnIds());
+			isAuthorizedUser = false;
 
 		} else {
 			objectColumnIds.addAll(queryResultObjectDataBean
-					.getObjectColumnIds());
-			isAuthorizedUser = false;
+					.getIdentifiedDataColumnIds());
+			
 		}
 		if (objectColumnIds != null) {
 			for (int k = 0; k < objectColumnIds.size(); k++) {
