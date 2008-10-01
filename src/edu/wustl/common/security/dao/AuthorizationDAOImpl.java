@@ -13,7 +13,6 @@ import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement;
 import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.security.exceptions.CSObjectNotFoundException;
@@ -47,16 +46,17 @@ import org.hibernate.Transaction;
 public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.AuthorizationDAOImpl
 {
 
-	static final Logger log = edu.wustl.common.util.logger.Logger.out;
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AuthorizationDAOImpl.class);
 
 	private SessionFactory sf = null;
-
-	private String typeOfAccess = "MIXED";
 
 	/**
 	 * @param sf
 	 * @param applicationContextName
-	 * @throws CSConfigurationException 
+	 * @throws CSConfigurationException
 	 */
 	public AuthorizationDAOImpl(SessionFactory sf, String applicationContextName)
 			throws CSConfigurationException
@@ -72,7 +72,6 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		ResultSet rs = null;
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmt2 = null;
-		boolean test = false;
 		Session s = null;
 		Connection cn = null;
 
@@ -102,7 +101,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			generateQuery(stbr2,attributeVal);
 			
 			String sql = stbr.toString();
-			log.debug("SQL:" + sql);
+			logger.debug("SQL:" + sql);
 			pstmt = cn.prepareStatement(sql);
 
 			String sql2 = stbr2.toString();
@@ -143,8 +142,8 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		}
 		catch (Exception ex)
 		{
-			if (log.isDebugEnabled())
-				log.debug("Failed to get privileges for " + userName + "|" + ex.getMessage());
+			if (logger.isDebugEnabled())
+				logger.debug("Failed to get privileges for " + userName + "|" + ex.getMessage());
 			throw new CSException("Failed to get privileges for " + userName + "|"
 					+ ex.getMessage(), ex);
 		}
@@ -159,8 +158,8 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			}
 			catch (Exception ex2)
 			{
-				if (log.isDebugEnabled())
-					log.debug("Authorization|||getPrivilegeMap|Failure|Error in Closing Session |"
+				if (logger.isDebugEnabled())
+					logger.debug("Authorization|||getPrivilegeMap|Failure|Error in Closing Session |"
 							+ ex2.getMessage());
 			}
 		}
@@ -185,7 +184,6 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 
 			for (int i = 0; i < protectionElementIds.length; i++)
 			{
-				ProtectionGroupProtectionElement intersection = new ProtectionGroupProtectionElement();
 				String query = "from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement"
 						+ " where protectionGroupProtectionElement.protectionElement.protectionElementId="
 						+ protectionElementIds[i]
@@ -203,19 +201,19 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		}
 		catch (Exception ex)
 		{
-			log.error(ex);
+			logger.error(ex);
 			try
 			{
 				t.rollback();
 			}
 			catch (Exception ex3)
 			{
-				if (log.isDebugEnabled())
-					log
+				if (logger.isDebugEnabled())
+					logger
 							.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error in Rolling Back Transaction|"
 									+ ex3.getMessage());
 			}
-			log
+			logger
 					.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error Occured in deassigning Protection Elements "
 							+ StringUtilities.stringArrayToString(protectionElementIds)
 							+ " to Protection Group" + protectionGroupId + "|" + ex.getMessage());
@@ -231,13 +229,13 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			}
 			catch (Exception ex2)
 			{
-				if (log.isDebugEnabled())
-					log
+				if (logger.isDebugEnabled())
+					logger
 							.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error in Closing Session |"
 									+ ex2.getMessage());
 			}
 		}
-		log
+		logger
 				.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Success|Success in deassigning Protection Elements "
 						+ StringUtilities.stringArrayToString(protectionElementIds)
 						+ " to Protection Group" + protectionGroupId + "|");
@@ -263,14 +261,14 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			groups.clear();
 			groups.addAll(list);
 
-			log.debug("The result size:" + groups.size());
+			logger.debug("The result size:" + groups.size());
 
 		}
 		catch (Exception ex)
 		{
-			log.error(ex);
-			if (log.isDebugEnabled())
-				log
+			logger.error(ex);
+			if (logger.isDebugEnabled())
+				logger
 						.debug("Authorization|||getGroups|Failure|Error in obtaining Groups for User Id "
 								+ userId + "|" + ex.getMessage());
 			throw new CSObjectNotFoundException(
@@ -285,13 +283,13 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			}
 			catch (Exception ex2)
 			{
-				if (log.isDebugEnabled())
-					log.debug("Authorization|||getGroups|Failure|Error in Closing Session |"
+				if (logger.isDebugEnabled())
+					logger.debug("Authorization|||getGroups|Failure|Error in Closing Session |"
 							+ ex2.getMessage());
 			}
 		}
-		if (log.isDebugEnabled())
-			log
+		if (logger.isDebugEnabled())
+			logger
 					.debug("Authorization|||getGroups|Success|Successful in obtaining Groups for User Id "
 							+ userId + "|");
 		return groups;
@@ -310,11 +308,11 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 
 		if (obj == null)
 		{
-			log.debug("Authorization|||getObjectByPrimaryKey|Failure|Not found object of type "
+			logger.debug("Authorization|||getObjectByPrimaryKey|Failure|Not found object of type "
 					+ objectType.getName() + "|");
 			throw new CSObjectNotFoundException(objectType.getName() + " not found");
 		}
-		log
+		logger
 				.debug("Authorization|||getObjectByPrimaryKey|Success|Success in retrieving object of type "
 						+ objectType.getName() + "|");
 		return obj;
