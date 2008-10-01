@@ -2,7 +2,6 @@
 package edu.wustl.common.security.exceptions;
 
 /**
- * 
  *<p>Title: </p>
  *<p>Description:  </p>
  *<p>Copyright: (c) Washington University, School of Medicine 2005</p>
@@ -14,7 +13,12 @@ public class SMTransactionException extends SMException
 {
 
 	/**
-	 * 
+	 * serial version id.
+	 */
+	private static final long serialVersionUID = 3799704644728617089L;
+
+	/**
+	 * No argument constructor.
 	 */
 	public SMTransactionException()
 	{

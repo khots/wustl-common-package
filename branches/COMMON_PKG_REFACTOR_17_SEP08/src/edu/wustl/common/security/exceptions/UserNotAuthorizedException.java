@@ -9,11 +9,16 @@ package edu.wustl.common.security.exceptions;
 public class UserNotAuthorizedException extends SMException
 {
 
+	/**
+	 * Serial version id.
+	 */
+	private static final long serialVersionUID = -8600518692061076696L;
+
 	private String privilegeName;
 
 	private String baseObject;
 
-	private String baseObjectIdentifier;
+	private String baseObjIdentifier;
 
 	/**
 	 * @return Returns the baseObject.
@@ -36,15 +41,15 @@ public class UserNotAuthorizedException extends SMException
 	 */
 	public String getBaseObjectIdentifier()
 	{
-		return baseObjectIdentifier;
+		return baseObjIdentifier;
 	}
 
 	/**
-	 * @param baseObjectIdentifier The baseObjectIdentifier to set.
+	 * @param baseObjIdentifier The baseObjectIdentifier to set.
 	 */
-	public void setBaseObjectIdentifier(String baseObjectIdentifier)
+	public void setBaseObjectIdentifier(String baseObjIdentifier)
 	{
-		this.baseObjectIdentifier = baseObjectIdentifier;
+		this.baseObjIdentifier = baseObjIdentifier;
 	}
 
 	/**
