@@ -22,6 +22,7 @@ import gov.nih.nci.security.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,8 +73,8 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		ResultSet rs = null;
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmt2 = null;
-		Session s = null;
-		Connection cn = null;
+		Session session = null;
+		Connection connection = null;
 
 		if (StringUtilities.isBlank(userName))
 		{
@@ -90,22 +91,21 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 
 		try
 		{
-			s = sf.openSession();
-			cn = s.connection();
+			session = sf.openSession();
+			connection = session.connection();
 			StringBuffer stbr = new StringBuffer();
 			String attributeVal = "=?";
 			generateQuery(stbr,attributeVal);
-			
+
 			StringBuffer stbr2 = new StringBuffer();
 			attributeVal = " IS NULL";
 			generateQuery(stbr2,attributeVal);
-			
+
 			String sql = stbr.toString();
-			logger.debug("SQL:" + sql);
-			pstmt = cn.prepareStatement(sql);
+			pstmt = connection.prepareStatement(sql);
 
 			String sql2 = stbr2.toString();
-			pstmt2 = cn.prepareStatement(sql2);
+			pstmt2 = connection.prepareStatement(sql2);
 			Iterator it = pEs.iterator();
 			while (it.hasNext())
 			{
@@ -142,25 +142,22 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		}
 		catch (Exception ex)
 		{
-			if (logger.isDebugEnabled())
-				logger.debug("Failed to get privileges for " + userName + "|" + ex.getMessage());
-			throw new CSException("Failed to get privileges for " + userName + "|"
-					+ ex.getMessage(), ex);
+			StringBuffer mess= new StringBuffer("Failed to get privileges for ")
+					.append(userName).append(':').append(ex.getMessage());
+			logger.debug(mess,ex);
+			throw new CSException(mess.toString(), ex);
 		}
 		finally
 		{
 			try
 			{
-
-				s.close();
+				session.close();
 				rs.close();
 				pstmt.close();
 			}
-			catch (Exception ex2)
+			catch (SQLException ex2)
 			{
-				if (logger.isDebugEnabled())
-					logger.debug("Authorization|||getPrivilegeMap|Failure|Error in Closing Session |"
-							+ ex2.getMessage());
+				logger.debug("Error in Closing Session |"+ ex2.getMessage());
 			}
 		}
 		return result;
