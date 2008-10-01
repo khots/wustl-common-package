@@ -171,85 +171,58 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 	public void removeProtectionElementsFromProtectionGroup(String protectionGroupId,
 			String[] protectionElementIds) throws CSTransactionException
 	{
-		Session s = null;
-		Transaction t = null;
+		Session session = null;
+		Transaction tx = null;
 
 		try
 		{
-			s = sf.openSession();
-			t = s.beginTransaction();
+			session = sf.openSession();
+			tx = session.beginTransaction();
 
-			ProtectionGroup protectionGroup = (ProtectionGroup) this.getObjectByPrimaryKey(s,
+			ProtectionGroup protectionGroup = (ProtectionGroup) this.getObjectByPrimaryKey(session,
 					ProtectionGroup.class, Long.valueOf(protectionGroupId));
 
 			for (int i = 0; i < protectionElementIds.length; i++)
 			{
-				String query = "from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement"
-						+ " where protectionGroupProtectionElement.protectionElement.protectionElementId="
-						+ protectionElementIds[i]
-						+ " and protectionGroupProtectionElement.protectionGroup.protectionGroupId="
-						+ protectionGroupId;
-				Query queryObj = s.createQuery(query);
+				StringBuffer query = new StringBuffer();
+				query.append("from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement");
+				query.append(" where protectionGroupProtectionElement.protectionElement.protectionElementId=");
+				query.append(protectionElementIds[i]);
+				query.append(" and protectionGroupProtectionElement.protectionGroup.protectionGroupId=");
+				query.append(protectionGroupId);
+				Query queryObj = session.createQuery(query.toString());
 				List list = queryObj.list();
 				if (list != null && list.size() > 0)
+				{
 					this.removeObject(list.get(0));
-
+				}
 			}
-
-			t.commit();
-
+			tx.commit();
 		}
 		catch (Exception ex)
 		{
-			logger.error(ex);
-			try
-			{
-				t.rollback();
-			}
-			catch (Exception ex3)
-			{
-				if (logger.isDebugEnabled())
-					logger
-							.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error in Rolling Back Transaction|"
-									+ ex3.getMessage());
-			}
-			logger
-					.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error Occured in deassigning Protection Elements "
-							+ StringUtilities.stringArrayToString(protectionElementIds)
-							+ " to Protection Group" + protectionGroupId + "|" + ex.getMessage());
-			throw new CSTransactionException(
-					"An error occured in deassigning Protection Elements from Protection Group\n"
-							+ ex.getMessage(), ex);
+			tx.rollback();
+			StringBuffer mess= new StringBuffer("Error Occured in deassigning Protection Elements ")
+					.append(StringUtilities.stringArrayToString(protectionElementIds))
+					.append(" to Protection Group").append( protectionGroupId);
+			logger.error(mess + ex.getMessage(),ex);
+			throw new CSTransactionException(mess+ ex.getMessage(), ex);
 		}
 		finally
 		{
-			try
-			{
-				s.close();
-			}
-			catch (Exception ex2)
-			{
-				if (logger.isDebugEnabled())
-					logger
-							.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Failure|Error in Closing Session |"
-									+ ex2.getMessage());
-			}
+				session.close();
 		}
-		logger
-				.debug("Authorization|||removeProtectionElementsFromProtectionGroup|Success|Success in deassigning Protection Elements "
-						+ StringUtilities.stringArrayToString(protectionElementIds)
-						+ " to Protection Group" + protectionGroupId + "|");
 	}
 
 	public Set getGroups(String userId) throws CSObjectNotFoundException
 	{
-		Session s = null;
+		Session session = null;
 		Set groups = new HashSet();
 		try
 		{
-			s = HibernateSessionFactoryHelper.getAuditSession(sf);
+			session = HibernateSessionFactoryHelper.getAuditSession(sf);
 
-			User user = (User) this.getObjectByPrimaryKey(s, User.class, Long.valueOf(userId));
+			User user = (User) this.getObjectByPrimaryKey(session, User.class, Long.valueOf(userId));
 			groups = user.getGroups();
 			List list = new ArrayList();
 			Iterator toSortIterator = groups.iterator();
@@ -260,38 +233,24 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			Collections.sort(list);
 			groups.clear();
 			groups.addAll(list);
-
-			logger.debug("The result size:" + groups.size());
-
 		}
 		catch (Exception ex)
 		{
-			logger.error(ex);
-			if (logger.isDebugEnabled())
-				logger
-						.debug("Authorization|||getGroups|Failure|Error in obtaining Groups for User Id "
-								+ userId + "|" + ex.getMessage());
-			throw new CSObjectNotFoundException(
-					"An error occurred while obtaining Associated Groups for the User\n"
-							+ ex.getMessage(), ex);
+			String mess="An error occurred while obtaining Associated Groups for the User:"+userId;
+			logger.error(mess,ex);
+			throw new CSObjectNotFoundException(mess+ ex.getMessage(), ex);
 		}
 		finally
 		{
 			try
 			{
-				s.close();
+				session.close();
 			}
 			catch (Exception ex2)
 			{
-				if (logger.isDebugEnabled())
-					logger.debug("Authorization|||getGroups|Failure|Error in Closing Session |"
-							+ ex2.getMessage());
+				logger.debug("Error in Closing Session"	+ ex2.getMessage());
 			}
 		}
-		if (logger.isDebugEnabled())
-			logger
-					.debug("Authorization|||getGroups|Success|Successful in obtaining Groups for User Id "
-							+ userId + "|");
 		return groups;
 
 	}
