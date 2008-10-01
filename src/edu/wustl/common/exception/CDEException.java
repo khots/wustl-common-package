@@ -1,12 +1,13 @@
 package edu.wustl.common.exception;
 
-
+/**
+ * Exception for CDE.
+ */
 public class CDEException extends Exception
 {
-	private Exception wrapException;
 
 	/**
-	 * No argument constructor
+	 * No argument constructor.
 	 */
 	public CDEException()
 	{
@@ -14,7 +15,7 @@ public class CDEException extends Exception
 	}
 
 	/**
-	 * One argument constructor
+	 * One argument constructor.
 	 * @param message Message with exception
 	 */
 	public CDEException(String message)
@@ -23,7 +24,7 @@ public class CDEException extends Exception
 	}
 
 	/**
-	 * One argument constructor
+	 * One argument constructor.
 	 * @param exception Exception
 	 */
 	public CDEException(Exception exception)
@@ -32,28 +33,12 @@ public class CDEException extends Exception
 	}
 
 	/**
+	 * Constructor with message and exception.
 	 * @param message Message with exception
 	 * @param wrapException The wrapException to set.
 	 */
 	public CDEException(String message, Exception wrapException)
 	{
 		super(message, wrapException);
-		this.wrapException = wrapException;
-	}
-
-	/**
-	 * @return Returns the wrapException.
-	 */
-	public Exception getWrapException()
-	{
-		return wrapException;
-	}
-
-	/**
-	 * @param wrapException The wrapException to set.
-	 */
-	public void setWrapException(Exception wrapException)
-	{
-		this.wrapException = wrapException;
 	}
 }
