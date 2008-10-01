@@ -74,7 +74,6 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		PreparedStatement pstmt2 = null;
 		boolean test = false;
 		Session s = null;
-
 		Connection cn = null;
 
 		if (StringUtilities.isBlank(userName))
@@ -92,70 +91,22 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 
 		try
 		{
-
 			s = sf.openSession();
-
 			cn = s.connection();
-
 			StringBuffer stbr = new StringBuffer();
-			stbr.append("select distinct(p.privilege_name)");
-			stbr.append(" from csm_protection_group pg,");
-			stbr.append(" csm_protection_element pe,");
-			stbr.append(" csm_pg_pe pgpe,");
-			stbr.append(" csm_user_group_role_pg ugrpg,");
-			stbr.append(" csm_user u,");
-			stbr.append(" csm_group g,");
-			stbr.append(" csm_user_group ug,");
-			stbr.append(" csm_role_privilege rp,");
-			stbr.append(" csm_privilege p ");
-			stbr.append(" where pgpe.protection_group_id = pg.protection_group_id");
-			stbr.append(" and pgpe.protection_element_id = pe.protection_element_id");
-			stbr.append(" and pe.object_id= ?");
-
-			stbr.append(" and pe.attribute=?");
-			stbr.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
-			stbr.append(" and (( ugrpg.group_id = g.group_id");
-			stbr.append(" and ug.group_id= g.group_id");
-			stbr.append("       and ug.user_id = u.user_id)");
-			stbr.append("       or ");
-			stbr.append("     (ugrpg.user_id = u.user_id))");
-			stbr.append(" and u.login_name=?");
-			stbr.append(" and ugrpg.role_id = rp.role_id ");
-			stbr.append(" and rp.privilege_id = p.privilege_id");
-
+			String attributeVal = "=?";
+			generateQuery(stbr,attributeVal);
+			
 			StringBuffer stbr2 = new StringBuffer();
-			stbr2.append("select distinct(p.privilege_name)");
-			stbr2.append(" from csm_protection_group pg,");
-			stbr2.append(" csm_protection_element pe,");
-			stbr2.append(" csm_pg_pe pgpe,");
-			stbr2.append(" csm_user_group_role_pg ugrpg,");
-			stbr2.append(" csm_user u,");
-			stbr2.append(" csm_group g,");
-			stbr2.append(" csm_user_group ug,");
-			stbr2.append(" csm_role_privilege rp,");
-			stbr2.append(" csm_privilege p ");
-			stbr2.append(" where pgpe.protection_group_id = pg.protection_group_id");
-			stbr2.append(" and pgpe.protection_element_id = pe.protection_element_id");
-			stbr2.append(" and pe.object_id= ?");
-
-			stbr2.append(" and pe.attribute IS NULL");
-			stbr2.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
-			stbr2.append(" and (( ugrpg.group_id = g.group_id");
-			stbr2.append(" and ug.group_id= g.group_id");
-			stbr2.append("       and ug.user_id = u.user_id)");
-			stbr2.append("       or ");
-			stbr2.append("     (ugrpg.user_id = u.user_id))");
-			stbr2.append(" and u.login_name=?");
-			stbr2.append(" and ugrpg.role_id = rp.role_id ");
-			stbr2.append(" and rp.privilege_id = p.privilege_id");
-
+			attributeVal = " IS NULL";
+			generateQuery(stbr2,attributeVal);
+			
 			String sql = stbr.toString();
 			log.debug("SQL:" + sql);
 			pstmt = cn.prepareStatement(sql);
 
 			String sql2 = stbr2.toString();
 			pstmt2 = cn.prepareStatement(sql2);
-
 			Iterator it = pEs.iterator();
 			while (it.hasNext())
 			{
@@ -163,7 +114,6 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 				ArrayList privs = new ArrayList();
 				if (pe.getObjectId() != null)
 				{
-
 					if (pe.getAttribute() != null)
 					{
 						pstmt.setString(1, pe.getObjectId());
@@ -177,9 +127,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 						pstmt2.setString(2, userName);
 						rs = pstmt2.executeQuery();
 					}
-
 				}
-
 				while (rs.next())
 				{
 					String priv = rs.getString(1);
@@ -191,9 +139,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 				ObjectPrivilegeMap opm = new ObjectPrivilegeMap(pe, privs);
 				result.add(opm);
 			}
-
 			pstmt.close();
-
 		}
 		catch (Exception ex)
 		{
@@ -218,7 +164,6 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 							+ ex2.getMessage());
 			}
 		}
-
 		return result;
 	}
 
@@ -373,6 +318,34 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 				.debug("Authorization|||getObjectByPrimaryKey|Success|Success in retrieving object of type "
 						+ objectType.getName() + "|");
 		return obj;
+	}
+	
+	private void generateQuery(StringBuffer stbr,String attributeVal)
+	{
+		stbr.append("select distinct(p.privilege_name)");
+		stbr.append(" from csm_protection_group pg,");
+		stbr.append(" csm_protection_element pe,");
+		stbr.append(" csm_pg_pe pgpe,");
+		stbr.append(" csm_user_group_role_pg ugrpg,");
+		stbr.append(" csm_user u,");
+		stbr.append(" csm_group g,");
+		stbr.append(" csm_user_group ug,");
+		stbr.append(" csm_role_privilege rp,");
+		stbr.append(" csm_privilege p ");
+		stbr.append(" where pgpe.protection_group_id = pg.protection_group_id");
+		stbr.append(" and pgpe.protection_element_id = pe.protection_element_id");
+		stbr.append(" and pe.object_id= ?");
+
+		stbr.append(" and pe.attribute "+attributeVal);
+		stbr.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
+		stbr.append(" and (( ugrpg.group_id = g.group_id");
+		stbr.append(" and ug.group_id= g.group_id");
+		stbr.append("       and ug.user_id = u.user_id)");
+		stbr.append("       or ");
+		stbr.append("     (ugrpg.user_id = u.user_id))");
+		stbr.append(" and u.login_name=?");
+		stbr.append(" and ugrpg.role_id = rp.role_id ");
+		stbr.append(" and rp.privilege_id = p.privilege_id");
 	}
 
 }
