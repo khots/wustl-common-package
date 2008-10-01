@@ -9,6 +9,14 @@ package edu.wustl.common.security.exceptions;
 public class SMException extends Exception
 {
 
+	/**
+	 * serial version id.
+	 */
+	private static final long serialVersionUID = 1998965888442573900L;
+
+	/**
+	 * No argument constructor.
+	 */
 	public SMException()
 	{
 		super();
