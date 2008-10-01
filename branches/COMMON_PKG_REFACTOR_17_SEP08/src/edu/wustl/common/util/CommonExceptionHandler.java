@@ -19,7 +19,7 @@ import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * 
+ *
  *<p>Title: </p>
  *<p>Description:  </p>
  *<p>Copyright: (c) Washington University, School of Medicine 2005</p>
@@ -30,16 +30,21 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonExceptionHandler extends ExceptionHandler
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonExceptionHandler.class);
 	/**
 	 * Retrieve the error details from request and set it in session.
-	 * @param exception the Exception.
-	 * @param ActionMapping mapping
-	 * @param ActionForm formInstance
-	 * @param HttpServletRequest request
-	 * @param HttpServletResponse response
+	 * @param exception Exception generic exception.
+	 * @param exConfig ExceptionConfig configuration exception.
+	 * @param mapping ActionMapping information about current page.
+	 * @param formInstance ActionForm populated form.
+	 * @param request HttpServletRequest information about request.
+	 * @param response HttpServletResponse information about response.
+	 * @throws ServletException servlet exception.
 	 * @return the output of execute method.
-	 */	
+	 */
 	public ActionForward execute(Exception exception, ExceptionConfig exConfig, ActionMapping mapping,
 			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException
@@ -47,7 +52,7 @@ public class CommonExceptionHandler extends ExceptionHandler
 		String errorMessage = getErrorMsg(exception);
 		logger.error(errorMessage, exception);
 		/** Modified by amit_doshi
-		*  code reviewer abhijit_naik 
+		*  code reviewer abhijit_naik
 		*/
 		request.getSession().setAttribute(
 				Constants.ERROR_DETAIL,
