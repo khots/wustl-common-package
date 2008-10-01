@@ -130,4 +130,18 @@ public class DomainObjectListAction extends SecureAction
 		}
 		return list;
 	}
+
+	
+	protected String getObjectId(AbstractActionForm form)
+	{
+	
+		return null;
+	}
+
+	
+	protected boolean isAuthorizedToExecute(HttpServletRequest request)
+	{
+		
+		return true;
+	}
 }

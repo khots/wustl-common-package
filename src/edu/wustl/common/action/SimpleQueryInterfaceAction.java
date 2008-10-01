@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.bizlogic.QueryBizLogic;
@@ -214,5 +215,17 @@ public class SimpleQueryInterfaceAction extends SecureAction
 			objectId = super.getObjectIdForSecureMethodAccess(request);
 		}
 		return objectId;
+	}
+
+	protected String getObjectId(AbstractActionForm form)
+	{
+	
+		return null;
+	}
+
+	
+	protected boolean isAuthorizedToExecute(HttpServletRequest request)
+	{
+		return true;
 	}
 }

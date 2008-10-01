@@ -70,26 +70,28 @@ public class CDEDownloader
 	public void connect() throws Exception
 	{
 		//Mandar : 05-Apr-06 Bugid: 1622 : Added call to init() after removing it from constructor
-		init();
-
-		int connectAttempts = 0;
-		while (connectAttempts < maxServerConnectAttempts)
+		
+		try
 		{
-			try
+			init();
+			int connectAttempts = 0;
+			while (connectAttempts < maxServerConnectAttempts)
 			{
-				appService = ApplicationService.getRemoteInstance(CDEConConfig.dbserver);
-
-				if (appService != null)
-					return;
-			} //try
-			catch (Exception conexp)
-			{
-				Logger.out.error("Connection Error: " + conexp.getMessage(), conexp);
-			} // catch
-			connectAttempts++;
-		} // while connectAttempts < MAX_SERVER_CONNECT_ATTEMPTS
-		throw new Exception("Connection Error: Unable to connect to " + CDEConConfig.dbserver);
-	} // connect
+					appService = ApplicationService.getRemoteInstance(CDEConConfig.dbserver);
+	
+					if (appService != null)
+						return;
+				
+				connectAttempts++;
+			} 
+		} 
+		catch (Exception conexp)
+		{
+			Logger.out.error("Connection Error: " + conexp.getMessage(), conexp);
+			conexp.printStackTrace();
+		} 
+		
+	} 
 
 	/**
 	 * @param cdeCon It is the Configuration object. Contains all required
@@ -103,25 +105,27 @@ public class CDEDownloader
 	public CDE downloadCDE(XMLCDE xmlCDE) throws Exception
 	{
 		Logger.out.info("Downloading CDE " + xmlCDE.getName());
-
-		int downloadAttempts = 0;
-		while (downloadAttempts < maxCDEDownloadAttempts)
+		CDE resultCde = null;
+		try
 		{
-			try
+			int downloadAttempts = 0;
+			while (downloadAttempts < maxCDEDownloadAttempts)
 			{
-				CDE resultCde = retrieveDataElement(xmlCDE);
-
+				resultCde = retrieveDataElement(xmlCDE);
 				if (resultCde != null)
-					return resultCde;
-			}
-			catch (Exception conexp)
-			{
-				Logger.out.error("CDE Download Error: " + conexp.getMessage(), conexp);
-			}
-			downloadAttempts++;
-		} // while downloadAttempts < MAX_CDE_DOWNLOAD_ATTEMPTS
-		throw new Exception("CDE Download Error: Unable to download CDE " + xmlCDE.getName());
-	} // downloadCDE
+				{
+					break;
+				}	
+				downloadAttempts++;
+			} 
+		}
+		catch (Exception conexp)
+		{
+			Logger.out.error("CDE Download Error: " + conexp.getMessage(), conexp);
+			conexp.printStackTrace();
+		}
+		return resultCde;
+	} 
 
 	/**
 	 * @param CDEPublicID PublicID of the CDE to download

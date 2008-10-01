@@ -98,19 +98,9 @@ public class AdvancedConditionsImpl extends ConditionsImpl
 	{
 		Logger.out.info("in getString");
 		StringBuffer whereConditionsString = new StringBuffer();
-
 		int childCount = whereCondition.getChildCount();
-
-		DefaultMutableTreeNode parent1 = (DefaultMutableTreeNode) whereCondition.getParent();
-		AdvancedConditionsNode parentNode = null;
-		if (parent1 != null)
-		{
-			parentNode = (AdvancedConditionsNode) parent1.getUserObject();
-		}
-
-		//            Object obj =whereCondition.getUserObject();
-
 		AdvancedConditionsNode currentNodeData = null;
+
 		currentNodeData = (AdvancedConditionsNode) (whereCondition).getUserObject();
 		if (currentNodeData != null && currentNodeData.getObjectConditions().size() > 0)
 		{
@@ -122,125 +112,13 @@ public class AdvancedConditionsImpl extends ConditionsImpl
 				whereConditionsString.append(" " + Operator.AND + " (");
 		}
 		Logger.out.debug("hasConditions():" + hasConditions());
+		
 		if (childCount > 0 && hasConditions())
 		{
-			//	        	whereConditionsString.append(" "+Operator.AND+" ");
-
-			/**
-			 * In case operation with children is EXIST a subquery is formed
-			 */
-			if (currentNodeData != null
-					&& currentNodeData.getOperationWithChildCondition().getOperator().equals(
-							Operator.EXIST))
-			{
-				Logger.out.debug("currentNodeData:" + currentNodeData + " operation:"
-						+ currentNodeData.getOperationWithChildCondition());
-				DefaultMutableTreeNode child;
-
-				for (int i = 0; i < childCount; i++)
-				{
-					child = (DefaultMutableTreeNode) whereCondition.getChildAt(i);
-					Query query = QueryFactory.getInstance().newQuery(Query.ADVANCED_QUERY,
-							((AdvancedConditionsNode) child.getUserObject()).getObjectName());
-					query.setTableSufix(tableSufix + 1);
-					query.setLevelOfParent(this.level);
-					//START: Fix for Bug#1992
-					query.setParentsOperationWithChildren(currentNodeData
-							.getOperationWithChildCondition());
-					//END: Fix for Bug#1992
-
-					//START: Fix for Bug#2076
-					//Setting whether child query is on child or parent of current node
-					if (currentNodeData.isRuleForChild())
-					{
-						query.setQueryOnChild(true);
-					}
-					else
-					{
-						query.setQueryOnChild(false);
-					}
-					//END: Fix for Bug#2076
-
-					Logger.out.debug("current object:" + currentNodeData.getObjectName()
-							+ " Parent object:" + parentObject);
-					//Aarti: Commented the following code since its never being called
-					//set isParentDerivedSpecimen attribute of child query to true 
-					//if current node is a derived specimen
-					//		                if(currentNodeData.getObjectName().equals(Query.SPECIMEN) && parentObject.equals(Query.SPECIMEN) 
-					//		                		&& parentNode != null)
-					//		                {
-					//		                	
-					//		                		if(parentNode.getOperationWithChildCondition().getOperator().equals(Operator.EXIST))
-					//		                		{
-					//		                			query.setParentDerivedSpecimen(false);
-					//		                		}
-					//		                		else
-					//		                		{
-					//		                			query.setParentDerivedSpecimen(true);
-					//		                		}
-					//		                	
-					//		                }
-					//		                else
-					//		                {
-					//		                	query.setParentDerivedSpecimen(false);
-					//		                }
-					if (currentNodeData != null)
-					{
-						query.setParentOfQueryStartObject(currentNodeData.getObjectName());
-					}
-					whereConditionsString.append(" \nEXISTS \n(");//start of one child subquery
-					((AdvancedConditionsImpl) ((AdvancedQuery) query).whereConditions)
-							.setWhereCondition(child);
-					whereConditionsString.append(query.getString());
-					whereConditionsString.append(" \n)"); //End of one child subquery
-					if (i != childCount - 1)
-					{
-						whereConditionsString.append("\n"
-								+ currentNodeData.getOperationWithChildCondition()
-										.getOperatorParams()[0] + "\n");
-					}
-				}
-			}
-			else
-			{
-
-				/**
-				 * start of children
-				 */
-
-				DefaultMutableTreeNode child;
-				AdvancedConditionsImpl advancedConditionsImpl;
-				boolean prevChildHasCondition;
-				for (int i = 0; i < childCount; i++)
-				{
-					child = (DefaultMutableTreeNode) whereCondition.getChildAt(i);
-					if (child != null && hasConditions(child))
-					{
-						whereConditionsString.append("(");
-						advancedConditionsImpl = new AdvancedConditionsImpl();
-						advancedConditionsImpl.setWhereCondition(child);
-						advancedConditionsImpl.setLevel(child.getLevel());
-						if (currentNodeData != null)
-						{
-							advancedConditionsImpl.setParentObject(currentNodeData.getObjectName());
-						}
-						whereConditionsString.append("\n "
-								+ advancedConditionsImpl.getString(tableSufix) + " ");
-						whereConditionsString.append(")");
-						prevChildHasCondition = true;
-					}
-					else
-					{
-						prevChildHasCondition = false;
-					}
-					if (i != childCount - 1 && prevChildHasCondition)
-					{
-						whereConditionsString.append(Operator.OR);
-					}
-				}
-
-			}
+			subQueryIfChildExists(currentNodeData,childCount,
+				tableSufix,whereConditionsString);
 		}
+		
 		if (currentNodeData != null && currentNodeData.getObjectConditions().size() > 0)
 		{
 			if (currentNodeData.getObjectConditions().size() > 0 && childCount > 0
@@ -254,26 +132,6 @@ public class AdvancedConditionsImpl extends ConditionsImpl
 
 	public boolean hasConditions()
 	{
-		//    	boolean hasCondition = false;
-		//    	Enumeration children = whereCondition.children();
-		//    	DefaultMutableTreeNode child;
-		//    	Vector conditions;
-		//    	AdvancedConditionsNode advancedConditionsNode;
-		//    	while(children.hasMoreElements())
-		//    	{
-		//    		child = (DefaultMutableTreeNode) children.nextElement();
-		//    		
-		//    		advancedConditionsNode = (AdvancedConditionsNode) child.getUserObject();
-		//    		if(advancedConditionsNode!=null )
-		//    		{
-		//    			conditions = advancedConditionsNode.getObjectConditions();
-		//    			if(conditions != null && conditions.size()>0)
-		//    			{
-		//    				hasCondition = true;
-		//    			}
-		//    			break;
-		//    		}
-		//    	}
 		return hasConditions(whereCondition);
 	}
 
@@ -556,4 +414,109 @@ public class AdvancedConditionsImpl extends ConditionsImpl
 		}
 		return hasConditionOnIdentifiedField;
 	}
+	
+	
+	private void subQueryIfChildExists(AdvancedConditionsNode currentNodeData,int childCount,
+			int tableSufix,StringBuffer whereConditionsString) throws SQLException
+	{
+
+		/**
+		 * In case operation with children is EXIST a subquery is formed
+		 */
+		if (currentNodeData != null
+				&& currentNodeData.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			Logger.out.debug("currentNodeData:" + currentNodeData + " operation:"
+					+ currentNodeData.getOperationWithChildCondition());
+			DefaultMutableTreeNode child;
+
+			for (int i = 0; i < childCount; i++)
+			{
+				child = (DefaultMutableTreeNode) whereCondition.getChildAt(i);
+				Query query = QueryFactory.getInstance().newQuery(Query.ADVANCED_QUERY,
+						((AdvancedConditionsNode) child.getUserObject()).getObjectName());
+				query.setTableSufix(tableSufix + 1);
+				query.setLevelOfParent(this.level);
+				//START: Fix for Bug#1992
+				query.setParentsOperationWithChildren(currentNodeData
+						.getOperationWithChildCondition());
+				//END: Fix for Bug#1992
+
+				//START: Fix for Bug#2076
+				//Setting whether child query is on child or parent of current node
+				if (currentNodeData.isRuleForChild())
+				{
+					query.setQueryOnChild(true);
+				}
+				else
+				{
+					query.setQueryOnChild(false);
+				}
+				//END: Fix for Bug#2076
+
+				Logger.out.debug("current object:" + currentNodeData.getObjectName()
+						+ " Parent object:" + parentObject);
+				
+				if (currentNodeData != null)
+				{
+					query.setParentOfQueryStartObject(currentNodeData.getObjectName());
+				}
+				whereConditionsString.append(" \nEXISTS \n(");//start of one child subquery
+				((AdvancedConditionsImpl) ((AdvancedQuery) query).whereConditions)
+						.setWhereCondition(child);
+				whereConditionsString.append(query.getString());
+				whereConditionsString.append(" \n)"); //End of one child subquery
+				if (i != childCount - 1)
+				{
+					whereConditionsString.append("\n"
+							+ currentNodeData.getOperationWithChildCondition()
+									.getOperatorParams()[0] + "\n");
+				}
+			}
+		}
+		else
+		{
+
+			/**
+			 * start of children
+			 */
+
+			DefaultMutableTreeNode child;
+			AdvancedConditionsImpl advancedConditionsImpl;
+			boolean prevChildHasCondition;
+			for (int i = 0; i < childCount; i++)
+			{
+				child = (DefaultMutableTreeNode) whereCondition.getChildAt(i);
+				if (child != null && hasConditions(child))
+				{
+					whereConditionsString.append("(");
+					advancedConditionsImpl = new AdvancedConditionsImpl();
+					advancedConditionsImpl.setWhereCondition(child);
+					advancedConditionsImpl.setLevel(child.getLevel());
+					if (currentNodeData != null)
+					{
+						advancedConditionsImpl.setParentObject(currentNodeData.getObjectName());
+					}
+					whereConditionsString.append("\n "
+							+ advancedConditionsImpl.getString(tableSufix) + " ");
+					whereConditionsString.append(")");
+					prevChildHasCondition = true;
+				}
+				else
+				{
+					prevChildHasCondition = false;
+				}
+				if (i != childCount - 1 && prevChildHasCondition)
+				{
+					whereConditionsString.append(Operator.OR);
+				}
+			}
+
+		}
+	
+	}
+	
+	
+	
 }
