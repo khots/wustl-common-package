@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.security.exceptions;
@@ -12,15 +12,21 @@ public class PasswordEncryptionException extends Exception
 {
 
 	/**
-	 * Default constructor
+	 * serial version id.
+	 */
+	private static final long serialVersionUID = 7522016908298800388L;
+
+	/**
+	 * Default constructor.
 	 */
 	public PasswordEncryptionException()
 	{
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/**
-	 * @param message the detail message. The detail message is saved for later retrieval by the getMessage() method.
+	 * @param message the detail message. The detail message is saved for later retrieval by the
+	 *  getMessage() method.
 	 */
 	public PasswordEncryptionException(String message)
 	{
