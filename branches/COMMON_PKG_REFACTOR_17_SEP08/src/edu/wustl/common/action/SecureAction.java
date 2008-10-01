@@ -66,10 +66,8 @@ public abstract class SecureAction extends BaseAction
 	 * @return boolean
 	 * @throws Exception Generic exception
 	 */
-	protected boolean isAuthorizedToExecute(HttpServletRequest request) throws Exception
-	{
-		return true;
-	}
+	protected abstract boolean isAuthorizedToExecute(HttpServletRequest request);
+	
 
 	/**
 	 * Returns the object id of the protection element that represents
@@ -110,8 +108,6 @@ public abstract class SecureAction extends BaseAction
 	 * @param form AbstractActionForm
 	 * @return null value for object Id.
 	 */
-	protected String getObjectId(AbstractActionForm form)
-	{
-		return null;
-	}
+	protected abstract String getObjectId(AbstractActionForm form);
+	
 }

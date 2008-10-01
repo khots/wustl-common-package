@@ -250,11 +250,12 @@ public abstract class Query
 	 */
 	public boolean addElementToView(DataElement dataElement) throws SQLException
 	{
-		if (dataElement == null)
+		boolean isElementAdded = false;
+		if (dataElement != null)
 		{
-			throw new NullPointerException("Data element added to view cannot be null");
+			isElementAdded = resultView.add(dataElement);
 		}
-		return resultView.add(dataElement);
+		return isElementAdded;
 	}
 
 	/**

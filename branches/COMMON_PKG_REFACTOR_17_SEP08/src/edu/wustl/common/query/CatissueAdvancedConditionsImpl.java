@@ -130,112 +130,19 @@ public class CatissueAdvancedConditionsImpl extends AdvancedConditionsImpl
 
 				if (table2.getTableName().equals(Query.SPECIMEN))
 				{
-					//If parents parent is also Specimen
-					if (parent2.getObjectName().equals(Query.SPECIMEN)
-							&& !parent2.getOperationWithChildCondition().getOperator().equals(
-									Operator.EXIST))
-					{
-						//						//third level parent
-						//						AdvancedConditionsNode parent1 = (AdvancedConditionsNode) ((DefaultMutableTreeNode)parentNode).getUserObject();
-						//parent3 conditions vector
-						Table parent2LinkingTable = getParentLinkingTable(parent2);
-						table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN
-								+ (level - 1) + "L", parent2LinkingTable));
-						table2.setTableAliasAppend(table2.getTableName() + level + "L");
-					}
-					else if (parent1.getObjectName().equals(Query.SPECIMEN_COLLECTION_GROUP)
-							&& !parent1.getOperationWithChildCondition().getOperator().equals(
-									Operator.EXIST))
-					{
-						table2.setLinkingTable(new Table(Query.SPECIMEN_COLLECTION_GROUP,
-								Query.SPECIMEN_COLLECTION_GROUP));
-					}
-					else
-					{
-						table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN));
-						table2.setTableAliasAppend(table2.getTableName() + level + "L");
-					}
+				  setTableAliasForSpecimen(table2,parent1,parent2,
+							level);
 				}
 				//IF the condition belongs to specimen characteristics
 				else if (table2.getTableName().equals(Query.SPECIMEN_CHARACTERISTICS))
 				{
-
-					//					table2.setLinkingTable(new Table(Query.SPECIMEN,
-					//							Query.SPECIMEN+ level+"L",new Table(Query.SPECIMEN,
-					//									Query.SPECIMEN)));
-					//					If parents parent is also Specimen
-					if (parent2.getObjectName().equals(Query.SPECIMEN)
-							&& !parent2.getOperationWithChildCondition().getOperator().equals(
-									Operator.EXIST))
-					{
-						//						//third level parent
-						//						AdvancedConditionsNode parent1 = (AdvancedConditionsNode) ((DefaultMutableTreeNode)parentNode).getUserObject();
-						//parent3 conditions vector
-						Table parent2LinkingTable = getParentLinkingTable(parent2);
-						table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN + level
-								+ "L", new Table(Query.SPECIMEN,
-								Query.SPECIMEN + (level - 1) + "L", parent2LinkingTable)));
-						table2.setTableAliasAppend(table2.getTableName() + level + "L");
-					}
-					else if (parent1.getObjectName().equals(Query.SPECIMEN_COLLECTION_GROUP)
-							&& !parent1.getOperationWithChildCondition().getOperator().equals(
-									Operator.EXIST))
-					{
-						table2.setLinkingTable(new Table(Query.SPECIMEN_COLLECTION_GROUP,
-								Query.SPECIMEN_COLLECTION_GROUP));
-					}
-					else
-					{
-						table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN + level
-								+ "L", new Table(Query.SPECIMEN, Query.SPECIMEN)));
-						table2.setTableAliasAppend(table2.getTableName() + level + "L");
-					}
-
+				  setTableAliasForSpecChar(table2,parent1,parent2,level);
 				}
 				//else SpecimenEventParameters condition
 				else
 				{
-					if (parent1.getObjectName().equals(Query.SPECIMEN_COLLECTION_GROUP)
-							&& !parent1.getOperationWithChildCondition().getOperator().equals(
-									Operator.EXIST))
-					{
-						if (table2.getTableName().equals(Query.SPECIMEN_EVENT_PARAMETERS))
-						{
-							table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN));
-						}
-						else if (table2.getTableName().indexOf(Query.PARAM) != -1)
-						{
-							table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
-									Query.SPECIMEN_EVENT_PARAMETERS_APPEND + table2.getTableName()
-											+ level + "L" + childIndex + "C", new Table(
-											Query.SPECIMEN, Query.SPECIMEN)));
-						}
-					}
-
-					else if (parent2.getObjectName().equals(Query.SPECIMEN)
-							&& !parent2.getOperationWithChildCondition().getOperator().equals(
-									Operator.EXIST))
-					{
-						Table parent2LinkingTable = getParentLinkingTable(parent2);
-						table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
-								Query.SPECIMEN_EVENT_PARAMETERS_APPEND + table2.getTableName()
-										+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
-										Query.SPECIMEN + level + "L", new Table(Query.SPECIMEN,
-												Query.SPECIMEN + (level - 1) + "L",
-												parent2LinkingTable))));
-					}
-					else
-					{
-
-						table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
-								Query.SPECIMEN_EVENT_PARAMETERS_APPEND + table2.getTableName()
-										+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
-										Query.SPECIMEN + level + "L", new Table(Query.SPECIMEN,
-												Query.SPECIMEN))));
-					}
-					table2.setTableAliasAppend(table2.getTableName() + level + "L" + childIndex
-							+ "C");
-
+					setTableAliasForSpecimenEventParameters(table2,parent1,parent2,
+							level,childIndex);
 				}
 			}
 
@@ -247,40 +154,10 @@ public class CatissueAdvancedConditionsImpl extends AdvancedConditionsImpl
 				if (table2.getTableName().equals(Query.SPECIMEN_EVENT_PARAMETERS)
 						|| table2.getTableName().equals(Query.USER))
 				{
-					//Aarti: A condition corresponding to actual event is added 
-					//so that a link is obtained between actual event parameter class and specimenEventParameter
-					Condition actualEventIdentifierCondition = getIdentifierCondition(table2
-							.getLinkingTable().getTableName());
-					Table eventTable = actualEventIdentifierCondition.getDataElement().getTable();
-					eventTable.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
-							Query.SPECIMEN_EVENT_PARAMETERS_APPEND + eventTable.getTableName()
-									+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
-									Query.SPECIMEN, new Table(Query.SPECIMEN_COLLECTION_GROUP,
-											Query.SPECIMEN_COLLECTION_GROUP))));
-					eventTable.setTableAliasAppend(eventTable.getTableName() + level + "L"
-							+ childIndex + "C");
-					Logger.out.debug("table:" + table2 + " Linking table:"
-							+ table2.getLinkingTable().getTableName() + " event table:"
-							+ eventTable);
-					table2.setTableAliasAppend(table2.getTableName() + level + "L" + childIndex
-							+ "C");
-					additionalConditions.add(actualEventIdentifierCondition);
-					//					advConditionNode.addConditionToNode(actualEventIdentifierCondition);
-					if (table2.getTableName().equals(Query.SPECIMEN_EVENT_PARAMETERS))
-					{
-						table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN));
-						table2.setTableAliasAppend(Query.SPECIMEN_EVENT_PARAMETERS_APPEND
-								+ eventTable.getTableName() + level + "L" + childIndex + "C");
-					}
-					else
-					{
-						table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
-								Query.SPECIMEN_EVENT_PARAMETERS_APPEND + eventTable.getTableName()
-										+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
-										Query.SPECIMEN, new Table(Query.SPECIMEN_COLLECTION_GROUP,
-												Query.SPECIMEN_COLLECTION_GROUP))));
-						Table table1 = table2.getLinkingTable();
-					}
+					
+					setTableAliasForBaseSpecimenEventParameters(table2,parent1,parent2,
+						level,childIndex,additionalConditions);
+					
 				}
 				//if attribute chosen belongs to the derived event class itself
 				else if (table2.getTableName().indexOf(Query.PARAM) != -1)
@@ -349,6 +226,151 @@ public class CatissueAdvancedConditionsImpl extends AdvancedConditionsImpl
 		con.setOperator(new Operator(Operator.GREATER_THAN));
 		con.setValue("0");
 		return con;
+	}
+	
+	private void setTableAliasForSpecimen(Table table2,AdvancedConditionsNode parent1,AdvancedConditionsNode parent2,
+			int level)
+	{
+		//If parents parent is also Specimen
+		if (parent2.getObjectName().equals(Query.SPECIMEN)
+				&& !parent2.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			//						//third level parent
+			//						AdvancedConditionsNode parent1 = (AdvancedConditionsNode) ((DefaultMutableTreeNode)parentNode).getUserObject();
+			//parent3 conditions vector
+			Table parent2LinkingTable = getParentLinkingTable(parent2);
+			table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN
+					+ (level - 1) + "L", parent2LinkingTable));
+			table2.setTableAliasAppend(table2.getTableName() + level + "L");
+		}
+		else if (parent1.getObjectName().equals(Query.SPECIMEN_COLLECTION_GROUP)
+				&& !parent1.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			table2.setLinkingTable(new Table(Query.SPECIMEN_COLLECTION_GROUP,
+					Query.SPECIMEN_COLLECTION_GROUP));
+		}
+		else
+		{
+			table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN));
+			table2.setTableAliasAppend(table2.getTableName() + level + "L");
+		}
+	}
+	
+	private void setTableAliasForSpecChar(Table table2,AdvancedConditionsNode parent1,AdvancedConditionsNode parent2,int level)
+	{
+		if (parent2.getObjectName().equals(Query.SPECIMEN)
+				&& !parent2.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			Table parent2LinkingTable = getParentLinkingTable(parent2);
+			table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN + level
+					+ "L", new Table(Query.SPECIMEN,
+					Query.SPECIMEN + (level - 1) + "L", parent2LinkingTable)));
+			table2.setTableAliasAppend(table2.getTableName() + level + "L");
+		}
+		else if (parent1.getObjectName().equals(Query.SPECIMEN_COLLECTION_GROUP)
+				&& !parent1.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			table2.setLinkingTable(new Table(Query.SPECIMEN_COLLECTION_GROUP,
+					Query.SPECIMEN_COLLECTION_GROUP));
+		}
+		else
+		{
+			table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN + level
+					+ "L", new Table(Query.SPECIMEN, Query.SPECIMEN)));
+			table2.setTableAliasAppend(table2.getTableName() + level + "L");
+		}
+	
+	}
+	
+	private void setTableAliasForSpecimenEventParameters(Table table2,AdvancedConditionsNode parent1,AdvancedConditionsNode parent2,
+			int level,int childIndex)
+	{
+
+		if (parent1.getObjectName().equals(Query.SPECIMEN_COLLECTION_GROUP)
+				&& !parent1.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			if (table2.getTableName().equals(Query.SPECIMEN_EVENT_PARAMETERS))
+			{
+				table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN));
+			}
+			else if (table2.getTableName().indexOf(Query.PARAM) != -1)
+			{
+				table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
+						Query.SPECIMEN_EVENT_PARAMETERS_APPEND + table2.getTableName()
+								+ level + "L" + childIndex + "C", new Table(
+								Query.SPECIMEN, Query.SPECIMEN)));
+			}
+		}
+
+		else if (parent2.getObjectName().equals(Query.SPECIMEN)
+				&& !parent2.getOperationWithChildCondition().getOperator().equals(
+						Operator.EXIST))
+		{
+			Table parent2LinkingTable = getParentLinkingTable(parent2);
+			table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
+					Query.SPECIMEN_EVENT_PARAMETERS_APPEND + table2.getTableName()
+							+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
+							Query.SPECIMEN + level + "L", new Table(Query.SPECIMEN,
+									Query.SPECIMEN + (level - 1) + "L",
+									parent2LinkingTable))));
+		}
+		else
+		{
+
+			table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
+					Query.SPECIMEN_EVENT_PARAMETERS_APPEND + table2.getTableName()
+							+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
+							Query.SPECIMEN + level + "L", new Table(Query.SPECIMEN,
+									Query.SPECIMEN))));
+		}
+		table2.setTableAliasAppend(table2.getTableName() + level + "L" + childIndex
+				+ "C");
+	}
+	
+	private void setTableAliasForBaseSpecimenEventParameters(Table table2,AdvancedConditionsNode parent1,AdvancedConditionsNode parent2,
+			int level,int childIndex,Vector additionalConditions)
+	{
+
+		//Aarti: A condition corresponding to actual event is added 
+		//so that a link is obtained between actual event parameter class and specimenEventParameter
+		Condition actualEventIdentifierCondition = getIdentifierCondition(table2
+				.getLinkingTable().getTableName());
+		Table eventTable = actualEventIdentifierCondition.getDataElement().getTable();
+		eventTable.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
+				Query.SPECIMEN_EVENT_PARAMETERS_APPEND + eventTable.getTableName()
+						+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
+						Query.SPECIMEN, new Table(Query.SPECIMEN_COLLECTION_GROUP,
+								Query.SPECIMEN_COLLECTION_GROUP))));
+		eventTable.setTableAliasAppend(eventTable.getTableName() + level + "L"
+				+ childIndex + "C");
+		Logger.out.debug("table:" + table2 + " Linking table:"
+				+ table2.getLinkingTable().getTableName() + " event table:"
+				+ eventTable);
+		table2.setTableAliasAppend(table2.getTableName() + level + "L" + childIndex
+				+ "C");
+		additionalConditions.add(actualEventIdentifierCondition);
+		//					advConditionNode.addConditionToNode(actualEventIdentifierCondition);
+		if (table2.getTableName().equals(Query.SPECIMEN_EVENT_PARAMETERS))
+		{
+			table2.setLinkingTable(new Table(Query.SPECIMEN, Query.SPECIMEN));
+			table2.setTableAliasAppend(Query.SPECIMEN_EVENT_PARAMETERS_APPEND
+					+ eventTable.getTableName() + level + "L" + childIndex + "C");
+		}
+		else
+		{
+			table2.setLinkingTable(new Table(Query.SPECIMEN_EVENT_PARAMETERS,
+					Query.SPECIMEN_EVENT_PARAMETERS_APPEND + eventTable.getTableName()
+							+ level + "L" + childIndex + "C", new Table(Query.SPECIMEN,
+							Query.SPECIMEN, new Table(Query.SPECIMEN_COLLECTION_GROUP,
+									Query.SPECIMEN_COLLECTION_GROUP))));
+			Table table1 = table2.getLinkingTable();
+		}
+	
 	}
 
 }

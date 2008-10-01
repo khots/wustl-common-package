@@ -52,13 +52,13 @@ public class Condition
 	 */
 	public Condition(DataElement dataElement, Operator op, String value)
 	{
-		if (dataElement == null || op == null || value == null)
+		if(dataElement != null && op != null && value != null)
 		{
-			throw new NullPointerException("dataelement operator or value null");
+			this.dataElement = dataElement;
+			this.operator = op;
+			this.value = value;
 		}
-		this.dataElement = dataElement;
-		this.operator = op;
-		this.value = value;
+		
 	}
 
 	/**
@@ -126,67 +126,7 @@ public class Condition
 		if (!(newOperator.equalsIgnoreCase(Operator.IS) || newOperator
 				.equalsIgnoreCase(Operator.IS_NOT)))
 		{
-			if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_TINY_INT))
-			{
-				if (newValue.equalsIgnoreCase(Constants.CONDITION_VALUE_YES))
-				{
-					newValue = Constants.TINY_INT_VALUE_ONE;
-				}
-				else
-				{
-					newValue = Constants.TINY_INT_VALUE_ZERO;
-				}
-			}
-
-			if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_VARCHAR)
-					|| dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_TEXT)
-					|| dataElement.getFieldType().equalsIgnoreCase(
-							Constants.FIELD_TYPE_TIMESTAMP_TIME))
-			{
-				if (dataElement.getField().equals("TISSUE_SITE")
-						&& (newOperator.equals(Operator.IN) || newOperator.equals(Operator.NOT_IN)))
-				{
-					newValue = CDEManager.getCDEManager().getSubValueStr(
-							Constants.CDE_NAME_TISSUE_SITE, newValue);
-				}
-				else
-				{
-					newValue = checkQuotes(newValue);
-					newValue = "'" + newValue + "'";
-					//To make queries case insensitive, value is converted to
-					//UPPER(<<value>>)
-					if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_VARCHAR)
-							|| dataElement.getFieldType().equalsIgnoreCase(
-									Constants.FIELD_TYPE_TEXT))
-					{
-						newValue = Constants.UPPER + "(" + newValue + ")";
-					}
-				}
-
-			}
-			else if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)
-					|| dataElement.getFieldType().equalsIgnoreCase(
-							Constants.FIELD_TYPE_TIMESTAMP_DATE))
-			{
-				try
-				{
-					Date date = new Date();
-					date = Utility.parseDate(newValue);
-
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(date);
-					String value = (calendar.get(Calendar.MONTH) + 1) + "-"
-							+ calendar.get(Calendar.DAY_OF_MONTH) + "-"
-							+ calendar.get(Calendar.YEAR);
-
-					newValue = Variables.strTodateFunction + "('" + value + "','"
-							+ Variables.datePattern + "')";
-				}
-				catch (ParseException parseExp)
-				{
-					Logger.out.debug("Wrong Date Format");
-				}
-			}
+			newValue = someMoreOperators(newValue,newOperator);
 		}
 
 		//Aarti: To make queries case insensitive condition is converted to
@@ -306,4 +246,73 @@ public class Condition
 		return isConditionOnIdentifiedField;
 	}
 
+	private String someMoreOperators(String val,String newOperator)
+	{
+		String  newValue = val;
+		
+		if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_TINY_INT))
+		{
+			if (newValue.equalsIgnoreCase(Constants.CONDITION_VALUE_YES))
+			{
+				newValue = Constants.TINY_INT_VALUE_ONE;
+			}
+			else
+			{
+				newValue = Constants.TINY_INT_VALUE_ZERO;
+			}
+		}
+
+		if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_VARCHAR)
+				|| dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_TEXT)
+				|| dataElement.getFieldType().equalsIgnoreCase(
+						Constants.FIELD_TYPE_TIMESTAMP_TIME))
+		{
+			if (dataElement.getField().equals("TISSUE_SITE")
+					&& (newOperator.equals(Operator.IN) || newOperator.equals(Operator.NOT_IN)))
+			{
+				newValue = CDEManager.getCDEManager().getSubValueStr(
+						Constants.CDE_NAME_TISSUE_SITE, newValue);
+			}
+			else
+			{
+				newValue = checkQuotes(newValue);
+				newValue = "'" + newValue + "'";
+				//To make queries case insensitive, value is converted to
+				//UPPER(<<value>>)
+				if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_VARCHAR)
+						|| dataElement.getFieldType().equalsIgnoreCase(
+								Constants.FIELD_TYPE_TEXT))
+				{
+					newValue = Constants.UPPER + "(" + newValue + ")";
+				}
+			}
+
+		}
+		else if (dataElement.getFieldType().equalsIgnoreCase(Constants.FIELD_TYPE_DATE)
+				|| dataElement.getFieldType().equalsIgnoreCase(
+						Constants.FIELD_TYPE_TIMESTAMP_DATE))
+		{
+			try
+			{
+				Date date = new Date();
+				date = Utility.parseDate(newValue);
+
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				String value = (calendar.get(Calendar.MONTH) + 1) + "-"
+						+ calendar.get(Calendar.DAY_OF_MONTH) + "-"
+						+ calendar.get(Calendar.YEAR);
+
+				newValue = Variables.strTodateFunction + "('" + value + "','"
+						+ Variables.datePattern + "')";
+			}
+			catch (ParseException parseExp)
+			{
+				Logger.out.debug("Wrong Date Format");
+			}
+		}
+		return newValue;
+	
+	}
+	
 }
