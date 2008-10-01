@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.util;
@@ -9,13 +9,20 @@ import java.util.Comparator;
 import edu.wustl.common.domain.AbstractDomainObject;
 
 /**
- * This class compares the two domain objects  by their identifiers
+ * This class compares the two domain objects  by their identifiers.
  * @author chetan_patil
  *
  */
 public class DomainBeanIdentifierComparator implements Comparator<Object>
 {
 
+	/**
+	 * compare two objects.
+	 * @param object1 Object first object.
+	 * @param object2 Object second object.
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 * @return int numeric value for comparison.
+	 */
 	public int compare(Object object1, Object object2)
 	{
 		AbstractDomainObject domainObject1 = (AbstractDomainObject) object1;
