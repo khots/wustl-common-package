@@ -16,12 +16,17 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
 
 /**
- * This method populates data required for ForwardTo activity
+ * This method populates data required for ForwardTo activity.
  * @author Krunal Thakkar
  */
 public abstract class AbstractForwardToProcessor
 {
 
+	/**
+	 * @param actionForm AbstractActionForm current form.
+	 * @param domainObject AbstractDomainObject domain object.
+	 * @return Map list of forwarded data.
+	 */
 	public abstract Map populateForwardToData(AbstractActionForm actionForm,
 			AbstractDomainObject domainObject);
 }
