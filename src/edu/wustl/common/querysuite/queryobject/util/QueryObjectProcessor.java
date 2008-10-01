@@ -89,7 +89,7 @@ public class QueryObjectProcessor
 		}
 		catch (CyclicException exp)
 		{
-			throw new RuntimeException("Unable to Process object, Exception:" + exp.getMessage());
+			exp.printStackTrace();
 		}
 
 		return isAnyNodeProcessed;
