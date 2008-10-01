@@ -23,13 +23,19 @@ import edu.wustl.common.util.logger.Logger;
 public class CVSTagReader
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(CVSTagReader.class);
 	/**
 	 * Reads the file and returns the CVS tag from comment section.
-	 * File pattern is 
+	 * File pattern is
 	 *
-		 /* $Name: 1.1.4.1.2.3 $
+		 /* $Name: 1.1.4.1.2.4 $
 		 * $Log: CVSTagReader.java,v $
+		 * Revision 1.1.4.1.2.4  2008/10/01 13:02:39  dharitri_pradhan
+		 * java-doc has been edited.
+		 *
 		 * Revision 1.1.4.1.2.3  2008/09/25 11:11:09  ravi_kumar
 		 * code refactoring
 		 *
@@ -40,17 +46,17 @@ public class CVSTagReader
 		 * run formatter and removed all import related warnings.
 		 *
 		 * Revision 1.1.4.1  2008/04/24 05:32:05  abhijit_naik
-		 * refasctoring and formatiing code
+		 * refactoring and formatiing code
 		 *
 		 * Revision 1.1  2006/07/04 10:50:37  Kapil
 		 * Read the tag information from a file.
 		 *
 		 * Revision 1.1  2006/06/28 14:02:17  Kapil
 		 * Test cvs keywords
-		 * /	
-	 * @param file: File in whcih tag information is available
-	 * @return parse and retrun the CVS tag form whcih check-out is done. 
-	 * Returns null if any IOError occures or if tag can not be parsed.
+		 *
+	 * @param file String File in which tag information is available.
+	 * @return parse and return the CVS tag form which check-out is done.
+	 * Returns null if any IOError occurs or if tag can not be parsed.
 	 **/
 	public String readTag(String file)
 	{
@@ -77,9 +83,9 @@ public class CVSTagReader
 	/**
 	 * @param str one line string that contains CVS tag
 	 * @return Returns the CVS tag parse from the following pattern.
-	 * Line pattern: * $Name: 1.1.4.1.2.3 $
-	 * Example1: * $Name: 1.1.4.1.2.3 $
-	 * Example2: * $Name: 1.1.4.1.2.3 $
+	 * Line pattern: * $Name: 1.1.4.1.2.4 $
+	 * Example1: * $Name: 1.1.4.1.2.4 $
+	 * Example2: * $Name: 1.1.4.1.2.4 $
 	 * */
 	private String parseTag(String str)
 	{
