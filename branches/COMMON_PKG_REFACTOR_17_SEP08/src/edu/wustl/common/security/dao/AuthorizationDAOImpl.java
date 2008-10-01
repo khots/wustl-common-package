@@ -11,7 +11,6 @@ import gov.nih.nci.logging.api.logger.hibernate.HibernateSessionFactoryHelper;
 import gov.nih.nci.security.authorization.ObjectPrivilegeMap;
 import gov.nih.nci.security.authorization.domainobjects.Privilege;
 import gov.nih.nci.security.authorization.domainobjects.ProtectionElement;
-import gov.nih.nci.security.authorization.domainobjects.ProtectionGroup;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
@@ -52,25 +51,25 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AuthorizationDAOImpl.class);
 
-	private SessionFactory sf = null;
+	private SessionFactory sessionFact = null;
 
 	/**
-	 * @param sf
-	 * @param applicationContextName
+	 * @param sessionFact
+	 * @param appContextName
 	 * @throws CSConfigurationException
 	 */
-	public AuthorizationDAOImpl(SessionFactory sf, String applicationContextName)
+	public AuthorizationDAOImpl(SessionFactory sessionFact, String appContextName)
 			throws CSConfigurationException
 	{
-		super(sf, applicationContextName);
-		this.sf = sf;
+		super(sessionFact, appContextName);
+		this.sessionFact = sessionFact;
 
 	}
 
 	public Collection getPrivilegeMap(String userName, Collection pEs) throws CSException
 	{
 		ArrayList result = new ArrayList();
-		ResultSet rs = null;
+		ResultSet resulSet = null;
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmt2 = null;
 		Session session = null;
@@ -84,14 +83,14 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		{
 			throw new CSException("protection elements collection can't be null!");
 		}
-		if (pEs.size() == 0)
+		if (pEs.isEmpty())
 		{
 			return result;
 		}
 
 		try
 		{
-			session = sf.openSession();
+			session = sessionFact.openSession();
 			connection = session.connection();
 			StringBuffer stbr = new StringBuffer();
 			String attributeVal = "=?";
@@ -106,36 +105,36 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 
 			String sql2 = stbr2.toString();
 			pstmt2 = connection.prepareStatement(sql2);
-			Iterator it = pEs.iterator();
-			while (it.hasNext())
+			Iterator iterator = pEs.iterator();
+			while (iterator.hasNext())
 			{
-				ProtectionElement pe = (ProtectionElement) it.next();
+				ProtectionElement pElement = (ProtectionElement) iterator.next();
 				ArrayList privs = new ArrayList();
-				if (pe.getObjectId() != null)
+				if (pElement.getObjectId() != null)
 				{
-					if (pe.getAttribute() != null)
+					if (pElement.getAttribute()== null)
 					{
-						pstmt.setString(1, pe.getObjectId());
-						pstmt.setString(2, pe.getAttribute());
-						pstmt.setString(3, userName);
-						rs = pstmt.executeQuery();
+						pstmt2.setString(1, pElement.getObjectId());
+						pstmt2.setString(2, userName);
+						resulSet = pstmt2.executeQuery();
 					}
 					else
 					{
-						pstmt2.setString(1, pe.getObjectId());
-						pstmt2.setString(2, userName);
-						rs = pstmt2.executeQuery();
+						pstmt.setString(1, pElement.getObjectId());
+						pstmt.setString(2, pElement.getAttribute());
+						pstmt.setString(3, userName);
+						resulSet = pstmt.executeQuery();
 					}
 				}
-				while (rs.next())
+				while (resulSet.next())
 				{
-					String priv = rs.getString(1);
-					Privilege p = new Privilege();
-					p.setName(priv);
-					privs.add(p);
+					String priv = resulSet.getString(1);
+					Privilege privilege = new Privilege();
+					privilege.setName(priv);
+					privs.add(privilege);
 				}
-				rs.close();
-				ObjectPrivilegeMap opm = new ObjectPrivilegeMap(pe, privs);
+				resulSet.close();
+				ObjectPrivilegeMap opm = new ObjectPrivilegeMap(pElement, privs);
 				result.add(opm);
 			}
 			pstmt.close();
@@ -152,8 +151,9 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 			try
 			{
 				session.close();
-				rs.close();
+				resulSet.close();
 				pstmt.close();
+				connection.close();
 			}
 			catch (SQLException ex2)
 			{
@@ -166,41 +166,37 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 	//changes to load the object and then delete it
 	//else it throws exception
 	public void removeProtectionElementsFromProtectionGroup(String protectionGroupId,
-			String[] protectionElementIds) throws CSTransactionException
+			String[] protectionEleIds) throws CSTransactionException
 	{
 		Session session = null;
-		Transaction tx = null;
+		Transaction transaction = null;
 
 		try
 		{
-			session = sf.openSession();
-			tx = session.beginTransaction();
+			session = sessionFact.openSession();
+			transaction = session.beginTransaction();
 
-			ProtectionGroup protectionGroup = (ProtectionGroup) this.getObjectByPrimaryKey(session,
-					ProtectionGroup.class, Long.valueOf(protectionGroupId));
-
-			for (int i = 0; i < protectionElementIds.length; i++)
+			for (int i = 0; i < protectionEleIds.length; i++)
 			{
-				StringBuffer query = new StringBuffer();
-				query.append("from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement");
+				StringBuffer query = new StringBuffer("from gov.nih.nci.security.dao.hibernate.ProtectionGroupProtectionElement protectionGroupProtectionElement");
 				query.append(" where protectionGroupProtectionElement.protectionElement.protectionElementId=");
-				query.append(protectionElementIds[i]);
+				query.append(protectionEleIds[i]);
 				query.append(" and protectionGroupProtectionElement.protectionGroup.protectionGroupId=");
 				query.append(protectionGroupId);
 				Query queryObj = session.createQuery(query.toString());
 				List list = queryObj.list();
-				if (list != null && list.size() > 0)
+				if (list != null && !list.isEmpty())
 				{
 					this.removeObject(list.get(0));
 				}
 			}
-			tx.commit();
+			transaction.commit();
 		}
 		catch (Exception ex)
 		{
-			tx.rollback();
+			transaction.rollback();
 			StringBuffer mess= new StringBuffer("Error Occured in deassigning Protection Elements ")
-					.append(StringUtilities.stringArrayToString(protectionElementIds))
+					.append(StringUtilities.stringArrayToString(protectionEleIds))
 					.append(" to Protection Group").append( protectionGroupId);
 			logger.error(mess + ex.getMessage(),ex);
 			throw new CSTransactionException(mess+ ex.getMessage(), ex);
@@ -217,7 +213,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		Set groups = new HashSet();
 		try
 		{
-			session = HibernateSessionFactoryHelper.getAuditSession(sf);
+			session = HibernateSessionFactoryHelper.getAuditSession(sessionFact);
 
 			User user = (User) this.getObjectByPrimaryKey(session, User.class, Long.valueOf(userId));
 			groups = user.getGroups();
@@ -252,7 +248,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 
 	}
 
-	private Object getObjectByPrimaryKey(Session s, Class objectType, Long primaryKey)
+	private Object getObjectByPrimaryKey(Session session, Class objectType, Long primaryKey)
 			throws HibernateException, CSObjectNotFoundException
 	{
 
@@ -260,7 +256,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		{
 			throw new CSObjectNotFoundException("The primary key can't be null");
 		}
-		Object obj = s.load(objectType, primaryKey);
+		Object obj = session.load(objectType, primaryKey);
 
 		if (obj == null)
 		{
@@ -290,7 +286,7 @@ public class AuthorizationDAOImpl extends gov.nih.nci.security.dao.Authorization
 		stbr.append(" and pgpe.protection_element_id = pe.protection_element_id");
 		stbr.append(" and pe.object_id= ?");
 
-		stbr.append(" and pe.attribute "+attributeVal);
+		stbr.append(" and pe.attribute ").append(attributeVal);
 		stbr.append(" and pg.protection_group_id = ugrpg.protection_group_id ");
 		stbr.append(" and (( ugrpg.group_id = g.group_id");
 		stbr.append(" and ug.group_id= g.group_id");
