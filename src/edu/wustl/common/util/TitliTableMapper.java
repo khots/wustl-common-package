@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.util;
@@ -23,29 +23,32 @@ import titli.controller.Name;
 import titli.model.TitliException;
 
 /**
- * This class reads the mapping  xml file and gets the tree into the memory
- * it's a sigleton 
- * 
+ * This class reads the mapping  xml file and gets the tree into the memory.
+ * it's a sigleton
+ *
  * @author Juber Patel
  *
  */
 public final class TitliTableMapper
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliTableMapper.class);
 	/**
-	 * the only instance of this class
+	 * the only instance of this class.
 	 */
 	private static TitliTableMapper mapper = new TitliTableMapper();
 
 	/**
-	 * the in-memory document constructed from the xml file
+	 * the in-memory document constructed from the xml file.
 	 */
 	private Document document=null;
 
 	/**
-	 * the private constructor for singleton behaviour
-	 * it reads the xml file and creates the Document
+	 * the private constructor for singleton behaviour.
+	 * it reads the xml file and creates the Document.
 	 *
 	 */
 	private TitliTableMapper()
@@ -85,8 +88,9 @@ public final class TitliTableMapper
 	}
 
 	/**
-	 * get the only instance of this class
-	 * @return the only instance of this class
+	 * get the only instance of this class.
+	 * @return TitliTableMapper the only instance of this class
+	 * @exception TitliException titli exception.
 	 */
 	public static TitliTableMapper getInstance()throws TitliException
 	{
@@ -98,10 +102,10 @@ public final class TitliTableMapper
 	}
 
 	/**
-	 * get the the label corresponding to the specified table name
-	 * @param tableName the table name
-	 * @return the table name
-	 * @throws Exception if problems occur
+	 * get the the label corresponding to the specified table name.
+	 * @param tableName the table name.
+	 * @return the table name.
+	 * @throws TitliException if problems occur.
 	 */
 	public String getLabel(Name tableName) throws TitliException
 	{
