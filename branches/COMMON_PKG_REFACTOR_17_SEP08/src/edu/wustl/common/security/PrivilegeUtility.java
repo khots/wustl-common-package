@@ -4,6 +4,11 @@
 
 package edu.wustl.common.security;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import edu.wustl.common.beans.SecurityDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.exceptions.SMException;
@@ -30,11 +35,6 @@ import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.security.exceptions.CSObjectNotFoundException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Utility class for methods related to CSM 
  * 
@@ -43,6 +43,11 @@ import java.util.Set;
  */
 public class PrivilegeUtility
 {
+
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(PrivilegeUtility.class);
 
 	private static AuthorizationManager authorizationManager = null;
 	private Class requestingClass = PrivilegeUtility.class;
@@ -90,12 +95,12 @@ public class PrivilegeUtility
 			 */
 			assignProtectionElementsToGroups(protectionElements, dynamicGroups);
 
-			Logger.out.debug("************** Inserted authorization Data ***************");
+			logger.debug("************** Inserted authorization Data ***************");
 
 		}
 		catch (CSException e)
 		{
-			Logger.out.fatal("The Security Service encountered " + "a fatal exception.", e);
+			logger.fatal("The Security Service encountered " + "a fatal exception.", e);
 			throw new SMException("The Security Service encountered a fatal exception.", e);
 		}
 	}
@@ -172,10 +177,10 @@ public class PrivilegeUtility
 
 		if (authorizationData != null)
 		{
-			Logger.out.debug(" UserGroupRoleProtectionGroup Size:" + authorizationData.size());
+			logger.debug(" UserGroupRoleProtectionGroup Size:" + authorizationData.size());
 			for (int i = 0; i < authorizationData.size(); i++)
 			{
-				Logger.out.debug(" authorizationData:" + i + " "
+				logger.debug(" authorizationData:" + i + " "
 						+ authorizationData.get(i).toString());
 				group = new Group();
 
@@ -192,18 +197,18 @@ public class PrivilegeUtility
 					try
 					{
 						list = getObjects(groupSearchCriteria);
-						Logger.out.debug("User group " + group.getGroupName() + " already exists");
+						logger.debug("User group " + group.getGroupName() + " already exists");
 					}
 					/**
 					 * If group does not exist already
 					 */
 					catch (SMException ex)
 					{
-						Logger.out.debug("User group " + group.getGroupName() + " does not exist");
+						logger.debug("User group " + group.getGroupName() + " does not exist");
 						//                        group.setUsers(userGroupRoleProtectionGroupBean.getGroup());
 						userProvisioningManager.createGroup(group);
-						Logger.out.debug("User group " + group.getGroupName() + " created");
-						Logger.out.debug("Users added to group : " + group.getUsers());
+						logger.debug("User group " + group.getGroupName() + " created");
+						logger.debug("Users added to group : " + group.getUsers());
 						list = getObjects(groupSearchCriteria);
 					}
 					group = (Group) list.get(0);
@@ -219,7 +224,7 @@ public class PrivilegeUtility
 						// String[] {String.valueOf(group.getGroupId())});
 						assignAdditionalGroupsToUser(String.valueOf(user.getUserId()),
 								new String[]{String.valueOf(group.getGroupId())});
-						Logger.out.debug("userId:" + user.getUserId() + " group Id:"
+						logger.debug("userId:" + user.getUserId() + " group Id:"
 								+ group.getGroupId());
 					}
 
@@ -238,7 +243,7 @@ public class PrivilegeUtility
 					{
 						list = getObjects(protectionGroupSearchCriteria);
 						protectionGroup = (ProtectionGroup) list.get(0);
-						Logger.out.debug(" From Database: " + protectionGroup.toString());
+						logger.debug(" From Database: " + protectionGroup.toString());
 					}
 					/**
 					 * If the protection group does not already exist create the
@@ -248,7 +253,7 @@ public class PrivilegeUtility
 					{
 						protectionGroup.setProtectionElements(protectionElements);
 						userProvisioningManager.createProtectionGroup(protectionGroup);
-						Logger.out.debug("Protection group created: " + protectionGroup.toString());
+						logger.debug("Protection group created: " + protectionGroup.toString());
 					}
 
 					role = new Role();
@@ -260,13 +265,13 @@ public class PrivilegeUtility
 					userProvisioningManager.assignGroupRoleToProtectionGroup(String
 							.valueOf(protectionGroup.getProtectionGroupId()), String.valueOf(group
 							.getGroupId()), roleIds);
-					Logger.out.debug("Assigned Group Role To Protection Group "
+					logger.debug("Assigned Group Role To Protection Group "
 							+ protectionGroup.getProtectionGroupId() + " "
 							+ String.valueOf(group.getGroupId()) + " " + roleIds);
 				}
 				catch (CSTransactionException ex)
 				{
-					Logger.out.error("Error occured Assigned Group Role To Protection Group "
+					logger.error("Error occured Assigned Group Role To Protection Group "
 							+ protectionGroup.getProtectionGroupId() + " "
 							+ String.valueOf(group.getGroupId()) + " " + roleIds, ex);
 					throw new SMException(ex.getMessage(), ex);
@@ -331,7 +336,7 @@ public class PrivilegeUtility
 		}
 		catch (CSTransactionException ex)
 		{
-			Logger.out.warn(ex.getMessage() + "Error occured while creating Potection Element "
+			logger.warn(ex.getMessage() + "Error occured while creating Potection Element "
 					+ protectionElement.getProtectionElementName());
 			throw new CSException(ex.getMessage(), ex);
 		}
@@ -342,11 +347,11 @@ public class PrivilegeUtility
 	{
 		if (userId == null || groupIds == null || groupIds.length < 1)
 		{
-			Logger.out.debug(" Null or insufficient Parameters passed");
+			logger.debug(" Null or insufficient Parameters passed");
 			throw new SMException("Null or insufficient Parameters passed");
 		}
 
-		Logger.out.debug(" userId: " + userId + " groupIds:" + groupIds);
+		logger.debug(" userId: " + userId + " groupIds:" + groupIds);
 
 		Set consolidatedGroupIds = new HashSet();
 		Set consolidatedGroups;
@@ -384,7 +389,7 @@ public class PrivilegeUtility
 			for (int i = 0; it.hasNext(); i++)
 			{
 				finalUserGroupIds[i] = (String) it.next();
-				Logger.out.debug("Group user is assigned to: " + finalUserGroupIds[i]);
+				logger.debug("Group user is assigned to: " + finalUserGroupIds[i]);
 			}
 
 			/**
@@ -395,7 +400,7 @@ public class PrivilegeUtility
 		}
 		catch (CSException ex)
 		{
-			Logger.out.fatal("The Security Service encountered " + "a fatal exception.", ex);
+			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
 			throw new SMException("The Security Service encountered a fatal exception.", ex);
 		}
 	}
@@ -414,14 +419,14 @@ public class PrivilegeUtility
 	{
 		if (null == searchCriteria)
 		{
-			Logger.out.debug(" Null Parameters passed");
+			logger.debug(" Null Parameters passed");
 			throw new SMException("Null Parameters passed");
 		}
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 		List list = userProvisioningManager.getObjects(searchCriteria);
 		if (null == list || list.size() <= 0)
 		{
-			Logger.out.debug("Search resulted in no results");
+			logger.debug("Search resulted in no results");
 			throw new SMException("Search resulted in no results");
 		}
 		return list;
@@ -442,14 +447,13 @@ public class PrivilegeUtility
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 			userProvisioningManager.assignProtectionElement(GroupsName, protectionElement
 					.getObjectId());
-			Logger.out.debug("Associated protection group: " + GroupsName + " to protectionElement"
+			logger.debug("Associated protection group: " + GroupsName + " to protectionElement"
 					+ protectionElement.getProtectionElementName());
 		}
 
 		catch (CSException e)
 		{
-			Logger.out
-					.error("The Security Service encountered an error while associating protection group: "
+			logger.error("The Security Service encountered an error while associating protection group: "
 							+ GroupsName
 							+ " to protectionElement"
 							+ protectionElement.getProtectionElementName());
@@ -474,7 +478,7 @@ public class PrivilegeUtility
 			protectionGroups = new HashSet();
 			for (int i = 0; i < staticGroups.length; i++)
 			{
-				Logger.out.debug(" group name " + i + " " + staticGroups[i]);
+				logger.debug(" group name " + i + " " + staticGroups[i]);
 				protectionGroup = new ProtectionGroup();
 				protectionGroup.setProtectionGroupName(staticGroups[i]);
 				protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(protectionGroup);
@@ -482,12 +486,12 @@ public class PrivilegeUtility
 				{
 					List list = getObjects(protectionGroupSearchCriteria);
 					protectionGroup = (ProtectionGroup) list.get(0);
-					Logger.out.debug(" From Database: " + protectionGroup.toString());
+					logger.debug(" From Database: " + protectionGroup.toString());
 					protectionGroups.add(protectionGroup);
 				}
 				catch (SMException sme)
 				{
-					Logger.out.warn("Error occured while retrieving " + staticGroups[i]
+					logger.warn("Error occured while retrieving " + staticGroups[i]
 							+ "  From Database: ");
 				}
 			}
@@ -560,7 +564,7 @@ public class PrivilegeUtility
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get user: Exception: " + e.getMessage());
+			logger.debug("Unable to get user: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -576,16 +580,16 @@ public class PrivilegeUtility
 	 */
 	public User getUserById(String userId) throws SMException
 	{
-		Logger.out.debug("user Id: " + userId);
+		logger.debug("user Id: " + userId);
 		try
 		{
 			User user = getUserProvisioningManager().getUserById(userId);
-			Logger.out.debug("User returned: " + user.getLoginName());
+			logger.debug("User returned: " + user.getLoginName());
 			return user;
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get user by Id: Exception: " + e.getMessage());
+			logger.debug("Unable to get user by Id: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -601,10 +605,10 @@ public class PrivilegeUtility
 	 */
 	public Role getRole(String roleName) throws CSException, SMException
 	{
-		Logger.out.debug(" roleName:" + roleName);
+		logger.debug(" roleName:" + roleName);
 		if (roleName == null)
 		{
-			Logger.out.debug("Rolename passed is null");
+			logger.debug("Rolename passed is null");
 			throw new SMException("No role of name null");
 		}
 
@@ -622,11 +626,11 @@ public class PrivilegeUtility
 		}
 		catch (SMException e)
 		{
-			Logger.out.debug("Role not found by name " + roleName);
+			logger.debug("Role not found by name " + roleName);
 			throw new SMException("Role not found by name " + roleName, e);
 		}
 		role = (Role) list.get(0);
-		Logger.out.debug(" RoleId of role " + role.getName() + " is " + role.getId());
+		logger.debug(" RoleId of role " + role.getName() + " is " + role.getId());
 		return role;
 	}
 
@@ -651,10 +655,10 @@ public class PrivilegeUtility
 	public ProtectionGroup getProtectionGroup(String protectionGroupName) throws CSException,
 			CSTransactionException, SMException
 	{
-		Logger.out.debug(" protectionGroupName:" + protectionGroupName);
+		logger.debug(" protectionGroupName:" + protectionGroupName);
 		if (protectionGroupName == null)
 		{
-			Logger.out.debug("protectionGroupName passed is null");
+			logger.debug("protectionGroupName passed is null");
 			throw new SMException("No protectionGroup of name null");
 		}
 
@@ -673,13 +677,13 @@ public class PrivilegeUtility
 		}
 		catch (SMException e)
 		{
-			Logger.out.debug("Protection Group not found by name " + protectionGroupName);
+			logger.debug("Protection Group not found by name " + protectionGroupName);
 			userProvisioningManager.createProtectionGroup(protectionGroup);
 			list = getObjects(protectionGroupSearchCriteria);
 		}
 		protectionGroup = (ProtectionGroup) list.get(0);
 
-		Logger.out.debug(" ID of ProtectionGroup " + protectionGroup.getProtectionGroupName()
+		logger.debug(" ID of ProtectionGroup " + protectionGroup.getProtectionGroupName()
 				+ " is " + protectionGroup.getProtectionGroupId());
 		return protectionGroup;
 	}
@@ -698,13 +702,13 @@ public class PrivilegeUtility
 	{
 		try
 		{
-			Logger.out.debug("Protection Group Name:" + protectionGroupName + " objectType:"
+			logger.debug("Protection Group Name:" + protectionGroupName + " objectType:"
 					+ objectType + " protectionElementIds:"
 					+ edu.wustl.common.util.Utility.getArrayString(objectIds));
 
 			if (protectionGroupName == null || objectType == null || objectIds == null)
 			{
-				Logger.out.debug(" One of the parameters is null");
+				logger.debug(" One of the parameters is null");
 				throw new SMException(
 						"Could not assign Protection elements to protection group. One or more parameters are null");
 			}
@@ -721,13 +725,13 @@ public class PrivilegeUtility
 				catch (CSTransactionException txex) //thrown when association
 				// already exists
 				{
-					Logger.out.debug("Exception:" + txex.getMessage());
+					logger.debug("Exception:" + txex.getMessage());
 				}
 			}
 		}
 		catch (CSException csex)
 		{
-			Logger.out.debug("Could not assign Protection elements to protection group", csex);
+			logger.debug("Could not assign Protection elements to protection group", csex);
 			throw new SMException("Could not assign Protection elements to protection group", csex);
 		}
 	}
@@ -744,12 +748,11 @@ public class PrivilegeUtility
 	public void assignUserRoleToProtectionGroup(Long userId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException
 	{
-		Logger.out.debug("userId:" + userId + " roles:" + roles + " protectionGroup:"
+		logger.debug("userId:" + userId + " roles:" + roles + " protectionGroup:"
 				+ protectionGroup);
 		if (userId == null || roles == null || protectionGroup == null)
 		{
-			Logger.out
-					.debug("Could not assign user role to protection group. One or more parameters are null");
+			logger.debug("Could not assign user role to protection group. One or more parameters are null");
 			throw new SMException("Could not assign user role to protection group");
 		}
 		Set protectionGroupRoleContextSet;
@@ -783,7 +786,7 @@ public class PrivilegeUtility
 		}
 		catch (CSException csex)
 		{
-			Logger.out.debug("Could not assign user role to protection group", csex);
+			logger.debug("Could not assign user role to protection group", csex);
 			throw new SMException("Could not assign user role to protection group", csex);
 		}
 	}
@@ -863,13 +866,12 @@ public class PrivilegeUtility
 	{
 		try
 		{
-			Logger.out.debug("Protection Group Name:" + protectionGroupName
+			logger.debug("Protection Group Name:" + protectionGroupName
 					+ " protectionElementIds:"
 					+ edu.wustl.common.util.Utility.getArrayString(objectIds));
 			if (protectionGroupName == null || objectType == null || objectIds == null)
 			{
-				Logger.out
-						.debug("Cannot disassign protection elements. One of the parameters is null.");
+				logger.debug("Cannot disassign protection elements. One of the parameters is null.");
 				throw new SMException(
 						"Could not deassign Protection elements to protection group. One of the parameters is null.");
 			}
@@ -878,7 +880,7 @@ public class PrivilegeUtility
 			{
 				try
 				{
-					Logger.out.debug(" protectionGroupName:" + protectionGroupName + " objectId:"
+					logger.debug(" protectionGroupName:" + protectionGroupName + " objectId:"
 							+ objectType.getName() + "_" + objectIds[i]);
 					userProvisioningManager.deAssignProtectionElements(protectionGroupName,
 							objectType.getName() + "_" + objectIds[i]);
@@ -886,13 +888,13 @@ public class PrivilegeUtility
 				catch (CSTransactionException txex) //thrown when no
 				// association exists
 				{
-					Logger.out.debug("Exception:" + txex.getMessage(), txex);
+					logger.debug("Exception:" + txex.getMessage(), txex);
 				}
 			}
 		}
 		catch (CSException csex)
 		{
-			Logger.out.debug("Could not deassign Protection elements to protection group", csex);
+			logger.debug("Could not deassign Protection elements to protection group", csex);
 			throw new SMException("Could not deassign Protection elements to protection group",
 					csex);
 		}
@@ -902,27 +904,27 @@ public class PrivilegeUtility
 	{
 		if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to Administrator group");
+			logger.debug(" role corresponds to Administrator group");
 			return SecurityManager.rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID);
 		}
 		else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to Supervisor group");
+			logger.debug(" role corresponds to Supervisor group");
 			return SecurityManager.rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID);
 		}
 		else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to Technician group");
+			logger.debug(" role corresponds to Technician group");
 			return SecurityManager.rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID);
 		}
 		else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.PUBLIC_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to public group");
+			logger.debug(" role corresponds to public group");
 			return SecurityManager.rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID);
 		}
 		else
 		{
-			Logger.out.debug("role corresponds to no group");
+			logger.debug("role corresponds to no group");
 			return null;
 		}
 	}
@@ -939,13 +941,12 @@ public class PrivilegeUtility
 	public void assignGroupRoleToProtectionGroup(Long groupId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException
 	{
-		Logger.out.debug("userId:" + groupId + " roles:" + roles + " protectionGroup:"
+		logger.debug("userId:" + groupId + " roles:" + roles + " protectionGroup:"
 				+ protectionGroup.getProtectionGroupName());
 
 		if (groupId == null || roles == null || protectionGroup == null)
 		{
-			Logger.out
-					.debug("Could not assign group role to protection group. One or more parameters are null");
+			logger.debug("Could not assign group role to protection group. One or more parameters are null");
 			throw new SMException(
 					"Could not assign group role to protection group. One or more parameters are null");
 		}
@@ -973,7 +974,7 @@ public class PrivilegeUtility
 			}
 			catch (CSObjectNotFoundException e)
 			{
-				Logger.out.debug("Could not find Role Context for the Group: " + e.toString());
+				logger.debug("Could not find Role Context for the Group: " + e.toString());
 			}
 
 			if (protectionGroupRoleContext != null)
@@ -1001,7 +1002,7 @@ public class PrivilegeUtility
 		}
 		catch (CSException csex)
 		{
-			Logger.out.debug("Could not assign user role to protection group", csex);
+			logger.debug("Could not assign user role to protection group", csex);
 			throw new SMException("Could not assign user role to protection group", csex);
 		}
 	}
