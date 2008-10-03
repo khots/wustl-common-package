@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.util;
@@ -24,16 +24,34 @@ import titli.model.fetch.TitliFetchException;
 public class TitliResultGroup
 {
 
+	/**
+	 * group ResultGroupInterface group of result group.
+	 */
 	private ResultGroupInterface group;
+	/**
+	 * pageOf String current page.
+	 */
 	private String pageOf;
+	/**
+	 * label String label name.
+	 */
 	private String label;
+	/**
+	 * columnList List of type String - list of columns.
+	 */
 	private List<String> columnList;
+	/**
+	 * dataList List of type String - list of data.
+	 */
 	private List<List<String>> dataList;
+	/**
+	 * iterator Iterator of match interface.
+	 */
 	private Iterator<MatchInterface> iterator;
 
 	/**
-	 * the constructor
-	 * @param group the ResultGroup fro mwhich to make TitliResultGroup
+	 * The constructor.
+	 * @param group the ResultGroup from which to make TitliResultGroup.
 	 */
 	public TitliResultGroup(ResultGroupInterface group)
 	{
@@ -42,9 +60,9 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * get the "page of" string for the table associated with this group
+	 * get the "page of" string for the table associated with this group.
 	 * @return the "page of" string for the table associated with this group
-	 * @throws Exception if problems occur
+	 * @throws TitliException exception if problems occur.
 	 */
 	public String getPageOf() throws TitliException
 	{
@@ -57,9 +75,9 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * get the label for the table associated with this group
+	 * get the label for the table associated with this group.
 	 * @return the label for the table associated with this group
-	 * @throws Exception if problems occur
+	 * @throws TitliException exception if problems occur
 	 */
 	public String getLabel() throws TitliException
 	{
@@ -72,7 +90,7 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * get the underlying ResultGroupInterface
+	 * get the underlying ResultGroupInterface.
 	 * @return the underlying ResultGroupInterface
 	 */
 	public ResultGroupInterface getNativeGroup()
@@ -81,7 +99,7 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * the list for DataView
+	 * the list for data view.
 	 * @return List of column names
 	 * @throws TitliFetchException if problems occur
 	 */
@@ -101,7 +119,7 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * get the data list for DataView
+	 * get the data list for data view.
 	 * @return the list of data
 	 * @throws TitliFetchException if problems occur
 	 */
@@ -131,9 +149,9 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * get the data list for next n records
-	 * this method was spcifically added for the pagination requirement 
-	 * that only the rercords required to display the current page should be fetched  
+	 * get the data list for next n records.
+	 * this method was specifically added for the pagination requirement
+	 * that only the records required to display the current page should be fetched
 	 * @param num number of records
 	 * @return the data list for next n records
 	 * @throws TitliFetchException if problems occur
@@ -145,7 +163,7 @@ public class TitliResultGroup
 		{
 			iterator = group.getMatchList().iterator();
 		}
-		
+
 		List<String> dataRow;
 		for (int i = 0; i < num && iterator.hasNext(); i++)
 		{
@@ -165,9 +183,9 @@ public class TitliResultGroup
 	}
 
 	/**
-	 * tells whether there are any more records to be fetched
-	 * used in conjunction with getNext()
-	 *  
+	 * tells whether there are any more records to be fetched.
+	 * used in conjunction with getNext().
+	 *
 	 * @return true if there are any more records to be fetched, otherwise false
 	 */
 	public boolean hasMore()
