@@ -39,6 +39,11 @@ public class HibernateMetaData
 {
 
 	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(HibernateMetaData.class);
+	
+	/**
 	 * cfg Configuration - Hibernate configuration.
 	 */
 	private static Configuration cfg;
@@ -107,16 +112,16 @@ public class HibernateMetaData
 	{
 		Class objClass = obj.getClass();
 		Package objPackage = objClass.getPackage();
-		Logger.out.debug("Input Class: " + objClass.getName() + " Package:" + objPackage.getName());
+		logger.debug("Input Class: " + objClass.getName() + " Package:" + objPackage.getName());
 
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass() != null)
 		{
 
-			Logger.out.debug(objPackage.getName() + " " + persistentClass.getClassName()
+			logger.debug(objPackage.getName() + " " + persistentClass.getClassName()
 					+ "*********"
 					+ persistentClass.getSuperclass().getMappedClass().getPackage().getName());
-			Logger.out.debug("!!!!!!!!!!! "
+			logger.debug("!!!!!!!!!!! "
 					+ persistentClass.getSuperclass().getMappedClass().getPackage().getName()
 							.equals(objPackage.getName()));
 			do
@@ -124,7 +129,7 @@ public class HibernateMetaData
 				persistentClass = persistentClass.getSuperclass();
 			}
 			while (persistentClass != null);
-			Logger.out.debug("Supermost class in the same package:"
+			logger.debug("Supermost class in the same package:"
 					+ persistentClass.getMappedClass().getName());
 		}
 		else
@@ -193,13 +198,13 @@ public class HibernateMetaData
 	 */
 	public static String getColumnName(Class classObj, String attributeName)
 	{
-		//Logger.out.debug("classObj, String attributeName "+classObj+" "+attributeName);
+		//logger.debug("classObj, String attributeName "+classObj+" "+attributeName);
 		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
 		while (it.hasNext())
 		{
 			Property property = (Property) it.next();
 
-			//Logger.out.debug("property.getName() "+property.getName());
+			//logger.debug("property.getName() "+property.getName());
 			//System.out.println();
 			//System.out.print("property.getName() "+property.getName()+" ");
 			if (property != null && property.getName().equals(attributeName))
@@ -216,7 +221,7 @@ public class HibernateMetaData
 		}
 
 		Property property = cfg.getClassMapping(classObj.getName()).getIdentifierProperty();
-		//Logger.out.debug("property.getName() "+property.getName());
+		//logger.debug("property.getName() "+property.getName());
 		if (property.getName().equals(attributeName))
 		{
 			Iterator colIt = property.getColumnIterator();//y("id").getColumnIterator();
@@ -299,7 +304,7 @@ public class HibernateMetaData
 		{
 			//This line is commented because logger when not initialized
 			//properly throws NullPointerException.
-			//Logger.out.info("Error occured in fildAllRelations Function:"+e);
+			//logger.info("Error occured in fildAllRelations Function:"+e);
 		}
 
 	}
@@ -513,7 +518,7 @@ public class HibernateMetaData
 		{
 			HibernateProxy hp = (HibernateProxy) domainObject;
 			Object obj = hp.getHibernateLazyInitializer().getImplementation();
-			Logger.out.debug(obj + " : obj");
+			logger.debug(obj + " : obj");
 			return (AbstractDomainObject) obj;
 		}
 		return domainObject;
@@ -529,11 +534,11 @@ public class HibernateMetaData
 	public static void main(String[] args) throws Exception
 	{
 		Variables.applicationHome = System.getProperty("user.dir");
-		Logger.out = org.apache.log4j.Logger.getLogger("");
+		logger = org.apache.log4j.Logger.getLogger("");
 		PropertyConfigurator.configure(Variables.applicationHome + "\\WEB-INF\\src\\"
 				+ "ApplicationResources.properties");
 
-		Logger.out.debug("here");
+		logger.debug("here");
 
 		DBUtil.currentSession();
 	}
