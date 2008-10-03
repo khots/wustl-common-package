@@ -21,9 +21,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
-import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -48,7 +46,14 @@ public class CsmCacheManager
 	
 	private IValidator getValidatorInstance() 
 	{
-		return (IValidator) Utility.getObject(Variables.validatorClassname);
+		if(Variables.validatorClassname == null || Variables.validatorClassname.length()==0)
+		{
+			return null;
+		}
+		else
+		{
+			return (IValidator) Utility.getObject(Variables.validatorClassname);
+		}
 	}
 
 	public CsmCache getNewCsmCacheObject()
