@@ -75,6 +75,11 @@ import gov.nih.nci.security.exceptions.CSTransactionException;
 public class SecurityManager implements Permissions
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(SecurityManager.class);
+
 	private static AuthenticationManager authenticationManager = null;
 
 	private static AuthorizationManager authorizationManager = null;
@@ -323,13 +328,13 @@ public class SecurityManager implements Permissions
 		boolean loginSuccess = false;
 		try
 		{
-			Logger.out.debug("login name: " + loginName + " passowrd: " + password);
+			logger.debug("login name: " + loginName + " passowrd: " + password);
 			AuthenticationManager authMngr = getAuthenticationManager();
 			loginSuccess = authMngr.login(loginName, password);
 		}
 		catch (CSException ex)
 		{
-			Logger.out.debug("Authentication|" + requestingClass + "|" + loginName
+			logger.debug("Authentication|" + requestingClass + "|" + loginName
 					+ "|login|Success| Authentication is not successful for user " + loginName
 					+ "|" + ex.getMessage());
 			throw new SMException(ex.getMessage(), ex);
@@ -353,12 +358,12 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSTransactionException e)
 		{
-			Logger.out.debug("Unable to create user: Exception: " + e.getMessage());
+			logger.debug("Unable to create user: Exception: " + e.getMessage());
 			throw new SMTransactionException(e.getMessage(), e);
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to create user: Exception: " + e);
+			logger.debug("Unable to create user: Exception: " + e);
 		}
 	}
 
@@ -379,7 +384,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get user: Exception: " + e.getMessage());
+			logger.debug("Unable to get user: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -397,11 +402,11 @@ public class SecurityManager implements Permissions
 			group.setGroupName(ADMINISTRATOR_GROUP);
 			GroupSearchCriteria groupSearchCriteria = new GroupSearchCriteria(group);
 			List list = getObjects(groupSearchCriteria);
-			Logger.out.debug("Group Size: " + list.size());
+			logger.debug("Group Size: " + list.size());
 			group = (Group) list.get(0);
-			Logger.out.debug("Group : " + group.getGroupName());
+			logger.debug("Group : " + group.getGroupName());
 			Set users = group.getUsers();
-			Logger.out.debug("Users : " + users);
+			logger.debug("Users : " + users);
 			Long[] userId = new Long[users.size()];
 			Iterator it = users.iterator();
 			for (int i = 0; i < users.size(); i++)
@@ -412,7 +417,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get users: Exception: " + e.getMessage());
+			logger.debug("Unable to get users: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -437,7 +442,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (SMException e)
 		{
-			Logger.out.debug("Unable to get user: Exception: " + e.getMessage());
+			logger.debug("Unable to get user: Exception: " + e.getMessage());
 			throw e;
 		}
 		return userExists;
@@ -451,12 +456,12 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSTransactionException ex)
 		{
-			Logger.out.debug("Unable to get user: Exception: " + ex.getMessage());
+			logger.debug("Unable to get user: Exception: " + ex.getMessage());
 			throw new SMTransactionException("Failed to find this user with userId:" + userId, ex);
 		}
 		catch (CSException e)
 		{
-			Logger.out
+			logger
 					.debug("Unable to obtain Authorization Manager: Exception: " + e.getMessage());
 			throw new SMException("Failed to find this user with userId:" + userId, e);
 		}
@@ -490,7 +495,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get roles: Exception: " + e.getMessage());
+			logger.debug("Unable to get roles: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 		return roles;
@@ -507,7 +512,7 @@ public class SecurityManager implements Permissions
 	 */
 	public void assignRoleToUser(String userID, String roleID) throws SMException
 	{
-		Logger.out.debug("UserName: " + userID + " Role ID:" + roleID);
+		logger.debug("UserName: " + userID + " Role ID:" + roleID);
 		UserProvisioningManager userProvisioningManager = null;
 		User user;
 		String groupId;
@@ -531,19 +536,19 @@ public class SecurityManager implements Permissions
 			groupId = getGroupIdForRole(roleID);
 			if (groupId == null)
 			{
-				Logger.out.debug(" User assigned no role");
+				logger.debug(" User assigned no role");
 			}
 			else
 			{
 				assignAdditionalGroupsToUser(String.valueOf(user.getUserId()),
 						new String[]{groupId});
-				Logger.out.debug(" User assigned role:" + groupId);
+				logger.debug(" User assigned role:" + groupId);
 			}
 
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("UNABLE TO ASSIGN ROLE TO USER: Exception: " + e.getMessage());
+			logger.debug("UNABLE TO ASSIGN ROLE TO USER: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -552,27 +557,27 @@ public class SecurityManager implements Permissions
 	{
 		if (roleID.equals(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to Administrator group");
+			logger.debug(" role corresponds to Administrator group");
 			return rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID);
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to Supervisor group");
+			logger.debug(" role corresponds to Supervisor group");
 			return rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID);
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to Technician group");
+			logger.debug(" role corresponds to Technician group");
 			return rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID);
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.PUBLIC_ROLE)))
 		{
-			Logger.out.debug(" role corresponds to public group");
+			logger.debug(" role corresponds to public group");
 			return rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID);
 		}
 		else
 		{
-			Logger.out.debug("role corresponds to no group");
+			logger.debug("role corresponds to no group");
 			return null;
 		}
 	}
@@ -623,7 +628,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get roles: Exception: " + e.getMessage());
+			logger.debug("Unable to get roles: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 		return role;
@@ -678,7 +683,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get roles: Exception: " + e.getMessage());
+			logger.debug("Unable to get roles: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 		return "";
@@ -702,7 +707,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to modify user: Exception: " + e.getMessage());
+			logger.debug("Unable to modify user: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -718,16 +723,16 @@ public class SecurityManager implements Permissions
 	 */
 	public User getUserById(String userId) throws SMException
 	{
-		Logger.out.debug("user Id: " + userId);
+		logger.debug("user Id: " + userId);
 		try
 		{
 			User user = getUserProvisioningManager().getUserById(userId);
-			Logger.out.debug("User returned: " + user.getLoginName());
+			logger.debug("User returned: " + user.getLoginName());
 			return user;
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get user by Id: Exception: " + e.getMessage());
+			logger.debug("Unable to get user by Id: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -751,7 +756,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get users by emailAddress: Exception: " + e.getMessage());
+			logger.debug("Unable to get users by emailAddress: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -770,7 +775,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get all users: Exception: " + e.getMessage());
+			logger.debug("Unable to get all users: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -789,14 +794,14 @@ public class SecurityManager implements Permissions
 	{
 		if (null == searchCriteria)
 		{
-			Logger.out.debug(" Null Parameters passed");
+			logger.debug(" Null Parameters passed");
 			throw new SMException("Null Parameters passed");
 		}
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 		List list = userProvisioningManager.getObjects(searchCriteria);
 		if (null == list || list.size() <= 0)
 		{
-			// Logger.out.debug("Search resulted in no results");
+			// logger.debug("Search resulted in no results");
 			// throw new SMException("Search resulted in no results");
 		}
 		return list;
@@ -804,11 +809,11 @@ public class SecurityManager implements Permissions
 
 	public void assignUserToGroup(String userGroupname, String userId) throws SMException
 	{
-		Logger.out.debug(" userId: " + userId + " userGroupname:" + userGroupname);
+		logger.debug(" userId: " + userId + " userGroupname:" + userGroupname);
 
 		if (userId == null || userGroupname == null)
 		{
-			Logger.out.debug(" Null or insufficient Parameters passed");
+			logger.debug(" Null or insufficient Parameters passed");
 			throw new SMException("Null or insufficient Parameters passed");
 		}
 
@@ -825,23 +830,23 @@ public class SecurityManager implements Permissions
 			}
 			else
 			{
-				Logger.out.debug("No user group with name " + userGroupname + " is present");
+				logger.debug("No user group with name " + userGroupname + " is present");
 			}
 		}
 		catch (CSException ex)
 		{
-			Logger.out.fatal("The Security Service encountered " + "a fatal exception.", ex);
+			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
 			throw new SMException("The Security Service encountered a fatal exception.", ex);
 		}
 	}
 
 	public void removeUserFromGroup(String userGroupname, String userId) throws SMException
 	{
-		Logger.out.debug(" userId: " + userId + " userGroupname:" + userGroupname);
+		logger.debug(" userId: " + userId + " userGroupname:" + userGroupname);
 
 		if (userId == null || userGroupname == null)
 		{
-			Logger.out.debug(" Null or insufficient Parameters passed");
+			logger.debug(" Null or insufficient Parameters passed");
 			throw new SMException("Null or insufficient Parameters passed");
 		}
 
@@ -857,12 +862,12 @@ public class SecurityManager implements Permissions
 			}
 			else
 			{
-				Logger.out.debug("No user group with name " + userGroupname + " is present");
+				logger.debug("No user group with name " + userGroupname + " is present");
 			}
 		}
 		catch (CSException ex)
 		{
-			Logger.out.fatal("The Security Service encountered " + "a fatal exception.", ex);
+			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
 			throw new SMException("The Security Service encountered a fatal exception.", ex);
 		}
 	}
@@ -881,7 +886,7 @@ public class SecurityManager implements Permissions
 		List list = getObjects(searchCriteria);
 		if (list.isEmpty() == false)
 		{
-			Logger.out.debug("list size********************" + list.size());
+			logger.debug("list size********************" + list.size());
 			group = (Group) list.get(0);
 
 			return group;
@@ -894,11 +899,11 @@ public class SecurityManager implements Permissions
 	{
 		if (userId == null || groupIds == null || groupIds.length < 1)
 		{
-			Logger.out.debug(" Null or insufficient Parameters passed");
+			logger.debug(" Null or insufficient Parameters passed");
 			throw new SMException("Null or insufficient Parameters passed");
 		}
 
-		Logger.out.debug(" userId: " + userId + " groupIds:" + groupIds);
+		logger.debug(" userId: " + userId + " groupIds:" + groupIds);
 
 		Set consolidatedGroupIds = new HashSet();
 		Set consolidatedGroups;
@@ -937,7 +942,7 @@ public class SecurityManager implements Permissions
 			for (int i = 0; it.hasNext(); i++)
 			{
 				finalUserGroupIds[i] = (String) it.next();
-				Logger.out.debug("Group user is assigned to: " + finalUserGroupIds[i]);
+				logger.debug("Group user is assigned to: " + finalUserGroupIds[i]);
 			}
 
 			/**
@@ -948,7 +953,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException ex)
 		{
-			Logger.out.fatal("The Security Service encountered " + "a fatal exception.", ex);
+			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
 			throw new SMException("The Security Service encountered a fatal exception.", ex);
 		}
 
@@ -961,13 +966,13 @@ public class SecurityManager implements Permissions
 		{
 			boolean isAuthorized = getAuthorizationManager().checkPermission(userName, objectId,
 					privilegeName);
-			Logger.out.debug(" User:" + userName + " objectId:" + objectId + " privilegeName:"
+			logger.debug(" User:" + userName + " objectId:" + objectId + " privilegeName:"
 					+ privilegeName + " isAuthorized:" + isAuthorized);
 			return isAuthorized;
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get all users: Exception: " + e.getMessage());
+			logger.debug("Unable to get all users: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -979,7 +984,7 @@ public class SecurityManager implements Permissions
 		{
 			try
 			{
-				Logger.out.debug(" User:" + userName + "objectType:" + objectType + " objectId:"
+				logger.debug(" User:" + userName + "objectType:" + objectType + " objectId:"
 						+ objectIdentifier + " privilegeName:" + privilegeName);
 
 				//				String protectionElementName = objectType + "_" + objectIdentifier;
@@ -995,13 +1000,13 @@ public class SecurityManager implements Permissions
 				//				while (it1.hasNext())
 				//				{
 				//				ObjectPrivilegeMap map = (ObjectPrivilegeMap) it1.next();
-				//				Logger.out.debug("PE Privileges>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+map.getPrivileges().toString());
-				//				Logger.out.debug("PE Privileges Size>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+map.getPrivileges().size());
+				//				logger.debug("PE Privileges>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+map.getPrivileges().toString());
+				//				logger.debug("PE Privileges Size>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+map.getPrivileges().size());
 				//				Iterator it2 = map.getPrivileges().iterator();
 				//				while (it2.hasNext())
 				//				{
 				//				Privilege pr = (Privilege)it2.next();
-				//				Logger.out.debug("Privilege ****************************"+pr.getName());
+				//				logger.debug("Privilege ****************************"+pr.getName());
 				//				}
 				//				}
 
@@ -1011,13 +1016,13 @@ public class SecurityManager implements Permissions
 				//				while (it.hasNext()) {
 				//				ProtectionGroup protectionGroup = (ProtectionGroup) it.next();
 				//				String name = protectionGroup.getProtectionGroupName();
-				//				Logger.out.debug("Protection group Name : ############################"+name);
+				//				logger.debug("Protection group Name : ############################"+name);
 				//				}
 
 				boolean isAuthorized = getAuthorizationManager().checkPermission(userName,
 						objectType + "_" + objectIdentifier, privilegeName);
 
-				Logger.out.debug(" User:" + userName + "objectType:" + objectType + " objectId:"
+				logger.debug(" User:" + userName + "objectType:" + objectType + " objectId:"
 						+ objectIdentifier + " privilegeName:" + privilegeName + " isAuthorized:"
 						+ isAuthorized);
 
@@ -1025,7 +1030,7 @@ public class SecurityManager implements Permissions
 			}
 			catch (CSException e)
 			{
-				Logger.out.debug("Unable to get all users: Exception: " + e.getMessage());
+				logger.debug("Unable to get all users: Exception: " + e.getMessage());
 				throw new SMException(e.getMessage(), e);
 			}
 		}
@@ -1063,7 +1068,7 @@ public class SecurityManager implements Permissions
 				name = protectionGroup.getProtectionGroupName();
 				if (name.indexOf(nameConsistingOf) != -1)
 				{
-					Logger.out.debug("protection group by name " + nameConsistingOf
+					logger.debug("protection group by name " + nameConsistingOf
 							+ " for Protection Element " + protectionElementName + " is " + name);
 					return name;
 				}
@@ -1071,7 +1076,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get protection group by name " + nameConsistingOf
+			logger.debug("Unable to get protection group by name " + nameConsistingOf
 					+ " for Protection Element " + protectionElementName + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
@@ -1115,7 +1120,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get protection group by name " + " for Protection Element "
+			logger.debug("Unable to get protection group by name " + " for Protection Element "
 					+ protectionElementName + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
@@ -1161,7 +1166,7 @@ public class SecurityManager implements Permissions
 	private Set getObjectsForAssignPrivilege(Collection privilegeMap, String objectType,
 			String privilegeName) throws SMException
 	{
-		Logger.out.debug(" objectType:" + objectType + " privilegeName:" + privilegeName);
+		logger.debug(" objectType:" + objectType + " privilegeName:" + privilegeName);
 		Set objects = new HashSet();
 		NameValueBean nameValueBean;
 
@@ -1179,18 +1184,18 @@ public class SecurityManager implements Permissions
 			{
 				objectPrivilegeMap = (ObjectPrivilegeMap) iterator.next();
 				objectId = objectPrivilegeMap.getProtectionElement().getObjectId();
-				Logger.out.debug("PE Name .................."
+				logger.debug("PE Name .................."
 						+ objectPrivilegeMap.getProtectionElement().getProtectionElementName());
-				Logger.out.debug("PE objectId : " + objectId);
+				logger.debug("PE objectId : " + objectId);
 				if (objectId.indexOf(objectType + "_") != -1)
 				{
 					privileges = objectPrivilegeMap.getPrivileges();
-					Logger.out.debug("Privileges:" + privileges.size());
+					logger.debug("Privileges:" + privileges.size());
 					Iterator it = privileges.iterator();
 					while (it.hasNext())
 					{
 						privilege = (Privilege) it.next();
-						Logger.out.debug(" Privilege:" + privilege.getName());
+						logger.debug(" Privilege:" + privilege.getName());
 
 						if (privilege.getName().equals("ASSIGN_" + privilegeName))
 						{
@@ -1198,7 +1203,7 @@ public class SecurityManager implements Permissions
 									.lastIndexOf("_") + 1), objectId.substring(objectId
 									.lastIndexOf("_") + 1));
 							objects.add(nameValueBean);
-							Logger.out.debug(nameValueBean);
+							logger.debug(nameValueBean);
 							break;
 						}
 					}
@@ -1243,10 +1248,10 @@ public class SecurityManager implements Permissions
 			user = getUserById(userID);
 			if (user == null)
 			{
-				Logger.out.debug(" User not found");
+				logger.debug(" User not found");
 				return objects;
 			}
-			Logger.out.debug("user login name:" + user.getLoginName());
+			logger.debug("user login name:" + user.getLoginName());
 
 			for (int i = 0; i < objectTypes.length; i++)
 			{
@@ -1255,7 +1260,7 @@ public class SecurityManager implements Permissions
 
 					try
 					{
-						Logger.out.debug("objectType:" + objectTypes[i]);
+						logger.debug("objectType:" + objectTypes[i]);
 						protectionElement = new ProtectionElement();
 						protectionElement.setObjectId(objectTypes[i] + "_*");
 						protectionElementSearchCriteria = new ProtectionElementSearchCriteria(
@@ -1266,7 +1271,7 @@ public class SecurityManager implements Permissions
 						for (int k = 0; k < list.size(); k++)
 						{
 							protectionElement = (ProtectionElement) list.get(k);
-							Logger.out.debug(protectionElement.getObjectId() + " "
+							logger.debug(protectionElement.getObjectId() + " "
 									+ protectionElement.getAttribute());
 						}
 
@@ -1275,14 +1280,14 @@ public class SecurityManager implements Permissions
 					}
 					catch (SMException smex)
 					{
-						Logger.out.debug(" Exception:", smex);
+						logger.debug(" Exception:", smex);
 					}
 				}
 			}
 		}
 		catch (CSException e)
 		{
-			Logger.out.debug("Unable to get objects: Exception: " + e.getMessage());
+			logger.debug("Unable to get objects: Exception: " + e.getMessage());
 			throw new SMException(e.getMessage(), e);
 		}
 		return objects;
@@ -1344,18 +1349,18 @@ public class SecurityManager implements Permissions
 							.getIdentifierColumnId()), Permissions.READ_DENIED);
 
 			isAuthorizedForMain = !isAuthorizedForMain;
-			Logger.out.debug("Main object:" + queryResultObjectData2.getAliasName()
+			logger.debug("Main object:" + queryResultObjectData2.getAliasName()
 					+ " isAuthorizedForMain:" + isAuthorizedForMain);
 
 			//Remove the data from the fields directly related to main object
 			if (!isAuthorizedForMain)
 			{
-				Logger.out.debug("Removed Main Object Fields...................");
+				logger.debug("Removed Main Object Fields...................");
 				removeUnauthorizedFieldsData(aList, queryResultObjectData2, false);
 			}
 			else
 			{
-				Logger.out.debug("For Identified Data : User : " + sessionDataBean.getUserName()
+				logger.debug("For Identified Data : User : " + sessionDataBean.getUserName()
 						+ " Alias Name : " + queryResultObjectData2.getAliasName()
 						+ "Identifed Column : "
 						+ aList.get(queryResultObjectData2.getIdentifierColumnId()));
@@ -1363,7 +1368,7 @@ public class SecurityManager implements Permissions
 						queryResultObjectData2.getAliasName(), aList.get(queryResultObjectData2
 								.getIdentifierColumnId()), Permissions.IDENTIFIED_DATA_ACCESS);
 
-				Logger.out.debug("hasPrivilegeOnIdentifiedData:" + hasPrivilegeOnIdentifiedData);
+				logger.debug("hasPrivilegeOnIdentifiedData:" + hasPrivilegeOnIdentifiedData);
 
 				if (!hasPrivilegeOnIdentifiedData)
 				{
@@ -1371,9 +1376,9 @@ public class SecurityManager implements Permissions
 				}
 			}
 
-			Logger.out.debug("isAuthorizedForMain***********************" + isAuthorizedForMain);
+			logger.debug("isAuthorizedForMain***********************" + isAuthorizedForMain);
 			// Check the privilege on related objects when the privilege on main object is de-assigned.
-			Logger.out.debug("Check Permission of Related Objects..................");
+			logger.debug("Check Permission of Related Objects..................");
 			queryObjects = queryResultObjectData2.getRelatedQueryResultObjects();
 			for (int j = 0; j < queryObjects.size(); j++)
 			{
@@ -1394,7 +1399,7 @@ public class SecurityManager implements Permissions
 					isAuthorizedForRelated = false;
 				}
 
-				Logger.out.debug("Related object:" + queryResultObjectData3.getAliasName()
+				logger.debug("Related object:" + queryResultObjectData3.getAliasName()
 						+ " isAuthorizedForRelated:" + isAuthorizedForRelated);
 
 				//If not authorized to see related objects
@@ -1434,7 +1439,7 @@ public class SecurityManager implements Permissions
 			QueryResultObjectData queryResultObjectData3, boolean removeOnlyIdentifiedData)
 	{
 
-		Logger.out.debug(" Table:" + queryResultObjectData3.getAliasName()
+		logger.debug(" Table:" + queryResultObjectData3.getAliasName()
 				+ " removeOnlyIdentifiedData:" + removeOnlyIdentifiedData);
 		List objectColumnIds;
 
@@ -1449,7 +1454,7 @@ public class SecurityManager implements Permissions
 		{
 			objectColumnIds = queryResultObjectData3.getDependentColumnIds();
 		}
-		Logger.out.debug("objectColumnIds:" + objectColumnIds);
+		logger.debug("objectColumnIds:" + objectColumnIds);
 		if (objectColumnIds != null)
 		{
 			for (int k = 0; k < objectColumnIds.size(); k++)
@@ -1478,7 +1483,7 @@ public class SecurityManager implements Permissions
 		{
 			boolean isAuthorized = false;
 			String tableName = (String) AbstractClient.objectTableNames.get(tableAlias);
-			Logger.out.debug(" AliasName:" + tableAlias + " tableName:" + tableName
+			logger.debug(" AliasName:" + tableAlias + " tableName:" + tableName
 					+ " Identifier:" + identifier + " Permission:" + permission + " userName"
 					+ userName);
 
@@ -1498,7 +1503,7 @@ public class SecurityManager implements Permissions
 					}
 					catch (ClassNotFoundException classNotExp)
 					{
-						Logger.out.debug("Class " + securityDataPrefixForTable + " not present.");
+						logger.debug("Class " + securityDataPrefixForTable + " not present.");
 					}
 				}
 
@@ -1525,7 +1530,7 @@ public class SecurityManager implements Permissions
 			//whether it is class level / object level / no privilege
 			int privilegeType = Integer.parseInt((String) AbstractClient.privilegeTypeMap
 					.get(tableAlias));
-			Logger.out.debug(" privilege type:" + privilegeType);
+			logger.debug(" privilege type:" + privilegeType);
 
 			try
 			{
@@ -1553,7 +1558,7 @@ public class SecurityManager implements Permissions
 			}
 			catch (SMException e)
 			{
-				Logger.out.debug(" Exception while checking permission:" + e.getMessage(), e);
+				logger.debug(" Exception while checking permission:" + e.getMessage(), e);
 				return isAuthorized;
 			}
 			return isAuthorized;
@@ -1619,14 +1624,14 @@ public class SecurityManager implements Permissions
 		boolean hasIdentifiedData = false;
 		String dataElementTableName;
 		Vector identifiedData = new Vector();
-		Logger.out.debug(this);
-		Logger.out.debug(aliasName);
+		logger.debug(this);
+		logger.debug(aliasName);
 
 		identifiedData = (Vector) AbstractClient.identifiedDataMap.get(aliasName);
-		Logger.out.debug("Table:" + aliasName + " Identified Data:" + identifiedData);
+		logger.debug("Table:" + aliasName + " Identified Data:" + identifiedData);
 		if (identifiedData != null)
 		{
-			Logger.out.debug(" identifiedData not null..." + identifiedData);
+			logger.debug(" identifiedData not null..." + identifiedData);
 			hasIdentifiedData = true;
 		}
 		return hasIdentifiedData;
