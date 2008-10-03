@@ -2,16 +2,19 @@
 package edu.wustl.common.util;
 
 /**
- * This comparator is used where soritng shound be done on relevance counter of NameValueBean
+ * This comparator is used where sorting should be done on relevance counter of NameValueBean.
  */
 import edu.wustl.common.beans.NameValueBean;
 
 public class NameValueBeanRelevanceComparator implements java.util.Comparator<Object>
 {
-
-	/* (non-Javadoc)
-	 * @see ava.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	/**
+	 * @param arg0 Object object to be compared.
+	 * @param arg1 Object object to be compared.
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 * @return int output of comparison.
 	 */
+
 	public int compare(Object arg0, Object arg1)
 	{
 		int retValue=0;
@@ -29,7 +32,7 @@ public class NameValueBeanRelevanceComparator implements java.util.Comparator<Ob
 	}
 
 	/**
-	 * This method returns difference of two NameValueBean
+	 * This method returns difference of two NameValueBean.
 	 * @param retValue
 	 * @param nvb1 NameValueBean
 	 * @param nvb2 NameValueBean
