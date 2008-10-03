@@ -566,7 +566,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				 */
 				else if (tinyIntColumns.contains(new Integer(i + 1)))
 				{
-					if(obj!= null && obj.equals("true") || obj.equals("TRUE"))
+					if(obj!= null && obj.equals("true") || obj.equals("TRUE") || obj.equals("1"))
 					{
 						stmt.setObject(i+1, 1);
 					}
