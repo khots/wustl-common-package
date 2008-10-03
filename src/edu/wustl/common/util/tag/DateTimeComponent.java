@@ -96,7 +96,7 @@ public class DateTimeComponent extends TagSupport
 	Integer endYear;
 
 	/**
-	 * Tooltip to be displayed on the calendar icon. 
+	 * Tooltip to be displayed on the calendar icon.
 	 */
 	String iconComment;
 
@@ -116,14 +116,14 @@ public class DateTimeComponent extends TagSupport
 	Integer minutes;
 
 	/**
-	 * Javascript function to be called on click of calendar image. 
+	 * Javascript function to be called on click of calendar image.
 	 */
 	String onClickImage;
 
 	// ------------ SETTER Methods ----------------------------------
 
 	/**
-	 * @param pattern The pattern to set.
+	 * @param datePattern String - The pattern to set.
 	 */
 	public void setPattern(String datePattern)
 	{
@@ -131,7 +131,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param day The day to set.
+	 * @param dayOfMonth Integer - The day to set.
 	 */
 	public void setDay(Integer dayOfMonth)
 	{
@@ -171,7 +171,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param month The month to set.
+	 * @param monthOfYear Integer - The month to set.
 	 */
 	public void setMonth(Integer monthOfYear)
 	{
@@ -187,7 +187,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param hour The hour to set.
+	 * @param timeInHours Integer - The hour to set.
 	 */
 	public void setHour(Integer timeInHours)
 	{
@@ -195,7 +195,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param minutes The minutes to set.
+	 * @param timeInMinutes Integer - The minutes to set.
 	 */
 	public void setMinutes(Integer timeInMinutes)
 	{
@@ -203,7 +203,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param name The name to set.
+	 * @param txtdate String - The name to set.
 	 */
 	public void setName(String txtdate)
 	{
@@ -211,7 +211,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param id The id to set.
+	 * @param txtdateid String - The id to set.
 	 */
 	public void setId(String txtdateid)
 	{
@@ -219,7 +219,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * @param year The year to set.
+	 * @param yearOfDate Integer - The year to set.
 	 */
 	public void setYear(Integer yearOfDate)
 	{
@@ -270,7 +270,9 @@ public class DateTimeComponent extends TagSupport
 
 	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag for this
-	 * custom tag is encountered. 
+	 * custom tag is encountered.
+	 * @exception JspException jsp exception.
+	 * @return integer value as per validation.
 	 */
 	public int doStartTag() throws JspException
 	{
@@ -295,15 +297,18 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * A call back function
+	 * A call back function.
+	 * @exception JspException jsp exception.
+	 * @return integer value for evaluated page.
 	 */
 	public int doEndTag() throws JspException
 	{
 		return EVAL_PAGE;
 	}
 
-	/* method to validate the given values for the attributes.
-	 * Returns true if all required attributes are in proper valid format. Otherwise returns false. 
+	/**
+	 * method to validate the given values for the attributes.
+	 * @return true if all required attributes are in proper valid format. Otherwise returns false.
 	 */
 	private boolean validate()
 	{
@@ -317,7 +322,7 @@ public class DateTimeComponent extends TagSupport
 			errors = new ActionErrors();
 		}
 
-		// validations for name 
+		// validations for name
 		if (Utility.isNull(name))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is null"));
@@ -355,37 +360,47 @@ public class DateTimeComponent extends TagSupport
 
 		Date currentDate = Calendar.getInstance().getTime();
 
-		//setting errors in request 
+		//setting errors in request
 		request.setAttribute(Globals.ERROR_KEY, errors);
 
 		return result;
 	}
 
 	//method to generate the required output.
+	/**
+	 * @return String generated output.
+	 * @throws IOException I/O exception.
+	 */
 	private String generateOutput() throws IOException
 	{
 
 		String output = "<INPUT name='" + name + "' id = '" + id + "' value='" + value
 				+ "' class=\"" + styleClass + "\" size=\"10\"";
 		if (disabled.booleanValue())
+		{
 			output = output + " disabled=\"disabled\">";
+		}
 		else
+		{
 			output = output + ">";
-
+			}
 		String onClickFunction = "";
 
 		/**
 		 * Changes done by Jitendra to fix the bug if two DateTimeComponent included in the same jsp.
-		 * So to fix this bug, now we are passing id attribute to showCalendar, printCalendar and 
+		 * So to fix this bug, now we are passing id attribute to showCalendar, printCalendar and
 		 * printTimeCalendar js function.
 		 */
 		if (onClickImage == null)
+		{
 			onClickFunction = "showCalendar('" + id + "'," + year + "," + month + "," + day + ",'"
 					+ pattern + "','" + formName + "','" + name + "',event," + startYear + ","
 					+ endYear + ");";
+		}
 		else
+		{
 			onClickFunction = onClickImage;
-
+		}
 		output = output + "<A onclick=\"" + onClickFunction + "\" href=\"javascript://\">";
 		output = output
 				+ "<span valign=middle ><IMG alt=\""
@@ -425,14 +440,15 @@ public class DateTimeComponent extends TagSupport
 		*/
 	}
 
-	/*
-	 * Method to initialize the optional parameters
+	/**
+	 * Method to initialize the optional parameters.
 	 */
 	private void initializeParameters()
 	{
 		if (value == null)
+		{
 			value = "";
-
+		}
 		if (value.trim().length() > 0)
 		{
 			Integer specimenYear = Integer.valueOf(Utility.getYear(value));
@@ -505,6 +521,10 @@ public class DateTimeComponent extends TagSupport
 
 	}
 
+	/**
+	 * @param args arguments.
+	 * @throws Exception generic exception.
+	 */
 	public static void main(String[] args) throws Exception
 	{
 		DateTimeComponent obj = new DateTimeComponent();
