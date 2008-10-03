@@ -9,6 +9,14 @@
 
 package edu.wustl.common.util.global;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import javax.servlet.http.HttpSession;
+
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
@@ -17,14 +25,6 @@ import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.util.StringEncrypter;
 import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import javax.servlet.http.HttpSession;
 
 /**
  *<p>Title: </p>
@@ -38,6 +38,11 @@ import javax.servlet.http.HttpSession;
 public class PasswordManager
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordManager.class);
+	
 	public static final int SUCCESS = 0;
 	public static final int FAIL_LENGTH = 1;
 	public static final int FAIL_SAME_AS_OLD = 2;
@@ -168,8 +173,8 @@ public class PasswordManager
 		}
 		catch (Exception e)
 		{
-			Logger.out.warn("Problems in Encryption/Decryption in CommonJdao ");
-			Logger.out.warn("Exception= " + e.getMessage());
+			logger.warn("Problems in Encryption/Decryption in CommonJdao ");
+			logger.warn("Exception= " + e.getMessage());
 		}
 		return null;
 	}
@@ -205,8 +210,8 @@ public class PasswordManager
 		}
 		catch (Exception e)
 		{
-			Logger.out.warn("Problems in Decription/Encription");
-			Logger.out.warn("Exception= " + e.getMessage());
+			logger.warn("Problems in Decription/Encription");
+			logger.warn("Exception= " + e.getMessage());
 		}
 		return null;
 	}
@@ -233,8 +238,7 @@ public class PasswordManager
 				&& passwordChangedInsameSession.booleanValue() == true)
 		{
 			// return error code if attribute (Boolean) is in session   
-			Logger.out
-					.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
+			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
 			return FAIL_SAME_SESSION;
 		}
 		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
@@ -242,14 +246,14 @@ public class PasswordManager
 		// to Check length of password,if not valid return FAIL_LENGTH 
 		if (newPassword.length() < minimumPasswordLength)
 		{
-			Logger.out.debug("Password is not valid returning FAIL_LENGHT");
+			logger.debug("Password is not valid returning FAIL_LENGHT");
 			return FAIL_LENGTH;
 		}
 
 		// to Check new password is different as old password ,if bot are same return FAIL_SAME_AS_OLD    	
 		if (newPassword.equals(oldPassword))
 		{
-			Logger.out.debug("Password is not valid returning FAIL_SAME_AS_OLD");
+			logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
 			return FAIL_SAME_AS_OLD;
 		}
 
@@ -295,10 +299,10 @@ public class PasswordManager
 		if (foundUCase == false || foundLCase == false || foundNumber == false
 				|| foundSpace == true)
 		{
-			Logger.out.debug("Password is not valid returning FAIL_IN_PATTERN");
+			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
 			return FAIL_IN_PATTERN;
 		}
-		Logger.out.debug("Password is Valid returning SUCCESS");
+		logger.debug("Password is Valid returning SUCCESS");
 		return SUCCESS;
 	}
 
@@ -362,7 +366,7 @@ public class PasswordManager
 		catch (Exception e)
 		{
 			// if error occured during password comparision
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			return FAIL_WRONG_OLD_PASSWORD;
 		}
 
@@ -370,12 +374,11 @@ public class PasswordManager
 		// get attribute (Boolean) from session object stored when password is changed successfully 
 		Boolean b = null;
 		b = (Boolean) httpSession.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
-		Logger.out.debug("b---" + b);
+		logger.debug("b---" + b);
 		if (b != null && b.booleanValue() == true)
 		{
 			// return error code if attribute (Boolean) is in session   
-			Logger.out
-					.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
+			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
 			return FAIL_SAME_SESSION; // return int value 5
 		}
 		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
@@ -383,14 +386,14 @@ public class PasswordManager
 		// to Check length of password,if not valid return FAIL_LENGTH = 2
 		if (newPassword.length() < minimumPasswordLength)
 		{
-			Logger.out.debug("Password is not valid returning FAIL_LENGHT");
+			logger.debug("Password is not valid returning FAIL_LENGHT");
 			return FAIL_LENGTH; // return int value 1
 		}
 
 		// to Check new password is different as old password ,if bot are same return FAIL_SAME_AS_OLD = 3    	
 		if (newPassword.equals(oldPassword))
 		{
-			Logger.out.debug("Password is not valid returning FAIL_SAME_AS_OLD");
+			logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
 			return FAIL_SAME_AS_OLD; //return int value 2
 		}
 
@@ -399,17 +402,17 @@ public class PasswordManager
 		int usernameBeforeMailaddress = userName.indexOf('@');
 		// get substring of username before '@' character    
 		String name = userName.substring(0, usernameBeforeMailaddress);
-		Logger.out.debug("usernameBeforeMailaddress---" + name);
+		logger.debug("usernameBeforeMailaddress---" + name);
 		if (name != null && newPassword.equals(name))
 		{
-			Logger.out.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
+			logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
 			return FAIL_SAME_AS_USERNAME; // return int value 3
 		}
 		//to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
 		// eg. username=abc@abc.com newpassword=abc@abc.com is not valid
 		if (newPassword.equals(userName))
 		{
-			Logger.out.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
+			logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
 			return FAIL_SAME_AS_USERNAME; // return int value 3
 		}
 
@@ -430,7 +433,7 @@ public class PasswordManager
 			if (Character.isSpaceChar(dest[i]))
 			{
 				foundSpace = true;
-				Logger.out.debug("Found Space in Password");
+				logger.debug("Found Space in Password");
 				break;
 			}
 			// to check whether char is Upper Case. 
@@ -438,7 +441,7 @@ public class PasswordManager
 			{
 				//foundUCase=true if char is Upper Case and Upper Case is not found in previous char.
 				foundUCase = true;
-				Logger.out.debug("Found UCase in Password");
+				logger.debug("Found UCase in Password");
 			}
 
 			// to check whether char is Lower Case 
@@ -446,7 +449,7 @@ public class PasswordManager
 			{
 				//foundLCase=true if char is Lower Case and Lower Case is not found in previous char.
 				foundLCase = true;
-				Logger.out.debug("Found LCase in Password");
+				logger.debug("Found LCase in Password");
 			}
 
 			// to check whether char is Number/Digit
@@ -454,17 +457,17 @@ public class PasswordManager
 			{
 				//	foundNumber=true if char is Digit and Digit is not found in previous char.
 				foundNumber = true;
-				Logger.out.debug("Found Number in Password");
+				logger.debug("Found Number in Password");
 			}
 		}
 		// condition to check whether all above condotion is satisfied
 		if (foundUCase == false || foundLCase == false || foundNumber == false
 				|| foundSpace == true)
 		{
-			Logger.out.debug("Password is not valid returning FAIL_IN_PATTERN");
+			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
 			return FAIL_IN_PATTERN; // return int value 4
 		}
-		Logger.out.debug("Password is Valid returning SUCCESS");
+		logger.debug("Password is Valid returning SUCCESS");
 		return SUCCESS;
 	}
 
