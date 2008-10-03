@@ -33,19 +33,38 @@ import edu.wustl.common.util.logger.Logger;
 public class MapDataParser
 {
 
+	/**
+	 * logger Logger - generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(MapDataParser.class);
+	/**
+	 * packageName String name of package.
+	 */
 	private String packageName;
+	/**
+	 * bigMap Map hash map to hold object.
+	 */
 	private Map bigMap;
+	/**
+	 * dataList Collection list of data.
+	 */
 	private Collection dataList;
 
+	/**
+	 * Create a map and linked hash set.
+	 * @param packageName String name of package.
+	 */
 	public MapDataParser(String packageName)
 	{
 		this.packageName = packageName;
 		bigMap = new HashMap();
 		dataList = new LinkedHashSet();
-		
 	}
 
+	/**
+	 * Create map of specimen data.
+	 * @return map containing specimen data.
+	 */
 	private Map<String,String> createMap()
 	{
 		Map<String,String> map = new TreeMap<String,String>();
@@ -58,6 +77,14 @@ public class MapDataParser
 		return map;
 	}
 
+	/**
+	 * Determine the type of object from the class name and type passed as parameters.
+	 * @param str String specify object.
+	 * @param type Class type of class.
+	 * @return object that refers to the value passed as parameters.
+	 * @throws ParseException parsing exception.
+	 * @throws IOException I/O exception.
+	 */
 	private Object toObject(String str, Class type) throws ParseException, IOException
 	{
 		Object obj;
@@ -117,9 +144,11 @@ public class MapDataParser
 	}
 
 	/**
-	 * @param str
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * This method read data from file and create binary object with those data as state.
+	 * @param str String containing  file and data information.
+	 * @return object containing data read from file.
+	 * @throws FileNotFoundException exception for file not found.
+	 * @throws IOException I/O exception.
 	 */
 	private Object getBllobObject(String str) throws IOException
 	{
@@ -133,6 +162,13 @@ public class MapDataParser
 		return Hibernate.createBlob(buff);
 	}
 
+	/**
+	 * Create array containing methods details of the class passed as parameters.
+	 * @param objClass Class class for object.
+	 * @param methodName String name of method.
+	 * @return array containing method details.
+	 * @throws Exception generic exception.
+	 */
 	private Method findMethod(Class objClass, String methodName) throws Exception
 	{
 		Method methdName=null;
@@ -148,8 +184,15 @@ public class MapDataParser
 		return methdName;
 	}
 
-	private void parstData(Object parentObj, String str, String value, String parentKey)
-			throws Exception
+	/**
+	 * Get the methods of the class by parsing the string.
+	 * @param parentObj Object parent object.
+	 * @param str String string to be parsed.
+	 * @param value String value of the element.
+	 * @param parentKey String key of parent object.
+	 * @throws Exception generic exception.
+	 */
+	private void parstData(Object parentObj, String str, String value, String parentKey)throws Exception
 	{
 		StringTokenizer tokenizer = new StringTokenizer(str, "_");
 
@@ -179,6 +222,14 @@ public class MapDataParser
 		}
 	}
 
+	/**
+	 * This method gets the instance of the class.
+	 * @param parentObj Object parent object.
+	 * @param str String string to be parsed.
+	 * @param mapKey String key for the map.
+	 * @return Object object of class.
+	 * @throws Exception generic exception.
+	 */
 	private Object parseClassAndGetInstance(Object parentObj, String str, String mapKey)
 			throws Exception
 	{
@@ -233,6 +284,15 @@ public class MapDataParser
 		return obj;
 	}
 
+	/**
+	 * Get the qualified class name and create instance of it.
+	 * @param coll Collection collection of objects.
+	 * @param index String index value.
+	 * @param className String class name.
+	 * @param mapKey String map key.
+	 * @return Object the object.
+	 * @throws Exception generic exception.
+	 */
 	private Object getObjFromList(Collection coll, String index, String className, String mapKey)
 			throws Exception
 	{
@@ -248,12 +308,24 @@ public class MapDataParser
 		return obj;
 	}
 
+	/**
+	 * @param parentObj Object parent object.
+	 * @param str String collection string.
+	 * @return the collection of attributes.
+	 * @throws Exception generic exception.
+	 */
 	private Collection getCollectionObj(Object parentObj, String str) throws Exception
 	{
 		String attrName = str + "Collection";
 		return (Collection) Utility.getValueFor(parentObj, attrName);
 	}
 
+	/**
+	 * @param map Map map of generated data.
+	 * @param isOrdered boolean check for ordered.
+	 * @return collection containing data.
+	 * @throws Exception generic exception.
+	 */
 	public Collection generateData(Map map, boolean isOrdered) throws Exception
 	{
 		if (isOrdered)
@@ -263,6 +335,11 @@ public class MapDataParser
 		return generateData(map);
 	}
 
+	/**
+	 * @param map Map generated map.
+	 * @return collection containing data.
+	 * @throws Exception generic exception.
+	 */
 	public Collection generateData(Map map) throws Exception
 	{
 		Iterator it = map.keySet().iterator();
@@ -275,14 +352,23 @@ public class MapDataParser
 		return dataList;
 	}
 
+	/**
+	 * This method get the row no.
+	 * @param key String key to get row no.
+	 * @return row no.
+	 */
 	public int parseKeyAndGetRowNo(String key)
 	{
 		int start = key.indexOf(':');
 		int end = key.indexOf('_');
 		return Integer.parseInt(key.substring(start + 1, end));
-		
-	}
+}
 
+	/**
+	 * display information about the collection of data.
+	 * @param args String[] arguments.
+	 * @throws Exception generic exception.
+	 */
 	public static void main(String[] args) throws Exception
 	{
 		MapDataParser aMapDataParser = new MapDataParser("edu.wustl.catissuecore.domain");
@@ -292,14 +378,22 @@ public class MapDataParser
 		logger.info(dataCollection);
 	}
 
+	/**
+	 * @param list List list of row
+	 * @param map Map mapped the form details.
+	 * @param status String status of the execution of statement.
+	 */
 	public static void deleteRow(List list, Map map, String status)
 	{
 		deleteRow(list, map, status, null);
 	}
 
 	/**
-	 * Returns boolean used for diabling/enabling checkbox in jsp Page and
-	 * rearranging rows
+	 * This method delete the data on clicking of delete button.
+	 * @param list List list of row.
+	 * @param map Map mapped form details.
+	 * @param status String status of execution.
+	 * @param outer String
 	 */
 	public static void deleteRow(List<String> list, Map map, String status, String outer)
 	{
@@ -326,7 +420,7 @@ public class MapDataParser
 			boolean condition = false;
 			String third = "", fourth = "";
 
-			//checking whether key is inneTable'key or not
+			//checking whether key is innerTable'key or not
 			if (second.indexOf(':') != -1)
 			{
 				condition = true;
