@@ -32,25 +32,43 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * This class is for creating a file with a given list of data.
  * It creates the file according to delimeter specified.
- * For eg: if comma is the delimiter specified then a CSV file is created. 
+ * For eg: if comma is the delimiter specified then a CSV file is created.
  * @author Poornima Govindrao
  * @author deepti_shelar
  * @author Supriya Dankh
- *  
+ *
  */
 
 public class ExportReport
 {
+	/**
+	 * temp BufferedWriter temporary buffered writer.
+	 */
 	private BufferedWriter temp;
+	/**
+	 * zipFileName String zipped file name.
+	 */
 	private String zipFileName;
+	/**
+	 * path String path.
+	 */
 	private String path;
+	/**
+	 * cvsFileWriter BufferedWriter cvs file buffered writer.
+	 */
 	private BufferedWriter cvsFileWriter;
+	/**
+	 * fileName String file name.
+	 */
 	private String fileName;
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(ExportReport.class);
 
 	/**
-	 * @param fileName
-	 * @throws IOException
+	 * @param fileName String file name.
+	 * @throws IOException I/O exception.
 	 */
 	public ExportReport(String fileName) throws IOException
 	{
@@ -62,7 +80,7 @@ public class ExportReport
 	 * for the any row and no blank lines are inserted before start of values.
 	 * @param values List
 	 * @param delimiter delimiter
-	 * @throws IOException
+	 * @throws IOException I/O exception.
 	 */
 	public void writeData(List values, String delimiter) throws IOException
 	{
@@ -71,11 +89,11 @@ public class ExportReport
 
 	/**
 	 * This constructor is called when the exported list contains data for 'file' attributes.
-	 * 
-	 * @param path
-	 * @param csvFileName
-	 * @param zipFileName
-	 * @throws IOException
+	 *
+	 * @param path String specified path
+	 * @param csvFileName String csv file name.
+	 * @param zipFileName String zipped file name.
+	 * @throws IOException I/O exception.
 	 */
 	public ExportReport(String path, String csvFileName, String zipFileName) throws IOException
 	{
@@ -87,10 +105,10 @@ public class ExportReport
 
 	/**
 	 * This method writes data of parameters passed to zip file.
-	 * @param values
-	 * @param delimiter
-	 * @param mainEntityIdsList
-	 * @throws IOException
+	 * @param values List list of values.
+	 * @param delimiter String comma
+	 * @param mainEntityIdsList List list of entity.
+	 * @throws IOException I/O exception.
 	 */
 	public void writeDataToZip(List values, String delimiter, List mainEntityIdsList)
 			throws IOException
@@ -101,13 +119,13 @@ public class ExportReport
 	/**
 	 * This method creates a zip file which contains a csv file and other data files.
 	 * The file is according to delimeter specified.
-	 * 
-	 * @param values values list. It is List of List. 
+	 *
+	 * @param values values list. It is List of List.
 	 * @param delimiter delimiter used for separating individual fields.
 	 * @param noblankLines No of blank lines added before values
 	 * @param columnIndent No columns that will be left blank for values
 	 * @param mainEntityIdsList list of main entity ids : required in case of file exports.
-	 * @throws IOException
+	 * @throws IOException I/O exception.
 	 */
 	public void writeDataToZip(List values, String delimiter, int noblankLines, int columnIndent,
 			List mainEntityIdsList) throws IOException
@@ -137,7 +155,7 @@ public class ExportReport
 
 	/**
 	 * Creates text files for reports.
-	 * @param sql to get the reports 
+	 * @param sql to get the reports
 	 */
 	private void createDataFiles(String sql)
 	{
@@ -163,8 +181,8 @@ public class ExportReport
 	/**
 	 * write the column details in created file.
 	 * @param columnList containing list of columns.
-	 * @throws SQLException
-	 * @throws IOException
+	 * @throws SQLException sql exception
+	 * @throws IOException I/O exception.
 	 */
 	private void createFile(List columnList) throws SQLException, IOException
 	{
@@ -199,13 +217,13 @@ public class ExportReport
 	}
 
 	/**
-	 * Creates a csv file
-	 * @param values list data
-	 * @param delimiter comma
-	 * @param noblankLines no of blank lines
-	 * @param columnIndent 
-	 * @param idFileNameMap map which stores id and file name 
-	 * @throws IOException 
+	 * Creates a csv file.
+	 * @param values List data
+	 * @param delimiter String comma
+	 * @param noblankLines int no of blank lines.
+	 * @param columnIndent int column indent.
+	 * @param idFileNameMap Map of type String map which stores id and file name
+	 * @throws IOException I/O exception.
 	 */
 	private void createCSVFile(List values, String delimiter, int noblankLines, int columnIndent,
 			Map<String, String> idFileNameMap) throws IOException
@@ -250,8 +268,8 @@ public class ExportReport
 	}
 
 	/**
-	 * Closes file stream
-	 * @throws IOException
+	 * Closes file stream.
+	 * @throws IOException I/O exception.
 	 */
 	public void closeFile() throws IOException
 	{
@@ -267,16 +285,16 @@ public class ExportReport
 
 	/**
 	 * This method creates the file according to delimeter specified.
-	 * @param values values list. It is List of List. 
+	 * @param values values list. It is List of List.
 	 * @param delimiter delimiter used for separting individaul fields.
 	 * @param noblankLines No of blank lines added before values
 	 * @param columnIndent No columns that will be left blank for values
-	 * @throws IOException
+	 * @throws IOException I/O exception.
 	 */
 	public void writeData(List values, String delimiter, int noblankLines, int columnIndent)
 			throws IOException
 	{
-		//Writes the list of data into file 
+		//Writes the list of data into file
 		for (int i = 0; i < noblankLines; i++)
 		{
 			temp.write(TextConstants.LINE_SEPARATOR);
@@ -312,7 +330,7 @@ public class ExportReport
 	}
 
 	/**
-	 * Creates a zip file , contains a csv and other text files
+	 * Creates a zip file , contains a csv and other text files.
 	 * @param files files to be compressed.
 	 */
 	public void createZip(List<String> files)
@@ -320,7 +338,7 @@ public class ExportReport
 		try
 		{
 			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(this.zipFileName));
-			File file;	
+			File file;
 			for (Iterator<String> iterator = files.iterator(); iterator.hasNext();)
 			{
 				String fileName = (String) iterator.next();
@@ -344,13 +362,12 @@ public class ExportReport
 	}
 
 	/**
-	 * Zip the file passed as parameter. 
+	 * Zip the file passed as parameter.
 	 * @param buf
-	 * @param out
-	 * @param fileName
-	 * @return void
+	 * @param out ZipOutputStream zipped output data.
+	 * @param fileName String file name.
 	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws IOException I/O exception.
 	 */
 	private void putFileToZip(ZipOutputStream out, String fileName) throws IOException
 	{
@@ -368,10 +385,10 @@ public class ExportReport
 
 	/**
 	 * Zip the file passed as parameter.
-	 * @param out
-	 * @param fileName
+	 * @param out ZipOutputStream zipped output data.
+	 * @param fileName String file name.
 	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws IOException I/O exception.
 	 */
 	private void putCSVFileToZip(ZipOutputStream out, String fileName) throws IOException
 	{
@@ -397,11 +414,12 @@ public class ExportReport
 	}
 
 	/**
-	 * Executes sql and returns data list. 
-	 * @param sql
+	 * Executes sql and returns data list.
+	 * @param sql String sql query.
 	 * @return List containing data list as output.
 	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws ClassNotFoundException exception for class not found.
+	 * @throws DAOException DAO exception.
 	 */
 	private List<List<String>> executeQuery(String sql) throws DAOException, ClassNotFoundException
 	{
