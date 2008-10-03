@@ -4,13 +4,6 @@
 
 package edu.wustl.common.util.tag;
 
-/**
- * @author Santosh Chandak
- * JSP tag for Autocomplete feature. The body of this tag is executed once for every call of the tag
- * when the page is rendered. 
- * To use this tag, include AutocompleterCommon.jsp in your page
- */
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,71 +16,76 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.global.Constants;
-
+/**
+ * @author Santosh Chandak
+ * JSP tag for Autocomplete feature. The body of this tag is executed once for every call of the tag
+ * when the page is rendered.
+ * To use this tag, include AutocompleterCommon.jsp in your page
+ */
 public class AutoCompleteTag extends TagSupport
 {
 
 	/**
-	 * version ID 
+	 * serialVersionUID long - version ID.
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * property on which Autocompleter is to be applied
+	 * property on which Auto completer is to be applied.
 	 */
 	private String property;
 
 	/**
-	 * Object containing values of the dropdown. Supported datatypes 
+	 * Object containing values of the dropdown. Supported data types.
 	 * 1. String Array 2. List of Name Value Beans
-	 * 
+	 *
 	 */
 	private Object optionsList;
 
 	/**
-	 * Default style
+	 * Default style.
 	 */
 	private String styleClass = "formFieldSized15";
 
 	/**
-	 * Number of results to be shown, set to 11 as for time dropdowns showing 11 values was more logical 
+	 * Number of results to be shown, set to 11 as for time drop downs showing 11 values was more logical.
 	 */
 	private String numberOfResults = "11";
 
 	/**
-	 * Trigger matching when user enters these number of characters
+	 * Trigger matching when user enters these number of characters.
 	 */
 	private String numberOfCharacters = "1";
 
 	/**
-	 * set to true if the textbox is readOnly
+	 * set to true if the textbox is readOnly.
 	 */
 	private Object readOnly = "false";
 
 	/**
-	 * set to true if the textbox is disabled
+	 * set to true if the textbox is disabled.
 	 */
 	private Object disabled = "false";
 
 	/**
-	 * Functions to be called when textbox loses focus
+	 * Functions to be called when textbox loses focus.
 	 */
 	private String onChange = "";
 
 	/**
-	 * initial value in the textbox, this is compulsary attribute
+	 * initial value in the textbox, this is compulsory attribute.
 	 */
 	private Object initialValue = "";
 
 	/**
-	 * if the property is dependent on some other property 
+	 * if the property is dependent on some other property.
 	 * eg. type depends on class
-	 * 
+	 *
 	 */
 	private String dependsOn = "";
 
 	/**
-	 * size
+	 * size String.
 	 */
 	private String size = "300";
 
@@ -100,6 +98,8 @@ public class AutoCompleteTag extends TagSupport
 	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag
 	 * for this custom tag is encountered.
+	 * @exception JspException jsp exception.
+	 * @return integer value to skip body.
 	 */
 	public int doStartTag() throws JspException
 	{
@@ -139,6 +139,9 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	//	@SuppressWarnings("unchecked")
+	/**
+	 * @return String auto complete result.
+	 */
 	private String getAutocompleteHTML()
 	{
 		String autoCompleteResult = "";
@@ -200,6 +203,7 @@ public class AutoCompleteTag extends TagSupport
 		}
 
 		if (property.equals(Constants.SPECIMEN_TYPE))
+		{
 			autoCompleteResult += "var AutoC = ";
 		autoCompleteResult += "new Autocompleter.Combobox(\""
 				+ property
@@ -213,11 +217,14 @@ public class AutoCompleteTag extends TagSupport
 				+ numberOfCharacters + " });";
 
 		autoCompleteResult += "</script>";
-
+		}
 		return autoCompleteResult;
 	}
 
 	//@SuppressWarnings("unchecked")
+	/**
+	 * This method prepare common data.
+	 */
 	private void prepareCommonData()
 	{
 		if (initialValue == null || initialValue.equals(""))
@@ -296,9 +303,9 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * This function prepares the HTML to be rendered
+	 * This function prepares the HTML to be rendered.
 	 * @return String - containing HTML to be rendered
-	 * 
+	 *
 	 */
 	//@SuppressWarnings("unchecked")
 	private String getAutocompleteHTMLForDynamicProperty()
@@ -434,7 +441,9 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * A call back function
+	 * A call back function.
+	 * @exception JspException jsp exception.
+	 * @return integer value for evaluated page.
 	 */
 	public int doEndTag() throws JspException
 	{
@@ -442,7 +451,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @return
+	 * @return String number of characters.
 	 */
 	public String getNumberOfCharacters()
 	{
@@ -450,7 +459,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @param numberOfCharacters
+	 * @param numberOfCharacters String number of characters.
 	 */
 	public void setNumberOfCharacters(String numberOfCharacters)
 	{
@@ -458,7 +467,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @return
+	 * @return String number of results.
 	 */
 	public String getNumberOfResults()
 	{
@@ -466,7 +475,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @param numberOfResults
+	 * @param numberOfResults String number of results.
 	 */
 	public void setNumberOfResults(String numberOfResults)
 	{
@@ -474,7 +483,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @return
+	 * @return Object list of options.
 	 */
 	public Object getOptionsList()
 	{
@@ -482,7 +491,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @param optionsList
+	 * @param optionsList Object set the list of option.
 	 */
 	public void setOptionsList(Object optionsList)
 	{
@@ -490,7 +499,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @return
+	 * @return String name of property.
 	 */
 	public String getProperty()
 	{
@@ -498,7 +507,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @param property
+	 * @param property String set the property.
 	 */
 	public void setProperty(String property)
 	{
@@ -506,7 +515,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @return
+	 * @return String size.
 	 */
 	public String getSize()
 	{
@@ -514,7 +523,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @param size
+	 * @param size String set the size.
 	 */
 	public void setSize(String size)
 	{
@@ -522,7 +531,7 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @return
+	 * @return String style class.
 	 */
 	public String getStyleClass()
 	{
@@ -530,18 +539,24 @@ public class AutoCompleteTag extends TagSupport
 	}
 
 	/**
-	 * @param styleClass
+	 * @param styleClass set the style class.
 	 */
 	public void setStyleClass(String styleClass)
 	{
 		this.styleClass = styleClass;
 	}
 
+	/**
+	 * @return Object initial value.
+	 */
 	public Object getInitialValue()
 	{
 		return initialValue;
 	}
 
+	/**
+	 * @param initialValue Object set initial value.
+	 */
 	public void setInitialValue(Object initialValue)
 	{
 		if (initialValue != null)
