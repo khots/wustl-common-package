@@ -149,10 +149,10 @@ public abstract class AbstractUnmarshallingEventHandlerImpl implements Unmarshal
 		reportError(e.getMessage(), e, false);
 	}
 
-	protected final void dump()
+	/*protected final void dump()
 	{
 		System.err.println("state is :" + state);
-	}
+	}*/
 
 	private void reportError(String msg, boolean canRecover) throws SAXException
 	{
@@ -208,7 +208,7 @@ public abstract class AbstractUnmarshallingEventHandlerImpl implements Unmarshal
 		// I believe this is really a bug of the compiler,
 		// since when an object spawns a child object, it must be "prepared"
 		// to receive this event.
-		dump();
+		//dump();
 		throw new JAXBAssertionError(Messages.format(Messages.UNEXPECTED_LEAVE_CHILD));
 	}
 

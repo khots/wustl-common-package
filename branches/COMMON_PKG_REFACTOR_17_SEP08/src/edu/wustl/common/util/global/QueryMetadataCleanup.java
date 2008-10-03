@@ -87,11 +87,11 @@ public class QueryMetadataCleanup
 		String driver = args[2];
 		String url = args[3];
 		Class.forName(driver).newInstance();
-		System.out.println("Database Parameters Passed:");
+		/*System.out.println("Database Parameters Passed:");
 		System.out.println("userName:" + userName);
 		System.out.println("password:" + password);
 		System.out.println("driver:" + userName);
-		System.out.println("url:" + url);
+		System.out.println("url:" + url);*/
 		con = DriverManager.getConnection(url, userName, password);
 		//		con.setAutoCommit(false);
 		stmt = con.createStatement();

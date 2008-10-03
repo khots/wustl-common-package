@@ -165,9 +165,10 @@ public class MarshallerImpl extends AbstractMarshallerImpl
 		throw new MarshalException(Messages.format(Messages.UNSUPPORTED_RESULT));
 	}
 
-	private void write(XMLSerializable obj, ContentHandler writer) throws JAXBException
+	private void write(XMLSerializable obj, ContentHandler writerObj) throws JAXBException
 	{
 
+		ContentHandler writer = writerObj;
 		try
 		{
 			if (getSchemaLocation() != null || getNoNSSchemaLocation() != null)
@@ -224,23 +225,24 @@ public class MarshallerImpl extends AbstractMarshallerImpl
 		}
 	}
 
-	public XMLWriter createWriter(Writer w, String encoding) throws JAXBException
+	public XMLWriter createWriter(Writer writerObj, String encoding) throws JAXBException
 	{
-
+		Writer writer = writerObj;
+		
 		// buffering improves the performance
-		w = new BufferedWriter(w);
+		writer = new BufferedWriter(writer);
 
 		CharacterEscapeHandler ceh = createEscapeHandler(encoding);
 		XMLWriter xw;
 
 		if (isFormattedOutput())
 		{
-			DataWriter d = new DataWriter(w, encoding, ceh);
+			DataWriter d = new DataWriter(writer, encoding, ceh);
 			d.setIndentStep(indent);
 			xw = d;
 		}
 		else
-			xw = new XMLWriter(w, encoding, ceh);
+			xw = new XMLWriter(writer, encoding, ceh);
 
 		xw.setXmlDecl(printXmlDeclaration);
 		xw.setHeader(header);
