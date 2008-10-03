@@ -33,6 +33,11 @@ public class SendEmail
 {
 
 	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(SendEmail.class);
+	
+	/**
 	 * Used to send the mail with given parameters.
 	 * @param to "To" Address for sending the mail
 	 * @param from "From" Address for sending the mail
@@ -143,19 +148,19 @@ public class SendEmail
 		}
 		catch (MessagingException mex)
 		{
-			Logger.out.warn("Unable to send mail to: " + to);
-			Logger.out.warn("Exception= " + mex.getMessage());
+			logger.warn("Unable to send mail to: " + to);
+			logger.warn("Exception= " + mex.getMessage());
 			Exception ex = null;
 			if ((ex = mex.getNextException()) != null)
 			{
-				Logger.out.warn("Exception= " + ex.getMessage());
+				logger.warn("Exception= " + ex.getMessage());
 			}
 			return false;
 		}
 		catch (Exception ex)
 		{
-			Logger.out.warn("Unable to send mail to: " + to);
-			Logger.out.warn("Exception= " + ex.getMessage());
+			logger.warn("Unable to send mail to: " + to);
+			logger.warn("Exception= " + ex.getMessage());
 			return false;
 		}
 
