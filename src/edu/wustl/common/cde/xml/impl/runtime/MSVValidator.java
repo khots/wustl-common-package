@@ -80,7 +80,7 @@ public class MSVValidator implements XMLSerializer, IDContextProvider2
 	{
 		try
 		{
-			new MSVValidator(jaxbCtx, context, vo)._validate();
+			new MSVValidator(jaxbCtx, context, vo).validate();
 		}
 		catch (RuntimeException e)
 		{
@@ -94,7 +94,7 @@ public class MSVValidator implements XMLSerializer, IDContextProvider2
 	}
 
 	/** performs the validation to the object specified in the constructor. */
-	private void _validate() throws SAXException
+	private void validate() throws SAXException
 	{
 		context.getNamespaceContext().startElement();
 

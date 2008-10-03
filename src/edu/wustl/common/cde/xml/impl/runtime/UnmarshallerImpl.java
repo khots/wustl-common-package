@@ -119,9 +119,10 @@ public class UnmarshallerImpl extends AbstractUnmarshallerImpl
 		return unmarshaller;
 	}
 
-	protected Object unmarshal(XMLReader reader, InputSource source) throws JAXBException
+	protected Object unmarshal(XMLReader readerObj, InputSource source) throws JAXBException
 	{
 
+		XMLReader reader = readerObj;
 		SAXLocator locator = new SAXLocator();
 		SAXUnmarshallerHandler handler = createUnmarshallerHandler(locator);
 

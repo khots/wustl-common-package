@@ -227,17 +227,6 @@ public class SimpleQueryInterfaceForm extends ActionForm
 						key = "SimpleConditionsNode:" + i + "_Condition_value";
 						enteredValue = (String) getValue(key);
 						String nextOperator = "SimpleConditionsNode:" + i + "_Operator_operator";
-						//                    if ((validator.isEmpty(enteredValue)))
-						//                    {
-						//                        errors.add(ActionErrors.GLOBAL_ERROR, 
-						//                                new ActionError("simpleQuery.value.required"));
-						//                        conditionError = true;
-						//                    }
-						//                    else
-						//                      {
-						//---------- DataType validation
-						//		                    if (!(validator.isEmpty(enteredValue)))
-						//		                    {
 						String dataElement = "SimpleConditionsNode:" + i
 								+ "_Condition_DataElement_field";
 						String selectedField = (String) getValue(dataElement);
@@ -256,65 +245,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 						//		        	            String dataType = selectedField.substring(lastInd+1);
 
 						//Bug# 1698 : Proper error message should be shown for negative integers
-						if ((dataType.trim().equals("bigint") || dataType.trim().equals("integer")))
-						{
-							Logger.out.debug(" Check for integer");
-							if (validator.convertToLong(enteredValue) == null)
-							{
-								errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-										"simpleQuery.intvalue.required"));
-								conditionError = true;
-								Logger.out.debug(enteredValue + " is not a valid integer");
-							}
-							else if (!validator.isPositiveNumeric(enteredValue, 0))
-							{
-								errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-										"simpleQuery.intvalue.poisitive.required"));
-								conditionError = true;
-								Logger.out.debug(enteredValue + " is not a positive integer");
-							}
-
-						}// integer or long
-						//END || Bug# 1698 changes
-
-						else if ((dataType.trim().equals("double"))
-								&& !validator.isDouble(enteredValue, false))
-						{
-							errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-									"simpleQuery.decvalue.required"));
-							conditionError = true;
-						} // double
-						else if (dataType.trim().equals("tinyint"))
-						{
-							if (!enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_YES)
-									&& !enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_NO))
-							{
-								errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-										"simpleQuery.tinyint.format"));
-								conditionError = true;
-							}
-						}
-						else if (dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_TIME))
-						{
-							if (validator
-									.isValidTime(enteredValue, Constants.TIME_PATTERN_HH_MM_SS) == false)
-							{
-								errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-										"simpleQuery.time.format"));
-								conditionError = true;
-							}
-						}
-						else if (dataType.trim().equals(Constants.FIELD_TYPE_DATE)
-								|| dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_DATE))
-						{
-							if (validator.checkDate(enteredValue) == false)
-							{
-								errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-										"simpleQuery.date.format"));
-								conditionError = true;
-							}
-						}
-						//		                    }
+						
+						conditionError = validateDataType(dataType,enteredValue,errors);
+						
 					}
 				}
 			}
@@ -325,6 +258,65 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		setMutable(false);
 
 		return errors;
+	}
+	
+	private boolean validateDataType(String dataType,String enteredValue,ActionErrors errors)
+	{
+		Validator validator = new Validator();
+		boolean conditionError = false;
+		if ((dataType.trim().equals("bigint") || dataType.trim().equals("integer")))
+		{
+			Logger.out.debug(" Check for integer");
+			if (validator.convertToLong(enteredValue) == null)
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+						"simpleQuery.intvalue.required"));
+				conditionError = true;
+				Logger.out.debug(enteredValue + " is not a valid integer");
+			}
+			else if (!validator.isPositiveNumeric(enteredValue, 0))
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+						"simpleQuery.intvalue.poisitive.required"));
+				conditionError = true;
+				Logger.out.debug(enteredValue + " is not a positive integer");
+			}
+
+		} else if ((dataType.trim().equals("double"))
+				&& !validator.isDouble(enteredValue, false))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+					"simpleQuery.decvalue.required"));
+			conditionError = true;
+		} else if (dataType.trim().equals("tinyint"))
+		{
+			if (!enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_YES)
+					&& !enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_NO))
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+						"simpleQuery.tinyint.format"));
+				conditionError = true;
+			}
+		} else if (dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_TIME))
+		{
+			if (validator
+					.isValidTime(enteredValue, Constants.TIME_PATTERN_HH_MM_SS) == false)
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+						"simpleQuery.time.format"));
+				conditionError = true;
+			}
+		} else if (dataType.trim().equals(Constants.FIELD_TYPE_DATE)
+				|| dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_DATE))
+		{
+			if (validator.checkDate(enteredValue) == false)
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+						"simpleQuery.date.format"));
+				conditionError = true;
+			}
+		}
+		return conditionError;
 	}
 
 	/**
