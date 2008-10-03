@@ -469,26 +469,12 @@ public class PrivilegeCache
 		else
 		{
 			String protGrName = null;
-			String roleName;
 			Role role;
 			ProtectionGroup protectionGroup;
 
 			try
 			{
-				// Getting Appropriate Role
-				// role name is generated as <<privilegeName>>_ONLY
-				if (privilegeName.equals(Permissions.READ))
-				{
-					roleName = Permissions.READ_DENIED;
-				}
-				else
-				{
-					roleName = privilegeName + "_ONLY";
-				}
-				role = privilegeUtility.getRole(roleName);
-				logger.debug("Operation>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-						+ (assignOperation == true ? "Remove READ_DENIED" : "Add READ_DENIED"));
-
+				role = privilegeUtility.getRoleByPrivilege(privilegeName);
 				Set roles = new HashSet();
 				roles.add(role);
 

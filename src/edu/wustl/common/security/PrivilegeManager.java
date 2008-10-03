@@ -287,7 +287,7 @@ public final class PrivilegeManager
 			{
 				//Get user group for the corresponding role
 				groupId = utility.getGroupIdForRole(roleId);
-				role = getRole(privilegeName, utility);
+				role = utility.getRoleByPrivilege(privilegeName);
 				Set roles = new HashSet();
 				roles.add(role);
 				if ("USE".equals(privilegeName))
@@ -339,32 +339,6 @@ public final class PrivilegeManager
 			}
 		}
 	}
-
-	/**
-	 * Getting Appropriate Role, role name is generated as {privilegeName}_ONLY.
-	 * @param privilegeName
-	 * @param utility
-	 * @return
-	 * @throws CSException
-	 * @throws SMException
-	 */
-	private Role getRole(String privilegeName, PrivilegeUtility utility) throws CSException,
-			SMException
-	{
-		Role role;
-		String roleName;
-		if (privilegeName.equals(Permissions.READ))
-		{
-			roleName = Permissions.READ_DENIED;
-		}
-		else
-		{
-			roleName = privilegeName + "_ONLY";
-		}
-		role = utility.getRole(roleName);
-		return role;
-	}
-
 	/**
 	 * This is a temporary method written for StorageContainer - special case
 	 * Used for StorageContainerBizLogic.isDeAssignable() method
