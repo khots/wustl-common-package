@@ -19,11 +19,17 @@ import edu.wustl.common.util.CVSTagReader;
 public class CVSTagReaderTestCase extends BaseTestCase
 {
 
+	/**
+	 * Constructer.
+	 */
 	public CVSTagReaderTestCase()
 	{
 		super("CVSTagReaderTestCase");
 	}
 
+	/**
+	 * Test the reading tag.
+	 */
 	public void testReadTagPositive()
 	{
 		CVSTagReader cvsTagReader = new CVSTagReader();
@@ -31,6 +37,9 @@ public class CVSTagReaderTestCase extends BaseTestCase
 		assertEquals("Test_tag", tag);
 	}
 
+	/**
+	 * Test file not found read tag.
+	 */
 	public void testReadTagFileNotFound()
 	{
 		CVSTagReader cvsTagReader = new CVSTagReader();
@@ -38,6 +47,9 @@ public class CVSTagReaderTestCase extends BaseTestCase
 		assertEquals(null, tag);
 	}
 
+	/**
+	 * Test reading of wrong pattern.
+	 */
 	public void testReadTagWrongPattern()
 	{
 		CVSTagReader cvsTagReader = new CVSTagReader();
