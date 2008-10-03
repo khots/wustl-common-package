@@ -37,6 +37,10 @@ import gov.nih.nci.security.exceptions.CSException;
 public class PrivilegeCache
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(PrivilegeCache.class);
 	/*
 	 * login name of the user who has logged in
 	 */
@@ -69,35 +73,12 @@ public class PrivilegeCache
 	 * Collection of ObjectPrivilegeMap for each call Here, for every passed
 	 * ProtectionElement,the method looks for the privileges that User has on
 	 * the ProtectionElement such ObjectPrivilegeMaps are then passed to
-	 * 'populatePrivileges' method
+	 * 'populatePrivileges' method.
 	 * 
 	 * @throws Exception
 	 */
 	private void initialize() throws Exception
 	{
-		/*
-		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
-		Set set = privilegeUtility.getUserProvisioningManager().getProtectionElementPrivilegeContextForUser(userId);
-		
-		
-		// To populate the privilege map
-		for (Object o : set)
-		{
-			ProtectionElementPrivilegeContext context = (ProtectionElementPrivilegeContext) o;
-			
-			String objectId = context.getProtectionElement().getObjectId();
-
-			BitSet bitSet = new BitSet();
-
-			for (Object privilege : context.getPrivileges())
-			{
-				bitSet.set(getBitNumber(((Privilege) privilege).getName()));
-			}
-			
-			privilegeMap.put(objectId, bitSet);
-		}
-		*/
-
 		for (String className : PrivilegeManager.getInstance().getClasses())
 		{
 			Collection objectPrivilegeMap = getObjectPrivilegeMap(className);
@@ -134,7 +115,7 @@ public class PrivilegeCache
 		}
 		catch (CSException excp)
 		{
-			Logger.out.error(excp.getMessage(), excp);
+			logger.error(excp.getMessage(), excp);
 		}
 
 		return objectPrivilegeMap;
@@ -171,20 +152,21 @@ public class PrivilegeCache
 	}
 
 	/**
-	 * Simply checks if the user has any privilage on given object id
+	 * Simply checks if the user has any privilage on given object id.
 	 *  
 	 * @param objectId
 	 * @return
 	 */
 	public boolean hasPrivilege(String objectId)
 	{
+		boolean hasPrivilege=false;
 		BitSet bitSet = privilegeMap.get(objectId);
 		if (bitSet != null && bitSet.cardinality() > 0)
 		{
-			return true;
+			hasPrivilege=true;
 		}
 
-		return false;
+		return hasPrivilege;
 	}
 
 	/**
@@ -192,7 +174,7 @@ public class PrivilegeCache
 	 * as the objectId & retrieve its associated BitSet from the privilegeMap
 	 * Then, we check whether User has Permission over the passed Privilege or
 	 * no & return true if user has privilege, false otherwise.
-	 * 
+	 *
 	 * @param classObj
 	 * @param privilegeName
 	 * @return
@@ -207,7 +189,7 @@ public class PrivilegeCache
 	 * retrieve its associated BitSet from the privilegeMap Then, we check
 	 * whether User has Permission over the passed Privilege or no & return true
 	 * if user has privilege, false otherwise.
-	 * 
+	 *
 	 * @param aDObject
 	 * @param privilegeName
 	 * @return
@@ -230,14 +212,7 @@ public class PrivilegeCache
 	public boolean hasPrivilege(String objectId, String privilegeName)
 	{
 		boolean isAuthorized = false;
-/*
-		if (objectId.contains("edu.wustl.catissuecore.domain.User_"))
-		{
-			System.out.println("checking privileges for " + objectId);
-		}*/
-
 		BitSet bitSet = privilegeMap.get(objectId);
-
 		if (bitSet == null)
 		{
 			for (String objectIdPart : PrivilegeManager.getInstance().getLazyObjects())
@@ -279,7 +254,7 @@ public class PrivilegeCache
 		}
 		catch (CSException excp)
 		{
-			Logger.out.error(excp.getMessage(), excp);
+			logger.error(excp.getMessage(), excp);
 		}
 
 		return bitSet;
@@ -299,17 +274,21 @@ public class PrivilegeCache
 	{
 		BitSet bitSet = privilegeMap.get(objectId);
 
-		if (privilegeName.equals("READ"))
+		if ("READ".equals(privilegeName))
+		{
 			bitSet.set(getBitNumber("READ_DENIED"), !value);
+		}
 		else
+		{
 			bitSet.set(getBitNumber(privilegeName), value);
+		}
 	}
 
 	/**
 	 * This method is used to refresh the Privilege Cache for the user A call to
 	 * this method forces CSM to go to the database & get the ProtectionElements
-	 * For more, please refer to the 'initialize' method above
-	 * 
+	 * For more, please refer to the 'initialize' method above.
+	 *
 	 * @throws Exception
 	 */
 	public void refresh() throws Exception
@@ -471,7 +450,7 @@ public class PrivilegeCache
 
 	/**
 	 * This method assigns privilege by privilegeName to the user identified by
-	 * userId on the objects identified by objectIds
+	 * userId on the objects identified by objectIds.
 	 * 
 	 * @param privilegeName
 	 * @param objectIds
@@ -483,15 +462,9 @@ public class PrivilegeCache
 	{
 		boolean assignOperation = assignOp;
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
-
-		Logger.out.debug("In assignPrivilegeToUser...");
-		Logger.out.debug("privilegeName:" + privilegeName + " objectType:" + objectType
-				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
-				+ " userId:" + userId);
-
 		if (privilegeName == null || objectType == null || objectIds == null || userId == null)
 		{
-			Logger.out.debug("Cannot assign privilege to user. One of the parameters is null.");
+			logger.debug("Cannot assign privilege to user. One of the parameters is null.");
 		}
 		else
 		{
@@ -510,7 +483,7 @@ public class PrivilegeCache
 					roleName = privilegeName + "_ONLY";
 
 				role = privilegeUtility.getRole(roleName);
-				Logger.out.debug("Operation>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+				logger.debug("Operation>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 						+ (assignOperation == true ? "Remove READ_DENIED" : "Add READ_DENIED"));
 
 				Set roles = new HashSet();
@@ -522,7 +495,7 @@ public class PrivilegeCache
 
 					if (assignOperation == Constants.PRIVILEGE_ASSIGN)
 					{
-						Logger.out.debug("Assign Protection elements");
+						logger.debug("Assign Protection elements");
 
 						protectionGroup = privilegeUtility.getProtectionGroup(protectionGroupName);
 
@@ -535,20 +508,13 @@ public class PrivilegeCache
 					}
 					else
 					{
-						Logger.out.debug("De Assign Protection elements");
-						Logger.out.debug("protectionGroupName : " + protectionGroupName
-								+ " objectType : " + objectType + " objectIds : "
-								+ edu.wustl.common.util.Utility.getArrayString(objectIds));
+						logger.debug("De Assign Protection elements");
 						privilegeUtility.deAssignProtectionElements(protectionGroupName,
 								objectType, objectIds);
 					}
 				}
 				else
 				{
-					// In case of assign remove the READ_DENIED privilege of the
-					// user
-					// and in case of de-assign add the READ_DENIED privilege to
-					// the user.
 					assignOperation = !assignOperation;
 
 					for (int i = 0; i < objectIds.length; i++)
@@ -557,21 +523,18 @@ public class PrivilegeCache
 						// Protection Group Name is generated as
 						// PG_<<userID>>_ROLE_<<roleID>>
 
-						Logger.out.debug("objectType............................" + objectType);
-						// changed by ajay
-
 						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants
-									.getCollectionProtocolPGName(objectIds[i]);
+						{
+							protectionGroupName = Constants.getCollectionProtocolPGName(objectIds[i]);
+						}
 						else if (objectType.getName().equals(
 								Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants
-									.getDistributionProtocolPGName(objectIds[i]);
+						{
+							protectionGroupName = Constants.getDistributionProtocolPGName(objectIds[i]);
+						}
 
 						protectionGroup = privilegeUtility.getProtectionGroup(protectionGroupName);
-
-						Logger.out.debug("Assign User Role To Protection Group");
-
+						logger.debug("Assign User Role To Protection Group");
 						// Assign User Role To Protection Group
 						privilegeUtility.assignUserRoleToProtectionGroup(userId, roles,
 								protectionGroup, assignOperation);
@@ -586,7 +549,7 @@ public class PrivilegeCache
 	}
 
 	/**
-	 * get the ids and privileges where ids start with the given prefix
+	 * get the ids and privileges where ids start with the given prefix.
 	 * 
 	 * @param prefix
 	 * @return
@@ -608,11 +571,10 @@ public class PrivilegeCache
 		}
 
 		return map;
-
 	}
 
 	/**
-	 * convert the given bitset into a set of privilege names
+	 * convert the given bitset into a set of privilege names.
 	 * 
 	 * @param value
 	 * @return
