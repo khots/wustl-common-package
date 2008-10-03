@@ -175,23 +175,23 @@ public final class PrivilegeManager
 	{
 		try
 		{
-			Collection<PrivilegeCache> listOfPrivilegeCaches = getPrivilegeCaches();
+			Collection<PrivilegeCache> listOfPrivCaches = getPrivilegeCaches();
 
 			ProtectionElement protectionElement = privilegeUtility.getUserProvisioningManager()
 					.getProtectionElement(objectId);
 
-			Collection<ProtectionElement> protectionElements = new Vector<ProtectionElement>();
-			protectionElements.add(protectionElement);
+			Collection<ProtectionElement> protElements = new Vector<ProtectionElement>();
+			protElements.add(protectionElement);
 
-			for (PrivilegeCache privilegeCache : listOfPrivilegeCaches)
+			for (PrivilegeCache privilegeCache : listOfPrivCaches)
 			{
-				Collection<ObjectPrivilegeMap> objectPrivilegeMapCollection = privilegeUtility
+				Collection<ObjectPrivilegeMap> objPrivMapCol = privilegeUtility
 						.getUserProvisioningManager().getPrivilegeMap(
-								privilegeCache.getLoginName(), protectionElements);
+								privilegeCache.getLoginName(), protElements);
 
-				if (objectPrivilegeMapCollection.size() > 0)
+				if (!objPrivMapCol.isEmpty())
 				{
-					privilegeCache.addObject(objectId, objectPrivilegeMapCollection.iterator()
+					privilegeCache.addObject(objectId, objPrivMapCol.iterator()
 							.next().getPrivileges());
 				}
 			}
@@ -234,16 +234,16 @@ public final class PrivilegeManager
 			String roleId, boolean assignOperation) throws Exception
 	{
 		PrivilegeUtility utility = new PrivilegeUtility();
-		Collection<PrivilegeCache> listOfPrivilegeCaches = null;
+		Collection<PrivilegeCache> listOfPrivCaches = null;
 		String groupId = utility.getGroupIdForRole(roleId);
 
 		Set<User> users = utility.getUserProvisioningManager().getUsers(groupId);
 
 		for (User user : users)
 		{
-			listOfPrivilegeCaches = getPrivilegeCaches();
+			listOfPrivCaches = getPrivilegeCaches();
 
-			for (PrivilegeCache privilegeCache : listOfPrivilegeCaches)
+			for (PrivilegeCache privilegeCache : listOfPrivCaches)
 			{
 				if (privilegeCache.getLoginName().equals(user.getLoginName()))
 				{
@@ -273,10 +273,6 @@ public final class PrivilegeManager
 	{
 		boolean assignOperation = assignOp;
 		PrivilegeUtility utility = new PrivilegeUtility();
-
-		logger.debug("privilegeName:" + privilegeName + " objectType:" + objectType
-				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
-				+ " roleId:" + roleId);
 		if (privilegeName == null || objectType == null || objectIds == null || roleId == null)
 		{
 			logger.debug("Cannot assign privilege to user. One of the parameters is null.");
@@ -284,99 +280,89 @@ public final class PrivilegeManager
 		else
 		{
 			String groupId;
-			UserProvisioningManager userProvisioningManager;
-			String protectionGroupName = null;
-			String roleName;
+			String protGrName = null;
 			Role role;
 			ProtectionGroup protectionGroup;
 			try
 			{
 				//Get user group for the corresponding role
 				groupId = utility.getGroupIdForRole(roleId);
-				userProvisioningManager = utility.getUserProvisioningManager();
-
-				//Getting Appropriate Role
-				//role name is generated as <<privilegeName>>_ONLY
-				if (privilegeName.equals(Permissions.READ))
-					roleName = Permissions.READ_DENIED;
-				else
-					roleName = privilegeName + "_ONLY";
-				role = utility.getRole(roleName);
-
+				role = getRole(privilegeName, utility);
 				Set roles = new HashSet();
 				roles.add(role);
-
-				if (privilegeName.equals("USE"))
+				if ("USE".equals(privilegeName))
 				{
-					protectionGroupName = "PG_GROUP_" + groupId + "_ROLE_" + role.getId();
+					protGrName = "PG_GROUP_" + groupId + "_ROLE_" + role.getId();
 
 					if (assignOperation == Constants.PRIVILEGE_ASSIGN)
 					{
-						protectionGroup = utility.getProtectionGroup(protectionGroupName);
-
-						logger.debug("Assign Protection elements");
-
-						//Assign Protection elements to Protection Group
+						protectionGroup = utility.getProtectionGroup(protGrName);
+						logger.info("Assign Protection elements");
 						utility.assignProtectionElements(protectionGroup.getProtectionGroupName(),
 								objectType, objectIds);
-
 						utility.assignGroupRoleToProtectionGroup(Long.valueOf(groupId), roles,
 								protectionGroup, assignOperation);
 					}
 					else
 					{
-						logger.debug("De Assign Protection elements");
-
-						utility.deAssignProtectionElements(protectionGroupName, objectType,
-								objectIds);
+						logger.info("De Assign Protection elements");
+						utility.deAssignProtectionElements(protGrName, objectType,objectIds);
 					}
 				}
 				else
 				{
-					logger.debug("Value Before#####################" + assignOperation);
-
 					// In case of assign remove the READ_DENIED privilege of the group
 					// and in case of de-assign add the READ_DENIED privilege to the group.
 					assignOperation = !assignOperation;
-
-					logger.debug("Value After#####################" + assignOperation);
-
 					for (int i = 0; i < objectIds.length; i++)
 					{
-
-						//Getting Appropriate Group
-						// Protection Group Name is generated as
-						// PG_<<userID>>_ROLE_<<roleID>>
-						//				protectionGroupName = "PG_GROUP_" + groupId + "_ROLE_"
-						//						+ role.getId();
-						logger.debug("objectType............................" + objectType);
-
-						// Commented by Ashwin --- remove dependency on domainobject package
-
 						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants
+						{
+							protGrName = Constants
 									.getCollectionProtocolPGName(objectIds[i]);
-						else if (objectType.getName().equals(
-								Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
-							protectionGroupName = Constants
+						}
+						else if (objectType.getName().equals(Constants.DISTRIBUTION_PROTOCOL_CLASS_NAME))
+						{
+							protGrName = Constants
 									.getDistributionProtocolPGName(objectIds[i]);
-
-						protectionGroup = utility.getProtectionGroup(protectionGroupName);
-
-						logger.debug("Assign Group Role To Protection Group");
-
-						//Assign User Role To Protection Group
+						}
+						protectionGroup = utility.getProtectionGroup(protGrName);
 						utility.assignGroupRoleToProtectionGroup(Long.valueOf(groupId), roles,
 								protectionGroup, assignOperation);
 					}
 				}
-
 			}
 			catch (CSException csex)
 			{
+				logger.debug("Exception in method assignPrivilegeToGroup", csex);
 				throw new SMException(csex);
 			}
 		}
+	}
+
+	/**
+	 * Getting Appropriate Role, role name is generated as {privilegeName}_ONLY.
+	 * @param privilegeName
+	 * @param utility
+	 * @return
+	 * @throws CSException
+	 * @throws SMException
+	 */
+	private Role getRole(String privilegeName, PrivilegeUtility utility) throws CSException,
+			SMException
+	{
+		Role role;
+		String roleName;
+		if (privilegeName.equals(Permissions.READ))
+		{
+			roleName = Permissions.READ_DENIED;
+		}
+		else
+		{
+			roleName = privilegeName + "_ONLY";
+		}
+		role = utility.getRole(roleName);
+		return role;
 	}
 
 	/**
@@ -399,7 +385,9 @@ public final class PrivilegeManager
 		for (User user : users)
 		{
 			if (!getPrivilegeCache(user.getLoginName()).hasPrivilege(objectId, privilegeName))
+			{
 				hasGroupPriv= false;
+			}
 		}
 
 		return hasGroupPriv;
@@ -506,9 +494,9 @@ public final class PrivilegeManager
 				privilegeList.add(privilege);
 			}
 			role.setPrivileges(privilegeList);
-			UserProvisioningManager userProvisioningManager = privilegeUtility
+			UserProvisioningManager userProvManager = privilegeUtility
 					.getUserProvisioningManager();
-			userProvisioningManager.createRole(role);
+			userProvManager.createRole(role);
 		}
 
 	}
@@ -542,10 +530,10 @@ public final class PrivilegeManager
 		Set<String> result = new HashSet<String>();
 		try
 		{
-			UserProvisioningManager userProvisioningManager = privilegeUtility
+			UserProvisioningManager userProvManager = privilegeUtility
 					.getUserProvisioningManager();
 
-			List list = userProvisioningManager.getAccessibleGroups(objectId, privilege);
+			List list = userProvManager.getAccessibleGroups(objectId, privilege);
 
 			for (Object o : list)
 			{
