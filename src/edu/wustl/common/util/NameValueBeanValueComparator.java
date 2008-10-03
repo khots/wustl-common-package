@@ -9,8 +9,11 @@ import edu.wustl.common.beans.NameValueBean;
 public class NameValueBeanValueComparator implements java.util.Comparator<Object>
 {
 
-	/* (non-Javadoc)
+	/**
+	 * @param arg0 Object object to be compared.
+	 * @param arg1 Object object to be compared.
 	 * @see ava.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 * @return integer output of comparison.
 	 */
 	public int compare(Object arg0, Object arg1)
 	{
