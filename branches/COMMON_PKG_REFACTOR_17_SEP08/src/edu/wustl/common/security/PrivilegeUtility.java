@@ -7,6 +7,7 @@ package edu.wustl.common.security;
 import edu.wustl.common.beans.SecurityDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.security.exceptions.SMException;
+import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.AuthorizationManager;
@@ -1018,6 +1019,29 @@ public class PrivilegeUtility
 	public Privilege getPrivilegeById(String privilegeId) throws CSException
 	{
 		return getUserProvisioningManager().getPrivilegeById(privilegeId);
+
+	}
+	
+	/**
+	 * Getting Appropriate Role, role name is generated as {privilegeName}_ONLY.
+	 * @param privilegeName
+	 * @param utility
+	 * @return
+	 * @throws CSException
+	 * @throws SMException
+	 */
+	public Role getRoleByPrivilege(String privilegeName) throws CSException,SMException
+	{
+		String roleName;
+		if (privilegeName.equals(Permissions.READ))
+		{
+			roleName = Permissions.READ_DENIED;
+		}
+		else
+		{
+			roleName = privilegeName + "_ONLY";
+		}
+		return getRole(roleName);
 
 	}
 }
