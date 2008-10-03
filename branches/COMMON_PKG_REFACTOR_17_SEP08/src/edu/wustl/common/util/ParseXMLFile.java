@@ -1,7 +1,7 @@
 /**
  *<p>Copyright: (c) Washington University, School of Medicine 2006.</p>
  *<p>Company: Washington University, School of Medicine, St. Louis.</p>
- *<p>ClassName: edu.wustl.cab2b.client.ui.main.ParseXMLFile </p> 
+ *<p>ClassName: edu.wustl.cab2b.client.ui.main.ParseXMLFile </p>
  */
 
 package edu.wustl.common.util;
@@ -28,7 +28,7 @@ import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.util.global.TextConstants;
 
 /**
- * This class is used for parsing the XML file and put the parsed elements to HashMaps 
+ * This class is used for parsing the XML file and put the parsed elements to HashMaps.
  * @author Kaushal Kumar
  * @version 1.0
  */
@@ -46,25 +46,27 @@ public class ParseXMLFile
 	 * Variables declared by Pratibha
 	 */
 	/**
-	 * non enum data type to condition map
+	 * non enum data type to condition map.
 	 */
 	private Map<String, ArrayList<String>> nedtCondMap = new HashMap<String, ArrayList<String>>();
 	/**
-	 * non enum data type to component map
+	 * non enum data type to component map.
 	 */
 	private Map<String, String> nedtCompMap = new HashMap<String, String>();
-	
+
 	/**
-	 * enum data type to condition map
+	 * enum data type to condition map.
 	 */
 	private Map<String, ArrayList<String>> edtCondMap = new HashMap<String, ArrayList<String>>();
 	/**
-	 * enum data type to component map
+	 * enum data type to component map.
 	 */
 	private Map<String, String> edtompMap = new HashMap<String, String>();
 
 	/**
-	 * Constructor for parsing the XML file. 
+	 * Constructor for parsing the XML file.
+	 * @param path String path of file.
+	 * @exception CheckedException checked exception.
 	 */
 	protected ParseXMLFile(String path) throws CheckedException
 	{
@@ -76,11 +78,11 @@ public class ParseXMLFile
 	/**
 	 * @param path of the file.
 	 * @return instance of ParseXMLFile.
-	 * @throws CheckedException
+	 * @throws CheckedException checked exception.
 	 */
 	public static ParseXMLFile getInstance(String path) throws CheckedException
 	{
-		return new ParseXMLFile(path);		
+		return new ParseXMLFile(path);
 	}
 
 	/**
@@ -109,13 +111,13 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * Method to read dynamic UI component details from xml and populate UI accordingly
+	 * Method to read dynamic UI component details from xml and populate UI accordingly.
 	 * @param node root node to parse.
 	 */
 	private void readDynamicUIComponents(Node node)
 	{
 
-		// This node list will return two children. 
+		// This node list will return two children.
 		// 1. non-enumerated
 		// 2. enumerated
 		NodeList children = node.getChildNodes();
@@ -127,14 +129,14 @@ public class ParseXMLFile
 			{
 				if (child.getNodeName().equalsIgnoreCase("non-enumerated"))
 				{
-					/* Get all its children nodes and store corresponding details into the 
+					/* Get all its children nodes and store corresponding details into the
 					appropriate data-structures.*/
 					NodeList dataTypeNodes = child.getChildNodes();
 					readDataTypeDetailsForAllNode(dataTypeNodes, nedtCondMap,nedtCompMap);
 				}
 				else
 				{
-					/*Get all its children nodes and store corresponding details into the 
+					/*Get all its children nodes and store corresponding details into the
 					appropriate data-structures.*/
 					NodeList dataTypeNodes = child.getChildNodes();
 					readDataTypeDetailsForAllNode(dataTypeNodes, edtCondMap,edtompMap);
@@ -144,10 +146,10 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * Method to get condition list and component associated with it
-	 * @param dataTypeNodes
-	 * @param dataTypeToCondMap
-	 * @param dataTypeToCompMap
+	 * Method to get condition list and component associated with it.
+	 * @param dataTypeNodes NodeList data type of node.
+	 * @param dataTypeToCondMap Map of type ArrayList.
+	 * @param dataTypeToCompMap Map of type String.
 	 */
 	private void readDataTypeDetailsForAllNode(NodeList dataTypeNodes,
 			Map<String, ArrayList<String>> dataTypeToCondMap,
@@ -202,9 +204,10 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * This method parses the nodes of XML file and returns the Document object
-	 * @param fileName
-	 * @return doc
+	 * This method parses the nodes of XML file and returns the Document object.
+	 * @param fileName String file name.
+	 * @return Document contents of file in document format.
+	 * @exception CheckedException checked exception.
 	 */
 	private Document parseFile(String fileName) throws CheckedException
 	{
@@ -212,7 +215,7 @@ public class ParseXMLFile
 		Document doc = null;
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		docBuilderFactory.setIgnoringElementContentWhitespace(true);
-		try 
+		try
 		{
 			docBuilderFactory.setIgnoringComments(true);
 			docBuilderFactory.setIgnoringElementContentWhitespace(true);
@@ -248,18 +251,18 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * @param dataTypeString
+	 * @param dataTypeString String data type.
 	 * @return non enumerated class name.
 	 */
 	public String getNonEnumClassName(String dataTypeString)
 	{
 		return nedtCompMap.get(dataTypeString);
 	}
-	
+
 	/**
 	 * This method returns the enumerated class name.
-	 * @param dataTypeString
-	 * @return enum class name.
+	 * @param dataTypeString String data type.
+	 * @return String class name.
 	 */
 	public String getEnumClassName(String dataTypeString)
 	{
@@ -267,7 +270,7 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * @param dataTypeString
+	 * @param dataTypeString String data type.
 	 * @return list of enumerated conditions.
 	 */
 	public List<String> getEnumConditionList(String dataTypeString)
@@ -276,7 +279,7 @@ public class ParseXMLFile
 	}
 
 	/**
-	 * @param dataTypeString
+	 * @param dataTypeString String data type.
 	 * @return list of non enumerated conditions.
 	 */
 	public List<String> getNonEnumConditionList(String dataTypeString)
