@@ -788,6 +788,32 @@ public class JDBCDAOImpl implements JDBCDAO
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/**
+	 * setAutoCommit.
+	 * @param autoCommitFlag
+	 * @throws DAOException
+	 */
+	public void setAutoCommit(boolean autoCommitFlag) throws DAOException
+	{
+		try
+		{
+			connection.setAutoCommit(autoCommitFlag);
+		}
+		catch (Exception sqlExp)
+		{
+			//throw new DAOException(sqlExp.getMessage(),sqlExp);
+			Logger.out.error(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
+		}
+	}
+	/**
+	 * getConnection.
+	 * @param autoCommitFlag
+	 * @throws DAOException
+	 */
+	public Connection getConnection()
+	{
+		return connection;
+	}
 
 }
