@@ -31,7 +31,12 @@ public class Validator
 {
 
 	/**
-	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(Validator.class);
+
+	/**
+	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc.
 	 * */
 	private static final String REGEX_XSS_VULNERABLE = "[()<>]";
 
@@ -169,7 +174,7 @@ public class Validator
 	 */
 	public boolean isPositiveNumeric(String numString, int positiveCheck)
 	{
-		Logger.out.debug(" numString:" + numString);
+		logger.debug(" numString:" + numString);
 		Double value = convertToNumber(numString);
 		if (value != null)
 		{
@@ -213,7 +218,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			Logger.out.debug("NumberFormatException:" + exp.getMessage());
+			logger.debug("NumberFormatException:" + exp.getMessage());
 			return longValue;
 		}
 	}
@@ -228,7 +233,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			Logger.out.error("NumberFormatException:" + exp.getMessage());
+			logger.error("NumberFormatException:" + exp.getMessage());
 			return value;
 		}
 	}
@@ -287,7 +292,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			Logger.out.debug("NumberFormatException:" + exp.getMessage());
+			logger.debug("NumberFormatException:" + exp.getMessage());
 			return false;
 		}
 
@@ -295,7 +300,7 @@ public class Validator
 
 	public boolean isValidOption(String option)
 	{
-		Logger.out.debug("option value: " + option);
+		logger.debug("option value: " + option);
 		if (option != null)
 		{
 			if (option.trim().equals("") || option.trim().equals("-1")
@@ -408,7 +413,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			Logger.out.error("IsValidDatePattern : exp : " + exp);
+			logger.error("IsValidDatePattern : exp : " + exp);
 			return false;
 		}
 		//System.out.println("dtCh : " +dtCh );
@@ -449,7 +454,7 @@ public class Validator
 	{
 		try
 		{
-			Logger.out.debug("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr);
+			logger.debug("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr);
 			//System.out.println("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr );
 			int[] daysInMonth = daysArray(12);
 			int pos1 = dtStr.indexOf(dtCh);
@@ -476,26 +481,26 @@ public class Validator
 
 			if (pos1 == -1 || pos2 == -1)
 			{
-				Logger.out.debug("The date format should be : mm/dd/yyyy");
+				logger.debug("The date format should be : mm/dd/yyyy");
 				//System.out.println("The date format should be : mm/dd/yyyy");
 				return false;
 			}
 			if (strMonth.length() < 1 || month < 1 || month > 12)
 			{
-				Logger.out.debug("Please enter a valid month");
+				logger.debug("Please enter a valid month");
 				//System.out.println("Please enter a valid month");
 				return false;
 			}
 			if (strDay.length() < 1 || day < 1 || day > 31
 					|| (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month])
 			{
-				Logger.out.debug("Please enter a valid day");
+				logger.debug("Please enter a valid day");
 				//System.out.println("Please enter a valid day");
 				return false;
 			}
 			if (strYear.length() != 4 || year == 0 || year < minYear || year > maxYear)
 			{
-				Logger.out.debug("Please enter a valid 4 digit year between " + minYear + " and "
+				logger.debug("Please enter a valid 4 digit year between " + minYear + " and "
 						+ maxYear);
 				//System.out.println("Please enter a valid 4 digit year between "+minYear+" and "+maxYear);
 				return false;
@@ -504,7 +509,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			Logger.out.error("exp in isDate : " + exp);
+			logger.error("exp in isDate : " + exp);
 			exp.printStackTrace();
 			//System.out.println(exp);
 			return false;
@@ -517,7 +522,7 @@ public class Validator
 		boolean result = true;
 		try
 		{
-			Logger.out.debug("checkDate : " + checkDate);
+			logger.debug("checkDate : " + checkDate);
 			if (isEmpty(checkDate))
 			{
 				result = false;
@@ -534,10 +539,10 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			Logger.out.error("Check Date : exp : " + exp);
+			logger.error("Check Date : exp : " + exp);
 			result = false;
 		}
-		Logger.out.debug("CheckDate : " + result);
+		logger.debug("CheckDate : " + result);
 		return result;
 	}
 
@@ -558,13 +563,13 @@ public class Validator
 			//System.out.println("2");
 			//System.out.println("toCheck : "+ toCheck);
 			int dateCheckResult = currentDate.compareTo(toCheck);
-			//    		Logger.out.debug("currentDate.compareTo(toCheck ) : " + dateCheckResult );
+			//    		logger.debug("currentDate.compareTo(toCheck ) : " + dateCheckResult );
 			if (dateCheckResult < 0)
 				result = false;
 		}
 		catch (Exception exp)
 		{
-			//Logger.out.error("compareDateWithCurrent : " + dateToCheck + " : exp : "+ exp);
+			//logger.error("compareDateWithCurrent : " + dateToCheck + " : exp : "+ exp);
 			////System.out.println("compareDateWithCurrent : " + dateToCheck + " : exp : "+ exp);
 			result = false;
 		}
@@ -617,7 +622,7 @@ public class Validator
 	// Error messages for empty date, Invalid date, and Future dates are formatted .
 	public String validateDate(String strDate, boolean checkFutureDate)
 	{
-		Logger.out.debug("Validate Date : " + strDate);
+		logger.debug("Validate Date : " + strDate);
 		String returnString = "";
 		if (isEmpty(strDate))
 		{
@@ -649,7 +654,7 @@ public class Validator
 				returnString = "errors.date.format";
 			}
 		}
-		Logger.out.debug("validateDate Return : " + returnString);
+		logger.debug("validateDate Return : " + returnString);
 		return returnString;
 	}
 
@@ -708,7 +713,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//Logger.out.error("Check Zip Code : exp : "+ exp);
+			//logger.error("Check Zip Code : exp : "+ exp);
 			result = false;
 		}
 		return result;
@@ -729,18 +734,10 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//Logger.out.error("Check Phone/Fax Number : exp : "+ exp);
+			//logger.error("Check Phone/Fax Number : exp : "+ exp);
 			result = false;
 		}
 		return result;
-	}
-
-	public static void main(String[] args)
-	{
-		Validator validator = new Validator();
-		String sdate = "10-10-2000";
-		String sdate1 = "11/13/2001";
-		
 	}
 
 	/**
@@ -878,7 +875,7 @@ public class Validator
 		try
 		{
 			//System.out.println("mainString : "+ mainString + " delimiter: "+ delimiter);
-			Logger.out.debug("mainString : " + mainString + " delimiter: " + delimiter);
+			logger.debug("mainString : " + mainString + " delimiter: " + delimiter);
 			char[] specialChars = delimiter.toCharArray();
 
 			for (int spCharCount = 0; spCharCount < specialChars.length; spCharCount++)
@@ -887,7 +884,7 @@ public class Validator
 				//System.out.print("searchChar : "+searchChar + " : ");
 				int pos = mainString.indexOf(searchChar);
 				//System.out.println("pos : "+pos );
-				Logger.out.debug("searchChar : " + searchChar + " | pos : " + pos);
+				logger.debug("searchChar : " + searchChar + " | pos : " + pos);
 				if (pos != -1)
 				{
 					return true;
@@ -897,7 +894,7 @@ public class Validator
 		catch (Exception exp)
 		{
 			//System.out.println("error : " + exp);
-			Logger.out.error(exp.getMessage(), exp);
+			logger.error(exp.getMessage(), exp);
 			return true;
 		}
 
@@ -912,7 +909,7 @@ public class Validator
 		long diff = time2 - time1;
 
 		long days = diff / (1000 * 60 * 60 * 24);
-		Logger.out.debug("Difference in dates = " + days);
+		logger.debug("Difference in dates = " + days);
 
 		return days;
 	}
