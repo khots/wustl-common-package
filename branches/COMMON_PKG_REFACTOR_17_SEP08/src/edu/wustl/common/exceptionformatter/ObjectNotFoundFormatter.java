@@ -11,6 +11,11 @@ import edu.wustl.common.util.logger.Logger;
 public class ObjectNotFoundFormatter implements ExceptionFormatter
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ObjectNotFoundFormatter.class);
+	
 	public String formatMessage(Exception objExcp, Object[] args)
 	{
 		// TODO Auto-generated method stub
@@ -28,7 +33,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		}
 		else
 		{
-			Logger.out.debug("Error Message: Connection object not given");
+			logger.debug("Error Message: Connection object not given");
 		}
 		try
 		{
@@ -39,18 +44,18 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			startIndex = message.indexOf(temp1) - 1;
 			tempIndex = message.indexOf(temp3) + temp3.length();
 			String columnName = message.substring(tempIndex, startIndex);
-			Logger.out.debug(columnName + "--" + columnName.length());
+			logger.debug(columnName + "--" + columnName.length());
 
 			// get column value on from message for which object was not found   
 			startIndex = message.indexOf(temp1) + temp1.length();
 			endIndex = message.indexOf(",", startIndex);
 			String value = message.substring(startIndex, endIndex);
-			Logger.out.debug(value + "  " + value.length());
+			logger.debug(value + "  " + value.length());
 
 			// get class name from message
 			startIndex = message.indexOf(temp2) + temp2.length();
 			String className = message.substring(startIndex);
-			Logger.out.debug(className + "--" + className.length());
+			logger.debug(className + "--" + className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class
 			String displayName = ExceptionFormatterFactory.getDisplayName(HibernateMetaData
@@ -62,7 +67,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;
@@ -88,18 +93,18 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			startIndex = message.indexOf(temp1) - 1;
 			tempIndex = message.indexOf(temp3) + temp3.length();
 			String columnName = message.substring(tempIndex, startIndex);
-			//Logger.out.debug(columnName+"--"+columnName.length());
+			//logger.debug(columnName+"--"+columnName.length());
 
 			// get column value on from message for which object was not found   
 			startIndex = message.indexOf(temp1) + temp1.length();
 			endIndex = message.indexOf(",", startIndex);
 			String value = message.substring(startIndex, endIndex);
-			//Logger.out.debug(value+"  "+value.length());
+			//logger.debug(value+"  "+value.length());
 
 			// get class name from message
 			startIndex = message.indexOf(temp2) + temp2.length();
 			String className = message.substring(startIndex);
-			//Logger.out.debug(className+"--"+className.length());
+			//logger.debug(className+"--"+className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class 
 			String displayName = "dispname";//getDisplayName(HibernateMetaData.getTableName(classObj),connection);
@@ -107,11 +112,11 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			Object[] arguments = new Object[]{displayName, columnName, value};
 
 			formattedErrMsg = MessageFormat.format(Constants.OBJECT_NOT_FOUND_ERROR, arguments);
-			Logger.out.debug(formattedErrMsg);
+			logger.debug(formattedErrMsg);
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 

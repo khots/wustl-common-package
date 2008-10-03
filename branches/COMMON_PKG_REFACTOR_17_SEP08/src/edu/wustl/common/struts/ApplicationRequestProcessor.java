@@ -30,6 +30,11 @@ import edu.wustl.common.util.logger.Logger;
 public class ApplicationRequestProcessor extends TilesRequestProcessor
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationRequestProcessor.class);
+	
 	public ApplicationRequestProcessor()
 	{
 	}
@@ -37,7 +42,7 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 	protected ActionForm processActionForm(HttpServletRequest request,
 			HttpServletResponse response, ActionMapping mapping)
 	{
-		Logger.out.debug("contentType " + request.getContentType());
+		logger.debug("contentType " + request.getContentType());
 		if (request.getContentType() != null && request.getContentType().equals(Constants.HTTP_API))
 		{
 			try
@@ -62,7 +67,7 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 					request.setAttribute(Constants.OPERATION, operation);
 				}
 
-				Logger.out.debug("mapping.getAttribute() " + mapping.getAttribute());
+				logger.debug("mapping.getAttribute() " + mapping.getAttribute());
 
 				if ("request".equals(mapping.getScope()))
 				{
@@ -84,7 +89,7 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 			}
 			catch (Exception e)
 			{
-				Logger.out.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 			return null;
 		}
