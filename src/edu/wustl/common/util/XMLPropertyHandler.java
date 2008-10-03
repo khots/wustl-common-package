@@ -1,6 +1,6 @@
 /**
  * <p>Title:XMLPropertyHandler Class>
- * <p>Description:This class parses from caTissue_Properties.xml(includes properties name & value pairs) 
+ * <p>Description:This class parses from caTissue_Properties.xml(includes properties name & value pairs)
  * file using DOM parser.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -27,15 +27,27 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class gives the properties value by giving properties name.
- * 
+ *
  * @author tapan_sahoo
  */
 public class XMLPropertyHandler
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(XMLPropertyHandler.class);
+	/**
+	 * document Document document containing information about xml.
+	 */
 	private static Document document = null;
-	
+
+	/**
+	 * @param path String path for logger information.
+	 * @throws SAXException sax related exception.
+	 * @throws IOException I/O exception.
+	 * @throws ParserConfigurationException configuration exception at the time of parsing.
+	 */
 	public static void init(String path) throws SAXException,IOException,ParserConfigurationException
 	{
 		logger.info("path" + path);
@@ -71,6 +83,8 @@ public class XMLPropertyHandler
 	 * returns the properties value as String. Put the xml file in the path as
 	 * you will provide the path
 	 * </p>
+	 * @param propertyName String name of property.
+	 * @return String value of property.
 	 */
 
 	public static String getValue(String propertyName)
@@ -91,10 +105,9 @@ public class XMLPropertyHandler
 
 	/**
 	 * This method extract value from a child.
-	 * @param propertyName
-	 * @param value
-	 * @param child
-	 * @return name of property.
+	 * @param propertyName String name of property.
+	 * @param child Node child node.
+	 * @return String name of child node.
 	 */
 	private static String extractValue(String propertyName, Node child)
 	{
