@@ -16,11 +16,14 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * This is the action class for sending file to client end.
  * @author Poornima Govindrao
- *  
+ *
  */
 public class SendFile
 {
 
+	/**
+	 * logger Logger Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(SendFile.class);
 
 	public static void sendFileToClient(HttpServletResponse response, String filePath,
@@ -41,7 +44,7 @@ public class SendFile
 					OutputStream opstream = response.getOutputStream();
 					bis = new BufferedInputStream(new FileInputStream(file));
 					int count;
-					byte buf[] = new byte[Constants.FOUR_KILO_BYTES];
+					byte[] buf = new byte[Constants.FOUR_KILO_BYTES];
 					while ((count = bis.read(buf)) > -1)
 					{
 						opstream.write(buf, 0, count);
