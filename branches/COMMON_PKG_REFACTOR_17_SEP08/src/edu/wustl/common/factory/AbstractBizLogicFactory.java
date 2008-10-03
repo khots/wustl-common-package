@@ -25,6 +25,11 @@ public class AbstractBizLogicFactory
 {
 
 	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractBizLogicFactory.class);
+
+	/**
 	 * Returns DAO instance according to the form bean type.
 	 * @param FORM_TYPE The form bean type.
 	 * @return An AbstractDAO object.
@@ -50,33 +55,33 @@ public class AbstractBizLogicFactory
 		}
 		catch (ClassNotFoundException classNotFndExp)
 		{
-			Logger.out.debug("AbstractBizLogicFactory : BizLogic with class name "
+			logger.debug("AbstractBizLogicFactory : BizLogic with class name "
 					+ bizLogicFactoryName + " not present");
-			Logger.out.debug(classNotFndExp.getMessage(), classNotFndExp);
+			logger.debug(classNotFndExp.getMessage(), classNotFndExp);
 			throw new BizLogicException(
 					"Server Error #1: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
 		}
 		catch (NoSuchMethodException noMethodExp)
 		{
-			Logger.out.debug("AbstractBizLogicFactory : No such method " + methodName
+			logger.debug("AbstractBizLogicFactory : No such method " + methodName
 					+ " in bizLogic class " + bizLogicFactoryName);
-			Logger.out.debug(noMethodExp.getMessage(), noMethodExp);
+			logger.debug(noMethodExp.getMessage(), noMethodExp);
 			throw new BizLogicException(
 					"Server Error #2: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
 		}
 		catch (InvocationTargetException invTrgtExp)
 		{
-			Logger.out.debug("AbstractBizLogicFactory : No such method " + methodName
+			logger.debug("AbstractBizLogicFactory : No such method " + methodName
 					+ " in bizLogic class " + bizLogicFactoryName);
-			Logger.out.debug(invTrgtExp.getMessage(), invTrgtExp);
+			logger.debug(invTrgtExp.getMessage(), invTrgtExp);
 			throw new BizLogicException(
 					"Server Error #3: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
 		}
 		catch (IllegalAccessException illAccEcp)
 		{
-			Logger.out.debug("AbstractBizLogicFactory : No access to method " + methodName
+			logger.debug("AbstractBizLogicFactory : No access to method " + methodName
 					+ " in bizLogic class " + bizLogicFactoryName);
-			Logger.out.debug(illAccEcp.getMessage(), illAccEcp);
+			logger.debug(illAccEcp.getMessage(), illAccEcp);
 			throw new BizLogicException(
 					"Server Error #4: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
 		}
