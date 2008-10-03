@@ -14,12 +14,12 @@ import java.util.Comparator;
  */
 public class KeyComparator implements Comparator<Object>
 {
-	
-	/* 
+
+	/**
 	 * This method compare between two objects passed as parameters.
-	 * @param object1
-	 * @param object2
-	 * @return integer value based on the output of comparison. 
+	 * @param object1 Object object to be compared.
+	 * @param object2 Object object to be compared.
+	 * @return integer value based on the output of comparison.
 	 */
 	public int compare(Object object1, Object object2)
 	{
@@ -70,9 +70,9 @@ public class KeyComparator implements Comparator<Object>
 
 	/**
 	 * This method compare the two integers passed as parameters.
-	 * @param inner1
-	 * @param inner2
-	 * @return
+	 * @param inner1 int comparable value.
+	 * @param inner2 int comparable value.
+	 * @return int return value after comparison.
 	 */
 	private int getretValue(int inner1, int inner2)
 	{
@@ -94,9 +94,9 @@ public class KeyComparator implements Comparator<Object>
 
 	/**
 	 * This method return the integer for a substring.
-	 * @param key1
-	 * @param index1
-	 * @return
+	 * @param key String key.
+	 * @param index int index.
+	 * @return int key.
 	 */
 	private int getKey(String key, int index)
 	{
