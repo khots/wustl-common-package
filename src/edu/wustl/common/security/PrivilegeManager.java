@@ -28,7 +28,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import edu.wustl.common.security.exceptions.SMException;
-import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.UserProvisioningManager;
@@ -313,7 +312,7 @@ public final class PrivilegeManager
 				{
 					// In case of assign remove the READ_DENIED privilege of the group
 					// and in case of de-assign add the READ_DENIED privilege to the group.
-					assignOperation = !assignOperation;
+					assignOperation ^=assignOperation;
 					for (int i = 0; i < objectIds.length; i++)
 					{
 						if (objectType.getName().equals(Constants.COLLECTION_PROTOCOL_CLASS_NAME))
