@@ -14,16 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.wustl.common.action.AddNewAction;
 import edu.wustl.common.bizlogic.CDEBizLogic;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.cde.xml.XMLPermissibleValueType;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.CDEException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.common.exception.CDEException;
 
 /**
  * @author kapil_kaveeshwar
@@ -35,6 +36,11 @@ public class CDECacheManager
 {
 
 	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
+	
+	/**
 	 * @param cdeXMLMAP Map of xmlCDEs configured by the user in the CDEConfig.xml.
 	 * The refresh() method accepts the XMLCDEs map and iterates through the map. A CDE is downloaded from the server and 
 	 * depending on the XMLCDEs object configuration, it is stored in the database. An email is sent to the administrator regarding the download status
@@ -43,7 +49,7 @@ public class CDECacheManager
 	 */
 	public void refresh(Map cdeXMLMAP) throws CDEException
 	{
-		Logger.out.info("Initializing CDE Cache Manager");
+		logger.info("Initializing CDE Cache Manager");
 		CDEDownloader cdeDownloader = null;
 		List downloadedCDEList = new ArrayList();
 		List errorLogs = new ArrayList();
@@ -52,14 +58,14 @@ public class CDECacheManager
 		{
 			cdeDownloader = new CDEDownloader();
 			cdeDownloader.connect();
-			Logger.out.info("Connected to the server successfully...");
+			logger.info("Connected to the server successfully...");
 		}
 		catch (Exception exp)
 		{
 			//Logging the error message.
 			errorLogs.add(exp.getMessage());
 
-			Logger.out.error(exp.getMessage(), exp);
+			logger.error(exp.getMessage(), exp);
 			//Send the error logs to administrator.
 			throw new CDEException(sendCDEDownloadStatusEmail(errorLogs));
 		}
@@ -75,7 +81,7 @@ public class CDECacheManager
 				try
 				{
 					CDE cde = cdeDownloader.downloadCDE(xmlCDE);
-					Logger.out.info(cde.getLongName() + " : CDE download successful ... ");
+					logger.info(cde.getLongName() + " : CDE download successful ... ");
 
 					//Sets the parent permissible values and the CDEs for all the permissible values.
 					configurePermissibleValues(cde, xmlCDE);
@@ -84,7 +90,7 @@ public class CDECacheManager
 				catch (Exception exp)
 				{
 					errorLogs.add(exp.getMessage());
-					Logger.out.error(exp.getMessage(), exp);
+					logger.error(exp.getMessage(), exp);
 				}
 			}
 		}
@@ -101,17 +107,17 @@ public class CDECacheManager
 			try
 			{
 				cdeBizLogic.insert(cde, null, Constants.HIBERNATE_DAO);
-				Logger.out.debug(cde.getLongName() + " : CDE inserted in database ... ");
+				logger.debug(cde.getLongName() + " : CDE inserted in database ... ");
 			}
 			catch (UserNotAuthorizedException userNotAuthExp)
 			{
 				errorLogs.add(userNotAuthExp.getMessage());
-				Logger.out.error(userNotAuthExp.getMessage(), userNotAuthExp);
+				logger.error(userNotAuthExp.getMessage(), userNotAuthExp);
 			}
 			catch (BizLogicException bizLogicExp)
 			{
 				errorLogs.add(bizLogicExp.getMessage());
-				Logger.out.error(bizLogicExp.getMessage(), bizLogicExp);
+				logger.error(bizLogicExp.getMessage(), bizLogicExp);
 			}
 		}
 	}
