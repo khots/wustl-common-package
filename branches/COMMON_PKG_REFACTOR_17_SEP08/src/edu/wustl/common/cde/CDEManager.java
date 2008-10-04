@@ -32,12 +32,16 @@ import edu.wustl.common.util.logger.Logger;
  * */
 public class CDEManager
 {
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CDEManager.class);
 
 	public static CDEManager cdeManager;
 
 	public static void init() throws Exception
 	{
-		Logger.out.debug("Initializing CDE Manager");
+		logger.debug("Initializing CDE Manager");
 		//Singleton instance of CDEManager 
 		cdeManager = new CDEManager();
 		cdeManager.loadCDEInMemory();
@@ -77,20 +81,20 @@ public class CDEManager
 			while (iterator.hasNext())
 			{
 				XMLCDE xmlCDEObj = (XMLCDE) iterator.next();
-				Logger.out.debug("Reading XML CDE Name : " + xmlCDEObj.getName());
+				logger.debug("Reading XML CDE Name : " + xmlCDEObj.getName());
 				cdeXMLMAP.put(xmlCDEObj.getName(), xmlCDEObj);
 			}
 			cdeHandler = new CDEHandler(cdeXMLMAP);
 		}
 		catch (JAXBException je)
 		{
-			Logger.out.error(je.getMessage(), je);
+			logger.error(je.getMessage(), je);
 			throw new Exception("Could not read the" + Constants.CDE_CONF_FILE + " XML file : "
 					+ je.getMessage());
 		}
 		catch (IOException ioe)
 		{
-			Logger.out.error(ioe.getMessage(), ioe);
+			logger.error(ioe.getMessage(), ioe);
 			throw new Exception("Could not read the" + Constants.CDE_CONF_FILE
 					+ " XML file IO Error : " + ioe.getMessage());
 		}
@@ -115,7 +119,7 @@ public class CDEManager
 	 */
 	private void loadCDEInMemory() throws Exception
 	{
-		Logger.out.debug("Loading the CDEs in in memory");
+		logger.debug("Loading the CDEs in in memory");
 		cdeHandler.loadCDE();
 	}
 
@@ -189,7 +193,7 @@ public class CDEManager
 
 			if (value.equals(permissibleValue.getValue()))
 			{
-				Logger.out.debug("permissibleValue " + permissibleValue.getValue());
+				logger.debug("permissibleValue " + permissibleValue.getValue());
 				isParentFound = true;
 				List pvList = loadPermissibleValue(permissibleValue, isParentFound, value);
 				list.addAll(pvList);
@@ -206,8 +210,8 @@ public class CDEManager
 				}
 			}
 		}
-		Logger.out.debug("list " + list.size());
-		Logger.out.debug(list);
+		logger.debug("list " + list.size());
+		logger.debug(list);
 
 		StringBuffer buff = new StringBuffer("(");
 		Iterator it = list.iterator();
@@ -221,7 +225,7 @@ public class CDEManager
 			else
 				buff.append(",");
 		}
-		Logger.out.debug(buff);
+		logger.debug(buff);
 		return buff.toString();
 	}
 
@@ -243,7 +247,7 @@ public class CDEManager
 			{
 				if (value.equals(subPermissibleValue.getValue()))
 				{
-					Logger.out.debug(value);
+					logger.debug(value);
 					isParentFound = true;
 					List subPVList = loadPermissibleValue(subPermissibleValue, isParentFound, value);
 					pvList.addAll(subPVList);

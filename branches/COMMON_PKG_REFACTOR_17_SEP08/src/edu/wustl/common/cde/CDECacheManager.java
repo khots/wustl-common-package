@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.wustl.common.action.AddNewAction;
 import edu.wustl.common.bizlogic.CDEBizLogic;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.cde.xml.XMLPermissibleValueType;
@@ -38,7 +37,7 @@ public class CDECacheManager
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CDECacheManager.class);
 	
 	/**
 	 * @param cdeXMLMAP Map of xmlCDEs configured by the user in the CDEConfig.xml.

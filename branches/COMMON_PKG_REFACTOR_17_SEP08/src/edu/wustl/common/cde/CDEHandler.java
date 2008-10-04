@@ -28,6 +28,11 @@ import edu.wustl.common.util.logger.Logger;
 public class CDEHandler
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CDEHandler.class);
+
 	private Map inMemCacheMap = new HashMap();
 	private Map cdeXMLMAP;
 
@@ -55,7 +60,7 @@ public class CDEHandler
 		if (obj != null)
 		{
 			XMLCDE xmlCDE = (XMLCDE) obj;
-			Logger.out.debug("xmlCDE " + xmlCDE.getName());
+			logger.debug("xmlCDE " + xmlCDE.getName());
 
 			/** Retrieve CDE from cache */
 			if (xmlCDE.isCache())
@@ -87,7 +92,7 @@ public class CDEHandler
 					}
 					catch (DAOException ex)
 					{
-						Logger.out.debug(ex.getMessage(), ex);
+						logger.debug(ex.getMessage(), ex);
 						//throw new Exception("Could not load CDE "+CDEName+" from local DB database: "+ ex.getMessage(), ex);
 					}
 				}
@@ -105,7 +110,7 @@ public class CDEHandler
 				}
 				catch (Exception cdeExp)
 				{
-					Logger.out.error("Exception while retriving CDE." + cdeExp.getMessage());
+					logger.error("Exception while retriving CDE." + cdeExp.getMessage());
 					//throw cdeExp;
 				}
 			}
