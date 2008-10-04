@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import edu.wustl.common.action.AddNewAction;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.ApplicationProperties;
@@ -32,6 +33,11 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 
 public class CDEDownloader
 {
+
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
 
 	public static int maxServerConnectAttempts = Integer.parseInt(ApplicationProperties
 			.getValue("max.server.connect.attempts"));
@@ -87,7 +93,7 @@ public class CDEDownloader
 		} 
 		catch (Exception conexp)
 		{
-			Logger.out.error("Connection Error: " + conexp.getMessage(), conexp);
+			logger.error("Connection Error: " + conexp.getMessage(), conexp);
 			conexp.printStackTrace();
 		} 
 		
@@ -104,7 +110,7 @@ public class CDEDownloader
 	 */
 	public CDE downloadCDE(XMLCDE xmlCDE) throws Exception
 	{
-		Logger.out.info("Downloading CDE " + xmlCDE.getName());
+		logger.info("Downloading CDE " + xmlCDE.getName());
 		CDE resultCde = null;
 		try
 		{
@@ -121,7 +127,7 @@ public class CDEDownloader
 		}
 		catch (Exception conexp)
 		{
-			Logger.out.error("CDE Download Error: " + conexp.getMessage(), conexp);
+			logger.error("CDE Download Error: " + conexp.getMessage(), conexp);
 			conexp.printStackTrace();
 		}
 		return resultCde;
@@ -167,16 +173,16 @@ public class CDEDownloader
 					.getPreferredDefinition(), dataElement.getVersion().toString(), dataElement
 					.getDateModified());
 
-			Logger.out.debug("CDE Public Id : " + cdeobj.getPublicId());
-			Logger.out.debug("CDE Def : " + cdeobj.getDefination());
-			Logger.out.debug("CDE Long Name : " + cdeobj.getLongName());
-			Logger.out.debug("CDE Version : " + cdeobj.getVersion());
-			Logger.out.debug("CDE Perferred Name : " + cdeobj.getPreferredName());
-			Logger.out.debug("CDE Last Modified Date : " + cdeobj.getDateLastModified());
+			logger.debug("CDE Public Id : " + cdeobj.getPublicId());
+			logger.debug("CDE Def : " + cdeobj.getDefination());
+			logger.debug("CDE Long Name : " + cdeobj.getLongName());
+			logger.debug("CDE Version : " + cdeobj.getVersion());
+			logger.debug("CDE Perferred Name : " + cdeobj.getPreferredName());
+			logger.debug("CDE Last Modified Date : " + cdeobj.getDateLastModified());
 
 			//Access the permissible value.
 			ValueDomain valueDomain = dataElement.getValueDomain();
-			Logger.out.debug("valueDomain class : " + valueDomain.getClass());
+			logger.debug("valueDomain class : " + valueDomain.getClass());
 
 			if (valueDomain instanceof EnumeratedValueDomain)
 			{
@@ -205,7 +211,7 @@ public class CDEDownloader
 	 */
 	private Set getPermissibleValues(Collection valueDomainCollection)
 	{
-		Logger.out.debug("Value Domain Size : " + valueDomainCollection.size());
+		logger.debug("Value Domain Size : " + valueDomainCollection.size());
 
 		Set permissibleValuesSet = new HashSet();
 
@@ -225,8 +231,8 @@ public class CDEDownloader
 			cachedPermissibleValue.setConceptid(permissibleValue.getId());
 			cachedPermissibleValue.setValue(permissibleValue.getValue());
 
-			Logger.out.debug("Concept ID : " + cachedPermissibleValue.getConceptid());
-			Logger.out.debug("Value : " + cachedPermissibleValue.getValue());
+			logger.debug("Concept ID : " + cachedPermissibleValue.getConceptid());
+			logger.debug("Value : " + cachedPermissibleValue.getValue());
 			permissibleValuesSet.add(cachedPermissibleValue);
 		} // while iterator
 		return permissibleValuesSet;
@@ -278,7 +284,7 @@ public class CDEDownloader
 
 		if (validnum == false)
 		{
-			//Logger.out.info("Invalid Proxy Port: " + proxyport);
+			//logger.info("Invalid Proxy Port: " + proxyport);
 			throw new Exception("Invalid ProxyPort");
 		} // validnum == false
 
