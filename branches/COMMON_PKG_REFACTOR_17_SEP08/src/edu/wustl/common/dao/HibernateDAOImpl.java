@@ -43,6 +43,11 @@ import edu.wustl.common.util.logger.Logger;
 public class HibernateDAOImpl implements HibernateDAO
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(HibernateDAOImpl.class);
+	
 	protected Session session = null;
 	protected Transaction transaction = null;
 	protected AuditManager auditManager;
@@ -77,7 +82,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		catch (HibernateException dbex)
 		{
-			Logger.out.error(dbex.getMessage(), dbex);
+			logger.error(dbex.getMessage(), dbex);
 			throw handleError(Constants.GENERIC_DATABASE_ERROR, dbex);
 		}
 	}
@@ -93,11 +98,11 @@ public class HibernateDAOImpl implements HibernateDAO
 		try
 		{
 			DBUtil.closeSession();
-			//   Logger.out.info("-------------close session------------");
+			//   logger.info("-------------close session------------");
 		}
 		catch (HibernateException dx)
 		{
-			Logger.out.error(dx.getMessage(), dx);
+			logger.error(dx.getMessage(), dx);
 			throw handleError(Constants.GENERIC_DATABASE_ERROR, dx);
 		}
 		session = null;
@@ -121,7 +126,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		catch (HibernateException dbex)
 		{
-			Logger.out.error(dbex.getMessage(), dbex);
+			logger.error(dbex.getMessage(), dbex);
 			throw handleError("Error in commit: ", dbex);
 		}
 	}
@@ -150,7 +155,7 @@ public class HibernateDAOImpl implements HibernateDAO
 			}
 			catch (HibernateException dbex)
 			{
-				Logger.out.error(dbex.getMessage(), dbex);
+				logger.error(dbex.getMessage(), dbex);
 				throw handleError("Error in rollback: ", dbex);
 			}
 		}
@@ -174,19 +179,19 @@ public class HibernateDAOImpl implements HibernateDAO
 			String sql = "UPDATE " + tableName + " SET ACTIVITY_STATUS = '"
 					+ Constants.ACTIVITY_STATUS_DISABLED + "' WHERE " + whereColumnName + " IN ( "
 					+ buff.toString() + ")";
-			//Logger.out.debug("sql "+sql);
+			//logger.debug("sql "+sql);
 			int count = st.executeUpdate(sql);
 			st.close();
-			//Logger.out.debug("Update count "+count);
+			//logger.debug("Update count "+count);
 		}
 		catch (HibernateException dbex)
 		{
-			Logger.out.error(dbex.getMessage(), dbex);
+			logger.error(dbex.getMessage(), dbex);
 			throw handleError("Error in JDBC connection: ", dbex);
 		}
 		catch (SQLException sqlEx)
 		{
-			Logger.out.error(sqlEx.getMessage(), sqlEx);
+			logger.error(sqlEx.getMessage(), sqlEx);
 			throw handleError("Error in disabling Related Objects: ", sqlEx);
 		}
 	}
@@ -201,7 +206,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
 			boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
 	{
-		//Logger.out.info("inser call---------------------");
+		//logger.info("inser call---------------------");
 		boolean isAuthorized = true;
 
 		try
@@ -242,7 +247,7 @@ public class HibernateDAOImpl implements HibernateDAO
 
 	private DAOException handleError(String message, Exception hibExp)
 	{
-		Logger.out.error(hibExp.getMessage(), hibExp);
+		logger.error(hibExp.getMessage(), hibExp);
 		String msg = generateErrorMessage(message, hibExp);
 		return new DAOException(msg, hibExp);
 	}
@@ -258,7 +263,7 @@ public class HibernateDAOImpl implements HibernateDAO
 			{
 				for (int i = 0; i < str.length; i++)
 				{
-					//Logger.out.debug("str:" + str[i]);
+					//logger.debug("str:" + str[i]);
 					message.append(str[i] + " ");
 				}
 			}
@@ -312,7 +317,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		catch (HibernateException hibExp)
 		{
-			//Logger.out.error(hibExp.getMessage(), hibExp);
+			//logger.error(hibExp.getMessage(), hibExp);
 			//throw new DAOException("Error in update", hibExp);
 			throw handleError("", hibExp);
 		}
@@ -322,7 +327,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		//        }
 		catch (SMException smex)
 		{
-			//Logger.out.error(smex.getMessage(), smex);
+			//logger.error(smex.getMessage(), smex);
 			//throw new DAOException("Error in update", smex);
 			throw handleError("", smex);
 		}
@@ -336,7 +341,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		{
 			if (obj instanceof Auditable && isAuditable)
 			{
-				//Logger.out.debug("In update audit...................................");
+				//logger.debug("In update audit...................................");
 				auditManager.compare((Auditable) obj, (Auditable) oldObj, "UPDATE");
 			}
 		}
@@ -366,7 +371,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		catch (HibernateException hibExp)
 		{
-			Logger.out.error(hibExp.getMessage(), hibExp);
+			logger.error(hibExp.getMessage(), hibExp);
 			throw new DAOException("Error in delete", hibExp);
 		}
 	}
@@ -427,7 +432,7 @@ public class HibernateDAOImpl implements HibernateDAO
 						
 			Query query = null;
 			sqlBuff.append("from " + sourceObjectName + " " + className);
-			//Logger.out.debug(" String : "+sqlBuff.toString());
+			//logger.debug(" String : "+sqlBuff.toString());
 
 			if ((whereColumnName != null && whereColumnName.length > 0)
 					&& (whereColumnCondition != null && whereColumnCondition.length == whereColumnName.length)
@@ -447,12 +452,12 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		catch (HibernateException hibExp)
 		{
-			Logger.out.error(hibExp.getMessage(), hibExp);
+			logger.error(hibExp.getMessage(), hibExp);
 			throw new DAOException("Error in retrieve " + hibExp.getMessage(), hibExp);
 		}
 		catch (Exception exp)
 		{
-			Logger.out.error(exp.getMessage(), exp);
+			logger.error(exp.getMessage(), exp);
 			throw new DAOException("Logical Erroe in retrieve method " + exp.getMessage(), exp);
 		}
 		return list;
@@ -467,12 +472,12 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		catch (ClassNotFoundException cnFoundExp)
 		{
-			Logger.out.error(cnFoundExp.getMessage(), cnFoundExp);
+			logger.error(cnFoundExp.getMessage(), cnFoundExp);
 			throw new DAOException("Error in retrieve " + cnFoundExp.getMessage(), cnFoundExp);
 		}
 		catch (HibernateException hibExp)
 		{
-			Logger.out.error(hibExp.getMessage(), hibExp);
+			logger.error(hibExp.getMessage(), hibExp);
 			throw new DAOException("Error in retrieve " + hibExp.getMessage(), hibExp);
 		}
 	}
@@ -610,7 +615,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	
 	private void generateSelectBlock(String[] selectColumnName,StringBuffer sqlBuff,String className)
 	{
-//		Logger.out.debug("***********className:"+className);
+//		logger.debug("***********className:"+className);
 		if (selectColumnName != null && selectColumnName.length > 0)
 		{
 			sqlBuff.append("Select ");
@@ -652,7 +657,7 @@ public class HibernateDAOImpl implements HibernateDAO
 				Object valArr[] = (Object[]) whereColumnValue[i];
 				for (int j = 0; j < valArr.length; j++)
 				{
-					//Logger.out.debug(sqlBuff);
+					//logger.debug(sqlBuff);
 					sqlBuff.append("? ");
 					if ((j + 1) < valArr.length)
 						sqlBuff.append(", ");
@@ -676,7 +681,7 @@ public class HibernateDAOImpl implements HibernateDAO
 				sqlBuff.append(" " + condition + " ");
 		}
 
-		//Logger.out.debug(sqlBuff.toString());
+		//logger.debug(sqlBuff.toString());
 
 		sqlQuery = session.createQuery(sqlBuff.toString());
 
@@ -684,7 +689,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		//Adds the column values in where clause
 		for (int i = 0; i < whereColumnValue.length; i++)
 		{
-			//Logger.out.debug("whereColumnValue[i]. " + whereColumnValue[i]);
+			//logger.debug("whereColumnValue[i]. " + whereColumnValue[i]);
 			if (whereColumnCondition[i].equals("is null")
 					|| whereColumnCondition[i].equals("is not null"))
 			{
