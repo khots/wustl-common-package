@@ -16,6 +16,10 @@ import edu.wustl.common.util.logger.Logger;
 
 public class ExceptionFormatterFactory
 {
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ExceptionFormatterFactory.class);
 
 	static ResourceBundle prop;
 	static
@@ -28,11 +32,11 @@ public class ExceptionFormatterFactory
 			 */
 			prop = ResourceBundle.getBundle("ExceptionFormatter");
 
-			Logger.out.debug("File Loaded");
+			logger.debug("File Loaded");
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage() + " " + e);
+			logger.error(e.getMessage() + " " + e);
 		}
 	}
 
@@ -50,19 +54,19 @@ public class ExceptionFormatterFactory
 			String formatterClassName = prop.getString(excpClassName);
 			if (formatterClassName == null)
 			{
-				Logger.out.error("ExceptionFormatter Class not found for " + excpClassName);
+				logger.error("ExceptionFormatter Class not found for " + excpClassName);
 			}
 			else
 			{
 				//	Instantiate a Exception Formatter
-				Logger.out.debug("exceptionClass: " + excpClassName);
-				Logger.out.debug("formatterClass: " + formatterClassName);
+				logger.debug("exceptionClass: " + excpClassName);
+				logger.debug("formatterClass: " + formatterClassName);
 				expFormatter = (ExceptionFormatter) Class.forName(formatterClassName).newInstance();
 			}
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage() + " " + e);
+			logger.error(e.getMessage() + " " + e);
 		}
 		return expFormatter;
 	}
@@ -86,7 +90,7 @@ public class ExceptionFormatterFactory
 		}
 		catch (Exception ex)
 		{
-			Logger.out.error(ex.getMessage(), ex);
+			logger.error(ex.getMessage(), ex);
 		}
 		return displayName;
 	}
