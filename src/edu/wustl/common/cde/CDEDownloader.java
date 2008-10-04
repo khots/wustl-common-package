@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import edu.wustl.common.action.AddNewAction;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.ApplicationProperties;
@@ -37,7 +36,7 @@ public class CDEDownloader
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CDEDownloader.class);
 
 	public static int maxServerConnectAttempts = Integer.parseInt(ApplicationProperties
 			.getValue("max.server.connect.attempts"));
