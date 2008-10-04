@@ -56,6 +56,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 {
 
 	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogic.class);
+	
+	/**
 	 * This method gets called before insert method. Any logic before inserting into database can be included here.
 	 * @param obj The object to be inserted.
 	 * @param dao the dao object
@@ -186,7 +191,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoExp)
 		{
 			daoExp.printStackTrace();
-			Logger.out.error(daoExp.getMessage(), daoExp);
+			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
 		{
@@ -262,7 +267,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoExp)
 		{
 			daoExp.printStackTrace();
-			Logger.out.error(daoExp.getMessage(), daoExp);
+			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
 		{
@@ -332,7 +337,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, String separatorBetweenFields) throws DAOException
 	{
-		//Logger.out.debug("in get list");
+		//logger.debug("in get list");
 		List nameValuePairs = new ArrayList();
 
 		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
@@ -380,8 +385,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 					{
 						tmpObj = tmpBuffer.get(0);
 
-						//Logger.out.debug("nameValueBean Name : : " + tmpObj);
-						//Logger.out.debug("NameClass : : " + tmpObj.getClass().getName());
+						//logger.debug("nameValueBean Name : : " + tmpObj);
+						//logger.debug("NameClass : : " + tmpObj.getClass().getName());
 						nameValueBean.setName(tmpObj);
 					}
 					else
@@ -396,7 +401,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 							}
 						}
 
-						//Logger.out.debug("nameValueBean Name : : " + nameBuff.toString());
+						//logger.debug("nameValueBean Name : : " + nameBuff.toString());
 						nameValueBean.setName(nameBuff.toString());
 					}
 
@@ -518,7 +523,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
 				whereColumnCondition, whereColumnValue, joinCondition);
 		list = Utility.removeNull(list);
-		Logger.out.debug(sourceClass.getName() + " Related objects to "
+		logger.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		return list;
 	}
@@ -535,7 +540,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
 				whereColumnCondition, whereColumnValue, joinCondition);
-		Logger.out.debug(sourceClass.getName() + " Related objects to "
+		logger.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		list = Utility.removeNull(list);
 		return list;
@@ -566,7 +571,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			Long userId, String roleId, boolean assignToUser, boolean assignOperation)
 			throws SMException, DAOException
 	{
-		Logger.out.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
+		logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
 				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
 				+ " userId:" + userId + " roleId:" + roleId + " assignToUser:" + assignToUser);
 
@@ -629,7 +634,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	protected DAOException handleSMException(SMException e)
 	{
-		Logger.out.error("Exception in Authorization: " + e.getMessage(), e);
+		logger.error("Exception in Authorization: " + e.getMessage(), e);
 		String message = "Security Exception: " + e.getMessage();
 		if (e.getCause() != null)
 			message = message + " : " + e.getCause().getMessage();
@@ -680,7 +685,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		if (!list.isEmpty())
 		{
 			Object obj = list.get(0);
-			Logger.out.debug("obj Class " + obj.getClass());
+			logger.debug("obj Class " + obj.getClass());
 			//Object[] objArr = (String)obj
 			activityStatus = (String) obj;
 		}
@@ -712,7 +717,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoExp)
 		{
 			daoExp.printStackTrace();
-			Logger.out.error(daoExp.getMessage(), daoExp);
+			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
 		{
@@ -745,7 +750,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoExp)
 		{
 			daoExp.printStackTrace();
-			Logger.out.error(daoExp.getMessage(), daoExp);
+			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
 		{
