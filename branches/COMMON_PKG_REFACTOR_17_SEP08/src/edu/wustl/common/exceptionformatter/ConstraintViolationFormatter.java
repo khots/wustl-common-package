@@ -21,11 +21,14 @@ import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
-import gov.nih.nci.security.exceptions.CSTransactionException;
 
 public class ConstraintViolationFormatter implements ExceptionFormatter
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ConstraintViolationFormatter.class);
 	/*  
 	 * @param objExcp - Exception object 
 	 * @param args[] where args[0] must be String 'Table_Name' 
@@ -64,7 +67,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		{
 
 			objExcp = (Exception) objExcp.getCause();
-			Logger.out.debug(objExcp);
+			logger.debug(objExcp);
 		}
 		try
 		{
@@ -76,7 +79,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			}
 			else
 			{
-				Logger.out.debug("Error Message: Connection object not given");
+				logger.debug("Error Message: Connection object not given");
 			}
 			// Get Contraint Name from messages         		
 			String sqlMessage = generateErrorMessage(objExcp);
@@ -86,24 +89,24 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			int startIndexofMsg = temp.indexOf(".");
 			int endIndexofMsg = temp.indexOf(")");
 			String strKey = temp.substring((startIndexofMsg + 1), endIndexofMsg);
-			Logger.out.debug("Contraint Name: " + strKey);
+			logger.debug("Contraint Name: " + strKey);
 
 			String Query = "select COLUMN_NAME,TABLE_NAME from user_cons_columns where constraint_name = '"
 					+ strKey + "'";
-			Logger.out.debug("ExceptionFormatter Query: " + Query);
+			logger.debug("ExceptionFormatter Query: " + Query);
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(Query);
 			while (rs.next())
 			{
 				columnName += rs.getString("COLUMN_NAME") + ",";
-				Logger.out.debug("columnName: " + columnName);
+				logger.debug("columnName: " + columnName);
 				tableName = rs.getString("TABLE_NAME");
-				Logger.out.debug("tableName: " + tableName);
+				logger.debug("tableName: " + tableName);
 			}
 			if (columnName.length() > 0 && tableName.length() > 0)
 			{
 				columnName = columnName.substring(0, columnName.length() - 1);
-				Logger.out.debug("columnName befor formatting: " + columnName);
+				logger.debug("columnName befor formatting: " + columnName);
 				String displayName = ExceptionFormatterFactory
 						.getDisplayName(tableName, connection);
 
@@ -116,7 +119,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;
@@ -124,12 +127,12 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 
 	private String mySQLformatMessage(Exception excp, Object[] args)
 	{
-		Logger.out.debug(excp.getClass().getName());
+		logger.debug(excp.getClass().getName());
 		Exception objExcp = excp;
 		if (objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
 		{
 			objExcp = (Exception) objExcp.getCause();
-			Logger.out.debug(objExcp);
+			logger.debug(objExcp);
 		}
 		String dispTableName = null;
 		String tableName = null; // stores Table_Name for which column name to be found 
@@ -143,10 +146,10 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		}
 		else
 		{
-			Logger.out.debug("Table Name not specified");
+			logger.debug("Table Name not specified");
 			tableName = "Unknown Table";
 		}
-		Logger.out.debug("Table Name:" + tableName);
+		logger.debug("Table Name:" + tableName);
 		dispTableName = tableName;
 		if (args.length > 2)
 		{
@@ -156,7 +159,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			}
 			else
 			{
-				Logger.out.debug("Table Name not specified");
+				logger.debug("Table Name not specified");
 				dispTableName = tableName;
 			}
 		}
@@ -178,7 +181,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			// Get the %d part of the string
 			String strKey = sqlMessage.substring(indexofMsg, sqlMessage.length() - 1);
 			key = Integer.parseInt(strKey);
-			Logger.out.debug(String.valueOf(key));
+			logger.debug(String.valueOf(key));
 
 			// For the key extracted frm the string, get the column name on which the 
 			// costraint has failed
@@ -190,7 +193,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			}
 			else
 			{
-				Logger.out.debug("Error Message: Connection object not given");
+				logger.debug("Error Message: Connection object not given");
 			}
 
 			// Get database metadata object for the connection
@@ -208,14 +211,14 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			columnName = columnNames.toString();
 			columnName = columnName.substring(0, columnName.length());
 			arguments[1] = columnName;
-			Logger.out.debug("Column Name: " + columnNames.toString());
+			logger.debug("Column Name: " + columnNames.toString());
 
 			// Insert Table_Name and Column_Name in  CONSTRAINT_VOILATION_ERROR message   
 			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR, arguments);
 		}
 		catch (Exception e)
 		{
-			Logger.out.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;
@@ -234,7 +237,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			{
 				for (int i = 0; i < str.length; i++)
 				{
-					Logger.out.debug("str:" + str[i]);
+					logger.debug("str:" + str[i]);
 					message.append(str[i] + " ");
 				}
 			}
@@ -255,7 +258,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		String tableName = nameOfTable;
 		ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
 		String message = cEX.getMessage();
-		Logger.out.debug("message :" + message);
+		logger.debug("message :" + message);
 		int startIndex = message.indexOf("[");
 
 		/**
@@ -271,7 +274,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			endIndex = message.indexOf("]");
 		}
 		String className = message.substring((startIndex + 1), endIndex);
-		Logger.out.debug("ClassName: " + className);
+		logger.debug("ClassName: " + className);
 		Class classObj = Class.forName(className);
 		// get table name from class 
 		tableName = HibernateMetaData.getRootTableName(classObj);
@@ -302,11 +305,11 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		{
 			// In this loop, all the indexes are stored as key of the HashMap
 			// and the column names are stored as value.
-			Logger.out.debug("Key: " + indexCount);
+			logger.debug("Key: " + indexCount);
 			if (key == indexCount)
 			{
 				constraintVoilated = rs.getString("INDEX_NAME");
-				Logger.out.debug("Constraint: " + constraintVoilated);
+				logger.debug("Constraint: " + constraintVoilated);
 				found = true; // column name for given key index found
 				//break;
 			}
@@ -317,7 +320,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 				temp.append(",");
 				indexDetails.remove(rs.getString("INDEX_NAME"));
 				indexDetails.put(rs.getString("INDEX_NAME"), temp);
-				Logger.out.debug("Column :" + temp.toString());
+				logger.debug("Column :" + temp.toString());
 			}
 			else
 			{
@@ -329,12 +332,12 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 
 			indexCount++; // increment record count*/
 		}
-		Logger.out.debug("out of loop");
+		logger.debug("out of loop");
 		if (found)
 		{
 			columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
-			Logger.out.debug("Column Name: " + columnNames.toString());
-			Logger.out.debug("Constraint: " + constraintVoilated);
+			logger.debug("Column Name: " + columnNames.toString());
+			logger.debug("Constraint: " + constraintVoilated);
 		}
 		return columnNames;
 	}
