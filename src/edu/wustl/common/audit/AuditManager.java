@@ -32,6 +32,11 @@ import edu.wustl.common.util.logger.Logger;
 public class AuditManager
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AuditManager.class);
+
 	/* Instance of Audit event. 
 	 * All the change under one database session are added under this event.
 	 **/
@@ -161,7 +166,7 @@ public class AuditManager
 		}
 		catch (Exception ex)
 		{
-			Logger.out.error(ex.getMessage(), ex);
+			logger.error(ex.getMessage(), ex);
 			throw new AuditException();
 		}
 
@@ -533,7 +538,7 @@ public class AuditManager
 		}
 		catch (UserNotAuthorizedException sme)
 		{
-			Logger.out.debug("Exception:" + sme.getMessage(), sme);
+			logger.debug("Exception:" + sme.getMessage(), sme);
 		}
 
 	}

@@ -36,6 +36,11 @@ import edu.wustl.common.util.logger.Logger;
 public class SimpleQueryInterfaceForm extends ActionForm
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceForm.class);
+	
 	boolean mutable = true;
 
 	Map values = new TreeMap();
@@ -266,20 +271,20 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		boolean conditionError = false;
 		if ((dataType.trim().equals("bigint") || dataType.trim().equals("integer")))
 		{
-			Logger.out.debug(" Check for integer");
+			logger.debug(" Check for integer");
 			if (validator.convertToLong(enteredValue) == null)
 			{
 				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 						"simpleQuery.intvalue.required"));
 				conditionError = true;
-				Logger.out.debug(enteredValue + " is not a valid integer");
+				logger.debug(enteredValue + " is not a valid integer");
 			}
 			else if (!validator.isPositiveNumeric(enteredValue, 0))
 			{
 				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 						"simpleQuery.intvalue.poisitive.required"));
 				conditionError = true;
-				Logger.out.debug(enteredValue + " is not a positive integer");
+				logger.debug(enteredValue + " is not a positive integer");
 			}
 
 		} else if ((dataType.trim().equals("double"))
