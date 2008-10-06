@@ -181,7 +181,9 @@ public class HibernateMetaData
 	 */
 	public static String getColumnName(Class classObj, String attributeName)
 	{
+		String colName=TextConstants.EMPTY_STRING;
 		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
+		boolean gotColName=false;
 		while (it.hasNext())
 		{
 			Property property = (Property) it.next();
@@ -191,8 +193,14 @@ public class HibernateMetaData
 				while (colIt.hasNext())
 				{
 					Column col = (Column) colIt.next();
-					return col.getName();
+					colName=col.getName();
+					gotColName=true;
+					break;
 				}
+			}
+			if(gotColName)
+			{
+				break;
 			}
 		}
 
@@ -203,11 +211,12 @@ public class HibernateMetaData
 			while (colIt.hasNext())
 			{
 				Column col = (Column) colIt.next();
-				return col.getName();
+				colName= col.getName();
+				break;
 			}
 		}
 
-		return "";
+		return colName;
 	}
 
 	/**
@@ -285,15 +294,15 @@ public class HibernateMetaData
 
 	/**This function saves the relation data in HashSet.
 	 * @param col this is the collection which contains all data
-	 * @param rel_type this is Many-To-Many to Many-To-One
-	 * @throws Exception generic exception.
+	 * @param relType this is Many-To-Many to Many-To-One
+	 * @throws ClassNotFoundException
 	 */
-	private static void saveRelations(Collection col, String rel_type) throws Exception
+	private static void saveRelations(Collection col, String relType) throws ClassNotFoundException
 	{
 		String className = col.getOwner().getClassName();
 		String relatedClassName = col.getElement().getType().getName();
 		String roleAttribute = col.getRole();
-		String relationType = rel_type;
+		String relationType = relType;
 		String relationTable = col.getElement().getTable().getName();
 		String keyId = getKeyId(roleAttribute);
 		String roleId = getRoleKeyId(roleAttribute);
@@ -329,6 +338,7 @@ public class HibernateMetaData
 	public static boolean isRelationManyToMany(Class classObj1, Class classObj2,
 			String roleAttributeName)
 	{
+		boolean isManyToMay=false;
 		ClassRelationshipData crd = new ClassRelationshipData(classObj1.getName(), classObj2
 				.getName(), roleAttributeName);
 		Iterator itr = mappings.iterator();
@@ -338,10 +348,11 @@ public class HibernateMetaData
 			ClassRelationshipData crd1 = (ClassRelationshipData) itr.next();
 			if (crd1.equals(crd) && crd1.getRelationType().equals("ManyToMany"))
 			{
-				return true;
+				isManyToMay= true;
+				break;
 			}
 		}
-		return false;
+		return isManyToMay;
 	}
 	/** This function returns the relation between the classes passed.
 	 *
@@ -358,14 +369,12 @@ public class HibernateMetaData
 				.getName(), roleAttributeName);
 
 		Iterator itr = mappings.iterator();
-
 		while (itr.hasNext())
 		{
 			ClassRelationshipData crd1 = (ClassRelationshipData) itr.next();
 			if (crd1.equals(crd))
 			{
 				return crd1;
-
 			}
 		}
 		return null;
