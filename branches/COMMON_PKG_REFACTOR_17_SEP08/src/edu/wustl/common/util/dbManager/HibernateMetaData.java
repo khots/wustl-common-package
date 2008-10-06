@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.cfg.Configuration;
@@ -51,7 +52,7 @@ public class HibernateMetaData
 	/**
 	 * mappings HashSet - set to keep relations.
 	 */
-	private static HashSet<ClassRelationshipData> mappings = new HashSet<ClassRelationshipData>();
+	private static Set<ClassRelationshipData> mappings = new HashSet<ClassRelationshipData>();
 
 	private static final int DEFAULT_COL_WIDTH=50;
 	/**
@@ -74,10 +75,10 @@ public class HibernateMetaData
 		List<String> list = new ArrayList<String>();
 		Class classObj = Class.forName(className);
 		PersistentClass classobj1 = cfg.getClassMapping(classObj.getName());
-		Iterator<Subclass> it = classobj1.getDirectSubclasses();
-		while (it.hasNext())
+		Iterator<Subclass> iterator = classobj1.getDirectSubclasses();
+		while (iterator.hasNext())
 		{
-			Subclass subClass = (Subclass) it.next();
+			Subclass subClass = (Subclass) iterator.next();
 			list.add(subClass.getClassName());
 		}
 		return list;
@@ -107,7 +108,6 @@ public class HibernateMetaData
 	public static Class getSupermostClassInPackage(Object obj)
 	{
 		Class objClass = obj.getClass();
-		Package objPackage = objClass.getPackage();
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass() != null)
 		{
@@ -160,11 +160,11 @@ public class HibernateMetaData
 	public static String getClassName(String tableName)
 	{
 		String className=TextConstants.EMPTY_STRING;
-		Iterator it = cfg.getClassMappings();
+		Iterator iterator = cfg.getClassMappings();
 		PersistentClass persistentClass;
-		while (it.hasNext())
+		while (iterator.hasNext())
 		{
-			persistentClass = (PersistentClass) it.next();
+			persistentClass = (PersistentClass) iterator.next();
 			if (tableName.equalsIgnoreCase(persistentClass.getTable().getName()))
 			{
 				className=persistentClass.getClassName();
@@ -183,14 +183,14 @@ public class HibernateMetaData
 	public static String getColumnName(Class classObj, String attributeName)
 	{
 		String colName=TextConstants.EMPTY_STRING;
-		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
+		Iterator<Property> iterator = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
 		boolean gotColName=false;
-		while (it.hasNext())
+		while (iterator.hasNext())
 		{
-			Property property = (Property) it.next();
+			Property property = (Property) iterator.next();
 			if (property != null && property.getName().equals(attributeName))
 			{
-				Iterator colIt = property.getColumnIterator();
+				Iterator<Column> colIt = property.getColumnIterator();
 				while (colIt.hasNext())
 				{
 					Column col = (Column) colIt.next();
@@ -251,8 +251,8 @@ public class HibernateMetaData
 		org.hibernate.mapping.Collection coll = cfg.getCollectionMapping(
 		  "edu.wustl.catissuecore.domain.CollectionProtocolEvent.specimenRequirementCollection");
 		
-		Iterator it = coll.getColumnIterator();
-		while (it.hasNext())
+		Iterator iterator = coll.getColumnIterator();
+		while (iterator.hasNext())
 		{
 			//org.hibernate.mapping.Set set = (org.hibernate.mapping.Set)it.next();
 		
@@ -474,10 +474,10 @@ public class HibernateMetaData
 	public static int getColumnWidth(Class classObj, String attributeName)
 	{
 		int colWidth=DEFAULT_COL_WIDTH;
-		Iterator<Property> it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
-		while (it.hasNext())
+		Iterator<Property> iterator = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
+		while (iterator.hasNext())
 		{
-			Property property = (Property) it.next();
+			Property property = (Property) iterator.next();
 
 			if (property != null && property.getName().equals(attributeName))
 			{
@@ -504,8 +504,8 @@ public class HibernateMetaData
 		Object proxyObj=domainObject;
 		if (domainObject instanceof HibernateProxy)
 		{
-			HibernateProxy hp = (HibernateProxy) domainObject;
-			Object obj = hp.getHibernateLazyInitializer().getImplementation();
+			HibernateProxy hibernatProxy = (HibernateProxy) domainObject;
+			Object obj = hibernatProxy.getHibernateLazyInitializer().getImplementation();
 			proxyObj=(AbstractDomainObject) obj;
 		}
 		return proxyObj;
