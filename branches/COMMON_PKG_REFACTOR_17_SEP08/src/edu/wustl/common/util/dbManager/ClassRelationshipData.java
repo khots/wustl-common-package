@@ -231,7 +231,7 @@ public class ClassRelationshipData
 	public boolean equals(Object obj)
 	{
 		boolean isEqual=false;
-		if (obj != null && obj instanceof ClassRelationshipData)
+		if (obj instanceof ClassRelationshipData)
 		{
 			ClassRelationshipData crd = (ClassRelationshipData) obj;
 			if (this.getClassName().equals(crd.getClassName())
