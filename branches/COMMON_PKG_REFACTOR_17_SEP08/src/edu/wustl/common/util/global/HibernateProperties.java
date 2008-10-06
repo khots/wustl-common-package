@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import edu.wustl.common.util.logger.Logger;
+
 /**
  * This class is used to retrieve values of keys from the ApplicationResources.properties file.
  * @author kapil_kaveeshwar
@@ -19,7 +21,12 @@ public class HibernateProperties
 
 	private static Properties p;
 
-	public static void initBundle(String baseName)
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(HibernateProperties.class);
+
+	public static void initBundle(String baseName) throws Exception
 	{
 		try
 		{
@@ -31,9 +38,8 @@ public class HibernateProperties
 		}
 		catch (Exception exe)
 		{
-			exe.printStackTrace();
-			throw new RuntimeException("Exception building HibernateProperties: "
-					+ exe.getMessage(), exe);
+			logger.error("Error:Application may not run properly",exe);
+			throw new Exception("Error:Application may not run properly: "+ exe.getMessage(), exe);
 		}
 
 		//ResourceBundle.
