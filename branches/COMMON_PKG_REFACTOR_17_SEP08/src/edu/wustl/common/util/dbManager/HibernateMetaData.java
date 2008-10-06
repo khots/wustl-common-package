@@ -26,6 +26,7 @@ import org.hibernate.proxy.HibernateProxy;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
@@ -58,9 +59,6 @@ public class HibernateMetaData
 	public static void initHibernateMetaData(Configuration configuration)
 	{
 		cfg = configuration;
-		//This function finds all the relations and keeps in mappings set.
-		//This Function is commented because it is unused code.
-		//findRelations();
 	}
 
 	/**
@@ -72,13 +70,10 @@ public class HibernateMetaData
 	 */
 	public static List getSubClassList(String className) throws ClassNotFoundException
 	{
-		List list = new ArrayList();
-		//System.out.println("className :::"+ className);
+		List<String> list = new ArrayList<String>();
 		Class classObj = Class.forName(className);
-		//System.out.println("classObj :::"+ classObj);
 		PersistentClass classobj1 = cfg.getClassMapping(classObj.getName());
-		Iterator it = classobj1.getDirectSubclasses();
-		//Iterator it = cfg.getClassMapping(classObj).getDirectSubclasses();
+		Iterator<Subclass> it = classobj1.getDirectSubclasses();
 		while (it.hasNext())
 		{
 			Subclass subClass = (Subclass) it.next();
@@ -112,31 +107,18 @@ public class HibernateMetaData
 	{
 		Class objClass = obj.getClass();
 		Package objPackage = objClass.getPackage();
-		logger.debug("Input Class: " + objClass.getName() + " Package:" + objPackage.getName());
-
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass() != null)
 		{
-
-			logger.debug(objPackage.getName() + " " + persistentClass.getClassName()
-					+ "*********"
-					+ persistentClass.getSuperclass().getMappedClass().getPackage().getName());
-			logger.debug("!!!!!!!!!!! "
-					+ persistentClass.getSuperclass().getMappedClass().getPackage().getName()
-							.equals(objPackage.getName()));
 			do
 			{
 				persistentClass = persistentClass.getSuperclass();
 			}
 			while (persistentClass != null);
-			logger.debug("Supermost class in the same package:"
-					+ persistentClass.getMappedClass().getName());
+
+			objClass=persistentClass.getMappedClass();
 		}
-		else
-		{
-			return objClass;
-		}
-		return persistentClass.getMappedClass();
+		return objClass;
 	}
 
 	/**
@@ -145,14 +127,13 @@ public class HibernateMetaData
 	 */
 	public static String getTableName(Class classObj)
 	{
-
+		String tableName=TextConstants.EMPTY_STRING;
 		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
 		if (tbl != null)
 		{
-			return tbl.getName();
+			tableName=tbl.getName();
 		}
-		return "";
-
+		return tableName;
 	}
 
 	/**
@@ -161,13 +142,13 @@ public class HibernateMetaData
 	 */
 	public static String getRootTableName(Class classObj)
 	{
+		String rootTabName=TextConstants.EMPTY_STRING;
 		Table tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
 		if (tbl != null)
 		{
-			return tbl.getName();
+			rootTabName=tbl.getName();
 		}
-		return "";
-
+		return rootTabName;
 	}
 
 	/**
@@ -177,6 +158,7 @@ public class HibernateMetaData
 	 */
 	public static String getClassName(String tableName)
 	{
+		String className=TextConstants.EMPTY_STRING;
 		Iterator it = cfg.getClassMappings();
 		PersistentClass persistentClass;
 		while (it.hasNext())
@@ -184,11 +166,12 @@ public class HibernateMetaData
 			persistentClass = (PersistentClass) it.next();
 			if (tableName.equalsIgnoreCase(persistentClass.getTable().getName()))
 			{
-				return persistentClass.getClassName();
+				className=persistentClass.getClassName();
+				break;
 			}
 		}
 
-		return "";
+		return className;
 	}
 
 	/**
@@ -198,38 +181,29 @@ public class HibernateMetaData
 	 */
 	public static String getColumnName(Class classObj, String attributeName)
 	{
-		//logger.debug("classObj, String attributeName "+classObj+" "+attributeName);
 		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
 		while (it.hasNext())
 		{
 			Property property = (Property) it.next();
-
-			//logger.debug("property.getName() "+property.getName());
-			//System.out.println();
-			//System.out.print("property.getName() "+property.getName()+" ");
 			if (property != null && property.getName().equals(attributeName))
 			{
-				//System.out.println("property.getColumnSpan() "+property.getColumnSpan());
 				Iterator colIt = property.getColumnIterator();
 				while (colIt.hasNext())
 				{
 					Column col = (Column) colIt.next();
-					//System.out.println("col "+col.getName());
 					return col.getName();
 				}
 			}
 		}
 
 		Property property = cfg.getClassMapping(classObj.getName()).getIdentifierProperty();
-		//logger.debug("property.getName() "+property.getName());
 		if (property.getName().equals(attributeName))
 		{
-			Iterator colIt = property.getColumnIterator();//y("id").getColumnIterator();
+			Iterator colIt = property.getColumnIterator();
 			while (colIt.hasNext())
 			{
 				Column col = (Column) colIt.next();
 				return col.getName();
-				//System.out.println(col.getName());
 			}
 		}
 
