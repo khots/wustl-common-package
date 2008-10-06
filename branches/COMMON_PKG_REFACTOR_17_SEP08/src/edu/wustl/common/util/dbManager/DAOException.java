@@ -63,12 +63,8 @@ public class DAOException extends Exception
 	{
 		this("", exception);
 		logger.error("Exception in Authorization: " + exception.getMessage(), exception);
-		String message = "Security Exception: " + exception.getMessage();
-		if (exception.getCause() != null)
-		{
-			message = message + " : " + exception.getCause().getMessage();
+		String message = "Security Exception: " + exception.getMessage();		
 		this.message = message;
-		}
 	}
 
 	/**
