@@ -40,17 +40,17 @@ public class HibernateUtility
 				{
 					Object value = values.get(counter);
 					String objectType = value.getClass().getName();
-					String onlyClassName = objectType.substring(objectType.lastIndexOf(".")
+					String onlyClassName = objectType.substring(objectType.lastIndexOf('.')
 							+ 1,objectType.length());
-					if (onlyClassName.equals("String"))
+					if (String.class.getSimpleName().equals(onlyClassName))
 					{
 						query.setString(counter, (String) value);
 					}
-					else if (onlyClassName.equals("Integer"))
+					else if (Integer.class.getSimpleName().equals(onlyClassName))
 					{
 						query.setInteger(counter, Integer.parseInt(value.toString()));
 					}
-					else if (onlyClassName.equals("Long"))
+					else if (Long.class.getSimpleName().equals(onlyClassName))
 					{
 						query.setLong(counter, Long.parseLong(value.toString()));
 					}
