@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is used to retrieve values of keys from the ApplicationResources.properties file.
@@ -19,13 +19,15 @@ public class ApplicationProperties
 {
 
 	private static ResourceBundle bundle;
-	private static Logger logger = edu.wustl.common.util.logger.Logger
-			.getLogger(ApplicationProperties.class);
+
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationProperties.class);
 
 	public static void initBundle(String baseName)
 	{
 		bundle = ResourceBundle.getBundle(baseName);
-
 	}
 
 	/**
@@ -34,7 +36,7 @@ public class ApplicationProperties
 	 */
 	public static String getValue(String theKey)
 	{
-		String val = "";
+		String val = TextConstants.EMPTY_STRING;
 		if (bundle == null)
 		{
 			logger.fatal("resource bundle is null cannot return value for key " + theKey);
@@ -47,7 +49,7 @@ public class ApplicationProperties
 	}
 
 	/**
-	 * This method should be used when you want to customize error message with multiple replacement parameters
+	 * This method should be used when you want to customize error message with multiple replacement parameters.
 	 * 
 	 * @param theKey - error key
 	 * @param placeHolders - replacement Strings
@@ -55,25 +57,22 @@ public class ApplicationProperties
 	 */
 	public static String getValue(String theKey, List placeHolders)
 	{
-		String msg = "";
+		String msg = TextConstants.EMPTY_STRING;
 		if (bundle == null)
 		{
 			logger.fatal("resource bundle is null cannot return value for key " + theKey);
-			return msg;
 		}
 		else
 		{
 			msg = bundle.getString(theKey);
+			StringBuffer message = new StringBuffer(msg);
+			for (int i = 0; i < placeHolders.size(); i++)
+			{
+				message.replace(message.indexOf("{"), message.indexOf("}") + 1, (String) placeHolders.get(i));
+			}
+			msg=message.toString();
 		}
-
-		StringBuffer message = new StringBuffer(msg);
-
-		for (int i = 0; i < placeHolders.size(); i++)
-		{
-			message.replace(message.indexOf("{"), message.indexOf("}") + 1, (String) placeHolders
-					.get(i));
-		}
-		return message.toString();
+		return msg;
 	}
 
 	/**
@@ -84,7 +83,7 @@ public class ApplicationProperties
 	 */
 	public static String getValue(String theKey, String placeHolder)
 	{
-		List temp = new ArrayList();
+		List<String> temp = new ArrayList<String>();
 		temp.add(placeHolder);
 		return getValue(theKey, temp);
 	}
