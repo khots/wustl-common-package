@@ -19,7 +19,7 @@ import edu.wustl.common.util.logger.Logger;
 public class HibernateProperties
 {
 
-	private static Properties p;
+	private static Properties prop;
 
 	/**
 	 * logger Logger - Generic logger.
@@ -32,8 +32,8 @@ public class HibernateProperties
 		{
 			File file = new File(baseName);
 			BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
-			p = new Properties();
-			p.load(stram);
+			prop = new Properties();
+			prop.load(stram);
 			stram.close();
 		}
 		catch (Exception exe)
@@ -47,6 +47,6 @@ public class HibernateProperties
 
 	public static String getValue(String theKey)
 	{
-		return p.getProperty(theKey);
+		return prop.getProperty(theKey);
 	}
 }
