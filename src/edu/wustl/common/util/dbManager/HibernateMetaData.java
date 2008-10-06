@@ -51,8 +51,9 @@ public class HibernateMetaData
 	/**
 	 * mappings HashSet - set to keep relations.
 	 */
-	private static HashSet mappings = new HashSet();
+	private static HashSet<ClassRelationshipData> mappings = new HashSet<ClassRelationshipData>();
 
+	private static final int DEFAULT_COL_WIDTH=50;
 	/**
 	 * @param configuration Configuration Hibernate configuration.
 	 */
@@ -283,11 +284,9 @@ public class HibernateMetaData
 				}
 			}
 		}
-		catch (Exception e)
+		catch (ClassNotFoundException exception)
 		{
-			//This line is commented because logger when not initialized
-			//properly throws NullPointerException.
-			//logger.info("Error occured in fildAllRelations Function:"+e);
+			logger.debug("Not able to save the relation.",exception);
 		}
 
 	}
@@ -367,18 +366,19 @@ public class HibernateMetaData
 	{
 		ClassRelationshipData crd = new ClassRelationshipData(classObj1.getName(), classObj2
 				.getName(), roleAttributeName);
-
-		Iterator itr = mappings.iterator();
+		Iterator<ClassRelationshipData> itr = mappings.iterator();
+		ClassRelationshipData crdRetValue=null;
+		ClassRelationshipData crd1=null;
 		while (itr.hasNext())
 		{
-			ClassRelationshipData crd1 = (ClassRelationshipData) itr.next();
+			crd1 = (ClassRelationshipData) itr.next();
 			if (crd1.equals(crd))
 			{
-				return crd1;
+				crdRetValue=crd1;
+				break;
 			}
 		}
-		return null;
-
+		return crdRetValue;
 	}
 
 	/**This function returns the Role class for given attribute name.
@@ -387,18 +387,18 @@ public class HibernateMetaData
 	 */
 	public static Class getRoleClass(String attName)
 	{
-		Iterator itr = mappings.iterator();
-
+		Class roleClass=null;
+		Iterator<ClassRelationshipData> itr = mappings.iterator();
 		while (itr.hasNext())
 		{
 			ClassRelationshipData crd = (ClassRelationshipData) itr.next();
 			if (crd.getRoleAttribute().indexOf(attName) != -1)
 			{
-				return Utility.getClassObject(crd.getRelatedClassName());
-
+				roleClass= Utility.getClassObject(crd.getRelatedClassName());
+				break;
 			}
 		}
-		return null;
+		return roleClass;
 	}
 
 	/** This function returns the qualified attribute name related to concerned objects passed as parameters.
@@ -409,7 +409,8 @@ public class HibernateMetaData
 	 */
 	public static String getFullyQualifiedRoleAttName(Class classObj1, Class classObj2,String attName)
 	{
-		Iterator itr = mappings.iterator();
+		String roleAttName=null;
+		Iterator<ClassRelationshipData> itr = mappings.iterator();
 		while (itr.hasNext())
 		{
 			ClassRelationshipData crd = (ClassRelationshipData) itr.next();
@@ -417,10 +418,11 @@ public class HibernateMetaData
 					&& classObj2.getName().equals(crd.getRelatedClassName())
 					&& crd.getRoleAttribute().indexOf(attName) != -1)
 			{
-				return crd.getRoleAttribute();
+				roleAttName=crd.getRoleAttribute();
+				break;
 			}
 		}
-		return null;
+		return roleAttName;
 	}
 
 	/**
@@ -432,15 +434,16 @@ public class HibernateMetaData
 	 */
 	public static String getKeyId(String attributeName)
 	{
+		String keyId=TextConstants.EMPTY_STRING;
 		org.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
-		Iterator keyIt = col1.getKey().getColumnIterator();
+		Iterator<Column> keyIt = col1.getKey().getColumnIterator();
 		while (keyIt.hasNext())
 		{
 			Column col = (Column) keyIt.next();
-			return (col.getName());
+			keyId=col.getName();
+			break;
 		}
-
-		return "";
+		return keyId;
 	}
 
 	/** This function returns the key Id of role, for the attribute passed.
@@ -451,18 +454,17 @@ public class HibernateMetaData
 	 */
 	public static String getRoleKeyId(String attributeName)
 	{
+		String roleKeyId=TextConstants.EMPTY_STRING;
 		org.hibernate.mapping.Collection col1 = cfg.getCollectionMapping(attributeName);
-		Iterator colIt = col1.getElement().getColumnIterator();
-		while (colIt.hasNext())
+		Iterator<Column> colIt = col1.getElement().getColumnIterator();
+		if(colIt.hasNext())
 		{
 			Column col = (Column) colIt.next();
-			return (col.getName());
+			roleKeyId=(col.getName());
 		}
-		return "";
+		return roleKeyId;
 	}
 
-	//Mandar:26-apr-06 start
-	//	Mandar : 26-Apr-06 : 872 : Column width
 	/**
 	 * Return the column width for the parameters class and attribute.
 	 * @param classObj Name of the class.
@@ -471,24 +473,26 @@ public class HibernateMetaData
 	 */
 	public static int getColumnWidth(Class classObj, String attributeName)
 	{
-		Iterator it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
+		int colWidth=DEFAULT_COL_WIDTH;
+		Iterator<Property> it = cfg.getClassMapping(classObj.getName()).getPropertyClosureIterator();
 		while (it.hasNext())
 		{
 			Property property = (Property) it.next();
 
 			if (property != null && property.getName().equals(attributeName))
 			{
-				Iterator colIt = property.getColumnIterator();
-				while (colIt.hasNext())
+				Iterator<Column> colIt = property.getColumnIterator();
+				if(colIt.hasNext())
 				{
 					Column col = (Column) colIt.next();
-					return col.getLength();
+					colWidth=col.getLength();
+					break;
 				}
 			}
 		}
 		// if attribute is not found than the default width will be 50.
-		return 50;
-	} // getColumnWidth
+		return colWidth;
+	}
 
 	/**
 	 * This method will return proxy object from domain Object.
@@ -497,17 +501,15 @@ public class HibernateMetaData
 	 */
 	public static Object getProxyObjectImpl(Object domainObject)
 	{
+		Object proxyObj=domainObject;
 		if (domainObject instanceof HibernateProxy)
 		{
 			HibernateProxy hp = (HibernateProxy) domainObject;
 			Object obj = hp.getHibernateLazyInitializer().getImplementation();
-			logger.debug(obj + " : obj");
-			return (AbstractDomainObject) obj;
+			proxyObj=(AbstractDomainObject) obj;
 		}
-		return domainObject;
+		return proxyObj;
 	}
-
-	//	Mandar:26-Apr-06 end
 
 	/**
 	 * This function configure the properties file.
@@ -517,12 +519,8 @@ public class HibernateMetaData
 	public static void main(String[] args) throws Exception
 	{
 		Variables.applicationHome = System.getProperty("user.dir");
-		logger = org.apache.log4j.Logger.getLogger("");
 		PropertyConfigurator.configure(Variables.applicationHome + "\\WEB-INF\\src\\"
 				+ "ApplicationResources.properties");
-
-		logger.debug("here");
-
 		DBUtil.currentSession();
 	}
 }
