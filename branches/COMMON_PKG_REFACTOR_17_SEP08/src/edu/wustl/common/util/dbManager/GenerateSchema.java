@@ -37,35 +37,33 @@ public class GenerateSchema
 	 */
 	public static void main(String[] args) throws HibernateException, IOException, Exception
 	{
-		boolean isToPrintOnConsole = false;
+		boolean isToPrint = false;
 		boolean isToExecuteOnDB = false;
 		if (args.length != 0)
 		{
 			String arg = args[0];
 			if (arg.equalsIgnoreCase("true"))
 			{
-				isToPrintOnConsole = true;
+				isToPrint = true;
 				isToExecuteOnDB = true;
 			}
 			if (arg.equalsIgnoreCase("false"))
 			{
-				isToPrintOnConsole = false;
+				isToPrint = false;
 				isToExecuteOnDB = false;
 			}
 		}
 
 		File file = new File("db.properties");
 		BufferedInputStream stram = new BufferedInputStream(new FileInputStream(file));
-		Properties p = new Properties();
-		p.load(stram);
+		Properties prop = new Properties();
+		prop.load(stram);
 		stram.close();
 
 		Configuration cfg = new Configuration();
-		cfg.setProperties(p);
+		cfg.setProperties(prop);
 		cfg.addDirectory(new File("./src"));
 		new SchemaExport(cfg).setOutputFile("query.sql").setDelimiter(";").create(
-				isToPrintOnConsole, isToExecuteOnDB);
-		//		if(isToExecuteOnDB)
-		//			new GenerateUser();
+				isToPrint, isToExecuteOnDB);
 	}
 }
