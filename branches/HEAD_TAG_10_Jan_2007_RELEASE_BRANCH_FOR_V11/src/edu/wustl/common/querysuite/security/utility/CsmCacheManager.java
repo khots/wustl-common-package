@@ -21,6 +21,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.query.AbstractClient;
 import edu.wustl.common.security.PrivilegeCache;
 import edu.wustl.common.security.PrivilegeManager;
+import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
@@ -440,9 +441,9 @@ public class CsmCacheManager
 		{
 			hasPrivilegeOnIdentifiedData = 
 				((checkPermission(sessionDataBean, entityName, entityId, 
-						Variables.privilegeDetailsMap.get(Constants.PHI_ACCESS))) ||
+						Permissions.PHI)) ||
 				(checkPermission(sessionDataBean, entityName, entityId,
-					    Variables.privilegeDetailsMap.get(Constants.REGISTRATION)))
+					    Permissions.REGISTRATION))
 					);
 
 			cache.addNewObjectInIdentifiedDataAccsessMap(entityId,
@@ -468,7 +469,7 @@ public class CsmCacheManager
 		if (cache.isReadDenied(cpId) == null)
 		{
 			isAuthorisedUser = checkPermission(sessionDataBean, entityName, cpId,
-					Variables.privilegeDetailsMap.get(Constants.READ_DENIED));
+					Permissions.READ_DENIED);
 			cache.addNewObjectInReadPrivilegeMap(cpId, isAuthorisedUser);
 		}
 		else
@@ -547,7 +548,7 @@ public class CsmCacheManager
 		// instead, call redirected to privilegeCache.hasPrivilege		
 		Boolean isAuthorisedUser = privilegeCache.hasPrivilege(entityName+"_"+entityId, permission);
 		
-		if (Variables.privilegeDetailsMap.get(Constants.READ_DENIED).equals(permission))
+		if (Permissions.READ_DENIED.equals(permission))
 			isAuthorisedUser = !isAuthorisedUser;
 		
 		if(!isAuthorisedUser)
