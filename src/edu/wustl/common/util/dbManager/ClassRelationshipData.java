@@ -1,6 +1,8 @@
 
 package edu.wustl.common.util.dbManager;
 
+import org.hibernate.mapping.Collection;
+
 /**This class contains all the relationship related data i.e className, relatedClass,
  * relationshipType.
  * @author vaishali_khandelwal
@@ -64,6 +66,40 @@ public class ClassRelationshipData
 	public ClassRelationshipData()
 	{
 
+	}
+
+	public ClassRelationshipData(Collection col, String relType)
+	{
+		this.className = col.getOwner().getClassName();
+		this.relatedClassName = col.getElement().getType().getName();
+		this.roleAttribute = col.getRole();
+		this.relationType = relType;
+		this.relationTable = col.getElement().getTable().getName();
+		this.keyId = HibernateMetaData.getKeyId(roleAttribute);
+		this.roleId = HibernateMetaData.getRoleKeyId(roleAttribute);
+
+	}
+	public ClassRelationshipData(String className, ClassRelationshipData refObject)
+	{
+		this(refObject);
+		this.className =className;
+	}
+	public ClassRelationshipData(String className,String relatedClassName, ClassRelationshipData refObject)
+	{
+		this(refObject);
+		this.className =className;
+		this.relatedClassName = relatedClassName;
+	}
+	
+	private ClassRelationshipData(ClassRelationshipData refObject)
+	{
+		this.className =refObject.className ;
+		this.relatedClassName = refObject.relatedClassName;
+		this.roleAttribute =refObject.roleAttribute;
+		this.relationType = refObject.relationType;
+		this.relationTable = refObject.relationTable;
+		this.keyId = refObject.keyId;
+		this.roleId = refObject.roleId;
 	}
 
 	/**

@@ -298,33 +298,45 @@ public class HibernateMetaData
 	 */
 	private static void saveRelations(Collection col, String relType) throws ClassNotFoundException
 	{
-		String className = col.getOwner().getClassName();
-		String relatedClassName = col.getElement().getType().getName();
-		String roleAttribute = col.getRole();
-		String relationType = relType;
-		String relationTable = col.getElement().getTable().getName();
-		String keyId = getKeyId(roleAttribute);
-		String roleId = getRoleKeyId(roleAttribute);
 
-		ClassRelationshipData hmc = new ClassRelationshipData(className, relatedClassName,
-				roleAttribute, relationType, relationTable, keyId, roleId);
-		mappings.add(hmc);
-
+		ClassRelationshipData classRelationshipData = new ClassRelationshipData(col, relType);
+		mappings.add(classRelationshipData);
+		ClassRelationshipData hmc = classRelationshipData;
+		String className;
 		List list1 = HibernateMetaData.getSubClassList(col.getOwner().getClassName());
 		for (int i = 0; i < list1.size(); i++)
 		{
-			hmc = new ClassRelationshipData(list1.get(i).toString(), relatedClassName,
-					roleAttribute, relationType, relationTable, keyId, roleId);
+//			hmc = new ClassRelationshipData(list1.get(i).toString(), relatedClassName,
+//					roleAttribute, relationType, relationTable, keyId, roleId);
+			className = list1.get(i).toString();
+			hmc = createNewClassRelShip(hmc, className);
+
 			mappings.add(hmc);
 		}
 
 		List list2 = HibernateMetaData.getSubClassList(col.getElement().getType().getName());
+		String relatedClassName;
 		for (int i = 0; i < list2.size(); i++)
 		{
-			hmc = new ClassRelationshipData(className, list2.get(i).toString(), roleAttribute,
-					relationType, relationTable, keyId, roleId);
+			relatedClassName = list2.get(i).toString();
+			className =classRelationshipData.getClassName();
+			hmc = createNewClassRelShip(classRelationshipData, className, relatedClassName);
 			mappings.add(hmc);
 		}
+	}
+
+	private static ClassRelationshipData createNewClassRelShip(ClassRelationshipData classRelationshipData,
+			String className, String relatedClassName)
+	{
+		ClassRelationshipData hmc;
+		hmc = new ClassRelationshipData(className, relatedClassName, classRelationshipData);
+		return hmc;
+	}
+
+	private static ClassRelationshipData createNewClassRelShip(ClassRelationshipData hmc, String className)
+	{
+		return  new ClassRelationshipData(className, hmc);
+
 	}
 
 	/** This function checks weather relation is Many-Many.
