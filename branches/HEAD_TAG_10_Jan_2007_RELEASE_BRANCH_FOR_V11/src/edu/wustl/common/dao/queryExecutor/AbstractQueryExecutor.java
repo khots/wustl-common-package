@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -227,57 +228,36 @@ public abstract class AbstractQueryExecutor
 		 */
 		while (resultSet.next() && recordCount < noOfRecords)
 		{
-			int i = 1;
-
 			List aList = new ArrayList();
-			
-			while (i <= columnCount)
-			{
-
-				if (resultSet.getObject(i) != null)
-				{
-
-					Object valueObj = resultSet.getObject(i);
-					
-					//Abhijit: Why used instanceof? 
-					// why not metaData.getColumnType(i) == Types.CLOB ??
-					
-					if (valueObj instanceof oracle.sql.CLOB)
-					{
-						aList.add(valueObj);
-					}
-					else
-					{
-						String value;
-                        if(valueObj instanceof oracle.sql.DATE) {
-                            valueObj =  ((oracle.sql.DATE) valueObj).timestampValue();
+			// Srinath: rewrote to use resultSet getters of correct type.            
+			for (int i = 1; i <= columnCount; i++) {
+                Object retObj;
+                switch (metaData.getColumnType(i)) {
+                    case Types.CLOB :
+                        retObj = resultSet.getObject(i);
+                        break;
+                    case Types.DATE :
+                    case Types.TIMESTAMP :
+                        retObj = resultSet.getTimestamp(i);
+                        if (retObj == null) {
+                            break;
                         }
-						// Sri: Added check for date/time/timestamp since the
-						// default date format returned by toString was yyyy-dd-mm
-						// bug#463 
-						if (valueObj instanceof java.util.Date) // since all java.sql time 
-						//classes are derived from java.util.Date 
-						{
-                            // Srinath: next line is hack fix for bug 9618
-                            valueObj = resultSet.getTimestamp(i);
-                            
-							SimpleDateFormat formatter = new SimpleDateFormat(
-									Constants.DATE_PATTERN_MM_DD_YYYY + " "+Constants.TIME_PATTERN_HH_MM_SS);
-							value = formatter.format((java.util.Date) valueObj);
-						}
-						else
-						{
-							value = valueObj.toString();
-						}
-						aList.add(value);
-					}
-				}
-				else
-				{
-					aList.add("");
-				}
-				i++;
-			}   
+                        SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_PATTERN_MM_DD_YYYY + " "
+                                + Constants.TIME_PATTERN_HH_MM_SS);
+                        retObj = formatter.format((java.util.Date) retObj);
+                        break;
+                    default :
+                        retObj = resultSet.getObject(i);
+                        if (retObj != null) {
+                            retObj = retObj.toString();
+                        }
+                }
+                if (retObj == null) {
+                    aList.add("");
+                } else {
+                    aList.add(retObj);
+                }
+            }   
 			if(!isLongKeyOfMap && queryResultObjectDataMap!=null)
 			{
 			//Aarti: If query has condition on identified data then check user's permission
