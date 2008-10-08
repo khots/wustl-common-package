@@ -352,21 +352,21 @@ public class SecurityManager implements Permissions
 		{
 			getUserProvisioningManager().createUser(user);
 		}
-		catch (CSTransactionException e)
+		catch (CSTransactionException exception)
 		{
-			logger.debug("Unable to create user: Exception: " + e.getMessage());
-			throw new SMTransactionException(e.getMessage(), e);
+			logger.debug("Unable to create user "+user.getEmailId());
+			throw new SMTransactionException(exception.getMessage(), exception);
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to create user: Exception: " + e);
+			logger.debug("Unable to create user:"+user.getEmailId(), exception);
 		}
 	}
 
 	/**
 	 * This method returns the User object from the database for the passed
 	 * User's Login Name. If no User is found then null is returned
-	 * 
+	 *
 	 * @param loginName
 	 *            Login name of the user
 	 * @return @throws
@@ -378,10 +378,10 @@ public class SecurityManager implements Permissions
 		{
 			return getAuthorizationManager().getUser(loginName);
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get user: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get user: "+loginName,exception);
+			throw new SMException("Unable to get user: "+loginName, exception);
 		}
 	}
 
@@ -392,35 +392,33 @@ public class SecurityManager implements Permissions
 	 */
 	public Long[] getAllAdministrators() throws SMException
 	{
+		Long[] userId;
 		try
 		{
 			Group group = new Group();
 			group.setGroupName(ADMINISTRATOR_GROUP);
 			GroupSearchCriteria groupSearchCriteria = new GroupSearchCriteria(group);
 			List list = getObjects(groupSearchCriteria);
-			logger.debug("Group Size: " + list.size());
 			group = (Group) list.get(0);
-			logger.debug("Group : " + group.getGroupName());
-			Set users = group.getUsers();
-			logger.debug("Users : " + users);
-			Long[] userId = new Long[users.size()];
-			Iterator it = users.iterator();
+			Set<User> users = group.getUsers();
+			userId = new Long[users.size()];
+			Iterator<User> iterator = users.iterator();
 			for (int i = 0; i < users.size(); i++)
 			{
-				userId[i] = ((User) it.next()).getUserId();
+				userId[i] = ((User) iterator.next()).getUserId();
 			}
-			return userId;
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get users: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get users: Exception: " + exception.getMessage());
+			throw new SMException(exception.getMessage(), exception);
 		}
+		return userId;
 	}
 
 	/**
 	 * This method checks whether a user exists in the database or not
-	 * 
+	 *
 	 * @param loginName
 	 *            Login name of the user
 	 * @return TRUE is returned if a user exists else FALSE is returned
@@ -436,10 +434,10 @@ public class SecurityManager implements Permissions
 				userExists = false;
 			}
 		}
-		catch (SMException e)
+		catch (SMException exception)
 		{
-			logger.debug("Unable to get user: Exception: " + e.getMessage());
-			throw e;
+			logger.debug("Unable to get user :"+loginName);
+			throw exception;
 		}
 		return userExists;
 	}
@@ -457,8 +455,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException e)
 		{
-			logger
-					.debug("Unable to obtain Authorization Manager: Exception: " + e.getMessage());
+			logger.debug("Unable to obtain Authorization Manager: Exception: " + e.getMessage());
 			throw new SMException("Failed to find this user with userId:" + userId, e);
 		}
 	}
@@ -472,7 +469,7 @@ public class SecurityManager implements Permissions
 	 */
 	public Vector getRoles() throws SMException
 	{
-		Vector roles = new Vector();
+		Vector<Role> roles = new Vector();
 		UserProvisioningManager userProvisioningManager = null;
 		try
 		{
@@ -489,10 +486,10 @@ public class SecurityManager implements Permissions
 					.get(Constants.PUBLIC_ROLE)));
 
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get roles: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get roles: Exception: ",exception);
+			throw new SMException(exception.getMessage(), exception);
 		}
 		return roles;
 	}
@@ -500,22 +497,18 @@ public class SecurityManager implements Permissions
 	/**
 	 * Assigns a Role to a User
 	 * 
-	 * @param userName -
-	 *            the User Name to to whom the Role will be assigned
-	 * @param roleID -
-	 *            The id of the Role which is to be assigned to the user
+	 * @param userName - the User Name to to whom the Role will be assigned
+	 * @param roleID -	The id of the Role which is to be assigned to the user
 	 * @throws SMException
 	 */
 	public void assignRoleToUser(String userID, String roleID) throws SMException
 	{
-		logger.debug("UserName: " + userID + " Role ID:" + roleID);
 		UserProvisioningManager userProvisioningManager = null;
 		User user;
 		String groupId;
 		try
 		{
 			userProvisioningManager = getUserProvisioningManager();
-			//user = userProvisioningManager.getUser(userName);
 			user = userProvisioningManager.getUserById(userID);
 
 			//Remove user from any other role if he is assigned some
@@ -532,50 +525,58 @@ public class SecurityManager implements Permissions
 			groupId = getGroupIdForRole(roleID);
 			if (groupId == null)
 			{
-				logger.debug(" User assigned no role");
+				logger.info(" User assigned no role");
 			}
 			else
 			{
 				assignAdditionalGroupsToUser(String.valueOf(user.getUserId()),
 						new String[]{groupId});
-				logger.debug(" User assigned role:" + groupId);
+				logger.info(" User assigned role:" + groupId);
 			}
 
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("UNABLE TO ASSIGN ROLE TO USER: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("UNABLE TO ASSIGN ROLE TO USER: Exception: " + exception.getMessage());
+			throw new SMException(exception.getMessage(), exception);
 		}
 	}
 
 	private String getGroupIdForRole(String roleID)
 	{
+		String roleName=null;
+		String roleId=null;
+		String roleGroupId=null;
 		if (roleID.equals(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)))
 		{
-			logger.debug(" role corresponds to Administrator group");
-			return rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID);
+			roleName=Constants.ADMINISTRATOR_ROLE;
+			roleId=Constants.ADMINISTRATOR_GROUP_ID;
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)))
 		{
-			logger.debug(" role corresponds to Supervisor group");
-			return rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID);
+			roleName=Constants.SUPERVISOR_ROLE;
+			roleId=Constants.SUPERVISOR_GROUP_ID;
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)))
 		{
-			logger.debug(" role corresponds to Technician group");
-			return rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID);
+			roleName=Constants.TECHNICIAN_ROLE;
+			roleId=Constants.TECHNICIAN_GROUP_ID;
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.PUBLIC_ROLE)))
 		{
-			logger.debug(" role corresponds to public group");
-			return rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID);
+			roleName=Constants.PUBLIC_ROLE;
+			roleId=Constants.PUBLIC_GROUP_ID;
 		}
 		else
 		{
 			logger.debug("role corresponds to no group");
-			return null;
 		}
+		if(roleId!=null)
+		{
+			roleGroupId=rolegroupNamevsId.get(roleId);
+			logger.info("role corresponds to "+roleName);
+		}
+		return roleGroupId;
 	}
 
 	public Role getUserRole(long userID) throws SMException
