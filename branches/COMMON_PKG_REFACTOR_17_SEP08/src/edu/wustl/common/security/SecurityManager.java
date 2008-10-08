@@ -9,6 +9,7 @@
 
 package edu.wustl.common.security;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -104,6 +105,23 @@ public class SecurityManager implements Permissions
 
 	private static String securityDataPrefix = CLASS_NAME;
 
+	private static Properties SECURITY_MANAGER_PROP;
+
+	static{
+		InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
+				Constants.SECURITY_MANAGER_PROP_FILE);
+		SECURITY_MANAGER_PROP = new Properties();
+		try
+		{
+			SECURITY_MANAGER_PROP.load(inputStream);
+			inputStream.close();
+		}
+		catch (IOException exception)
+		{
+			logger.warn("Not able to initialize Security Manager Properties.", exception);
+		}
+	}
+
 	/**
 	 * @param class1
 	 */
@@ -125,28 +143,30 @@ public class SecurityManager implements Permissions
 	public static final SecurityManager getInstance(Class class1)
 	{
 		Class className = null;
+		SecurityManager securityManager=null;
 		try
 		{
-			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
-					Constants.SECURITY_MANAGER_PROP_FILE);
-			Properties p = new Properties();
-			p.load(inputStream);
-			inputStream.close();
-			String securityManagerClass = p.getProperty(Constants.SECURITY_MANAGER_CLASSNAME);
+			String securityManagerClass=SECURITY_MANAGER_PROP.getProperty(Constants.SECURITY_MANAGER_CLASSNAME);
 			if (securityManagerClass != null)
+			{
 				className = Class.forName(securityManagerClass);
+			}
 			if (className != null)
 			{
 				Constructor[] cons = className.getConstructors();
-				return (SecurityManager) cons[0].newInstance(class1);
+				securityManager= (SecurityManager) cons[0].newInstance(class1);
 			}
 		}
-		catch (Exception e)
+		catch (Exception exception)
 		{
-			e.printStackTrace();
+			logger.warn("Error in creating SecurityManager instance",exception);
 		}
 
-		return new SecurityManager(class1);
+		if(null==securityManager)
+		{
+			securityManager= new SecurityManager(class1);
+		}
+		return securityManager;
 	}
 
 	public static String getApplicationContextName()
@@ -154,17 +174,12 @@ public class SecurityManager implements Permissions
 		String applicationName = "";
 		try
 		{
-			InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
-					Constants.SECURITY_MANAGER_PROP_FILE);
-			Properties p = new Properties();
-			p.load(inputStream);
-			inputStream.close();
-			applicationName = p.getProperty(Constants.APPLN_CONTEXT_NAME);
+			applicationName = SECURITY_MANAGER_PROP.getProperty(Constants.APPLN_CONTEXT_NAME);
 			APPLICATION_CONTEXT_NAME = applicationName;
 		}
-		catch (Exception e)
+		catch (Exception exception)
 		{
-			e.printStackTrace();
+			logger.warn("Error in getting application context name",exception);
 		}
 
 		return applicationName;
@@ -179,21 +194,21 @@ public class SecurityManager implements Permissions
 	*/
 	private String getGroupID(String groupName) throws CSException, SMException
 	{
+		List list;
+		String groupId=null;
 		Group group = new Group();
 		group.setGroupName(groupName);
-		UserProvisioningManager userProvisioningManager;
+		UserProvisioningManager userProvisioningManager=getUserProvisioningManager();
 		SearchCriteria searchCriteria = new GroupSearchCriteria(group);
-		List list;
-		userProvisioningManager = getUserProvisioningManager();
 		group.setApplication(userProvisioningManager.getApplication(APPLICATION_CONTEXT_NAME));
 		list = getObjects(searchCriteria);
-		if (list.isEmpty() == false)
+		if (!list.isEmpty())
 		{
 			group = (Group) list.get(0);
-			return group.getGroupId().toString();
+			groupId= group.getGroupId().toString();
 		}
 
-		return null;
+		return groupId;
 	}
 
 	/**
@@ -203,34 +218,32 @@ public class SecurityManager implements Permissions
 	 */
 	private String getRoleID(String roleName) throws CSException, SMException
 	{
+		List list;
+		String roleId=null;
 		Role role = new Role();
 		role.setName(roleName);
-		UserProvisioningManager userProvisioningManager;
 		SearchCriteria searchCriteria = new RoleSearchCriteria(role);
-		List list;
-		userProvisioningManager = getUserProvisioningManager();
+		UserProvisioningManager userProvisioningManager= getUserProvisioningManager();
 		role.setApplication(userProvisioningManager.getApplication(APPLICATION_CONTEXT_NAME));
 		list = getObjects(searchCriteria);
-		if (list.isEmpty() == false)
+		if (!list.isEmpty())
 		{
 			role = (Role) list.get(0);
-			return role.getId().toString();
+			roleId=role.getId().toString();
 		}
-		return null;
+		return roleId;
 	}
 
 	public void initializeConstants()
 	{
 		try
 		{
-
 			rolegroupNamevsId.put(Constants.ADMINISTRATOR_ROLE,
 					getRoleID(Constants.ROLE_ADMINISTRATOR));
 			rolegroupNamevsId.put(Constants.PUBLIC_ROLE, getRoleID(Constants.SCIENTIST));
 			rolegroupNamevsId.put(Constants.TECHNICIAN_ROLE, getRoleID(Constants.TECHNICIAN));
 			rolegroupNamevsId.put(Constants.SUPERVISOR_ROLE, getRoleID(Constants.SUPERVISOR));
-			rolegroupNamevsId
-					.put(Constants.ADMINISTRATOR_GROUP_ID, getGroupID(ADMINISTRATOR_GROUP));
+			rolegroupNamevsId.put(Constants.ADMINISTRATOR_GROUP_ID, getGroupID(ADMINISTRATOR_GROUP));
 			rolegroupNamevsId.put(Constants.PUBLIC_GROUP_ID, getGroupID(PUBLIC_GROUP));
 			rolegroupNamevsId.put(Constants.TECHNICIAN_GROUP_ID, getGroupID(TECHNICIAN_GROUP));
 			rolegroupNamevsId.put(Constants.SUPERVISOR_GROUP_ID, getGroupID(SUPERVISOR_GROUP));
@@ -240,13 +253,13 @@ public class SecurityManager implements Permissions
 					getRoleID(SUPER_ADMINISTRATOR_GROUP));
 			initialized = true;
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			e.printStackTrace();
+			logger.warn("Error in initializing rolegroupNamevsId map",exception);
 		}
-		catch (SMException e)
+		catch (SMException exception)
 		{
-			e.printStackTrace();
+			logger.warn("Error in initializing rolegroupNamevsId map",exception);
 		}
 	}
 
@@ -254,66 +267,49 @@ public class SecurityManager implements Permissions
 	 * Returns the AuthenticationManager for the caTISSUE Core. This method
 	 * follows the singleton pattern so that only one AuthenticationManager is
 	 * created for the caTISSUE Core.
-	 * 
-	 * @return @throws
-	 *         CSException
+	 *
+	 * @return
+	 * @throws	CSException
 	 */
 	protected AuthenticationManager getAuthenticationManager() throws CSException
 	{
 		if (authenticationManager == null)
 		{
-			synchronized (requestingClass)
-			{
-				if (authenticationManager == null)
-				{
-					authenticationManager = SecurityServiceProvider
-							.getAuthenticationManager(APPLICATION_CONTEXT_NAME);
-				}
-			}
+			authenticationManager = SecurityServiceProvider
+					.getAuthenticationManager(APPLICATION_CONTEXT_NAME);
 		}
-
 		return authenticationManager;
-
 	}
 
 	/**
 	 * Returns the Authorization Manager for the caTISSUE Core. This method
 	 * follows the singleton pattern so that only one AuthorizationManager is
 	 * created.
-	 * 
-	 * @return @throws
-	 *         CSException
+	 *
+	 * @return
+	 * @throws	CSException
 	 */
 	protected AuthorizationManager getAuthorizationManager() throws CSException
 	{
 
 		if (authorizationManager == null)
 		{
-			synchronized (requestingClass)
-			{
-				if (authorizationManager == null)
-				{
-					authorizationManager = SecurityServiceProvider
-							.getAuthorizationManager(APPLICATION_CONTEXT_NAME);
-				}
-			}
+			authorizationManager = SecurityServiceProvider
+					.getAuthorizationManager(APPLICATION_CONTEXT_NAME);
 		}
 
 		return authorizationManager;
-
 	}
 
 	/**
 	 * Returns the UserProvisioningManager singleton object.
-	 * 
-	 * @return @throws
-	 *         CSException
+	 *
+	 * @return
+	 * @throws	CSException
 	 */
 	public UserProvisioningManager getUserProvisioningManager() throws CSException
 	{
-		UserProvisioningManager userProvisioningManager = (UserProvisioningManager) getAuthorizationManager();
-
-		return userProvisioningManager;
+		return (UserProvisioningManager) getAuthorizationManager();
 	}
 
 	/**
@@ -321,23 +317,23 @@ public class SecurityManager implements Permissions
 	 * @param requestingClass
 	 * @param loginName login name
 	 * @param password password
-	 * @return @throws CSException
+	 * @return
+	 * @throws CSException
 	 */
 	public boolean login(String loginName, String password) throws SMException
 	{
 		boolean loginSuccess = false;
 		try
 		{
-			logger.debug("login name: " + loginName + " passowrd: " + password);
 			AuthenticationManager authMngr = getAuthenticationManager();
 			loginSuccess = authMngr.login(loginName, password);
 		}
-		catch (CSException ex)
+		catch (CSException exception)
 		{
-			logger.debug("Authentication|" + requestingClass + "|" + loginName
-					+ "|login|Success| Authentication is not successful for user " + loginName
-					+ "|" + ex.getMessage());
-			throw new SMException(ex.getMessage(), ex);
+			StringBuffer mesg=new StringBuffer("Authentication fails for user")
+				.append(loginName).append("requestingClass:").append(requestingClass);
+			logger.debug(mesg.toString());
+			throw new SMException(mesg.toString(), exception);
 		}
 		return loginSuccess;
 	}
