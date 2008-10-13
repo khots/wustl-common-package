@@ -990,7 +990,6 @@ public class SecurityManager implements Permissions
 			throws SMException
 	{
 		Set protectionGroups;
-		Iterator it;
 		ProtectionGroup protectionGroup;
 		ProtectionElement protectionElement;
 		String name = null;
@@ -1001,24 +1000,24 @@ public class SecurityManager implements Permissions
 			protectionElement = authManager.getProtectionElement(protectionElementName);
 			protectionGroups = authManager.getProtectionGroups(protectionElement
 					.getProtectionElementId().toString());
-			it = protectionGroups.iterator();
+			Iterator<ProtectionGroup> it = protectionGroups.iterator();
 			while (it.hasNext())
 			{
 				protectionGroup = (ProtectionGroup) it.next();
 				name = protectionGroup.getProtectionGroupName();
 				if (name.indexOf(nameConsistingOf) != -1)
 				{
-					logger.debug("protection group by name " + nameConsistingOf
-							+ " for Protection Element " + protectionElementName + " is " + name);
-					return name;
+					break;
 				}
 			}
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get protection group by name " + nameConsistingOf
-					+ " for Protection Element " + protectionElementName + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			String mess= new StringBuffer("Unable to get protection group by name")
+								.append(nameConsistingOf).append(" for Protection Element ")
+								.append(protectionElementName).toString();
+			logger.debug(mess, exception);
+			throw new SMException(mess,exception);
 		}
 		return name;
 
@@ -1026,12 +1025,11 @@ public class SecurityManager implements Permissions
 
 	/**
 	 * This method returns name of the Protection groupwhich consists of obj as
-	 * Protection Element and whose name consists of string nameConsistingOf
+	 * Protection Element and whose name consists of string nameConsistingOf.
 	 * 
 	 * @param obj
 	 * @param nameConsistingOf
-	 * @return @throws
-	 *         SMException
+	 * @return @throws SMException
 	 */
 	public String[] getProtectionGroupByName(AbstractDomainObject obj) throws SMException
 	{
@@ -1058,11 +1056,11 @@ public class SecurityManager implements Permissions
 
 			}
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get protection group by name " + " for Protection Element "
-					+ protectionElementName + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			String mess="Unable to get protection group for Protection Element "+ protectionElementName;
+			logger.debug(mess,exception);
+			throw new SMException(mess, exception);
 		}
 		return names;
 
@@ -1070,10 +1068,9 @@ public class SecurityManager implements Permissions
 
 	/**
 	 * Returns name value beans corresponding to all privileges that can be
-	 * assigned for Assign Privileges Page
+	 * assigned for Assign Privileges Page.
 	 * 
-	 * @param roleName
-	 *            role name of user logged in
+	 * @param roleName role name of user logged in
 	 * @return
 	 */
 	public Vector getPrivilegesForAssignPrivilege(String roleName)
@@ -1103,15 +1100,12 @@ public class SecurityManager implements Permissions
 	 *         SMException thrown if any error occurs while retreiving
 	 *         ProtectionElementPrivilegeContextForUser
 	 */
-	private Set getObjectsForAssignPrivilege(Collection privilegeMap, String objectType,
+	private Set<NameValueBean> getObjectsForAssignPrivilege(Collection privilegeMap, String objectType,
 			String privilegeName) throws SMException
 	{
-		logger.debug(" objectType:" + objectType + " privilegeName:" + privilegeName);
-		Set objects = new HashSet();
+		Set<NameValueBean> objects = new HashSet<NameValueBean>();
 		NameValueBean nameValueBean;
-
 		ObjectPrivilegeMap objectPrivilegeMap;
-
 		Collection privileges;
 		Iterator iterator;
 		String objectId;
@@ -1124,26 +1118,19 @@ public class SecurityManager implements Permissions
 			{
 				objectPrivilegeMap = (ObjectPrivilegeMap) iterator.next();
 				objectId = objectPrivilegeMap.getProtectionElement().getObjectId();
-				logger.debug("PE Name .................."
-						+ objectPrivilegeMap.getProtectionElement().getProtectionElementName());
-				logger.debug("PE objectId : " + objectId);
 				if (objectId.indexOf(objectType + "_") != -1)
 				{
 					privileges = objectPrivilegeMap.getPrivileges();
-					logger.debug("Privileges:" + privileges.size());
 					Iterator it = privileges.iterator();
+					String name;
 					while (it.hasNext())
 					{
 						privilege = (Privilege) it.next();
-						logger.debug(" Privilege:" + privilege.getName());
-
 						if (privilege.getName().equals("ASSIGN_" + privilegeName))
 						{
-							nameValueBean = new NameValueBean(objectId.substring(objectId
-									.lastIndexOf("_") + 1), objectId.substring(objectId
-									.lastIndexOf("_") + 1));
+							name=objectId.substring(objectId.lastIndexOf('_') + 1);
+							nameValueBean = new NameValueBean(name,name);
 							objects.add(nameValueBean);
-							logger.debug(nameValueBean);
 							break;
 						}
 					}
@@ -1157,81 +1144,85 @@ public class SecurityManager implements Permissions
 	/**
 	 * This method returns name value beans of the object ids for types
 	 * identified by objectTypes on which user can assign privileges identified
-	 * by privilegeNames User needs to have ASSIGN_ < <privilegeName>>privilege
+	 * by privilegeNames User needs to have ASSIGN_ {privilegeName}privilege
 	 * on these objects to assign corresponding privilege on them identified by
-	 * userID has
-	 * 
+	 * userID has.
+	 *
 	 * @param userID
 	 * @param objectTypes
 	 * @param privilegeNames
-	 * @return @throws
-	 *         SMException
+	 * @return @throws SMException
 	 */
-	public Set getObjectsForAssignPrivilege(String userID, String[] objectTypes,
+	public Set<NameValueBean> getObjectsForAssignPrivilege(String userID, String[] objectTypes,
 			String[] privilegeNames) throws SMException
 	{
-		Set objects = new HashSet();
-		AuthorizationManager authorizationManager;
-		Collection privilegeMap;
-		List list;
+		Set<NameValueBean> objects=null;
+
 		try
 		{
-			if (objectTypes == null || privilegeNames == null)
-			{
-				return objects;
-			}
-			authorizationManager = getAuthorizationManager();
-
-			ProtectionElement protectionElement;
-			ProtectionElementSearchCriteria protectionElementSearchCriteria;
 			User user = new User();
 			user = getUserById(userID);
-			if (user == null)
+			if (objectTypes == null || privilegeNames == null ||user == null)
 			{
 				logger.debug(" User not found");
-				return objects;
+				objects = new HashSet<NameValueBean>();
 			}
-			logger.debug("user login name:" + user.getLoginName());
-
-			for (int i = 0; i < objectTypes.length; i++)
+			else
 			{
-				for (int j = 0; j < privilegeNames.length; j++)
-				{
-
-					try
-					{
-						logger.debug("objectType:" + objectTypes[i]);
-						protectionElement = new ProtectionElement();
-						protectionElement.setObjectId(objectTypes[i] + "_*");
-						protectionElementSearchCriteria = new ProtectionElementSearchCriteria(
-								protectionElement);
-						list = getObjects(protectionElementSearchCriteria);
-						privilegeMap = authorizationManager.getPrivilegeMap(user.getLoginName(),
-								list);
-						for (int k = 0; k < list.size(); k++)
-						{
-							protectionElement = (ProtectionElement) list.get(k);
-							logger.debug(protectionElement.getObjectId() + " "
-									+ protectionElement.getAttribute());
-						}
-
-						objects.addAll(getObjectsForAssignPrivilege(privilegeMap, objectTypes[i],
-								privilegeNames[j]));
-					}
-					catch (SMException smex)
-					{
-						logger.debug(" Exception:", smex);
-					}
-				}
+				objects=getAssignedPrivilege(objectTypes, privilegeNames, user);
 			}
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get objects: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get objects: " ,exception);
+			throw new SMException("Unable to get objects: ", exception);
 		}
 		return objects;
 
+	}
+
+	/**
+	 * @param objectTypes
+	 * @param privilegeNames
+	 * @param objects
+	 * @param user
+	 * @throws CSException
+	 */
+	private Set<NameValueBean> getAssignedPrivilege(String[] objectTypes, String[] privilegeNames,
+			User user) throws CSException
+	{
+		Set<NameValueBean> objects = new HashSet<NameValueBean>();
+		Collection privilegeMap;
+		List list;
+		ProtectionElement protectionElement;
+		ProtectionElementSearchCriteria protectionElementSearchCriteria;
+		AuthorizationManager authorizationManager = getAuthorizationManager();
+		for (int i = 0; i < objectTypes.length; i++)
+		{
+			for (int j = 0; j < privilegeNames.length; j++)
+			{
+				try
+				{
+					protectionElement = new ProtectionElement();
+					protectionElement.setObjectId(objectTypes[i] + "_*");
+					protectionElementSearchCriteria=new ProtectionElementSearchCriteria(protectionElement);
+					list = getObjects(protectionElementSearchCriteria);
+					privilegeMap=authorizationManager.getPrivilegeMap(user.getLoginName(),list);
+					for (int k = 0; k < list.size(); k++)
+					{
+						protectionElement = (ProtectionElement) list.get(k);
+					}
+
+					objects.addAll(getObjectsForAssignPrivilege(privilegeMap, objectTypes[i],
+							privilegeNames[j]));
+				}
+				catch (SMException smex)
+				{
+					logger.debug(" Exception in getting object of privileges", smex);
+				}
+			}
+		}
+		return objects;
 	}
 
 	/**
@@ -1259,28 +1250,7 @@ public class SecurityManager implements Permissions
 		List queryObjects;
 		Map columnIdsMap = new HashMap();
 
-		//Aarti: For all objects in objectIdentifiers check permission on the
-		// objects
-		//In case user is not authorized to access an object make
-		//value of all the columns that are dependent on this object ##
-		//		for(int j=0; j< objectIdentifiers.length; j++)
-		//		{
-		//			isAuthorized =
-		// checkPermission(sessionDataBean.getUserName(),objectIdentifiers[j][0],aList.get(Integer.parseInt(objectIdentifiers[j][1])));
-		//			if(!isAuthorized)
-		//			{
-		//				objectColumnIds = (Vector)columnIdsMap.get(objectIdentifiers[j][0]);
-		//				if(objectColumnIds!=null)
-		//				{
-		//					for(int k=0; k<objectColumnIds.size();k++)
-		//					{
-		//						aList.set(((Integer)objectColumnIds.get(k)).intValue()-1,"##");
-		//					}
-		//				}
-		//			}
-		//		}
-
-		for (; keyIterator.hasNext();)
+		while(keyIterator.hasNext())
 		{
 			queryResultObjectData2 = (QueryResultObjectData) queryResultObjectDataMap
 					.get(keyIterator.next());
