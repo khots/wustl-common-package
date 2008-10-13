@@ -1037,7 +1037,6 @@ public class SecurityManager implements Permissions
 		Iterator it;
 		ProtectionGroup protectionGroup;
 		ProtectionElement protectionElement;
-		String name = null;
 		String[] names = null;
 		String protectionElementName = obj.getObjectId();
 		try
@@ -1242,13 +1241,11 @@ public class SecurityManager implements Permissions
 		// boolean that indicates whether user has privilege on identified data
 		boolean hasPrivilegeOnIdentifiedData = false;
 
-		Vector objectColumnIds;
 		Set keySet = queryResultObjectDataMap.keySet();
 		Iterator keyIterator = keySet.iterator();
 		QueryResultObjectData queryResultObjectData2;
 		QueryResultObjectData queryResultObjectData3;
 		List queryObjects;
-		Map columnIdsMap = new HashMap();
 
 		while(keyIterator.hasNext())
 		{
