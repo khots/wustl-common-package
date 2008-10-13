@@ -544,7 +544,7 @@ public class SecurityManager implements Permissions
 		}
 	}
 
-	private String getGroupIdForRole(String roleID)
+	public String getGroupIdForRole(String roleID)
 	{
 		String roleName=null;
 		String roleId=null;

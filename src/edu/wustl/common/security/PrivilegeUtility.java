@@ -48,7 +48,7 @@ public class PrivilegeUtility
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PrivilegeUtility.class);
-
+	private static SecurityManager securityManager = SecurityManager.getInstance(PrivilegeUtility.class);
 	private static AuthorizationManager authorizationManager = null;
 	private Class requestingClass = PrivilegeUtility.class;
 
@@ -345,64 +345,7 @@ public class PrivilegeUtility
 
 	public void assignAdditionalGroupsToUser(String userId, String[] groupIds) throws SMException
 	{
-		if (userId == null || groupIds == null || groupIds.length < 1)
-		{
-			logger.debug(" Null or insufficient Parameters passed");
-			throw new SMException("Null or insufficient Parameters passed");
-		}
-
-		logger.debug(" userId: " + userId + " groupIds:" + groupIds);
-
-		Set consolidatedGroupIds = new HashSet();
-		Set consolidatedGroups;
-		String[] finalUserGroupIds;
-		UserProvisioningManager userProvisioningManager;
-		Group group = new Group();
-
-		try
-		{
-			userProvisioningManager = getUserProvisioningManager();
-
-			consolidatedGroups = userProvisioningManager.getGroups(userId);
-			if (null != consolidatedGroups)
-			{
-				Iterator it = consolidatedGroups.iterator();
-				while (it.hasNext())
-				{
-					group = (Group) it.next();
-					consolidatedGroupIds.add(String.valueOf(group.getGroupId()));
-				}
-			}
-
-			/**
-			 * Consolidating all the Groups
-			 */
-
-			for (int i = 0; i < groupIds.length; i++)
-			{
-				consolidatedGroupIds.add(groupIds[i]);
-			}
-
-			finalUserGroupIds = new String[consolidatedGroupIds.size()];
-			Iterator it = consolidatedGroupIds.iterator();
-
-			for (int i = 0; it.hasNext(); i++)
-			{
-				finalUserGroupIds[i] = (String) it.next();
-				logger.debug("Group user is assigned to: " + finalUserGroupIds[i]);
-			}
-
-			/**
-			 * Setting groups for user and updating it
-			 */
-			userProvisioningManager.assignGroupsToUser(userId, finalUserGroupIds);
-
-		}
-		catch (CSException ex)
-		{
-			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
-			throw new SMException("The Security Service encountered a fatal exception.", ex);
-		}
+		securityManager.assignAdditionalGroupsToUser(userId, groupIds);
 	}
 
 	/**
@@ -417,19 +360,7 @@ public class PrivilegeUtility
 	 */
 	public List getObjects(SearchCriteria searchCriteria) throws SMException, CSException
 	{
-		if (null == searchCriteria)
-		{
-			logger.debug(" Null Parameters passed");
-			throw new SMException("Null Parameters passed");
-		}
-		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-		List list = userProvisioningManager.getObjects(searchCriteria);
-		if (null == list || list.size() <= 0)
-		{
-			logger.debug("Search resulted in no results");
-			throw new SMException("Search resulted in no results");
-		}
-		return list;
+		return securityManager.getObjects(searchCriteria) ;		
 	}
 
 	/**
@@ -518,9 +449,7 @@ public class PrivilegeUtility
 	 */
 	public UserProvisioningManager getUserProvisioningManager() throws CSException
 	{
-		UserProvisioningManager userProvisioningManager = (UserProvisioningManager) getAuthorizationManager();
-
-		return userProvisioningManager;
+		return securityManager.getUserProvisioningManager();
 	}
 
 	/**
@@ -531,20 +460,7 @@ public class PrivilegeUtility
 	 */
 	protected AuthorizationManager getAuthorizationManager() throws CSException
 	{
-		//Creating instance of security manager to initialize and set constants default value
-		SecurityManager securityManager = SecurityManager.getInstance(this.getClass());
-		if (authorizationManager == null)
-		{
-			synchronized (requestingClass)
-			{
-				if (authorizationManager == null)
-				{
-					authorizationManager = SecurityServiceProvider
-							.getAuthorizationManager(SecurityManager.APPLICATION_CONTEXT_NAME);
-				}
-			}
-		}
-		return authorizationManager;
+		return securityManager.getAuthorizationManager();
 	}
 
 	/**
@@ -558,15 +474,7 @@ public class PrivilegeUtility
 	 */
 	public User getUser(String loginName) throws SMException
 	{
-		try
-		{
-			return getAuthorizationManager().getUser(loginName);
-		}
-		catch (CSException e)
-		{
-			logger.debug("Unable to get user: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
-		}
+		return securityManager.getUser(loginName);
 	}
 
 	/**
@@ -580,18 +488,7 @@ public class PrivilegeUtility
 	 */
 	public User getUserById(String userId) throws SMException
 	{
-		logger.debug("user Id: " + userId);
-		try
-		{
-			User user = getUserProvisioningManager().getUserById(userId);
-			logger.debug("User returned: " + user.getLoginName());
-			return user;
-		}
-		catch (CSException e)
-		{
-			logger.debug("Unable to get user by Id: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
-		}
+		return securityManager.getUserById(userId);
 	}
 
 	/**
@@ -902,31 +799,7 @@ public class PrivilegeUtility
 
 	public String getGroupIdForRole(String roleID)
 	{
-		if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)))
-		{
-			logger.debug(" role corresponds to Administrator group");
-			return SecurityManager.rolegroupNamevsId.get(Constants.ADMINISTRATOR_GROUP_ID);
-		}
-		else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)))
-		{
-			logger.debug(" role corresponds to Supervisor group");
-			return SecurityManager.rolegroupNamevsId.get(Constants.SUPERVISOR_GROUP_ID);
-		}
-		else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)))
-		{
-			logger.debug(" role corresponds to Technician group");
-			return SecurityManager.rolegroupNamevsId.get(Constants.TECHNICIAN_GROUP_ID);
-		}
-		else if (roleID.equals(SecurityManager.rolegroupNamevsId.get(Constants.PUBLIC_ROLE)))
-		{
-			logger.debug(" role corresponds to public group");
-			return SecurityManager.rolegroupNamevsId.get(Constants.PUBLIC_GROUP_ID);
-		}
-		else
-		{
-			logger.debug("role corresponds to no group");
-			return null;
-		}
+		return securityManager.getGroupIdForRole(roleID);
 	}
 
 	/**
@@ -1027,7 +900,7 @@ public class PrivilegeUtility
 	 * Getting Appropriate Role, role name is generated as {privilegeName}_ONLY.
 	 * @param privilegeName
 	 * @param utility
-	 * @return
+	 * @return Role
 	 * @throws CSException
 	 * @throws SMException
 	 */
