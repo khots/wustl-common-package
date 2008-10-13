@@ -440,7 +440,7 @@ public class PrivilegeUtility
 	/**
 	 * This method returns the User object from the database for the passed
 	 * User's Login Name. If no User is found then null is returned.
-	 * 
+	 *
 	 * @param loginName
 	 *            Login name of the user
 	 * @return @throws
@@ -476,21 +476,18 @@ public class PrivilegeUtility
 	 */
 	public Role getRole(String roleName) throws CSException, SMException
 	{
-		logger.debug(" roleName:" + roleName);
 		if (roleName == null)
 		{
-			logger.debug("Rolename passed is null");
-			throw new SMException("No role of name null");
+			logger.debug("Role name passed is null");
+			throw new SMException("Role name passed is null");
 		}
 
 		//Search for role by the name roleName
-		RoleSearchCriteria roleSearchCriteria;
-		Role role;
-		role = new Role();
+		Role role = new Role();
 		role.setName(roleName);
 		role.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
-		roleSearchCriteria = new RoleSearchCriteria(role);
-		List list;
+		RoleSearchCriteria roleSearchCriteria= new RoleSearchCriteria(role);
+		List<Role> list;
 		try
 		{
 			list = getObjects(roleSearchCriteria);
@@ -501,16 +498,13 @@ public class PrivilegeUtility
 			throw new SMException("Role not found by name " + roleName, e);
 		}
 		role = (Role) list.get(0);
-		logger.debug(" RoleId of role " + role.getName() + " is " + role.getId());
 		return role;
 	}
 
 	public Set<Privilege> getRolePrivileges(String id) throws CSObjectNotFoundException,
 			CSException
 	{
-
 		return getUserProvisioningManager().getPrivileges(id);
-
 	}
 
 	/**
@@ -526,7 +520,6 @@ public class PrivilegeUtility
 	public ProtectionGroup getProtectionGroup(String protectionGroupName) throws CSException,
 			CSTransactionException, SMException
 	{
-		logger.debug(" protectionGroupName:" + protectionGroupName);
 		if (protectionGroupName == null)
 		{
 			logger.debug("protectionGroupName passed is null");
@@ -540,7 +533,7 @@ public class PrivilegeUtility
 		protectionGroup.setProtectionGroupName(protectionGroupName);
 		protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(protectionGroup);
 		UserProvisioningManager userProvisioningManager = null;
-		List list;
+		List<ProtectionGroup> list;
 		try
 		{
 			userProvisioningManager = getUserProvisioningManager();
@@ -553,9 +546,6 @@ public class PrivilegeUtility
 			list = getObjects(protectionGroupSearchCriteria);
 		}
 		protectionGroup = (ProtectionGroup) list.get(0);
-
-		logger.debug(" ID of ProtectionGroup " + protectionGroup.getProtectionGroupName()
-				+ " is " + protectionGroup.getProtectionGroupId());
 		return protectionGroup;
 	}
 
@@ -573,15 +563,11 @@ public class PrivilegeUtility
 	{
 		try
 		{
-			logger.debug("Protection Group Name:" + protectionGroupName + " objectType:"
-					+ objectType + " protectionElementIds:"
-					+ edu.wustl.common.util.Utility.getArrayString(objectIds));
-
 			if (protectionGroupName == null || objectType == null || objectIds == null)
 			{
 				logger.debug(" One of the parameters is null");
-				throw new SMException(
-						"Could not assign Protection elements to protection group. One or more parameters are null");
+				throw new SMException("Could not assign Protection elements to protection group." +
+						" One or more parameters are null");
 			}
 
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
@@ -589,21 +575,20 @@ public class PrivilegeUtility
 			{
 				try
 				{
-					userProvisioningManager.assignProtectionElement(protectionGroupName, objectType
-							.getName()
-							+ "_" + objectIds[i]);
+					userProvisioningManager.assignProtectionElement
+					(protectionGroupName, objectType.getName()+ "_" + objectIds[i]);
 				}
 				catch (CSTransactionException txex) //thrown when association
-				// already exists
 				{
-					logger.debug("Exception:" + txex.getMessage());
+					logger.debug("Exception:" + txex.getMessage(),txex);
 				}
 			}
 		}
 		catch (CSException csex)
 		{
-			logger.debug("Could not assign Protection elements to protection group", csex);
-			throw new SMException("Could not assign Protection elements to protection group", csex);
+			String mess="Could not assign Protection elements to protection group";
+			logger.debug(mess, csex);
+			throw new SMException(mess, csex);
 		}
 	}
 
@@ -788,31 +773,19 @@ public class PrivilegeUtility
 	public void assignGroupRoleToProtectionGroup(Long groupId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException
 	{
-		logger.debug("userId:" + groupId + " roles:" + roles + " protectionGroup:"
-				+ protectionGroup.getProtectionGroupName());
-
 		if (groupId == null || roles == null || protectionGroup == null)
 		{
-			logger.debug("Could not assign group role to protection group. One or more parameters are null");
-			throw new SMException(
-					"Could not assign group role to protection group. One or more parameters are null");
+			String mess="Could not assign group role to protection group. One or more parameters are null";
+			logger.debug(mess);
+			throw new SMException(mess);
 		}
 		Set protectionGroupRoleContextSet = null;
 		ProtectionGroupRoleContext protectionGroupRoleContext = null;
 		Iterator it;
-		Set aggregatedRoles = new HashSet();		
+		Set aggregatedRoles = new HashSet();
 		try
 		{
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-
-			/**
-			 * Name : Aarti Sharma
-			 * Reviewer: Sachin Lale
-			 * Bug ID: 4418
-			 * Description: CSM API getProtectionGroupRoleContextForGroup throws exception
-			 * CSObjectNotFoundException when called on oracle database thus leading to this problem.
-			 * Check is made for this exception now so that the method works for oracle as well.
-			 */
 			try
 			{
 				protectionGroupRoleContextSet = userProvisioningManager
