@@ -746,12 +746,11 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
-	 * Returns list of the User objects for the passed email address
-	 * 
-	 * @param emailAddress -
-	 *            Email Address for which users need to be searched
-	 * @return @throws
-	 *         SMException if there is any exception while querying the database
+	 * Returns list of the User objects for the passed email address.
+	 *
+	 * @param emailAddress -Email Address for which users need to be searched
+	 * @return List Returns list of the User objects for the passed email address.
+	 * @throws SMException if there is any exception while querying the database
 	 */
 	public List getUsersByEmail(String emailAddress) throws SMException
 	{
@@ -762,10 +761,10 @@ public class SecurityManager implements Permissions
 			SearchCriteria searchCriteria = new UserSearchCriteria(user);
 			return getUserProvisioningManager().getObjects(searchCriteria);
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get users by emailAddress: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get users by emailAddress for email:"+emailAddress,exception);
+			throw new SMException(exception.getMessage(), exception);
 		}
 	}
 
@@ -781,15 +780,15 @@ public class SecurityManager implements Permissions
 			SearchCriteria searchCriteria = new UserSearchCriteria(user);
 			return getUserProvisioningManager().getObjects(searchCriteria);
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get all users: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get all users: Exception: " + exception.getMessage());
+			throw new SMException(exception.getMessage(), exception);
 		}
 	}
 
 	/**
-	 * Returns list of objects corresponding to the searchCriteria passed
+	 * Returns list of objects corresponding to the searchCriteria passed.
 	 * 
 	 * @param searchCriteria
 	 * @return List of resultant objects
@@ -802,23 +801,20 @@ public class SecurityManager implements Permissions
 	{
 		if (null == searchCriteria)
 		{
-			logger.debug(" Null Parameters passed");
+			logger.debug("searchCriteria is null");
 			throw new SMException("Null Parameters passed");
 		}
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 		List list = userProvisioningManager.getObjects(searchCriteria);
 		if (null == list || list.size() <= 0)
 		{
-			// logger.debug("Search resulted in no results");
-			// throw new SMException("Search resulted in no results");
+			logger.warn("Search resulted in no results");
 		}
 		return list;
 	}
 
 	public void assignUserToGroup(String userGroupname, String userId) throws SMException
 	{
-		logger.debug(" userId: " + userId + " userGroupname:" + userGroupname);
-
 		if (userId == null || userGroupname == null)
 		{
 			logger.debug(" Null or insufficient Parameters passed");
@@ -827,31 +823,26 @@ public class SecurityManager implements Permissions
 
 		try
 		{
-			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-
 			Group group = getUserGroup(userGroupname);
-			if (group != null)
-			{
-				String[] groupIds = {group.getGroupId().toString()};
-
-				assignAdditionalGroupsToUser(userId, groupIds);
-			}
-			else
+			if (group == null)
 			{
 				logger.debug("No user group with name " + userGroupname + " is present");
 			}
+			else
+			{
+				String[] groupIds = {group.getGroupId().toString()};
+				assignAdditionalGroupsToUser(userId, groupIds);
+			}
 		}
-		catch (CSException ex)
+		catch (CSException exception)
 		{
-			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
-			throw new SMException("The Security Service encountered a fatal exception.", ex);
+			logger.fatal("The Security Service encountered a fatal exception.", exception);
+			throw new SMException("The Security Service encountered a fatal exception.", exception);
 		}
 	}
 
 	public void removeUserFromGroup(String userGroupname, String userId) throws SMException
 	{
-		logger.debug(" userId: " + userId + " userGroupname:" + userGroupname);
-
 		if (userId == null || userGroupname == null)
 		{
 			logger.debug(" Null or insufficient Parameters passed");
@@ -861,9 +852,7 @@ public class SecurityManager implements Permissions
 		try
 		{
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-
 			Group group = getUserGroup(userGroupname);
-
 			if (group != null)
 			{
 				userProvisioningManager.removeUserFromGroup(group.getGroupId().toString(), userId);
@@ -1594,7 +1583,7 @@ public class SecurityManager implements Permissions
 		Iterator keyIterator = keySet.iterator();
 		QueryResultObjectData queryResultObjectData2;
 
-		for (; keyIterator.hasNext();)
+		while(keyIterator.hasNext())
 		{
 
 			queryResultObjectData2 = (QueryResultObjectData) queryResultObjectDataMap
@@ -1607,13 +1596,10 @@ public class SecurityManager implements Permissions
 						queryResultObjectData2.getAliasName(), aList.get(queryResultObjectData2
 								.getIdentifierColumnId()), Permissions.IDENTIFIED_DATA_ACCESS);
 				//if user does not have privilege on even a single identified
-				// data in row
-				//user does not have privilege on all the identified data in
-				// that row
+				// data in row,user does not have privilege on all the identified data in that row
 				if (!hasPrivilegeOnIdentifiedData)
 				{
 					hasPrivilegeOnIdentifiedData = false;
-					return hasPrivilegeOnIdentifiedData;
 				}
 			}
 		}
@@ -1623,23 +1609,17 @@ public class SecurityManager implements Permissions
 
 	/**
 	 * Checks whether an object type has any identified data associated with
-	 * it or not
+	 * it or not.
 	 * @param aliasName
 	 * @return
 	 */
 	private boolean hasAssociatedIdentifiedData(String aliasName)
 	{
 		boolean hasIdentifiedData = false;
-		String dataElementTableName;
 		Vector identifiedData = new Vector();
-		logger.debug(this);
-		logger.debug(aliasName);
-
 		identifiedData = (Vector) AbstractClient.identifiedDataMap.get(aliasName);
-		logger.debug("Table:" + aliasName + " Identified Data:" + identifiedData);
 		if (identifiedData != null)
 		{
-			logger.debug(" identifiedData not null..." + identifiedData);
 			hasIdentifiedData = true;
 		}
 		return hasIdentifiedData;
@@ -1656,12 +1636,12 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
+	 * Description: This method checks user's privilege on identified data.
 	 * Name : Aarti Sharma
 	 * Reviewer: Sachin Lale
 	 * Bug ID: 4111
 	 * Patch ID: 4111_2
 	 * See also: 4111_1
-	 * Description: This method checks user's privilege on identified data
 	 * @param userId User's Identifier
 	 * @return true if user has privilege on identified data else false
 	 * @throws SMException
@@ -1676,8 +1656,8 @@ public class SecurityManager implements Permissions
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 
 			//Get privileges the user has based on his role
-			Set privileges = userProvisioningManager.getPrivileges(String.valueOf(role.getId()));
-			Iterator privIterator = privileges.iterator();
+			Set<Privilege> privileges = userProvisioningManager.getPrivileges(String.valueOf(role.getId()));
+			Iterator<Privilege> privIterator = privileges.iterator();
 			Privilege privilege;
 
 			// If user has Identified data access set hasIdentifiedDataAccess true
@@ -1691,27 +1671,12 @@ public class SecurityManager implements Permissions
 				}
 			}
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Exception in hasIdentifiedDataAccess method",exception);
+			throw new SMException(exception.getMessage(), exception);
 		}
 		return hasIdentifiedDataAccess;
 
 	}
-
-	//	public static void main(String[] args)
-	//	{		
-	//	try
-	//	{
-	//	boolean isAuthorized = getAuthorizationManager().checkPermission(
-	//	"admin@admin.com", "ParticipantMedicalIdentifier" + "_" + "1",
-	//	"READ");
-	//	}
-	//	catch (CSException e)
-	//	{
-	//	// TODO Auto-generated catch block
-	//	e.printStackTrace();
-	//	}
-	//	}
-
 }
