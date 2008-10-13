@@ -35,6 +35,7 @@ import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.AuthenticationManager;
 import gov.nih.nci.security.AuthorizationManager;
@@ -53,6 +54,7 @@ import gov.nih.nci.security.dao.RoleSearchCriteria;
 import gov.nih.nci.security.dao.SearchCriteria;
 import gov.nih.nci.security.dao.UserSearchCriteria;
 import gov.nih.nci.security.exceptions.CSException;
+import gov.nih.nci.security.exceptions.CSObjectNotFoundException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
 
 /**
@@ -581,55 +583,67 @@ public class SecurityManager implements Permissions
 
 	public Role getUserRole(long userID) throws SMException
 	{
-		Set groups;
+		Set<Group> groups;
 		UserProvisioningManager userProvisioningManager = null;
-		Iterator it;
-		Group group;
 		Role role = null;
 		try
 		{
 			userProvisioningManager = getUserProvisioningManager();
 			groups = userProvisioningManager.getGroups(String.valueOf(userID));
-			it = groups.iterator();
-			while (it.hasNext())
+			role = getRole(groups, userProvisioningManager, role);
+		}
+		catch (CSException exception)
+		{
+			logger.debug("Unable to get roles: Exception: " + exception.getMessage(),exception);
+			throw new SMException(exception.getMessage(), exception);
+		}
+		return role;
+	}
+
+	/**
+	 * @param groups
+	 * @param userProvisioningManager
+	 * @param role
+	 * @return
+	 * @throws CSObjectNotFoundException
+	 */
+	private Role getRole(Set groups, UserProvisioningManager userProvisioningManager, Role role)
+			throws CSObjectNotFoundException
+	{
+		Group group;
+		Iterator<Group> it = groups.iterator();
+		while (it.hasNext())
+		{
+			group = (Group) it.next();
+			if (group.getApplication().getApplicationName().equals(APPLICATION_CONTEXT_NAME))
 			{
-				group = (Group) it.next();
-				if (group.getApplication().getApplicationName().equals(APPLICATION_CONTEXT_NAME))
+				if (group.getGroupName().equals(ADMINISTRATOR_GROUP))
 				{
-					if (group.getGroupName().equals(ADMINISTRATOR_GROUP))
-					{
-						role = userProvisioningManager.getRoleById(rolegroupNamevsId
-								.get(Constants.ADMINISTRATOR_ROLE));
-						return role;
-					}
-					else if (group.getGroupName().equals(SUPERVISOR_GROUP))
-					{
-						role = userProvisioningManager.getRoleById(rolegroupNamevsId
-								.get(Constants.SUPERVISOR_ROLE));
-						return role;
-					}
-					else if (group.getGroupName().equals(TECHNICIAN_GROUP))
-					{
-						role = userProvisioningManager.getRoleById(rolegroupNamevsId
-								.get(Constants.TECHNICIAN_ROLE));
-						return role;
-					}
-					else if (group.getGroupName().equals(PUBLIC_GROUP))
-					{
-						role = userProvisioningManager.getRoleById(rolegroupNamevsId
-								.get(Constants.PUBLIC_ROLE));
-						return role;
-					}
+					role = userProvisioningManager.getRoleById(rolegroupNamevsId
+							.get(Constants.ADMINISTRATOR_ROLE));
+					break;
+				}
+				else if (group.getGroupName().equals(SUPERVISOR_GROUP))
+				{
+					role = userProvisioningManager.getRoleById(rolegroupNamevsId
+							.get(Constants.SUPERVISOR_ROLE));
+					break;
+				}
+				else if (group.getGroupName().equals(TECHNICIAN_GROUP))
+				{
+					role = userProvisioningManager.getRoleById(rolegroupNamevsId
+							.get(Constants.TECHNICIAN_ROLE));
+					break;
+				}
+				else if (group.getGroupName().equals(PUBLIC_GROUP))
+				{
+					role = userProvisioningManager.getRoleById(rolegroupNamevsId
+							.get(Constants.PUBLIC_ROLE));
+					break;
 				}
 			}
 		}
-		catch (CSException e)
-		{
-			logger.debug("Unable to get roles: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
-		}
 		return role;
-
 	}
 
 	/**
@@ -645,6 +659,7 @@ public class SecurityManager implements Permissions
 	 */
 	public String getUserGroup(long userID) throws SMException
 	{
+		String role=TextConstants.EMPTY_STRING;
 		Set groups;
 		UserProvisioningManager userProvisioningManager = null;
 		Iterator it;
@@ -661,40 +676,41 @@ public class SecurityManager implements Permissions
 				{
 					if (group.getGroupName().equals(ADMINISTRATOR_GROUP))
 					{
-						return Roles.ADMINISTRATOR;
+						role=Roles.ADMINISTRATOR;
+						break;
 					}
 					else if (group.getGroupName().equals(SUPERVISOR_GROUP))
 					{
-						return Roles.SUPERVISOR;
+						role=Roles.SUPERVISOR;
+						break;
 					}
 					else if (group.getGroupName().equals(TECHNICIAN_GROUP))
 					{
-						return Roles.TECHNICIAN;
+						role=Roles.TECHNICIAN;
+						break;
 					}
 					else if (group.getGroupName().equals(PUBLIC_GROUP))
 					{
-						return Roles.SCIENTIST;
+						role=Roles.SCIENTIST;
+						break;
 					}
 				}
 			}
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get roles: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get roles: Exception: " + exception.getMessage(),exception);
+			throw new SMException(exception.getMessage(), exception);
 		}
-		return "";
+		return role;
 	}
 
 	/**
 	 * Modifies an entry for an existing User in the database based on the data
-	 * passed
-	 * 
-	 * @param user -
-	 *            the User object that needs to be modified in the database
-	 * @throws SMException
-	 *             if there is any exception in modifying the User in the
-	 *             database
+	 * passed.
+	 *
+	 * @param user -the User object that needs to be modified in the database
+	 * @throws SMException if there is any exception in modifying the User in the database
 	 */
 	public void modifyUser(User user) throws SMException
 	{
@@ -702,35 +718,30 @@ public class SecurityManager implements Permissions
 		{
 			getUserProvisioningManager().modifyUser(user);
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to modify user: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to modify user: Exception: " + exception.getMessage(),exception);
+			throw new SMException(exception.getMessage(), exception);
 		}
 	}
 
 	/**
-	 * Returns the User object for the passed User id
-	 * 
-	 * @param userId -
-	 *            The id of the User object which is to be obtained
+	 * Returns the User object for the passed User id.
+	 *
+	 * @param userId -The id of the User object which is to be obtained
 	 * @return The User object from the database for the passed User id
-	 * @throws SMException
-	 *             if the User object is not found for the given id
+	 * @throws SMException -if the User object is not found for the given id
 	 */
 	public User getUserById(String userId) throws SMException
 	{
-		logger.debug("user Id: " + userId);
 		try
 		{
-			User user = getUserProvisioningManager().getUserById(userId);
-			logger.debug("User returned: " + user.getLoginName());
-			return user;
+			return getUserProvisioningManager().getUserById(userId);
 		}
-		catch (CSException e)
+		catch (CSException exception)
 		{
-			logger.debug("Unable to get user by Id: Exception: " + e.getMessage());
-			throw new SMException(e.getMessage(), e);
+			logger.debug("Unable to get user by Id for : "+userId,exception);
+			throw new SMException(exception.getMessage(), exception);
 		}
 	}
 
