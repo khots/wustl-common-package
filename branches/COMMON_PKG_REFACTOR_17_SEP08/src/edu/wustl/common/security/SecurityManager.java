@@ -836,8 +836,9 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.fatal("The Security Service encountered a fatal exception.", exception);
-			throw new SMException("The Security Service encountered a fatal exception.", exception);
+			String mess="The Security Service encountered a fatal exception.";
+			logger.fatal(mess, exception);
+			throw new SMException(mess, exception);
 		}
 	}
 
@@ -864,8 +865,9 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException ex)
 		{
-			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
-			throw new SMException("The Security Service encountered a fatal exception.", ex);
+			String mess="The Security Service encountered a fatal exception.";
+			logger.fatal(mess, ex);
+			throw new SMException(mess, ex);
 		}
 	}
 
@@ -881,39 +883,35 @@ public class SecurityManager implements Permissions
 		group.setGroupName(userGroupname);
 		SearchCriteria searchCriteria = new GroupSearchCriteria(group);
 		List list = getObjects(searchCriteria);
-		if (list.isEmpty() == false)
+		if (list.isEmpty())
 		{
-			logger.debug("list size********************" + list.size());
+			group=null;
+		}
+		else
+		{
 			group = (Group) list.get(0);
-
-			return group;
 		}
 
-		return null;
+		return group;
 	}
 
 	public void assignAdditionalGroupsToUser(String userId, String[] groupIds) throws SMException
 	{
 		if (userId == null || groupIds == null || groupIds.length < 1)
 		{
-			logger.debug(" Null or insufficient Parameters passed");
-			throw new SMException("Null or insufficient Parameters passed");
+			String mesg=" Null or insufficient Parameters passed";
+			logger.debug(mesg);
+			throw new SMException(mesg);
 		}
-
-		logger.debug(" userId: " + userId + " groupIds:" + groupIds);
-
 		Set consolidatedGroupIds = new HashSet();
 		Set consolidatedGroups;
 		String[] finalUserGroupIds;
 		UserProvisioningManager userProvisioningManager;
 		Group group = null;
-
 		try
 		{
 			userProvisioningManager = getUserProvisioningManager();
-
 			consolidatedGroups = userProvisioningManager.getGroups(userId);
-
 			if (null != consolidatedGroups)
 			{
 				Iterator it = consolidatedGroups.iterator();
@@ -923,37 +921,26 @@ public class SecurityManager implements Permissions
 					consolidatedGroupIds.add(String.valueOf(group.getGroupId()));
 				}
 			}
-
-			/**
-			 * Consolidating all the Groups
-			 */
-
+			 //Consolidating all the Groups
 			for (int i = 0; i < groupIds.length; i++)
 			{
 				consolidatedGroupIds.add(groupIds[i]);
 			}
-
 			finalUserGroupIds = new String[consolidatedGroupIds.size()];
 			Iterator it = consolidatedGroupIds.iterator();
-
 			for (int i = 0; it.hasNext(); i++)
 			{
 				finalUserGroupIds[i] = (String) it.next();
-				logger.debug("Group user is assigned to: " + finalUserGroupIds[i]);
 			}
-
-			/**
-			 * Setting groups for user and updating it
-			 */
+			 //Setting groups for user and updating it
 			userProvisioningManager.assignGroupsToUser(userId, finalUserGroupIds);
-
 		}
-		catch (CSException ex)
+		catch (CSException exception)
 		{
-			logger.fatal("The Security Service encountered " + "a fatal exception.", ex);
-			throw new SMException("The Security Service encountered a fatal exception.", ex);
+			String mesg="The Security Service encountered a fatal exception.";
+			logger.fatal(mesg, exception);
+			throw new SMException(mesg, exception);
 		}
-
 	}
 
 	public boolean isAuthorized(String userName, String objectId, String privilegeName)
@@ -961,15 +948,11 @@ public class SecurityManager implements Permissions
 	{
 		try
 		{
-			boolean isAuthorized = getAuthorizationManager().checkPermission(userName, objectId,
-					privilegeName);
-			logger.debug(" User:" + userName + " objectId:" + objectId + " privilegeName:"
-					+ privilegeName + " isAuthorized:" + isAuthorized);
-			return isAuthorized;
+			return getAuthorizationManager().checkPermission(userName, objectId,privilegeName);
 		}
 		catch (CSException e)
 		{
-			logger.debug("Unable to get all users: Exception: " + e.getMessage());
+			logger.debug( e.getMessage(),e);
 			throw new SMException(e.getMessage(), e);
 		}
 	}
@@ -977,66 +960,26 @@ public class SecurityManager implements Permissions
 	public boolean checkPermission(String userName, String objectType, String objectIdentifier,
 			String privilegeName) throws SMException
 	{
+		boolean isAuthorized=true;
 		if (Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
 		{
 			try
 			{
-				logger.debug(" User:" + userName + "objectType:" + objectType + " objectId:"
-						+ objectIdentifier + " privilegeName:" + privilegeName);
-
-				//				String protectionElementName = objectType + "_" + objectIdentifier;
-
-				//				ProtectionElement protectionElement = getAuthorizationManager().getProtectionElement(
-				//				protectionElementName);
-
-				//				List peList = new ArrayList();
-				//				peList.add(protectionElement);
-
-				//				Collection pMap = getAuthorizationManager().getPrivilegeMap(userName, peList);
-				//				Iterator it1 = pMap.iterator();
-				//				while (it1.hasNext())
-				//				{
-				//				ObjectPrivilegeMap map = (ObjectPrivilegeMap) it1.next();
-				//				logger.debug("PE Privileges>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+map.getPrivileges().toString());
-				//				logger.debug("PE Privileges Size>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+map.getPrivileges().size());
-				//				Iterator it2 = map.getPrivileges().iterator();
-				//				while (it2.hasNext())
-				//				{
-				//				Privilege pr = (Privilege)it2.next();
-				//				logger.debug("Privilege ****************************"+pr.getName());
-				//				}
-				//				}
-
-				//				Set protectionGroups = getAuthorizationManager().getProtectionGroups(
-				//				protectionElement.getProtectionElementId().toString());
-				//				Iterator it = protectionGroups.iterator();
-				//				while (it.hasNext()) {
-				//				ProtectionGroup protectionGroup = (ProtectionGroup) it.next();
-				//				String name = protectionGroup.getProtectionGroupName();
-				//				logger.debug("Protection group Name : ############################"+name);
-				//				}
-
-				boolean isAuthorized = getAuthorizationManager().checkPermission(userName,
+				isAuthorized = getAuthorizationManager().checkPermission(userName,
 						objectType + "_" + objectIdentifier, privilegeName);
-
-				logger.debug(" User:" + userName + "objectType:" + objectType + " objectId:"
-						+ objectIdentifier + " privilegeName:" + privilegeName + " isAuthorized:"
-						+ isAuthorized);
-
-				return isAuthorized;
 			}
-			catch (CSException e)
+			catch (CSException exception)
 			{
-				logger.debug("Unable to get all users: Exception: " + e.getMessage());
-				throw new SMException(e.getMessage(), e);
+				logger.debug("Unable tocheck permissionn" ,exception);
+				throw new SMException("Unable to check permission",exception);
 			}
 		}
-		return true;
+		return isAuthorized;
 	}
 
 	/**
 	 * This method returns name of the Protection groupwhich consists of obj as
-	 * Protection Element and whose name consists of string nameConsistingOf
+	 * Protection Element and whose name consists of string nameConsistingOf.
 	 * 
 	 * @param obj
 	 * @param nameConsistingOf
