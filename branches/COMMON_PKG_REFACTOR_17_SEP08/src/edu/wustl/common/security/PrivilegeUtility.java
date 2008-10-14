@@ -603,9 +603,7 @@ public class PrivilegeUtility
 	 */
 	public void assignUserRoleToProtectionGroup(Long userId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException
-	{
-		logger.debug("userId:" + userId + " roles:" + roles + " protectionGroup:"
-				+ protectionGroup);
+	{		
 		if (userId == null || roles == null || protectionGroup == null)
 		{
 			logger.debug("Could not assign user role to protection group. One or more parameters are null");
@@ -630,7 +628,6 @@ public class PrivilegeUtility
 						protectionGroup.getProtectionGroupId()))
 				{
 					aggregatedRoles.addAll(protectionGroupRoleContext.getRoles());
-
 					break;
 				}
 			}
@@ -652,11 +649,11 @@ public class PrivilegeUtility
 	 * @param aggregatedRoles Set of roles 
 	 * @return array of role ids
 	 */
-	private String[] getRoleIds(Set aggregatedRoles)
+	private String[] getRoleIds(Set<Role> aggregatedRoles)
 	{
 		String[] roleIds = null;
 		roleIds = new String[aggregatedRoles.size()];
-		Iterator roleIt = aggregatedRoles.iterator();
+		Iterator<Role> roleIt = aggregatedRoles.iterator();
 
 		for (int i = 0; roleIt.hasNext(); i++)
 		{
@@ -668,13 +665,13 @@ public class PrivilegeUtility
 	/**
 	 * @param roles roles.
 	 * @param assignOperation operation
-	 * @param aggregatedRoles list of roles
+	 * @param aggrRoles list of roles
 	 * @return
 	 */
 	private Set addRemoveRoles(Set roles, boolean assignOperation, Set aggrRoles)
 	{
 		Set aggregatedRoles = aggrRoles;
-		
+
 		// if the operation is assign, add the roles to be assigned.
 		if (assignOperation == Constants.PRIVILEGE_ASSIGN)
 		{
@@ -689,20 +686,20 @@ public class PrivilegeUtility
 		return aggregatedRoles;
 	}
 
-	private Set removeRoles(Set fromSet, Set toSet)
+	private Set removeRoles(Set<Role> fromSet, Set<Role> toSet)
 	{
-		Set differnceRoles = new HashSet();
-		Iterator fromSetiterator = fromSet.iterator();
+		Set<Role> differnceRoles = new HashSet<Role>();
+		Iterator<Role> fromSetiterator = fromSet.iterator();
 		while (fromSetiterator.hasNext())
 		{
 			Role role1 = (Role) fromSetiterator.next();
 
-			Iterator toSetIterator = toSet.iterator();
+			Iterator<Role> toSetIterator = toSet.iterator();
 			while (toSetIterator.hasNext())
 			{
 				Role role2 = (Role) toSetIterator.next();
 
-				if (role1.getId().equals(role2.getId()) == false)
+				if (!role1.getId().equals(role2.getId()))
 				{
 					differnceRoles.add(role1);
 				}
@@ -720,29 +717,23 @@ public class PrivilegeUtility
 	public void deAssignProtectionElements(String protectionGroupName, Class objectType,
 			Long[] objectIds) throws SMException
 	{
+		if (protectionGroupName == null || objectType == null || objectIds == null)
+		{
+			String mess="Cannot disassign protection elements. One of the parameters is null.";
+			logger.debug(mess);
+			throw new SMException(mess);
+		}
 		try
 		{
-			logger.debug("Protection Group Name:" + protectionGroupName
-					+ " protectionElementIds:"
-					+ edu.wustl.common.util.Utility.getArrayString(objectIds));
-			if (protectionGroupName == null || objectType == null || objectIds == null)
-			{
-				logger.debug("Cannot disassign protection elements. One of the parameters is null.");
-				throw new SMException(
-						"Could not deassign Protection elements to protection group. One of the parameters is null.");
-			}
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 			for (int i = 0; i < objectIds.length; i++)
 			{
 				try
 				{
-					logger.debug(" protectionGroupName:" + protectionGroupName + " objectId:"
-							+ objectType.getName() + "_" + objectIds[i]);
 					userProvisioningManager.deAssignProtectionElements(protectionGroupName,
 							objectType.getName() + "_" + objectIds[i]);
 				}
-				catch (CSTransactionException txex) //thrown when no
-				// association exists
+				catch (CSTransactionException txex) //thrown when no association exists
 				{
 					logger.debug("Exception:" + txex.getMessage(), txex);
 				}
@@ -750,9 +741,9 @@ public class PrivilegeUtility
 		}
 		catch (CSException csex)
 		{
-			logger.debug("Could not deassign Protection elements to protection group", csex);
-			throw new SMException("Could not deassign Protection elements to protection group",
-					csex);
+			String mess="Could not deassign Protection elements to protection group";
+			logger.debug(mess, csex);
+			throw new SMException(mess,csex);
 		}
 	}
 
@@ -764,7 +755,7 @@ public class PrivilegeUtility
 	/**
 	 * This method assigns user group identified by groupId, roles identified by
 	 * roles on protectionGroup
-	 * 
+	 *
 	 * @param groupId
 	 * @param roles
 	 * @param protectionGroup
@@ -781,7 +772,7 @@ public class PrivilegeUtility
 		}
 		Set protectionGroupRoleContextSet = null;
 		ProtectionGroupRoleContext protectionGroupRoleContext = null;
-		Iterator it;
+
 		Set aggregatedRoles = new HashSet();
 		try
 		{
@@ -795,24 +786,10 @@ public class PrivilegeUtility
 			{
 				logger.debug("Could not find Role Context for the Group: " + e.toString());
 			}
-
 			if (protectionGroupRoleContext != null)
 			{
-
-				it = protectionGroupRoleContextSet.iterator();
-				while (it.hasNext())
-				{
-					protectionGroupRoleContext = (ProtectionGroupRoleContext) it.next();
-					if (protectionGroupRoleContext.getProtectionGroup().getProtectionGroupId()
-							.equals(protectionGroup.getProtectionGroupId()))
-					{
-						aggregatedRoles.addAll(protectionGroupRoleContext.getRoles());
-
-						break;
-					}
-				}
+				aggregatedRoles=getAggregatedRoles(protectionGroup, protectionGroupRoleContextSet);
 			}
-
 			aggregatedRoles = addRemoveRoles(roles, assignOperation, aggregatedRoles);
 			String[] roleIds = getRoleIds(aggregatedRoles);
 			userProvisioningManager.assignGroupRoleToProtectionGroup(String.valueOf(protectionGroup
@@ -824,6 +801,29 @@ public class PrivilegeUtility
 			logger.debug("Could not assign user role to protection group", csex);
 			throw new SMException("Could not assign user role to protection group", csex);
 		}
+	}
+
+	/**
+	 * @param protectionGroup
+	 * @param protectionGroupRoleContextSet
+	 * @param aggregatedRoles
+	 */
+	private Set getAggregatedRoles(ProtectionGroup protectionGroup,Set protectionGroupRoleContextSet)
+	{
+		ProtectionGroupRoleContext protectionGroupRoleContext;
+		Set aggregatedRoles = new HashSet();
+		Iterator it = protectionGroupRoleContextSet.iterator();
+		while (it.hasNext())
+		{
+			protectionGroupRoleContext = (ProtectionGroupRoleContext) it.next();
+			if (protectionGroupRoleContext.getProtectionGroup().getProtectionGroupId()
+					.equals(protectionGroup.getProtectionGroupId()))
+			{
+				aggregatedRoles.addAll(protectionGroupRoleContext.getRoles());
+				break;
+			}
+		}
+		return aggregatedRoles;
 	}
 
 	/*
