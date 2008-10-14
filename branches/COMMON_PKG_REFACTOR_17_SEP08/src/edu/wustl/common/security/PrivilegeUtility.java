@@ -619,7 +619,7 @@ public class PrivilegeUtility
 	/**
 	 * This method assigns user identified by userId, roles identified by roles
 	 * on protectionGroup
-	 * 
+	 *
 	 * @param userId user id
 	 * @param roles roles
 	 * @param protectionGroup operation
@@ -627,44 +627,58 @@ public class PrivilegeUtility
 	 */
 	public void assignUserRoleToProtectionGroup(Long userId, Set roles,
 			ProtectionGroup protectionGroup, boolean assignOperation) throws SMException
-	{		
+	{
 		if (userId == null || roles == null || protectionGroup == null)
 		{
 			logger.debug("One or more parameters are null");
 			throw new SMException("Could not assign user role to protection group");
 		}
-		Set protectionGroupRoleContextSet;
 		ProtectionGroupRoleContext protectionGroupRoleContext;
-		Set aggregatedRoles = new HashSet();
 		try
 		{
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
-			protectionGroupRoleContextSet = userProvisioningManager
-					.getProtectionGroupRoleContextForUser(String.valueOf(userId));
-
-			//get all the roles that user has on this protection group
-			Iterator iterator = protectionGroupRoleContextSet.iterator();
-			while (iterator.hasNext())
-			{
-				protectionGroupRoleContext = (ProtectionGroupRoleContext) iterator.next();
-				if (protectionGroupRoleContext.getProtectionGroup().getProtectionGroupId().equals(
-						protectionGroup.getProtectionGroupId()))
-				{
-					aggregatedRoles.addAll(protectionGroupRoleContext.getRoles());
-					break;
-				}
-			}
+			Set aggregatedRoles = getAllRolesOnProtGroup(userId, protectionGroup,
+					userProvisioningManager);
 			aggregatedRoles = addRemoveRoles(roles, assignOperation, aggregatedRoles);
 			String[] roleIds = getRoleIds(aggregatedRoles);
 			userProvisioningManager.assignUserRoleToProtectionGroup(String.valueOf(userId),
 					roleIds, String.valueOf(protectionGroup.getProtectionGroupId()));
-
 		}
 		catch (CSException csex)
 		{
 			logger.debug("Could not assign user role to protection group", csex);
 			throw new SMException("Could not assign user role to protection group", csex);
 		}
+	}
+
+	/**
+	 * get all the roles that user has on this protection group.
+	 * @param userId
+	 * @param protectionGroup
+	 * @param userProvisioningManager
+	 * @return
+	 * @throws CSObjectNotFoundException
+	 */
+	private Set getAllRolesOnProtGroup(Long userId, ProtectionGroup protectionGroup,
+			UserProvisioningManager userProvisioningManager) throws CSObjectNotFoundException
+	{
+		ProtectionGroupRoleContext protectionGroupRoleContext;
+		Set aggregatedRoles = new HashSet();
+		Set protectionGroupRoleContextSet;
+		protectionGroupRoleContextSet = userProvisioningManager
+				.getProtectionGroupRoleContextForUser(String.valueOf(userId));
+		Iterator iterator = protectionGroupRoleContextSet.iterator();
+		while (iterator.hasNext())
+		{
+			protectionGroupRoleContext = (ProtectionGroupRoleContext) iterator.next();
+			if (protectionGroupRoleContext.getProtectionGroup().getProtectionGroupId().equals(
+					protectionGroup.getProtectionGroupId()))
+			{
+				aggregatedRoles.addAll(protectionGroupRoleContext.getRoles());
+				break;
+			}
+		}
+		return aggregatedRoles;
 	}
 
 	/**
