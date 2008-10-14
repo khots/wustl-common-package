@@ -17,8 +17,19 @@ public class DefaultLookupResult implements Serializable
 	private static final long serialVersionUID = 1L;
 	
 	Object object;
-	Double probablity;
-	
+	Double weight;
+	MatchingStatusForSSNPMI isSSNPMI;
+
+	public MatchingStatusForSSNPMI getIsSSNPMI() 
+	{
+		return isSSNPMI;
+	}
+
+	public void setIsSSNPMI(MatchingStatusForSSNPMI isSSNPMI)
+	{
+		this.isSSNPMI = isSSNPMI;
+	}
+
 	public Object getObject()
 	{
 		return object;
@@ -29,15 +40,13 @@ public class DefaultLookupResult implements Serializable
 		this.object = object;
 	}
 	
-	public Double getProbablity()
+	public Double getWeight()
 	{
-		return probablity;
+		return weight;
 	}
 	
-	public void setProbablity(Double probablity)
+	public void setWeight(Double weight)
 	{
-		this.probablity = probablity;
+		this.weight = weight;
 	}
-	
-	
 }
