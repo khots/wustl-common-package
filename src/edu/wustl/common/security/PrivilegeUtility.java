@@ -143,123 +143,131 @@ public class PrivilegeUtility
 	private void createUserGroupRoleProtectionGroup(List authorizationData, Set protectionElements)
 			throws CSException, SMException
 	{
-		ProtectionGroup protectionGroup = null;
+		ProtectionGroup protectionGroup = new ProtectionGroup();
 		SecurityDataBean userGroupRoleProtectionGroupBean;
 		RoleSearchCriteria roleSearchCriteria;
 		Role role;
 		String[] roleIds = null;
-		List list;
-		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
-		Group group;
-		GroupSearchCriteria groupSearchCriteria;
-		Set userGroup;
-		User user;
-		Iterator it;
+		Group group = new Group();
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 
 		if (authorizationData != null)
 		{
-			logger.debug(" UserGroupRoleProtectionGroup Size:" + authorizationData.size());
 			for (int i = 0; i < authorizationData.size(); i++)
 			{
-				logger.debug(" authorizationData:" + i + " "
-						+ authorizationData.get(i).toString());
-				group = new Group();
-
 				try
 				{
-					userGroupRoleProtectionGroupBean = (SecurityDataBean) authorizationData.get(i);
-
-					group.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
-					group.setGroupName(userGroupRoleProtectionGroupBean.getGroupName());
-					groupSearchCriteria = new GroupSearchCriteria(group);
-					/**
-					 * If group already exists
-					 */
-					try
-					{
-						list = getObjects(groupSearchCriteria);
-						logger.debug("User group " + group.getGroupName() + " already exists");
-					}
-					/**
-					 * If group does not exist already
-					 */
-					catch (SMException ex)
-					{
-						logger.debug("User group " + group.getGroupName() + " does not exist");
-						//                        group.setUsers(userGroupRoleProtectionGroupBean.getGroup());
-						userProvisioningManager.createGroup(group);
-						logger.debug("User group " + group.getGroupName() + " created");
-						logger.debug("Users added to group : " + group.getUsers());
-						list = getObjects(groupSearchCriteria);
-					}
-					group = (Group) list.get(0);
-
-					/**
-					 * Assigning group to users in userGroup
-					 */
-					userGroup = userGroupRoleProtectionGroupBean.getGroup();
-					for (it = userGroup.iterator(); it.hasNext();)
-					{
-						user = (User) it.next();
-						//                    userProvisioningManager.assignGroupsToUser(String.valueOf(user.getUserId()),new
-						// String[] {String.valueOf(group.getGroupId())});
-						assignAdditionalGroupsToUser(String.valueOf(user.getUserId()),
-								new String[]{String.valueOf(group.getGroupId())});
-						logger.debug("userId:" + user.getUserId() + " group Id:"
-								+ group.getGroupId());
-					}
-
-					protectionGroup = new ProtectionGroup();
-					protectionGroup
-							.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
-					protectionGroup.setProtectionGroupName(userGroupRoleProtectionGroupBean
-							.getProtectionGroupName());
-					protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(
-							protectionGroup);
-					/**
-					 * If Protection group already exists add protection
-					 * elements to the group
-					 */
-					try
-					{
-						list = getObjects(protectionGroupSearchCriteria);
-						protectionGroup = (ProtectionGroup) list.get(0);
-						logger.debug(" From Database: " + protectionGroup.toString());
-					}
-					/**
-					 * If the protection group does not already exist create the
-					 * protection group and add protection elements to it.
-					 */
-					catch (SMException sme)
-					{
-						protectionGroup.setProtectionElements(protectionElements);
-						userProvisioningManager.createProtectionGroup(protectionGroup);
-						logger.debug("Protection group created: " + protectionGroup.toString());
-					}
+					userGroupRoleProtectionGroupBean=
+						(SecurityDataBean)authorizationData.get(i);
+					group = getGroup(userProvisioningManager,userGroupRoleProtectionGroupBean);
+					//Assigning group to users in userGroup
+					assignAdditionalGroups(userGroupRoleProtectionGroupBean,group);
+					protectionGroup = getProtectionGroup(protectionElements,
+							userProvisioningManager,userGroupRoleProtectionGroupBean);
 
 					role = new Role();
 					role.setName(userGroupRoleProtectionGroupBean.getRoleName());
 					roleSearchCriteria = new RoleSearchCriteria(role);
-					list = getObjects(roleSearchCriteria);
+					List<Role> roleList = getObjects(roleSearchCriteria);
 					roleIds = new String[1];
-					roleIds[0] = String.valueOf(((Role) list.get(0)).getId());
-					userProvisioningManager.assignGroupRoleToProtectionGroup(String
-							.valueOf(protectionGroup.getProtectionGroupId()), String.valueOf(group
-							.getGroupId()), roleIds);
-					logger.debug("Assigned Group Role To Protection Group "
-							+ protectionGroup.getProtectionGroupId() + " "
-							+ String.valueOf(group.getGroupId()) + " " + roleIds);
+					roleIds[0] = String.valueOf(((Role) roleList.get(0)).getId());
+					userProvisioningManager.assignGroupRoleToProtectionGroup
+						(String.valueOf(protectionGroup.getProtectionGroupId()),
+								String.valueOf(group.getGroupId())
+								, roleIds);
 				}
 				catch (CSTransactionException ex)
 				{
 					logger.error("Error occured Assigned Group Role To Protection Group "
 							+ protectionGroup.getProtectionGroupId() + " "
-							+ String.valueOf(group.getGroupId()) + " " + roleIds, ex);
+							+ group.getGroupId() + " " + roleIds, ex);
 					throw new SMException(ex.getMessage(), ex);
 				}
 			}
 		}
+	}
+
+	private void assignAdditionalGroups(SecurityDataBean userGroupRoleProtectionGroupBean
+			,Group group) throws SMException
+	{
+		String [] groupId=new String[]{String.valueOf(group.getGroupId())};
+		Set userGroup= userGroupRoleProtectionGroupBean.getGroup();
+		Iterator iterator=userGroup.iterator();
+		while(iterator.hasNext())
+		{
+			User user = (User) iterator.next();
+			assignAdditionalGroupsToUser(String.valueOf(user.getUserId()),groupId);
+		}
+	}
+	/**
+	 * @param protectionElements
+	 * @param protectionGroup
+	 * @param userProvisioningManager
+	 * @param protectionGroupSearchCriteria
+	 * @return
+	 * @throws CSException
+	 * @throws CSTransactionException
+	 */
+	private ProtectionGroup getProtectionGroup(
+			Set protectionElements,
+			UserProvisioningManager userProvisioningManager,
+			SecurityDataBean userGroupRoleProtectionGroupBean) throws CSException,
+			CSTransactionException
+	{
+		ProtectionGroup protectionGroup = new ProtectionGroup();
+		protectionGroup.setApplication(
+				getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
+		protectionGroup.setProtectionGroupName(userGroupRoleProtectionGroupBean
+				.getProtectionGroupName());
+		ProtectionGroupSearchCriteria protectionGroupSearchCriteria;
+		protectionGroupSearchCriteria = new ProtectionGroupSearchCriteria(protectionGroup);
+
+		//If Protection group already exists add protection elements to the group
+		try
+		{
+			List<ProtectionGroup> protGrList= getObjects(protectionGroupSearchCriteria);
+			protectionGroup = (ProtectionGroup) protGrList.get(0);
+		}
+		/* If the protection group does not already exist create the
+		 * protection group and add protection elements to it.
+		 */
+		catch (SMException sme)
+		{
+			protectionGroup.setProtectionElements(protectionElements);
+			userProvisioningManager.createProtectionGroup(protectionGroup);
+			logger.debug("Protection group created: " + protectionGroup.toString());
+		}
+		return protectionGroup;
+	}
+
+	/**
+	 * @param group
+	 * @param userProvisioningManager
+	 * @param groupSearchCriteria
+	 * @return
+	 * @throws CSException
+	 * @throws CSTransactionException
+	 * @throws SMException
+	 */
+	private Group getGroup(UserProvisioningManager userProvisioningManager,
+			SecurityDataBean userGroupRoleProtectionGroupBean)
+			throws CSException, CSTransactionException,SMException
+	{
+		List<Group> groupList;
+		Group group = new Group();
+		group.setApplication(getApplication(SecurityManager.APPLICATION_CONTEXT_NAME));
+		group.setGroupName(userGroupRoleProtectionGroupBean.getGroupName());
+		GroupSearchCriteria groupSearchCriteria = new GroupSearchCriteria(group);
+		try//If group already exists
+		{
+			groupList = getObjects(groupSearchCriteria);
+		}
+		catch (SMException ex)//If group does not exist already
+		{
+			userProvisioningManager.createGroup(group);
+			groupList = getObjects(groupSearchCriteria);
+		}
+		return (Group) groupList.get(0);
 	}
 
 	/**
@@ -501,10 +509,10 @@ public class PrivilegeUtility
 		return role;
 	}
 
-	public Set<Privilege> getRolePrivileges(String id) throws CSObjectNotFoundException,
+	public Set<Privilege> getRolePrivileges(String roleId) throws CSObjectNotFoundException,
 			CSException
 	{
-		return getUserProvisioningManager().getPrivileges(id);
+		return getUserProvisioningManager().getPrivileges(roleId);
 	}
 
 	/**
@@ -606,12 +614,11 @@ public class PrivilegeUtility
 	{		
 		if (userId == null || roles == null || protectionGroup == null)
 		{
-			logger.debug("Could not assign user role to protection group. One or more parameters are null");
+			logger.debug("One or more parameters are null");
 			throw new SMException("Could not assign user role to protection group");
 		}
 		Set protectionGroupRoleContextSet;
 		ProtectionGroupRoleContext protectionGroupRoleContext;
-		Iterator it;
 		Set aggregatedRoles = new HashSet();
 		try
 		{
@@ -620,10 +627,10 @@ public class PrivilegeUtility
 					.getProtectionGroupRoleContextForUser(String.valueOf(userId));
 
 			//get all the roles that user has on this protection group
-			it = protectionGroupRoleContextSet.iterator();
-			while (it.hasNext())
+			Iterator iterator = protectionGroupRoleContextSet.iterator();
+			while (iterator.hasNext())
 			{
-				protectionGroupRoleContext = (ProtectionGroupRoleContext) it.next();
+				protectionGroupRoleContext = (ProtectionGroupRoleContext) iterator.next();
 				if (protectionGroupRoleContext.getProtectionGroup().getProtectionGroupId().equals(
 						protectionGroup.getProtectionGroupId()))
 				{
@@ -766,7 +773,7 @@ public class PrivilegeUtility
 	{
 		if (groupId == null || roles == null || protectionGroup == null)
 		{
-			String mess="Could not assign group role to protection group. One or more parameters are null";
+			String mess="One or more parameters are null";
 			logger.debug(mess);
 			throw new SMException(mess);
 		}
@@ -812,10 +819,10 @@ public class PrivilegeUtility
 	{
 		ProtectionGroupRoleContext protectionGroupRoleContext;
 		Set aggregatedRoles = new HashSet();
-		Iterator it = protectionGroupRoleContextSet.iterator();
-		while (it.hasNext())
+		Iterator iterator = protectionGroupRoleContextSet.iterator();
+		while (iterator.hasNext())
 		{
-			protectionGroupRoleContext = (ProtectionGroupRoleContext) it.next();
+			protectionGroupRoleContext = (ProtectionGroupRoleContext) iterator.next();
 			if (protectionGroupRoleContext.getProtectionGroup().getProtectionGroupId()
 					.equals(protectionGroup.getProtectionGroupId()))
 			{
