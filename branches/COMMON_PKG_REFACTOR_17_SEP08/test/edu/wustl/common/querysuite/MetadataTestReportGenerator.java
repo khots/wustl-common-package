@@ -31,7 +31,7 @@ import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.logger.Logger;
 
 /**
