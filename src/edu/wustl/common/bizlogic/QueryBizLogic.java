@@ -39,7 +39,7 @@ import edu.wustl.common.query.Operator;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.Relation;
 import edu.wustl.common.query.RelationCondition;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;

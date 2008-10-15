@@ -17,7 +17,7 @@ import java.util.HashMap;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 
-import edu.wustl.common.util.dbManager.HibernateMetaData;
+import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;

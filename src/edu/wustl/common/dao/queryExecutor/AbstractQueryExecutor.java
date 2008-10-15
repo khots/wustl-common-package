@@ -24,7 +24,7 @@ import java.util.Map;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.querysuite.security.utility.CsmCache;
 import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;

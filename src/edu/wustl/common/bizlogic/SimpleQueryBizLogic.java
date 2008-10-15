@@ -27,8 +27,8 @@ import edu.wustl.common.query.DataElement;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.SimpleConditionsNode;
 import edu.wustl.common.query.Table;
-import edu.wustl.common.util.dbManager.DAOException;
-import edu.wustl.common.util.dbManager.HibernateMetaData;
+import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 

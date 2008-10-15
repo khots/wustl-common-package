@@ -23,7 +23,7 @@ import java.util.zip.ZipOutputStream;
 import oracle.sql.CLOB;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.SqlConstants;
 import edu.wustl.common.util.global.TextConstants;
