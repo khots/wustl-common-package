@@ -8,9 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -25,21 +23,10 @@ import java.util.ArrayList;
  */
 public class AutomateImport
 {
-
-	// The Name of the server for the database. For example : localhost
-	static String DATABASE_SERVER_NAME;
-	// The Port number of the server for the database.
-	static String DATABASE_SERVER_PORT_NUMBER;
-	// The Type of Database. Use one of the two values 'MySQL', 'Oracle'.
-	static String DATABASE_TYPE;
-	//	Name of the Database.
-	static String DATABASE_NAME;
-	// Database User name
-	static String DATABASE_USERNAME;
-	// Database Password
-	static String DATABASE_PASSWORD;
-	// The database Driver 
-	static String DATABASE_DRIVER;
+	/**
+	 * dbUtility object is used to store the argument values and getting database connection.
+	 */
+	private static DatabaseUtility dbUtility= new DatabaseUtility();
 	//Oracle Version
 	static String ORACLE_TNS_NAME;
 
@@ -66,11 +53,11 @@ public class AutomateImport
 		{
 			AutomateImport automateImport = new AutomateImport();
 			automateImport.configureDBConnection(args);
-			connection = automateImport.getConnection();
+			connection = dbUtility.getConnection();
 			ArrayList<String> tableNamesList = automateImport.getTableNamesList(args[8]);
 			int size = tableNamesList.size();
 			String filePath = args[9].replaceAll("\\\\", "//");
-			if (Constants.ORACLE_DATABASE.equals(DATABASE_TYPE.toUpperCase()))
+			if (Constants.ORACLE_DATABASE.equals(dbUtility.getDbType().toUpperCase()))
 			{
 				ORACLE_TNS_NAME = args[11];
 				String filePathCTL = args[10].replaceAll("\\\\", "//");
@@ -143,32 +130,6 @@ public class AutomateImport
 		}
 	}
 
-	private void test(String[] args) throws SQLException, IOException, ClassNotFoundException
-	{
-		DATABASE_SERVER_NAME = "10.88.199.74";
-		DATABASE_SERVER_PORT_NUMBER = "1521";
-		DATABASE_TYPE = "oracle";
-		DATABASE_NAME = "clindb";
-		DATABASE_USERNAME = "oracle_test22";
-		DATABASE_PASSWORD = "oracle_test22";
-		DATABASE_DRIVER = "oracle.jdbc.driver.OracleDriver";
-		ORACLE_TNS_NAME = "climax10g";
-		AutomateImport automateImport = new AutomateImport();
-		Connection connection = automateImport.getConnection();
-		String filePath = "I:/oracleTest/";
-		ArrayList<String> tableNamesList = automateImport.getTableNamesList(filePath
-				+ "dumpFileColumnInfo1.txt");
-		int size = tableNamesList.size();
-		for (int i = 0; i < size; i++)
-		{
-			String ctlFilePath = filePath + tableNamesList.get(i) + ".ctl";
-			String csvFilePath = filePath + tableNamesList.get(i) + ".csv";
-			automateImport.createCTLFiles(connection, csvFilePath, ctlFilePath, tableNamesList
-					.get(i));
-			//automateImport.importDataOracle(ctlFilePath);
-		}
-	}
-
 	/**
 	 * Configuration
 	 * @param args
@@ -179,40 +140,13 @@ public class AutomateImport
 		{
 			throw new RuntimeException("In sufficient number of arguments");
 		}
-		DATABASE_SERVER_NAME = args[0];
-		DATABASE_SERVER_PORT_NUMBER = args[1];
-		DATABASE_TYPE = args[2];
-		DATABASE_NAME = args[3];
-		DATABASE_USERNAME = args[4];
-		DATABASE_PASSWORD = args[5];
-		DATABASE_DRIVER = args[6];
-	}
-
-	/**
-	 * This method will create a database connection using configuration info.
-	 * @return Connection : Database connection object
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	private Connection getConnection() throws ClassNotFoundException, SQLException
-	{
-		Connection connection = null;
-		// Load the JDBC driver
-		Class.forName(DATABASE_DRIVER);
-		// Create a connection to the database
-		String url = "";
-		if ("MySQL".equalsIgnoreCase(DATABASE_TYPE))
-		{
-			url = "jdbc:mysql://" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER + "/"
-					+ DATABASE_NAME; // a JDBC url
-		}
-		if ("Oracle".equalsIgnoreCase(DATABASE_TYPE))
-		{
-			url = "jdbc:oracle:thin:@" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER
-					+ ":" + DATABASE_NAME;
-		}
-		connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
-		return connection;
+		dbUtility.setDbServerNname(args[0]);
+		dbUtility.setDbServerPortNumber(args[1]);
+		dbUtility.setDbType(args[2]);
+		dbUtility.setDbName(args[3]);
+		dbUtility.setDbUserName(args[4]);
+		dbUtility.setDbPassword(args[5]);
+		dbUtility.setDbDriver(args[6]);
 	}
 
 	/**
@@ -295,7 +229,7 @@ public class AutomateImport
 	 */
 	private void importDataOracle(String fileName) throws Exception
 	{
-		String cmd = "sqlldr " + DATABASE_USERNAME + "/" + DATABASE_PASSWORD + "@"
+		String cmd = "sqlldr " + dbUtility.getDbUserName() + "/" + dbUtility.getDbPassword() + "@"
 				+ ORACLE_TNS_NAME + " control=" + fileName;
 		Runtime rt = Runtime.getRuntime();
 		Process proc = rt.exec(cmd);
