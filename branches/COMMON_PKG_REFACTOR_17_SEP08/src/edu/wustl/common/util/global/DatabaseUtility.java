@@ -47,6 +47,41 @@ public class DatabaseUtility
 	private String dbDriver;
 
 	/**
+	 * Index for database Server Name.
+	 */
+	private static final int  INDX_DB_SERVER_NAME=0;
+
+	/**
+	 * Index for database server port number.
+	 */
+	private static final int  INDX_DB_SERVER_PORT_NUMBER=1;
+
+	/**
+	 * Index for database type.
+	 */
+	private static final int  INDX_DB_TYPE=2;
+
+	/**
+	 * Index for database name.
+	 */
+	private static final int  INDX_DB_NAME=3;
+
+	/**
+	 * Index for database user name.
+	 */
+	private static final int  INDX_DB_USER_NAME=4;
+
+	/**
+	 * Index for database password.
+	 */
+	private static final int  INDX_DB_PASSWORD=5;
+
+	/**
+	 * Index for database driver.
+	 */
+	private static final int  INDX_DB_DRIVER=6;
+
+	/**
 	 * @return the dbServerName
 	 */
 	public String getDbServerNname()
@@ -57,7 +92,7 @@ public class DatabaseUtility
 	/**
 	 * @param dbServerName the dbServerName to set
 	 */
-	public void setDbServerNname(String dbServerName)
+	public void setDbServerName(String dbServerName)
 	{
 		this.dbServerName = dbServerName;
 	}
@@ -181,6 +216,21 @@ public class DatabaseUtility
 		}
 		connection = DriverManager.getConnection(url, dbUserName, dbPassword);
 		return connection;
+	}
+
+	/**
+	 * This method sets all database parameters.
+	 * @param args String array containing database parameters.
+	 */
+	public void setDbParams(String[] args)
+	{
+		setDbServerName(args[INDX_DB_SERVER_NAME]);
+		setDbServerPortNumber(args[INDX_DB_SERVER_PORT_NUMBER]);
+		setDbType(args[INDX_DB_TYPE]);
+		setDbName(args[INDX_DB_NAME]);
+		setDbUserName(args[INDX_DB_USER_NAME]);
+		setDbPassword(args[INDX_DB_PASSWORD]);
+		setDbDriver(args[INDX_DB_DRIVER]);
 	}
 
 }
