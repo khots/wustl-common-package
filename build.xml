@@ -315,7 +315,7 @@
 	</target>
 
 	<target name="Generate-Schema" depends="build_jar">
-		<java classname="edu.wustl.common.util.dbManager.GenerateSchema">
+		<java classname="edu.wustl.common.util.dbmanager.GenerateSchema">
 			<arg value="false" />
 			<classpath>
 				<pathelement location="${build.dir}/catissuecore.jar" />
