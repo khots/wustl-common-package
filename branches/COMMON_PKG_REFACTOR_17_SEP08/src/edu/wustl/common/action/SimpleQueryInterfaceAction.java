@@ -26,7 +26,7 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.SimpleQueryInterfaceForm;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.bizlogic.QueryBizLogic;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;

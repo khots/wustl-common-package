@@ -7,7 +7,7 @@ import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 
 /** This interface defines methods which are specific to JDBC operations.*/
 public interface JDBCDAO extends AbstractDAO

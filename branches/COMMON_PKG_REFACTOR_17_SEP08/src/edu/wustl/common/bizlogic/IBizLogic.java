@@ -18,7 +18,7 @@ import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 
 /**
  * @author kapil_kaveeshwar

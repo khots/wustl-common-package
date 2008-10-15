@@ -29,7 +29,7 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.CDETreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.tree.TreeNode;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 
 /**
  * This is biz Logic class for the CDEs.

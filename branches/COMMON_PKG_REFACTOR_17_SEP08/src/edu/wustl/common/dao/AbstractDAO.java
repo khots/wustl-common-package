@@ -11,7 +11,7 @@
 package edu.wustl.common.dao;
 
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.util.dbManager.DAOException;
+import edu.wustl.common.util.dbmanager.DAOException;
 
 /**
  * AbstractDAO class contains abstract methods which are used to manupulating or accessing () 
