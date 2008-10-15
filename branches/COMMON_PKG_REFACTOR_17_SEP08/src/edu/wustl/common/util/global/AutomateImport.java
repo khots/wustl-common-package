@@ -171,9 +171,10 @@ public class AutomateImport
 		{
 			stmt = conn.createStatement
 				(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			String query = "LOAD DATA LOCAL INFILE '" + filename + "' INTO TABLE " + tableName
-					+ " FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n';";
-			stmt.execute(query);
+			StringBuffer query= new StringBuffer("LOAD DATA LOCAL INFILE '")
+			.append(filename).append("' INTO TABLE ").append(tableName)
+			.append(" FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n';");
+			stmt.execute(query.toString());
 		}
 		finally
 		{
@@ -244,8 +245,8 @@ public class AutomateImport
 								.append('/').append(dbUtility.getDbPassword())
 								.append('@').append(ORACLE_TNS_NAME)
 								.append(" control=").append(fileName);
-		Runtime rt = Runtime.getRuntime();
-		Process proc = rt.exec(cmd.toString());
+		Runtime runtime = Runtime.getRuntime();
+		Process proc = runtime.exec(cmd.toString());
 		// any error message?
 		StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream());
 
@@ -274,14 +275,17 @@ public class AutomateImport
 		{
 			file.delete();
 		}
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(ctlFileName)));
-		String value = "LOAD DATA INFILE '" + csvFileName + "' " + "\nBADFILE '/sample.bad'"
-				+ "\nDISCARDFILE '/sample.dsc'" + "\nAPPEND " + "\nINTO TABLE " + tableName + " "
-				+ "\nFIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'\n";
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(ctlFileName)));
+		String value= new StringBuffer("LOAD DATA INFILE '")
+			.append(csvFileName)
+			.append("' \nBADFILE '/sample.bad'\nDISCARDFILE '/sample.dsc'\nAPPEND \nINTO TABLE ")
+			.append(tableName)
+			.append(" \nFIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'\n").toString();
+
 		String columnName = getColumnName(connection, tableName);
-		bw.write(value + columnName);
-		bw.flush();
-		bw.close();
+		bufferedWriter.write(value + columnName);
+		bufferedWriter.flush();
+		bufferedWriter.close();
 	}
 
 	/**
@@ -295,37 +299,37 @@ public class AutomateImport
 	{
 		String query = "select * from " + tableName + " where 1=2";
 		Statement stmt = null;
-		ResultSet rs = null;
+		ResultSet resultSet = null;
 		try
 		{
 			stmt = connection.createStatement();
-			rs = stmt.executeQuery(query);
-			StringBuffer sb = new StringBuffer();
-			sb.append("(");
-			ResultSetMetaData rsMetaData = rs.getMetaData();
+			resultSet = stmt.executeQuery(query);
+			StringBuffer columnNameList = new StringBuffer();
+			columnNameList.append("(");
+			ResultSetMetaData rsMetaData = resultSet.getMetaData();
 			int numberOfColumns = rsMetaData.getColumnCount();
 			for (int i = 1; i < numberOfColumns + 1; i++)
 			{
-				sb.append(rsMetaData.getColumnName(i));
+				columnNameList.append(rsMetaData.getColumnName(i));
 				if (Types.DATE == rsMetaData.getColumnType(i)
 						|| Types.TIMESTAMP == rsMetaData.getColumnType(i))
 				{
-					sb.append(" DATE 'YYYY-MM-DD'");
+					columnNameList.append(" DATE 'YYYY-MM-DD'");
 				}
 				if (!("HIDDEN".equals(rsMetaData.getColumnName(i)))
 						&& !("FORMAT".equals(rsMetaData.getColumnName(i))))
 				{
-					sb.append(" NULLIF ");
-					sb.append(rsMetaData.getColumnName(i));
-					sb.append("='\\\\N'");
+					columnNameList.append(" NULLIF ");
+					columnNameList.append(rsMetaData.getColumnName(i));
+					columnNameList.append("='\\\\N'");
 				}
 				if (i < numberOfColumns)
 				{
-					sb.append(",");
+					columnNameList.append(",");
 				}
 			}
-			sb.append(")");
-			return sb.toString();
+			columnNameList.append(")");
+			return columnNameList.toString();
 		}
 		finally
 		{
@@ -333,9 +337,9 @@ public class AutomateImport
 			{
 				stmt.close();
 			}
-			if (rs != null)
+			if (resultSet != null)
 			{
-				rs.close();
+				resultSet.close();
 			}
 
 		}
@@ -344,10 +348,10 @@ public class AutomateImport
 
 class StreamGobbler extends Thread
 {
-	InputStream is;
+	InputStream inputStream;
 
-	StreamGobbler(InputStream is)
+	StreamGobbler(InputStream inputStream)
 	{
-		this.is = is;
+		this.inputStream = inputStream;
 	}
 }
