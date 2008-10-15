@@ -180,44 +180,6 @@ public class QueryObjectProcessor
 	}
 
 	/**
-	 * Method to create deep copy of the object.
-	 * @param obj The object to be copied.
-	 * @return The Object reference representing deep copy of the given object.
-	 */
-	public static Object getObjectCopy(Object obj)
-	{
-		long startTime = System.currentTimeMillis();
-		Object copy = null;
-		try
-		{
-			// Write the object out to a byte array
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream out = new ObjectOutputStream(bos);
-			out.writeObject(obj);
-			out.flush();
-			out.close();
-
-			// Make an input stream from the byte array and read
-			// a copy of the object back in.
-			ObjectInputStream in = new ObjectInputStream(
-					new ByteArrayInputStream(bos.toByteArray()));
-			copy = in.readObject();
-		}
-		catch (IOException e)
-		{
-			Logger.out.error(e.getMessage(), e);
-			copy = null;
-		}
-		catch (ClassNotFoundException cnfe)
-		{
-			Logger.out.error(cnfe.getMessage(), cnfe);
-			copy = null;
-		}
-		Logger.out.debug("Time taken to copy Object:" + (System.currentTimeMillis() - startTime));
-		return copy;
-	}
-
-	/**
 	 * To get map of all Children nodes along with their ids under given output tree node.
 	 * @param root The root noe of the output tree.
 	 * @return map of all Children nodes along with their ids under given output tree node.
