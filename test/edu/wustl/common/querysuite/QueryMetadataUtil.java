@@ -17,7 +17,7 @@ import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationExcept
 import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
-import edu.wustl.common.util.dbManager.DBUtil;
+import edu.wustl.common.util.dbmanager.DBUtil;
 
 /**
  * This class generates metadata for CP enhancements.
