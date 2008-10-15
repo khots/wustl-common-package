@@ -53,8 +53,9 @@ public class PasswordEncrypter
 	/**
 	 * Main method.
 	 * @param args arguments to main methods.
+	 * @throws Exception -If number of arguments are less than 7
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 
 		configureDBConnection(args);
@@ -125,8 +126,9 @@ public class PasswordEncrypter
 	/**
 	 * This method is for configuring database connection.
 	 * @param args String[] of configuration info
+	 * @throws Exception -If number of arguments are less than 7
 	 */
-	private static void configureDBConnection(String[] args)
+	private static void configureDBConnection(String[] args) throws Exception
 	{
 		if (args.length == MIN_NO_ARGS)
 		{
@@ -134,7 +136,7 @@ public class PasswordEncrypter
 		}
 		else
 		{
-			throw new RuntimeException("Incorrect number of parameters!!!!");
+			throw new Exception("Incorrect number of parameters!!!!");
 		}
 	}
 }
