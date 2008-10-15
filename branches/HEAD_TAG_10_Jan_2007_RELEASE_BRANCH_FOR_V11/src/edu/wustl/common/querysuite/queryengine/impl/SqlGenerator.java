@@ -71,12 +71,12 @@ import edu.wustl.common.querysuite.utils.DatabaseType;
 import edu.wustl.common.querysuite.utils.TermProcessor;
 import edu.wustl.common.querysuite.utils.TermProcessor.IAttributeAliasProvider;
 import edu.wustl.common.querysuite.utils.TermProcessor.TermString;
-import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.metadata.util.DyExtnObjectCloner;
 
 /**
  * To generate SQL from the given Query Object.
@@ -208,7 +208,7 @@ public class SqlGenerator implements ISqlGenerator {
      * @throws SqlException When there is error in the passed IQuery object.
      */
     String buildQuery(IQuery query) throws MultipleRootsException, SqlException, RuntimeException {
-        IQuery queryClone = (IQuery) QueryObjectProcessor.getObjectCopy(query);
+        IQuery queryClone = new DyExtnObjectCloner().clone(query);
         // IQuery queryClone = query;
         constraints = queryClone.getConstraints();
 
