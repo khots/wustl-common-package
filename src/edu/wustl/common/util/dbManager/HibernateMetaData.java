@@ -208,6 +208,10 @@ public class HibernateMetaData
 		{
 			dbName = Constants.POSTGRESQL_DATABASE;
 		}
+		else if (dialect.toLowerCase().indexOf("db2") != -1)
+		{
+			dbName = Constants.DB2_DATABASE;
+		}
 		return dbName;
 	}
 	public static void getDATA(Class classObj)
