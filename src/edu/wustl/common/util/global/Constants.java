@@ -8,6 +8,7 @@
 package edu.wustl.common.util.global;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This classes is specific to common files. And contains all variables used by classes from
@@ -43,7 +44,8 @@ public class Constants
 
 	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
 
-	public static final HashMap<String, String[]> STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES = new HashMap<String, String[]>();
+	public static final Map<String, String[]> STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES
+						= new HashMap<String, String[]>();
 
 	// Mandar: Used for Date Validations in Validator Class
 	public static final String DATE_SEPARATOR = "-";
@@ -115,9 +117,11 @@ public class Constants
 		return "SITE_" + identifier;
 	}
 
-	public static final String COLLECTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
-	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
-	// Aarti: Constants for security parameter required 
+	public static final String COLLECTION_PROTOCOL_CLASS_NAME
+		= "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
+	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME
+	= "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
+	// Aarti: Constants for security parameter required
 	// while retrieving data from DAOs
 	public static final int INSECURE_RETRIEVE = 0;
 	public static final int CLASS_LEVEL_SECURE_RETRIEVE = 1;
@@ -157,9 +161,12 @@ public class Constants
 	// This string is used for searching " for key " string in the above error message
 	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
 
-	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation. Please report this problem to the administrator";
-	public static final String CONSTRAINT_VOILATION_ERROR = "Submission failed since a {0} with the same {1} already exists";
-	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
+	public static final String GENERIC_DATABASE_ERROR
+		="An error occurred during a database operation. Please report this problem to the administrator";
+	public static final String CONSTRAINT_VOILATION_ERROR
+					="Submission failed since a {0} with the same {1} already exists";
+	public static final String OBJECT_NOT_FOUND_ERROR
+			= "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
 
 	public static final String ACTIVITY_STATUS_DISABLED = "Disabled";
 	public static final String ACTIVITY_STATUS_CLOSED = "Closed";
@@ -251,7 +258,7 @@ public class Constants
 
 	public static final String IDENTIFIER_FIELD_INDEX = "identifierFieldIndex";
 	/*
-	 * Patch ID: SimpleSearchEdit_3 
+	 * Patch ID: SimpleSearchEdit_3
 	 * Description: Constants required for this feature plus Delimeter used in the DHTML grid.
 	*/
 	public static final String HYPERLINK_COLUMN_MAP = "hyperlinkColumnMap";
@@ -389,7 +396,7 @@ public class Constants
 	public static final String ORIGINAL_SIMPLE_QUERY_OBJECT = "originalSimpleQueryObject";
 	public static final String ORIGINAL_SIMPLE_QUERY_COUNTER = "counter";
 	public static final String SIMPLE_QUERY_COUNTER = "counter";
-	/***  Added New Constansts  ***/
+	/***  Added New Constansts.  ***/
 
 	//	Activity Status values
 	public static final String ACTIVITY_STATUS_APPROVE = "Approve";
@@ -536,12 +543,12 @@ public class Constants
 	public static final String PUBLIC_GROUP_ID = "PUBLIC_GROUP_ID";
 	public static final String SUPER_ADMINISTRATOR_GROUP_ID = "SUPER_ADMINISTRATOR_GROUP_ID";
 	public static final String APPLICATION_CLINPORTAL = "clinportal";
-	public static final String allowOperation = "allowOperation";
+	public static final String ALLOW_OPERATION = "allowOperation";
 	public static final String REGISTRATION = "REGISTRATION";
 	public static final String PHI_ACCESS = "PHI_ACCESS";
 	public static final String READ_DENIED = "READ_DENIED";
 	public static final String VALIDATOR_CLASSNAME = "validator.classname";
-	public static final String hashedOut = "##";
+	public static final String HASHED_OUT = "##";
 	public static final int ONE = 1;
 	public static final int INITIALIZE = -1;
 	public static final int ONE_KILO_BYTES=1024;
