@@ -1,5 +1,5 @@
 
-package edu.wustl.common.util.databasemanager;
+package edu.wustl.common.util.dbmanager;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;

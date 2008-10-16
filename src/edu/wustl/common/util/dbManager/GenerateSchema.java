@@ -1,5 +1,5 @@
 
-package edu.wustl.common.util.dbmanage;
+package edu.wustl.common.util.dbmanager;
 
 import java.io.BufferedInputStream;
 import java.io.File;
