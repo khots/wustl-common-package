@@ -91,9 +91,7 @@ public class Validator
 
 	/**
 	 * Checks whether a string is empty and adds an ActionError object in the ActionErrors object.
-	 * @param componentName Component which is to be checked.
-	 * @param labelName Label of the component on the jsp page which is checked. 
-	 * @param errors ActionErrors Object.
+	 * @param str string to be checked.
 	 * @return Returns true if the componentName is empty else returns false.
 	 */
 	public boolean isEmpty(String str)
@@ -202,11 +200,12 @@ public class Validator
 	}
 
 	/**
-	 * 
-	 * Return Long representation of numString if its convertible else returns null
+	 *
+	 * Return Long representation of numString if its convertible else returns null.
 	 * @param numString The string whose characters are to be checked.
 	 * @author aarti_sharma
-	 *   
+	 * @return Long representation of numString if its convertible else returns null
+	 *
 	 */
 	public Long convertToLong(String numString)
 	{
@@ -242,7 +241,8 @@ public class Validator
 	 * Checks the given String for double value.
 	 * 
 	 * @param dblString
-	 * @return boolean True if the string contains double number or false if any non numeric character is present.
+	 * @return boolean True if the string contains double number or
+	 *  false if any non numeric character is present.
 	 */
 	public boolean isDouble(String dblString)
 	{
@@ -305,9 +305,13 @@ public class Validator
 		{
 			if (option.trim().equals("") || option.trim().equals("-1")
 					|| option.equals(Constants.SELECT_OPTION))
+			{
 				return false;
+			}
 			else
+			{
 				return true;
+			}
 		}
 
 		return false;
@@ -462,18 +466,23 @@ public class Validator
 			String strMonth = dtStr.substring(0, pos1);
 			String strDay = dtStr.substring(pos1 + 1, pos2);
 			String strYear = dtStr.substring(pos2 + 1);
-			//System.out.println("pos1 : "+pos1 + " pos2 : "+pos2 + " strMonth : "+strMonth + "strDay : "+strDay + "strYear : "+strYear  );
 			String strYr = strYear;
 
 			if (strDay.charAt(0) == '0' && strDay.length() > 1)
+			{
 				strDay = strDay.substring(1);
+			}
 
 			if (strMonth.charAt(0) == '0' && strMonth.length() > 1)
+			{
 				strMonth = strMonth.substring(1);
+			}
 			for (int i = 1; i <= 3; i++)
 			{
 				if (strYr.charAt(0) == '0' && strYr.length() > 1)
+				{
 					strYr = strYr.substring(1);
+				}
 			}
 			int month = Integer.parseInt(strMonth);
 			int day = Integer.parseInt(strDay);
@@ -502,7 +511,6 @@ public class Validator
 			{
 				logger.debug("Please enter a valid 4 digit year between " + minYear + " and "
 						+ maxYear);
-				//System.out.println("Please enter a valid 4 digit year between "+minYear+" and "+maxYear);
 				return false;
 			}
 			return true;
@@ -534,7 +542,9 @@ public class Validator
 					result = isDate(checkDate);
 				}
 				else
+				{
 					result = false;
+				}
 			}
 		}
 		catch (Exception exp)
@@ -565,7 +575,9 @@ public class Validator
 			int dateCheckResult = currentDate.compareTo(toCheck);
 			//    		logger.debug("currentDate.compareTo(toCheck ) : " + dateCheckResult );
 			if (dateCheckResult < 0)
+			{
 				result = false;
+			}
 		}
 		catch (Exception exp)
 		{
@@ -606,7 +618,9 @@ public class Validator
 			//System.out.println("toCheck : "+ toCheck);
 			int dateCheckResult = maxDate.compareTo(toCheck);
 			if (dateCheckResult < 0)
+			{
 				result = false;
+			}
 		}
 		catch (Exception exp)
 		{
@@ -696,10 +710,10 @@ public class Validator
 		}
 	}
 
-	// ------------------------------Date Validation ends-----------------------------------------------------------------------
+	// -------------Date Validation ends---------
 
 	/**
-	 * returns true if zip code is valid else returns false
+	 * returns true if zip code is valid else returns false.
 	 */
 	public boolean isValidZipCode(String zipCode)
 	{
@@ -720,7 +734,7 @@ public class Validator
 	}
 
 	/**
-	 * returns true if Phone/Fax number is valid else returns false
+	 * returns true if Phone/Fax number is valid else returns false.
 	 */
 	public boolean isValidPhoneNumber(String phoneNumber)
 	{
@@ -916,7 +930,7 @@ public class Validator
 
 	/**
 	 * This method check for xxs vulnerable characters like <, >, (, ) etc.
-	 * @param String for which xss vulnerable character [ (,),< or > ] to be checked.
+	 * @param value String for which xss vulnerable character [ (,),< or > ] to be checked.
 	 * @return true if the string contains any xss vulnerable character else false.
 	 */
 	public static boolean isXssVulnerable(String value)
