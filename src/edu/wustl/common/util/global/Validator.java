@@ -87,12 +87,10 @@ public class Validator
 			Pattern pattern = Pattern.compile("[0-9]{3}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(ssn);
 			result = mat.matches();
-			//System.out.println(result);
 		}
 		catch (Exception exp)
 		{
-			//System.out.println("exp");
-			return false;
+			result=false;
 		}
 		return result;
 	}
@@ -104,11 +102,12 @@ public class Validator
 	 */
 	public boolean isEmpty(String str)
 	{
-		if (str == null || str.trim().length() == 0)
+		boolean isEmpty=false;
+		if (str == null || TextConstants.EMPTY_STRING.equals(str.trim()))
 		{
-			return true;
+			isEmpty=true;
 		}
-		return false;
+		return isEmpty;
 	}
 
 	/**
@@ -118,49 +117,51 @@ public class Validator
 	 * */
 	public boolean isAlpha(String alphaString)
 	{
+		boolean isAlpha=true;
 		int index = 0;
 		while (index < alphaString.length())
 		{
 			if (!Character.isLetter(alphaString.charAt(index)))
 			{
-				return false;
+				isAlpha= false;
+				break;
 			}
 			index++;
 		}
-		return true;
+		return isAlpha;
 	}
 
 	/**
 	 * Checks that the input String contains only numeric digits.
 	 * @param numString The string whose characters are to be checked.
-	 * @return Returns false if the String contains any alphabet else returns true. 
+	 * @return false if the String contains any alphabet else returns true.
 	 * */
 	public boolean isNumeric(String numString)
 	{
+		boolean isNumeric=true;
 		try
 		{
 			long longValue = Long.parseLong(numString);
 			if (longValue <= 0)
 			{
-				return false;
+				isNumeric=false;
 			}
-
-			return true;
 		}
 		catch (NumberFormatException exp)
 		{
-			return false;
+			isNumeric=false;
 		}
+		return isNumeric;
 	}
 
 	/**
-	 * 
+	 *
 	 * Checks that the input String contains only numeric digits.
 	 * @param numString The string whose characters are to be checked.
 	 * @param positiveCheck Positive integer to check for positive number
 	 * @return Returns false if the String contains any alphabet else returns true.
 	 * Depending on the value of the positiveCheck will check for positive values
-	 *   
+	 *
 	 */
 	public boolean isNumeric(String numString, int positiveCheck)
 	{
@@ -176,35 +177,28 @@ public class Validator
 	 * @return Returns false if the String contains any alphabet or negative integer else returns true.
 	 * @author aarti_sharma
 	 * Depending on the value of the positiveCheck will check for positive values
-	 *   
+	 *
 	 */
 	public boolean isPositiveNumeric(String numString, int positiveCheck)
 	{
-		logger.debug(" numString:" + numString);
+		boolean isPosNum=true;
 		Double value = convertToNumber(numString);
-		if (value != null)
+		if (value == null)
 		{
-			if (positiveCheck > 0)
-			{
-				if (value.longValue() <= 0)
-				{
-					return false;
-				}
-			}
-			else if (positiveCheck == 0)
-			{
-				if (value.longValue() < 0)
-				{
-					return false;
-				}
-			}
+			isPosNum=false;
 		}
 		else
 		{
-			return false;
+			if (positiveCheck > 0 && value.longValue() <= 0)
+			{
+				isPosNum=false;
+			}
+			else if (positiveCheck == 0 && value.longValue() < 0)
+			{
+				isPosNum=false;
+			}
 		}
-		return true;
-
+		return isPosNum;
 	}
 
 	/**
@@ -221,15 +215,19 @@ public class Validator
 		try
 		{
 			longValue = Long.valueOf(numString);
-			return longValue;
+
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.debug("NumberFormatException:" + exp.getMessage());
-			return longValue;
+			logger.debug("NumberFormatException:" + exp.getMessage(),exp);
 		}
+		return longValue;		
 	}
-
+	/**
+	 * This converts string into a number.
+	 * @param numString Number as a string.
+	 * @return Double number.
+	 */
 	public Double convertToNumber(String numString)
 	{
 		Double value = null;
@@ -247,7 +245,7 @@ public class Validator
 
 	/**
 	 * Checks the given String for double value.
-	 * 
+	 *
 	 * @param dblString
 	 * @return boolean True if the string contains double number or
 	 *  false if any non numeric character is present.
@@ -366,7 +364,7 @@ public class Validator
 	public String delimiterExcludingGiven(String ignoreList)
 	{
 		String spChars = "!@#$%^&*()=+\\|{[ ]}\'\";:/?.>,<`~ -_";
-		//    	//System.out.println("Original : " + spChars);
+
 		StringBuffer specialChars = new StringBuffer(spChars);
 		//    	//System.out.println("SB : " +sb);
 		StringBuffer retStr = new StringBuffer();
