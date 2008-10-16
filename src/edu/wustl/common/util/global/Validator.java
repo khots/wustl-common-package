@@ -165,7 +165,6 @@ public class Validator
 	 */
 	public boolean isNumeric(String numString, int positiveCheck)
 	{
-		//Bug# 1698 : Proper error message should be shown for negative integers
 		return isPositiveNumeric(numString, positiveCheck);
 	}
 
@@ -221,7 +220,7 @@ public class Validator
 		{
 			logger.debug("NumberFormatException:" + exp.getMessage(),exp);
 		}
-		return longValue;		
+		return longValue;
 	}
 	/**
 	 * This converts string into a number.
@@ -234,13 +233,12 @@ public class Validator
 		try
 		{
 			value = new Double(numString);
-			return value;
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.error("NumberFormatException:" + exp.getMessage());
-			return value;
+			logger.error("NumberFormatException:" + exp.getMessage(),exp);
 		}
+		return value;
 	}
 
 	/**
@@ -252,23 +250,20 @@ public class Validator
 	 */
 	public boolean isDouble(String dblString)
 	{
+		boolean isDouble=true;
 		try
 		{
 			double dblValue = Double.parseDouble(dblString);
-
 			if (dblValue < 0 || Double.isNaN(dblValue))
 			{
-				return false;
+				isDouble=false;
 			}
-
-			return true;
 		}
 		catch (NumberFormatException exp)
 		{
-			//System.out.println("Error : "+exp);
-			return false;
+			isDouble=false;
 		}
-
+		return isDouble;
 	}
 
 	/**
@@ -278,49 +273,37 @@ public class Validator
 	 */
 	public boolean isDouble(String dblString, boolean positiveCheck)
 	{
+		boolean isDouble=true;
 		try
 		{
 			double dblValue = Double.parseDouble(dblString);
 
 			if (Double.isNaN(dblValue))
 			{
-				return false;
+				isDouble=false;
 			}
-			if (positiveCheck)
+			if (positiveCheck && dblValue < 0)
 			{
-				if (dblValue < 0)
-				{
-					return false;
-				}
+				isDouble=false;
 			}
-
-			return true;
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.debug("NumberFormatException:" + exp.getMessage());
-			return false;
+			logger.debug("NumberFormatException:" + exp.getMessage(),exp);
+			isDouble= false;
 		}
-
+		return isDouble;
 	}
 
 	public boolean isValidOption(String option)
 	{
-		logger.debug("option value: " + option);
-		if (option != null)
+		boolean isValidOption=false;
+		if (option != null && !(option.trim().equals("") || option.trim().equals("-1")
+					|| option.equals(Constants.SELECT_OPTION)))
 		{
-			if (option.trim().equals("") || option.trim().equals("-1")
-					|| option.equals(Constants.SELECT_OPTION))
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
+			isValidOption=true;
 		}
-
-		return false;
+		return isValidOption;
 	}
 
 	private boolean isValidEmailId(String emailAddress)
@@ -328,7 +311,6 @@ public class Validator
 		boolean result = true;
 		try
 		{
-
 			Pattern pattern = Pattern
 					.compile(REGEX_VALID_EMAIL,Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(emailAddress);
@@ -336,8 +318,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//System.out.println("5");
-			return false;
+			result= false;
 		}
 		return result;
 	}
@@ -364,9 +345,7 @@ public class Validator
 	public String delimiterExcludingGiven(String ignoreList)
 	{
 		String spChars = "!@#$%^&*()=+\\|{[ ]}\'\";:/?.>,<`~ -_";
-
 		StringBuffer specialChars = new StringBuffer(spChars);
-		//    	//System.out.println("SB : " +sb);
 		StringBuffer retStr = new StringBuffer();
 
 		try
@@ -375,39 +354,30 @@ public class Validator
 			for (int spCharCount = 0; spCharCount < spIgnoreChars.length; spCharCount++)
 			{
 				char chkChar = spIgnoreChars[spCharCount];
-				//    			//System.out.println(chkChar);
 				int chInd = specialChars.indexOf("" + chkChar);
 				while (chInd != -1)
 				{
 					specialChars = specialChars.deleteCharAt(chInd);
 					chInd = specialChars.indexOf("" + chkChar);
-					//    				//System.out.println("\t"+sb);
 				}
-
 			}
 			retStr = specialChars;
-			//    		//System.out.println("\n\nRetStr : " + retStr);
 		}
 		catch (Exception exp)
 		{
-			//System.out.println("error : " + exp);
+			logger.debug("", exp);
 		}
-
 		return retStr.toString();
 	}
-
-	// ----------------------------------- Date Validation -------------------- 
 
 	private boolean isValidDatePattern(String checkDate)
 	{
 		boolean result = true;
 		try
 		{
-			//System.out.println("checkDate in isValidDatePattern : " +checkDate);
 			Pattern pattern = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(checkDate);
 			result = mat.matches();
-			//System.out.println("is Valid Date Pattern : - : "+result);
 			dtCh = Constants.DATE_SEPARATOR;
 			// check for  / separator
 			if (!result)
@@ -415,7 +385,6 @@ public class Validator
 				pattern = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
 				mat = pattern.matcher(checkDate);
 				result = mat.matches();
-				//System.out.println("is Valid Date Pattern : / : "+result);
 				dtCh = Constants.DATE_SEPARATOR_SLASH;
 			}
 		}
@@ -424,7 +393,6 @@ public class Validator
 			logger.error("IsValidDatePattern : exp : " + exp);
 			return false;
 		}
-		//System.out.println("dtCh : " +dtCh );
 		return result;
 	}
 
@@ -494,20 +462,17 @@ public class Validator
 			if (pos1 == -1 || pos2 == -1)
 			{
 				logger.debug("The date format should be : mm/dd/yyyy");
-				//System.out.println("The date format should be : mm/dd/yyyy");
 				return false;
 			}
 			if (strMonth.length() < 1 || month < 1 || month > 12)
 			{
 				logger.debug("Please enter a valid month");
-				//System.out.println("Please enter a valid month");
 				return false;
 			}
 			if (strDay.length() < 1 || day < 1 || day > 31
 					|| (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month])
 			{
 				logger.debug("Please enter a valid day");
-				//System.out.println("Please enter a valid day");
 				return false;
 			}
 			if (strYear.length() != 4 || year == 0 || year < minYear || year > maxYear)
@@ -522,7 +487,6 @@ public class Validator
 		{
 			logger.error("exp in isDate : " + exp);
 			exp.printStackTrace();
-			//System.out.println(exp);
 			return false;
 		}
 
@@ -565,18 +529,10 @@ public class Validator
 		try
 		{
 			Date currentDate = Calendar.getInstance().getTime();
-			//System.out.println("1 : -- "+ dateToCheck );
-			//System.out.println("currentDate : "+ currentDate );
-			//String pattern="MM-dd-yyyy";
 			String pattern = "MM" + dtCh + "dd" + dtCh + "yyyy";
-			//System.out.println("\n\n\n\n\n\n------------\n"+pattern+"\n\n\n\n\n\n------------\n");
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 			Date toCheck = dateFormat.parse(dateToCheck);
-
-			//System.out.println("2");
-			//System.out.println("toCheck : "+ toCheck);
 			int dateCheckResult = currentDate.compareTo(toCheck);
-			//    		logger.debug("currentDate.compareTo(toCheck ) : " + dateCheckResult );
 			if (dateCheckResult < 0)
 			{
 				result = false;
@@ -584,41 +540,25 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//logger.error("compareDateWithCurrent : " + dateToCheck + " : exp : "+ exp);
-			////System.out.println("compareDateWithCurrent : " + dateToCheck + " : exp : "+ exp);
 			result = false;
 		}
 
 		return result;
 	}
 
-	// -- method to compare two dates
 	public boolean compareDates(String startDate, String endDate)
 	{
 		boolean result = true;
 		try
 		{
-			// currentdate = enddate
-			//    		Date currentDate = Calendar.getInstance().getTime();
-
-			//System.out.println("1 : -- "+ startDate );
 			isValidDatePattern(startDate);
 			String pattern = "MM" + dtCh + "dd" + dtCh + "yyyy";
-			//System.out.println("\n------------\n"+pattern+"\n------------\n");
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 			Date toCheck = dateFormat.parse(startDate);
-
-			//System.out.println(toCheck.toString()+"\n-------------\n" );
-
-			//System.out.println("2 : -- "+ endDate );
 			isValidDatePattern(endDate);
 			String pattern1 = "MM" + dtCh + "dd" + dtCh + "yyyy";
-			//System.out.println("\n------------\n"+pattern1+"\n------------\n");
 			SimpleDateFormat dF1 = new SimpleDateFormat(pattern1);
 			Date maxDate = dF1.parse(endDate);
-
-			//System.out.println("2");
-			//System.out.println("toCheck : "+ toCheck);
 			int dateCheckResult = maxDate.compareTo(toCheck);
 			if (dateCheckResult < 0)
 			{
@@ -627,10 +567,8 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//System.out.println(exp);
 			result = false;
 		}
-		//System.out.println("Date : "+ endDate + " > " + startDate + " : - " + result  );
 		return result;
 
 	}
@@ -639,7 +577,6 @@ public class Validator
 	// Error messages for empty date, Invalid date, and Future dates are formatted .
 	public String validateDate(String strDate, boolean checkFutureDate)
 	{
-		logger.debug("Validate Date : " + strDate);
 		String returnString = "";
 		if (isEmpty(strDate))
 		{
@@ -661,13 +598,11 @@ public class Validator
 				}
 				else
 				{
-					//System.out.println("validateDate : Date invalid");
 					returnString = "errors.date.format";
 				}
 			}
 			else
 			{
-				//System.out.println("validateDate : Pattern invalid");
 				returnString = "errors.date.format";
 			}
 		}
@@ -891,16 +826,13 @@ public class Validator
 	{
 		try
 		{
-			//System.out.println("mainString : "+ mainString + " delimiter: "+ delimiter);
 			logger.debug("mainString : " + mainString + " delimiter: " + delimiter);
 			char[] specialChars = delimiter.toCharArray();
 
 			for (int spCharCount = 0; spCharCount < specialChars.length; spCharCount++)
 			{
 				char searchChar = specialChars[spCharCount];
-				//System.out.print("searchChar : "+searchChar + " : ");
 				int pos = mainString.indexOf(searchChar);
-				//System.out.println("pos : "+pos );
 				logger.debug("searchChar : " + searchChar + " | pos : " + pos);
 				if (pos != -1)
 				{
@@ -910,7 +842,6 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//System.out.println("error : " + exp);
 			logger.error(exp.getMessage(), exp);
 			return true;
 		}
