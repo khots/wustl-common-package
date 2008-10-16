@@ -837,7 +837,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				protectionElementName = getObjectId(dao, domainObject);
 			}
 			//TODO To revisit this piece of code --> Vishvesh
-			if (Constants.allowOperation.equals(protectionElementName))
+			if (Constants.ALLOW_OPERATION.equals(protectionElementName))
 			{
 				isAuthorized = true;
 			}
@@ -927,7 +927,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public String getObjectId(AbstractDAO dao, Object domainObject)
 	{
-		return Constants.allowOperation;
+		return Constants.ALLOW_OPERATION;
 	}
 
 	/**
