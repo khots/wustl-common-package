@@ -5,7 +5,7 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
-package edu.wustl.common.util.dbmanager;
+package edu.wustl.common.util.dbmanage;
 
 import java.util.ArrayList;
 import java.util.HashSet;

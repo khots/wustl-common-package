@@ -1,5 +1,5 @@
 
-package edu.wustl.common.util.dbmanager;
+package edu.wustl.common.util.dbmanage;
 
 import org.hibernate.mapping.Collection;
 
