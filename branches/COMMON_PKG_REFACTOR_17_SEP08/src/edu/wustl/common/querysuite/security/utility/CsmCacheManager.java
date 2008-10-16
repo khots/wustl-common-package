@@ -633,9 +633,9 @@ public class CsmCacheManager
 			{
 				if (isSimpleSearch)
 					aList.set(((Integer) objectColumnIds.get(k)).intValue() - 1,
-							Constants.hashedOut);
+							Constants.HASHED_OUT);
 				else
-					aList.set(((Integer) objectColumnIds.get(k)).intValue(), Constants.hashedOut);
+					aList.set(((Integer) objectColumnIds.get(k)).intValue(), Constants.HASHED_OUT);
 			}
 		}
 	}
