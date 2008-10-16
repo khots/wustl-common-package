@@ -39,11 +39,19 @@ public class Validator
 	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc.
 	 * */
 	private static final String REGEX_XSS_VULNERABLE = "[()<>]";
-
+	/**
+	 * This is regular expression to validate email id.
+	 */
+	private static final String REGEX_VALID_EMAIL
+		= "^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$";
+	/**
+	 * This is regular expression to validate phone number.
+	 */
+	private static final String REGEX_VALID_PHONE = "\\(\\d{3}\\)\\d{3}-\\d{4}|\\d{3}\\-\\d{3}-\\d{4}";
 	/**
 	 * Checks that the input String is a valid email address.
 	 * @param aEmailAddress String containing the email address to be checked.
-	 * @return Returns true if its a valid email address, else returns false.  
+	 * @return Returns true if its a valid email address, else returns false.
 	 * */
 	public boolean isValidEmailAddress(String aEmailAddress)
 	{
@@ -76,8 +84,8 @@ public class Validator
 		boolean result = true;
 		try
 		{
-			Pattern re = Pattern.compile("[0-9]{3}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
-			Matcher mat = re.matcher(ssn);
+			Pattern pattern = Pattern.compile("[0-9]{3}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
+			Matcher mat = pattern.matcher(ssn);
 			result = mat.matches();
 			//System.out.println(result);
 		}
@@ -106,18 +114,18 @@ public class Validator
 	/**
 	 * Checks that the input String contains only alphabetic characters.
 	 * @param alphaString The string whose characters are to be checked.
-	 * @return Returns false if the String contains any digit else returns true. 
+	 * @return false if the String contains any digit else returns true. 
 	 * */
 	public boolean isAlpha(String alphaString)
 	{
-		int i = 0;
-		while (i < alphaString.length())
+		int index = 0;
+		while (index < alphaString.length())
 		{
-			if (!Character.isLetter(alphaString.charAt(i)))
+			if (!Character.isLetter(alphaString.charAt(index)))
 			{
 				return false;
 			}
-			i++;
+			index++;
 		}
 		return true;
 	}
@@ -323,11 +331,9 @@ public class Validator
 		try
 		{
 
-			Pattern re = Pattern
-					.compile(
-							"^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$",
-							Pattern.CASE_INSENSITIVE);
-			Matcher mat = re.matcher(emailAddress);
+			Pattern pattern = Pattern
+					.compile(REGEX_VALID_EMAIL,Pattern.CASE_INSENSITIVE);
+			Matcher mat = pattern.matcher(emailAddress);
 			result = mat.matches();
 		}
 		catch (Exception exp)
@@ -361,27 +367,27 @@ public class Validator
 	{
 		String spChars = "!@#$%^&*()=+\\|{[ ]}\'\";:/?.>,<`~ -_";
 		//    	//System.out.println("Original : " + spChars);
-		StringBuffer sb = new StringBuffer(spChars);
+		StringBuffer specialChars = new StringBuffer(spChars);
 		//    	//System.out.println("SB : " +sb);
 		StringBuffer retStr = new StringBuffer();
 
 		try
 		{
-			char spIgnoreChars[] = ignoreList.toCharArray();
+			char []spIgnoreChars = ignoreList.toCharArray();
 			for (int spCharCount = 0; spCharCount < spIgnoreChars.length; spCharCount++)
 			{
 				char chkChar = spIgnoreChars[spCharCount];
 				//    			//System.out.println(chkChar);
-				int chInd = sb.indexOf("" + chkChar);
+				int chInd = specialChars.indexOf("" + chkChar);
 				while (chInd != -1)
 				{
-					sb = sb.deleteCharAt(chInd);
-					chInd = sb.indexOf("" + chkChar);
+					specialChars = specialChars.deleteCharAt(chInd);
+					chInd = specialChars.indexOf("" + chkChar);
 					//    				//System.out.println("\t"+sb);
 				}
 
 			}
-			retStr = sb;
+			retStr = specialChars;
 			//    		//System.out.println("\n\nRetStr : " + retStr);
 		}
 		catch (Exception exp)
@@ -400,16 +406,16 @@ public class Validator
 		try
 		{
 			//System.out.println("checkDate in isValidDatePattern : " +checkDate);
-			Pattern re = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
-			Matcher mat = re.matcher(checkDate);
+			Pattern pattern = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
+			Matcher mat = pattern.matcher(checkDate);
 			result = mat.matches();
 			//System.out.println("is Valid Date Pattern : - : "+result);
 			dtCh = Constants.DATE_SEPARATOR;
 			// check for  / separator
 			if (!result)
 			{
-				re = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
-				mat = re.matcher(checkDate);
+				pattern = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
+				mat = pattern.matcher(checkDate);
 				result = mat.matches();
 				//System.out.println("is Valid Date Pattern : / : "+result);
 				dtCh = Constants.DATE_SEPARATOR_SLASH;
@@ -435,11 +441,11 @@ public class Validator
 		return (((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28);
 	}
 
-	private int[] daysArray(int n)
+	private int[] daysArray(int monthNum)
 	{
-		int dayArray[] = new int[n + 1];
+		int []dayArray = new int[monthNum + 1];
 		dayArray[0] = 0;
-		for (int i = 1; i <= n; i++)
+		for (int i = 1; i <= monthNum; i++)
 		{
 			dayArray[i] = 31;
 			if (i == 4 || i == 6 || i == 9 || i == 11)
@@ -459,7 +465,6 @@ public class Validator
 		try
 		{
 			logger.debug("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr);
-			//System.out.println("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr );
 			int[] daysInMonth = daysArray(12);
 			int pos1 = dtStr.indexOf(dtCh);
 			int pos2 = dtStr.indexOf(dtCh, pos1 + 1);
@@ -567,8 +572,8 @@ public class Validator
 			//String pattern="MM-dd-yyyy";
 			String pattern = "MM" + dtCh + "dd" + dtCh + "yyyy";
 			//System.out.println("\n\n\n\n\n\n------------\n"+pattern+"\n\n\n\n\n\n------------\n");
-			SimpleDateFormat dF = new SimpleDateFormat(pattern);
-			Date toCheck = dF.parse(dateToCheck);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+			Date toCheck = dateFormat.parse(dateToCheck);
 
 			//System.out.println("2");
 			//System.out.println("toCheck : "+ toCheck);
@@ -602,8 +607,8 @@ public class Validator
 			isValidDatePattern(startDate);
 			String pattern = "MM" + dtCh + "dd" + dtCh + "yyyy";
 			//System.out.println("\n------------\n"+pattern+"\n------------\n");
-			SimpleDateFormat dF = new SimpleDateFormat(pattern);
-			Date toCheck = dF.parse(startDate);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+			Date toCheck = dateFormat.parse(startDate);
 
 			//System.out.println(toCheck.toString()+"\n-------------\n" );
 
@@ -721,9 +726,9 @@ public class Validator
 		try
 		{
 			// valid format for zip code are '99999-9999' or '99999'
-			Pattern p = Pattern.compile("\\d{5}\\-\\d{4}|\\d{5}");
-			Matcher m = p.matcher(zipCode);
-			result = m.matches();
+			Pattern pattern = Pattern.compile("\\d{5}\\-\\d{4}|\\d{5}");
+			Matcher matcher = pattern.matcher(zipCode);
+			result = matcher.matches();
 		}
 		catch (Exception exp)
 		{
@@ -742,9 +747,9 @@ public class Validator
 		try
 		{
 			// valid format for phone/fax number ar '(999)999-9999' or '999-999-9999'
-			Pattern p = Pattern.compile("\\(\\d{3}\\)\\d{3}-\\d{4}|\\d{3}\\-\\d{3}-\\d{4}"); // for fax and phone
-			Matcher m = p.matcher(phoneNumber);
-			result = m.matches();
+			Pattern pattern = Pattern.compile(REGEX_VALID_PHONE); // for fax and phone
+			Matcher matcher = pattern.matcher(phoneNumber);
+			result = matcher.matches();
 		}
 		catch (Exception exp)
 		{
@@ -938,9 +943,9 @@ public class Validator
 		boolean isXssVulnerable = false;
 		if (value != null)
 		{
-			Pattern p = Pattern.compile(REGEX_XSS_VULNERABLE);
-			Matcher m = p.matcher(value);
-			isXssVulnerable = m.find();
+			Pattern pattern = Pattern.compile(REGEX_XSS_VULNERABLE);
+			Matcher matcher = pattern.matcher(value);
+			isXssVulnerable = matcher.find();
 		}
 		return isXssVulnerable;
 	}
