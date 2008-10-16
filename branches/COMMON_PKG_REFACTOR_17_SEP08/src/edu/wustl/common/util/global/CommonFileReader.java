@@ -4,11 +4,21 @@ package edu.wustl.common.util.global;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+import edu.wustl.common.util.logger.Logger;
+/**
+ * This class is used to read a file.
+ */
 public class CommonFileReader
 {
 
 	/**
-	 * @param args
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonFileReader.class);
+
+	/**
+	 * @param fileName file name.
+	 * @return return the content of file.
 	 */
 	public String readData(String fileName)
 	{
@@ -22,19 +32,11 @@ public class CommonFileReader
 				buffer.append(line).append("<br>");
 			}
 		}
-		catch (Exception e)
+		catch (Exception exception)
 		{
-			e.printStackTrace();
+			logger.debug("Not able to read the file:"+fileName,exception);
 		}
 
 		return buffer.toString();
 	}
-
-	//	public String getFileName(String key)
-	//	{
-	//		ResourceBundle myResources = ResourceBundle.getBundle("ApplicationResources");
-	//		String fileName = myResources.getString(key);
-	//		return fileName;
-	//	}
-
 }
