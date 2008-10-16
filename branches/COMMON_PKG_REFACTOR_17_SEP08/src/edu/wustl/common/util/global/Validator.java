@@ -370,6 +370,7 @@ public class Validator
 		return retStr.toString();
 	}
 
+	// ----------------------------------- Date Validation --------------------
 	private boolean isValidDatePattern(String checkDate)
 	{
 		boolean result = true;
@@ -391,14 +392,14 @@ public class Validator
 		catch (Exception exp)
 		{
 			logger.error("IsValidDatePattern : exp : " + exp);
-			return false;
+			result=false;
 		}
 		return result;
 	}
 
-	String dtCh = Constants.DATE_SEPARATOR;
-	int minYear = Integer.parseInt(Constants.MIN_YEAR);
-	int maxYear = Integer.parseInt(Constants.MAX_YEAR);
+	private String dtCh = Constants.DATE_SEPARATOR;
+	private int minYear = Integer.parseInt(Constants.MIN_YEAR);
+	private int maxYear = Integer.parseInt(Constants.MAX_YEAR);
 
 	private int daysInFebruary(int year)
 	{
@@ -428,6 +429,7 @@ public class Validator
 
 	private boolean isDate(String dtStr)
 	{
+		boolean isDate=true;
 		try
 		{
 			logger.debug("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr);
@@ -462,34 +464,33 @@ public class Validator
 			if (pos1 == -1 || pos2 == -1)
 			{
 				logger.debug("The date format should be : mm/dd/yyyy");
-				return false;
+				isDate= false;
 			}
 			if (strMonth.length() < 1 || month < 1 || month > 12)
 			{
 				logger.debug("Please enter a valid month");
-				return false;
+				isDate= false;
 			}
 			if (strDay.length() < 1 || day < 1 || day > 31
 					|| (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month])
 			{
 				logger.debug("Please enter a valid day");
-				return false;
+				isDate= false;
 			}
 			if (strYear.length() != 4 || year == 0 || year < minYear || year > maxYear)
 			{
 				logger.debug("Please enter a valid 4 digit year between " + minYear + " and "
 						+ maxYear);
-				return false;
+				isDate= false;
 			}
-			return true;
 		}
 		catch (Exception exp)
 		{
 			logger.error("exp in isDate : " + exp);
 			exp.printStackTrace();
-			return false;
+			isDate= false;
 		}
-
+		return isDate;
 	}
 
 	public boolean checkDate(String checkDate)
@@ -613,39 +614,24 @@ public class Validator
 	//Returns TRUE if operator is valid else return FALSE
 	public boolean isOperator(String value)
 	{
-		if (value == null)
+		boolean isOperator=true;
+		if (value == null || value.equals(Constants.ANY) || value.equals("-1"))
 		{
-			return false;
+			isOperator= false;
 		}
-		else if (value.equals(Constants.ANY) || value.equals("-1"))
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return isOperator;
 	}
 
 	public boolean isValue(String value)
 	{
+		boolean isValue=true;
 		//Purposefully not checked for value==null.
-		if (value == null)
+		if (value!= null && (TextConstants.EMPTY_STRING.equals(value.trim())
+				|| value.equals("-1") || value.equals(Constants.SELECT_OPTION)))
 		{
-			return true;
+			isValue= false;
 		}
-		else if (value.trim().length() == 0)
-		{
-			return false;
-		}
-		else if (value.equals("-1") || value.equals(Constants.SELECT_OPTION))
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return isValue;
 	}
 
 	// -------------Date Validation ends---------
