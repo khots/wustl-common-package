@@ -17,7 +17,9 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ApplicationProperties
 {
-
+	/**
+	 * Generic resource bundle.
+	 */
 	private static ResourceBundle bundle;
 
 	/**
@@ -25,13 +27,17 @@ public class ApplicationProperties
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationProperties.class);
 
+	/**
+	 * Load the resource bundle file.
+	 * @param baseName Resource Bundle file name.
+	 */
 	public static void initBundle(String baseName)
 	{
 		bundle = ResourceBundle.getBundle(baseName);
 	}
 
 	/**
-	 * @param theKey
+	 * @param theKey key in a application property file
 	 * @return the value of key.
 	 */
 	public static String getValue(String theKey)
@@ -49,13 +55,14 @@ public class ApplicationProperties
 	}
 
 	/**
-	 * This method should be used when you want to customize error message with multiple replacement parameters.
-	 * 
+	 * This method should be used when you want to
+	 * customize error message with multiple replacement parameters.
+	 *
 	 * @param theKey - error key
 	 * @param placeHolders - replacement Strings
 	 * @return - complete error message
 	 */
-	public static String getValue(String theKey, List placeHolders)
+	public static String getValue(String theKey, List<String> placeHolders)
 	{
 		String msg = TextConstants.EMPTY_STRING;
 		if (bundle == null)
@@ -68,7 +75,8 @@ public class ApplicationProperties
 			StringBuffer message = new StringBuffer(msg);
 			for (int i = 0; i < placeHolders.size(); i++)
 			{
-				message.replace(message.indexOf("{"), message.indexOf("}") + 1, (String) placeHolders.get(i));
+				message.replace(message.indexOf("{"),
+						message.indexOf("}") + 1,placeHolders.get(i));
 			}
 			msg=message.toString();
 		}
@@ -76,9 +84,9 @@ public class ApplicationProperties
 	}
 
 	/**
-	 * This method should be used when you want to customize error message with single replacement parameter
+	 * This method should be used when you want to customize error message with single replacement parameter.
 	 * @param theKey - error key
-	 * @param placeHolders - replacement Strings
+	 * @param placeHolder - replacement Strings
 	 * @return - complete error message
 	 */
 	public static String getValue(String theKey, String placeHolder)
