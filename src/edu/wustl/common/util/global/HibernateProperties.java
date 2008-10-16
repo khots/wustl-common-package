@@ -8,6 +8,8 @@ package edu.wustl.common.util.global;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 import edu.wustl.common.util.logger.Logger;
@@ -18,15 +20,21 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class HibernateProperties
 {
-
+	/**
+	 * Properties object.
+	 */
 	private static Properties prop;
 
 	/**
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(HibernateProperties.class);
-
-	public static void initBundle(String baseName) throws Exception
+	/**
+	 * This method load the properties file.
+	 * @param baseName File Name
+	 * @throws IOException - Generic IO exception
+	 */
+	public static void initBundle(String baseName) throws IOException
 	{
 		try
 		{
@@ -36,15 +44,22 @@ public class HibernateProperties
 			prop.load(stram);
 			stram.close();
 		}
-		catch (Exception exe)
+		catch (FileNotFoundException exe)
 		{
-			logger.error("Error:Application may not run properly",exe);
-			throw new Exception("Error:Application may not run properly: "+ exe.getMessage(), exe);
+			logger.error("Not able to read the file:"+baseName,exe);
+			throw exe;
 		}
-
-		//ResourceBundle.
+		catch (IOException exe)
+		{
+			logger.error("Not able to load the properties file:"+baseName,exe);
+			throw exe;
+		}
 	}
-
+	/**
+	 * get the value for a key.
+	 * @param theKey key in properties file.
+	 * @return value for a key.
+	 */
 	public static String getValue(String theKey)
 	{
 		return prop.getProperty(theKey);

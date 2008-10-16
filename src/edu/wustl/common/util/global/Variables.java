@@ -52,6 +52,7 @@ public class Variables
 
 	// Ravi : for Multi Site Rep. changes
 	public static Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
-	public static Map<String, List<NameValueBean>> privilegeGroupingMap = new HashMap<String, List<NameValueBean>>();
+	public static Map<String, List<NameValueBean>> privilegeGroupingMap
+			= new HashMap<String, List<NameValueBean>>();
 	public static String validatorClassname = CONST_VARIABLES_VALUE;
 }
