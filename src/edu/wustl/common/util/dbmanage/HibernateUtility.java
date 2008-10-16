@@ -1,5 +1,5 @@
 
-package edu.wustl.common.util.dbmanager;
+package edu.wustl.common.util.dbmanage;
 
 import java.util.Collection;
 import java.util.List;
