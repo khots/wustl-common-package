@@ -154,6 +154,7 @@ public class Constants
 	public static final String  ORACLE_DATABASE = "ORACLE";
 	public static final String  MYSQL_DATABASE = "MYSQL";
 	public static final String  POSTGRESQL_DATABASE = "POSTGRESQL";
+	public static final String  DB2_DATABASE = "DB2";
 	
 	
 	// The unique key voilation message is "Duplicate entry %s for key %d"
