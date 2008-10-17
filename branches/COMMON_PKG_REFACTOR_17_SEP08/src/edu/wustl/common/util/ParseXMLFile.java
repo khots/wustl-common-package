@@ -6,26 +6,18 @@
 
 package edu.wustl.common.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
 import edu.wustl.common.util.global.TextConstants;
+import edu.wustl.common.util.global.XMLParserUtility;
 
 /**
  * This class is used for parsing the XML file and put the parsed elements to HashMaps.
@@ -70,7 +62,7 @@ public class ParseXMLFile
 	 */
 	protected ParseXMLFile(String path) throws CheckedException
 	{
-		Document doc = parseFile(path);
+		Document doc = XMLParserUtility.parseFile(path);
 		Node root = doc.getDocumentElement();
 		readDynamicUIComponents(root);
 	}
@@ -201,53 +193,6 @@ public class ParseXMLFile
 				}
 			}
 		}
-	}
-
-	/**
-	 * This method parses the nodes of XML file and returns the Document object.
-	 * @param fileName String file name.
-	 * @return Document contents of file in document format.
-	 * @exception CheckedException checked exception.
-	 */
-	private Document parseFile(String fileName) throws CheckedException
-	{
-		DocumentBuilder docBuilder;
-		Document doc = null;
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		docBuilderFactory.setIgnoringElementContentWhitespace(true);
-		try
-		{
-			docBuilderFactory.setIgnoringComments(true);
-			docBuilderFactory.setIgnoringElementContentWhitespace(true);
-			docBuilder = docBuilderFactory.newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.UN_XXXX);
-		}
-		File sourceFile = new File(fileName);
-		try
-		{
-			InputStream inputStream = ParseXMLFile.class.getClassLoader().getResourceAsStream(
-					fileName);
-			if (inputStream == null)
-			{
-				doc = docBuilder.parse(sourceFile);
-			}
-			else
-			{
-				doc = docBuilder.parse(inputStream);
-			}
-		}
-		catch (SAXException e)
-		{
-			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.IO_0003);
-		}
-		catch (IOException e)
-		{
-			throw new CheckedException(e.getMessage(), e, ErrorCodeConstants.IO_0001);
-		}
-		return doc;
 	}
 
 	/**
