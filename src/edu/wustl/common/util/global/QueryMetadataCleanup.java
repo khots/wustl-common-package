@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.util.global;
@@ -24,19 +24,27 @@ import java.util.Set;
  */
 public class QueryMetadataCleanup
 {
-
+	/**
+	 * specify connection object.
+	 */
 	private static Connection con = null;
+	/**
+	 * specify statement object.
+	 */
 	private static Statement stmt = null;
-	static private BufferedWriter writer = null;
+	/**
+	 * specify BufferedWriter object.
+	 */
+	private static BufferedWriter writer = null;
 
 	/**
-	 * 
+	 *
 	 * @param args The database connecttion related parameters:
 	 * 	- User Name
 	 * 	- Password
 	 * 	- driver
 	 * 	- Connection URL
-	 * 	
+	 *
 	 */
 	public static void main(String[] args)
 	{
@@ -58,6 +66,7 @@ public class QueryMetadataCleanup
 		finally
 		{
 			if (con != null)
+			{
 				try
 				{
 					con.close();
@@ -66,17 +75,22 @@ public class QueryMetadataCleanup
 				{
 					throw new RuntimeException(e);
 				}
+			}
 		}
 
 	}
 
 	/**
 	 * TO create Connection object.
-	 * @param args
-	 * @throws SQLException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
+	 * @param args The database connecttion related parameters:
+	 * 	- User Name
+	 * 	- Password
+	 * 	- driver
+	 * 	- Connection URL
+	 * @throws SQLException SQL Exception
+	 * @throws InstantiationException InstantiationException
+	 * @throws IllegalAccessException IllegalAccessException
+	 * @throws ClassNotFoundException ClassNotFoundException
 	 */
 	private static void createConnection(String[] args) throws SQLException,
 			InstantiationException, IllegalAccessException, ClassNotFoundException
@@ -99,21 +113,20 @@ public class QueryMetadataCleanup
 
 	/**
 	 * Removes entries from path & intramodel association table.
-	 * @throws SQLException
-	 * @throws IOException
+	 * @throws SQLException generic SQLException
+	 * @throws IOException generic IOException
 	 */
 	private static void cleanup() throws SQLException, IOException
 	{
 		StringBuffer deletedRecords = new StringBuffer("\nintra_model_association:");
-		String corruptedAssociationSql = "select ASSOCIATION_ID, DE_ASSOCIATION_ID From intra_model_association where de_association_id not in (select IDENTIFIER from dyextn_association)";
-		ResultSet rs = stmt.executeQuery(corruptedAssociationSql);
+		ResultSet resultSet = stmt.executeQuery(SqlConstants.SQL_CORRUPTED_ASSOCIATION);
 		Set<Long> intraModelAssociationIds = new HashSet<Long>();
-		while (rs.next())
+		while (resultSet.next())
 		{
-			deletedRecords.append("\n").append(rs.getLong(1)).append((",")).append(rs.getLong(2));
-			intraModelAssociationIds.add(rs.getLong(1));
+			deletedRecords.append("\n"+ resultSet.getLong(1)+","+resultSet.getLong(2));
+			intraModelAssociationIds.add(resultSet.getLong(1));
 		}
-		rs.close();
+		resultSet.close();
 		writer.write("\nTotal Corrupted DE AssociationIds: " + intraModelAssociationIds.size());
 		if (intraModelAssociationIds.isEmpty())
 		{
@@ -130,23 +143,23 @@ public class QueryMetadataCleanup
 		for (Long id : intraModelAssociationIds)
 		{
 			associationDelSQL.append(id).append(",");
-			String pathSql = "select PATH_ID,FIRST_ENTITY_ID,INTERMEDIATE_PATH,LAST_ENTITY_ID from PATH where INTERMEDIATE_PATH like '%"
+			String pathSql = SqlConstants.SQL_PATH +"'%"
 					+ id + "%'";
-			rs = stmt.executeQuery(pathSql);
-			while (rs.next())
+			resultSet = stmt.executeQuery(pathSql);
+			while (resultSet.next())
 			{
-				String path = rs.getString(3);
-				boolean b = isPresentInPath(id, path);
-				if (b)
+				String path = resultSet.getString(3);
+				boolean isPresentId = isPresentInPath(id, path);
+				if (isPresentId)
 				{
-					pathDelSQL.append(rs.getLong(1)).append(",");
+					pathDelSQL.append(resultSet.getLong(1)+",");
 					pathCnt++;
-					writer.write("\n" + entityNameMap.get(rs.getLong(2)) + "--->"
-							+ entityNameMap.get(rs.getLong(4)));
-					deletedRecords.append("\n").append(rs.getLong(1)).append((",")).append(
-							rs.getLong(2)).append((",")).append(rs.getString(3)).append((","))
-							.append(rs.getLong(4));
-					//					writer.write("\n"+id+":"+ rs.getLong(1) +":" +path+":" + entityNameMap.get(rs.getLong(2))+"--->"+entityNameMap.get(rs.getLong(4)));
+					writer.write("\n" + entityNameMap.get(resultSet.getLong(2)) + "--->"
+							+ entityNameMap.get(resultSet.getLong(4)));
+					deletedRecords.append('\n').append(resultSet.getLong(1))
+					.append(',').append(resultSet.getLong(2))
+					.append(',').append(resultSet.getString(3))
+					.append(',').append(resultSet.getLong(4));
 				}
 
 			}
@@ -177,39 +190,39 @@ public class QueryMetadataCleanup
 
 	/**
 	 * To check whether given association id is present in the given path or not.
-	 * @param id The intramodel association id.
+	 * @param associationId The intramodel association id.
 	 * @param path The string representing intermediate path.
-	 * @return
+	 * @return isPresent return whether given association id is present in the given path or not
 	 */
-	private static boolean isPresentInPath(Long id, String path)
+	private static boolean isPresentInPath(Long associationId, String path)
 	{
 		String[] splitArray = path.split("_");
-		boolean b = false;
+		boolean isPresent = false;
 		for (int index = 0; index < splitArray.length; index++)
 		{
-			if (splitArray[index].equals(id.toString()))
+			if (splitArray[index].equals(associationId.toString()))
 			{
-				b = true;
+				isPresent = true;
 			}
 		}
-		return b;
+		return isPresent;
 	}
 
 	/**
 	 * Create map of entity id verses entity Name.
 	 * @return The map of entity id verses entity Name.
-	 * @throws SQLException
+	 * @throws SQLException generic SQLException
 	 */
 	private static Map<Long, String> getEntityNameMap() throws SQLException
 	{
 		Map<Long, String> entityNameMap = new HashMap<Long, String>();
-		ResultSet rs = stmt
-				.executeQuery("select IDENTIFIER, NAME from dyextn_abstract_metadata WHERE CREATED_DATE IS NOT NULL");
-		while (rs.next())
+		ResultSet resultSet = stmt
+				.executeQuery(SqlConstants.SQL_ENTITY_NAMES);
+		while (resultSet.next())
 		{
-			entityNameMap.put(rs.getLong(1), rs.getString(2));
+			entityNameMap.put(resultSet.getLong(1), resultSet.getString(2));
 		}
-		rs.close();
+		resultSet.close();
 		return entityNameMap;
 	}
 }
