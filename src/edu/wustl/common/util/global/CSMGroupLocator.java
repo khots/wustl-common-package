@@ -1,21 +1,12 @@
 package edu.wustl.common.util.global;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * It return class PG Name,PI GroupName or Coordinator GroupName.
@@ -24,11 +15,6 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CSMGroupLocator
 {
-	/**
-	 * logger Logger - Generic logger.
-	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CSMGroupLocator.class);
-
 	/**
 	 * File name for CSM group configuration.
 	 */
@@ -100,7 +86,7 @@ public class CSMGroupLocator
 	 */
 	public void init() throws ClassNotFoundException
 	{
-		Document doc =getDocument(CSM_GROUP_CONF_FILE);
+		Document doc =XMLParserUtility.getDocument(CSM_GROUP_CONF_FILE);
 		NodeList csmGrNodeLst = doc.getElementsByTagName(ELE_CSM_GROUP);
 		populateMaps(csmGrNodeLst);
 	}
@@ -137,55 +123,10 @@ public class CSMGroupLocator
 		Element csmGrElmnt = (Element) csmGrNode;
 		csmGrClassName=csmGrElmnt.getAttribute(ATTR_CLASS_NAME);
 		Class clazz=Class.forName(csmGrClassName);
-		pgName = getElementValue(csmGrElmnt,ELE_PG_NAME);
-		piGroupName = getElementValue(csmGrElmnt,ELE_PI_GROUP_NAME);
-		coGroupName = getElementValue(csmGrElmnt,ELE_COORDINATOR_GROUP_NAME);
+		pgName = XMLParserUtility.getElementValue(csmGrElmnt,ELE_PG_NAME);
+		piGroupName = XMLParserUtility.getElementValue(csmGrElmnt,ELE_PI_GROUP_NAME);
+		coGroupName = XMLParserUtility.getElementValue(csmGrElmnt,ELE_COORDINATOR_GROUP_NAME);
 		csmGroup= new CSMGroup(pgName,piGroupName,coGroupName);
 	    classVsCsmGroupMap.put(clazz, csmGroup);
-	}
-
-	/**
-	 * This method return role name from xml file.
-	 * @param element String- privilege Element
-	 * @param elementName -Element name for which value has to be return
-	 * @return String Role name
-	 */
-	private String getElementValue(Element element,String elementName)
-	{
-		String roleName;
-		NodeList roleNmElmntLst = element.getElementsByTagName(elementName);
-		Element roleNmElmnt = (Element) roleNmElmntLst.item(0);
-		NodeList roleNm = roleNmElmnt.getChildNodes();
-		roleName=((Node) roleNm.item(0)).getNodeValue();
-		return roleName;
-	}
-	/**
-	 * This method returns the Document object for xml file.
-	 * @param fileName File name.
-	 * @return Document xml document.
-	 */
-	private Document getDocument(String fileName)
-	{
-		Document doc=null;
-		try
-		{
-			File file = new File(fileName);
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-			doc=documentBuilder.parse(file);
-		}
-		catch (ParserConfigurationException exception)
-		{
-			logger.error("DocumentBuilder cannot be created",exception);
-		}
-		catch (SAXException exception)
-		{
-			logger.error("Can not parse the xml file:"+fileName,exception);
-		}
-		catch (IOException exception)
-		{
-			logger.error("Can not parse the xml file:"+fileName,exception);
-		}
-		return doc;
 	}
 }
