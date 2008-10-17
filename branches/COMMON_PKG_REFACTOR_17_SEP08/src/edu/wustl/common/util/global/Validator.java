@@ -42,12 +42,12 @@ public class Validator
 	/**
 	 * This is regular expression to validate email id.
 	 */
-	private static final String REGEX_VALID_EMAIL
-		= "^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$";
+	private static final String REGEX_VALID_EMAIL = "^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$";
 	/**
 	 * This is regular expression to validate phone number.
 	 */
 	private static final String REGEX_VALID_PHONE = "\\(\\d{3}\\)\\d{3}-\\d{4}|\\d{3}\\-\\d{3}-\\d{4}";
+
 	/**
 	 * Checks that the input String is a valid email address.
 	 * @param aEmailAddress String containing the email address to be checked.
@@ -84,13 +84,14 @@ public class Validator
 		boolean result = true;
 		try
 		{
-			Pattern pattern = Pattern.compile("[0-9]{3}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("[0-9]{3}-[0-9]{2}-[0-9]{4}",
+					Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(ssn);
 			result = mat.matches();
 		}
 		catch (Exception exp)
 		{
-			result=false;
+			result = false;
 		}
 		return result;
 	}
@@ -102,10 +103,10 @@ public class Validator
 	 */
 	public boolean isEmpty(String str)
 	{
-		boolean isEmpty=false;
+		boolean isEmpty = false;
 		if (str == null || TextConstants.EMPTY_STRING.equals(str.trim()))
 		{
-			isEmpty=true;
+			isEmpty = true;
 		}
 		return isEmpty;
 	}
@@ -117,13 +118,13 @@ public class Validator
 	 * */
 	public boolean isAlpha(String alphaString)
 	{
-		boolean isAlpha=true;
+		boolean isAlpha = true;
 		int index = 0;
 		while (index < alphaString.length())
 		{
 			if (!Character.isLetter(alphaString.charAt(index)))
 			{
-				isAlpha= false;
+				isAlpha = false;
 				break;
 			}
 			index++;
@@ -138,18 +139,18 @@ public class Validator
 	 * */
 	public boolean isNumeric(String numString)
 	{
-		boolean isNumeric=true;
+		boolean isNumeric = true;
 		try
 		{
 			long longValue = Long.parseLong(numString);
 			if (longValue <= 0)
 			{
-				isNumeric=false;
+				isNumeric = false;
 			}
 		}
 		catch (NumberFormatException exp)
 		{
-			isNumeric=false;
+			isNumeric = false;
 		}
 		return isNumeric;
 	}
@@ -180,21 +181,21 @@ public class Validator
 	 */
 	public boolean isPositiveNumeric(String numString, int positiveCheck)
 	{
-		boolean isPosNum=true;
+		boolean isPosNum = true;
 		Double value = convertToNumber(numString);
 		if (value == null)
 		{
-			isPosNum=false;
+			isPosNum = false;
 		}
 		else
 		{
 			if (positiveCheck > 0 && value.longValue() <= 0)
 			{
-				isPosNum=false;
+				isPosNum = false;
 			}
 			else if (positiveCheck == 0 && value.longValue() < 0)
 			{
-				isPosNum=false;
+				isPosNum = false;
 			}
 		}
 		return isPosNum;
@@ -218,10 +219,11 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.debug("NumberFormatException:" + exp.getMessage(),exp);
+			logger.debug("NumberFormatException:" + exp.getMessage(), exp);
 		}
 		return longValue;
 	}
+
 	/**
 	 * This converts string into a number.
 	 * @param numString Number as a string.
@@ -236,7 +238,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.error("NumberFormatException:" + exp.getMessage(),exp);
+			logger.error("NumberFormatException:" + exp.getMessage(), exp);
 		}
 		return value;
 	}
@@ -244,24 +246,24 @@ public class Validator
 	/**
 	 * Checks the given String for double value.
 	 *
-	 * @param dblString
+	 * @param dblString string
 	 * @return boolean True if the string contains double number or
 	 *  false if any non numeric character is present.
 	 */
 	public boolean isDouble(String dblString)
 	{
-		boolean isDouble=true;
+		boolean isDouble = true;
 		try
 		{
 			double dblValue = Double.parseDouble(dblString);
 			if (dblValue < 0 || Double.isNaN(dblValue))
 			{
-				isDouble=false;
+				isDouble = false;
 			}
 		}
 		catch (NumberFormatException exp)
 		{
-			isDouble=false;
+			isDouble = false;
 		}
 		return isDouble;
 	}
@@ -273,75 +275,71 @@ public class Validator
 	 */
 	public boolean isDouble(String dblString, boolean positiveCheck)
 	{
-		boolean isDouble=true;
+		boolean isDouble = true;
 		try
 		{
 			double dblValue = Double.parseDouble(dblString);
 
 			if (Double.isNaN(dblValue))
 			{
-				isDouble=false;
+				isDouble = false;
 			}
 			if (positiveCheck && dblValue < 0)
 			{
-				isDouble=false;
+				isDouble = false;
 			}
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.debug("NumberFormatException:" + exp.getMessage(),exp);
-			isDouble= false;
+			logger.debug("NumberFormatException:" + exp.getMessage(), exp);
+			isDouble = false;
 		}
 		return isDouble;
 	}
 
+	/**
+	 * Check option is valid or not.
+	 * @param option option
+	 * @return option valid or not
+	 */
 	public boolean isValidOption(String option)
 	{
-		boolean isValidOption=false;
-		if (option != null && !(option.trim().equals("") || option.trim().equals("-1")
-					|| option.equals(Constants.SELECT_OPTION)))
+		boolean isValidOption = false;
+		if (option != null
+				&& !(option.trim().equals("") || option.trim().equals("-1") || option
+						.equals(Constants.SELECT_OPTION)))
 		{
-			isValidOption=true;
+			isValidOption = true;
 		}
 		return isValidOption;
 	}
 
+	/**
+	 * Check emailAddress is valid or not.
+	 * @param emailAddress email Address
+	 * @return valid or not
+	 */
 	private boolean isValidEmailId(String emailAddress)
 	{
 		boolean result = true;
 		try
 		{
-			Pattern pattern = Pattern
-					.compile(REGEX_VALID_EMAIL,Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile(REGEX_VALID_EMAIL, Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(emailAddress);
 			result = mat.matches();
 		}
 		catch (Exception exp)
 		{
-			result= false;
+			result = false;
 		}
 		return result;
 	}
 
-	//    public boolean containsSpecialCharacters( String mainString, String delimiter)
-	//    {
-	//    	try
-	//		{
-	//    		StringTokenizer st = new StringTokenizer(mainString, delimiter);
-	//    		int count = st.countTokens();
-	//    		if(count>1)
-	//    			return true;
-	//    		else
-	//    			return false;
-	//		}
-	//    	catch(Exception exp)
-	//		{
-	//			//System.out.println("error : " + exp);
-	//    		return true;
-	//		}
-	//
-	//    }
-
+	/**
+	 * delimiter Excluding Given list.
+	 * @param ignoreList ignore delimiter List
+	 * @return delimiter string Excluding Given list
+	 */
 	public String delimiterExcludingGiven(String ignoreList)
 	{
 		String spChars = "!@#$%^&*()=+\\|{[ ]}\'\";:/?.>,<`~ -_";
@@ -350,7 +348,7 @@ public class Validator
 
 		try
 		{
-			char []spIgnoreChars = ignoreList.toCharArray();
+			char[] spIgnoreChars = ignoreList.toCharArray();
 			for (int spCharCount = 0; spCharCount < spIgnoreChars.length; spCharCount++)
 			{
 				char chkChar = spIgnoreChars[spCharCount];
@@ -371,12 +369,18 @@ public class Validator
 	}
 
 	// ----------------------------------- Date Validation --------------------
+	/**
+	 * check Valid Date Pattern.
+	 * @param checkDate date value
+	 * @return valid or not.
+	 */
 	private boolean isValidDatePattern(String checkDate)
 	{
 		boolean result = true;
 		try
 		{
-			Pattern pattern = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}",
+					Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(checkDate);
 			result = mat.matches();
 			dtCh = Constants.DATE_SEPARATOR;
@@ -392,55 +396,129 @@ public class Validator
 		catch (Exception exp)
 		{
 			logger.error("IsValidDatePattern : exp : " + exp);
-			result=false;
+			result = false;
 		}
 		return result;
 	}
 
+	/**
+	 * specify date separator.
+	 */
 	private String dtCh = Constants.DATE_SEPARATOR;
+	/**
+	 * specify min year.
+	 */
 	private final int minYear = Integer.parseInt(Constants.MIN_YEAR);
+	/**
+	 * specify max year.
+	 */
 	private final int maxYear = Integer.parseInt(Constants.MAX_YEAR);
-	private static final int DAYS_IN_A_MONTH_31=31;
-	private static final int DAYS_IN_A_MONTH_30=30;
-	private static final int DAYS_IN_A_MONTH_28=28;
-	private static final int DAYS_IN_A_MONTH_29=29;
-	private static final int TOTAL_MONTHS_IN_YEAR=12;
-	private static final int SEC_IN_A_MIN=60;
-	private static final int MIN_IN_A_HR=60;
-	private static final int HRS_IN_A_DAY=24;
-	private static final int ONE_THOUSAND=1000;
-	private static final int MONTH_FEB=2;
-	private static final int MONTH_APRIL=4;
-	private static final int MONTH_JUNE=6;
-	private static final int MONTH_SEP=9;
-	private static final int MONTH_NOV=11;
-	private static final int DIGITS_IN_YEAR=4;
-	private static final int FOUR=4;
-	private static final int HUNDRED=100;
-	private static final int FOUR_HUNDRED=400;
+	/**
+	 * specify days in a month.
+	 */
+	private static final int DAYS_IN_A_MONTH_31 = 31;
+	/**
+	 * specify days in a month.
+	 */
+	private static final int DAYS_IN_A_MONTH_30 = 30;
+	/**
+	 * specify days in a month.
+	 */
+	private static final int DAYS_IN_A_MONTH_28 = 28;
+	/**
+	 * specify days in a month.
+	 */
+	private static final int DAYS_IN_A_MONTH_29 = 29;
+	/**
+	 * specify days in a month.
+	 */
+	private static final int TOTAL_MONTHS_IN_YEAR = 12;
+	/**
+	 * specify second in a min.
+	 */
+	private static final int SEC_IN_A_MIN = 60;
+	/**
+	 * specify min in a hour.
+	 */
+	private static final int MIN_IN_A_HR = 60;
+	/**
+	 * specify hours in a day.
+	 */
+	private static final int HRS_IN_A_DAY = 24;
+	/**
+	 * specify 1000 number.
+	 */
+	private static final int ONE_THOUSAND = 1000;
+	/**
+	 * specify feb month.
+	 */
+	private static final int MONTH_FEB = 2;
+	/**
+	 * specify April month.
+	 */
+	private static final int MONTH_APRIL = 4;
+	/**
+	 * specify June month.
+	 */
+	private static final int MONTH_JUNE = 6;
+	/**
+	 *  specify September month.
+	 */
+	private static final int MONTH_SEP = 9;
+	/**
+	 * specify November month.
+	 */
+	private static final int MONTH_NOV = 11;
+	/**
+	 * specify Digits in year.
+	 */
+	private static final int DIGITS_IN_YEAR = 4;
+	/**
+	 * specify four number.
+	 */
+	private static final int FOUR = 4;
+	/**
+	 * specify number 100.
+	 */
+	private static final int HUNDRED = 100;
+	/**
+	 * specify number 400.
+	 */
+	private static final int FOUR_HUNDRED = 400;
 
+	/**
+	 * February days.
+	 * @param year year
+	 * @return days in Feb
+	 */
 	private int daysInFebruary(int year)
 	{
 		// February has 29 days in any year evenly divisible by four,
 		// EXCEPT for centurial years which are not also divisible by 400.
-		int daysInFeb=DAYS_IN_A_MONTH_28;
-		if((year % FOUR == 0) && ((!(year % HUNDRED == 0)) || (year % FOUR_HUNDRED == 0)))
+		int daysInFeb = DAYS_IN_A_MONTH_28;
+		if ((year % FOUR == 0) && ((!(year % HUNDRED == 0)) || (year % FOUR_HUNDRED == 0)))
 		{
-			daysInFeb=DAYS_IN_A_MONTH_29;
+			daysInFeb = DAYS_IN_A_MONTH_29;
 
 		}
 		return daysInFeb;
 	}
 
+	/**
+	 * Days in month.
+	 * @param monthNum total months in year
+	 * @return Days in month.
+	 */
 	private int[] daysArray(int monthNum)
 	{
-		int []dayArray = new int[monthNum + 1];
+		int[] dayArray = new int[monthNum + 1];
 		dayArray[0] = 0;
-		boolean isDays30=false;
+		boolean isDays30 = false;
 		for (int i = 1; i <= monthNum; i++)
 		{
 			dayArray[i] = DAYS_IN_A_MONTH_31;
-			isDays30= (i == MONTH_APRIL) || (i == MONTH_JUNE) || (i == MONTH_SEP) || (i == MONTH_NOV);
+			isDays30 = (i == MONTH_APRIL) || (i == MONTH_JUNE) || (i == MONTH_SEP)
+					|| (i == MONTH_NOV);
 			if (isDays30)
 			{
 				dayArray[i] = DAYS_IN_A_MONTH_30;
@@ -453,10 +531,15 @@ public class Validator
 		return dayArray;
 	}
 
+	/**
+	 * To check date value.
+	 * @param dtStr check date value
+	 * @return isDate valid or not.
+	 */
 	private boolean isDate(String dtStr)
 	{
-		boolean isDate=true;
-		String errorMess=TextConstants.EMPTY_STRING;
+		boolean isDate = true;
+		String errorMess = TextConstants.EMPTY_STRING;
 		try
 		{
 			int[] daysInMonth = daysArray(TOTAL_MONTHS_IN_YEAR);
@@ -471,39 +554,45 @@ public class Validator
 			int year = Integer.parseInt(strYr);
 			if (pos1 == -1 || pos2 == -1)
 			{
-				errorMess="The date format should be : mm/dd/yyyy";
-				isDate= false;
+				errorMess = "The date format should be : mm/dd/yyyy";
+				isDate = false;
 			}
 			if (strMonth.length() < 1 || month < 1 || month > TOTAL_MONTHS_IN_YEAR)
 			{
-				errorMess="Please enter a valid month";
-				isDate= false;
+				errorMess = "Please enter a valid month";
+				isDate = false;
 			}
 			if (strDay.length() < 1 || day < 1 || day > DAYS_IN_A_MONTH_31
 					|| (month == MONTH_FEB && day > daysInFebruary(year))
 					|| day > daysInMonth[month])
 			{
-				errorMess="Please enter a valid day";
-				isDate= false;
+				errorMess = "Please enter a valid day";
+				isDate = false;
 			}
 			if (strYear.length() != DIGITS_IN_YEAR || year == 0 || year < minYear || year > maxYear)
 			{
-				errorMess="Please enter a valid 4 digit year between "+minYear+" and "+maxYear;
-				isDate= false;
+				errorMess = "Please enter a valid 4 digit year between " + minYear + " and "
+						+ maxYear;
+				isDate = false;
 			}
 		}
 		catch (Exception exp)
 		{
-			logger.error("Date is not valid:"+dtStr,exp);
-			isDate= false;
+			logger.error("Date is not valid:" + dtStr, exp);
+			isDate = false;
 		}
-		if(isDate)
+		if (isDate)
 		{
 			logger.error(errorMess);
 		}
 		return isDate;
 	}
 
+	/**
+	 * To check date.
+	 * @param checkDate date value
+	 * @return result valid or not
+	 */
 	public boolean checkDate(String checkDate)
 	{
 		boolean result = true;
@@ -533,6 +622,11 @@ public class Validator
 		return result;
 	}
 
+	/**
+	 * To compare date with current one.
+	 * @param dateToCheck date value to check
+	 * @return result true or false
+	 */
 	public boolean compareDateWithCurrent(String dateToCheck)
 	{
 		boolean result = true;
@@ -556,6 +650,12 @@ public class Validator
 		return result;
 	}
 
+	/**
+	 * To compare Dates.
+	 * @param startDate start date
+	 * @param endDate end date
+	 * @return result true or false
+	 */
 	public boolean compareDates(String startDate, String endDate)
 	{
 		boolean result = true;
@@ -583,8 +683,13 @@ public class Validator
 
 	}
 
-	// --- method to check date and format the errors accordingly.
-	// Error messages for empty date, Invalid date, and Future dates are formatted .
+	/**
+	 * method to check date and format the errors accordingly.
+	 * Error messages for empty date, Invalid date, and Future dates are formatted .
+	 * @param strDate date
+	 * @param checkFutureDate boolean value
+	 * @return string
+	 */
 	public String validateDate(String strDate, boolean checkFutureDate)
 	{
 		String returnString = "";
@@ -616,25 +721,35 @@ public class Validator
 		return returnString;
 	}
 
-	//Returns TRUE if operator is valid else return FALSE
+	/**
+	 * method to check operator is valid or not.
+	 * @param value operator
+	 * @return Returns TRUE if operator is valid else return FALSE
+	 */
 	public boolean isOperator(String value)
 	{
-		boolean isOperator=true;
+		boolean isOperator = true;
 		if (value == null || value.equals(Constants.ANY) || value.equals("-1"))
 		{
-			isOperator= false;
+			isOperator = false;
 		}
 		return isOperator;
 	}
 
+	/**
+	 * method to check value.
+	 * @param value value
+	 * @return Returns TRUE if value is valid else return FALSE
+	 */
 	public boolean isValue(String value)
 	{
-		boolean isValue=true;
+		boolean isValue = true;
 		//Purposefully not checked for value==null.
-		if (value!= null && (TextConstants.EMPTY_STRING.equals(value.trim())
-				|| value.equals("-1") || value.equals(Constants.SELECT_OPTION)))
+		if (value != null
+				&& (TextConstants.EMPTY_STRING.equals(value.trim()) || value.equals("-1") || value
+						.equals(Constants.SELECT_OPTION)))
 		{
-			isValue= false;
+			isValue = false;
 		}
 		return isValue;
 	}
@@ -642,7 +757,9 @@ public class Validator
 	// -------------Date Validation ends---------
 
 	/**
-	 * returns true if zip code is valid else returns false.
+	 * metho to check zipcode.
+	 * @param zipCode zipcode
+	 * @return Returns true if zip code is valid else returns false.
 	 */
 	public boolean isValidZipCode(String zipCode)
 	{
@@ -663,7 +780,9 @@ public class Validator
 	}
 
 	/**
-	 * returns true if Phone/Fax number is valid else returns false.
+	 * method to check phoneNumber.
+	 * @param phoneNumber phoneNumber
+	 * @return Returns true if Phone/Fax number is valid else returns false.
 	 */
 	public boolean isValidPhoneNumber(String phoneNumber)
 	{
@@ -781,7 +900,7 @@ public class Validator
 
 		if (value == null)
 		{
-			isValid=true;
+			isValid = true;
 		}
 		else if (list != null)
 		{
@@ -801,19 +920,25 @@ public class Validator
 		boolean isValid = false;
 		if (value == null)
 		{
-			isValid=true;
+			isValid = true;
 		}
 		else if (list != null)
 		{
-			isValid=isEnumeratedValue(list, value);
+			isValid = isEnumeratedValue(list, value);
 		}
 
 		return isValid;
 	}
 
+	/**
+	 * method to check SpecialCharacters.
+	 * @param mainString mainString
+	 * @param delimiter delimiter
+	 * @return true if contains SpecialCharacters else false.
+	 */
 	public boolean containsSpecialCharacters(String mainString, String delimiter)
 	{
-		boolean hasSpChars=false;
+		boolean hasSpChars = false;
 		try
 		{
 			char[] specialChars = delimiter.toCharArray();
@@ -823,7 +948,7 @@ public class Validator
 				int pos = mainString.indexOf(searchChar);
 				if (pos != -1)
 				{
-					hasSpChars= true;
+					hasSpChars = true;
 					break;
 				}
 			}
@@ -831,19 +956,24 @@ public class Validator
 		catch (Exception exp)
 		{
 			logger.error(exp.getMessage(), exp);
-			hasSpChars= true;
+			hasSpChars = true;
 		}
 
 		return hasSpChars;
 	}
 
-	//Method to return difference between to dates in days.
+	/**
+	 * Method to return difference between to dates in days.
+	 * @param startDate start Date.
+	 * @param endDate end Date.
+	 * @return return difference between to dates in days.
+	 */
 	public long getDateDiff(Date startDate, Date endDate)
 	{
 		long time1 = startDate.getTime();
 		long time2 = endDate.getTime();
 		long diff = time2 - time1;
-		return  diff / (ONE_THOUSAND * SEC_IN_A_MIN * MIN_IN_A_HR * HRS_IN_A_DAY);
+		return diff / (ONE_THOUSAND * SEC_IN_A_MIN * MIN_IN_A_HR * HRS_IN_A_DAY);
 	}
 
 	/**
