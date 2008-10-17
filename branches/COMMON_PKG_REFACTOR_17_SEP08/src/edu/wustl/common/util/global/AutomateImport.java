@@ -32,12 +32,33 @@ public class AutomateImport
 	/**
 	 * Minimum number of arguments required.
 	 */
-	private static final int MIN_NO_ARGS=10;
+	private static final int MIN_NO_OF_ARGS=10;
 
 	/**
 	 * oracle tns name.
 	 */
-	static String ORACLE_TNS_NAME;
+	private static String oracleTnsName;
+
+	/**
+	 * Index for CA model operation like import or export.
+	 */
+	private static final int  INDX_FOR_OPERATION=7;
+	/**
+	 * Index for file which contains all table names.
+	 */
+	private static final int  INDX_FOR_TABLE_NAMES_FILE=8;
+	/**
+	 * Index for csv file name.
+	 */
+	private static final int  INDX_FOR_CSV_FILE_NAME=9;
+	/**
+	 * Index for CTL file name.
+	 */
+	private static final int  INDX_FOR_CTL_FILE_PATH=10;
+	/**
+	 * Index for oracle tns name.
+	 */
+	private static final int  INDX_FOR_TNS_NAME=11;
 
 	/**
 	 *
@@ -64,22 +85,25 @@ public class AutomateImport
 			AutomateImport automateImport = new AutomateImport();
 			automateImport.configureDBConnection(args);
 			connection = dbUtility.getConnection();
-			List<String> tableNamesList = automateImport.getTableNamesList(args[8]);
+			List<String> tableNamesList = automateImport
+							.getTableNamesList(args[INDX_FOR_TABLE_NAMES_FILE]);
 			int size = tableNamesList.size();
-			String filePath = args[9].replaceAll("\\\\", "//");
+			String filePath = args[INDX_FOR_CSV_FILE_NAME].replaceAll("\\\\", "//");
 			if (Constants.ORACLE_DATABASE.equals(dbUtility.getDbType().toUpperCase()))
 			{
-				ORACLE_TNS_NAME = args[11];
-				String filePathCTL = args[10].replaceAll("\\\\", "//");
-				if (args[7].toLowerCase().equals("import"))
+				oracleTnsName = args[INDX_FOR_TNS_NAME];
+				String filePathCTL = args[INDX_FOR_CTL_FILE_PATH].replaceAll("\\\\", "//");
+				if (args[INDX_FOR_OPERATION].toLowerCase().equals("import"))
 				{
 					for (int i = 0; i < size; i++)
 					{
 						String ctlFilePath = filePathCTL + tableNamesList.get(i) + ".ctl";
 						if (!new File(ctlFilePath).exists())
 						{
-							String csvFilePath = filePath + tableNamesList.get(i) + ".csv";
-							automateImport.createCTLFiles(connection, csvFilePath, ctlFilePath,
+							String csvFilePath = filePath
+								+ tableNamesList.get(i) + ".csv";
+							automateImport.createCTLFiles(connection,
+									csvFilePath,ctlFilePath,
 									tableNamesList.get(i));
 						}
 						automateImport.importDataOracle(ctlFilePath);
@@ -98,15 +122,15 @@ public class AutomateImport
 			}
 			else
 			{
-				if (args[7].toLowerCase().equals("import"))
+				if (args[INDX_FOR_OPERATION].toLowerCase().equals("import"))
 				{
 					Statement stmt = connection.createStatement();
 					stmt.execute("SET FOREIGN_KEY_CHECKS=0;");
 					for (int i = 0; i < size; i++)
 					{
 						String dumpFilePath = filePath + tableNamesList.get(i) + ".csv";
-						automateImport.importDataMySQL(connection, dumpFilePath, tableNamesList
-								.get(i));
+						automateImport.importDataMySQL(connection,
+								dumpFilePath, tableNamesList.get(i));
 					}
 					stmt.execute("SET FOREIGN_KEY_CHECKS=1;");
 				}
@@ -115,8 +139,8 @@ public class AutomateImport
 					for (int i = 0; i < size; i++)
 					{
 						String dumpFilePath = filePath + tableNamesList.get(i) + ".csv";
-						automateImport.exportDataMySQL(connection, dumpFilePath, tableNamesList
-								.get(i));
+						automateImport.exportDataMySQL(connection,
+								dumpFilePath, tableNamesList.get(i));
 					}
 				}
 			}
@@ -149,7 +173,7 @@ public class AutomateImport
 	 */
 	private void configureDBConnection(String[] args) throws Exception
 	{
-		if (args.length < MIN_NO_ARGS)
+		if (args.length < MIN_NO_OF_ARGS)
 		{
 			throw new Exception("In sufficient number of arguments");
 		}
@@ -243,7 +267,7 @@ public class AutomateImport
 	{
 		StringBuffer cmd = new StringBuffer("sqlldr ").append(dbUtility.getDbUserName())
 								.append('/').append(dbUtility.getDbPassword())
-								.append('@').append(ORACLE_TNS_NAME)
+								.append('@').append(oracleTnsName)
 								.append(" control=").append(fileName);
 		Runtime runtime = Runtime.getRuntime();
 		Process proc = runtime.exec(cmd.toString());
