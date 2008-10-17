@@ -400,15 +400,24 @@ public class Validator
 	private String dtCh = Constants.DATE_SEPARATOR;
 	private int minYear = Integer.parseInt(Constants.MIN_YEAR);
 	private int maxYear = Integer.parseInt(Constants.MAX_YEAR);
+	private static final int MONTH_OF_DAYS_31=31;
+	private static final int MONTH_OF_DAYS_30=30;
+	private static final int MONTH_OF_DAYS_28=28;
+	private static final int MONTH_OF_DAYS_29=29;
+	private static final int TOTAL_MONTHS_IN_YEAR=12;
+	private static final int SEC_IN_A_MIN=60;
+	private static final int MIN_IN_A_HR=60;
+	private static final int HRS_IN_A_DAY=24;
+	private static final int ONE_THOUSAND=1000;
 
 	private int daysInFebruary(int year)
 	{
 		// February has 29 days in any year evenly divisible by four,
 		// EXCEPT for centurial years which are not also divisible by 400.
-		int daysInFeb=28;
+		int daysInFeb=MONTH_OF_DAYS_28;
 		if((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0)))
 		{
-			daysInFeb=29;
+			daysInFeb=MONTH_OF_DAYS_29;
 
 		}
 		return daysInFeb;
@@ -420,14 +429,14 @@ public class Validator
 		dayArray[0] = 0;
 		for (int i = 1; i <= monthNum; i++)
 		{
-			dayArray[i] = 31;
+			dayArray[i] = MONTH_OF_DAYS_31;
 			if (i == 4 || i == 6 || i == 9 || i == 11)
 			{
-				dayArray[i] = 30;
+				dayArray[i] = MONTH_OF_DAYS_30;
 			}
 			if (i == 2)
 			{
-				dayArray[i] = 29;
+				dayArray[i] = MONTH_OF_DAYS_29;
 			}
 		}
 		return dayArray;
@@ -436,6 +445,7 @@ public class Validator
 	private boolean isDate(String dtStr)
 	{
 		boolean isDate=true;
+		String errorMess=TextConstants.EMPTY_STRING;
 		try
 		{
 			int[] daysInMonth = daysArray(12);
@@ -445,55 +455,39 @@ public class Validator
 			String strDay = dtStr.substring(pos1 + 1, pos2);
 			String strYear = dtStr.substring(pos2 + 1);
 			String strYr = strYear;
-
-			if (strDay.charAt(0) == '0' && strDay.length() > 1)
-			{
-				strDay = strDay.substring(1);
-			}
-
-			if (strMonth.charAt(0) == '0' && strMonth.length() > 1)
-			{
-				strMonth = strMonth.substring(1);
-			}
-			for (int i = 1; i <= 3; i++)
-			{
-				if (strYr.charAt(0) == '0' && strYr.length() > 1)
-				{
-					strYr = strYr.substring(1);
-				}
-			}
 			int month = Integer.parseInt(strMonth);
 			int day = Integer.parseInt(strDay);
 			int year = Integer.parseInt(strYr);
-
 			if (pos1 == -1 || pos2 == -1)
 			{
-				logger.debug("The date format should be : mm/dd/yyyy");
+				errorMess="The date format should be : mm/dd/yyyy";
 				isDate= false;
 			}
 			if (strMonth.length() < 1 || month < 1 || month > 12)
 			{
-				logger.debug("Please enter a valid month");
+				errorMess="Please enter a valid month";
 				isDate= false;
 			}
-			if (strDay.length() < 1 || day < 1 || day > 31
+			if (strDay.length() < 1 || day < 1 || day > MONTH_OF_DAYS_31
 					|| (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month])
 			{
-				logger.debug("Please enter a valid day");
+				errorMess="Please enter a valid day";
 				isDate= false;
 			}
 			if (strYear.length() != 4 || year == 0 || year < minYear || year > maxYear)
 			{
-				logger.debug("Please enter a valid 4 digit year between " + minYear + " and "
-						+ maxYear);
+				errorMess="Please enter a valid 4 digit year between "+minYear+" and "+maxYear;
 				isDate= false;
 			}
 		}
 		catch (Exception exp)
 		{
-			logger.error("exp in isDate : " + exp);
-			exp.printStackTrace();
+			logger.error("Date is not valid:"+dtStr,exp);
 			isDate= false;
+		}
+		if(isDate)
+		{
+			logger.error(errorMess);
 		}
 		return isDate;
 	}
@@ -503,7 +497,6 @@ public class Validator
 		boolean result = true;
 		try
 		{
-			logger.debug("checkDate : " + checkDate);
 			if (isEmpty(checkDate))
 			{
 				result = false;
@@ -841,7 +834,7 @@ public class Validator
 		long time1 = startDate.getTime();
 		long time2 = endDate.getTime();
 		long diff = time2 - time1;
-		long days = diff / (1000 * 60 * 60 * 24);
+		long days = diff / (ONE_THOUSAND * SEC_IN_A_MIN * MIN_IN_A_HR * HRS_IN_A_DAY);
 		return days;
 	}
 
