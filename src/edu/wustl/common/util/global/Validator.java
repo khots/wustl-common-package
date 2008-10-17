@@ -400,24 +400,29 @@ public class Validator
 	private String dtCh = Constants.DATE_SEPARATOR;
 	private int minYear = Integer.parseInt(Constants.MIN_YEAR);
 	private int maxYear = Integer.parseInt(Constants.MAX_YEAR);
-	private static final int MONTH_OF_DAYS_31=31;
-	private static final int MONTH_OF_DAYS_30=30;
-	private static final int MONTH_OF_DAYS_28=28;
-	private static final int MONTH_OF_DAYS_29=29;
+	private static final int DAYS_IN_A_MONTH_31=31;
+	private static final int DAYS_IN_A_MONTH_30=30;
+	private static final int DAYS_IN_A_MONTH_28=28;
+	private static final int DAYS_IN_A_MONTH_29=29;
 	private static final int TOTAL_MONTHS_IN_YEAR=12;
 	private static final int SEC_IN_A_MIN=60;
 	private static final int MIN_IN_A_HR=60;
 	private static final int HRS_IN_A_DAY=24;
 	private static final int ONE_THOUSAND=1000;
+	private static final int MONTH_FEB=4;
+	private static final int MONTH_APRIL=4;
+	private static final int MONTH_JUNE=6;
+	private static final int MONTH_SEP=9;
+	private static final int MONTH_NOV=11;
 
 	private int daysInFebruary(int year)
 	{
 		// February has 29 days in any year evenly divisible by four,
 		// EXCEPT for centurial years which are not also divisible by 400.
-		int daysInFeb=MONTH_OF_DAYS_28;
+		int daysInFeb=DAYS_IN_A_MONTH_28;
 		if((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0)))
 		{
-			daysInFeb=MONTH_OF_DAYS_29;
+			daysInFeb=DAYS_IN_A_MONTH_29;
 
 		}
 		return daysInFeb;
@@ -429,14 +434,14 @@ public class Validator
 		dayArray[0] = 0;
 		for (int i = 1; i <= monthNum; i++)
 		{
-			dayArray[i] = MONTH_OF_DAYS_31;
-			if (i == 4 || i == 6 || i == 9 || i == 11)
+			dayArray[i] = DAYS_IN_A_MONTH_31;
+			if (i == MONTH_APRIL || i == MONTH_JUNE || i == MONTH_SEP || i == MONTH_NOV)
 			{
-				dayArray[i] = MONTH_OF_DAYS_30;
+				dayArray[i] = DAYS_IN_A_MONTH_30;
 			}
-			if (i == 2)
+			if (i == MONTH_FEB)
 			{
-				dayArray[i] = MONTH_OF_DAYS_29;
+				dayArray[i] = DAYS_IN_A_MONTH_29;
 			}
 		}
 		return dayArray;
@@ -448,7 +453,7 @@ public class Validator
 		String errorMess=TextConstants.EMPTY_STRING;
 		try
 		{
-			int[] daysInMonth = daysArray(12);
+			int[] daysInMonth = daysArray(TOTAL_MONTHS_IN_YEAR);
 			int pos1 = dtStr.indexOf(dtCh);
 			int pos2 = dtStr.indexOf(dtCh, pos1 + 1);
 			String strMonth = dtStr.substring(0, pos1);
@@ -463,12 +468,12 @@ public class Validator
 				errorMess="The date format should be : mm/dd/yyyy";
 				isDate= false;
 			}
-			if (strMonth.length() < 1 || month < 1 || month > 12)
+			if (strMonth.length() < 1 || month < 1 || month > TOTAL_MONTHS_IN_YEAR)
 			{
 				errorMess="Please enter a valid month";
 				isDate= false;
 			}
-			if (strDay.length() < 1 || day < 1 || day > MONTH_OF_DAYS_31
+			if (strDay.length() < 1 || day < 1 || day > DAYS_IN_A_MONTH_31
 					|| (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month])
 			{
 				errorMess="Please enter a valid day";
@@ -586,12 +591,9 @@ public class Validator
 			{
 				if (isDate(strDate))
 				{
-					if (checkFutureDate)
+					if (checkFutureDate && !compareDateWithCurrent(strDate))
 					{
-						if (!compareDateWithCurrent(strDate))
-						{
-							returnString = "errors.invalid.date";
-						}
+						returnString = "errors.invalid.date";
 					}
 				}
 				else
