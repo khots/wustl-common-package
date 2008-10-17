@@ -75,7 +75,7 @@ public class Validator
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ssn Social Security Number to check
 	 * @return boolean depending on the value of ssn.
 	 */
@@ -113,7 +113,7 @@ public class Validator
 	/**
 	 * Checks that the input String contains only alphabetic characters.
 	 * @param alphaString The string whose characters are to be checked.
-	 * @return false if the String contains any digit else returns true. 
+	 * @return false if the String contains any digit else returns true.
 	 * */
 	public boolean isAlpha(String alphaString)
 	{
@@ -169,7 +169,7 @@ public class Validator
 	}
 
 	/**
-	 * 
+	 *
 	 * Checks that the input String contains only positive numeric digits.
 	 * @param numString The string whose characters are to be checked.
 	 * @param positiveCheck Positive integer to check for positive number
@@ -415,14 +415,16 @@ public class Validator
 	private static final int MONTH_SEP=9;
 	private static final int MONTH_NOV=11;
 	private static final int DIGITS_IN_YEAR=4;
-	private static final int DIGITS_IN_MONTH=4;
+	private static final int FOUR=4;
+	private static final int HUNDRED=100;
+	private static final int FOUR_HUNDRED=400;
 
 	private int daysInFebruary(int year)
 	{
 		// February has 29 days in any year evenly divisible by four,
 		// EXCEPT for centurial years which are not also divisible by 400.
 		int daysInFeb=DAYS_IN_A_MONTH_28;
-		if((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0)))
+		if((year % FOUR == 0) && ((!(year % HUNDRED == 0)) || (year % FOUR_HUNDRED == 0)))
 		{
 			daysInFeb=DAYS_IN_A_MONTH_29;
 
@@ -709,7 +711,7 @@ public class Validator
 	 * @param value String the value that is to be checked.
 	 * @return true if enumerated value is valid else false.
 	 */
-	public static boolean isEnumeratedValue(List list, String value)
+	public static boolean isEnumeratedValue(List<NameValueBean> list, String value)
 	{
 		boolean isValid = false;
 
@@ -727,12 +729,12 @@ public class Validator
 	 * @param value String the value that is to be checked.
 	 * @return true if enumerated value is valid else false.
 	 */
-	private static boolean isValueInList(List list, String value)
+	private static boolean isValueInList(List<NameValueBean> list, String value)
 	{
 		boolean isValid = false;
 		for (int i = 1; i < list.size(); i++)
 		{
-			NameValueBean bean = (NameValueBean) list.get(i);
+			NameValueBean bean = list.get(i);
 
 			if (value.equals(bean.getValue()))
 			{
@@ -773,7 +775,7 @@ public class Validator
 	 * @param value String - the value that is to be checked.
 	 * @return true if enumerated value is valid or null else false.
 	 */
-	public static boolean isEnumeratedOrNullValue(List list, String value)
+	public static boolean isEnumeratedOrNullValue(List<NameValueBean> list, String value)
 	{
 		boolean isValid = false;
 
