@@ -18,6 +18,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -27,6 +28,7 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * This Class is used to send emails.
+ *
  * @author gautam_shetty
  */
 public class SendEmail
@@ -36,14 +38,20 @@ public class SendEmail
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(SendEmail.class);
-	
+
 	/**
 	 * Used to send the mail with given parameters.
-	 * @param to "To" Address for sending the mail
-	 * @param from "From" Address for sending the mail
-	 * @param host "Host" from where to send the mail
-	 * @param subject "Subject" of the mail
-	 * @param body "Body" of the mail
+	 *
+	 * @param to
+	 *            "To" Address for sending the mail
+	 * @param from
+	 *            "From" Address for sending the mail
+	 * @param host
+	 *            "Host" from where to send the mail
+	 * @param subject
+	 *            "Subject" of the mail
+	 * @param body
+	 *            "Body" of the mail
 	 * @return true if mail was successfully sent, false if it fails
 	 */
 	public boolean sendmail(String to, String from, String host, String subject, String body)
@@ -53,18 +61,24 @@ public class SendEmail
 
 	/**
 	 * Used to send the mail with given parameters.
-	 * @param to "To" Address for sending the mail
-	 * @param cc "CC" Address for sending the mail
-	 * @param bcc "BCC" Address for sending the mail
-	 * @param from "From" Address for sending the mail
-	 * @param host "Host" from where to send the mail
-	 * @param subject "Subject" of the mail
-	 * @param body "Body" of the mail
+	 * Modified by kiran_pinnamaneni. code reviewer abhijit_naik
+	 * @param to
+	 *            "To" Address for sending the mail
+	 * @param cc
+	 *            "CC" Address for sending the mail
+	 * @param bcc
+	 *            "BCC" Address for sending the mail
+	 * @param from
+	 *            "From" Address for sending the mail
+	 * @param host
+	 *            "Host" from where to send the mail
+	 * @param subject
+	 *            "Subject" of the mail
+	 * @param body
+	 *            "Body" of the mail
 	 * @return true if mail was successfully sent, false if it fails
 	 */
-	/** Modified by kiran_pinnamaneni
-	 *  code reviewer abhijit_naik 
-	 */
+
 	public boolean sendmail(String to, String cc, String bcc, String from, String host,
 			String subject, String body)
 	{
@@ -87,25 +101,34 @@ public class SendEmail
 
 	/**
 	 * Used to send the mail with given parameters.
-	 * @param to "To" List of address for sending the mail
-	 * @param cc "CC" List of address for sending the mail
-	 * @param bcc "BCC" List of address for sending the mail
-	 * @param from "From" Address for sending the mail
-	 * @param host "Host" from where to send the mail
-	 * @param subject "Subject" of the mail
-	 * @param body "Body" of the mail
+	 *
+	 * @param to
+	 *            "To" List of address for sending the mail
+	 * @param cc
+	 *            "CC" List of address for sending the mail
+	 * @param bcc
+	 *            "BCC" List of address for sending the mail
+	 * @param from
+	 *            "From" Address for sending the mail
+	 * @param host
+	 *            "Host" from where to send the mail
+	 * @param subject
+	 *            "Subject" of the mail
+	 * @param body
+	 *            "Body" of the mail
 	 * @return true if mail was successfully sent, false if it fails
 	 */
 	public boolean sendmail(String[] to, String[] cc, String[] bcc, String from, String host,
 			String subject, String body)
 	{
 
-		//create some properties and get the default Session
+		// create some properties and get the default Session
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
 
 		Session session = Session.getDefaultInstance(props, null);
 		session.setDebug(false);
+		boolean sendStatus = true;
 
 		try
 		{
@@ -113,27 +136,27 @@ public class SendEmail
 			MimeMessage msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(from));
 			InternetAddress[] toAddress = convertArrayToInternetAddrArray(to);
-			//InternetAddress[] toAddress = {new InternetAddress(to)};
+			// InternetAddress[] toAddress = {new InternetAddress(to)};
 
 			if (cc != null)
 			{
 				InternetAddress[] ccAddress = convertArrayToInternetAddrArray(cc);
-				//InternetAddress[] ccAddress = {new InternetAddress(cc)};
+				// InternetAddress[] ccAddress = {new InternetAddress(cc)};
 				msg.setRecipients(Message.RecipientType.CC, ccAddress);
 			}
 
 			if (bcc != null)
 			{
 				InternetAddress[] bccAddress = convertArrayToInternetAddrArray(bcc);
-				//InternetAddress[] bccAddress = {new InternetAddress(bcc)};
+				// InternetAddress[] bccAddress = {new InternetAddress(bcc)};
 				msg.setRecipients(Message.RecipientType.BCC, bccAddress);
 			}
-			//set TO
+			// set TO
 			msg.setRecipients(Message.RecipientType.TO, toAddress);
 
-			//Set Subject
+			// Set Subject
 			msg.setSubject(subject);
-			//set Date
+			// set Date
 			msg.setSentDate(new Date());
 			// create and fill the first message part
 			MimeBodyPart messageBodyPart = new MimeBodyPart();
@@ -151,27 +174,33 @@ public class SendEmail
 			logger.warn("Unable to send mail to: " + to);
 			logger.warn("Exception= " + mex.getMessage());
 			Exception ex = null;
-			if ((ex = mex.getNextException()) != null)
+			if ((mex.getNextException()) != null)
 			{
+				ex = mex.getNextException();
 				logger.warn("Exception= " + ex.getMessage());
 			}
-			return false;
+			sendStatus = false;
 		}
 		catch (Exception ex)
 		{
 			logger.warn("Unable to send mail to: " + to);
 			logger.warn("Exception= " + ex.getMessage());
-			return false;
+			sendStatus = false;
 		}
 
-		return true;
+		return sendStatus;
 	}
 
-	/** Added by kiran_pinnamaneni
-	 *  code reviewer abhijit_naik 
+	/**
+	 * This method convert Array To InternetAddrArray.
+	 * Added by kiran_pinnamaneni. code reviewer abhijit_naik
+	 * @param arrayToConvert convert int internet address array
+	 * @return internetAddress
+	 * @throws AddressException throws address exception
 	 */
 	private InternetAddress[] convertArrayToInternetAddrArray(String[] arrayToConvert)
-			throws Exception
+			throws AddressException
+
 	{
 		InternetAddress[] internetAddress = new InternetAddress[arrayToConvert.length];
 
