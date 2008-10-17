@@ -365,7 +365,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			logger.debug("", exp);
+			logger.debug(exp.getMessage(), exp);
 		}
 		return retStr.toString();
 	}
@@ -405,7 +405,13 @@ public class Validator
 	{
 		// February has 29 days in any year evenly divisible by four,
 		// EXCEPT for centurial years which are not also divisible by 400.
-		return (((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28);
+		int daysInFeb=28;
+		if((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0)))
+		{
+			daysInFeb=29;
+
+		}
+		return daysInFeb;
 	}
 
 	private int[] daysArray(int monthNum)
@@ -432,7 +438,6 @@ public class Validator
 		boolean isDate=true;
 		try
 		{
-			logger.debug("In isDate : dtCh : " + dtCh + " | dtStr : " + dtStr);
 			int[] daysInMonth = daysArray(12);
 			int pos1 = dtStr.indexOf(dtCh);
 			int pos2 = dtStr.indexOf(dtCh, pos1 + 1);
@@ -520,7 +525,6 @@ public class Validator
 			logger.error("Check Date : exp : " + exp);
 			result = false;
 		}
-		logger.debug("CheckDate : " + result);
 		return result;
 	}
 
@@ -607,7 +611,6 @@ public class Validator
 				returnString = "errors.date.format";
 			}
 		}
-		logger.debug("validateDate Return : " + returnString);
 		return returnString;
 	}
 
@@ -776,7 +779,7 @@ public class Validator
 
 		if (value == null)
 		{
-			return true;
+			isValid=true;
 		}
 		else if (list != null)
 		{
@@ -806,33 +809,30 @@ public class Validator
 		return isValid;
 	}
 
-	// Mandar : 22-May-06 : bug 1775 : validation of special characters updated.
-
 	public boolean containsSpecialCharacters(String mainString, String delimiter)
 	{
+		boolean hasSpChars=false;
 		try
 		{
-			logger.debug("mainString : " + mainString + " delimiter: " + delimiter);
 			char[] specialChars = delimiter.toCharArray();
-
 			for (int spCharCount = 0; spCharCount < specialChars.length; spCharCount++)
 			{
 				char searchChar = specialChars[spCharCount];
 				int pos = mainString.indexOf(searchChar);
-				logger.debug("searchChar : " + searchChar + " | pos : " + pos);
 				if (pos != -1)
 				{
-					return true;
+					hasSpChars= true;
+					break;
 				}
 			}
 		}
 		catch (Exception exp)
 		{
 			logger.error(exp.getMessage(), exp);
-			return true;
+			hasSpChars= true;
 		}
 
-		return false;
+		return hasSpChars;
 	}
 
 	//Method to return difference between to dates in days.
@@ -841,10 +841,7 @@ public class Validator
 		long time1 = startDate.getTime();
 		long time2 = endDate.getTime();
 		long diff = time2 - time1;
-
 		long days = diff / (1000 * 60 * 60 * 24);
-		logger.debug("Difference in dates = " + days);
-
 		return days;
 	}
 
