@@ -398,8 +398,8 @@ public class Validator
 	}
 
 	private String dtCh = Constants.DATE_SEPARATOR;
-	private int minYear = Integer.parseInt(Constants.MIN_YEAR);
-	private int maxYear = Integer.parseInt(Constants.MAX_YEAR);
+	private final int minYear = Integer.parseInt(Constants.MIN_YEAR);
+	private final int maxYear = Integer.parseInt(Constants.MAX_YEAR);
 	private static final int DAYS_IN_A_MONTH_31=31;
 	private static final int DAYS_IN_A_MONTH_30=30;
 	private static final int DAYS_IN_A_MONTH_28=28;
@@ -409,11 +409,13 @@ public class Validator
 	private static final int MIN_IN_A_HR=60;
 	private static final int HRS_IN_A_DAY=24;
 	private static final int ONE_THOUSAND=1000;
-	private static final int MONTH_FEB=4;
+	private static final int MONTH_FEB=2;
 	private static final int MONTH_APRIL=4;
 	private static final int MONTH_JUNE=6;
 	private static final int MONTH_SEP=9;
 	private static final int MONTH_NOV=11;
+	private static final int DIGITS_IN_YEAR=4;
+	private static final int DIGITS_IN_MONTH=4;
 
 	private int daysInFebruary(int year)
 	{
@@ -432,10 +434,12 @@ public class Validator
 	{
 		int []dayArray = new int[monthNum + 1];
 		dayArray[0] = 0;
+		boolean isDays30=false;
 		for (int i = 1; i <= monthNum; i++)
 		{
 			dayArray[i] = DAYS_IN_A_MONTH_31;
-			if (i == MONTH_APRIL || i == MONTH_JUNE || i == MONTH_SEP || i == MONTH_NOV)
+			isDays30= (i == MONTH_APRIL) || (i == MONTH_JUNE) || (i == MONTH_SEP) || (i == MONTH_NOV);
+			if (isDays30)
 			{
 				dayArray[i] = DAYS_IN_A_MONTH_30;
 			}
@@ -474,12 +478,13 @@ public class Validator
 				isDate= false;
 			}
 			if (strDay.length() < 1 || day < 1 || day > DAYS_IN_A_MONTH_31
-					|| (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month])
+					|| (month == MONTH_FEB && day > daysInFebruary(year))
+					|| day > daysInMonth[month])
 			{
 				errorMess="Please enter a valid day";
 				isDate= false;
 			}
-			if (strYear.length() != 4 || year == 0 || year < minYear || year > maxYear)
+			if (strYear.length() != DIGITS_IN_YEAR || year == 0 || year < minYear || year > maxYear)
 			{
 				errorMess="Please enter a valid 4 digit year between "+minYear+" and "+maxYear;
 				isDate= false;
@@ -836,8 +841,7 @@ public class Validator
 		long time1 = startDate.getTime();
 		long time2 = endDate.getTime();
 		long diff = time2 - time1;
-		long days = diff / (ONE_THOUSAND * SEC_IN_A_MIN * MIN_IN_A_HR * HRS_IN_A_DAY);
-		return days;
+		return  diff / (ONE_THOUSAND * SEC_IN_A_MIN * MIN_IN_A_HR * HRS_IN_A_DAY);
 	}
 
 	/**
