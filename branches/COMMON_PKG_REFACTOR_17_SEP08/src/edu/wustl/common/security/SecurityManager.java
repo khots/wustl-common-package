@@ -70,7 +70,7 @@ import gov.nih.nci.security.exceptions.CSTransactionException;
  * <p>
  * Company: Washington University, School of Medicine, St. Louis.
  * </p>
- * 
+ *
  * @author Aarti Sharma
  * @version 1.0
  */
@@ -83,33 +83,87 @@ public class SecurityManager implements Permissions
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(SecurityManager.class);
 
+	/**
+	 * AuthenticationManager instance.
+	 */
 	private static AuthenticationManager authenticationManager = null;
 
+	/**
+	 * AuthorizationManager instance.
+	 */
 	private static AuthorizationManager authorizationManager = null;
 
+	/**
+	 * Class instance.
+	 */
 	private Class requestingClass = null;
+	/**
+	 * specify boolean variable.
+	 */
 	public static boolean initialized = false;
+
+	/**
+	 * specify APPLICATION_CONTEXT_NAME variable.
+	 */
 	public static String APPLICATION_CONTEXT_NAME = null;
 
+	/**
+	 * specify HashMap rolegroupNamevsId.
+	 */
 	public static HashMap<String, String> rolegroupNamevsId = new HashMap<String, String>();
 
+	/**
+	 * specify ADMINISTRATOR_GROUP.
+	 */
 	public static final String ADMINISTRATOR_GROUP = "ADMINISTRATOR_GROUP";
+
+	/**
+	 * specify SUPER_ADMINISTRATOR_GROUP.
+	 */
 	public static final String SUPER_ADMINISTRATOR_GROUP = "SUPER_ADMINISTRATOR_GROUP";
+
+	/**
+	 * specify SUPERVISOR_GROUP.
+	 */
 	public static final String SUPERVISOR_GROUP = "SUPERVISOR_GROUP";
+
+	/**
+	 * specify TECHNICIAN_GROUP.
+	 */
 	public static final String TECHNICIAN_GROUP = "TECHNICIAN_GROUP";
+
+	/**
+	 * specify PUBLIC_GROUP.
+	 */
 	public static final String PUBLIC_GROUP = "PUBLIC_GROUP";
 
+	/**
+	 * specify CLASS_NAME.
+	 */
 	public static final String CLASS_NAME = "CLASS_NAME";
 
+	/**
+	 * specify table name.
+	 */
 	public static final String TABLE_NAME = "TABLE_NAME";
 
+	/**
+	 * specify table alias name.
+	 */
 	public static final String TABLE_ALIAS_NAME = "TABLE_ALIAS_NAME";
 
+	/**
+	 * specify securityDataPrefix.
+	 */
 	private static String securityDataPrefix = CLASS_NAME;
 
+	/**
+	 * specify SECURITY_MANAGER_PROP.
+	 */
 	private static Properties SECURITY_MANAGER_PROP;
 
-	static{
+	static
+	{
 		InputStream inputStream = DBUtil.class.getClassLoader().getResourceAsStream(
 				Constants.SECURITY_MANAGER_PROP_FILE);
 		SECURITY_MANAGER_PROP = new Properties();
@@ -125,7 +179,7 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
-	 * @param class1
+	 * @param class1 class
 	 */
 	public SecurityManager(Class class1)
 	{
@@ -139,16 +193,18 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
-	 * @param class1
-	 * @return
+	 * This method gets instance of SecurityManager.
+	 * @param class1 class
+	 * @return securityManager
 	 */
 	public static final SecurityManager getInstance(Class class1)
 	{
 		Class className = null;
-		SecurityManager securityManager=null;
+		SecurityManager securityManager = null;
 		try
 		{
-			String securityManagerClass=SECURITY_MANAGER_PROP.getProperty(Constants.SECURITY_MANAGER_CLASSNAME);
+			String securityManagerClass = SECURITY_MANAGER_PROP
+					.getProperty(Constants.SECURITY_MANAGER_CLASSNAME);
 			if (securityManagerClass != null)
 			{
 				className = Class.forName(securityManagerClass);
@@ -156,21 +212,25 @@ public class SecurityManager implements Permissions
 			if (className != null)
 			{
 				Constructor[] cons = className.getConstructors();
-				securityManager= (SecurityManager) cons[0].newInstance(class1);
+				securityManager = (SecurityManager) cons[0].newInstance(class1);
 			}
 		}
 		catch (Exception exception)
 		{
-			logger.warn("Error in creating SecurityManager instance",exception);
+			logger.warn("Error in creating SecurityManager instance", exception);
 		}
 
-		if(null==securityManager)
+		if (null == securityManager)
 		{
-			securityManager= new SecurityManager(class1);
+			securityManager = new SecurityManager(class1);
 		}
 		return securityManager;
 	}
 
+	/**
+	 * This method gets Application Context Name.
+	 * @return applicationName
+	 */
 	public static String getApplicationContextName()
 	{
 		String applicationName = "";
@@ -181,61 +241,66 @@ public class SecurityManager implements Permissions
 		}
 		catch (Exception exception)
 		{
-			logger.warn("Error in getting application context name",exception);
+			logger.warn("Error in getting application context name", exception);
 		}
 
 		return applicationName;
 	}
 
 	/**
-	* Returns group id from Group name
-	* @param groupName
-	* @return
-	* @throws CSException 
-	* @throws SMException 
+	* Returns group id from Group name.
+	* @param groupName group Name
+	* @return group Id
+	* @throws CSException CSException
+	* @throws SMException SMException
 	*/
 	private String getGroupID(String groupName) throws CSException, SMException
 	{
 		List list;
-		String groupId=null;
+		String groupId = null;
 		Group group = new Group();
 		group.setGroupName(groupName);
-		UserProvisioningManager userProvisioningManager=getUserProvisioningManager();
+		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 		SearchCriteria searchCriteria = new GroupSearchCriteria(group);
 		group.setApplication(userProvisioningManager.getApplication(APPLICATION_CONTEXT_NAME));
 		list = getObjects(searchCriteria);
 		if (!list.isEmpty())
 		{
 			group = (Group) list.get(0);
-			groupId= group.getGroupId().toString();
+			groupId = group.getGroupId().toString();
 		}
 
 		return groupId;
 	}
 
 	/**
-	 * Returns role id from role name
-	 * @param roleName
-	 * @return
+	 * Returns role id from role name.
+	 * @param roleName role Name
+	 * @return roleId
+	 * @throws CSException CSException
+	 * @throws SMException SMException
 	 */
 	private String getRoleID(String roleName) throws CSException, SMException
 	{
 		List list;
-		String roleId=null;
+		String roleId = null;
 		Role role = new Role();
 		role.setName(roleName);
 		SearchCriteria searchCriteria = new RoleSearchCriteria(role);
-		UserProvisioningManager userProvisioningManager= getUserProvisioningManager();
+		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 		role.setApplication(userProvisioningManager.getApplication(APPLICATION_CONTEXT_NAME));
 		list = getObjects(searchCriteria);
 		if (!list.isEmpty())
 		{
 			role = (Role) list.get(0);
-			roleId=role.getId().toString();
+			roleId = role.getId().toString();
 		}
 		return roleId;
 	}
 
+	/**
+	 * This method initialize Constants.
+	 */
 	public void initializeConstants()
 	{
 		try
@@ -245,7 +310,8 @@ public class SecurityManager implements Permissions
 			rolegroupNamevsId.put(Constants.PUBLIC_ROLE, getRoleID(Constants.SCIENTIST));
 			rolegroupNamevsId.put(Constants.TECHNICIAN_ROLE, getRoleID(Constants.TECHNICIAN));
 			rolegroupNamevsId.put(Constants.SUPERVISOR_ROLE, getRoleID(Constants.SUPERVISOR));
-			rolegroupNamevsId.put(Constants.ADMINISTRATOR_GROUP_ID, getGroupID(ADMINISTRATOR_GROUP));
+			rolegroupNamevsId
+					.put(Constants.ADMINISTRATOR_GROUP_ID, getGroupID(ADMINISTRATOR_GROUP));
 			rolegroupNamevsId.put(Constants.PUBLIC_GROUP_ID, getGroupID(PUBLIC_GROUP));
 			rolegroupNamevsId.put(Constants.TECHNICIAN_GROUP_ID, getGroupID(TECHNICIAN_GROUP));
 			rolegroupNamevsId.put(Constants.SUPERVISOR_GROUP_ID, getGroupID(SUPERVISOR_GROUP));
@@ -257,11 +323,11 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.warn("Error in initializing rolegroupNamevsId map",exception);
+			logger.warn("Error in initializing rolegroupNamevsId map", exception);
 		}
 		catch (SMException exception)
 		{
-			logger.warn("Error in initializing rolegroupNamevsId map",exception);
+			logger.warn("Error in initializing rolegroupNamevsId map", exception);
 		}
 	}
 
@@ -270,8 +336,8 @@ public class SecurityManager implements Permissions
 	 * follows the singleton pattern so that only one AuthenticationManager is
 	 * created for the caTISSUE Core.
 	 *
-	 * @return
-	 * @throws	CSException
+	 * @return authenticationManager
+	 * @throws	CSException CSException
 	 */
 	protected AuthenticationManager getAuthenticationManager() throws CSException
 	{
@@ -288,8 +354,8 @@ public class SecurityManager implements Permissions
 	 * follows the singleton pattern so that only one AuthorizationManager is
 	 * created.
 	 *
-	 * @return
-	 * @throws	CSException
+	 * @return authorizationManager
+	 * @throws	CSException CSException
 	 */
 	protected AuthorizationManager getAuthorizationManager() throws CSException
 	{
@@ -319,8 +385,8 @@ public class SecurityManager implements Permissions
 	 * @param requestingClass
 	 * @param loginName login name
 	 * @param password password
-	 * @return
-	 * @throws CSException
+	 * @return Returns true or false depending on the person gets authenticated or not.
+	 * @throws SMException SMException
 	 */
 	public boolean login(String loginName, String password) throws SMException
 	{
@@ -332,8 +398,8 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			StringBuffer mesg=new StringBuffer("Authentication fails for user")
-				.append(loginName).append("requestingClass:").append(requestingClass);
+			StringBuffer mesg = new StringBuffer("Authentication fails for user").append(loginName)
+					.append("requestingClass:").append(requestingClass);
 			logger.debug(mesg.toString());
 			throw new SMException(mesg.toString(), exception);
 		}
@@ -341,8 +407,8 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
-	 * This method creates a new User in the database based on the data passed
-	 * 
+	 * This method creates a new User in the database based on the data passed.
+	 *
 	 * @param user
 	 *            user to be created
 	 * @throws SMTransactionException
@@ -356,12 +422,12 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSTransactionException exception)
 		{
-			logger.debug("Unable to create user "+user.getEmailId());
+			logger.debug("Unable to create user " + user.getEmailId());
 			throw new SMTransactionException(exception.getMessage(), exception);
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to create user:"+user.getEmailId(), exception);
+			logger.debug("Unable to create user:" + user.getEmailId(), exception);
 		}
 	}
 
@@ -371,8 +437,8 @@ public class SecurityManager implements Permissions
 	 *
 	 * @param loginName
 	 *            Login name of the user
-	 * @return @throws
-	 *         SMException
+	 * @return returns the User object
+	 * @throws SMException SMException
 	 */
 	public User getUser(String loginName) throws SMException
 	{
@@ -382,15 +448,15 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get user: "+loginName,exception);
-			throw new SMException("Unable to get user: "+loginName, exception);
+			logger.debug("Unable to get user: " + loginName, exception);
+			throw new SMException("Unable to get user: " + loginName, exception);
 		}
 	}
 
 	/**
-	 * This method returns array of CSM user id of all users who are administrators
-	 * @return
-	 * @throws SMException
+	 * This method returns array of CSM user id of all users who are administrators.
+	 * @return userId user Id
+	 * @throws SMException SMException
 	 */
 	public Long[] getAllAdministrators() throws SMException
 	{
@@ -419,12 +485,12 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
-	 * This method checks whether a user exists in the database or not
+	 * This method checks whether a user exists in the database or not.
 	 *
 	 * @param loginName
 	 *            Login name of the user
 	 * @return TRUE is returned if a user exists else FALSE is returned
-	 * @throws SMException
+	 * @throws SMException SMException
 	 */
 	public boolean userExists(String loginName) throws SMException
 	{
@@ -438,12 +504,17 @@ public class SecurityManager implements Permissions
 		}
 		catch (SMException exception)
 		{
-			logger.debug("Unable to get user :"+loginName);
+			logger.debug("Unable to get user :" + loginName);
 			throw exception;
 		}
 		return userExists;
 	}
 
+	/**
+	 * This method removes user.
+	 * @param userId user Id
+	 * @throws SMException SMException
+	 */
 	public void removeUser(String userId) throws SMException
 	{
 		try
@@ -464,10 +535,10 @@ public class SecurityManager implements Permissions
 
 	/**
 	 * This method returns Vactor of all the role objects defined for the
-	 * application from the database
-	 * 
-	 * @return @throws
-	 *         SMException
+	 * application from the database.
+	 *
+	 * @return roles
+	 * @throws SMException SMException
 	 */
 	public Vector getRoles() throws SMException
 	{
@@ -490,18 +561,18 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get roles: Exception: ",exception);
+			logger.debug("Unable to get roles: Exception: ", exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 		return roles;
 	}
 
 	/**
-	 * Assigns a Role to a User
-	 * 
-	 * @param userName - the User Name to to whom the Role will be assigned
+	 * Assigns a Role to a User.
+	 *
+	 * @param userID - the user Id to whom the Role will be assigned
 	 * @param roleID -	The id of the Role which is to be assigned to the user
-	 * @throws SMException
+	 * @throws SMException SMException
 	 */
 	public void assignRoleToUser(String userID, String roleID) throws SMException
 	{
@@ -544,43 +615,54 @@ public class SecurityManager implements Permissions
 		}
 	}
 
+	/**
+	 * This method gets Group Id For Role.
+	 * @param roleID role Id
+	 * @return roleGroupId
+	 */
 	public String getGroupIdForRole(String roleID)
 	{
-		String roleName=null;
-		String roleId=null;
-		String roleGroupId=null;
+		String roleName = null;
+		String roleId = null;
+		String roleGroupId = null;
 		if (roleID.equals(rolegroupNamevsId.get(Constants.ADMINISTRATOR_ROLE)))
 		{
-			roleName=Constants.ADMINISTRATOR_ROLE;
-			roleId=Constants.ADMINISTRATOR_GROUP_ID;
+			roleName = Constants.ADMINISTRATOR_ROLE;
+			roleId = Constants.ADMINISTRATOR_GROUP_ID;
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.SUPERVISOR_ROLE)))
 		{
-			roleName=Constants.SUPERVISOR_ROLE;
-			roleId=Constants.SUPERVISOR_GROUP_ID;
+			roleName = Constants.SUPERVISOR_ROLE;
+			roleId = Constants.SUPERVISOR_GROUP_ID;
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.TECHNICIAN_ROLE)))
 		{
-			roleName=Constants.TECHNICIAN_ROLE;
-			roleId=Constants.TECHNICIAN_GROUP_ID;
+			roleName = Constants.TECHNICIAN_ROLE;
+			roleId = Constants.TECHNICIAN_GROUP_ID;
 		}
 		else if (roleID.equals(rolegroupNamevsId.get(Constants.PUBLIC_ROLE)))
 		{
-			roleName=Constants.PUBLIC_ROLE;
-			roleId=Constants.PUBLIC_GROUP_ID;
+			roleName = Constants.PUBLIC_ROLE;
+			roleId = Constants.PUBLIC_GROUP_ID;
 		}
 		else
 		{
 			logger.debug("role corresponds to no group");
 		}
-		if(roleId!=null)
+		if (roleId != null)
 		{
-			roleGroupId=rolegroupNamevsId.get(roleId);
-			logger.info("role corresponds to "+roleName);
+			roleGroupId = rolegroupNamevsId.get(roleId);
+			logger.info("role corresponds to " + roleName);
 		}
 		return roleGroupId;
 	}
 
+	/**
+	 * This method gets user role.
+	 * @param userID userID
+	 * @return role
+	 * @throws SMException SMException
+	 */
 	public Role getUserRole(long userID) throws SMException
 	{
 		Set<Group> groups;
@@ -594,18 +676,19 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get roles: Exception: " + exception.getMessage(),exception);
+			logger.debug("Unable to get roles: Exception: " + exception.getMessage(), exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 		return role;
 	}
 
 	/**
-	 * @param groups
-	 * @param userProvisioningManager
-	 * @param role
-	 * @return
-	 * @throws CSObjectNotFoundException
+	 * This method gets the role.
+	 * @param groups groups
+	 * @param userProvisioningManager userProvisioningManager
+	 * @param role role
+	 * @return role
+	 * @throws CSObjectNotFoundException CSObjectNotFoundException
 	 */
 	private Role getRole(Set groups, UserProvisioningManager userProvisioningManager, Role role)
 			throws CSObjectNotFoundException
@@ -647,19 +730,19 @@ public class SecurityManager implements Permissions
 	}
 
 	/**
-	 * Name : Virender Mehta
+	 * Name : Virender Mehta.
 	 * Reviewer: Sachin Lale
 	 * Bug ID: 3842
 	 * Patch ID: 3842_2
 	 * See also: 3842_1
 	 * Description: This function will return the Role name(Administrator, Scientist, Technician, Supervisor )
-	 * @param userID
+	 * @param userID user Id
 	 * @return Role Name
-	 * @throws SMException
+	 * @throws SMException SMException
 	 */
 	public String getUserGroup(long userID) throws SMException
 	{
-		String role=TextConstants.EMPTY_STRING;
+		String role = TextConstants.EMPTY_STRING;
 		Set groups;
 		UserProvisioningManager userProvisioningManager = null;
 		Iterator it;
@@ -676,22 +759,22 @@ public class SecurityManager implements Permissions
 				{
 					if (group.getGroupName().equals(ADMINISTRATOR_GROUP))
 					{
-						role=Roles.ADMINISTRATOR;
+						role = Roles.ADMINISTRATOR;
 						break;
 					}
 					else if (group.getGroupName().equals(SUPERVISOR_GROUP))
 					{
-						role=Roles.SUPERVISOR;
+						role = Roles.SUPERVISOR;
 						break;
 					}
 					else if (group.getGroupName().equals(TECHNICIAN_GROUP))
 					{
-						role=Roles.TECHNICIAN;
+						role = Roles.TECHNICIAN;
 						break;
 					}
 					else if (group.getGroupName().equals(PUBLIC_GROUP))
 					{
-						role=Roles.SCIENTIST;
+						role = Roles.SCIENTIST;
 						break;
 					}
 				}
@@ -699,7 +782,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get roles: Exception: " + exception.getMessage(),exception);
+			logger.debug("Unable to get roles: Exception: " + exception.getMessage(), exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 		return role;
@@ -720,7 +803,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to modify user: Exception: " + exception.getMessage(),exception);
+			logger.debug("Unable to modify user: Exception: " + exception.getMessage(), exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 	}
@@ -740,7 +823,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get user by Id for : "+userId,exception);
+			logger.debug("Unable to get user by Id for : " + userId, exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 	}
@@ -763,14 +846,17 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get users by emailAddress for email:"+emailAddress,exception);
+			logger
+					.debug("Unable to get users by emailAddress for email:" + emailAddress,
+							exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 	}
 
 	/**
-	 * @throws SMException
-	 *  
+	 * This method gets users.
+	 * @throws SMException SMException
+	 * @return users list
 	 */
 	public List getUsers() throws SMException
 	{
@@ -789,13 +875,13 @@ public class SecurityManager implements Permissions
 
 	/**
 	 * Returns list of objects corresponding to the searchCriteria passed.
-	 * 
-	 * @param searchCriteria
+	 *
+	 * @param searchCriteria searchCriteria
 	 * @return List of resultant objects
 	 * @throws SMException
 	 *             if searchCriteria passed is null or if search results in no
 	 *             results
-	 * @throws CSException
+	 * @throws CSException CSException
 	 */
 	public List getObjects(SearchCriteria searchCriteria) throws SMException, CSException
 	{
@@ -813,6 +899,12 @@ public class SecurityManager implements Permissions
 		return list;
 	}
 
+	/**
+	 * This method assign user to group.
+	 * @param userGroupname user Group name
+	 * @param userId user Id
+	 * @throws SMException userId
+	 */
 	public void assignUserToGroup(String userGroupname, String userId) throws SMException
 	{
 		if (userId == null || userGroupname == null)
@@ -836,12 +928,18 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			String mess="The Security Service encountered a fatal exception.";
+			String mess = "The Security Service encountered a fatal exception.";
 			logger.fatal(mess, exception);
 			throw new SMException(mess, exception);
 		}
 	}
 
+	/**
+	 * This method removes user from group.
+	 * @param userGroupname user Group name
+	 * @param userId user Id
+	 * @throws SMException SMException
+	 */
 	public void removeUserFromGroup(String userGroupname, String userId) throws SMException
 	{
 		if (userId == null || userGroupname == null)
@@ -865,17 +963,18 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException ex)
 		{
-			String mess="The Security Service encountered a fatal exception.";
+			String mess = "The Security Service encountered a fatal exception.";
 			logger.fatal(mess, ex);
 			throw new SMException(mess, ex);
 		}
 	}
 
 	/**
-	 * @param userGroupname
-	 * @return
-	 * @throws SMException
-	 * @throws CSException
+	 * This method gets user group.
+	 * @param userGroupname user Group name
+	 * @return group
+	 * @throws SMException SMException
+	 * @throws CSException CSException
 	 */
 	private Group getUserGroup(String userGroupname) throws SMException, CSException
 	{
@@ -885,7 +984,7 @@ public class SecurityManager implements Permissions
 		List list = getObjects(searchCriteria);
 		if (list.isEmpty())
 		{
-			group=null;
+			group = null;
 		}
 		else
 		{
@@ -895,11 +994,17 @@ public class SecurityManager implements Permissions
 		return group;
 	}
 
+	/**
+	 * This method assign Additional Groups To User.
+	 * @param userId user Id
+	 * @param groupIds group Ids
+	 * @throws SMException SMException
+	 */
 	public void assignAdditionalGroupsToUser(String userId, String[] groupIds) throws SMException
 	{
 		if (userId == null || groupIds == null || groupIds.length < 1)
 		{
-			String mesg=" Null or insufficient Parameters passed";
+			String mesg = " Null or insufficient Parameters passed";
 			logger.debug(mesg);
 			throw new SMException(mesg);
 		}
@@ -921,7 +1026,7 @@ public class SecurityManager implements Permissions
 					consolidatedGroupIds.add(String.valueOf(group.getGroupId()));
 				}
 			}
-			 //Consolidating all the Groups
+			//Consolidating all the Groups
 			for (int i = 0; i < groupIds.length; i++)
 			{
 				consolidatedGroupIds.add(groupIds[i]);
@@ -932,35 +1037,52 @@ public class SecurityManager implements Permissions
 			{
 				finalUserGroupIds[i] = (String) it.next();
 			}
-			 //Setting groups for user and updating it
+			//Setting groups for user and updating it
 			userProvisioningManager.assignGroupsToUser(userId, finalUserGroupIds);
 		}
 		catch (CSException exception)
 		{
-			String mesg="The Security Service encountered a fatal exception.";
+			String mesg = "The Security Service encountered a fatal exception.";
 			logger.fatal(mesg, exception);
 			throw new SMException(mesg, exception);
 		}
 	}
 
+	/**
+	 * This method checks user is authorized or not.
+	 * @param userName user Name
+	 * @param objectId object Id
+	 * @param privilegeName privilege Name
+	 * @return returns true if authorized else false
+	 * @throws SMException SMException
+	 */
 	public boolean isAuthorized(String userName, String objectId, String privilegeName)
 			throws SMException
 	{
 		try
 		{
-			return getAuthorizationManager().checkPermission(userName, objectId,privilegeName);
+			return getAuthorizationManager().checkPermission(userName, objectId, privilegeName);
 		}
 		catch (CSException e)
 		{
-			logger.debug( e.getMessage(),e);
+			logger.debug(e.getMessage(), e);
 			throw new SMException(e.getMessage(), e);
 		}
 	}
 
+	/**
+	 * This method checks permissions for user.
+	 * @param userName user Name
+	 * @param objectType object Type
+	 * @param objectIdentifier object Identifier
+	 * @param privilegeName privilege Name
+	 * @return returns true if authorized else false
+	 * @throws SMException SMException
+	 */
 	public boolean checkPermission(String userName, String objectType, String objectIdentifier,
 			String privilegeName) throws SMException
 	{
-		boolean isAuthorized=true;
+		boolean isAuthorized = true;
 		if (Boolean.parseBoolean(XMLPropertyHandler.getValue(Constants.ISCHECKPERMISSION)))
 		{
 			try
@@ -970,8 +1092,8 @@ public class SecurityManager implements Permissions
 			}
 			catch (CSException exception)
 			{
-				logger.debug("Unable tocheck permissionn" ,exception);
-				throw new SMException("Unable to check permission",exception);
+				logger.debug("Unable tocheck permissionn", exception);
+				throw new SMException("Unable to check permission", exception);
 			}
 		}
 		return isAuthorized;
@@ -980,11 +1102,12 @@ public class SecurityManager implements Permissions
 	/**
 	 * This method returns name of the Protection groupwhich consists of obj as
 	 * Protection Element and whose name consists of string nameConsistingOf.
-	 * 
-	 * @param obj
-	 * @param nameConsistingOf
-	 * @return @throws
-	 *         SMException
+	 *
+	 * @param obj AbstractDomainObject
+	 * @param nameConsistingOf nameConsistingOf
+	 * @return returns name of the Protection group which consists of obj as
+	 * Protection Element and whose name consists of string nameConsistingOf
+	 * @throws SMException SMException
 	 */
 	public String getProtectionGroupByName(AbstractDomainObject obj, String nameConsistingOf)
 			throws SMException
@@ -1013,11 +1136,11 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			String mess= new StringBuffer("Unable to get protection group by name")
-								.append(nameConsistingOf).append(" for Protection Element ")
-								.append(protectionElementName).toString();
+			String mess = new StringBuffer("Unable to get protection group by name").append(
+					nameConsistingOf).append(" for Protection Element ").append(
+					protectionElementName).toString();
 			logger.debug(mess, exception);
-			throw new SMException(mess,exception);
+			throw new SMException(mess, exception);
 		}
 		return name;
 
@@ -1026,10 +1149,10 @@ public class SecurityManager implements Permissions
 	/**
 	 * This method returns name of the Protection groupwhich consists of obj as
 	 * Protection Element and whose name consists of string nameConsistingOf.
-	 * 
-	 * @param obj
-	 * @param nameConsistingOf
-	 * @return @throws SMException
+	 *
+	 * @param obj AbstractDomainObject
+	 * @return returns name of the Protection group
+	 * @throws SMException SMException
 	 */
 	public String[] getProtectionGroupByName(AbstractDomainObject obj) throws SMException
 	{
@@ -1057,8 +1180,9 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			String mess="Unable to get protection group for Protection Element "+ protectionElementName;
-			logger.debug(mess,exception);
+			String mess = "Unable to get protection group for Protection Element "
+					+ protectionElementName;
+			logger.debug(mess, exception);
 			throw new SMException(mess, exception);
 		}
 		return names;
@@ -1099,8 +1223,8 @@ public class SecurityManager implements Permissions
 	 *         SMException thrown if any error occurs while retreiving
 	 *         ProtectionElementPrivilegeContextForUser
 	 */
-	private Set<NameValueBean> getObjectsForAssignPrivilege(Collection privilegeMap, String objectType,
-			String privilegeName) throws SMException
+	private Set<NameValueBean> getObjectsForAssignPrivilege(Collection privilegeMap,
+			String objectType, String privilegeName) throws SMException
 	{
 		Set<NameValueBean> objects = new HashSet<NameValueBean>();
 		NameValueBean nameValueBean;
@@ -1127,8 +1251,8 @@ public class SecurityManager implements Permissions
 						privilege = (Privilege) it.next();
 						if (privilege.getName().equals("ASSIGN_" + privilegeName))
 						{
-							name=objectId.substring(objectId.lastIndexOf('_') + 1);
-							nameValueBean = new NameValueBean(name,name);
+							name = objectId.substring(objectId.lastIndexOf('_') + 1);
+							nameValueBean = new NameValueBean(name, name);
 							objects.add(nameValueBean);
 							break;
 						}
@@ -1155,25 +1279,25 @@ public class SecurityManager implements Permissions
 	public Set<NameValueBean> getObjectsForAssignPrivilege(String userID, String[] objectTypes,
 			String[] privilegeNames) throws SMException
 	{
-		Set<NameValueBean> objects=null;
+		Set<NameValueBean> objects = null;
 
 		try
 		{
 			User user = new User();
 			user = getUserById(userID);
-			if (objectTypes == null || privilegeNames == null ||user == null)
+			if (objectTypes == null || privilegeNames == null || user == null)
 			{
 				logger.debug(" User not found");
 				objects = new HashSet<NameValueBean>();
 			}
 			else
 			{
-				objects=getAssignedPrivilege(objectTypes, privilegeNames, user);
+				objects = getAssignedPrivilege(objectTypes, privilegeNames, user);
 			}
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Unable to get objects: " ,exception);
+			logger.debug("Unable to get objects: ", exception);
 			throw new SMException("Unable to get objects: ", exception);
 		}
 		return objects;
@@ -1204,9 +1328,10 @@ public class SecurityManager implements Permissions
 				{
 					protectionElement = new ProtectionElement();
 					protectionElement.setObjectId(objectTypes[i] + "_*");
-					protectionElementSearchCriteria=new ProtectionElementSearchCriteria(protectionElement);
+					protectionElementSearchCriteria = new ProtectionElementSearchCriteria(
+							protectionElement);
 					list = getObjects(protectionElementSearchCriteria);
-					privilegeMap=authorizationManager.getPrivilegeMap(user.getLoginName(),list);
+					privilegeMap = authorizationManager.getPrivilegeMap(user.getLoginName(), list);
 					for (int k = 0; k < list.size(); k++)
 					{
 						protectionElement = (ProtectionElement) list.get(k);
@@ -1247,7 +1372,7 @@ public class SecurityManager implements Permissions
 		QueryResultObjectData queryResultObjectData3;
 		List queryObjects;
 
-		while(keyIterator.hasNext())
+		while (keyIterator.hasNext())
 		{
 			queryResultObjectData2 = (QueryResultObjectData) queryResultObjectDataMap
 					.get(keyIterator.next());
@@ -1390,9 +1515,8 @@ public class SecurityManager implements Permissions
 		{
 			boolean isAuthorized = false;
 			String tableName = (String) AbstractClient.objectTableNames.get(tableAlias);
-			logger.debug(" AliasName:" + tableAlias + " tableName:" + tableName
-					+ " Identifier:" + identifier + " Permission:" + permission + " userName"
-					+ userName);
+			logger.debug(" AliasName:" + tableAlias + " tableName:" + tableName + " Identifier:"
+					+ identifier + " Permission:" + permission + " userName" + userName);
 
 			String securityDataPrefixForTable;
 
@@ -1493,7 +1617,7 @@ public class SecurityManager implements Permissions
 		Iterator keyIterator = keySet.iterator();
 		QueryResultObjectData queryResultObjectData2;
 
-		while(keyIterator.hasNext())
+		while (keyIterator.hasNext())
 		{
 
 			queryResultObjectData2 = (QueryResultObjectData) queryResultObjectDataMap
@@ -1566,7 +1690,8 @@ public class SecurityManager implements Permissions
 			UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
 
 			//Get privileges the user has based on his role
-			Set<Privilege> privileges = userProvisioningManager.getPrivileges(String.valueOf(role.getId()));
+			Set<Privilege> privileges = userProvisioningManager.getPrivileges(String.valueOf(role
+					.getId()));
 			Iterator<Privilege> privIterator = privileges.iterator();
 			Privilege privilege;
 
@@ -1583,7 +1708,7 @@ public class SecurityManager implements Permissions
 		}
 		catch (CSException exception)
 		{
-			logger.debug("Exception in hasIdentifiedDataAccess method",exception);
+			logger.debug("Exception in hasIdentifiedDataAccess method", exception);
 			throw new SMException(exception.getMessage(), exception);
 		}
 		return hasIdentifiedDataAccess;
