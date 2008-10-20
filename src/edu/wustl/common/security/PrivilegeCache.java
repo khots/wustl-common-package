@@ -1,5 +1,5 @@
 /**
- * PrivilegeCache will cache all privileges for a specific user. 
+ * PrivilegeCache will cache all privileges for a specific user
  * An instance of PrivilegeCache will be created for every user who logs in.
  */
 
@@ -41,22 +41,22 @@ public class PrivilegeCache
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PrivilegeCache.class);
-	/*
-	 * login name of the user who has logged in
+	/**
+	 * login name of the user who has logged in.
 	 */
 	private String loginName;
 
-	/*
-	 * the map of object id and corresponding permissions / privileges
+	/**
+	 * the map of object id and corresponding permissions / privileges.
 	 */
 	private Map<String, BitSet> privilegeMap;
 
 	/**
 	 * After initialization of the variables, a call to method 'initialize()'
 	 * is made initialize() uses some ProtectionElementSearchCriterias & gets
-	 * Protection Elements from the database
-	 * 
-	 * @throws Exception
+	 * Protection Elements from the database.
+	 * @param loginName login name of the user who has logged in.
+	 * @throws Exception generic exception
 	 */
 	public PrivilegeCache(String loginName) throws Exception
 	{
@@ -74,8 +74,8 @@ public class PrivilegeCache
 	 * ProtectionElement,the method looks for the privileges that User has on
 	 * the ProtectionElement such ObjectPrivilegeMaps are then passed to
 	 * 'populatePrivileges' method.
-	 * 
-	 * @throws Exception
+	 *
+	 * @throws Exception generic exception
 	 */
 	private void initialize() throws Exception
 	{
@@ -93,6 +93,11 @@ public class PrivilegeCache
 
 	}
 
+	/**
+	 * This method gets Object Privilege Map.
+	 * @param protEleObjId Protection Element Id
+	 * @return objPrivMap return objPrivMap.
+	 */
 	private Collection getObjectPrivilegeMap(String protEleObjId)
 	{
 		Collection objPrivMap = new ArrayList();
@@ -104,8 +109,7 @@ public class PrivilegeCache
 			protectionElement.setObjectId(protEleObjId);
 			ProtectionElementSearchCriteria protEleSearchCrit = new ProtectionElementSearchCriteria(
 					protectionElement);
-			List list = privilegeUtility.getUserProvisioningManager().getObjects(
-					protEleSearchCrit);
+			List list = privilegeUtility.getUserProvisioningManager().getObjects(protEleSearchCrit);
 
 			if (!list.isEmpty())
 			{
@@ -124,15 +128,14 @@ public class PrivilegeCache
 	/**
 	 * populatePrivileges does the Mapping (inserts into Map) of the Object Id's
 	 * and corresponding BitSets.
-	 * 
+	 *
 	 * BitSet is used for the Mapping. There are total 10 possible Privileges /
 	 * Permissions. So, we use 10 bits of bitset for storing these Permissions
 	 * For every objectId in PrivilegeMap, a bit '1' in BitSet indicates user
 	 * has permission on that Privilege & a bit '0' indicates otherwise So, in
 	 * this method, we examine each Privilege returned by PrivilegeMap & set the
 	 * BitSet corresponding to the objectId accordingly.
-	 * 
-	 * @param objPrivMapCol
+	 * @param objPrivMapCol objPrivMapCol.
 	 */
 	private void populatePrivileges(Collection<ObjectPrivilegeMap> objPrivMapCol)
 	{
@@ -153,17 +156,16 @@ public class PrivilegeCache
 
 	/**
 	 * Simply checks if the user has any privilage on given object id.
-	 *  
-	 * @param objectId
-	 * @return
+	 * @param objectId object Id
+	 * @return return true if user has privilege, false otherwise.
 	 */
 	public boolean hasPrivilege(String objectId)
 	{
-		boolean hasPrivilege=false;
+		boolean hasPrivilege = false;
 		BitSet bitSet = privilegeMap.get(objectId);
 		if (bitSet != null && bitSet.cardinality() > 0)
 		{
-			hasPrivilege=true;
+			hasPrivilege = true;
 		}
 
 		return hasPrivilege;
@@ -174,10 +176,9 @@ public class PrivilegeCache
 	 * as the objectId & retrieve its associated BitSet from the privilegeMap
 	 * Then, we check whether User has Permission over the passed Privilege or
 	 * no & return true if user has privilege, false otherwise.
-	 *
-	 * @param classObj
-	 * @param privilegeName
-	 * @return
+	 * @param classObj classObj
+	 * @param privilegeName privilege Name
+	 * @return return true if user has privilege, false otherwise.
 	 */
 	public boolean hasPrivilege(Class classObj, String privilegeName)
 	{
@@ -190,9 +191,9 @@ public class PrivilegeCache
 	 * whether User has Permission over the passed Privilege or no & return true
 	 * if user has privilege, false otherwise.
 	 *
-	 * @param aDObject
-	 * @param privilegeName
-	 * @return
+	 * @param aDObject aDObject is AbstractDomainObject.
+	 * @param privilegeName privilege Name.
+	 * @return return true if user has privilege, false otherwise.
 	 */
 	public boolean hasPrivilege(AbstractDomainObject aDObject, String privilegeName)
 	{
@@ -204,10 +205,10 @@ public class PrivilegeCache
 	 * retrieve its associated BitSet from the privilegeMap Then, we check
 	 * whether User has Permission over the passed Privilege or no & return true
 	 * if user has privilege, false otherwise.
-	 * 
-	 * @param objectId
-	 * @param privilegeName
-	 * @return
+	 * @param objectId object Id
+	 * @param privilegeName privilege Name.
+	 * @return return true
+	 * if user has privilege, false otherwise.
 	 */
 	public boolean hasPrivilege(String objectId, String privilegeName)
 	{
@@ -233,6 +234,12 @@ public class PrivilegeCache
 		return isAuthorized;
 	}
 
+	/**
+	 * This method gets Privileges From Database.
+	 * @param objectId object Id
+	 * @param privilegeName privilege Name
+	 * @return BitSet return bitSet of Privileges from Database.
+	 */
 	private BitSet getPrivilegesFromDatabase(String objectId, String privilegeName)
 	{
 		PrivilegeUtility privilegeUtility = new PrivilegeUtility();
@@ -245,10 +252,9 @@ public class PrivilegeCache
 			protectionElement.setObjectId(objectId);
 			ProtectionElementSearchCriteria protEleSearchCrit = new ProtectionElementSearchCriteria(
 					protectionElement);
-			List list = privilegeUtility.getUserProvisioningManager().getObjects(
-					protEleSearchCrit);
-			Collection objPrivMap = privilegeUtility.getUserProvisioningManager()
-					.getPrivilegeMap(loginName, list);
+			List list = privilegeUtility.getUserProvisioningManager().getObjects(protEleSearchCrit);
+			Collection objPrivMap = privilegeUtility.getUserProvisioningManager().getPrivilegeMap(
+					loginName, list);
 			populatePrivileges(objPrivMap);
 			bitSet = privilegeMap.get(objectId);
 		}
@@ -260,16 +266,34 @@ public class PrivilegeCache
 		return bitSet;
 	}
 
+	/**
+	 * This method update Privilege.
+	 * @param classObj classObj
+	 * @param privilegeName privilege name
+	 * @param value boolean value.
+	 */
 	public void updatePrivilege(Class classObj, String privilegeName, boolean value)
 	{
 		updatePrivilege(classObj.getName(), privilegeName, value);
 	}
 
+	/**
+	 * This method update Privilege.
+	 * @param aDObject AbstractDomainObject
+	 * @param privilegeName privilege name
+	 * @param value boolean value.
+	 */
 	public void updatePrivilege(AbstractDomainObject aDObject, String privilegeName, boolean value)
 	{
 		updatePrivilege(aDObject.getObjectId(), privilegeName, value);
 	}
 
+	/**
+	 * This method update Privilege.
+	 * @param objectId object Id
+	 * @param privilegeName privilege name
+	 * @param value boolean value.
+	 */
 	public void updatePrivilege(String objectId, String privilegeName, boolean value)
 	{
 		BitSet bitSet = privilegeMap.get(objectId);
@@ -289,13 +313,18 @@ public class PrivilegeCache
 	 * this method forces CSM to go to the database & get the ProtectionElements
 	 * For more, please refer to the 'initialize' method above.
 	 *
-	 * @throws Exception
+	 * @throws Exception generic exception
 	 */
 	public void refresh() throws Exception
 	{
 		initialize();
 	}
 
+	/**
+	 * This method gets Bit Number of privilege Name.
+	 * @param privilegeName privilegeName privilege Name.
+	 * @return bit number of given privilege.
+	 */
 	private int getBitNumber(String privilegeName)
 	{
 		if (Permissions.READ.equals(privilegeName))
@@ -409,11 +438,20 @@ public class PrivilegeCache
 		return 0;
 	}
 
+	/**
+	 * This method gets Login name.
+	 * @return login name.
+	 */
 	public String getLoginName()
 	{
 		return loginName;
 	}
 
+	/**
+	 * This method add object.
+	 * @param objectId object Id
+	 * @param privileges collection of privileges.
+	 */
 	public void addObject(String objectId, Collection<Privilege> privileges)
 	{
 		BitSet bitSet = new BitSet();
@@ -425,6 +463,15 @@ public class PrivilegeCache
 		privilegeMap.put(objectId, bitSet);
 	}
 
+	/**
+	 * This method update user privelege.
+	 * @param privilegeName privilege Name
+	 * @param objectType object Type
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param assignOperation assign Operation
+	 * @throws Exception generic exception
+	 */
 	public void updateUserPrivilege(String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, boolean assignOperation) throws Exception
 	{
@@ -451,11 +498,13 @@ public class PrivilegeCache
 	/**
 	 * This method assigns privilege by privilegeName to the user identified by
 	 * userId on the objects identified by objectIds.
-	 * 
-	 * @param privilegeName
-	 * @param objectIds
-	 * @param userId
-	 * @throws SMException
+	 *
+	 * @param privilegeName privilege Name
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param objectType object Type
+	 * @param assignOp assignOp
+	 * @throws SMException generic SMException.
 	 */
 	private void assignPrivilegeToUser(String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, boolean assignOp) throws SMException
@@ -498,8 +547,8 @@ public class PrivilegeCache
 					else
 					{
 						logger.debug("De Assign Protection elements");
-						privilegeUtility.deAssignProtectionElements(protGrName,
-								objectType, objectIds);
+						privilegeUtility.deAssignProtectionElements(protGrName, objectType,
+								objectIds);
 					}
 				}
 				else
@@ -539,9 +588,9 @@ public class PrivilegeCache
 
 	/**
 	 * get the ids and privileges where ids start with the given prefix.
-	 * 
-	 * @param prefix
-	 * @return
+	 *
+	 * @param prefix prefix.
+	 * @return map of Privileges for Prefix
 	 */
 	public Map<String, List<NameValueBean>> getPrivilegesforPrefix(String prefix)
 	{
@@ -564,9 +613,8 @@ public class PrivilegeCache
 
 	/**
 	 * convert the given bitset into a set of privilege names.
-	 * 
-	 * @param value
-	 * @return
+	 * @param value value
+	 * @return return list of privilegeNames.
 	 */
 	private List<NameValueBean> getPrivilegeNames(BitSet value)
 	{
@@ -614,7 +662,7 @@ public class PrivilegeCache
 					/*case 14:
 						nmv.setName(Permissions.REPOSITORY_ADMINISTRATION);
 						break;*/
-					/*	
+					/*
 					case 25:
 						nmv.setName(Permissions.SPECIMEN_ANNOTATION);
 						break;
@@ -623,7 +671,7 @@ public class PrivilegeCache
 					case 26 :
 						nmv.setName(Permissions.SPECIMEN_PROCESSING);
 						break;
-					/*	
+					/*
 					case 27:
 						nmv.setName(Permissions.SPECIMEN_STORAGE);
 						break;
