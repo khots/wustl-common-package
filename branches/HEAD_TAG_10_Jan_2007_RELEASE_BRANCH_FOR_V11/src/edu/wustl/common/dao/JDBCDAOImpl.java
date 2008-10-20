@@ -196,12 +196,10 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
-			boolean onlyDistinctRows) throws DAOException
+	public List retrieve(String sourceObjectName, String[] selectColumnName, boolean onlyDistinctRows) throws DAOException
 	{
 		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
-		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
-				onlyDistinctRows);
+		return retrieve(sourceObjectName, selectColumnName, null, null, null, null, onlyDistinctRows);
 	}
 
 	/**
@@ -213,9 +211,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @param joinCondition The join condition.
 	 * @param onlyDistictRows true if only distict rows should be selected
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition, boolean onlyDistinctRows) throws DAOException
+	public List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName, String[] whereColumnCondition,
+			Object[] whereColumnValue, String joinCondition, boolean onlyDistinctRows) throws DAOException
 	{
 		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		List list = null;
@@ -264,12 +261,10 @@ public class JDBCDAOImpl implements JDBCDAO
 				int i;
 				for (i = 0; i < (whereColumnName.length - 1); i++)
 				{
-					query.append(sourceObjectName + "." + whereColumnName[i] + " "
-							+ whereColumnCondition[i] + " " + whereColumnValue[i]);
+					query.append(sourceObjectName + "." + whereColumnName[i] + " " + whereColumnCondition[i] + " " + whereColumnValue[i]);
 					query.append(" " + joinCondition + " ");
 				}
-				query.append(sourceObjectName + "." + whereColumnName[i] + " "
-						+ whereColumnCondition[i] + " " + whereColumnValue[i]);
+				query.append(sourceObjectName + "." + whereColumnName[i] + " " + whereColumnCondition[i] + " " + whereColumnValue[i]);
 			}
 			Logger.out.debug("JDBC Query " + query);
 			list = executeQuery(query.toString(), null, false, null);
@@ -291,12 +286,10 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @param joinCondition The join condition.
 	 * @param The session object.
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws DAOException
+	public List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName, String[] whereColumnCondition,
+			Object[] whereColumnValue, String joinCondition) throws DAOException
 	{
-		return retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
-				whereColumnValue, joinCondition, false);
+		return retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition, false);
 	}
 
 	/**
@@ -309,11 +302,10 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
-			DAOException
+	public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, Map queryResultObjectDataMap)
+			throws ClassNotFoundException, DAOException
 	{
-		return executeQuery(query,sessionDataBean,isSecureExecute,false,queryResultObjectDataMap,-1,-1).getResult();
+		return executeQuery(query, sessionDataBean, isSecureExecute, false, queryResultObjectDataMap, -1, -1).getResult();
 	}
 
 	/**
@@ -326,8 +318,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
+	public List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
 	{
 		/**
@@ -338,14 +329,16 @@ public class JDBCDAOImpl implements JDBCDAO
 		 * Calling executeQuery method with StartIndex parameter as -1, so that it will return all records from result.
 		 */
 
-		return executeQuery(query,sessionDataBean,isSecureExecute,hasConditionOnIdentifiedField,queryResultObjectDataMap,-1,-1).getResult();
+		return executeQuery(query, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField, queryResultObjectDataMap, -1, -1).getResult();
 	}
-
 
 	/**
 	 * @see edu.wustl.common.dao.JDBCDAO#executeQuery(java.lang.String, edu.wustl.common.beans.SessionDataBean, boolean, boolean, java.util.Map, int, int)
 	 */
-	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute, boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws ClassNotFoundException, DAOException {
+	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
+			boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws ClassNotFoundException,
+			DAOException
+	{
 		//Aarti: Security checks
 		if (Constants.switchSecurity && isSecureExecute)
 		{
@@ -361,8 +354,8 @@ public class JDBCDAOImpl implements JDBCDAO
 		 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
 		 */
 
-		return  getQueryResultList(query, sessionDataBean, isSecureExecute,
-				hasConditionOnIdentifiedField, queryResultObjectDataMap,startIndex,noOfRecords);
+		return getQueryResultList(query, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex,
+				noOfRecords);
 	}
 
 	/**
@@ -380,9 +373,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * @return
 	 * @throws DAOException
 	 */
-	private PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws DAOException
+	private PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
+			boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws DAOException
 	{
 		/**
 		 * Name: Prafull
@@ -391,7 +383,8 @@ public class JDBCDAOImpl implements JDBCDAO
 		 *
 		 * Calling QueryExecutor method.
 		 */
-		return AbstractQueryExecutor.getInstance().getQueryResultList(query,connection, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
+		return AbstractQueryExecutor.getInstance().getQueryResultList(query, connection, sessionDataBean, isSecureExecute,
+				hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
 
 	}
 
@@ -399,15 +392,13 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
-			throws DAOException
+	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue) throws DAOException
 	{
 		String whereColumnNames[] = {whereColumnName};
 		String whereColumnConditions[] = {"="};
 		Object whereColumnValues[] = {whereColumnValue};
 
-		return retrieve(sourceObjectName, null, whereColumnNames, whereColumnConditions,
-				whereColumnValues, Constants.AND_JOIN_CONDITION);
+		return retrieve(sourceObjectName, null, whereColumnNames, whereColumnConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
 	}
 
 	private Timestamp isColumnValueDate(Object value)
@@ -435,12 +426,12 @@ public class JDBCDAOImpl implements JDBCDAO
 		return null;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
 	 */
-	public void insert(String tableName, List columnValues) throws DAOException, SQLException{
-		insert(tableName,columnValues,null);
+	public void insert(String tableName, List columnValues) throws DAOException, SQLException
+	{
+		insert(tableName, columnValues, null);
 	}
 
 	/**
@@ -453,21 +444,38 @@ public class JDBCDAOImpl implements JDBCDAO
 	public void insert(String tableName, List columnValues, List<String>... columnNames) throws DAOException, SQLException
 	{
 		//Get metadate for temp table to set default values in date fields
-		String sql = "Select * from " + tableName + " where 1!=1";
+		StringBuffer sql = new StringBuffer("Select ");
 		Statement statement = connection.createStatement();
-		ResultSet resultSet = statement.executeQuery(sql.toString());
-		ResultSetMetaData metaData = resultSet.getMetaData();
+		ResultSet resultSet = null;
+		ResultSetMetaData metaData = null;
 		//Make a list of Date columns
 		List dateColumns = new ArrayList();
 		List numberColumns = new ArrayList();
 
 		//added by Kunal
 		List<String> columnNames_t;
-		if(columnNames!=null && columnNames.length > 0){
+		if (columnNames != null && columnNames.length > 0)
+		{
 			columnNames_t = columnNames[0];
+			for (int i = 0; i < columnNames_t.size(); i++)
+			{
+				sql.append(columnNames_t.get(i));
+				if (i != columnNames_t.size() - 1)
+				{
+					sql.append(",");
+				}
+			}
+			sql.append(" from " + tableName + " where 1!=1");
+			resultSet = statement.executeQuery(sql.toString());
+			metaData = resultSet.getMetaData();
+
 		}
 		else
 		{
+			sql.append("* from " + tableName + " where 1!=1");
+			resultSet = statement.executeQuery(sql.toString());
+			metaData = resultSet.getMetaData();
+
 			columnNames_t = new ArrayList<String>();
 			for (int i = 1; i <= metaData.getColumnCount(); i++)
 			{
@@ -475,15 +483,14 @@ public class JDBCDAOImpl implements JDBCDAO
 			}
 		}
 
-
-		 /** Name : Aarti Sharma
-		 * Reviewer: Prafull Kadam
-		 * Bug ID: 4126
-		 * Patch ID: 4126_1
-		 * See also: 4126_2
-		 * Desciption: Make a list of tinyint columns.
-		 * Tinyint datatype is used as a replacement for boolean in MySQL.
-		 */
+		/** Name : Aarti Sharma
+		* Reviewer: Prafull Kadam
+		* Bug ID: 4126
+		* Patch ID: 4126_1
+		* See also: 4126_2
+		* Desciption: Make a list of tinyint columns.
+		* Tinyint datatype is used as a replacement for boolean in MySQL.
+		*/
 		List tinyIntColumns = new ArrayList();
 
 		for (int i = 1; i <= metaData.getColumnCount(); i++)
@@ -503,16 +510,18 @@ public class JDBCDAOImpl implements JDBCDAO
 		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + "(");
 
 		Iterator<String> columnIterator = columnNames_t.iterator();
-		while(columnIterator.hasNext()){
+		while (columnIterator.hasNext())
+		{
 			query.append(columnIterator.next());
-			if(columnIterator.hasNext()){
+			if (columnIterator.hasNext())
+			{
 				query.append(",");
-			}else{
+			}
+			else
+			{
 				query.append(") values(");
 			}
 		}
-
-
 
 		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
 		//Changed implementation with column names
@@ -546,33 +555,36 @@ public class JDBCDAOImpl implements JDBCDAO
 				if (obj != null && dateColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
 				{
 					java.util.Date date = null;
-					try {
-						date = Utility.parseDate("1-1-9999","mm-dd-yyyy");
-					} catch (ParseException e) {
+					try
+					{
+						date = Utility.parseDate("1-1-9999", "mm-dd-yyyy");
+					}
+					catch (ParseException e)
+					{
 						e.printStackTrace();
 					}
 					Date sqlDate = new Date(date.getTime());
 					stmt.setDate(i + 1, sqlDate);
 				}
-				 /** Name : Aarti Sharma
-				 * Reviewer:  Prafull Kadam
-				 * Bug ID: 4126
-				 * Patch ID: 4126_2
-				 * See also: 4126_1
-				 * Desciption: If the value of the column is true set 1 in the statement else set 0.
-				 * This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-				 * If this is not done then all values will be set as 0
-				 * irrespective of whether the value is true or false.
-				 */
+				/** Name : Aarti Sharma
+				* Reviewer:  Prafull Kadam
+				* Bug ID: 4126
+				* Patch ID: 4126_2
+				* See also: 4126_1
+				* Desciption: If the value of the column is true set 1 in the statement else set 0.
+				* This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
+				* If this is not done then all values will be set as 0
+				* irrespective of whether the value is true or false.
+				*/
 				else if (tinyIntColumns.contains(new Integer(i + 1)))
 				{
-					if(obj!= null &&( obj.equals("true") || obj.equals("TRUE") || obj.equals("1")))
+					if (obj != null && (obj.equals("true") || obj.equals("TRUE") || obj.equals("1")))
 					{
-						stmt.setObject(i+1, 1);
+						stmt.setObject(i + 1, 1);
 					}
 					else
 					{
-						stmt.setObject(i+1, 0);
+						stmt.setObject(i + 1, 0);
 					}
 				}
 				else
@@ -591,7 +603,7 @@ public class JDBCDAOImpl implements JDBCDAO
 						}
 						else
 						{
-						  stmt.setObject(i + 1, obj);
+							stmt.setObject(i + 1, obj);
 						}
 					}
 				}
@@ -621,9 +633,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.AbstractDAO#update(java.lang.Object, SessionDataBean, boolean, boolean, boolean)
 	 */
-	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException,
-			UserNotAuthorizedException
+	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege)
+			throws DAOException, UserNotAuthorizedException
 	{
 		// TODO Auto-generated method stub
 	}
@@ -722,8 +733,8 @@ public class JDBCDAOImpl implements JDBCDAO
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#insert(java.lang.Object, boolean)
 	 */
-	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
+	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureInsert) throws DAOException,
+			UserNotAuthorizedException
 	{
 		// TODO Auto-generated method stub
 		//		if(isAuditable)
@@ -758,8 +769,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		}
 	}
 
-	public void disableRelatedObjects(String tableName, String whereColumnName,
-			Long whereColumnValues[]) throws DAOException
+	public void disableRelatedObjects(String tableName, String whereColumnName, Long whereColumnValues[]) throws DAOException
 	{
 	}
 
@@ -768,26 +778,27 @@ public class JDBCDAOImpl implements JDBCDAO
 		return null;
 	}
 
-	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
-			boolean isAuditable) throws DAOException
+	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
 	{
 	}
 
-    /* (non-Javadoc)
-     * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
-     */
-    public Object retrieveAttribute(Class<AbstractDomainObject> objClass,Long id,
-			String attributeName)
-			throws DAOException{
-    	return retrieveAttribute(objClass.getName(),id,attributeName);
-    }
+	/* (non-Javadoc)
+	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
+	 */
+	public Object retrieveAttribute(Class<AbstractDomainObject> objClass, Long id, String attributeName) throws DAOException
+	{
+		return retrieveAttribute(objClass.getName(), id, attributeName);
+	}
+
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
 	 */
-	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException {
+	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName) throws DAOException
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	/**
 	 * setAutoCommit.
 	 * @param autoCommitFlag
@@ -806,6 +817,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
 		}
 	}
+
 	/**
 	 * getConnection.
 	 * @param autoCommitFlag
