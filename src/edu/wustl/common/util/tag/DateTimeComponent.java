@@ -8,7 +8,6 @@ package edu.wustl.common.util.tag;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
@@ -29,6 +28,11 @@ import edu.wustl.common.util.Utility;
  */
 public class DateTimeComponent extends TagSupport
 {
+
+	/**
+	 * specify serialVersionUID.
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Name of the text field for the date component.
@@ -358,8 +362,6 @@ public class DateTimeComponent extends TagSupport
 			result = false;
 		}
 
-		Date currentDate = Calendar.getInstance().getTime();
-
 		//setting errors in request
 		request.setAttribute(Globals.ERROR_KEY, errors);
 
@@ -383,7 +385,7 @@ public class DateTimeComponent extends TagSupport
 		else
 		{
 			output = output + ">";
-			}
+		}
 		String onClickFunction = "";
 
 		/**
@@ -427,17 +429,6 @@ public class DateTimeComponent extends TagSupport
 		output = output + "</DIV>";
 
 		return output;
-		/*
-		<A onclick="showCalendar(2006,7,25,'MM/dd/yyyy','newsForm','date',event,1901,2099);" href="javascript://">
-			<IMG alt="date"  src="images/calendar.gif" border=0>
-		</A>
-		<DIV id=slcalcod style="Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px">
-			<SCRIPT>
-				printTimeCalendar(25,7,2006,12,50);
-				//printCalendar(25,7,2006);
-			</SCRIPT>
-		</DIV>
-		*/
 	}
 
 	/**
@@ -460,8 +451,6 @@ public class DateTimeComponent extends TagSupport
 
 		}
 
-		Date currentDate = Calendar.getInstance().getTime();
-
 		if (Utility.isNull(month))
 		{
 			month = Integer.valueOf((Calendar.getInstance().get(Calendar.MONTH)) + 1);
@@ -480,7 +469,7 @@ public class DateTimeComponent extends TagSupport
 		}
 		if (Utility.isNull(displayTime))
 		{
-			displayTime =Boolean.FALSE;
+			displayTime = Boolean.FALSE;
 		}
 		if (Utility.isNull(hour))
 		{
@@ -504,7 +493,7 @@ public class DateTimeComponent extends TagSupport
 		}
 		if (Utility.isNull(value))
 		{
-			value ="";
+			value = "";
 		}
 		if (Utility.isNull(styleClass))
 		{
