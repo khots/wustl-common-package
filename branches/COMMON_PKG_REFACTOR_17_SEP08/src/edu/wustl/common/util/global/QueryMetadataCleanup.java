@@ -142,7 +142,7 @@ public class QueryMetadataCleanup
 		deletedRecords.append("\npath:");
 		for (Long id : intraModelAssociationIds)
 		{
-			associationDelSQL.append(id).append(",");
+			associationDelSQL.append(id).append(',');
 			String pathSql = SqlConstants.SQL_PATH +"'%"
 					+ id + "%'";
 			resultSet = stmt.executeQuery(pathSql);
