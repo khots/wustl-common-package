@@ -699,24 +699,27 @@ public class Validator
 		}
 		else
 		{
-			if (isValidDatePattern(strDate))
-			{
-				if (isDate(strDate))
+			returnString = chkDateFormat(strDate);
+			if (TextConstants.EMPTY_STRING.equals(returnString)
+					&& checkFutureDate && !compareDateWithCurrent(strDate))
 				{
-					if (checkFutureDate && !compareDateWithCurrent(strDate))
-					{
-						returnString = "errors.invalid.date";
-					}
+					returnString = "errors.invalid.date";
 				}
-				else
-				{
-					returnString = "errors.date.format";
-				}
-			}
-			else
-			{
-				returnString = "errors.date.format";
-			}
+		}
+		return returnString;
+	}
+
+	/**
+	 * @param strDate
+	 * @param returnString
+	 * @return
+	 */
+	private String chkDateFormat(String strDate)
+	{
+		String returnString ="";
+		if (!isValidDatePattern(strDate) || !isDate(strDate))
+		{
+			returnString = "errors.date.format";
 		}
 		return returnString;
 	}
