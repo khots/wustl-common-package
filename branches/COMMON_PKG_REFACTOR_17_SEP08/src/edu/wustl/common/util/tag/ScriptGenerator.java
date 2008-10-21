@@ -17,28 +17,40 @@ import edu.wustl.common.beans.NameValueBean;
  *
  * A Utility class to generate javascript code for constructing
  * javascript hashtable datastructure from Java Map datastructures.
- * 
+ *
  * Assumes that the input is a Map and all keys for outer and inner
  * Maps are strings, and values are either Map or List.
- * Elements of all inner Lists are assumed to be string again. 
+ * Elements of all inner Lists are assumed to be string again.
  */
 public class ScriptGenerator
 {
 
+	/**
+	 * Constructor.
+	 */
 	private ScriptGenerator()
 	{
 
 	}
 
+	/**
+	 * This method gets JS For Outermost Data Table.
+	 * @return returner
+	 */
 	public static String getJSForOutermostDataTable()
 	{
-		String returner = "";
-		returner += "<script language=\"JavaScript\" type=\"text/javascript\"> \n";
-		returner += "var outerMostDataTable = new Hashtable(); \n";
-		returner += "</script>\n";
-		return returner;
+		StringBuffer returner = new StringBuffer(117);
+		returner
+				.append("<script language=\"JavaScript\" type=\"text/javascript\"> \n var outerMostDataTable = new Hashtable(); \n </script>\n");
+		return returner.toString();
 	}
 
+	/**
+	 * This method gets JS Equivalent For.
+	 * @param dataMap dataMap Java Map datastructure.
+	 * @param rowNum rowNum
+	 * @return returner
+	 */
 	public static String getJSEquivalentFor(Map dataMap, String rowNum)
 	{
 		String returner = "<script language=\"JavaScript\" type=\"text/javascript\"> \n";
@@ -62,12 +74,12 @@ public class ScriptGenerator
 	/**
 	 * A utility function to find the depth of Map.
 	 * Uses iteration to find the depth.
-	 * 
+	 *
 	 * depth of the map means the level of recursion used like
 	 * Map of Map of Map of Map of Map of List
 	 * here the depth of the outer map is 5.
-	 * 
-	 * @param map Java Map datastructure.
+	 *
+	 * @param mapval Java Map datastructure.
 	 * @return depth of the map.
 	 */
 	public static int depthOfMap(Map mapval)
@@ -97,11 +109,13 @@ public class ScriptGenerator
 	 * A recursive function to construct a string equivalent of the Javascript code
 	 * for constructing a Javascript hastable.
 	 * @param obj an Object, it can be either Map or List, if List the call will terminate.
-	 * @param depth the depth of the curent obj in the actual Map. 
+	 * @param depthval the depth of the curent obj in the actual Map.
 	 * @param keyValue key from which we got this obj value, for outer map it is empty.
-	 * @return String equivalent of javascript code. 
+	 * @param rowNumber row Number
+	 * @return String equivalent of javascript code.
 	 */
-	public static String getVarInStringForm(Object obj, int depthval, String keyValue, String rowNumber)
+	public static String getVarInStringForm(Object obj, int depthval, String keyValue,
+			String rowNumber)
 	{
 		int depth = depthval;
 		String returner = "";
@@ -148,7 +162,11 @@ public class ScriptGenerator
 		return returner;
 	}
 
-	public static void main12(String args[])
+	/**
+	 *
+	 * @param args args
+	 */
+	public static void main12(String [] args)
 	{
 		Map containerMap = new Hashtable();
 
@@ -174,12 +192,15 @@ public class ScriptGenerator
 		Map fourthMap = new Hashtable();
 		fourthMap.put("@", containerMap);
 
-		//int maxDepth = depthOfMap(containerMap);
 		String result = getJSEquivalentFor(fourthMap, "1");
-		
+
 	}
 
-	public static void main(String args[])
+	/**
+	 *
+	 * @param args args
+	 */
+	public static void main(String [] args)
 	{
 		Map containerMap = new Hashtable();
 
@@ -205,8 +226,7 @@ public class ScriptGenerator
 		Map fourthMap = new Hashtable();
 		fourthMap.put(new NameValueBean("@", "@"), containerMap);
 
-		//int maxDepth = depthOfMap(containerMap);
 		String result = getJSEquivalentFor(fourthMap, "1");
-	
+
 	}
 }
