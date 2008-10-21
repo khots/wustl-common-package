@@ -21,31 +21,113 @@ import edu.wustl.common.util.logger.Logger;
 public class PagenationTag extends TagSupport
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(PagenationTag.class);
+	/**
+	/**
+	 * specify serialVersionUID.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * specify name.
+	 */
 	protected String name = "Bhanu";
+
+	/**
+	 * specify pageNum.
+	 */
 	protected int pageNum = 1;
+
+	/**
+	 * specify previous Page.
+	 */
 	protected String prevPage = null;
+
+	/**
+	 * specify total Results.
+	 */
 	protected int totalResults = 1000;
+
+	/**
+	 * specify number of Results Per Page.
+	 */
 	protected int numResultsPerPage = 15;
+
+	/**
+	 * specify page Link Start.
+	 */
 	protected int mpageLinkStart = 1;
+
+	/**
+	 * specify page Link End.
+	 */
 	protected int mpageLinkEnd = 10;
+
+	/**
+	 * specify show Next.
+	 */
 	protected boolean mshowNext;
+
+	/**
+	 * specify search term.
+	 */
 	protected String searchTerm = null;
+
+	/**
+	 * specify search Term Values.
+	 */
 	protected String searchTermValues = null;
+
+	/**
+	 * specify selectedOrgs.
+	 */
 	protected String[] selectedOrgs = null;
+
+	/**
+	 * specify numLinks.
+	 */
 	private int numLinks = 10;
+
+	/**
+	 * specify resultLowRange.
+	 */
 	private int resultLowRange = 1;
+
+	/**
+	 * specify resultHighRange.
+	 */
 	private int resultHighRange = 1;
+
+	/**
+	 * specify pageName.
+	 */
 	private String pageName = null;
+
+	/**
+	 * Showing combo for Records/page values.
+	 */
 	protected boolean showPageSizeCombo = false;
+
+	/**
+	 * specify recordPerPageList.
+	 */
 	protected int[] recordPerPageList = Constants.RESULT_PERPAGE_OPTIONS;
 
+	/**
+	 * doStartTag.
+	 * @return SKIP_BODY
+	 */
 	public int doStartTag()
 	{
 		try
 		{
 			mshowNext = true;
 			JspWriter out = pageContext.getOut();
-			if (getPageName().equals("SpreadsheetView.do")) //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp) 
+			//pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp)
+			if (getPageName().equals("SpreadsheetView.do"))
 			{
 				out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=98% >");
 			}
@@ -57,21 +139,22 @@ public class PagenationTag extends TagSupport
 			if (pageNum > numLinks)
 			{
 				if (pageNum % numLinks != 0)
+				{
 					mpageLinkStart = ((pageNum / numLinks) * numLinks + 1);
+				}
 				else
+				{
 					mpageLinkStart = (pageNum - numLinks) + 1;
+				}
 			}
 			else
+			{
 				//For first time or for PageNum < 10.
 				mpageLinkStart = 1;
+			}
 
-			//Set the values of the ending Links on the Page.
-			//This checks if number of Results left in the arrayList is less than numResults i.e. showNext==zero
-			//            System.out.println("totalResults = " + totalResults
-			//                    + "  numResultsPerPage = " + numResultsPerPage
-			//                    + " m_pageLinkStart = " + m_pageLinkStart);
-			//           System.out.println(" totalResults "+totalResults+" numResultsPerPage =  "+numResultsPerPage+"  ");
-			if (numResultsPerPage == Integer.MAX_VALUE) // If user has opted to view all Records on this page.
+			// If user has opted to view all Records on this page.
+			if (numResultsPerPage == Integer.MAX_VALUE)
 			{
 				mpageLinkStart = 1;
 				mpageLinkEnd = 1;
@@ -108,16 +191,6 @@ public class PagenationTag extends TagSupport
 								/ numResultsPerPage);
 
 					}
-					//            System.out.println("totalResults = " + totalResults
-					//                  + "  m_pageLinkStart" + m_pageLinkStart
-					//                  + " numResultsPerPage = " + numResultsPerPage
-					//                  + " numLinks = " + numLinks+" m_pageLinkEnd = "+m_pageLinkEnd);
-					// If we have exhausted our resultset, then set m_showNext as false. which means NEXT link must not be shown
-
-					/*
-					 * Changed by Jitendra on 20/09/06.
-					 * Previously for some conditions it was failing because of which Next>> link was not showing for some conditions.
-					 */
 
 				}
 
@@ -138,8 +211,8 @@ public class PagenationTag extends TagSupport
 				}
 			}
 
-			//            System.out.println("resultLowRange = "+resultLowRange+" resultHighRange "+resultHighRange+" pageNum = "+pageNum);
-			if (!getPageName().equals("SpreadsheetView.do")) //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp) 
+			 //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp)
+			if (!getPageName().equals("SpreadsheetView.do"))
 			{
 				out.println("<tr> <td class = \"formtextbg\" align=\"CENTER\">" + name + "</td>");
 			}
@@ -150,7 +223,7 @@ public class PagenationTag extends TagSupport
 
 				String options = "";
 
-				int possibleResultPerPageValues[] = putValueIfNotPresent(recordPerPageList,
+				int [] possibleResultPerPageValues = putValueIfNotPresent(recordPerPageList,
 						numResultsPerPage);
 
 				for (int i = 0; i < possibleResultPerPageValues.length; i++)
@@ -159,13 +232,19 @@ public class PagenationTag extends TagSupport
 					String name = possibleResultPerPageValues[i] + "";
 
 					if (value == Integer.MAX_VALUE)
+					{
 						name = "All";
+					}
 
 					if (possibleResultPerPageValues[i] == numResultsPerPage)
+					{
 						options = options + "<option value=\"" + value
 								+ "\" selected=\"selected\" >" + name + "</option>";
+					}
 					else
+					{
 						options = options + "<option value=\"" + value + "\">" + name + "</option>";
+					}
 				}
 
 				out
@@ -217,7 +296,7 @@ public class PagenationTag extends TagSupport
 					out.print("<td align=\"CENTER\">" + i + " </td>");
 				}
 			}
-			if (mshowNext == true)
+			if (mshowNext)
 			{
 				out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + i + ","
 						+ numResultsPerPage + ",'" + prevPage + "','" + pageName + "')"
@@ -232,29 +311,41 @@ public class PagenationTag extends TagSupport
 		}
 		catch (IOException ioe)
 		{
-			Logger.out.debug("Error generating prime: " + ioe, ioe);
+			logger.debug("Error generating prime: " + ioe, ioe);
 		}
 		catch (Exception e)
 		{
-			Logger.out.debug(e.getMessage(), e);
+			logger.debug(e.getMessage(), e);
 		}
-		return (SKIP_BODY);
+		return SKIP_BODY;
 	}
 
-	private int[] putValueIfNotPresent(int originalArray[], int value)
+	/**
+	 * This method put Value If Not Present.
+	 * @param originalArray originalArray
+	 * @param value value
+	 * @return newArray
+	 */
+	private int[] putValueIfNotPresent(int[] originalArray, int value)
 	{
 		for (int i = 0; i < originalArray.length; i++)
 		{
-			if (value == originalArray[i]) //if array contains the value, then return same array. 
+			//if array contains the value, then return same array.
+			if (value == originalArray[i])
+			{
 				return originalArray;
+			}
 		}
 
-		int newArray[] = new int[originalArray.length + 1]; // array doesn't containe value, hence define new array.
+		 // array doesn't containe value, hence define new array.
+		int[] newArray = new int[originalArray.length + 1];
 		int i = 0;
 
 		for (; i < originalArray.length && value > originalArray[i]; i++)
+		{
 			// copying all elements less than value.
 			newArray[i] = originalArray[i];
+		}
 
 		newArray[i++] = value;
 
