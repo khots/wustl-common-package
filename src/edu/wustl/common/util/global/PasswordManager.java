@@ -170,43 +170,42 @@ public class PasswordManager
 	@Deprecated
 	public static String encode(String input)
 	{
-
+		String encodedString = null;
 		char charO = 'O';
 		char charF = 'f';
 		char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
 				'f'};
-		char ch1 = 'A';
-		String key = new String("" + ch1);
-		key += "WelcomeTocaTISSUECORE" + charO;
-		String in = "";
-		key += charF;
-		key += "ThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited";
+		StringBuffer key = new StringBuffer(120);
+		key.append("AWelcomeTocaTISSUECORE").append(charO);
+		StringBuffer inString = new StringBuffer();
+		key.append(charF);
+		key.append("ThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited");
 		for (int i = 0; i < input.length(); i++)
 		{
-			in += input.substring(i, i + 1);
-			in += key.substring(i, i + 1);
+			inString.append(input.substring(i, i + 1));
+			inString.append(key.substring(i, i + 1));
 		}
 
 		try
 		{
-			byte[] bytes = in.getBytes();
-			StringBuffer s = new StringBuffer(bytes.length * 2);
+			byte[] bytes = inString.toString().getBytes();
+			StringBuffer stringBuffer = new StringBuffer(bytes.length * 2);
 
 			for (int i = 0; i < bytes.length; i++)
 			{
-				byte b = bytes[i];
-				s.append(digits[(b & 0xf0) >> 4]);
-				s.append(digits[b & 0x0f]);
+				byte singleByte = bytes[i];
+				stringBuffer.append(digits[(singleByte & 0xf0) >> 4]);
+				stringBuffer.append(digits[singleByte & 0x0f]);
 			}
 
-			return s.toString();
+			encodedString = stringBuffer.toString();
 		}
 		catch (Exception e)
 		{
 			logger.warn("Problems in Encryption/Decryption in CommonJdao ");
 			logger.warn("Exception= " + e.getMessage());
 		}
-		return null;
+		return encodedString;
 	}
 
 	/**
@@ -217,11 +216,12 @@ public class PasswordManager
 	@Deprecated
 	public static String decode(String decodeString)
 	{
+		String decodedString = null;
 		try
 		{
 			int len = decodeString.length();
-			byte[] r = new byte[len / 2];
-			for (int i = 0; i < r.length; i++)
+			byte[] bytes = new byte[len / 2];
+			for (int i = 0; i < bytes.length; i++)
 			{
 				int digit1 = decodeString.charAt(i * 2);
 				int digit2 = decodeString.charAt(i * 2 + 1);
@@ -241,22 +241,21 @@ public class PasswordManager
 				{
 					digit2 -= 'a' - 10;
 				}
-				r[i] = (byte) ((digit1 << 4) + digit2);
+				bytes[i] = (byte) ((digit1 << 4) + digit2);
 			}
-			String sin = new String(r);
-			String sout = "";
+			String sin = new String(bytes);
+			StringBuffer sout = new StringBuffer();
 			for (int i = 0; i < sin.length(); i += 2)
 			{
-				sout += sin.substring(i, i + 1);
+				sout.append(sin.substring(i, i + 1));
 			}
-			return sout;
+			decodedString = sout.toString();
 		}
-		catch (Exception e)
+		catch (Exception exeption)
 		{
-			logger.warn("Problems in Decription/Encription");
-			logger.warn("Exception= " + e.getMessage());
+			logger.warn("Problems in Decription/Encription",exeption);
 		}
-		return null;
+		return decodedString;
 	}
 
 	/**
@@ -277,7 +276,7 @@ public class PasswordManager
 		Boolean passwordChangedInsameSession = (Boolean) httpSession
 				.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
 		if (passwordChangedInsameSession != null
-				&& passwordChangedInsameSession.booleanValue() == true)
+				&& passwordChangedInsameSession.booleanValue())
 		{
 			// return error code if attribute (Boolean) is in session
 			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
@@ -320,26 +319,25 @@ public class PasswordManager
 				break;
 			}
 			// to check whether char is Upper Case.
-			if (foundUCase == false && Character.isUpperCase(dest[i]) == true)
+			if (!foundUCase  && Character.isUpperCase(dest[i]))
 			{
 				foundUCase = true;
 			}
 
 			// to check whether char is Lower Case
-			if (foundLCase == false && Character.isLowerCase(dest[i]) == true)
+			if (!foundLCase && Character.isLowerCase(dest[i]))
 			{
 				foundLCase = true;
 			}
 
 			// to check whether char is Number/Digit
-			if (foundNumber == false && Character.isDigit(dest[i]) == true)
+			if (!foundNumber && Character.isDigit(dest[i]))
 			{
 				foundNumber = true;
 			}
 		}
 		// condition to check whether all above condotion is satisfied
-		if (foundUCase == false || foundLCase == false || foundNumber == false
-				|| foundSpace == true)
+		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
 		{
 			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
 			return FAIL_IN_PATTERN;
@@ -411,10 +409,10 @@ public class PasswordManager
 
 		// to check whether password change in same session
 		// get attribute (Boolean) from session object stored when password is changed successfully
-		Boolean b = null;
-		b = (Boolean) httpSession.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
-		logger.debug("b---" + b);
-		if (b != null && b.booleanValue() == true)
+		Boolean passwordChange = null;
+		passwordChange = (Boolean) httpSession.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
+		logger.debug("passwordChange---" + passwordChange);
+		if (passwordChange != null && passwordChange.booleanValue())
 		{
 			// return error code if attribute (Boolean) is in session
 			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
@@ -476,7 +474,7 @@ public class PasswordManager
 				break;
 			}
 			// to check whether char is Upper Case.
-			if (foundUCase == false && Character.isUpperCase(dest[i]) == true)
+			if (!foundUCase && Character.isUpperCase(dest[i]))
 			{
 				//foundUCase=true if char is Upper Case
 				//and Upper Case is not found in previous char.
@@ -485,7 +483,7 @@ public class PasswordManager
 			}
 
 			// to check whether char is Lower Case
-			if (foundLCase == false && Character.isLowerCase(dest[i]) == true)
+			if (!foundLCase && Character.isLowerCase(dest[i]))
 			{
 				//foundLCase=true if char is Lower Case
 				//and Lower Case is not found in previous char.
@@ -494,7 +492,7 @@ public class PasswordManager
 			}
 
 			// to check whether char is Number/Digit
-			if (foundNumber == false && Character.isDigit(dest[i]) == true)
+			if (!foundNumber && Character.isDigit(dest[i]))
 			{
 				//	foundNumber=true if char is Digit and Digit is not found in previous char.
 				foundNumber = true;
@@ -502,8 +500,7 @@ public class PasswordManager
 			}
 		}
 		// condition to check whether all above condotion is satisfied
-		if (foundUCase == false || foundLCase == false || foundNumber == false
-				|| foundSpace == true)
+		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
 		{
 			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
 			return FAIL_IN_PATTERN; // return int value 4
@@ -555,6 +552,7 @@ public class PasswordManager
 		return errMsg;
 
 	}
+
 	/**
 	 *
 	 * @param args filename,password.
@@ -564,18 +562,11 @@ public class PasswordManager
 	{
 		String pwd = "admin";
 		String encodedPWD = encrypt(pwd);
-		//System.out.println("encodedPWD:" + encodedPWD + ":");
-
-		//System.out.println(decrypt("xa2ImfuLjjZavG8j0xzkLA=="));
-		//System.out.println("old decoding:" + decode("614164576d65696c6e63"));
-		//Mandar 08-May-06
 		if (args.length > 1)
 		{
 			String filename = args[0];
 			String password = args[1];
 			encodedPWD = encrypt(password);
-			//System.out.println("Filename : " + filename + " : password : " + password
-			//	+ " : encoded" + encodedPWD);
 			writeToFile(filename, encodedPWD);
 		}
 	}
@@ -599,7 +590,7 @@ public class PasswordManager
 		}
 		catch (Exception ioe)
 		{
-			ioe.printStackTrace();
+			logger.warn("Problems in writing the encoded password to the file.");
 		}
 	} // writeToFile
 }

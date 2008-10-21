@@ -132,47 +132,36 @@ public class SendEmail
 
 		try
 		{
-			// create a message
 			MimeMessage msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(from));
 			InternetAddress[] toAddress = convertArrayToInternetAddrArray(to);
-			// InternetAddress[] toAddress = {new InternetAddress(to)};
 
 			if (cc != null)
 			{
 				InternetAddress[] ccAddress = convertArrayToInternetAddrArray(cc);
-				// InternetAddress[] ccAddress = {new InternetAddress(cc)};
 				msg.setRecipients(Message.RecipientType.CC, ccAddress);
 			}
 
 			if (bcc != null)
 			{
 				InternetAddress[] bccAddress = convertArrayToInternetAddrArray(bcc);
-				// InternetAddress[] bccAddress = {new InternetAddress(bcc)};
 				msg.setRecipients(Message.RecipientType.BCC, bccAddress);
 			}
-			// set TO
 			msg.setRecipients(Message.RecipientType.TO, toAddress);
-
-			// Set Subject
 			msg.setSubject(subject);
-			// set Date
 			msg.setSentDate(new Date());
 			// create and fill the first message part
 			MimeBodyPart messageBodyPart = new MimeBodyPart();
 			messageBodyPart.setText(body);
-
 			Multipart mp = new MimeMultipart();
 			mp.addBodyPart(messageBodyPart);
 			// add the Multipart to the message
 			msg.setContent(mp);
-			// send the message
 			Transport.send(msg);
 		}
 		catch (MessagingException mex)
 		{
-			logger.warn("Unable to send mail to: " + to);
-			logger.warn("Exception= " + mex.getMessage());
+			logger.warn("Unable to send mail to: " + to,mex);
 			Exception ex = null;
 			if ((mex.getNextException()) != null)
 			{
@@ -181,13 +170,11 @@ public class SendEmail
 			}
 			sendStatus = false;
 		}
-		catch (Exception ex)
+		catch (Exception exception)
 		{
-			logger.warn("Unable to send mail to: " + to);
-			logger.warn("Exception= " + ex.getMessage());
+			logger.warn("Unable to send mail to: " + to,exception);
 			sendStatus = false;
 		}
-
 		return sendStatus;
 	}
 
