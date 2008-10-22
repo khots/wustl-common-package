@@ -24,6 +24,7 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.security.exceptions.PasswordEncryptionException;
 import edu.wustl.common.util.XMLPropertyHandler;
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.util.StringEncrypter;
 import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
@@ -439,7 +440,6 @@ public class PasswordManager
 	}
 
 	/**
-	 * TODO Remove this method.
 	 * This method combines UI validation and business rules validation which is incorrect.
 	 * Call validatePasswordOnFormBean for Form bean validations.
 	 * Write your own methods for business validations.
@@ -540,22 +540,7 @@ public class PasswordManager
 			// to check whether user entered correct old password
 			try
 			{
-				// retrieve User DomainObject by user name
-				IBizLogic bizLogic = new DefaultBizLogic();
-				String[] selectColumnNames = {"password"};
-				String[] whereColumnNames = {"loginName"};
-				String[] whereColumnCondition = {"="};
-				String[] whereColumnValues = {userName};
-
-				//Gautam_COMMON_TEMP_FIX USER_CLASS_NAME
-				List userList = bizLogic.retrieve(Constants.USER_CLASS_NAME, selectColumnNames,
-						whereColumnNames, whereColumnCondition, whereColumnValues, null);
-				String password = null;
-				if (userList != null && !userList.isEmpty())
-				{
-					password = (String) userList.get(0);
-				}
-
+				String password = getOldPassword(userName);
 				//compare password stored in database with value of old password
 				//currently entered by user for Change Password operation
 				if (!oldPassword.equals(PasswordManager.decode(password)))
@@ -571,6 +556,31 @@ public class PasswordManager
 			}
 		}
 		return errorNo;
+	}
+
+	/**
+	 * @param userName user Name.
+	 * @return old password of a user.
+	 * @throws DAOException databse exception.
+	 */
+	private static String getOldPassword(String userName) throws DAOException
+	{
+		// retrieve User DomainObject by user name
+		IBizLogic bizLogic = new DefaultBizLogic();
+		String[] selectColumnNames = {"password"};
+		String[] whereColumnNames = {"loginName"};
+		String[] whereColumnCondition = {"="};
+		String[] whereColumnValues = {userName};
+
+		//Gautam_COMMON_TEMP_FIX USER_CLASS_NAME
+		List userList = bizLogic.retrieve(Constants.USER_CLASS_NAME, selectColumnNames,
+				whereColumnNames, whereColumnCondition, whereColumnValues, null);
+		String password = null;
+		if (userList != null && !userList.isEmpty())
+		{
+			password = (String) userList.get(0);
+		}
+		return password;
 	}
 
 	/**
