@@ -171,15 +171,11 @@ public class PasswordManager
 	public static String encode(String input)
 	{
 		String encodedString = null;
-		char charO = 'O';
-		char charF = 'f';
 		char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
 				'f'};
-		StringBuffer key = new StringBuffer(120);
-		key.append("AWelcomeTocaTISSUECORE").append(charO);
+		StringBuffer key = new StringBuffer
+("AWelcomeTocaTISSUECOREOfThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited");
 		StringBuffer inString = new StringBuffer();
-		key.append(charF);
-		key.append("ThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited");
 		for (int i = 0; i < input.length(); i++)
 		{
 			inString.append(input.substring(i, i + 1));
@@ -200,10 +196,9 @@ public class PasswordManager
 
 			encodedString = stringBuffer.toString();
 		}
-		catch (Exception e)
+		catch (Exception exception)
 		{
-			logger.warn("Problems in Encryption/Decryption in CommonJdao ");
-			logger.warn("Exception= " + e.getMessage());
+			logger.warn("Problems in Encryption/Decryption in CommonJdao ",exception);
 		}
 		return encodedString;
 	}
@@ -219,30 +214,7 @@ public class PasswordManager
 		String decodedString = null;
 		try
 		{
-			int len = decodeString.length();
-			byte[] bytes = new byte[len / 2];
-			for (int i = 0; i < bytes.length; i++)
-			{
-				int digit1 = decodeString.charAt(i * 2);
-				int digit2 = decodeString.charAt(i * 2 + 1);
-				if ((digit1 >= '0') && (digit1 <= '9'))
-				{
-					digit1 -= '0';
-				}
-				else if ((digit1 >= 'a') && (digit1 <= 'f'))
-				{
-					digit1 -= 'a' - 10;
-				}
-				if ((digit2 >= '0') && (digit2 <= '9'))
-				{
-					digit2 -= '0';
-				}
-				else if ((digit2 >= 'a') && (digit2 <= 'f'))
-				{
-					digit2 -= 'a' - 10;
-				}
-				bytes[i] = (byte) ((digit1 << 4) + digit2);
-			}
+			byte[] bytes = getStringAsBytes(decodeString);
 			String sin = new String(bytes);
 			StringBuffer sout = new StringBuffer();
 			for (int i = 0; i < sin.length(); i += 2)
@@ -256,6 +228,43 @@ public class PasswordManager
 			logger.warn("Problems in Decription/Encription",exeption);
 		}
 		return decodedString;
+	}
+
+	/**
+	 * @param decodeString String to be decoded.
+	 * @return string as byte array.
+	 */
+	private static byte[] getStringAsBytes(String decodeString)
+	{
+		int len = decodeString.length();
+		byte[] bytes = new byte[len / 2];
+		for (int i = 0; i < bytes.length; i++)
+		{
+			int digit1 = decodeString.charAt(i * 2);
+			int digit2 = decodeString.charAt(i * 2 + 1);
+			digit1 = getDigit(digit1);
+			digit2 = getDigit(digit2);
+			bytes[i] = (byte) ((digit1 << 4) + digit2);
+		}
+		return bytes;
+	}
+
+	/**
+	 * @param digit digit to be encoded.
+	 * @return encoded digit.
+	 */
+	private static int getDigit(int digit)
+	{
+		int encodedDigit=digit;
+		if ((encodedDigit >= '0') && (encodedDigit <= '9'))
+		{
+			encodedDigit -= '0';
+		}
+		else if ((encodedDigit >= 'a') && (encodedDigit <= 'f'))
+		{
+			encodedDigit -= 'a' - 10;
+		}
+		return encodedDigit;
 	}
 
 	/**
@@ -363,15 +372,14 @@ public class PasswordManager
 		Object obj = httpSession.getAttribute(Constants.SESSION_DATA);
 		SessionDataBean sessionData = null;
 		String userName = "";
-		if (obj != null)
+		if (obj == null)
 		{
-			sessionData = (SessionDataBean) obj;
-			// get User Name
-			userName = sessionData.getUserName();
+			return FAIL_INVALID_SESSION;
 		}
 		else
 		{
-			return FAIL_INVALID_SESSION;
+			sessionData = (SessionDataBean) obj;
+			userName = sessionData.getUserName();
 		}
 		// to check whether user entered correct old password
 
@@ -578,12 +586,10 @@ public class PasswordManager
 	 */
 	private static void writeToFile(String filename, String encodedPassword)
 	{
-		//Mandar: 781 10-May-06:
 		try
 		{
 			File fileObject = new File(filename);
 			FileWriter writeObject = new FileWriter(fileObject);
-
 			writeObject.write("first.admin.encodedPassword=" + encodedPassword + "\n");
 			writeObject.close();
 
@@ -592,5 +598,5 @@ public class PasswordManager
 		{
 			logger.warn("Problems in writing the encoded password to the file.");
 		}
-	} // writeToFile
+	}
 }
