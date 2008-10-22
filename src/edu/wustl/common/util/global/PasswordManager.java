@@ -45,6 +45,10 @@ public class PasswordManager
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordManager.class);
 	/**
+	 * Code for no error.
+	 */
+	public static final int NOT_FAILED = -1;
+	/**
 	 * specify Success.
 	 */
 	public static final int SUCCESS = 0;
@@ -302,38 +306,95 @@ public class PasswordManager
 	public static int validatePasswordOnFormBean(String newPassword, String oldPassword,
 			HttpSession httpSession)
 	{
-
-		// to check whether password change in same session
-		// get attribute (Boolean) from session object stored when password is changed successfully
-		Boolean passwordChangedInsameSession = (Boolean) httpSession
-				.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
-		if (passwordChangedInsameSession != null
-				&& passwordChangedInsameSession.booleanValue())
+		int errorNo=NOT_FAILED;
+		errorNo=chkChangePassInSameSession(httpSession,errorNo);
+		errorNo=chkPassForMinLength(newPassword,errorNo);
+		errorNo=chkPassForOldPass(newPassword, oldPassword,errorNo);
+		if(NOT_FAILED==errorNo)
 		{
-			// return error code if attribute (Boolean) is in session
+			errorNo=validateUpLowerNumSpaceCharInPass(newPassword);
+		}
+		if(NOT_FAILED!=errorNo)
+		{
+			errorNo=SUCCESS;
+		}
+		return errorNo;
+	}
+
+	/**
+	 * to Check new password is different as old password ,if both are same return FAIL_SAME_AS_OLD.
+	 * @param newPassword new password
+	 * @param oldPassword old password.
+	 * @param erNo error number-method body executes only when there is no error earlier.
+	 * @return int error number or -1
+	 */
+	private static int chkPassForOldPass(String newPassword, String oldPassword,int erNo)
+	{
+		int erroNo=erNo;
+		if(NOT_FAILED==erNo && newPassword.equals(oldPassword))
+		{
+				logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
+				erroNo=FAIL_SAME_AS_OLD;
+		}
+		return erroNo;
+	}
+
+	/**
+	 * @param newPassword New Password.
+	 * @param erNo error number-method body executes only when there is no error i.e. -1
+	 * @return int error number or -1
+	 */
+	private static int chkPassForMinLength(String newPassword,int erNo)
+	{
+		int erroNo=erNo;
+		if(NOT_FAILED==erNo)
+		{
+			int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
+					.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
+			// to Check length of password,if not valid return FAIL_LENGTH
+			if (newPassword.length() < minimumPasswordLength)
+			{
+				logger.debug("Password is not valid returning FAIL_LENGHT");
+				erroNo=FAIL_LENGTH;
+			}
+		}
+		return erroNo;
+	}
+
+	/**
+	 * to check whether password change in same session
+	 * get attribute (Boolean) from session object stored when password is changed successfully.
+	 * @param httpSession HttpSession.
+	 * @param erNo error number-method body executes only when there is no error earlier.
+	 * @return int error number or -1
+	 */
+	private static int chkChangePassInSameSession(HttpSession httpSession,int erNo)
+	{
+		int erroNo=erNo;
+		if(NOT_FAILED==erNo)
+		{
+			Boolean passwordChangedInsameSession = (Boolean) httpSession
+					.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
+			if (passwordChangedInsameSession != null
+					&& passwordChangedInsameSession.booleanValue())
+			{
+				// return error code if attribute (Boolean) is in session
 			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
-			return FAIL_SAME_SESSION;
+				erroNo=FAIL_SAME_SESSION;
+			}
 		}
-		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
-				.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
-		// to Check length of password,if not valid return FAIL_LENGTH
-		if (newPassword.length() < minimumPasswordLength)
-		{
-			logger.debug("Password is not valid returning FAIL_LENGHT");
-			return FAIL_LENGTH;
-		}
+		return erroNo;
+	}
 
-		// to Check new password is different as old password ,if bot are same return FAIL_SAME_AS_OLD
-		if (newPassword.equals(oldPassword))
-		{
-			logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
-			return FAIL_SAME_AS_OLD;
-		}
-
-		/**
-		 * following code checks pattern i.e password must include atleast one UCase,LCASE and Number
-		 * and must not contain space charecter.
-		 */
+	/**
+	 * following code checks pattern i.e password must include atleast one UCase,LCASE and Number
+	 * and must not contain space character.
+	 * @param newPassword New password
+	 * @return int error number or -1
+	 */
+	private static int validateUpLowerNumSpaceCharInPass(String newPassword)
+	{
+		int erroNo=NOT_FAILED;
 		char [] dest = new char[newPassword.length()];
 		// get char array where values get stores in dest[]
 		newPassword.getChars(0, newPassword.length(), dest, 0);
@@ -372,10 +433,9 @@ public class PasswordManager
 		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
 		{
 			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
-			return FAIL_IN_PATTERN;
+			erroNo= FAIL_IN_PATTERN;
 		}
-		logger.debug("Password is Valid returning SUCCESS");
-		return SUCCESS;
+		return erroNo;
 	}
 
 	/**
@@ -391,153 +451,126 @@ public class PasswordManager
 	 */
 	public static int validate(String newPassword, String oldPassword, HttpSession httpSession)
 	{
+		int errorNo=NOT_FAILED;
 		// get SessionDataBean objet from session
 		Object obj = httpSession.getAttribute(Constants.SESSION_DATA);
 		SessionDataBean sessionData = null;
 		String userName = "";
 		if (obj == null)
 		{
-			return FAIL_INVALID_SESSION;
+			errorNo=FAIL_INVALID_SESSION;
 		}
 		else
 		{
 			sessionData = (SessionDataBean) obj;
 			userName = sessionData.getUserName();
 		}
-		// to check whether user entered correct old password
-
-		try
+		errorNo=validateOldPassword(oldPassword, errorNo, userName);
+		errorNo=chkChangePassInSameSession(httpSession,errorNo);
+		errorNo=chkPassForMinLength(newPassword,errorNo);
+		errorNo=chkPassForOldPass(newPassword, oldPassword,errorNo);
+		errorNo=checkPassWithEmail(newPassword, userName,errorNo);
+		errorNo=chkPassWithUserName(newPassword, userName,errorNo);
+		if(NOT_FAILED==errorNo)
 		{
-			// retrieve User DomainObject by user name
-			IBizLogic bizLogic = new DefaultBizLogic();
-			String[] selectColumnNames = {"password"};
-			String[] whereColumnNames = {"loginName"};
-			String[] whereColumnCondition = {"="};
-			String[] whereColumnValues = {userName};
+			errorNo=validateUpLowerNumSpaceCharInPass(newPassword);
+		}
+		if(NOT_FAILED!=errorNo)
+		{
+			errorNo=SUCCESS;
+		}
+		return errorNo;
+	}
 
-			//Gautam_COMMON_TEMP_FIX USER_CLASS_NAME
-			List userList = bizLogic.retrieve(Constants.USER_CLASS_NAME, selectColumnNames,
-					whereColumnNames, whereColumnCondition, whereColumnValues, null);
-			String password = null;
-			if (userList != null && !userList.isEmpty())
+	/**
+	 * to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
+	 * eg. username=abc@abc.com newpassword=abc is not valid.
+	 * @param newPassword new Password.
+	 * @param userName user name.
+	 * @param erNo error number-method body executes only when there is no error i.e. -1
+	 * @return int error number or -1
+	 */
+	private static int checkPassWithEmail(String newPassword, String userName,int erNo)
+	{
+		int errorNo=erNo;
+		if(NOT_FAILED==erNo)
+		{
+			int usernameBeforeMailaddress = userName.indexOf('@');
+			// get substring of username before '@' character
+			String name = userName.substring(0, usernameBeforeMailaddress);
+			if (name != null && newPassword.equals(name))
 			{
-				password = (String) userList.get(0);
-			}
-
-			// compare password stored in database with value of old password currently entered by
-			// user for Change Password operation
-			if (!oldPassword.equals(PasswordManager.decode(password)))
-			{
-				return FAIL_WRONG_OLD_PASSWORD; //retun value is int 6
-			}
-		}
-		catch (Exception e)
-		{
-			// if error occured during password comparision
-			logger.error(e.getMessage(), e);
-			return FAIL_WRONG_OLD_PASSWORD;
-		}
-
-		// to check whether password change in same session
-		// get attribute (Boolean) from session object stored when password is changed successfully
-		Boolean passwordChange = null;
-		passwordChange = (Boolean) httpSession.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
-		logger.debug("passwordChange---" + passwordChange);
-		if (passwordChange != null && passwordChange.booleanValue())
-		{
-			// return error code if attribute (Boolean) is in session
-			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
-			return FAIL_SAME_SESSION; // return int value 5
-		}
-		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
-				.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
-		// to Check length of password,if not valid return FAIL_LENGTH = 2
-		if (newPassword.length() < minimumPasswordLength)
-		{
-			logger.debug("Password is not valid returning FAIL_LENGHT");
-			return FAIL_LENGTH; // return int value 1
-		}
-
-		// to Check new password is different as old password ,if bot are same return FAIL_SAME_AS_OLD = 3
-		if (newPassword.equals(oldPassword))
-		{
-			logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
-			return FAIL_SAME_AS_OLD; //return int value 2
-		}
-
-		// to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
-		// eg. username=abc@abc.com newpassword=abc is not valid
-		int usernameBeforeMailaddress = userName.indexOf('@');
-		// get substring of username before '@' character
-		String name = userName.substring(0, usernameBeforeMailaddress);
-		logger.debug("usernameBeforeMailaddress---" + name);
-		if (name != null && newPassword.equals(name))
-		{
-			logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
-			return FAIL_SAME_AS_USERNAME; // return int value 3
-		}
-		//to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
-		// eg. username=abc@abc.com newpassword=abc@abc.com is not valid
-		if (newPassword.equals(userName))
-		{
-			logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
-			return FAIL_SAME_AS_USERNAME; // return int value 3
-		}
-
-		// following is to checks pattern i.e password must include atleast one UCase,LCASE and Number
-		// and must not contain space charecter.
-		// define get char array whose length is equal to length of new password string.
-		char []dest = new char[newPassword.length()];
-		// get char array where values get stores in dest[]
-		newPassword.getChars(0, newPassword.length(), dest, 0);
-		boolean foundUCase = false; // boolean to check UCase character found in string
-		boolean foundLCase = false; // boolean to check LCase character found in string
-		boolean foundNumber = false; // boolean to check Digit/Number character found in string
-		boolean foundSpace = false;
-
-		for (int i = 0; i < dest.length; i++)
-		{
-			// to check if character is a Space. if true break from loop
-			if (Character.isSpaceChar(dest[i]))
-			{
-				foundSpace = true;
-				logger.debug("Found Space in Password");
-				break;
-			}
-			// to check whether char is Upper Case.
-			if (!foundUCase && Character.isUpperCase(dest[i]))
-			{
-				//foundUCase=true if char is Upper Case
-				//and Upper Case is not found in previous char.
-				foundUCase = true;
-				logger.debug("Found UCase in Password");
-			}
-
-			// to check whether char is Lower Case
-			if (!foundLCase && Character.isLowerCase(dest[i]))
-			{
-				//foundLCase=true if char is Lower Case
-				//and Lower Case is not found in previous char.
-				foundLCase = true;
-				logger.debug("Found LCase in Password");
-			}
-
-			// to check whether char is Number/Digit
-			if (!foundNumber && Character.isDigit(dest[i]))
-			{
-				//	foundNumber=true if char is Digit and Digit is not found in previous char.
-				foundNumber = true;
-				logger.debug("Found Number in Password");
+				logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
+				errorNo=FAIL_SAME_AS_USERNAME; // return int value 3
 			}
 		}
-		// condition to check whether all above condotion is satisfied
-		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
+		return errorNo;
+	}
+
+	/**
+	 * to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
+	 * eg. username=abc@abc.com newpassword=abc@abc.com is not valid
+	 * @param newPassword New Password.
+	 * @param userName User nmae
+	 * @param erNo error number-method body executes only when there is no error i.e. -1
+	 * @return int error number or -1
+	 */
+	private static int chkPassWithUserName(String newPassword, String userName,int erNo)
+	{
+		int errorNo=erNo;
+		if(NOT_FAILED==erNo && newPassword.equals(userName))
 		{
-			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
-			return FAIL_IN_PATTERN; // return int value 4
+				logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
+				errorNo=FAIL_SAME_AS_USERNAME; // return int value 3
 		}
-		logger.debug("Password is Valid returning SUCCESS");
-		return SUCCESS;
+		return errorNo;
+	}
+
+	/**
+	 * @param oldPassword Old Password.
+	 * @param erNo error number-method body executes only when there is no error i.e. -1
+	 * @param userName User Name
+	 * @return int: error number or -1
+	 */
+	private static int validateOldPassword(String oldPassword, int erNo, String userName)
+	{
+		int errorNo=erNo;
+		if(NOT_FAILED==erNo)
+		{
+			// to check whether user entered correct old password
+			try
+			{
+				// retrieve User DomainObject by user name
+				IBizLogic bizLogic = new DefaultBizLogic();
+				String[] selectColumnNames = {"password"};
+				String[] whereColumnNames = {"loginName"};
+				String[] whereColumnCondition = {"="};
+				String[] whereColumnValues = {userName};
+
+				//Gautam_COMMON_TEMP_FIX USER_CLASS_NAME
+				List userList = bizLogic.retrieve(Constants.USER_CLASS_NAME, selectColumnNames,
+						whereColumnNames, whereColumnCondition, whereColumnValues, null);
+				String password = null;
+				if (userList != null && !userList.isEmpty())
+				{
+					password = (String) userList.get(0);
+				}
+
+				//compare password stored in database with value of old password
+				//currently entered by user for Change Password operation
+				if (!oldPassword.equals(PasswordManager.decode(password)))
+				{
+					errorNo=FAIL_WRONG_OLD_PASSWORD; //retun value is int 6
+				}
+			}
+			catch (Exception e)
+			{
+				// if error occured during password comparision
+				logger.error(e.getMessage(), e);
+				errorNo= FAIL_WRONG_OLD_PASSWORD;
+			}
+		}
+		return errorNo;
 	}
 
 	/**
