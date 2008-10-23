@@ -93,7 +93,7 @@ public class AutomateImport
 			{
 				oracleTnsName = args[INDX_FOR_TNS_NAME];
 				String filePathCTL = args[INDX_FOR_CTL_FILE_PATH].replaceAll("\\\\", "//");
-				if (args[INDX_FOR_OPERATION].toLowerCase().equals("import"))
+				if (args[INDX_FOR_OPERATION].equalsIgnoreCase("import"))
 				{
 					for (int i = 0; i < size; i++)
 					{
@@ -122,7 +122,7 @@ public class AutomateImport
 			}
 			else
 			{
-				if (args[INDX_FOR_OPERATION].toLowerCase().equals("import"))
+				if (args[INDX_FOR_OPERATION].equalsIgnoreCase("import"))
 				{
 					Statement stmt = connection.createStatement();
 					stmt.execute("SET FOREIGN_KEY_CHECKS=0;");
@@ -145,24 +145,9 @@ public class AutomateImport
 				}
 			}
 		}
-		catch (Exception e)
-		{
-			throw e;
-		}
 		finally
 		{
-			if (connection != null)
-			{
-				try
-				{
-					connection.close();
-					connection = null;
-				}
-				catch (SQLException e)
-				{
-					e.printStackTrace();
-				}
-			}
+			connection.close();
 		}
 	}
 
@@ -259,9 +244,8 @@ public class AutomateImport
 
 	/**
 	 * This method will insert the data to database.
-	 * @param fileName
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @param fileName File Name
+	 * @throws Exception generic exception
 	 */
 	private void importDataOracle(String fileName) throws Exception
 	{
@@ -284,7 +268,7 @@ public class AutomateImport
 
 	/**
 	 * This method will create control file for SQL loader.
-	 * @param connection
+	 * @param connection Connection Object.
 	 * @param csvFileName
 	 * @param ctlFileName
 	 * @param tableName
@@ -328,31 +312,7 @@ public class AutomateImport
 		{
 			stmt = connection.createStatement();
 			resultSet = stmt.executeQuery(query);
-			StringBuffer columnNameList = new StringBuffer();
-			columnNameList.append("(");
-			ResultSetMetaData rsMetaData = resultSet.getMetaData();
-			int numberOfColumns = rsMetaData.getColumnCount();
-			for (int i = 1; i < numberOfColumns + 1; i++)
-			{
-				columnNameList.append(rsMetaData.getColumnName(i));
-				if (Types.DATE == rsMetaData.getColumnType(i)
-						|| Types.TIMESTAMP == rsMetaData.getColumnType(i))
-				{
-					columnNameList.append(" DATE 'YYYY-MM-DD'");
-				}
-				if (!("HIDDEN".equals(rsMetaData.getColumnName(i)))
-						&& !("FORMAT".equals(rsMetaData.getColumnName(i))))
-				{
-					columnNameList.append(" NULLIF ");
-					columnNameList.append(rsMetaData.getColumnName(i));
-					columnNameList.append("='\\\\N'");
-				}
-				if (i < numberOfColumns)
-				{
-					columnNameList.append(",");
-				}
-			}
-			columnNameList.append(")");
+			StringBuffer columnNameList = getColumnNameList(resultSet);
 			return columnNameList.toString();
 		}
 		finally
@@ -368,14 +328,60 @@ public class AutomateImport
 
 		}
 	}
-}
 
+	/**
+	 * @param resultSet ResultSet object.
+	 * @return list of column name
+	 * @throws SQLException Generic SQL Exception.
+	 */
+	private StringBuffer getColumnNameList(ResultSet resultSet) throws SQLException
+	{
+		StringBuffer columnNameList = new StringBuffer();
+		columnNameList.append('(');
+		ResultSetMetaData rsMetaData = resultSet.getMetaData();
+		int numberOfColumns = rsMetaData.getColumnCount();
+		for (int i = 1; i < numberOfColumns + 1; i++)
+		{
+			columnNameList.append(rsMetaData.getColumnName(i));
+			if (Types.DATE == rsMetaData.getColumnType(i)
+					|| Types.TIMESTAMP == rsMetaData.getColumnType(i))
+			{
+				columnNameList.append(" DATE 'YYYY-MM-DD'");
+			}
+			if (!("HIDDEN".equals(rsMetaData.getColumnName(i)))
+					&& !("FORMAT".equals(rsMetaData.getColumnName(i))))
+			{
+				columnNameList.append(" NULLIF ");
+				columnNameList.append(rsMetaData.getColumnName(i));
+				columnNameList.append("='\\\\N'");
+			}
+			if (i < numberOfColumns)
+			{
+				columnNameList.append(',');
+			}
+		}
+		columnNameList.append(')');
+		return columnNameList;
+	}
+}
+/**
+ *This class is for output of any  message(or error message) during import.
+ *
+ */
 class StreamGobbler extends Thread
 {
-	InputStream inputStream;
+	/**
+	 * InputStream object.
+	 */
+	private InputStream inputStream;
 
+	/**
+	 * One argument constructor.
+	 * @param inputStream InputStream object.
+	 */
 	StreamGobbler(InputStream inputStream)
 	{
+		super();
 		this.inputStream = inputStream;
 	}
 }
