@@ -1,6 +1,6 @@
 /**
  * <p>Title: DefaultBizLogic Class>
- * <p>Description:	DefaultBizLogic is a class which contains the default 
+ * <p>Description:	DefaultBizLogic is a class which contains the default
  * implementations required for all the biz logic classes.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -48,7 +48,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * DefaultBizLogic is a class which contains the default 
+ * DefaultBizLogic is a class which contains the default
  * implementations required for all the biz logic classes.
  * @author kapil_kaveeshwar
  */
@@ -59,14 +59,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogic.class);
-	
+
 	/**
-	 * This method gets called before insert method. Any logic before inserting into database can be included here.
+	 * This method gets called before insert method.
+	 * Any logic before inserting into database can be included here.
 	 * @param obj The object to be inserted.
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
+	 * @throws DAOException generic DAOException.
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException
@@ -74,6 +75,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
+	/**
+	 *
+	 * @param currentObj current Object.
+	 * @throws BizLogicException BizLogic Exception
+	 */
 	public void createProtectionElement(Object currentObj) throws BizLogicException
 	{
 
@@ -82,7 +88,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
-	 * @throws DAOException
+	 * @param dao The dao object.
+	 * @param sessionDataBean session specific Data
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException
@@ -91,12 +100,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * This method gets called after insert method. Any logic after insertnig object in database can be included here.
+	 * This method gets called after insert method.
+	 * Any logic after insertnig object in database can be included here.
 	 * @param obj The inserted object.
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException 
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException
@@ -107,8 +117,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException TODO
+	 * @param dao The dao object.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void delete(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
 	{
@@ -116,13 +127,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * This method gets called before update method. Any logic before updating into database can be included here.
+	 * This method gets called before update method.
+	 * Any logic before updating into database can be included here.
 	 * @param dao the dao object
 	 * @param currentObj The object to be updated.
 	 * @param oldObj The old object.
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void preUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
@@ -132,8 +144,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * Updates an objects into the database.
-	 * @param obj The object to be updated into the database. 
-	 * @throws DAOException
+	 * @param dao The dao object.
+	 * @param obj The object to be updated into the database.
+	 * @param oldObj old Object.
+	 * @param sessionDataBean session specific Data
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException
@@ -143,13 +159,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * This method gets called after update method. Any logic after updating into database can be included here.
+	 * This method gets called after update method.
+	 * Any logic after updating into database can be included here.
 	 * @param dao the dao object
 	 * @param currentObj The object to be updated.
 	 * @param oldObj The old object.
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void postUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
@@ -157,6 +174,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
+	/**
+	 * This method validate the object.
+	 * @param obj object.
+	 * @param dao The dao object
+	 * @param operation operation
+	 * @throws DAOException generic DAOException
+	 * @return true
+	 */
 	protected boolean validate(Object obj, DAO dao, String operation) throws DAOException
 	{
 		return true;
@@ -167,10 +192,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param sourceObjectName	source object name
 	 * @param selectColumnName	An array of field names to be selected
 	 * @param whereColumnName An array of field names.
-	 * @param whereColumnCondition The comparision condition for the field values. 
+	 * @param whereColumnCondition The comparision condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
-	 * @throws SMException
+	 * @throws DAOException generic DAOException
+	 * @return list
 	 */
 	public List retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
@@ -186,11 +212,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 			list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
 					whereColumnCondition, whereColumnValue, joinCondition);
-			//dao.commit();
 		}
 		catch (DAOException daoExp)
 		{
-			daoExp.printStackTrace();
 			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
@@ -203,11 +227,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param sourceObjectName source Object Name
 	 * @param whereColumnName An array of field names.
-	 * @param whereColumnCondition The comparision condition for the field values. 
+	 * @param whereColumnCondition The comparision condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
-	 * @throws SMException
+	 * @throws DAOException generic DAOException
+	 * @return List
 	 */
 	public List retrieve(String sourceObjectName, String[] whereColumnName,
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
@@ -219,14 +245,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param className class Name
 	 * @param colName Contains the field name.
 	 * @param colValue Contains the field value.
+	 * @return records
+	 * @throws DAOException generic DAOException
 	 */
 	public List retrieve(String className, String colName, Object colValue) throws DAOException
 	{
-		String colNames[] = {colName};
-		String colConditions[] = {"="};
-		Object colValues[] = {colValue};
+		String[] colNames = {colName};
+		String[] colConditions = {"="};
+		Object[] colValues = {colValue};
 
 		return retrieve(className, colNames, colConditions, colValues, Constants.AND_JOIN_CONDITION);
 	}
@@ -234,6 +263,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
+	 * @return records
+	 * @throws DAOException generic DAOException
 	 */
 	public List retrieve(String sourceObjectName) throws DAOException
 	{
@@ -244,13 +275,22 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
 	 * @param selectColumnName An array of the fields that should be selected
+	 * @return records
+	 * @throws DAOException generic DAOException
 	 */
 	public List retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
 	{
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
 	}
 
-	public Object retrieve(String sourceObjectName, Long id) throws DAOException
+	/**
+	 * Retrieve object.
+	 * @param sourceObjectName Contains the classname whose object is to be retrieved.
+	 * @param identifier Contains the id whose object is to be retrieved.
+	 * @return object.
+	 * @throws DAOException generic DAOException
+	 */
+	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
@@ -261,12 +301,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.openSession(null);
 
-			object = dao.retrieve(sourceObjectName, id);
+			object = dao.retrieve(sourceObjectName, identifier);
 			//dao.commit();
 		}
 		catch (DAOException daoExp)
 		{
-			daoExp.printStackTrace();
 			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
@@ -278,6 +317,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
+	/**
+	 * This method gets list.
+	 * @param sourceObjectName source Object Name
+	 * @param displayNameFields display Name Fields
+	 * @param valueField value Field
+	 * @param isToExcludeDisabled is To Exclude Disabled
+	 * @return List
+	 * @throws DAOException generic DAOException
+	 */
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			boolean isToExcludeDisabled) throws DAOException
 	{
@@ -300,16 +348,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * Returns collection of name value pairs.
-	 * @param sourceObjectName
-	 * @param displayNameFields
-	 * @param valueField
-	 * @param whereColumnName
-	 * @param whereColumnCondition
-	 * @param whereColumnValue
-	 * @param joinCondition
-	 * @param separatorBetweenFields
-	 * @return
-	 * @throws DAOException
+	 * @param sourceObjectName source Object Name
+	 * @param displayNameFields display Name Fields
+	 * @param valueField value Field
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param isToExcludeDisabled is To Exclude Disabled
+	 * @return Returns collection of name value pairs
+	 * @throws DAOException generic DAOException
 	 */
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
@@ -333,6 +382,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	//Mandar : 12-May-06 : bug id 863 : Sorting of ID columns
+	/**
+	 * Sorting of ID columns.
+	 * @param sourceObjectName source Object Name
+	 * @param displayNameFields display Name Fields
+	 * @param valueField value Field
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
+	 * @param separatorBetweenFields separator Between Fields
+	 * @return nameValuePairs.
+	 * @throws DAOException generic DAOException
+	 */
 	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, String separatorBetweenFields) throws DAOException
@@ -357,9 +419,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		/**
 		 * For each row in the result a vector will be created.Vector will contain all the columns
-		 * other than the value column(last column). 
+		 * other than the value column(last column).
 		 * If there is only one column in the result it will be set as the Name for the NameValueBean.
-		 * When more than one columns are present, a string representation will be set. 
+		 * When more than one columns are present, a string representation will be set.
 		 */
 		if (results != null)
 		{
@@ -384,9 +446,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 					if (tmpBuffer.size() == 1)//	only one column
 					{
 						tmpObj = tmpBuffer.get(0);
-
-						//logger.debug("nameValueBean Name : : " + tmpObj);
-						//logger.debug("NameClass : : " + tmpObj.getClass().getName());
 						nameValueBean.setName(tmpObj);
 					}
 					else
@@ -416,8 +475,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return nameValuePairs;
 	}
 
+	/**
+	 * This method disable Objects.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param classIdentifier class Identifier
+	 * @param tablename Contains the field table name
+	 * @param colName Contains the field name
+	 * @param objIDArr object ID Array
+	 * @return listOfSubElement
+	 * @throws DAOException generic DAOException
+	 */
 	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier,
-			String tablename, String colName, Long objIDArr[]) throws DAOException
+			String tablename, String colName, Long[] objIDArr) throws DAOException
 	{
 		dao.disableRelatedObjects(tablename, colName, objIDArr);
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
@@ -425,8 +495,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return listOfSubElement;
 	}
 
+	/**
+	 * This method disable Objects.
+	 * @param dao The dao object.
+	 * @param tablename Contains the field table name
+	 * @param sourceClass source Class
+	 * @param classIdentifier class Identifier
+	 * @param objIDArr object ID Array
+	 * @return listOfSubElement
+	 * @throws DAOException generic DAOException
+	 */
 	protected List disableObjects(DAO dao, String tablename, Class sourceClass,
-			String classIdentifier, Long objIDArr[]) throws DAOException
+			String classIdentifier, Long[] objIDArr) throws DAOException
 	{
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		disableAndAuditObjects(dao, sourceClass.getName(), tablename, listOfSubElement);
@@ -434,12 +514,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * 
-	 * @param dao
-	 * @param sourceClass
-	 * @param tablename
-	 * @param listOfSubElement
-	 * @throws DAOException
+	 * This metod disabled And Audit Objects.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param tablename Contains the field table name
+	 * @param listOfSubElement list Of SubElement
+	 * @throws DAOException generic DAOException
 	 */
 	protected void disableAndAuditObjects(DAO dao, String sourceClass, String tablename,
 			List listOfSubElement) throws DAOException
@@ -463,14 +543,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (UserNotAuthorizedException ex)
 		{
-			throw new DAOException(ex); //TODO: should throw bizlogicexception
+			throw new DAOException(ex); //should throw bizlogicexception
 		}
 	}
 
 	/**
-	 * @param tablename
-	 * @param auditEventLogsCollection
-	 * @param objectId
+	 * This method add Audit Events to Collection.
+	 * @param tablename Contains the field table name
+	 * @param auditEventLogsCollection audit Event Logs Collection
+	 * @param objectId object Id
 	 */
 	private void addAuditEventstoColl(String tablename, Collection auditEventLogsCollection,
 			Long objectId)
@@ -492,8 +573,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * @param tablename
-	 * @param listOfSubElement
+	 * @param dao The dao object.
+	 * @param tablename Contains the field table name
+	 * @param listOfSubElement list Of SubElement
 	 */
 	protected void auditDisabledObjects(DAO dao, String tablename, List listOfSubElement)
 	{
@@ -509,11 +591,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 		hibDAO.addAuditEventLogs(auditEventLogsCollection);
 	}
 
+	/**
+	 * This method gets related objects.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param classIdentifier class Identifier
+	 * @param objIDArr object ID Array.
+	 * @return list of related objects.
+	 * @throws DAOException generic DAOException
+	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
-			Long objIDArr[]) throws DAOException
+			Long[] objIDArr) throws DAOException
 	{
 		String sourceObjectName = sourceClass.getName();
-		String selectColumnName[] = {Constants.SYSTEM_IDENTIFIER};
+		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
 
 		String[] whereColumnName = {classIdentifier + "." + Constants.SYSTEM_IDENTIFIER};
 		String[] whereColumnCondition = {"in"};
@@ -528,10 +619,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return list;
 	}
 
-	//Aarti: Overloaded to let selectColumnName and whereColumnName also be
-	// parameters to method and are not hardcoded
+	/**
+	 * Overloaded to let selectColumnName and whereColumnName also be
+	 * parameters to method and are not hardcoded.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param selectColumnName An array of field names.
+	 * @param whereColumnName An array of field names.
+	 * @param objIDArr object ID Array.
+	 * @return list of related objects.
+	 * @throws DAOException generic DAOException
+	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
-			String[] whereColumnName, Long objIDArr[]) throws DAOException
+			String[] whereColumnName, Long[] objIDArr) throws DAOException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String[] whereColumnCondition = {"in"};
@@ -546,12 +646,22 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return list;
 	}
 
+	/**
+	 * This method gets related objects.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnValue An array of field values.
+	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @return list of related objects.
+	 * @throws DAOException generic DAOException.
+	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName,
 			String[] whereColumnValue, String[] whereColumnCondition) throws DAOException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String joinCondition = Constants.AND_JOIN_CONDITION;
-		String selectColumnName[] = {Constants.SYSTEM_IDENTIFIER};
+		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
 		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
 				whereColumnCondition, whereColumnValue, joinCondition);
 
@@ -561,11 +671,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * @author aarti_sharma
-	 * Method allows assigning of privilege privilegeName to user identified by userId 
+	 * Method allows assigning of privilege privilegeName to user identified by userId
 	 * or role identified by roleId
 	 * on objects ids objectIds of type objectType.
 	 * Privilege is to be assigned to user or a role is identified by boolean assignToUser
-	 * 
+	 * @param dao The dao object.
+	 * @param privilegeName privilege Name
+	 * @param objectType object Type
+	 * @param objectIds Array of object Ids.
+	 * @param userId user Id
+	 * @param roleId role Id
+	 * @param assignToUser assign To User
+	 * @param assignOperation Operation
+	 * @throws SMException SM Exception
+	 * @throws DAOException generic DAOException
 	 */
 	protected void setPrivilege(DAO dao, String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, String roleId, boolean assignToUser, boolean assignOperation)
@@ -577,13 +696,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		edu.wustl.common.security.PrivilegeUtility privilegeUtility = new edu.wustl.common.security.PrivilegeUtility();
 
-		// To get privilegeCache through 
+		// To get privilegeCache through
 		// Singleton instance of PrivilegeManager, requires User LoginName
 		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
 
 		if (assignToUser)
 		{
-			//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToUser(privilegeName, objectType, objectIds, userId, assignOperation);
 
 			try
 			{
@@ -592,30 +710,33 @@ public class DefaultBizLogic extends AbstractBizLogic
 				privilegeCache.updateUserPrivilege(privilegeName, objectType, objectIds, userId,
 						assignOperation);
 			}
-			catch (Exception e)
+			catch (Exception exception)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn(exception.getMessage(), exception);
 			}
 		}
 		else
 		{
-			//			SecurityManager.getInstance(this.getClass()).assignPrivilegeToGroup(privilegeName, objectType, objectIds, roleId, assignOperation);
 
 			try
 			{
 				privilegeManager.updateGroupPrivilege(privilegeName, objectType, objectIds, roleId,
 						assignOperation);
 			}
-			catch (Exception e)
+			catch (Exception exception)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(exception.getMessage(), exception);
 			}
 		}
 	}
 
-	protected Object getCorrespondingOldObject(Collection objectCollection, Long id)
+	/**
+	 * This method gets Corresponding Old Object.
+	 * @param objectCollection object Collection
+	 * @param identifier id.
+	 * @return Object.
+	 */
+	protected Object getCorrespondingOldObject(Collection objectCollection, Long identifier)
 	{
 		Iterator iterator = objectCollection.iterator();
 		AbstractDomainObject abstractDomainObject = null;
@@ -623,7 +744,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			AbstractDomainObject abstractDomainObj = (AbstractDomainObject) iterator.next();
 
-			if (id != null && id.equals(abstractDomainObj.getId()))
+			if (identifier != null && identifier.equals(abstractDomainObj.getId()))
 			{
 				abstractDomainObject = abstractDomainObj;
 				break;
@@ -632,22 +753,29 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return abstractDomainObject;
 	}
 
-	protected DAOException handleSMException(SMException e)
+	/**
+	 * This method handle SMException.
+	 * @param exception -SMException.
+	 * @return DAOException
+	 */
+	protected DAOException handleSMException(SMException exception)
 	{
-		logger.error("Exception in Authorization: " + e.getMessage(), e);
-		String message = "Security Exception: " + e.getMessage();
-		if (e.getCause() != null)
-			message = message + " : " + e.getCause().getMessage();
-		return new DAOException(message, e);
+		logger.error("Exception in Authorization: " + exception.getMessage(), exception);
+		StringBuffer message = new StringBuffer();
+		message.append("Security Exception: ").append(exception.getMessage());
+		if (exception.getCause() != null)
+		{
+			message.append(" : ").append(exception.getCause().getMessage());
+		}
+		return new DAOException(message.toString(), exception);
 	}
 
 	/**
-	 *  Method to check the ActivityStatus of the given identifier
-	 * @param dao
-	 * @param identifier of the Element
-	 * @param className of the Element
+	 *  Method to check the ActivityStatus of the given identifier.
+	 * @param dao The dao object.
+	 * @param ado object of IActivityStatus
 	 * @param errorName Dispaly Name of the Element
-	 * @throws DAOException
+	 * @throws DAOException generic DAOException
 	 */
 	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName) throws DAOException
 	{
@@ -671,12 +799,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 	}
 
+	/**
+	 * This method gets Activity Status.
+	 * @param dao The dao object.
+	 * @param sourceObjectName source Object Name
+	 * @param indetifier indetifier
+	 * @return activityStatus
+	 * @throws DAOException generic DAOException
+	 */
 	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier)
 			throws DAOException
 	{
-		String whereColumnNames[] = {Constants.SYSTEM_IDENTIFIER};
-		String colConditions[] = {"="};
-		Object whereColumnValues[] = {indetifier};
+		String[] whereColumnNames = {Constants.SYSTEM_IDENTIFIER};
+		String[] colConditions = {"="};
+		Object[] whereColumnValues = {indetifier};
 		String[] selectColumnName = {Constants.ACTIVITY_STATUS};
 		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnNames,
 				colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
@@ -692,17 +828,39 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return activityStatus;
 	}
 
+	/**
+	 * This method insert object.
+	 * @param obj object to be inserted.
+	 * @param dao The dao object.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
 	{
 		dao.insert(obj, null, false, false);
 	}
 
+	/**
+	 * This method updates object in database.
+	 * @param dao The dao object.
+	 * @param obj object to be updated.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
 	{
 		dao.update(obj, null, false, false, false);
 	}
 
-	public Object retrieveAttribute(Class objClass, Long id, String attributeName)
+	/**
+	 * This method retrieve Attribute.
+	 * @param objClass objClass
+	 * @param identifier identifier
+	 * @param attributeName attribute Name
+	 * @return attribute.
+	 * @throws DAOException generic DAOException.
+	 */
+	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws DAOException
 	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
@@ -712,11 +870,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.openSession(null);
-			attribute = dao.retrieveAttribute(objClass, id, attributeName);
+			attribute = dao.retrieveAttribute(objClass, identifier, attributeName);
 		}
 		catch (DAOException daoExp)
 		{
-			daoExp.printStackTrace();
 			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
@@ -728,14 +885,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
-	 * @param sourceObjectName Source object in the Database. 
-	 * @param id Id of the object.
-	 * @param attributeName attribute name to be retrieved. 
+	 * @param sourceObjectName Source object in the Database.
+	 * @param identifier Id of the object.
+	 * @param attributeName attribute name to be retrieved.
 	 * @return The Attribute value corresponding to the SourceObjectName & id.
-	 * @throws DAOException
-	 * @see edu.wustl.common.bizlogic.IBizLogic#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
+	 * @throws DAOException generic DAOException
+	 * @see edu.wustl.common.bizlogic.IBizLogic
+	 * #retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
 	 */
-	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName)
+	public Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws DAOException
 	{
 		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
@@ -745,11 +903,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.openSession(null);
-			attribute = dao.retrieveAttribute(sourceObjectName, id, attributeName);
+			attribute = dao.retrieveAttribute(sourceObjectName, identifier, attributeName);
 		}
 		catch (DAOException daoExp)
 		{
-			daoExp.printStackTrace();
 			logger.error(daoExp.getMessage(), daoExp);
 		}
 		finally
@@ -760,9 +917,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * This method gets called before populateUIBean method. Any logic before updating uiForm can be included here.
+	 * This method gets called before populateUIBean method.
+	 * Any logic before updating uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	protected void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException
@@ -771,9 +930,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * This method gets called after populateUIBean method. Any logic after populating  object uiForm can be included here.
+	 * This method gets called after populateUIBean method.
+	 * Any logic after populating  object uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	protected void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException
@@ -783,15 +944,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * This method is called from LoginAction (after successful User Login)
-	 * & here, privilegeCache object gets created for logged user 
-	 * & this object is stored in Cache through PrivilegeManager 
-	 * 
-	 * @throws Exception 
+	 * & here, privilegeCache object gets created for logged user
+	 * & this object is stored in Cache through PrivilegeManager.
+	 * @param loginName login Name
+	 * @throws Exception Exception
 	 * @author ravindra_jain
 	 */
 	public void cachePrivileges(String loginName) throws Exception
 	{
-		// A privilegeCache object is created for a user during Login & 
+		// A privilegeCache object is created for a user during Login &
 		// this cache contains the Classes, objects,... & corresponding Privileges
 		// which user has on these classes, objects, etc.
 		// All later Security checks are done through the cache & no call to the database is made
@@ -799,6 +960,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
+	/**
+	 *@param objCollection oject collection.
+	 *@param dao The dao object.
+	 *@param sessionDataBean session specific Data
+	 *@throws DAOException generic DAOException
+	 *@throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	@Override
 	protected void postInsert(Collection<AbstractDomainObject> objCollection, DAO dao,
 			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
@@ -808,7 +976,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized(edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized
+	 * (edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 * @param dao The dao object.
+	 * @param domainObject domain Object
+	 * @param sessionDataBean session specific Data
+	 * @return isAuthorized
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @throws DAOException generic DAOException
 	 */
 	public boolean isAuthorized(AbstractDAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws UserNotAuthorizedException, DAOException
@@ -822,8 +997,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		else
 		{
-
-			//	Get the base object id against which authorization will take place 
+			//	Get the base object id against which authorization will take place
 			if (domainObject instanceof List)
 			{
 				List list = (List) domainObject;
@@ -871,8 +1045,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		if (!isAuthorized)
 		{
-			UserNotAuthorizedException ex = new UserNotAuthorizedException();
-			ex.setPrivilegeName(privilegeName);
+			UserNotAuthorizedException exception = new UserNotAuthorizedException();
+			exception.setPrivilegeName(privilegeName);
 			if (protectionElementName != null
 					&& (protectionElementName.contains("Site") || protectionElementName
 							.contains("CollectionProtocol")))
@@ -880,19 +1054,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 				String[] arr = protectionElementName.split("_");
 				String[] nameArr = arr[0].split("\\.");
 				String baseObject = nameArr[nameArr.length - 1];
-				ex.setBaseObject(baseObject);
-				ex.setBaseObjectIdentifier(arr[1]);
+				exception.setBaseObject(baseObject);
+				exception.setBaseObjectIdentifier(arr[1]);
 			}
-			throw ex;
-			//ex.setBaseObject()
+			throw exception;
 		}
-
 		return isAuthorized;
 	}
 
 	/**This method gets the instance of privilege cache which is used for authorization.
-	 * @param sessionDataBean
-	 * @return
+	 * @param sessionDataBean session specific Data
+	 * @return privilegeCache
 	 */
 	private PrivilegeCache getPrivilegeCache(SessionDataBean sessionDataBean)
 	{
@@ -903,7 +1075,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * Gets privilege name depending upon operation performed
+	 * Gets privilege name depending upon operation performed.
 	 * @param domainObject Object on which authorization is reqd.
 	 * @return Privilege Name
 	 */
@@ -914,8 +1086,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * @param domainObject
-	 * @return
+	 * @param domainObject Object on which authorization is reqd.
+	 * @return Privilege Key
 	 */
 	protected String getPrivilegeKey(Object domainObject)
 	{
@@ -924,6 +1096,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	/**
 	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.AbstractDAO, java.lang.Object)
+	 * @param dao The dao object.
+	 * @param domainObject Object on which authorization is reqd.
+	 * @return allow Operation.
 	 */
 	public String getObjectId(AbstractDAO dao, Object domainObject)
 	{
@@ -934,7 +1109,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * Executes the HQL query.
 	 * @param query HQL query to execute.
 	 * @throws ClassNotFoundException Class not fount Exception
-	 * @throws BizLogicException BizLogic exception
+	 * @throws DAOException generic DAOException.
+	 * @return returner
 	 */
 	public List executeQuery(String query) throws ClassNotFoundException, DAOException
 	{
@@ -961,18 +1137,33 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return returner;
 	}
 
+	/**
+	 * Read Denied To be Checked.
+	 * @return false
+	 */
 	@Override
 	public boolean isReadDeniedTobeChecked()
 	{
 		return false;
 	}
 
+	/**
+	 * This method gets Read Denied Privilege Name.
+	 * @return Privilege Name
+	 */
 	@Override
 	public String getReadDeniedPrivilegeName()
 	{
 		return null;
 	}
 
+	/**
+	 * Check Privilege To View.
+	 * @param objName object Name
+	 * @param identifier identifier
+	 * @param sessionDataBean session Data
+	 * @return hasprivilege.
+	 */
 	public boolean hasPrivilegeToView(String objName, Long identifier,
 			SessionDataBean sessionDataBean)
 	{
@@ -983,7 +1174,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		else
 		{
-
 			List cpIdsList = new ArrayList();
 			Set<Long> cpIds = new HashSet<Long>();
 
@@ -995,7 +1185,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			else
 			{
-
 				for (Object cpId : cpIdsList)
 				{
 					cpId = cpIdsList.get(0);
@@ -1004,8 +1193,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 				PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(
 						sessionDataBean.getUserName());
-				StringBuffer sb = new StringBuffer();
-				sb.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
+				StringBuffer stringBuffer = new StringBuffer();
+				stringBuffer.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
 				boolean isPresent = false;
 
 				for (Long cpId : cpIds)
@@ -1015,17 +1204,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 					String[] privilegeNames = privilegeName.split(",");
 					if (privilegeNames.length > 1)
 					{
-						if ((privilegeCache.hasPrivilege(sb.toString() + cpId.toString(),
+						if ((privilegeCache.hasPrivilege(stringBuffer.toString() + cpId.toString(),
 								privilegeNames[0])))
 						{
 							isPresent = privilegeCache.hasPrivilege(
-									sb.toString() + cpId.toString(), privilegeNames[1]);
+									stringBuffer.toString() + cpId.toString(), privilegeNames[1]);
 							isPresent = !isPresent;
 						}
 					}
 					else
 					{
-						isPresent = privilegeCache.hasPrivilege(sb.toString() + cpId.toString(),
+						isPresent = privilegeCache.hasPrivilege(stringBuffer.toString() + cpId.toString(),
 								privilegeName);
 					}
 

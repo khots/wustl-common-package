@@ -47,16 +47,20 @@ import edu.wustl.common.util.logger.Logger;
 public abstract class AbstractBizLogic implements IBizLogic
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractBizLogic.class);
 
 	/**
-	 * This method gets called before insert method. Any logic before inserting into database can be included here.
+	 * This method gets called before insert method.
+	 * Any logic before inserting into database can be included here.
 	 * @param obj The object to be inserted.
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
 	 * @throws DAOException This will get thrown if application failed to
 	 *  communicate with database objects
-	 * @throws UserNotAuthorizedException 
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected abstract void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException;
@@ -64,34 +68,44 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
-	 * @param sessionDataBean 
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException 
+	 * @param dao the dao object.
+	 * @param sessionDataBean session specific data
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected abstract void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException;
 
+	/**
+	 * Inserts an object into the database.
+	 * @param obj The object to be inserted.
+	 * @param dao the dao object.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	protected abstract void insert(Object obj, DAO dao) throws DAOException,
 			UserNotAuthorizedException;
 
 	/**
-	 * This method gets called after insert method. Any logic after insertnig object in database can be included here.
+	 * This method gets called after insert method.
+	 * Any logic after insertnig object in database can be included here.
 	 * @param obj The inserted object.
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException 
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException;
 
 	/**
-	 * This method gets called after insert method. Any logic after insertnig object in database can be included here.
+	 * This method gets called after insert method.
+	 * Any logic after insertnig object in database can be included here.
 	 * @param objCollection Collection of object to be inserted
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException 
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected abstract void postInsert(Collection<AbstractDomainObject> objCollection, DAO dao,
 			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
@@ -99,59 +113,84 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException 
+	 * @param dao the dao object
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected abstract void delete(Object obj, DAO dao) throws DAOException,
 			UserNotAuthorizedException;
 
 	/**
-	 * This method gets called before update method. Any logic before updating into database can be included here.
+	 * This method gets called before update method.
+	 * Any logic before updating into database can be included here.
 	 * @param dao the dao object
 	 * @param currentObj The object to be updated.
 	 * @param oldObj The old object.
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected abstract void preUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 
 	/**
 	 * Updates an objects into the database.
-	 * @param obj The object to be updated into the database. 
-	 * @param sessionDataBean
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException 
+	 * @param dao the dao object.
+	 * @param obj The object to be updated into the database.
+	 * @param oldObj The old object.
+	 * @param sessionDataBean  session specific Data
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected abstract void update(DAO dao, Object obj, Object oldObj,
 			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException;
 
 	/**
-	 * This method gets called after update method. Any logic after updating into database can be included here.
+	 * This method gets called after update method.
+	 * Any logic after updating into database can be included here.
 	 * @param dao the dao object
 	 * @param currentObj The object to be updated.
 	 * @param oldObj The old object.
 	 * @param sessionDataBean session specific data
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
-	 * */
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	protected abstract void postUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 
+	/**
+	 * Updates an objects into the database.
+	 * @param dao the dao object
+	 * @param obj The object to be updated.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	protected abstract void update(DAO dao, Object obj) throws DAOException,
 			UserNotAuthorizedException;
 
 	/**
 	 * Validates the domain object for enumerated values.
-	 * @param obj The domain object to be validated. 
+	 * @param obj The domain object to be validated.
 	 * @param dao The DAO object
 	 * @param operation The operation(Add/Edit) that is to be performed.
 	 * @return True if all the enumerated value attributes contain valid values
-	 * @throws DAOException
+	 * @throws DAOException generic DAOException
 	 */
 	protected abstract boolean validate(Object obj, DAO dao, String operation) throws DAOException;
 
+	/**
+	 * This method set privilege to the user.
+	 * @param dao The DAO object
+	 * @param privilegeName privilege Name
+	 * @param objectType object Type
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param roleId role Id
+	 * @param assignToUser assign To User
+	 * @param assignOperation Operation
+	 * @throws SMException generic SMException
+	 * @throws DAOException generic DAOException
+	 */
 	protected abstract void setPrivilege(DAO dao, String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
 			boolean assignOperation) throws SMException, DAOException;
@@ -159,9 +198,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException TODO
-	 * @throws BizLogicException
+	 * @param daoType dao Type
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	public void delete(Object obj, int daoType) throws UserNotAuthorizedException,
 			BizLogicException
@@ -210,28 +249,29 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * This method gives the error message.
 	 * This method should be overrided for customizing error message
-	 * @param ex - Exception
+	 * @param exception - Exception
 	 * @param obj - Object
+	 * @param operation operation
 	 * @return - error message string
 	 */
-	public String getErrorMessage(DAOException ex, Object obj, String operation)
+	public String getErrorMessage(DAOException exception, Object obj, String operation)
 	{
 		String errMsg;
 
-		if (ex.getWrapException() == null)
+		if (exception.getWrapException() == null)
 		{
-			errMsg = ex.getMessage();
+			errMsg = exception.getMessage();
 		}
 		else
 		{
-			errMsg = formatException(ex.getWrapException(), obj, operation);
+			errMsg = formatException(exception.getWrapException(), obj, operation);
 		}
 
 		return errMsg;
 	}
 
 	/**
-	 * 
+	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
 	 * @param obj The object to be inserted
 	 * @param sessionDataBean  session specific data
 	 * @param daoType Type of dao (Hibernate or JDBC)
@@ -254,17 +294,15 @@ public abstract class AbstractBizLogic implements IBizLogic
 				preInsert(obj, dao, sessionDataBean);
 				insert(obj, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
-				//refresh the index for titli search
-				//refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
 				postInsert(obj, dao, sessionDataBean);
 			}
 		}
-		catch (DAOException ex)
+		catch (DAOException exception)
 		{
-			String errMsg = getErrorMessage(ex, obj, "Inserting");
+			String errMsg = getErrorMessage(exception, obj, "Inserting");
 			if (errMsg == null)
 			{
-				errMsg = ex.getMessage();
+				errMsg = exception.getMessage();
 			}
 			try
 			{
@@ -275,7 +313,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
 			}
 			logger.debug("Error in insert");
-			throw new BizLogicException(errMsg, ex);
+			throw new BizLogicException(errMsg, exception);
 		}
 		finally
 		{
@@ -295,7 +333,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * 
+	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
 	 * @param sessionDataBean  session specific data
 	 * @param daoType Type of dao (Hibernate or JDBC)
@@ -351,12 +389,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * 
+	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
 	 * @param sessionDataBean  session specific data
 	 * @param dao Type of dao (Hibernate or JDBC)
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
-	 * @throws BizLogicException Wrapping DAO exception into Bizlogic exception
+	 * @throws DAOException Wrapping DAO exception into Bizlogic exception
 	 */
 	public final void insertMultiple(Collection<AbstractDomainObject> objCollection,
 			AbstractDAO dao, SessionDataBean sessionDataBean) throws DAOException,
@@ -381,12 +419,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * @param obj object to be inser and validate
-	 * @param sessionDataBean
-	 * @param isInsertOnly
-	 * @param dao
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException
+	 * @param obj object to be insert and validate
+	 * @param sessionDataBean session specific Data
+	 * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
+	 * @param dao The dao object
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	private void insert(Object obj, SessionDataBean sessionDataBean, boolean isInsertOnly,
 			AbstractDAO dao) throws DAOException, UserNotAuthorizedException
@@ -401,18 +439,44 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 	}
 
+	/**
+	 * This method insert object.
+	 * @param obj object to be insert
+	 * @param sessionDataBean session specific Data
+	 * @param daoType dao Type
+	 * @exception BizLogicException BizLogic Exception
+	 * @exception UserNotAuthorizedException User Not Authorized Exception
+	 */
 	public final void insert(Object obj, SessionDataBean sessionDataBean, int daoType)
 			throws BizLogicException, UserNotAuthorizedException
 	{
 		insert(obj, sessionDataBean, daoType, false);
 	}
 
+	/**
+	 * This method insert object.
+	 * @param obj object to be insert
+	 * @param daoType dao Type
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	public final void insert(Object obj, int daoType) throws BizLogicException,
 			UserNotAuthorizedException
 	{
 		insert(obj, null, daoType, true);
 	}
 
+
+	/**
+	 * Updates an object into the database.
+	 * @param currentObj The object to be updated.
+	 * @param oldObj old Object
+	 * @param daoType daoType
+	 * @param sessionDataBean session specific Data
+	 * @param isUpdateOnly isUpdateOnly
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
 	private void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException,
 			UserNotAuthorizedException
@@ -434,7 +498,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 				preUpdate(dao, currentObj, oldObj, sessionDataBean);
 				if (isUpdateOnly)
 				{
-					//update(currentObj,daoType);
 					update(dao, currentObj);
 				}
 				else
@@ -442,8 +505,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 					update(dao, currentObj, oldObj, sessionDataBean);
 				}
 				dao.commit();
-				//refresh the index for titli search
-				//			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
 		}
@@ -463,7 +524,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				//TODO ERROR Handling
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
-				//throw new BizLogicException(ex.getMessage(), ex);
 			}
 			//TODO ERROR Handling
 			throw new BizLogicException(errMsg, ex);
@@ -476,7 +536,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				
+
 				throw new BizLogicException();
 			}
 			long endTime = System.currentTimeMillis();
@@ -486,7 +546,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * 
+	 * Updates an object into the database.
+	 * @param currentObj The object to be updated.
+	 * @param oldObj old Object
+	 * @param daoType dao Type
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	public final void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
@@ -495,7 +561,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * 
+	 * Updates an object into the database.
+	 * @param currentObj The object to be updated.
+	 * @param daoType dao Type
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	public final void update(Object currentObj, int daoType) throws BizLogicException,
 			UserNotAuthorizedException
@@ -503,6 +573,20 @@ public abstract class AbstractBizLogic implements IBizLogic
 		update(currentObj, null, daoType, null, true);
 	}
 
+	/**
+	 * This method set privilege to user.
+	 * @param daoType dao Type
+	 * @param privilegeName privilege Name
+	 * @param objectType object Type
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param sessionDataBean session specific Data
+	 * @param roleId role Id
+	 * @param assignToUser assign To User
+	 * @param assignOperation Operation
+	 * @throws SMException generic SMException
+	 * @throws BizLogicException BizLogic Exception
+	 */
 	public final void setPrivilege(int daoType, String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException
@@ -512,7 +596,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
 					+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
-					+ " userId:" + userId + " roleId:" + roleId + " assignToUser:" + assignToUser);
+					+ " userId:" + userId + " roleId:" + roleId
+					+ " assignToUser:" + assignToUser);
 			dao.openSession(sessionDataBean);
 			setPrivilege(dao, privilegeName, objectType, objectIds, userId, roleId, assignToUser,
 					assignOperation);
@@ -530,7 +615,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException(daoEx.getMessage(), daoEx);
 				//throw new BizLogicException(ex.getMessage(), ex);
 			}
-			
+
 			throw new BizLogicException(ex.getMessage(), ex);
 		}
 		finally
@@ -547,10 +632,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 	}
 
-	public String formatException(Exception ex, Object obj, String operation)
+	/**
+	 * This method formats Exception.
+	 * @param exception exception
+	 * @param obj object
+	 * @param operation operation
+	 * @return error message.
+	 */
+	public String formatException(Exception exception, Object obj, String operation)
 	{
 		String errMsg;
-		if (ex == null)
+		if (exception == null)
 		{
 			errMsg = null;
 		}
@@ -559,7 +651,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		try
 		{
 			// Get ExceptionFormatter
-			ExceptionFormatter ef = ExceptionFormatterFactory.getFormatter(ex);
+			ExceptionFormatter ef = ExceptionFormatterFactory.getFormatter(exception);
 			// call for Formating Message
 			if (ef != null)
 			{
@@ -567,29 +659,26 @@ public abstract class AbstractBizLogic implements IBizLogic
 				tableName = HibernateMetaData.getTableName(obj.getClass());
 				Object[] arguments = {roottableName, DBUtil.currentSession().connection(),
 						tableName};
-				errMsg = ef.formatMessage(ex, arguments);
+				errMsg = ef.formatMessage(exception, arguments);
 			}
 			else
 			{
-				// if ExceptionFormatter not found Format message through Default Formatter 
-				//String arg[]={operation,tableName};
-				//errMsg = new DefaultExceptionFormatter().getErrorMessage("Err.SMException.01",arg);
-				errMsg = ex.getMessage();
+				errMsg = exception.getMessage();
 			}
 		}
 		catch (Exception e)
 		{
-			logger.error(ex.getMessage(), ex);
+			logger.error(exception.getMessage(), exception);
 			// if Error occured while formating message then get message
 			// formatted through Default Formatter
-			String arg[] = {operation, tableName};
+			String [] arg = {operation, tableName};
 			errMsg = new DefaultExceptionFormatter().getErrorMessage("Err.SMException.01", arg);
 		}
 		return errMsg;
 	}
 
 	/**
-	 * refresh the titli search index to reflect the changes in the database
+	 * refresh the titli search index to reflect the changes in the database.
 	 * @param operation the operation to be performed : "insert", "update" or "delete"
 	 * @param obj the object correspondig to the record to be refreshed
 	 */
@@ -634,8 +723,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
-	 * @param colName Contains the field name.
-	 * @param colValue Contains the field value.
+	 * @param className Contains class Name.
+	 * @param identifier Contains the identifier.
+	 * @param uiForm object of the class which implements IValueObject
+	 * @throws DAOException generic DAOException
+	 * @throws BizLogicException BizLogic Exception
+	 * @return isSuccess
 	 */
 	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
 			throws DAOException, BizLogicException
@@ -648,12 +741,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			dao.openSession(null);
 
-			//List list= dao.retrieve(className, Constants.SYSTEM_IDENTIFIER, identifier);
 			Object object = dao.retrieve(className, identifier);
 
 			if (object != null)
 			{
-				/* 
+				/*
 				  If the record searched is present in the database,
 				  populate the formbean with the information retrieved.
 				 */
@@ -694,8 +786,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
-	 * @param colName Contains the field name.
-	 * @param colValue Contains the field value.
+	 * @param className Contains the class Name.
+	 * @param identifier identifier.
+	 * @param uiForm object of the class which implements IValueObject
+	 * @throws DAOException generic DAOException
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws AssignDataException Assign Data Exception
+	 * @return AbstractDomainObject
 	 */
 	public AbstractDomainObject populateDomainObject(String className, Long identifier,
 			IValueObject uiForm) throws DAOException, BizLogicException, AssignDataException
@@ -708,12 +805,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			dao.openSession(null);
 
-			//List list = dao.retrieve(className,Constants.SYSTEM_IDENTIFIER,identifier);
 			Object object = dao.retrieve(className, identifier);
 
 			if (object != null)
 			{
-				/* 
+				/*
 				  If the record searched is present in the database,
 				  populate the formbean with the information retrieved.
 				 */
@@ -723,7 +819,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 					abstractDomain.setAllValues(uiForm);
 				}
 			}
-			//dao.commit();
 		}
 		catch (DAOException daoExp)
 		{
@@ -758,22 +853,34 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * This method gets called before populateUIBean method. Any logic before updating uiForm can be included here.
+	 * This method gets called before populateUIBean method.
+	 * Any logic before updating uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	protected abstract void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException;
 
 	/**
-	 * This method gets called after populateUIBean method. Any logic after populating  object uiForm can be included here.
+	 * This method gets called after populateUIBean method.
+	 * Any logic after populating  object uiForm can be included here.
 	 * @param domainObj object of type AbstractDomainObject
 	 * @param uiForm object of the class which implements IValueObject
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException;
 
+	/**
+	 * This method checks Read Denied.
+	 * @return Read Denied or not.
+	 */
 	public abstract boolean isReadDeniedTobeChecked();
 
+	/**
+	 * This method gets Read Denied Privilege Name.
+	 * @return Denied Privilege Name.
+	 */
 	public abstract String getReadDeniedPrivilegeName();
 }

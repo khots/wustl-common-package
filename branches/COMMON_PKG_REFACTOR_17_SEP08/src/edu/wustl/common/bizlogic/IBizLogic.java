@@ -32,124 +32,275 @@ public interface IBizLogic
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
-	 * @throws DAOException
-	 * @throws UserNotAuthorizedException TODO
-	 * @throws BizLogicException
+	 * @param daoType dao Type.
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @throws BizLogicException BizLogic Exception
 	 */
-	public abstract void delete(Object obj, int daoType) throws UserNotAuthorizedException,
+	void delete(Object obj, int daoType) throws UserNotAuthorizedException,
 			BizLogicException;
 
-	public void insert(Object obj, SessionDataBean sessionDataBean, int daoType)
+	/**
+	 * Inserts an object from database.
+	 * @param obj The object to be Inserted.
+	 * @param sessionDataBean session specific Data
+	 * @param daoType dao Type
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void insert(Object obj, SessionDataBean sessionDataBean, int daoType)
 			throws BizLogicException, UserNotAuthorizedException;
 
-	public void insert(Object obj, int daoType) throws BizLogicException,
+	/**
+	 * Inserts an object from database.
+	 * @param obj The object to be Inserted.
+	 * @param daoType dao Type
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void insert(Object obj, int daoType) throws BizLogicException,
 			UserNotAuthorizedException;
 
-	public void update(Object currentObj, Object oldObj, int daoType,
+	/**
+	 * Updates an object.
+	 * @param currentObj current Object.
+	 * @param oldObj old Object.
+	 * @param daoType dao Type
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 
-	public void update(Object currentObj, int daoType) throws BizLogicException,
+	/**
+	 * Updates an object.
+	 * @param currentObj current Object.
+	 * @param daoType dao Type
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void update(Object currentObj, int daoType) throws BizLogicException,
 			UserNotAuthorizedException;
 
-	public void createProtectionElement(Object currentObj) throws BizLogicException;
+	/**
+	 * creates Protection Element.
+	 * @param currentObj current Object.
+	 * @throws BizLogicException BizLogic Exception.
+	 */
+	void createProtectionElement(Object currentObj) throws BizLogicException;
 
-	public abstract List retrieve(String sourceObjectName, String[] selectColumnName,
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param sourceObjectName source Object Name
+	 * @param selectColumnName An array of field names.
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
+	 * @return List
+	 * @throws DAOException generic DAOException
+	 */
+	List retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException;
 
 	/**
-	 * This method checks for a particular privilege on a particular Object_Id
-	 * Gets privilege name as well as Object_Id from appropriate BizLogic 
-	 * depending on the context of the operation
-	 * @throws DAOException 
-	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized(edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 * This method checks for a particular privilege on a particular Object_Id.
+	 * Gets privilege name as well as Object_Id from appropriate BizLogic
+	 * depending on the context of the operation.
+	 * @param dao The dao object.
+	 * @param domainObject domain Object.
+	 * @param sessionDataBean session specific Data
+	 * @return Authorized or not.
+	 * @throws DAOException generic DAOException.
+	 * @throws UserNotAuthorizedException User Not Authorized Exception.
+	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized
+	 * (edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
 	 */
-	public boolean isAuthorized(AbstractDAO dao, Object domainObject,
+	boolean isAuthorized(AbstractDAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws UserNotAuthorizedException, DAOException;
 
 	/**
 	 * This method returns the protection element name which should be used to authorize.
 	 * Default Implementation
-	 * If call is through some bizLogic which does not require authorization, 
+	 * If call is through some bizLogic which does not require authorization,
 	 * let that operation be allowed for ALL
+	 * @param dao The dao object.
+	 * @param domainObject domain Object.
+	 * @return Object Id.
 	 */
-	public String getObjectId(AbstractDAO dao, Object domainObject);
+	String getObjectId(AbstractDAO dao, Object domainObject);
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param sourceObjectName source Object Name.
 	 * @param whereColumnName An array of field names.
-	 * @param whereColumnCondition The comparision condition for the field values. 
+	 * @param whereColumnCondition The comparision condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
+	 * @return List.
+	 * @throws DAOException generic DAOException.
 	 */
-	public abstract List retrieve(String sourceObjectName, String[] whereColumnName,
+	List retrieve(String sourceObjectName, String[] whereColumnName,
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
 			throws DAOException;
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param className class Name.
 	 * @param colName Contains the field name.
 	 * @param colValue Contains the field value.
+	 * @return List.
+	 * @throws DAOException generic DAOException.
 	 */
-	public abstract List retrieve(String className, String colName, Object colValue)
+	List retrieve(String className, String colName, Object colValue)
 			throws DAOException;
 
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
+	 * @return list.
+	 * @throws DAOException generic DAOException.
 	 */
-	public abstract List retrieve(String sourceObjectName) throws DAOException;
+	List retrieve(String sourceObjectName) throws DAOException;
 
-	public Object retrieve(String sourceObjectName, Long id) throws DAOException;
+	/**
+	 * Retrieves all the records for class name in sourceObjectName.
+	 * @param sourceObjectName source Object Name.
+	 * @param identifier identifier.
+	 * @return object.
+	 * @throws DAOException generic DAOException.
+	 */
+	Object retrieve(String sourceObjectName, Long identifier) throws DAOException;
 
-	public abstract List getList(String sourceObjectName, String[] displayNameFields,
+	/**
+	 *
+	 * @param sourceObjectName source Object Name
+	 * @param displayNameFields display Name Fields
+	 * @param valueField value Field
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param isToExcludeDisabled is To Exclude Disabled
+	 * @return Returns collection
+	 * @throws DAOException generic DAOException
+	 */
+	List getList(String sourceObjectName, String[] displayNameFields,
 			String valueField, String[] whereColumnName, String[] whereColumnCondition,
 			Object[] whereColumnValue, String joinCondition, String separatorBetweenFields,
 			boolean isToExcludeDisabled) throws DAOException;
 
-	public abstract List getList(String sourceObjectName, String[] displayNameFields,
+	/**
+	 *
+	 * @param sourceObjectName source Object Name
+	 * @param displayNameFields display Name Fields
+	 * @param valueField value Field
+	 * @param isToExcludeDisabled -is To Exclude Disabled
+	 * @return Returns collection.
+	 * @throws DAOException generic DAOException.
+	 */
+	List getList(String sourceObjectName, String[] displayNameFields,
 			String valueField, boolean isToExcludeDisabled) throws DAOException;
 
-	public abstract List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
-			Long objIDArr[]) throws DAOException;
+	/**
+	 *
+	 * @param dao The dao object.
+	 * @param sourceClass source Class.
+	 * @param classIdentifier class Identifier.
+	 * @param objIDArr object ID Array.
+	 * @return list of related objects.
+	 * @throws DAOException generic DAOException
+	 */
+	List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
+			Long [] objIDArr) throws DAOException;
 
-	public void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
+	/**
+	 * sets Privilege.
+	 * @param daoType dao Type
+	 * @param privilegeName privilege Name
+	 * @param objectType objec tType
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param sessionDataBean session specific Data
+	 * @param roleId role Id.
+	 * @param assignToUser assign To User.
+	 * @param assignOperation Operation
+	 * @throws SMException SMException
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
 			boolean assignOperation) throws SMException, BizLogicException;
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
-	 * @param sourceObjectName Source object in the Database. 
-	 * @param id Id of the object.
-	 * @param attributeName attribute name to be retrieved. 
+	 * @param sourceObjectName Source object in the Database.
+	 * @param identifier Id of the object.
+	 * @param attributeName attribute name to be retrieved.
 	 * @return The Attribute value corresponding to the SourceObjectName & id.
-	 * @throws DAOException
+	 * @throws DAOException generic DAOException
 	 */
-	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName)
+	Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws DAOException;
 
 	/**
-	 * This is a wrapper function to retrieves attribute  for given class 
+	 * This is a wrapper function to retrieves attribute  for given class
 	 * name and identifier using dao.retrieveAttribute().
 	 * @param objClass source Class object
-	 * @param id identifer of the source object
+	 * @param identifier identifer of the source object
 	 * @param attributeName attribute to be retrieved
-	 * @return
-	 * @throws DAOException
+	 * @return object.
+	 * @throws DAOException generic DAOException.
 	 */
-	public Object retrieveAttribute(Class objClass, Long id, String attributeName)
+	Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws DAOException;
 
-	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
+	/**
+	 * populates UIBean.
+	 * @param className class Name
+	 * @param identifier identifier
+	 * @param uiForm object of the class which implements IValueObject
+	 * @return populated or not.
+	 * @throws DAOException generic DAOException.
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
 			throws DAOException, BizLogicException;
 
-	public AbstractDomainObject populateDomainObject(String className, Long identifier,
+	/**
+	 * populates Domain Object.
+	 * @param className class Name
+	 * @param identifier identifier
+	 * @param uiForm object of the class which implements IValueObject
+	 * @return AbstractDomainObject.
+	 * @throws DAOException generic DAOException.
+	 * @throws BizLogicException BizLogic Exception.
+	 * @throws AssignDataException Assign Data Exception.
+	 */
+	AbstractDomainObject populateDomainObject(String className, Long identifier,
 			IValueObject uiForm) throws DAOException, BizLogicException, AssignDataException;
 
-	public boolean isReadDeniedTobeChecked();
+	/**
+	 * Checkes is ReadDenied.
+	 * @return isReadDenied
+	 */
+	boolean isReadDeniedTobeChecked();
 
-	public boolean hasPrivilegeToView(String objName, Long identifier,
+	/**
+	 * Check Privilege To View.
+	 * @param objName object Name.
+	 * @param identifier identifier
+	 * @param sessionDataBean session specific Data
+	 * @return hasPrivilegeToView.
+	 */
+	boolean hasPrivilegeToView(String objName, Long identifier,
 			SessionDataBean sessionDataBean);
 
-	public String getReadDeniedPrivilegeName();
+	/**
+	 * gets ReadDenied Privilege Name.
+	 * @return Read Denied Privilege Name.
+	 */
+	String getReadDeniedPrivilegeName();
 }
