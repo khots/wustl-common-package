@@ -53,8 +53,10 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	/**
 	 * Saves the storageType object in the database.
 	 * @param obj The storageType object to be saved.
-	 * @param session The session in which the object is saved.
-	 * @throws DAOException
+	 * @param dao The dao object.
+	 * @param sessionDataBean The session specific data.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException
@@ -77,7 +79,9 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	/**
 	 * Deletes the CDE and the corresponding permissible values from the database.
 	 * @param obj the CDE to be deleted.
-	 * @param dao the DAO object. 
+	 * @param dao the DAO object.
+	 * @throws DAOException generic DAOException
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void delete(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
 	{
@@ -91,8 +95,10 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	}
 
 	/**
-	 * (non-Javadoc)
+	 * (non-Javadoc).
 	 * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface#getTreeViewData()
+	 * @throws DAOException generic DAOException
+	 * @return list
 	 */
 	public List getTreeViewData() throws DAOException
 	{
@@ -100,18 +106,15 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 		return null;
 	}
 
+	/**
+	 * This method gets tree view data.
+	 * @param cdeName cde Name
+	 * @return list
+	 * @throws DAOException generic DAOException
+	 */
 	public List getTreeViewData(String cdeName) throws DAOException
 	{
 		String cdeDecodedName = URLDecoder.decode(cdeName);
-		//        try
-		//        {
-		//            cdeName = URLDecoder.decode(cdeName, "UTF-8");
-		//        }
-		//        catch(UnsupportedEncodingException encExp)
-		//        {
-		//            throw new DAOException("Could not generate tree : CDE name not proper.");
-		//        }
-
 		CDE cde = CDEManager.getCDEManager().getCDE(cdeDecodedName);
 		CDETreeNode root = new CDETreeNode();
 		root.setCdeName(cdeDecodedName);
@@ -121,14 +124,16 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	}
 
 	/**
-	 * @param cde
-	 * @return
+	 * This method gets Tree Node List.
+	 * @param parentTreeNode parent Tree Node
+	 * @param permissibleValueSet Set of permissible Value
+	 * @return treeNodeList.
 	 */
 	private List getTreeNodeList(TreeNode parentTreeNode, Set permissibleValueSet)
 	{
 		List treeNodeList = new ArrayList();
 		if (permissibleValueSet != null)
-		{	
+		{
 			Iterator iterator = permissibleValueSet.iterator();
 			while (iterator.hasNext())
 			{
@@ -141,11 +146,11 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 						.getSubPermissibleValues());
 				if (subPermissibleValues != null && !subPermissibleValues.isEmpty())
 				{
-					//Bug-2717: For sorting  
+					//Bug-2717: For sorting
 					Collections.sort(subPermissibleValues);
 					treeNode.setChildNodes(subPermissibleValues);
 				}
-	
+
 				treeNodeList.add(treeNode);
 				//Bug-2717: For sorting
 				Collections.sort(treeNodeList);
@@ -156,9 +161,9 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	}
 
 	/**
-	 * Returns the CDE values without category names and only sub-categories
+	 * Returns the CDE values without category names and only sub-categories.
 	 * Poornima:Refer to bug 1718
-	 * @param permissibleValueSet - Set of permissible values  
+	 * @param permissibleValueSet - Set of permissible values
 	 * @param permissibleValueList - Filtered CDEs
 	 */
 	public void getFilteredCDE(Set permissibleValueSet, List permissibleValueList)
@@ -184,8 +189,15 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 		Collections.sort(permissibleValueList);
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface#getTreeViewData(edu.wustl.common.beans.SessionDataBean, java.util.Map)
+	/**
+	 * (non-Javadoc).
+	 * @see edu.wustl.catissuecore.bizlogic.TreeDataInterface
+	 * #getTreeViewData(edu.wustl.common.beans.SessionDataBean, java.util.Map)
+	 * @param sessionData session specific Data
+	 * @param map Map data structure.
+	 * @param list List data structure.
+	 * @throws DAOException generic DAOException.
+	 * @return list
 	 */
 	public List getTreeViewData(SessionDataBean sessionData, Map map, List list)
 			throws DAOException

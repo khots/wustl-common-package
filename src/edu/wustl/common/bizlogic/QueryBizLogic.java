@@ -56,34 +56,55 @@ import edu.wustl.common.util.logger.Logger;
 public class QueryBizLogic extends DefaultBizLogic
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(QueryBizLogic.class);
+	/**
+	 * specify ALIAS_NAME_TABLE_NAME_MAP_QUERY.
+	 */
 	private static final String ALIAS_NAME_TABLE_NAME_MAP_QUERY = "select ALIAS_NAME ,TABLE_NAME from "
 			+ "CATISSUE_QUERY_TABLE_DATA";
 
+	/**
+	 * specify ALIAS_NAME_PRIVILEGE_TYPE_MAP_QUERY.
+	 */
 	private static final String ALIAS_NAME_PRIVILEGE_TYPE_MAP_QUERY = "select ALIAS_NAME ,PRIVILEGE_ID from "
 			+ "CATISSUE_QUERY_TABLE_DATA";
 
+	/**
+	 * specify GET_RELATION_DATA query.
+	 */
 	private static final String GET_RELATION_DATA = "select FIRST_TABLE_ID, SECOND_TABLE_ID,"
 			+ "FIRST_TABLE_JOIN_COLUMN, SECOND_TABLE_JOIN_COLUMN "
 			+ "from CATISSUE_RELATED_TABLES_MAP";
 
-	// Commenting this variable as its not used anywhere	
-	//	private static final String GET_COLUMN_DATA = "select ALIAS_NAME,COLUMN_NAME from CATISSUE_INTERFACE_COLUMN_DATA columnData, "
-	//			+ "CATISSUE_QUERY_TABLE_DATA tableData where columnData.TABLE_ID = tableData.TABLE_ID  "
-	//			+ "and columnData.IDENTIFIER=";
-
+	/**
+	 * specify GET_TABLE_ALIAS query.
+	 */
 	private static final String GET_TABLE_ALIAS = "select ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA "
 			+ "where TABLE_ID=";
 
+	/**
+	 * specify GET_RELATED_TABLE_ALIAS_PART1 query.
+	 */
 	private static final String GET_RELATED_TABLE_ALIAS_PART1 = "SELECT table2.alias_name "
 			+ " from catissue_table_relation relation, CATISSUE_QUERY_TABLE_DATA table1, "
 			+ " CATISSUE_QUERY_TABLE_DATA table2 "
-			+ " where relation.parent_table_id = table1.table_id and relation.child_table_id = table2.table_id "
-			+ " and table1.alias_name = ";
+			+ " where relation.parent_table_id = table1.table_id "
+			+ " and relation.child_table_id = table2.table_id " + " and table1.alias_name = ";
 
+	/**
+	 * specify GET_RELATED_TABLE_ALIAS_PART2 query part2.
+	 */
 	private static final String GET_RELATED_TABLE_ALIAS_PART2 = " and exists "
 			+ "(select * from catissue_search_display_data displayData "
 			+ " where relation.RELATIONSHIP_ID = displayData.RELATIONSHIP_ID)";
 
+	/**
+	 * This method gets Query Object Name TableName Map.
+	 * @return queryObjectNameTableNameMap.
+	 */
 	public static HashMap getQueryObjectNameTableNameMap()
 	{
 		List list = null;
@@ -105,12 +126,12 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.debug("Could not obtain table object relation. Exception:"
+			logger.debug("Could not obtain table object relation. Exception: "
 					+ daoExp.getMessage(), daoExp);
 		}
 		catch (ClassNotFoundException classExp)
 		{
-			Logger.out.debug("Could not obtain table object relation. Exception:"
+			logger.debug("Could not obtain table object relation. Exception:"
 					+ classExp.getMessage(), classExp);
 		}
 		finally
@@ -121,7 +142,7 @@ public class QueryBizLogic extends DefaultBizLogic
 			}
 			catch (DAOException e)
 			{
-				Logger.out.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		return queryObjectNameTableNameMap;
@@ -129,8 +150,8 @@ public class QueryBizLogic extends DefaultBizLogic
 
 	/**
 	 * This returns the map containing table alias as key
-	 * and type of privilege on that table as value
-	 * @return
+	 * and type of privilege on that table as value.
+	 * @return returns the map.
 	 */
 	public static HashMap getPivilegeTypeMap()
 	{
@@ -154,13 +175,14 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.debug("Could not obtain table privilege map. Exception:"
-					+ daoExp.getMessage(), daoExp);
+			logger.debug("Could not obtain table privilege map. Exception:" + daoExp.getMessage(),
+					daoExp);
 		}
 		catch (ClassNotFoundException classExp)
 		{
-			Logger.out.debug("Could not obtain table privilege map. Exception:"
-					+ classExp.getMessage(), classExp);
+			logger.debug(
+					"Could not obtain table privilege map. Exception:" + classExp.getMessage(),
+					classExp);
 		}
 		finally
 		{
@@ -170,12 +192,16 @@ public class QueryBizLogic extends DefaultBizLogic
 			}
 			catch (DAOException e)
 			{
-				Logger.out.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		return pivilegeTypeMap;
 	}
 
+	/**
+	 * This method gets relation data.
+	 * @return relationConditionsForRelatedTables.
+	 */
 	public static HashMap getRelationData()
 	{
 		List list = null;
@@ -245,12 +271,13 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.debug("Could not obtain table object relation. Exception:"
-					+ daoExp.getMessage(), daoExp);
+			logger.debug(
+					"Could not obtain table object relation. Exception:" + daoExp.getMessage(),
+					daoExp);
 		}
 		catch (ClassNotFoundException classExp)
 		{
-			Logger.out.debug("Could not obtain table object relation. Exception:"
+			logger.debug("Could not obtain table object relation. Exception:"
 					+ classExp.getMessage(), classExp);
 		}
 		finally
@@ -261,41 +288,22 @@ public class QueryBizLogic extends DefaultBizLogic
 			}
 			catch (DAOException e)
 			{
-				Logger.out.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		return relationConditionsForRelatedTables;
 	}
 
+	/**
+	 * initialized Query Data.
+	 */
 	public static void initializeQueryData()
 	{
-		//        setObjectTableNames();
-		//        setRelationConditionsForRelatedTables();
-		//        setRelations();
 
 		Client.objectTableNames = QueryBizLogic.getQueryObjectNameTableNameMap();
 		Client.relationConditionsForRelatedTables = QueryBizLogic.getRelationData();
 		Client.privilegeTypeMap = QueryBizLogic.getPivilegeTypeMap();
 		List identifiedData = new ArrayList();
-
-		//        identifiedData.add("firstName");
-		//        identifiedData.add("lastName");
-		//        identifiedData.add("middleName");
-		//        identifiedData.add("birthDate");
-		//        identifiedData.add("socialSecurityNumber");
-		//        Client.identifiedFieldsMap.put(Participant.class.getName(), identifiedData);
-		//        
-		//        identifiedData = new Vector();
-		//        identifiedData.add("registrationDate");
-		//        Client.identifiedFieldsMap.put(CollectionProtocolRegistration.class.getName(), identifiedData);
-		//        
-		//        identifiedData = new Vector();
-		//        identifiedData.add("medicalRecordNumber");
-		//        Client.identifiedFieldsMap.put(ParticipantMedicalIdentifier.class.getName(), identifiedData);
-		//        
-		//        identifiedData = new Vector();
-		//        identifiedData.add("surgicalPathologyNumber");
-		//        Client.identifiedFieldsMap.put(ClinicalReport.class.getName(), identifiedData);
 
 		//For Participant
 		//identifiedData = new Vector();
@@ -321,17 +329,14 @@ public class QueryBizLogic extends DefaultBizLogic
 		identifiedData.add("SURGICAL_PATHOLOGICAL_NUMBER");
 		Client.identifiedDataMap.put(Query.CLINICAL_REPORT, identifiedData);
 
-		//        Client.identifiedClassNames.add(Participant.class.getName());
-		//        Client.identifiedClassNames.add(CollectionProtocolRegistration.class.getName());
-		//        Client.identifiedClassNames.add(SpecimenCollectionGroup.class.getName());
-		//        Client.identifiedClassNames.add(Specimen.class.getName());
 	}
 
 	/**
 	 * Returns the aliasName of the table from the table id.
-	 * @param tableId
-	 * @return
-	 * @throws DAOException
+	 * @param columnName column Name
+	 * @param columnValue column Value
+	 * @return Returns the aliasName.
+	 * @throws DAOException generic DAOException.
 	 */
 	public String getAliasName(String columnName, Object columnValue) throws DAOException
 	{
@@ -346,7 +351,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDAO.closeSession();
 
 		String aliasName = null;
-		if (list.isEmpty() == false)
+		if (!list.isEmpty())
 		{
 			List row = (List) list.get(0);
 			aliasName = (String) row.get(0);
@@ -356,25 +361,26 @@ public class QueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * Sets column names depending on the table name selected for that condition.
-	 * @param request HttpServletRequest
-	 * @param i number of row.
-	 * @param value table name.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
-	 */
-
-	/**
 	 * Bug#3549
 	 * Patch 1_1
 	 * Description: modified query to order the result  by ATTRIBUTE_ORDER column.
 	 */
+	/**
+	 * Sets column names depending on the table name selected for that condition.
+	 * @param value table name.
+	 * @return Column Names.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception
+	 */
 	public List getColumnNames(String value) throws DAOException, ClassNotFoundException
 	{
-		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.ATTRIBUTE_TYPE, temp.TABLES_IN_PATH, temp.DISPLAY_NAME,temp.ATTRIBUTE_ORDER "
+		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME, temp.ATTRIBUTE_TYPE,"
+				+ " temp.TABLES_IN_PATH, temp.DISPLAY_NAME,temp.ATTRIBUTE_ORDER "
 				+ " from CATISSUE_QUERY_TABLE_DATA tableData2 join "
-				+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, columnData.ATTRIBUTE_TYPE, "
-				+ " displayData.DISPLAY_NAME, displayData.ATTRIBUTE_ORDER , relationData.TABLES_IN_PATH "
+				+ " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID,"
+				+ " columnData.ATTRIBUTE_TYPE, "
+				+ " displayData.DISPLAY_NAME, displayData.ATTRIBUTE_ORDER ,"
+				+ " relationData.TABLES_IN_PATH "
 				+ " FROM CATISSUE_INTERFACE_COLUMN_DATA columnData, "
 				+ " CATISSUE_TABLE_RELATION relationData, "
 				+ " CATISSUE_QUERY_TABLE_DATA tableData, "
@@ -382,13 +388,11 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " where relationData.CHILD_TABLE_ID = columnData.TABLE_ID and "
 				+ " relationData.PARENT_TABLE_ID = tableData.TABLE_ID and "
 				+ " relationData.RELATIONSHIP_ID = displayData.RELATIONSHIP_ID and "
-				+ " columnData.IDENTIFIER = displayData.COL_ID and "
-				+ " tableData.ALIAS_NAME = '"
-				+ value
-				+ "') temp "
+				+ " columnData.IDENTIFIER = displayData.COL_ID and " + " tableData.ALIAS_NAME = '"
+				+ value + "') temp "
 				+ " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
-		Logger.out.debug("SQL*****************************" + sql);
+		logger.debug("SQL*****************************" + sql);
 
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
@@ -404,9 +408,8 @@ public class QueryBizLogic extends DefaultBizLogic
 			List rowList = (List) iterator.next();
 			String columnValue = (String) rowList.get(j++) + "." + (String) rowList.get(j++) + "."
 					+ (String) rowList.get(j++);
-
 			String tablesInPath = (String) rowList.get(j++);
-			if ((tablesInPath != null) && ("".equals(tablesInPath) == false))
+			if ((tablesInPath != null) && (!"".equals(tablesInPath)))
 			{
 				columnValue = columnValue + "." + tablesInPath;
 			}
@@ -422,39 +425,33 @@ public class QueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * Sets the next table names depending on the table in the previous row. 
-	 * @param request
-	 * @param i
+	 * Sets the next table names depending on the table in the previous row.
 	 * @param prevValue previous table name.
-	 * @param nextOperatorValue
-	 * @param checkList
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @return next table names.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception
 	 */
 	public Set getNextTableNames(String prevValue) throws DAOException, ClassNotFoundException
 	{
 		Set objectList = new TreeSet();
-		String sql = " (select temp.ALIAS_NAME, temp.DISPLAY_NAME "
-				+ " from "
-				+ " (select relationData.FIRST_TABLE_ID, tableData.ALIAS_NAME, tableData.DISPLAY_NAME "
-				+ " from CATISSUE_QUERY_TABLE_DATA tableData join "
+		String sql = " (select temp.ALIAS_NAME, temp.DISPLAY_NAME " + " from "
+				+ " (select relationData.FIRST_TABLE_ID, tableData.ALIAS_NAME,"
+				+ " tableData.DISPLAY_NAME " + " from CATISSUE_QUERY_TABLE_DATA tableData join "
 				+ " CATISSUE_RELATED_TABLES_MAP relationData "
-				+ " on tableData.TABLE_ID = relationData.SECOND_TABLE_ID) temp join CATISSUE_QUERY_TABLE_DATA tableData2 "
+				+ " on tableData.TABLE_ID = relationData.SECOND_TABLE_ID)"
+				+ " temp join CATISSUE_QUERY_TABLE_DATA tableData2 "
 				+ " on temp.FIRST_TABLE_ID = tableData2.TABLE_ID "
-				+ " where tableData2.ALIAS_NAME = '"
-				+ prevValue
-				+ "') "
-				+ " union "
-				+ " (select temp1.ALIAS_NAME, temp1.DISPLAY_NAME "
-				+ " from "
-				+ " (select relationData1.SECOND_TABLE_ID, tableData4.ALIAS_NAME, tableData4.DISPLAY_NAME "
-				+ " from CATISSUE_QUERY_TABLE_DATA tableData4 join "
+				+ " where tableData2.ALIAS_NAME = '" + prevValue + "') " + " union "
+				+ " (select temp1.ALIAS_NAME, temp1.DISPLAY_NAME " + " from "
+				+ " (select relationData1.SECOND_TABLE_ID, tableData4.ALIAS_NAME,"
+				+ " tableData4.DISPLAY_NAME " + " from CATISSUE_QUERY_TABLE_DATA tableData4 join "
 				+ " CATISSUE_RELATED_TABLES_MAP relationData1 "
-				+ " on tableData4.TABLE_ID = relationData1.FIRST_TABLE_ID) temp1 join CATISSUE_QUERY_TABLE_DATA tableData3 "
+				+ " on tableData4.TABLE_ID = relationData1.FIRST_TABLE_ID)"
+				+ " temp1 join CATISSUE_QUERY_TABLE_DATA tableData3 "
 				+ " on temp1.SECOND_TABLE_ID = tableData3.TABLE_ID "
 				+ " where tableData3.ALIAS_NAME = '" + prevValue + "')";
 
-		Logger.out.debug("TABLE SQL*****************************" + sql);
+		logger.debug("TABLE SQL*****************************" + sql);
 
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
@@ -503,6 +500,12 @@ public class QueryBizLogic extends DefaultBizLogic
 		return objectList;
 	}
 
+	/**
+	 * gets Check List.
+	 * @return Check List.
+	 * @throws DAOException generic DAOException
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 */
 	private List getCheckList() throws DAOException, ClassNotFoundException
 	{
 		String sql = " select TABLE_A.ALIAS_NAME, TABLE_A.DISPLAY_NAME "
@@ -519,6 +522,12 @@ public class QueryBizLogic extends DefaultBizLogic
 		return checkList;
 	}
 
+	/**
+	 * check For Table.
+	 * @param rowList row List.
+	 * @param checkList check List.
+	 * @return is Table Exists.
+	 */
 	private boolean checkForTable(List rowList, List checkList)
 	{
 		String aliasName = (String) rowList.get(0), displayName = (String) rowList.get(1);
@@ -539,10 +548,10 @@ public class QueryBizLogic extends DefaultBizLogic
 
 	/**
 	 * Returns the display name of the aliasName passed.
-	 * @param value
-	 * @return
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @param aliasName aliasName.
+	 * @return Returns the display name.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public String getDisplayName(String aliasName) throws DAOException, ClassNotFoundException
 	{
@@ -563,6 +572,13 @@ public class QueryBizLogic extends DefaultBizLogic
 		return prevValueDisplayName;
 	}
 
+	/**
+	 * gets Display Name by Table Name.
+	 * @param tableName tableName
+	 * @return prevValueDisplayName.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 */
 	public String getDisplayNamebyTableName(String tableName) throws DAOException,
 			ClassNotFoundException
 	{
@@ -585,9 +601,11 @@ public class QueryBizLogic extends DefaultBizLogic
 
 	/**
 	 * Returns all the tables in the simple query interface.
-	 * @param request
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @param aliasName alias Name.
+	 * @param forQI for QI.
+	 * @return Returns all the tables in the simple query interface.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public Set getAllTableNames(String aliasName, int forQI) throws DAOException,
 			ClassNotFoundException
@@ -641,10 +659,9 @@ public class QueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * Returns all the tables in the simple query interface.
-	 * @param request
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * Returns all the Main Objects Of Query.
+	 * @return Main Objects Of Query
+	 * @throws DAOException generic DAOException.
 	 */
 	public static List getMainObjectsOfQuery() throws DAOException
 	{
@@ -664,18 +681,17 @@ public class QueryBizLogic extends DefaultBizLogic
 			{
 				List row = (List) iterator.next();
 				mainObjects.add(row.get(0));
-				Logger.out.info("Main Objects:" + row.get(0));
+				logger.info("Main Objects:" + row.get(0));
 			}
 
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.debug("Could not obtain main objects. Exception:" + daoExp.getMessage(),
-					daoExp);
+			logger.debug("Could not obtain main objects. Exception:" + daoExp.getMessage(), daoExp);
 		}
 		catch (ClassNotFoundException classExp)
 		{
-			Logger.out.debug("Could not obtain main objects. Exception:" + classExp.getMessage(),
+			logger.debug("Could not obtain main objects. Exception:" + classExp.getMessage(),
 					classExp);
 		}
 		finally
@@ -686,19 +702,19 @@ public class QueryBizLogic extends DefaultBizLogic
 			}
 			catch (DAOException e)
 			{
-				Logger.out.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		return mainObjects;
 	}
 
 	/**
-	 * This method returns all tables that are related to 
-	 * the aliasname passed as parameter
+	 * This method returns all tables that are related to
+	 * the aliasname passed as parameter.
 	 * @author aarti_sharma
-	 * @param aliasName
-	 * @return
-	 * @throws DAOException
+	 * @param aliasName aliasName.
+	 * @return related Table Aliases.
+	 * @throws DAOException generic DAOException.
 	 */
 	public static List getRelatedTableAliases(String aliasName) throws DAOException
 	{
@@ -717,18 +733,18 @@ public class QueryBizLogic extends DefaultBizLogic
 			{
 				List row = (List) iterator.next();
 				relatedTableAliases.add(row.get(0));
-				Logger.out.info("aliasName:" + aliasName + " Related Table: " + row.get(0));
+				logger.info("aliasName:" + aliasName + " Related Table: " + row.get(0));
 			}
 
 		}
 		catch (DAOException daoExp)
 		{
-			Logger.out.debug("Could not obtain related tables. Exception:" + daoExp.getMessage(),
+			logger.debug("Could not obtain related tables. Exception:" + daoExp.getMessage(),
 					daoExp);
 		}
 		catch (ClassNotFoundException classExp)
 		{
-			Logger.out.debug("Could not obtain related tables. Exception:" + classExp.getMessage(),
+			logger.debug("Could not obtain related tables. Exception:" + classExp.getMessage(),
 					classExp);
 		}
 		finally
@@ -739,65 +755,19 @@ public class QueryBizLogic extends DefaultBizLogic
 			}
 			catch (DAOException e)
 			{
-				Logger.out.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		return relatedTableAliases;
 	}
 
 	/**
-	 * Sets column display name depending on the table name and column name.
-	 * @param request HttpServletRequest
-	 * @param i number of row.
-	 * @param value table name.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
-	 */
-	//    public String getColumnDisplayNames(String aliasName,String columnName) throws DAOException, ClassNotFoundException
-	//    {
-	//        /*String sql = 	"SELECT displayData.DISPLAY_NAME FROM  "+
-	//						"CATISSUE_SEARCH_DISPLAY_DATA displayData ,"+
-	//						"CATISSUE_INTERFACE_COLUMN_DATA columnData,"+
-	//						"CATISSUE_QUERY_TABLE_DATA tableData where "+
-	//						"tableData.TABLE_ID = columnData.TABLE_ID AND" +
-	//						" columnData.IDENTIFIER = displayData.COL_ID AND " +
-	//						"tableData.ALIAS_NAME = '"+aliasName+"' AND" +
-	//						" columnData.COLUMN_NAME = '"+columnName+"'";*/
-	//        String sql = 	" SELECT temp.DISPLAY_NAME " +
-	//        " from CATISSUE_QUERY_TABLE_DATA tableData2 join " +
-	//        " ( SELECT  columnData.COLUMN_NAME, columnData.TABLE_ID, columnData.ATTRIBUTE_TYPE, " +
-	//        " displayData.DISPLAY_NAME, relationData.TABLES_IN_PATH " +
-	//        " FROM CATISSUE_INTERFACE_COLUMN_DATA columnData, " +
-	//        " CATISSUE_TABLE_RELATION relationData, " +
-	//        " CATISSUE_QUERY_TABLE_DATA tableData, " +
-	//        " CATISSUE_SEARCH_DISPLAY_DATA displayData " +
-	//        " where relationData.CHILD_TABLE_ID = columnData.TABLE_ID and " +
-	//        " relationData.PARENT_TABLE_ID = tableData.TABLE_ID and " +
-	//        " relationData.RELATIONSHIP_ID = displayData.RELATIONSHIP_ID and " +
-	//        " columnData.IDENTIFIER = displayData.COL_ID and " +
-	//        " tableData.ALIAS_NAME = '"+aliasName+"' AND columnData.COLUMN_NAME= '"+columnName+"' ) temp " +
-	//        " on temp.TABLE_ID = tableData2.TABLE_ID ";
-	//        
-	//        Logger.out.debug("SQL*****************************"+sql);
-	//        
-	//        JDBCDAO jdbcDao = new JDBCDAO();
-	//        jdbcDao.openSession(null);
-	//        List list = jdbcDao.executeQuery(sql, null, false, null);
-	//        jdbcDao.closeSession();
-	//        String columnDisplayName  = new String();
-	//        Iterator iterator = list.iterator();
-	//        while (iterator.hasNext())
-	//        {
-	//            List rowList = (List)iterator.next();
-	//            columnDisplayName = (String)rowList.get(0);
-	//        }
-	//        return columnDisplayName;
-	//    }
-	/**
-	 * Returns the tables in path depending on the parent table Id and child table Id 
-	 * @param tableId Table Id.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * Returns the tables in path depending on the parent table Id and child table Id.
+	 * @param parentTableId parent Table Id.
+	 * @param childTableId child Table Id.
+	 * @return Returns the tables in path.
+	 * @throws DAOException generic DAOException
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public Set setTablesInPath(Long parentTableId, Long childTableId) throws DAOException,
 			ClassNotFoundException
@@ -806,7 +776,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " PARENT_TABLE_ID = '" + parentTableId + "' and " + " CHILD_TABLE_ID = '"
 				+ childTableId + "'";
 
-		Logger.out.debug("SQL*****************************" + sql);
+		logger.debug("SQL*****************************" + sql);
 
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
@@ -814,20 +784,20 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDao.closeSession();
 
 		Set tablePathSet = new HashSet();
-		QueryBizLogic bizLogic = new QueryBizLogic();//(QueryBizLogic)BizLogicFactory.getBizLogic(Constants.SIMPLE_QUERY_INTERFACE_ID);
+		QueryBizLogic bizLogic = new QueryBizLogic();
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext())
 		{
 			List rowList = (List) iterator.next();
 			String tablePath = (String) rowList.get(0);
-			Logger.out.debug("tableinpath with ids as from database:" + tablePath);
+			logger.debug("tableinpath with ids as from database:" + tablePath);
 			StringTokenizer pathIdToken = new StringTokenizer(tablePath, ":");
-			Logger.out.debug("no. of tables in path:" + pathIdToken.countTokens());
+			logger.debug("no. of tables in path:" + pathIdToken.countTokens());
 			while (pathIdToken.hasMoreTokens())
 			{
 				Long tableIdinPath = Long.valueOf(pathIdToken.nextToken());
 				String tableName = bizLogic.getAliasName(Constants.TABLE_ID_COLUMN, tableIdinPath);
-				Logger.out.debug("table in path:" + tableName);
+				logger.debug("table in path:" + tableName);
 				tablePathSet.add(tableName);
 			}
 		}
@@ -835,10 +805,12 @@ public class QueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * Returns the attribute type for the given column name and table alias name
+	 * Returns the attribute type for the given column name and table alias name.
 	 * @param columnName Column Name.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @param aliasName aliasName.
+	 * @return Returns the attribute type.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public String getAttributeType(String columnName, String aliasName) throws DAOException,
 			ClassNotFoundException
@@ -849,7 +821,7 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " where  columnData.TABLE_ID = tableData.TABLE_ID and "
 				+ "  columnData.COLUMN_NAME = '" + columnName + "' and tableData.ALIAS_NAME = '"
 				+ aliasName + "' ";
-		Logger.out.debug("SQL*****************************" + sql);
+		logger.debug("SQL*****************************" + sql);
 
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
@@ -868,9 +840,9 @@ public class QueryBizLogic extends DefaultBizLogic
 
 	/**
 	 * Returns the table Id of the table given the table alias name.
-	 * @param tableId
-	 * @return
-	 * @throws DAOException
+	 * @param aliasName aliasName
+	 * @return Returns the table Id
+	 * @throws DAOException generic DAOException.
 	 */
 	public String getTableIdFromAliasName(String aliasName) throws DAOException
 	{
@@ -884,25 +856,24 @@ public class QueryBizLogic extends DefaultBizLogic
 		List list = jdbcDAO.retrieve("CATISSUE_QUERY_TABLE_DATA", selectColumnNames,
 				whereColumnNames, whereColumnConditions, whereColumnValues, null);
 		jdbcDAO.closeSession();
-		Logger.out.debug("List of Ids size: " + list.size() + " list " + list);
+		logger.debug("List of Ids size: " + list.size() + " list " + list);
 		String tableIdString = "";
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext())
 		{
 			List rowList = (List) iterator.next();
-			Logger.out.debug("RowList of Ids size: " + rowList.size() + " Rowlist " + rowList);
-			//Logger.out.debug("RowList element "+rowList.get(0));
+			logger.debug("RowList of Ids size: " + rowList.size() + " Rowlist " + rowList);
 			tableIdString = (String) rowList.get(0);
 		}
 		return tableIdString;
 	}
 
 	/**
-	 * To get the List of NameValueBean objects of columns corresponding to the table aliasName. 
+	 * To get the List of NameValueBean objects of columns corresponding to the table aliasName.
 	 * @param aliasName The String representing aliasName of the table.
 	 * @return The List of NameValueBean objects, representing Columns corresponding to a table aliasName.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public List setColumnNames(String aliasName) throws DAOException, ClassNotFoundException
 	{
@@ -910,32 +881,33 @@ public class QueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * To get the List of NameValueBean objects of columns corresponding to the table aliasName. 
+	 * To get the List of NameValueBean objects of columns corresponding to the table aliasName.
 	 * @param aliasName The String representing aliasName of the table.
-	 * @param defaultViewAttributesOnly The boolean value, which will decide the list of columns in returned list. 
-	 * 			If true, it will return only default view attributes corresponding to a table aliasName, else return all attributes. 
+	 * @param defaultViewAttributesOnly The boolean value,
+	 * which will decide the list of columns in returned list.
+	 * If true, it will return only default view attributes corresponding to a table aliasName,
+	 * else return all attributes.
 	 * @return The List of NameValueBean objects, representing Columns corresponding to a table aliasName.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public List getColumnNames(String aliasName, boolean defaultViewAttributesOnly)
 			throws DAOException, ClassNotFoundException
 	{
 		String sql = getQueryFor(aliasName, defaultViewAttributesOnly);
-		List columnList = getList(aliasName, sql);
-		return columnList;
+		return getList(aliasName, sql);
 	}
 
 	/**
 	 * @param aliasName The String representing alias name of the table.
 	 * @param sql The Sql Script to get List of records.
 	 * @return The List of NameValueBean objects, obtained by specified sql.
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	private List getList(String aliasName, String sql) throws DAOException, ClassNotFoundException
 	{
-		Logger.out.debug("SQL*****************************" + sql);
+		logger.debug("SQL*****************************" + sql);
 
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
@@ -957,12 +929,12 @@ public class QueryBizLogic extends DefaultBizLogic
 			columnName = (String) rowList.get(j++);
 			columnDisplayName = (String) rowList.get(j++);
 
-			//Name ValueBean Value in the for of tableAlias.columnName.columnDisplayName.tablesInPath 
+			//Name ValueBean Value in the for of tableAlias.columnName.columnDisplayName.tablesInPath.
 			String columnValue = tableName + "." + columnName + "." + columnDisplayName + " : "
 					+ tableDisplayName;
 			String tablesInPath = (String) rowList.get(j++);
 
-			if ((tablesInPath != null) && ("".equals(tablesInPath) == false))
+			if ((tablesInPath != null) && (!"".equals(tablesInPath)))
 			{
 				columnValue = columnValue + "." + tablesInPath;
 			}
@@ -976,18 +948,17 @@ public class QueryBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * To get The SQL Query for fetching column names of given aliasName. 
-	 * @param aliasName The Table alias name.
-	 * @param defaultViewAttributesOnly true if user wants only Default view attributes, else query created will return all column names for given aliasName.
-	 * @return The sql query.
-	 */
-
-	/**
 	 * Bug#3549
 	 * Patch 1_2
 	 * Description:modified query to order the result  by ATTRIBUTE_ORDER column.
 	 */
-
+	/**
+	 * To get The SQL Query for fetching column names of given aliasName.
+	 * @param aliasName The Table alias name.
+	 * @param defaultViewAttributesOnly true if user wants only Default view attributes,
+	 * else query created will return all column names for given aliasName.
+	 * @return The sql query.
+	 */
 	private String getQueryFor(String aliasName, boolean defaultViewAttributesOnly)
 	{
 		String sql = " SELECT tableData2.ALIAS_NAME, temp.COLUMN_NAME,  temp.DISPLAY_NAME, temp.TABLES_IN_PATH  "
@@ -1009,9 +980,13 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " on temp.TABLE_ID = tableData2.TABLE_ID ORDER BY temp.ATTRIBUTE_ORDER";
 
 		if (defaultViewAttributesOnly)
+		{
 			sql = sql + sqlConditionForDefaultView + sql1;
+		}
 		else
+		{
 			sql = sql + sql1;
+		}
 
 		return sql;
 	}
@@ -1019,27 +994,28 @@ public class QueryBizLogic extends DefaultBizLogic
 	// For Summary Report Page
 	/**
 	 * Returns the count of speciman of the type passed.
-	 * @param String of Specimen Type, JDDCDAO object
+	 * @param specimanType String of Specimen Type, JDDCDAO object.
+	 * @param jdbcDAO JDBCDAO object.
 	 * @return String
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public String getSpecimenTypeCount(String specimanType, JDBCDAO jdbcDAO) throws DAOException,
 			ClassNotFoundException
 	{
 		String prevValueDisplayName = "0";
-		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join catissue_abstract_specimen absspec "
+		String sql = "select count(*) from CATISSUE_SPECIMEN specimen "
+			    + "join catissue_abstract_specimen absspec "
 				+ " on specimen.identifier=absspec.identifier where absspec.SPECIMEN_CLASS = '"
 				+ specimanType + "' and specimen.COLLECTION_STATUS = 'Collected'";
-		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO,sql);
+		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO, sql);
 		return prevValueDisplayName;
 	}
 
 	/**
-	 * Returns Map which has all the details of Summary Page
-	 * @return Map<String, Object>
-	 * @throws DAOException
-	 * @throws ClasssNotFoundException 
+	 * Returns Map which has all the details of Summary Page.
+	 * @return Map
+	 * @throws DAOException generic DAOException.
 	 */
 
 	public Map<String, Object> getTotalSummaryDetails() throws DAOException
@@ -1073,13 +1049,13 @@ public class QueryBizLogic extends DefaultBizLogic
 					jdbcDAO));
 			summaryDataMap.put("FluidQuantity", getSpecimenTypeQuantity(Constants.FLUID, jdbcDAO));
 		}
-		catch (ClassNotFoundException e)
+		catch (ClassNotFoundException exception)
 		{
-			e.printStackTrace();
+			logger.error(exception.getMessage(), exception);
 		}
-		catch (DAOException e)
+		catch (DAOException exception)
 		{
-			e.printStackTrace();
+			logger.error(exception.getMessage(), exception);
 		}
 		finally
 		{
@@ -1090,10 +1066,11 @@ public class QueryBizLogic extends DefaultBizLogic
 
 	/**
 	 * Returns the count of speciman of the type passed.
-	 * @param value
-	 * @return 
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @param specimanType speciman Type.
+	 * @param jdbcDAO JDBCDAO object.
+	 * @return Returns the count of speciman of the type passed.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	private String getSpecimenTypeQuantity(String specimanType, JDBCDAO jdbcDAO)
 			throws DAOException, ClassNotFoundException
@@ -1102,16 +1079,17 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select sum(AVAILABLE_QUANTITY) from CATISSUE_SPECIMEN specimen join"
 				+ " catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier"
 				+ " where absspec.SPECIMEN_CLASS='" + specimanType + "'";
-		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO,sql);
+		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO, sql);
 		return prevValueDisplayName;
 	}
 
 	/**
-	 * Returns the Specimen Sub-Type and its available Quantity
-	 * @param specimenType Class whose details are to be retrieved
+	 * Returns the Specimen Sub-Type and its available Quantity.
+	 * @param specimenType Class whose details are to be retrieved.
+	 * @param jdbcDAO JDBCDAO object.
 	 * @return Vector of type and count name value bean
-	 * @throws DAOException
-	 * @throws ClassNotFoundException, DAOException
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	private List getSpecimenTypeDetailsCount(String specimenType, JDBCDAO jdbcDAO)
 			throws DAOException, ClassNotFoundException
@@ -1135,24 +1113,24 @@ public class QueryBizLogic extends DefaultBizLogic
 					NameValueBean nameValueBean = new NameValueBean();
 					nameValueBean.setName((String) detailList.get(0));
 					nameValueBean.setValue((String) detailList.get(1));
-					Logger.out.debug(i + " : " + nameValueBean.toString());
+					logger.debug(i + " : " + nameValueBean.toString());
 					nameValuePairs.add(nameValueBean);
 				}
 			}
 		}
-		catch (DAOException e)
+		catch (DAOException exception)
 		{
-			e.printStackTrace();
+			logger.error(exception.getMessage(),exception);
 		}
 		return nameValuePairs;
 	}
 
 	/***
-	 * Returns the Total Specimen Count of caTissue
-	 * @param jdbcDAO
+	 * Returns the Total Specimen Count of caTissue.
+	 * @param jdbcDAO JDBCDAO object.
 	 * @return String
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	private String getTotalSpecimenCount(JDBCDAO jdbcDAO) throws DAOException,
 			ClassNotFoundException
@@ -1161,16 +1139,24 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select count(*) from CATISSUE_SPECIMEN specimen join "
 				+ "catissue_abstract_specimen absspec on specimen.identifier=absspec.identifier "
 				+ "where specimen.COLLECTION_STATUS='Collected'";
-		
-		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO,sql); 
+
+		prevValueDisplayName = getPrevValueDisplayName(jdbcDAO, sql);
 		return prevValueDisplayName;
 	}
 
+	/**
+	 * inserts Query For MySQL.
+	 * @param sqlQuery sql Query.
+	 * @param sessionData session Data.
+	 * @param jdbcDAO JDBCDAO object.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 */
 	public void insertQueryForMySQL(String sqlQuery, SessionDataBean sessionData, JDBCDAO jdbcDAO)
 			throws DAOException, ClassNotFoundException
 	{
 		String sqlQuery1 = sqlQuery.replaceAll("'", "''");
-		long no = 1;
+		long number = 1;
 
 		SimpleDateFormat fSDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String timeStamp = fSDateFormat.format(new Date());
@@ -1187,14 +1173,24 @@ public class QueryBizLogic extends DefaultBizLogic
 		String sql = "select max(identifier) from catissue_audit_event where USER_ID='" + userId
 				+ "'";
 
-		no = getQueryNumber(jdbcDAO,sql);
-		
+		number = getQueryNumber(jdbcDAO, sql);
+
 		String sqlForQueryLog = "insert into catissue_audit_event_query_log(QUERY_DETAILS,AUDIT_EVENT_ID) values ('"
-				+ sqlQuery1 + "','" + no + "')";
+				+ sqlQuery1 + "','" + number + "')";
 		jdbcDAO.executeUpdate(sqlForQueryLog);
 
 	}
 
+	/**
+	 * inserts Query For Oracle.
+	 * @param sqlQuery sql Query.
+	 * @param sessionData session Data
+	 * @param jdbcDAO JDBCDAO object.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 * @throws SQLException SQL Exception
+	 * @throws IOException IO Exception
+	 */
 	public void insertQueryForOracle(String sqlQuery, SessionDataBean sessionData, JDBCDAO jdbcDAO)
 			throws DAOException, ClassNotFoundException, SQLException, IOException
 	{
@@ -1214,7 +1210,6 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		if (!list.isEmpty())
 		{
-
 			List columnList = (List) list.get(0);
 			if (!columnList.isEmpty())
 			{
@@ -1240,7 +1235,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		long queryNo = 1;
 		sql = "select CATISSUE_AUDIT_EVENT_QUERY_SEQ.nextVal from dual";
 		queryNo = getQueryNumber(jdbcDAO, sql);
-		
+
 		String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
 				+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
 		jdbcDAO.executeUpdate(sqlForQueryLog);
@@ -1270,16 +1265,16 @@ public class QueryBizLogic extends DefaultBizLogic
 		osw.close();
 		os.close();
 		jdbcDAO.commit();
-		Logger.out.info("sqlForQueryLog:" + sqlForQueryLog);
+		logger.info("sqlForQueryLog:" + sqlForQueryLog);
 
 	}
 
-	/***
-	 * 
-	 * @param sqlQuery
-	 * @param sessionData
-	 * @throws DAOException
-	 * @throws ClassNotFoundException
+	/**
+	 * Inserts Query.
+	 * @param sqlQuery sql Query.
+	 * @param sessionData session Data.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
 	 */
 	public void insertQuery(String sqlQuery, SessionDataBean sessionData) throws DAOException,
 			ClassNotFoundException
@@ -1322,10 +1317,10 @@ public class QueryBizLogic extends DefaultBizLogic
 	/**
 	 * Method to execute the given SQL to get the query result.
 	 * @param sessionDataBean reference to SessionDataBean object
-	 * @param querySessionData
+	 * @param querySessionData query Session Data.
 	 * @param startIndex The Starting index of the result set.
 	 * @return The reference to PagenatedResultData, which contains the Query result information.
-	 * @throws DAOException
+	 * @throws DAOException generic DAOException.
 	 */
 	public PagenatedResultData execute(SessionDataBean sessionDataBean,
 			QuerySessionData querySessionData, int startIndex) throws DAOException
@@ -1356,9 +1351,16 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 	}
 
+	/**
+	 * Executes SQL query.
+	 * @param sql sql query.
+	 * @return list.
+	 * @throws DAOException generic DAOException.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 */
 	public static List executeSQL(String sql) throws DAOException, ClassNotFoundException
 	{
-		Logger.out.debug("SQL to get cardinality between 2 entities... " + sql);
+		logger.debug("SQL to get cardinality between 2 entities... " + sql);
 
 		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
 		jdbcDao.openSession(null);
@@ -1366,8 +1368,17 @@ public class QueryBizLogic extends DefaultBizLogic
 		jdbcDao.closeSession();
 		return list;
 	}
-	
-	private Long getQueryNumber(JDBCDAO jdbcDAO,String sql) throws ClassNotFoundException, DAOException
+
+	/**
+	 * Gets Query Number of given sql.
+	 * @param jdbcDAO JDBCDAO object.
+	 * @param sql sql query.
+	 * @return queryNo.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 * @throws DAOException generic DAOException.
+	 */
+	private Long getQueryNumber(JDBCDAO jdbcDAO, String sql) throws ClassNotFoundException,
+			DAOException
 	{
 		List list = jdbcDAO.executeQuery(sql, null, false, null);
 		long queryNo = 1;
@@ -1378,7 +1389,7 @@ public class QueryBizLogic extends DefaultBizLogic
 			if (!columnList.isEmpty())
 			{
 				String str = (String) columnList.get(0);
-				if (!str.equals(""))
+				if (!"".equals(str))
 				{
 					queryNo = Long.parseLong(str);
 
@@ -1387,8 +1398,16 @@ public class QueryBizLogic extends DefaultBizLogic
 		}
 		return queryNo;
 	}
-	
-	private String getPrevValueDisplayName(JDBCDAO jdbcDAO,String sql) throws ClassNotFoundException
+
+	/**
+	 * Gets Previous Value Display Name.
+	 * @param jdbcDAO JDBCDAO object.
+	 * @param sql sql query.
+	 * @return Previous Value Display Name.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 */
+	private String getPrevValueDisplayName(JDBCDAO jdbcDAO, String sql)
+			throws ClassNotFoundException
 	{
 		String prevValueDisplayName = "0";
 		try
@@ -1401,9 +1420,9 @@ public class QueryBizLogic extends DefaultBizLogic
 				prevValueDisplayName = (String) rowList.get(0);
 			}
 		}
-		catch (DAOException e)
+		catch (DAOException exception)
 		{
-			e.printStackTrace();
+			logger.error(exception.getMessage(), exception);
 		}
 		return prevValueDisplayName;
 	}
