@@ -31,7 +31,7 @@ public class PagenatedResultData
 	 * @param result The complete or Subset of query result.
 	 * @param totalRecords Total number of records that will be returned by the query
 	 */
-	PagenatedResultData(List result, int totalRecords)
+	public PagenatedResultData(List result, int totalRecords)
 	{
 		this.result = result;
 		this.totalRecords = totalRecords;

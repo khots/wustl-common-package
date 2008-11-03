@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -35,11 +34,8 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.security.PrivilegeCache;
-import edu.wustl.common.security.PrivilegeManager;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.Permissions;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.dbmanager.DBUtil;
@@ -669,66 +665,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return list;
 	}
 
-	/**
-	 * @author aarti_sharma
-	 * Method allows assigning of privilege privilegeName to user identified by userId
-	 * or role identified by roleId
-	 * on objects ids objectIds of type objectType.
-	 * Privilege is to be assigned to user or a role is identified by boolean assignToUser
-	 * @param dao The dao object.
-	 * @param privilegeName privilege Name
-	 * @param objectType object Type
-	 * @param objectIds Array of object Ids.
-	 * @param userId user Id
-	 * @param roleId role Id
-	 * @param assignToUser assign To User
-	 * @param assignOperation Operation
-	 * @throws SMException SM Exception
-	 * @throws DAOException generic DAOException
-	 */
-	protected void setPrivilege(DAO dao, String privilegeName, Class objectType, Long[] objectIds,
-			Long userId, String roleId, boolean assignToUser, boolean assignOperation)
-			throws SMException, DAOException
-	{
-		logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
-				+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
-				+ " userId:" + userId + " roleId:" + roleId + " assignToUser:" + assignToUser);
-
-		edu.wustl.common.security.PrivilegeUtility privilegeUtility = new edu.wustl.common.security.PrivilegeUtility();
-
-		// To get privilegeCache through
-		// Singleton instance of PrivilegeManager, requires User LoginName
-		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-
-		if (assignToUser)
-		{
-
-			try
-			{
-				String userName = privilegeUtility.getUserById(userId.toString()).getLoginName();
-				PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(userName);
-				privilegeCache.updateUserPrivilege(privilegeName, objectType, objectIds, userId,
-						assignOperation);
-			}
-			catch (Exception exception)
-			{
-				logger.warn(exception.getMessage(), exception);
-			}
-		}
-		else
-		{
-
-			try
-			{
-				privilegeManager.updateGroupPrivilege(privilegeName, objectType, objectIds, roleId,
-						assignOperation);
-			}
-			catch (Exception exception)
-			{
-				logger.error(exception.getMessage(), exception);
-			}
-		}
-	}
+	
 
 	/**
 	 * This method gets Corresponding Old Object.
@@ -942,23 +879,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
-	/**
-	 * This method is called from LoginAction (after successful User Login)
-	 * & here, privilegeCache object gets created for logged user
-	 * & this object is stored in Cache through PrivilegeManager.
-	 * @param loginName login Name
-	 * @throws Exception Exception
-	 * @author ravindra_jain
-	 */
-	public void cachePrivileges(String loginName) throws Exception
-	{
-		// A privilegeCache object is created for a user during Login &
-		// this cache contains the Classes, objects,... & corresponding Privileges
-		// which user has on these classes, objects, etc.
-		// All later Security checks are done through the cache & no call to the database is made
-		PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(loginName);
-
-	}
+	
 
 	/**
 	 *@param objCollection oject collection.
@@ -975,105 +896,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 	}
 
-	/**
-	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized
-	 * (edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
-	 * @param dao The dao object.
-	 * @param domainObject domain Object
-	 * @param sessionDataBean session specific Data
-	 * @return isAuthorized
-	 * @throws UserNotAuthorizedException User Not Authorized Exception
-	 * @throws DAOException generic DAOException
-	 */
-	public boolean isAuthorized(AbstractDAO dao, Object domainObject,
-			SessionDataBean sessionDataBean) throws UserNotAuthorizedException, DAOException
-	{
-		boolean isAuthorized = false;
-		String protectionElementName = null;
-		// Customize check for DE, return true if sessionDataBean is NULL
-		if (sessionDataBean == null || (sessionDataBean != null && sessionDataBean.isAdmin()))
-		{
-			isAuthorized = true;
-		}
-		else
-		{
-			//	Get the base object id against which authorization will take place
-			if (domainObject instanceof List)
-			{
-				List list = (List) domainObject;
-				for (Object domainObject2 : list)
-				{
-					protectionElementName = getObjectId(dao, domainObject2);
-				}
-			}
-			else
-			{
-				protectionElementName = getObjectId(dao, domainObject);
-			}
-			//TODO To revisit this piece of code --> Vishvesh
-			if (Constants.ALLOW_OPERATION.equals(protectionElementName))
-			{
-				isAuthorized = true;
-			}
-		}
-		//Get the required privilege name which we would like to check for the logged in user.
-		String privilegeName = getPrivilegeName(domainObject);
-		PrivilegeCache privilegeCache = getPrivilegeCache(sessionDataBean);
-		//Checking whether the logged in user has the required privilege on the given protection element
-
-		if (!isAuthorized)
-		{
-			if (!protectionElementName.equalsIgnoreCase("ADMIN_PROTECTION_ELEMENT"))
-			{
-				String[] prArray = protectionElementName.split("_");
-				String baseObjectId = prArray[0];
-				String objId = "";
-				for (int i = 1; i < prArray.length; i++)
-				{
-					objId = baseObjectId + "_" + prArray[i];
-					isAuthorized = privilegeCache.hasPrivilege(objId, privilegeName);
-					if (!isAuthorized)
-					{
-						break;
-					}
-				}
-			}
-			else
-			{
-				isAuthorized = privilegeCache.hasPrivilege(protectionElementName, privilegeName);
-			}
-		}
-		if (!isAuthorized)
-		{
-			UserNotAuthorizedException exception = new UserNotAuthorizedException();
-			exception.setPrivilegeName(privilegeName);
-			if (protectionElementName != null
-					&& (protectionElementName.contains("Site") || protectionElementName
-							.contains("CollectionProtocol")))
-			{
-				String[] arr = protectionElementName.split("_");
-				String[] nameArr = arr[0].split("\\.");
-				String baseObject = nameArr[nameArr.length - 1];
-				exception.setBaseObject(baseObject);
-				exception.setBaseObjectIdentifier(arr[1]);
-			}
-			throw exception;
-		}
-		return isAuthorized;
-	}
-
-	/**This method gets the instance of privilege cache which is used for authorization.
-	 * @param sessionDataBean session specific Data
-	 * @return privilegeCache
-	 */
-	private PrivilegeCache getPrivilegeCache(SessionDataBean sessionDataBean)
-	{
-		PrivilegeManager privilegeManager = PrivilegeManager.getInstance();
-		PrivilegeCache privilegeCache = privilegeManager.getPrivilegeCache(sessionDataBean
-				.getUserName());
-		return privilegeCache;
-	}
-
+	
+	
 	/**
 	 * Gets privilege name depending upon operation performed.
 	 * @param domainObject Object on which authorization is reqd.
@@ -1157,80 +981,4 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return null;
 	}
 
-	/**
-	 * Check Privilege To View.
-	 * @param objName object Name
-	 * @param identifier identifier
-	 * @param sessionDataBean session Data
-	 * @return hasprivilege.
-	 */
-	public boolean hasPrivilegeToView(String objName, Long identifier,
-			SessionDataBean sessionDataBean)
-	{
-		boolean hasprivilege = true;
-		if (sessionDataBean != null && sessionDataBean.isAdmin())
-		{
-			hasprivilege = true;
-		}
-		else
-		{
-			List cpIdsList = new ArrayList();
-			Set<Long> cpIds = new HashSet<Long>();
-
-			cpIdsList = Utility.getCPIdsList(objName, identifier, sessionDataBean, cpIdsList);
-
-			if (cpIdsList == null)
-			{
-				hasprivilege = false;
-			}
-			else
-			{
-				for (Object cpId : cpIdsList)
-				{
-					cpId = cpIdsList.get(0);
-					cpIds.add(Long.valueOf(cpId.toString()));
-				}
-
-				PrivilegeCache privilegeCache = PrivilegeManager.getInstance().getPrivilegeCache(
-						sessionDataBean.getUserName());
-				StringBuffer stringBuffer = new StringBuffer();
-				stringBuffer.append(Constants.COLLECTION_PROTOCOL_CLASS_NAME).append("_");
-				boolean isPresent = false;
-
-				for (Long cpId : cpIds)
-				{
-					String privilegeName = getReadDeniedPrivilegeName();
-
-					String[] privilegeNames = privilegeName.split(",");
-					if (privilegeNames.length > 1)
-					{
-						if ((privilegeCache.hasPrivilege(stringBuffer.toString() + cpId.toString(),
-								privilegeNames[0])))
-						{
-							isPresent = privilegeCache.hasPrivilege(
-									stringBuffer.toString() + cpId.toString(), privilegeNames[1]);
-							isPresent = !isPresent;
-						}
-					}
-					else
-					{
-						isPresent = privilegeCache.hasPrivilege(stringBuffer.toString() + cpId.toString(),
-								privilegeName);
-					}
-
-					if (privilegeName != null
-							&& privilegeName.equalsIgnoreCase(Permissions.READ_DENIED))
-					{
-						isPresent = !isPresent;
-					}
-					if (!isPresent)
-					{
-						hasprivilege = false;
-					}
-				}
-			}
-		}
-
-		return hasprivilege;
-	}
 }

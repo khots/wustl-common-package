@@ -191,9 +191,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws SMException generic SMException
 	 * @throws DAOException generic DAOException
 	 */
-	protected abstract void setPrivilege(DAO dao, String privilegeName, Class objectType,
+	protected void setPrivilege(DAO dao, String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
-			boolean assignOperation) throws SMException, DAOException;
+			boolean assignOperation) throws SMException, DAOException{}
 
 	/**
 	 * Deletes an object from the database.
@@ -883,4 +883,21 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @return Denied Privilege Name.
 	 */
 	public abstract String getReadDeniedPrivilegeName();
+	/**
+	 * 
+	 */
+	public boolean hasPrivilegeToView(String objName, Long identifier,
+			SessionDataBean sessionDataBean) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	/**
+	 * 
+	 */
+	public boolean isAuthorized(AbstractDAO dao, Object domainObject,
+			SessionDataBean sessionDataBean) throws UserNotAuthorizedException,
+			DAOException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
