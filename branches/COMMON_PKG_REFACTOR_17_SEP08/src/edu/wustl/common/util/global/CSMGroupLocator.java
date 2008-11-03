@@ -57,7 +57,7 @@ public class CSMGroupLocator
 	 */
 	public String getPGName(Long identifier,Class className)
 	{
-		return (String)classVsCsmGroupMap.get(className).getPgName();
+		return classVsCsmGroupMap.get(className).getPgName()+identifier;
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class CSMGroupLocator
 	 */
 	public String getPIGroupName(Long identifier,Class className)
 	{
-		return (String)classVsCsmGroupMap.get(className).getPiGroupName();
+		return (String)classVsCsmGroupMap.get(className).getPiGroupName()+identifier;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class CSMGroupLocator
 	 */
 	public String getCoordinatorGroupName(Long identifier,Class className)
 	{
-		return (String)classVsCsmGroupMap.get(className).getCoGroupName();
+		return (String)classVsCsmGroupMap.get(className).getCoGroupName()+identifier;
 	}
 
 	/**
