@@ -27,9 +27,10 @@ import java.util.Map;
 
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.queryExecutor.AbstractQueryExecutor;
+import edu.wustl.common.dao.queryExecutor.IQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.locator.InterfaceLocator;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -396,9 +397,25 @@ public class JDBCDAOImpl implements JDBCDAO
 		 *
 		 * Calling QueryExecutor method.
 		 */
-		return AbstractQueryExecutor.getInstance().getQueryResultList(query, connection,
-				sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
-				queryResultObjectDataMap, startIndex, noOfRecords);
+		InterfaceLocator iLocator = InterfaceLocator.getInstance();
+		String interfaceName = "IQueryExecutor";
+		String queryExecutorClassName = iLocator.getClassNameForInterface(interfaceName);
+		PagenatedResultData pagenatedResultData = null;
+		//
+		
+		try {
+			IQueryExecutor qe = (IQueryExecutor)Class.forName(queryExecutorClassName).newInstance();
+			pagenatedResultData = qe.getQueryResultList(query, connection,
+					sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
+					queryResultObjectDataMap, startIndex, noOfRecords);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return pagenatedResultData;
 
 	}
 

@@ -39,12 +39,7 @@ import org.xml.sax.SAXException;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.beans.NameValueBean;
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.dao.JDBCDAO;
-import edu.wustl.common.querysuite.security.utility.CsmCacheManager;
 import edu.wustl.common.tree.TreeNodeImpl;
-import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
@@ -969,57 +964,7 @@ public class Utility
 		return allPrivileges;
 	}
 
-	public static List getCPIdsList(String objName, Long identifier,
-			SessionDataBean sessionDataBean, List<Long> cpIdsList)
-	{
-		List<Long> idList=null;
-		if (objName != null && !objName.equalsIgnoreCase(Variables.mainProtocolObject))
-		{
-			String cpQuery = CsmCacheManager.getQueryStringForCP(objName, Integer.valueOf(identifier
-					.toString()));
-			JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-			try
-			{
-				jdbcDao.openSession(sessionDataBean);
-
-				List<List<Long>> list = null;
-				list = jdbcDao.executeQuery(cpQuery, sessionDataBean, false, null);
-				if (list != null && !list.isEmpty())
-				{
-					for (List<Long> list1 : list)
-					{
-						cpIdsList.add(Long.valueOf(list1.get(0).toString()));
-					}
-				}
-				idList=cpIdsList;
-			}
-			catch (DAOException daoException)
-			{
-				logger.debug("DAOException in getCPIdsList");
-			}
-			catch(ClassNotFoundException cnfException)
-			{
-				logger.debug("ClassNotFoundException in getCPIdsList");
-			}
-			finally
-			{
-				try
-				{
-					jdbcDao.closeSession();
-				}
-				catch (DAOException e)
-				{
-					logger.debug("Not able to close JDBCDAO connection");
-				}
-			}
-		}
-		else
-		{
-			cpIdsList.add(identifier);
-			idList=cpIdsList;
-		}
-		return idList;
-	}
+	
 
 	/**
 	 * This method returns records per page from session
