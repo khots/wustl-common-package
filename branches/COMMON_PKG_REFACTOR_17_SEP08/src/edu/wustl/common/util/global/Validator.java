@@ -581,7 +581,7 @@ public class Validator
 			logger.error("Date is not valid:" + dtStr, exp);
 			isDate = false;
 		}
-		if (isDate)
+		if (!isDate)
 		{
 			logger.error(errorMess);
 		}
@@ -710,9 +710,8 @@ public class Validator
 	}
 
 	/**
-	 * @param strDate
-	 * @param returnString
-	 * @return
+	 * @param strDate Date as String.
+	 * @return error key if any.
 	 */
 	private String chkDateFormat(String strDate)
 	{
