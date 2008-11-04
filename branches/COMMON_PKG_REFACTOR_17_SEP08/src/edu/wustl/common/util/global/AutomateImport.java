@@ -76,6 +76,7 @@ public class AutomateImport
 	 * 			- folder path for CAModelCSVs files
 	 * 			- folder path for CAModelCTLs files required in case of oracle
 	 * 			- oracle.tns.name required in case of oracle
+	 * @throws Exception -Generic exception.
 	 */
 	public static void main(String[] args) throws Exception
 	{
@@ -269,11 +270,11 @@ public class AutomateImport
 	/**
 	 * This method will create control file for SQL loader.
 	 * @param connection Connection Object.
-	 * @param csvFileName
-	 * @param ctlFileName
-	 * @param tableName
-	 * @throws IOException
-	 * @throws SQLException
+	 * @param csvFileName CSV file name.
+	 * @param ctlFileName ctl file name
+	 * @param tableName table name
+	 * @throws IOException Generic IO Exception
+	 * @throws SQLException Generic SQL Exception.
 	 */
 	private void createCTLFiles(Connection connection, String csvFileName, String ctlFileName,
 			String tableName) throws IOException, SQLException
@@ -298,10 +299,10 @@ public class AutomateImport
 
 	/**
 	 * This method will retrieve the column name list for a given table.
-	 * @param connection
-	 * @param tableName
-	 * @return
-	 * @throws SQLException
+	 * @param connection Connection Object.
+	 * @param tableName Table Name.
+	 * @return column Name.
+	 * @throws SQLException generic SQL exception.
 	 */
 	private String getColumnName(Connection connection, String tableName) throws SQLException
 	{
