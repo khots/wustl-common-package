@@ -10,7 +10,7 @@ import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.util.dbmanager.DAOException;
 
 /** This interface defines methods which are specific to JDBC operations.*/
-public interface JDBCDAO extends AbstractDAO
+public interface JDBCDAO extends DAO
 {
 
 	/**

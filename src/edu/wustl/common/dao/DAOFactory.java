@@ -9,7 +9,10 @@
 
 package edu.wustl.common.dao;
 
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.DaoProperties;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * DAOFactory is a factory for JDBC DAO instances of various domain objects.
@@ -22,6 +25,8 @@ public class DAOFactory
 	 * Singleton instace.
 	 */
 	private static DAOFactory factory = null;
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOFactory.class);
+
 
 	static
 	{
@@ -56,11 +61,13 @@ public class DAOFactory
 	/**
 	 * Returns DAO instance according to the type.
 	 * @param daoType The DAO type.
-	 * @return An AbstractDAO object.
+	 * @return An DAO object.
+	 * @deprecated This method uses daoType argument which is not required anymore,
+	 * please use getDAO() or getJDBCDAO(). 
 	 */
-	public AbstractDAO getDAO(int daoType)
+	public DAO getDAO(int daoType)
 	{
-		AbstractDAO dao = null;
+		DAO dao = null;
 		switch (daoType)
 		{
 			case Constants.HIBERNATE_DAO :
@@ -76,5 +83,52 @@ public class DAOFactory
 		}
 		return dao;
 	}
+	
+	public DAO getDAO()
+	{
+		DAO dao = null;
+		try {
+		
+		   dao = (DAO)Class.forName(DaoProperties.getValue("defaultDao")).newInstance();;
+		   
+		} catch (InstantiationException inExcp ) {
+			
+			logger.error(inExcp.getMessage() + "Class not be instantiated,it may be Interface or Abstract class " + inExcp);
+			
+		} catch (IllegalAccessException excp ) {
+			
+			logger.error(excp.getMessage() + "Class not Accessible " + excp);
+			
+		} catch (ClassNotFoundException excp ) {
+			
+			logger.error(excp.getMessage() + "Class not found " + excp);
+			
+		}
+		return dao;
+	}
+	
+	public DAO getJDBCDAO()
+	{
+		DAO dao = null;
+		try {
+		
+			dao = (DAO)Class.forName(DaoProperties.getValue("jdbcDao")).newInstance();
+	
+		} catch (InstantiationException inExcp ) {
+			
+			logger.error(inExcp.getMessage() + "Class not be instantiated,it may be Interface or Abstract class " + inExcp);
+			
+		} catch (IllegalAccessException excp ) {
+			
+			logger.error(excp.getMessage() + "Class not Accessible " + excp);
+			
+		} catch (ClassNotFoundException excp ) {
+			
+			logger.error(excp.getMessage() + "Class not found " + excp);
+			
+		}
+		return dao;
+	}
+	
 
 }

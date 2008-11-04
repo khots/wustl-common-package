@@ -183,5 +183,32 @@ public interface DAO
 	 */
 	Object retrieveAttribute(Class<AbstractDomainObject> objClass, Long identifier,
 			String attributeName) throws DAOException;
+	
+	
+	/**
+	 * This method will be used to establish the session with the database.
+	 * 
+	 * @throws DAOException
+	 */
+	public abstract void openSession(SessionDataBean sessionDataBean) throws DAOException;
+
+	/**
+	 * This method will be used to close the session with the database.
+	 * @throws DAOException
+	 */
+	public abstract void closeSession() throws DAOException;
+
+	/**
+	 * Commit the database level changes  
+	 * @throws DAOException
+	 */
+	public abstract void commit() throws DAOException;
+
+	/**
+	 * Rollback all the changes after last commit.  
+	 * @throws DAOException 
+	 * @throws DAOException
+	 */
+	public abstract void rollback() throws DAOException;
 
 }
