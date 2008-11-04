@@ -11,7 +11,6 @@ import java.util.List;
 
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
@@ -35,8 +34,21 @@ public interface IBizLogic
 	 * @param daoType dao Type.
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * @throws BizLogicException BizLogic Exception
+	 * @deprecated : This method uses daoType argument which is not required anymore,please use method
+	 * delete(Object obj) throws UserNotAuthorizedException,BizLogicException;
 	 */
 	void delete(Object obj, int daoType) throws UserNotAuthorizedException,
+			BizLogicException;
+	
+	
+	
+	/**
+	 * Deletes an object from the database.
+	 * @param obj The object to be deleted.
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	void delete(Object obj) throws UserNotAuthorizedException,
 			BizLogicException;
 
 	/**
@@ -46,20 +58,52 @@ public interface IBizLogic
 	 * @param daoType dao Type
 	 * @throws BizLogicException BizLogic Exception
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @deprecated This method uses daoType argument which is not required anymore,please use method
+	 * insert(Object obj, SessionDataBean sessionDataBean)
+	 * throws BizLogicException, UserNotAuthorizedException;
 	 */
 	void insert(Object obj, SessionDataBean sessionDataBean, int daoType)
 			throws BizLogicException, UserNotAuthorizedException;
 
+	
+	
+	/**
+	 * Inserts an object from database.
+	 * @param obj The object to be Inserted.
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void insert(Object obj, SessionDataBean sessionDataBean)
+			throws BizLogicException, UserNotAuthorizedException;
+
+	
+	
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
 	 * @param daoType dao Type
 	 * @throws BizLogicException BizLogic Exception
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @deprecated This method uses daoType argument which is not required anymore,please use method
+	 * insert(Object obj) throws BizLogicException,UserNotAuthorizedException;
 	 */
 	void insert(Object obj, int daoType) throws BizLogicException,
-			UserNotAuthorizedException;
+		UserNotAuthorizedException;
 
+	
+	
+	/**
+	 * Inserts an object from database.
+	 * @param obj The object to be Inserted.
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void insert(Object obj) throws BizLogicException,
+		UserNotAuthorizedException;
+
+	
+	
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
@@ -68,20 +112,52 @@ public interface IBizLogic
 	 * @param sessionDataBean session specific Data
 	 * @throws BizLogicException BizLogic Exception
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @deprecated This method uses daoType argument which is not required anymore,please use method
+	 * update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean)throws BizLogicException,
+	 * UserNotAuthorizedException;
 	 */
 	void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 
+	
+	/**
+	 * Updates an object.
+	 * @param currentObj current Object.
+	 * @param oldObj old Object.
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean) 
+	throws BizLogicException, UserNotAuthorizedException;
+
+
+	
+	
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
 	 * @param daoType dao Type
 	 * @throws BizLogicException BizLogic Exception
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @deprecated This method uses daoType argument which is not required anymore,please use method
+	 * update(Object currentObj) throws BizLogicException,UserNotAuthorizedException;
 	 */
 	void update(Object currentObj, int daoType) throws BizLogicException,
 			UserNotAuthorizedException;
 
+	/**
+	 * Updates an object.
+	 * @param currentObj current Object.
+	 * @throws BizLogicException BizLogic Exception
+	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 */
+	void update(Object currentObj) throws BizLogicException,
+			UserNotAuthorizedException;
+
+
+	
+	
 	/**
 	 * creates Protection Element.
 	 * @param currentObj current Object.
@@ -115,9 +191,9 @@ public interface IBizLogic
 	 * @throws DAOException generic DAOException.
 	 * @throws UserNotAuthorizedException User Not Authorized Exception.
 	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized
-	 * (edu.wustl.common.dao.AbstractDAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 * (edu.wustl.common.dao.DAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
 	 */
-	boolean isAuthorized(AbstractDAO dao, Object domainObject,
+	boolean isAuthorized(DAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws UserNotAuthorizedException, DAOException;
 
 	/**
@@ -129,7 +205,7 @@ public interface IBizLogic
 	 * @param domainObject domain Object.
 	 * @return Object Id.
 	 */
-	String getObjectId(AbstractDAO dao, Object domainObject);
+	String getObjectId(DAO dao, Object domainObject);
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
@@ -229,10 +305,36 @@ public interface IBizLogic
 	 * @param assignOperation Operation
 	 * @throws SMException SMException
 	 * @throws BizLogicException BizLogic Exception
+	 * @deprecated This method uses daoType argument which is not required anymore,please use method
+	 * setPrivilege(String privilegeName, Class objectType, Long[] objectIds,Long userId, 
+	 * SessionDataBean sessionDataBean, String roleId, boolean assignToUser,boolean assignOperation)
+	 *  throws SMException, BizLogicException;
 	 */
 	void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
 			boolean assignOperation) throws SMException, BizLogicException;
+	
+	
+	
+	/**
+	 * sets Privilege.
+	 * @param privilegeName privilege Name
+	 * @param objectType objec tType
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param sessionDataBean session specific Data
+	 * @param roleId role Id.
+	 * @param assignToUser assign To User.
+	 * @param assignOperation Operation
+	 * @throws SMException SMException
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	void setPrivilege(String privilegeName, Class objectType, Long[] objectIds,
+			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
+			boolean assignOperation) throws SMException, BizLogicException;
+
+	
+	
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.

@@ -26,7 +26,6 @@ import edu.common.dynamicextensions.util.global.Variables;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.AbstractDAO;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
@@ -198,7 +197,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		DAO dao = DAOFactory.getInstance().getDAO();
 
 		List list = null;
 
@@ -289,7 +288,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		DAO dao = DAOFactory.getInstance().getDAO();
 
 		Object object = null;
 
@@ -800,7 +799,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws DAOException
 	{
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		DAO dao = DAOFactory.getInstance().getDAO();
 
 		Object attribute = null;
 
@@ -833,7 +832,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws DAOException
 	{
-		AbstractDAO dao = DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		DAO dao = DAOFactory.getInstance().getDAO();
 
 		Object attribute = null;
 
@@ -919,12 +918,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.AbstractDAO, java.lang.Object)
+	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.DAO, java.lang.Object)
 	 * @param dao The dao object.
 	 * @param domainObject Object on which authorization is reqd.
 	 * @return allow Operation.
 	 */
-	public String getObjectId(AbstractDAO dao, Object domainObject)
+	public String getObjectId(DAO dao, Object domainObject)
 	{
 		return Constants.ALLOW_OPERATION;
 	}

@@ -5,7 +5,7 @@ import java.util.Collection;
 
 /** This interface defines methods which are specific to Hibernate operations .*/
 
-public interface HibernateDAO extends AbstractDAO
+public interface HibernateDAO extends DAO
 {
 
 	/**

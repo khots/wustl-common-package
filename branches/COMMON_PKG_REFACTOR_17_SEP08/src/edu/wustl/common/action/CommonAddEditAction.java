@@ -243,7 +243,7 @@ public class CommonAddEditAction extends Action
 		abstractDomain = abstractDomainObjectFactory.getDomainObject(abstractForm.getFormId(),
 				abstractForm);
 		IBizLogic bizLogic = getIBizLogic(abstractForm);
-		bizLogic.insert(abstractDomain, getSessionData(request), Constants.HIBERNATE_DAO);
+		bizLogic.insert(abstractDomain, getSessionData(request));
 		String target = new String(Constants.SUCCESS);
 		ActionMessages messages = new ActionMessages();
 		QueryBizLogic queryBizLogic = getQueryBizLogic();
@@ -385,8 +385,7 @@ public class CommonAddEditAction extends Action
 				abstractDomainOld = (AbstractDomainObject) sessionClean.load(Class
 						.forName(objectName), Long.valueOf(abstractForm.getId()));
 				IBizLogic bizLogic = getIBizLogic(abstractForm);
-				bizLogic.update(abstractDomain, abstractDomainOld, Constants.HIBERNATE_DAO,
-						getSessionData(request));
+				bizLogic.update(abstractDomain, abstractDomainOld,getSessionData(request));
 				sessionClean.close();
 			}
 			catch (Exception ex)
