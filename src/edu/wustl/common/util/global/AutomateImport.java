@@ -341,7 +341,7 @@ public class AutomateImport
 		columnNameList.append('(');
 		ResultSetMetaData rsMetaData = resultSet.getMetaData();
 		int numberOfColumns = rsMetaData.getColumnCount();
-		for (int i = 1; i < numberOfColumns + 1; i++)
+		for (int i = 1; i <= numberOfColumns; i++)
 		{
 			columnNameList.append(rsMetaData.getColumnName(i));
 			if (Types.DATE == rsMetaData.getColumnType(i)
@@ -356,11 +356,9 @@ public class AutomateImport
 				columnNameList.append(rsMetaData.getColumnName(i));
 				columnNameList.append("='\\\\N'");
 			}
-			if (i < numberOfColumns)
-			{
-				columnNameList.append(',');
-			}
+			columnNameList.append(',');
 		}
+		columnNameList.deleteCharAt(columnNameList.length()-1);
 		columnNameList.append(')');
 		return columnNameList;
 	}
