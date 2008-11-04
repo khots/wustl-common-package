@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package edu.wustl.common.dao;
 
 import java.util.Map;
@@ -13,12 +9,29 @@ import java.util.Map;
 public class QuerySessionData
 {
 
-	// The SQL for the query for which user is navigating results.  
+	/**
+	 *  The SQL for the query for which user is navigating results.
+	 */
 	String sql;
+	/**
+	 * Query Result Object Data Map.
+	 */
 	Map queryResultObjectDataMap;
+	/**
+	 * specify Secure Execute.
+	 */
 	boolean isSecureExecute;
+	/**
+	 * specify Condition On Identified Field.
+	 */
 	boolean hasConditionOnIdentifiedField;
+	/**
+	 * specify records Per Page.
+	 */
 	int recordsPerPage;
+	/**
+	 * specify total Number Of Records.
+	 */
 	int totalNumberOfRecords;
 
 	/**

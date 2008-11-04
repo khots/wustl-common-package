@@ -18,7 +18,9 @@ import edu.wustl.common.util.global.Constants;
 public class DAOFactory
 {
 
-	//	Singleton instace
+	/**
+	 * Singleton instace.
+	 */
 	private static DAOFactory factory = null;
 
 	static
@@ -26,18 +28,26 @@ public class DAOFactory
 		factory = new DAOFactory();
 	}
 
+	/**
+	 * Constructor.
+	 */
 	protected DAOFactory()
 	{
 	}
 
 	/**
 	 * Setter method in singleton class is to setup mock unit testing.
+	 * @param externalFactory DAOFactory object.
 	 * */
 	public static void setDAOFactory(DAOFactory externalFactory)
 	{
 		factory = externalFactory;
 	}
 
+	/**
+	 * Getter method in singleton class is to setup mock unit testing.
+	 * @return factory
+	 */
 	public static DAOFactory getInstance()
 	{
 		return factory;
@@ -45,7 +55,7 @@ public class DAOFactory
 
 	/**
 	 * Returns DAO instance according to the type.
-	 * @param type The DAO type.
+	 * @param daoType The DAO type.
 	 * @return An AbstractDAO object.
 	 */
 	public AbstractDAO getDAO(int daoType)
@@ -59,6 +69,8 @@ public class DAOFactory
 
 			case Constants.JDBC_DAO :
 				dao = new JDBCDAOImpl();
+				break;
+
 			default :
 				break;
 		}
