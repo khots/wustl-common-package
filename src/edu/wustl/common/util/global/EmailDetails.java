@@ -61,7 +61,7 @@ public class EmailDetails
 	 */
 	public void removeToAddress(String toAddress)
 	{
-		this.toAddress.add(toAddress);
+		this.toAddress.remove(toAddress);
 	}
 
 	/**
@@ -248,6 +248,7 @@ public class EmailDetails
 		{
 			internetAddress[i] = new InternetAddress(arrayToConvert.get(i));
 		}
+		
 		return internetAddress;
 	}
 }

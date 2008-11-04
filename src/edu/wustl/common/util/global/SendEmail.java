@@ -26,7 +26,7 @@ import javax.mail.internet.MimeMultipart;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * This Class is used to send emails.
+ * This Class is used to send E-mails.
  *
  * @author gautam_shetty
  */
@@ -63,12 +63,14 @@ public class SendEmail
 
 		Session session = Session.getDefaultInstance(props, null);
 		session.setDebug(false);
-		boolean sendStatus = true;
+		boolean sendStatus;
 
 		try
 		{
+
 			MimeMessage msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(from));
+
 			msg.setRecipients(Message.RecipientType.CC, emailDetails.getCcInternetAddrArray());
 			msg.setRecipients(Message.RecipientType.BCC, emailDetails.getBccInternetAddrArray());
 			msg.setRecipients(Message.RecipientType.TO, emailDetails.getToInternetAddrArray());
@@ -82,15 +84,11 @@ public class SendEmail
 			// add the Multipart to the message
 			msg.setContent(multiPart);
 			Transport.send(msg);
+			sendStatus = true;
 		}
 		catch (MessagingException mex)
 		{
 			logger.warn("Unable to send mail to: " + emailDetails.getToAddress(),mex);
-			sendStatus = false;
-		}
-		catch (Exception exception)
-		{
-			logger.warn("Unable to send mail to: " + emailDetails.getToAddress(),exception);
 			sendStatus = false;
 		}
 		return sendStatus;
