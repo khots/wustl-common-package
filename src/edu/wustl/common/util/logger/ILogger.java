@@ -5,32 +5,68 @@
  * Company: Washington University, School of Medicine, St. Louis.
  * @author Kapil Kaveeshwar
  * @version 1.00
- * 
- * FIXME: Java doc. 
+ *
  */
 
 package edu.wustl.common.util.logger;
-
+/**
+ * Interface for Logger.
+ */
 public interface ILogger
 {
 
-	public abstract void info(Object message);
+	/**
+	 * @param message Message to log.
+	 */
+	void info(Object message);
 
-	public abstract void info(Object message, Throwable t);
+	/**
+	 * @param message Message to log.
+	 * @param throwable Throwable object.
+	 */
+	void info(Object message, Throwable throwable);
 
-	public abstract void warn(Object message);
+	/**
+	 * @param message Message to log.
+	 */
+	void warn(Object message);
 
-	public abstract void warn(Object message, Throwable t);
+	/**
+	 * @param message Message to log.
+	 * @param throwable Throwable object.
+	 */
+	void warn(Object message, Throwable throwable);
 
-	public abstract void debug(Object message);
+	/**
+	 * @param message Message to log.
+	 */
+	void debug(Object message);
 
-	public abstract void debug(Object message, Throwable t);
+	/**
+	 * @param message Message to log.
+	 * @param throwable Throwable object.
+	 */
+	void debug(Object message, Throwable throwable);
 
-	public abstract void error(Object message);
+	/**
+	 * @param message Message to log.
+	 */
+	void error(Object message);
 
-	public abstract void error(Object message, Throwable t);
+	/**
+	 * @param message Message to log.
+	 * @param throwable Throwable object.
+	 */
+	void error(Object message, Throwable throwable);
 
-	public abstract void fatal(Object message);
+	/**
+	 * @param message Message to log.
+	 */
+	void fatal(Object message);
 
-	public abstract void fatal(Object message, Throwable t);
+	/**
+	 * @param message Message to log.
+	 * @param throwable Throwable object.
+	 */
+	void fatal(Object message, Throwable throwable);
 }
