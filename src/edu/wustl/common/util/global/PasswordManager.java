@@ -278,8 +278,8 @@ public class PasswordManager
 		{
 			int digit1 = decodeString.charAt(i * 2);
 			int digit2 = decodeString.charAt(i * 2 + 1);
-			digit1 = getDigit(digit1);
-			digit2 = getDigit(digit2);
+			digit1 = getEncodedDigit(digit1);
+			digit2 = getEncodedDigit(digit2);
 			bytes[i] = (byte) ((digit1 << 4) + digit2);
 		}
 		return bytes;
@@ -289,7 +289,7 @@ public class PasswordManager
 	 * @param digit digit to be encoded.
 	 * @return encoded digit.
 	 */
-	private static int getDigit(int digit)
+	private static int getEncodedDigit(int digit)
 	{
 		int encodedDigit=digit;
 		if ((encodedDigit >= '0') && (encodedDigit <= '9'))
