@@ -60,9 +60,9 @@ public class ParseXMLFile
 	 * @param path String path of file.
 	 * @exception CheckedException checked exception.
 	 */
-	protected ParseXMLFile(String path) throws CheckedException
+	protected ParseXMLFile(String path)
 	{
-		Document doc = XMLParserUtility.parseFile(path);
+		Document doc = XMLParserUtility.getDocument(path);
 		Node root = doc.getDocumentElement();
 		readDynamicUIComponents(root);
 	}
