@@ -2,7 +2,6 @@ package edu.wustl.common.util.global;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,9 +13,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
-import edu.wustl.cab2b.common.exception.CheckedException;
-import edu.wustl.common.util.ParseXMLFile;
 import edu.wustl.common.util.logger.Logger;
 
 /**
