@@ -8,8 +8,19 @@ import java.util.Collection;
 public interface HibernateDAO extends AbstractDAO
 {
 
-	public Object loadCleanObj(String sourceObjectName, Long id) throws Exception;
+	/**
+	 * Loaded Clean Object.
+	 * @param sourceObjectName source Object Name
+	 * @param identifier identifier.
+	 * @return Object
+	 * @throws Exception Exception.
+	 */
+	Object loadCleanObj(String sourceObjectName, Long identifier) throws Exception;
 
-	public void addAuditEventLogs(Collection auditEventDetailsCollection);
+	/**
+	 * Add AuditEvent Logs.
+	 * @param auditEventDetailsCollection audit Event Details Collection.
+	 */
+	void addAuditEventLogs(Collection auditEventDetailsCollection);
 
 }
