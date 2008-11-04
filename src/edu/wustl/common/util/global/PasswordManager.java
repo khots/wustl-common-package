@@ -82,6 +82,14 @@ public class PasswordManager
 	 */
 	public static final int FAIL_INVALID_SESSION = 7;
 	/**
+	 *  15 in hexa-decimal.
+	 */
+	public static final int HEX_15 = 0x0f;
+	/**
+	 *  240 in hexa-decimal.
+	 */
+	public static final int HEX_240 = 0xf0;
+	/**
 	 * This map contains error message for different error code.
 	 */
 	private static Map<Integer,String> errorMess;
@@ -218,8 +226,8 @@ public class PasswordManager
 			for (int i = 0; i < bytes.length; i++)
 			{
 				byte singleByte = bytes[i];
-				stringBuffer.append(digits[(singleByte & 0xf0) >> 4]);
-				stringBuffer.append(digits[singleByte & 0x0f]);
+				stringBuffer.append(digits[(singleByte & HEX_240) >> 4]);
+				stringBuffer.append(digits[singleByte & HEX_15]);
 			}
 
 			encodedString = stringBuffer.toString();
