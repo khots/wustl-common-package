@@ -93,10 +93,15 @@ public abstract class AbstractQueryExecutor
 		{
 			return new MysqlQueryExecutor();
 		}
-		else
+		else if(Variables.databaseName.equals(Constants.ORACLE_DATABASE))
 		{
 			return new OracleQueryExecutor();
 		}
+		else
+		{
+			return new Db2QueryExecuter();
+		}
+	
 	}
 
 	/**
