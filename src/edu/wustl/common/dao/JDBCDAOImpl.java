@@ -31,121 +31,38 @@ import edu.wustl.common.dao.queryExecutor.IQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.locator.InterfaceLocator;
-import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
  * Default implementation of AbstractDAO through JDBC.
  * @author gautam_shetty
  */
-public class JDBCDAOImpl implements JDBCDAO
+public abstract class JDBCDAOImpl implements JDBCDAO
 {
 
 	private Connection connection = null;
 	protected AuditManager auditManager;
+	private static org.apache.log4j.Logger logger = Logger.getLogger(JDBCDAOImpl.class);
 
-	/**
-	 * This method will be used to establish the session with the database.
-	 * Declared in AbstractDAO class.
-	 * 
-	 * @throws DAOException
-	 */
-	public void openSession(SessionDataBean sessionDataBean) throws DAOException
-	{
-		auditManager = new AuditManager();
-		if (sessionDataBean != null)
-		{
-			auditManager.setUserId(sessionDataBean.getUserId());
-			auditManager.setIpAddress(sessionDataBean.getIpAddress());
-		}
-		else
-		{
-			auditManager.setUserId(null);
-		}
+	public abstract void closeSession() throws DAOException;
+	
 
-		try
-		{
-			//Creates a connection.
-			connection = DBUtil.getConnection();// getConnection(database, loginName, password);
-			connection.setAutoCommit(false);
-		}
-		catch (Exception sqlExp)
-		{
-			//throw new DAOException(sqlExp.getMessage(),sqlExp);
-			Logger.out.error(sqlExp.getMessage(), sqlExp);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
-		}
-	}
+	public abstract void commit() throws DAOException;
+	
 
-	/**
-	 * This method will be used to close the session with the database.
-	 * Declared in AbstractDAO class.
-	 * @throws DAOException
-	 */
-	public void closeSession() throws DAOException
-	{
-		try
-		{
-			auditManager = null;
-			DBUtil.closeConnection();
-			//        	if (connection != null && !connection.isClosed())
-			//        	    connection.close();
-		}
-		catch (Exception sqlExp)
-		{
-			//            new DAOException(sqlExp.getMessage(),sqlExp);
-			Logger.out.error(sqlExp.getMessage(), sqlExp);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
+	public abstract void openSession(SessionDataBean sessionDataBean) throws DAOException;
+	
 
-		}
-	}
-
-	/**
-	 * Commit the database level changes.
-	 * Declared in AbstractDAO class.
-	 * @throws DAOException
-	 * @throws SMException
-	 */
-	public void commit() throws DAOException
-	{
-		try
-		{
-			auditManager.insert(this);
-
-			if (connection != null)
-				connection.commit();
-		}
-		catch (SQLException dbex)
-		{
-			Logger.out.error(dbex.getMessage(), dbex);
-			//throw new DAOException("Error in commit", dbex);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
-		}
-	}
-
-	/**
-	 * Rollback all the changes after last commit. 
-	 * Declared in AbstractDAO class. 
-	 * @throws DAOException
-	 */
-	public void rollback()
-	{
-		try
-		{
-			if (connection != null)
-				connection.rollback();
-		}
-		catch (SQLException dbex)
-		{
-			Logger.out.error(dbex.getMessage(), dbex);
-		}
-	}
+	public abstract void rollback() throws DAOException;
+	
+	
+	
+	public abstract void delete(String tableName) throws DAOException;
+	
 
 	/**
 	 * Creates a table with the query specified.
@@ -154,7 +71,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	 */
 	public void createTable(String query) throws DAOException
 	{
-		Logger.out.debug("Create Table Query " + query.toString());
+		logger.debug("Create Table Query " + query.toString());
 		executeUpdate(query.toString());
 	}
 
@@ -199,7 +116,7 @@ public class JDBCDAOImpl implements JDBCDAO
 	public List retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
 	{
-		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
+		//logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
 				onlyDistinctRows);
 	}
@@ -217,7 +134,7 @@ public class JDBCDAOImpl implements JDBCDAO
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, boolean onlyDistinctRows) throws DAOException
 	{
-		//Logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
+		//logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		List list = null;
 		String condition;
 
@@ -236,7 +153,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				//Bug# 2003: Limiting the define view does not remove duplicates
 				if (onlyDistinctRows)
 				{
-					//Logger.out.debug(" Adding distinct to query ");
+					//logger.out.debug(" Adding distinct to query ");
 					query.append(" DISTINCT ");
 				}
 				//END Bug# 2003
@@ -272,12 +189,12 @@ public class JDBCDAOImpl implements JDBCDAO
 				query.append(sourceObjectName + "." + whereColumnName[i] + " "
 						+ whereColumnCondition[i] + " " + whereColumnValue[i]);
 			}
-			Logger.out.debug("JDBC Query " + query);
+			logger.debug("JDBC Query " + query);
 			list = executeQuery(query.toString(), null, false, null);
 		}
 		catch (ClassNotFoundException classExp)
 		{
-			Logger.out.error(classExp.getMessage(), classExp);
+			logger.error(classExp.getMessage(), classExp);
 		}
 
 		return list;
@@ -357,7 +274,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		{
 			if (sessionDataBean == null)
 			{
-				//Logger.out.debug("Session data is null");
+				//logger.out.debug("Session data is null");
 				return null;
 			}
 		}
@@ -436,7 +353,7 @@ public class JDBCDAOImpl implements JDBCDAO
 
 	private Timestamp isColumnValueDate(Object value)
 	{
-		//Logger.out.debug("Column value: " + value);
+		//logger.out.debug("Column value: " + value);
 		try
 		{
 			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
@@ -445,10 +362,10 @@ public class JDBCDAOImpl implements JDBCDAO
 			Timestamp t = new Timestamp(date.getTime());
 			// Date sqlDate = new Date(date.getTime());
 
-			//Logger.out.debug("Column date value: " + date);
+			//logger.out.debug("Column date value: " + date);
 			if (value.toString().equals("") == false)
 			{
-				//Logger.out.debug("Return true: " + value);
+				//logger.out.debug("Return true: " + value);
 				return t;
 			}
 		}
@@ -603,52 +520,11 @@ public class JDBCDAOImpl implements JDBCDAO
 
 		query.append(columnNames[i] + " VARCHAR(50));");
 
-		Logger.out.debug("Create Table*************************" + query.toString());
+		logger.debug("Create Table*************************" + query.toString());
 
 		executeUpdate(query.toString());
 	}
-
-	/**
-	 * Deletes the specified table
-	 * @param tableName
-	 * @throws DAOException
-	 */
-	public void delete(String tableName) throws DAOException
-	{
-		StringBuffer query;
-		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
-		{
-			Logger.out.debug("MYSQL*****************************");
-			query = new StringBuffer("DROP TABLE IF EXISTS " + tableName);
-			executeUpdate(query.toString());
-		}
-		else
-		{
-			Logger.out.debug("ORACLE*****************************");
-			query = new StringBuffer("select tname from tab where tname='" + tableName + "'");
-			try
-			{
-				Statement statement = connection.createStatement();
-				ResultSet rs = statement.executeQuery(query.toString());
-				boolean isTableExists = rs.next();
-				Logger.out.debug("ORACLE****" + query.toString() + isTableExists);
-				if (isTableExists)
-				{
-					Logger.out.debug("Drop Table");
-					executeUpdate("DROP TABLE " + tableName + " cascade constraints");
-				}
-				rs.close();
-				statement.close();
-			}
-			catch (Exception sqlExp)
-			{
-				Logger.out.error(sqlExp.getMessage(), sqlExp);
-				throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
-			}
-		}
-
-	}
-
+	
 	/**
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.Long)
@@ -661,7 +537,7 @@ public class JDBCDAOImpl implements JDBCDAO
 		}
 		catch (Exception hibExp)
 		{
-			Logger.out.error(hibExp.getMessage(), hibExp);
+			logger.error(hibExp.getMessage(), hibExp);
 			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, hibExp);
 		}
 	}
@@ -788,7 +664,7 @@ public class JDBCDAOImpl implements JDBCDAO
 				if (date != null)
 				{
 					stmt.setObject(i + 1, date);
-					//Logger.out.debug("t.toString(): " + "---" + date);
+					//logger.out.debug("t.toString(): " + "---" + date);
 				}
 				else
 				{
@@ -828,5 +704,6 @@ public class JDBCDAOImpl implements JDBCDAO
 		}
 		
 	}
+	
 
 }
