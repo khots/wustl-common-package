@@ -407,7 +407,7 @@ public class Validator
 	 * specify date separator.
 	 */
 	private static String dtCh = Constants.DATE_SEPARATOR;
-	
+
 	/**
 	 * specify second in a min.
 	 */
