@@ -4,38 +4,7 @@
  */
 package edu.wustl.common.querysuite.queryobject;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import junit.framework.TestCase;
-import edu.common.dynamicextensions.domain.Attribute;
-import edu.common.dynamicextensions.domain.Entity;
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
-import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.beans.MatchedClass;
-import edu.wustl.cab2b.common.cache.AbstractEntityCache;
-import edu.wustl.cab2b.server.cache.EntityCache;
-import edu.wustl.common.hibernate.HibernateDatabaseOperations;
-import edu.wustl.common.hibernate.HibernateUtil;
-import edu.wustl.common.querysuite.QueryGeneratorMock;
-import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
-import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
-import edu.wustl.common.querysuite.exceptions.SqlException;
-import edu.wustl.common.querysuite.queryengine.impl.SqlGenerator;
-import edu.wustl.common.querysuite.queryobject.impl.Condition;
-import edu.wustl.common.querysuite.queryobject.impl.Connector;
-import edu.wustl.common.querysuite.queryobject.impl.Expression;
-import edu.wustl.common.querysuite.queryobject.impl.Query;
-import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
-import edu.wustl.common.querysuite.queryobject.impl.Rule;
-import edu.wustl.common.security.SecurityManager;
-import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * 
