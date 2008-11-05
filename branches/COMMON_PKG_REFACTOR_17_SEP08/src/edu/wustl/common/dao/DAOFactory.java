@@ -75,7 +75,7 @@ public class DAOFactory
 				break;
 
 			case Constants.JDBC_DAO :
-				dao = new JDBCDAOImpl();
+				//dao = new JDBCDAOImpl();
 				break;
 
 			default :
