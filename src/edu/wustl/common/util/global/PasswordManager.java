@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
 
@@ -404,40 +405,20 @@ public class PasswordManager
 	private static int validateUpLowerNumSpaceCharInPass(String newPassword)
 	{
 		int erroNo=NOT_FAILED;
-		char [] dest = new char[newPassword.length()];
-		// get char array where values get stores in dest[]
-		newPassword.getChars(0, newPassword.length(), dest, 0);
-		boolean foundUCase = false; // boolean to check UCase character found in string
-		boolean foundLCase = false; // boolean to check LCase character found in string
-		boolean foundNumber = false; // boolean to check Digit/Number character found in string
-		boolean foundSpace = false; // boolean to check space in String
+		final String regExpUpperCase="^.*\\p{Upper}.*$";
+		final String regExpLowerCase="^.*\\p{Lower}.*$";
+		final String regExpDigit="^.*\\p{Digit}.*$";
+		final String regExpSpace="^.*\\p{Space}.*$";
 
-		for (int i = 0; i < dest.length; i++)
-		{
-			// to check if character is a Space. if true break from loop
-			if (Character.isSpaceChar(dest[i]))
-			{
-				foundSpace = true;
-				break;
-			}
-			// to check whether char is Upper Case.
-			if (!foundUCase  && Character.isUpperCase(dest[i]))
-			{
-				foundUCase = true;
-			}
+		//boolean to check UCase character found in string
+		boolean foundUCase = Pattern.matches(regExpUpperCase,newPassword);
+		//boolean to check LCase character found in string
+		boolean foundLCase = Pattern.matches(regExpLowerCase,newPassword);
+		//boolean to check Digit/Number character found in string
+		boolean foundNumber = Pattern.matches(regExpDigit,newPassword);
+		//boolean to check space in String
+		boolean foundSpace = Pattern.matches(regExpSpace,newPassword);
 
-			// to check whether char is Lower Case
-			if (!foundLCase && Character.isLowerCase(dest[i]))
-			{
-				foundLCase = true;
-			}
-
-			// to check whether char is Number/Digit
-			if (!foundNumber && Character.isDigit(dest[i]))
-			{
-				foundNumber = true;
-			}
-		}
 		// condition to check whether all above condotion is satisfied
 		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
 		{
