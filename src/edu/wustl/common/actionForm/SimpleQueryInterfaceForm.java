@@ -55,7 +55,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	/**
 	 * Specifies INDEX FOR DATA TYPE.
 	 */
-	private static final int INDEX_FOR_DATA_TYPE=3;
+	private static final int INDEX_FOR_DATA_TYPE = 3;
 	/**
 	 * Specifies Tree Map.
 	 */
@@ -243,45 +243,28 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	public ActionErrors validate(ActionMapping mapping, HttpServletRequest request)
 	{
 		ActionErrors errors = new ActionErrors();
-		Validator validator = new Validator();
 		//if the operation is AND / OR.
 		if (isAndOrOperation())
 		{
-			validateAndOrOperationTrue(errors, validator);
+			validateAndOrOperationTrue(errors);
 		}
 		else
 		{
 			boolean tableError = false, attributeError = false, conditionError = false;
+			String errorKeyForTable = "simpleQuery.object.required";
+			String errorKeyForField = "simpleQuery.attribute.required";
 			for (int i = 1; i <= Integer.parseInt(counter); i++)
 			{
-				String key = "SimpleConditionsNode:" + i + "_Condition_DataElement_table";
-				String enteredValue = (String) getValue(key);
-				if ((!tableError) && (!(validator.isValidOption(enteredValue))))
-				{
-					errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-							"simpleQuery.object.required"));
-					tableError = true;
-				}
+				String condDataElement = i + "_Condition_DataElement_table";
+				tableError = isError(errors, tableError, errorKeyForTable, condDataElement);
 
-				key = "SimpleConditionsNode:" + i + "_Condition_DataElement_field";
-				enteredValue = (String) getValue(key);
-				if ((!attributeError) && (!(validator.isValidOption(enteredValue))))
-				{
-					errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-							"simpleQuery.attribute.required"));
-					attributeError = true;
-				}
+				condDataElement = i+"_Condition_DataElement_field";
+				attributeError = isError(errors, attributeError, errorKeyForField,
+						condDataElement);
 
-				String operatorKey = "SimpleConditionsNode:" + i + "_Condition_Operator_operator";
-				String operatorValue = (String) getValue(operatorKey);
-				if (!validator.isEmpty(operatorValue)
-						&& !(operatorValue.equals(Operator.IS_NULL) || operatorValue
-								.equals(Operator.IS_NOT_NULL)))
+				if (!conditionError)
 				{
-					if (!conditionError)
-					{
-						conditionError = validateOperatorValue(errors, i);
-					}
+					conditionError = validateOperatorValue(errors, i);
 				}
 			}
 		}
@@ -292,11 +275,37 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	}
 
 	/**
-	 * @param errors errors.
-	 * @param validator validator
+	 * @param errors ActionErrors object to update if error present.
+	 * @param error error true or false.
+	 * @param actionErrorKey actionError Key
+	 * @param conditionDataElement
+	 * @return errorValue true or false.
+	 * @param condDataElement condition Data Element.
 	 */
-	public void validateAndOrOperationTrue(ActionErrors errors, Validator validator)
+	private boolean isError(ActionErrors errors, boolean error,
+			String actionErrorKey, String condDataElement)
 	{
+		boolean errorValue = error;
+		if(!error)
+		{
+			Validator validator = new Validator();
+			String key = "SimpleConditionsNode:" + condDataElement;
+			String enteredValue = (String) getValue(key);
+			if (!validator.isValidOption(enteredValue))
+			{
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(actionErrorKey));
+				errorValue = true;
+			}
+		}
+		return errorValue;
+	}
+
+	/**
+	 * @param errors errors.
+	 */
+	public void validateAndOrOperationTrue(ActionErrors errors)
+	{
+		Validator validator = new Validator();
 		String key = "SimpleConditionsNode:" + (Integer.parseInt(counter) - 1)
 				+ "_Condition_DataElement_table";
 		String selectedTable = (String) getValue(key);
@@ -304,8 +313,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		//if the table is not selected, show an error message.
 		if (!(validator.isValidOption(selectedTable)))
 		{
-			errors.add(ActionErrors.GLOBAL_ERROR,
-					new ActionError("simpleQuery.object.required"));
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.object.required"));
 
 			this.counter = String.valueOf(Integer.parseInt(this.counter) - 1);
 
@@ -322,11 +330,31 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	private boolean validateOperatorValue(ActionErrors errors, int integerValue)
 	{
+		boolean conditionError = false;
+		Validator validator = new Validator();
+		String operatorKey = "SimpleConditionsNode:" + integerValue
+				+ "_Condition_Operator_operator";
+		String operatorValue = (String) getValue(operatorKey);
+		if (!validator.isEmpty(operatorValue)
+				&& !(operatorValue.equals(Operator.IS_NULL) || operatorValue
+						.equals(Operator.IS_NOT_NULL)))
+		{
+			conditionError = validateCondition(errors, integerValue);
+		}
+		return conditionError;
+	}
+
+	/**
+	 * This method updates ActionErrors object if errors present.
+	 * @param errors ActionErrors object.
+	 * @param integerValue integer Value for key generation.
+	 * @return conditionError
+	 */
+	private boolean validateCondition(ActionErrors errors, int integerValue)
+	{
 		boolean conditionError;
-		String key;
-		String enteredValue;
-		key = "SimpleConditionsNode:" + integerValue + "_Condition_value";
-		enteredValue = (String) getValue(key);
+		String key = "SimpleConditionsNode:" + integerValue + "_Condition_value";
+		String enteredValue = (String) getValue(key);
 		String dataElement = "SimpleConditionsNode:" + integerValue
 				+ "_Condition_DataElement_field";
 		String selectedField = (String) getValue(dataElement);
@@ -413,8 +441,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		logger.debug(" Check for integer");
 		if (validator.convertToLong(enteredValue) == null)
 		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-					"simpleQuery.intvalue.required"));
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.required"));
 			conditionError = true;
 			logger.debug(enteredValue + " is not a valid integer");
 		}
