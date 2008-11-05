@@ -24,7 +24,6 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.TimeInterval;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
-import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.util.InheritanceUtilMock;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
@@ -47,7 +46,7 @@ public class SqlGeneratorTestCase extends TestCase {
         Logger.configure();// To avoid null pointer Exception for code calling
         // logger statements.
         // HUH???
-        SecurityManager.getApplicationContextName();
+      //  SecurityManager.getApplicationContextName();
     }
 
     /*
