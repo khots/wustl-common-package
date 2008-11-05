@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package edu.wustl.common.actionForm;
 
 import java.util.LinkedHashMap;
@@ -24,28 +20,51 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * This Class encapsulates all the request parameters passed from Tilti Search
  * Form.
- * 
+ *
  * @author Juber Patel
- * 
+ *
  */
 public class TitliSearchForm extends ActionForm
 {
+
+	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = 3133201882979460560L;
 
 	/**
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchForm.class);
 
+	/**
+	 * Specifies search String.
+	 */
 	private String searchString;
 
+	/**
+	 * Specifies display Search String.
+	 */
 	private String displaySearchString;
 
+	/**
+	 * Specifies displayStats.
+	 */
 	private String displayStats;
 
+	/**
+	 * Specifies sorted Result Map.
+	 */
 	private SortedResultMapInterface sortedResultMap;
 
+	/**
+	 * Specifies titli Result Map.
+	 */
 	private Map<Name, TitliResultGroup> titliResultMap;
 
+	/**
+	 * Specifies selected Label.
+	 */
 	private String selectedLabel;
 
 	/**
@@ -108,24 +127,25 @@ public class TitliSearchForm extends ActionForm
 	}
 
 	/**
-	 * 
-	 * @return the result group corresponding to the selected label
+	 * Return the result group corresponding to the selected label.
+	 * @return the result group.
 	 */
 	public TitliResultGroup getSelectedGroup()
 	{
-		ResultGroupInterface i = null;
+		ResultGroupInterface resultGroupI = null;
 		try
 		{
-			i = sortedResultMap.get(TitliTableMapper.getInstance().getTable(selectedLabel));
+			resultGroupI = sortedResultMap.get(TitliTableMapper.getInstance().getTable(
+					selectedLabel));
 
 		}
-		catch (Exception e)
+		catch (Exception exception)
 		{
-			logger.error("Exception in TitliSearchForm : " + e.getMessage(), e);
+			logger.error("Exception in TitliSearchForm : " + exception.getMessage(), exception);
 
 		}
 
-		return new TitliResultGroup(i);
+		return new TitliResultGroup(resultGroupI);
 
 	}
 
@@ -138,7 +158,7 @@ public class TitliSearchForm extends ActionForm
 	}
 
 	/**
-	 * validate the input
+	 * validate the input.
 	 * @param mapping the cation mapping
 	 * @param request the request
 	 * @return acttion errors
@@ -155,7 +175,7 @@ public class TitliSearchForm extends ActionForm
 			errors.add("empty search string", new ActionError("  "));
 		}
 
-		if (requestSearchString.startsWith("*") || requestSearchString.startsWith("?"))
+		if (requestSearchString.charAt(0)=='*' || requestSearchString.charAt(0)=='?')
 		{
 			errors.add("search string starts with * or ? ", new ActionError("  "));
 		}
@@ -173,7 +193,7 @@ public class TitliSearchForm extends ActionForm
 	}
 
 	/**
-	 * @param displaysearchString the displaysearchString to set
+	 * @param displaySearchString the displaysearchString to set.
 	 */
 	public void setDisplaySearchString(String displaySearchString)
 	{

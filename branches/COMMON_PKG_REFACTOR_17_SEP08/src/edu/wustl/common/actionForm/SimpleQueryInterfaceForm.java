@@ -1,6 +1,6 @@
 /**
  * <p>Title: SimpleQueryInterfaceForm Class>
- * <p>Description:  SimpleQueryInterfaceForm Class is used to encapsulate all the request parameters passed 
+ * <p>Description:  SimpleQueryInterfaceForm Class is used to encapsulate all the request parameters passed
  * from simple query interface webpage. </p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -29,7 +29,7 @@ import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * SimpleQueryInterfaceForm Class is used to encapsulate all the request parameters passed 
+ * SimpleQueryInterfaceForm Class is used to encapsulate all the request parameters passed.
  * from simple query interface webpage.
  * @author gautam_shetty
  */
@@ -37,26 +37,65 @@ public class SimpleQueryInterfaceForm extends ActionForm
 {
 
 	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = 9041513259017953749L;
+
+	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(SimpleQueryInterfaceForm.class);
-	
-	boolean mutable = true;
+	private static org.apache.log4j.Logger logger = Logger
+			.getLogger(SimpleQueryInterfaceForm.class);
 
-	Map values = new TreeMap();
+	/**
+	 * Specifies whether the id is mutable or not.
+	 */
+	private boolean mutable = true;
 
-	String counter;
+	/**
+	 * Specifies INDEX FOR DATA TYPE.
+	 */
+	private static final int INDEX_FOR_DATA_TYPE=3;
+	/**
+	 * Specifies Tree Map.
+	 */
+	private Map<Object, Object> values = new TreeMap<Object, Object>();
 
-	String pageOf;
+	/**
+	 * Specifies counter.
+	 */
+	private String counter;
 
-	String aliasName;
+	/**
+	 * Specifies the page associated with this form bean.
+	 */
+	private String pageOf;
 
-	boolean andOrOperation = false;
+	/**
+	 * Specifies alias Name.
+	 */
+	private String aliasName;
 
-	//Variables neccessary for Configuration of SImple Search 
+	/**
+	 * Specifies andOr Operation.
+	 */
+	private boolean andOrOperation = false;
 
+	//Variables neccessary for Configuration of SImple Search.
+
+	/**
+	 * Specifies table Name neccessary for Configuration of Simple Search.
+	 */
 	private String tableName;
+
+	/**
+	 * Specifies selected Column Names neccessary for Configuration of Simple Search.
+	 */
 	private String[] selectedColumnNames;
+
+	/**
+	 * Specifies columnNames neccessary for Configuration of Simple Search.
+	 */
 	private String[] columnNames;
 
 	/**
@@ -80,6 +119,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public SimpleQueryInterfaceForm()
 	{
+		super();
 		this.counter = "1";
 	}
 
@@ -97,7 +137,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	public void setCounter(String counter)
 	{
 		if (isMutable())
+		{
 			this.counter = counter;
+		}
 	}
 
 	/**
@@ -116,18 +158,34 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		this.pageOf = pageOf;
 	}
 
+	/**
+	 * Put key and value pair in Map.
+	 * @param key key
+	 * @param value value
+	 */
 	public void setValue(String key, Object value)
 	{
 		if (isMutable())
+		{
 			values.put(key, value);
+		}
 	}
 
+	/**
+	 * Return key from Map.
+	 * @param key key.
+	 * @return key.
+	 */
 	public Object getValue(String key)
 	{
 		return values.get(key);
 	}
 
-	public Collection getAllValues()
+	/**
+	 * Gets all values from Map.
+	 * @return all values from Map.
+	 */
+	public Collection<Object> getAllValues()
 	{
 		return values.values();
 	}
@@ -148,7 +206,11 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		this.aliasName = aliasName;
 	}
 
-	public Map getValuesMap()
+	/**
+	 * Gets Values Map.
+	 * @return values Map.
+	 */
+	public Map<Object, Object> getValuesMap()
 	{
 		return values;
 	}
@@ -167,36 +229,25 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	public void setAndOrOperation(boolean andOrOperation)
 	{
 		if (isMutable())
+		{
 			this.andOrOperation = andOrOperation;
+		}
 	}
 
 	/**
-	 * Override validate method fo ActionForm class. 
+	 * Override validate method fo ActionForm class.
+	 * @param mapping ActionMapping object.
+	 * @param request HttpServletRequest object.
+	 * @return ActionErrors.
 	 */
 	public ActionErrors validate(ActionMapping mapping, HttpServletRequest request)
 	{
 		ActionErrors errors = new ActionErrors();
 		Validator validator = new Validator();
-
 		//if the operation is AND / OR.
 		if (isAndOrOperation())
 		{
-			String key = "SimpleConditionsNode:" + (Integer.parseInt(counter) - 1)
-					+ "_Condition_DataElement_table";
-			String selectedTable = (String) getValue(key);
-
-			//if the table is not selected, show an error message.
-			if (validator.isValidOption(selectedTable) == false)
-			{
-				errors.add(ActionErrors.GLOBAL_ERROR,
-						new ActionError("simpleQuery.object.required"));
-
-				this.counter = String.valueOf(Integer.parseInt(this.counter) - 1);
-
-				//remove the key for the join condition of last condition object from the map.
-				key = "SimpleConditionsNode:" + this.counter + "_Operator_operator";
-				values.remove(key);
-			}
+			validateAndOrOperationTrue(errors, validator);
 		}
 		else
 		{
@@ -205,7 +256,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 			{
 				String key = "SimpleConditionsNode:" + i + "_Condition_DataElement_table";
 				String enteredValue = (String) getValue(key);
-				if ((tableError == false) && (validator.isValidOption(enteredValue) == false))
+				if ((!tableError) && (!(validator.isValidOption(enteredValue))))
 				{
 					errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 							"simpleQuery.object.required"));
@@ -214,7 +265,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 
 				key = "SimpleConditionsNode:" + i + "_Condition_DataElement_field";
 				enteredValue = (String) getValue(key);
-				if ((attributeError == false) && (validator.isValidOption(enteredValue) == false))
+				if ((!attributeError) && (!(validator.isValidOption(enteredValue))))
 				{
 					errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 							"simpleQuery.attribute.required"));
@@ -227,99 +278,152 @@ public class SimpleQueryInterfaceForm extends ActionForm
 						&& !(operatorValue.equals(Operator.IS_NULL) || operatorValue
 								.equals(Operator.IS_NOT_NULL)))
 				{
-					if (conditionError == false)
+					if (!conditionError)
 					{
-						key = "SimpleConditionsNode:" + i + "_Condition_value";
-						enteredValue = (String) getValue(key);
-						String nextOperator = "SimpleConditionsNode:" + i + "_Operator_operator";
-						String dataElement = "SimpleConditionsNode:" + i
-								+ "_Condition_DataElement_field";
-						String selectedField = (String) getValue(dataElement);
-						StringTokenizer strTok = new StringTokenizer(selectedField, ".");
-						int tokenCnt = 1;
-						String dataType = "";
-						while (strTok.hasMoreTokens())
-						{
-							if (tokenCnt == 3)
-								dataType = strTok.nextToken();
-							else
-								strTok.nextToken();
-							tokenCnt++;
-						}
-						//		        	            int lastInd = selectedField.lastIndexOf(".");
-						//		        	            String dataType = selectedField.substring(lastInd+1);
-
-						//Bug# 1698 : Proper error message should be shown for negative integers
-						
-						conditionError = validateDataType(dataType,enteredValue,errors);
-						
+						conditionError = validateOperatorValue(errors, i);
 					}
 				}
 			}
 		}
-
-		//set andOrOperation to false.
 		setAndOrOperation(false);
 		setMutable(false);
 
 		return errors;
 	}
-	
-	private boolean validateDataType(String dataType,String enteredValue,ActionErrors errors)
+
+	/**
+	 * @param errors errors.
+	 * @param validator validator
+	 */
+	public void validateAndOrOperationTrue(ActionErrors errors, Validator validator)
+	{
+		String key = "SimpleConditionsNode:" + (Integer.parseInt(counter) - 1)
+				+ "_Condition_DataElement_table";
+		String selectedTable = (String) getValue(key);
+
+		//if the table is not selected, show an error message.
+		if (!(validator.isValidOption(selectedTable)))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,
+					new ActionError("simpleQuery.object.required"));
+
+			this.counter = String.valueOf(Integer.parseInt(this.counter) - 1);
+
+			//remove the key for the join condition of last condition object from the map.
+			key = "SimpleConditionsNode:" + this.counter + "_Operator_operator";
+			values.remove(key);
+		}
+	}
+
+	/**
+	 * @param errors errors.
+	 * @param integerValue integer Value.
+	 * @return conditionError.
+	 */
+	private boolean validateOperatorValue(ActionErrors errors, int integerValue)
+	{
+		boolean conditionError;
+		String key;
+		String enteredValue;
+		key = "SimpleConditionsNode:" + integerValue + "_Condition_value";
+		enteredValue = (String) getValue(key);
+		String dataElement = "SimpleConditionsNode:" + integerValue
+				+ "_Condition_DataElement_field";
+		String selectedField = (String) getValue(dataElement);
+		StringTokenizer strTok = new StringTokenizer(selectedField, ".");
+		int tokenCnt = 1;
+		String dataType = "";
+		while (strTok.hasMoreTokens())
+		{
+			if (tokenCnt == INDEX_FOR_DATA_TYPE)
+			{
+				dataType = strTok.nextToken();
+			}
+			else
+			{
+				strTok.nextToken();
+			}
+			tokenCnt++;
+		}
+		//Bug# 1698 :
+		//Proper error message should be shown for negative integers.
+		conditionError = validateDataType(dataType, enteredValue, errors);
+		return conditionError;
+	}
+
+	/**
+	 * validate Data Type.
+	 * @param dataType data Type to validate.
+	 * @param enteredValue entered Value.
+	 * @param errors ActionErrors.
+	 * @return returns true if valid data type else false.
+	 */
+	private boolean validateDataType(String dataType, String enteredValue, ActionErrors errors)
 	{
 		Validator validator = new Validator();
 		boolean conditionError = false;
 		if ((dataType.trim().equals("bigint") || dataType.trim().equals("integer")))
 		{
-			logger.debug(" Check for integer");
-			if (validator.convertToLong(enteredValue) == null)
-			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-						"simpleQuery.intvalue.required"));
-				conditionError = true;
-				logger.debug(enteredValue + " is not a valid integer");
-			}
-			else if (!validator.isPositiveNumeric(enteredValue, 0))
-			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-						"simpleQuery.intvalue.poisitive.required"));
-				conditionError = true;
-				logger.debug(enteredValue + " is not a positive integer");
-			}
-
-		} else if ((dataType.trim().equals("double"))
-				&& !validator.isDouble(enteredValue, false))
+			conditionError = validateInteger(enteredValue, errors, validator);
+		}
+		else if ((dataType.trim().equals("double")) && !validator.isDouble(enteredValue, false))
 		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-					"simpleQuery.decvalue.required"));
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.decvalue.required"));
 			conditionError = true;
-		} else if (dataType.trim().equals("tinyint"))
+		}
+		else if (dataType.trim().equals("tinyint"))
 		{
 			if (!enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_YES)
 					&& !enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_NO))
 			{
 				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-						"simpleQuery.tinyint.format"));
+								"simpleQuery.tinyint.format"));
 				conditionError = true;
 			}
-		} else if (dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_TIME))
+		}
+		else if (dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_TIME))
 		{
-			if (validator
-					.isValidTime(enteredValue, Constants.TIME_PATTERN_HH_MM_SS) == false)
+			if (!(validator.isValidTime(enteredValue, Constants.TIME_PATTERN_HH_MM_SS)))
 			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-						"simpleQuery.time.format"));
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.time.format"));
 				conditionError = true;
 			}
-		} else if (dataType.trim().equals(Constants.FIELD_TYPE_DATE)
+		}
+		else if (dataType.trim().equals(Constants.FIELD_TYPE_DATE)
 				|| dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_DATE))
 		{
-			if (validator.checkDate(enteredValue) == false)
+			if (!(validator.checkDate(enteredValue)))
 			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-						"simpleQuery.date.format"));
+				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.date.format"));
 				conditionError = true;
 			}
+		}
+		return conditionError;
+	}
+
+	/**
+	 * @param enteredValue entered Value.
+	 * @param errors errors
+	 * @param validator Validator object.
+	 * @return returns true if valid data type else false.
+	 */
+	private boolean validateInteger(String enteredValue, ActionErrors errors, Validator validator)
+	{
+		boolean conditionError = false;
+		logger.debug(" Check for integer");
+		if (validator.convertToLong(enteredValue) == null)
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+					"simpleQuery.intvalue.required"));
+			conditionError = true;
+			logger.debug(enteredValue + " is not a valid integer");
+		}
+		else if (!validator.isPositiveNumeric(enteredValue, 0))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+					"simpleQuery.intvalue.poisitive.required"));
+			conditionError = true;
+			logger.debug(enteredValue + " is not a positive integer");
 		}
 		return conditionError;
 	}
@@ -333,11 +437,11 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	}
 
 	/**
-	 * @param selectedColumnNames The selectedColumnNames to set.
+	 * @param selectedColNames The selectedColumnNames to set.
 	 */
-	public void setSelectedColumnNames(String[] selectedColumnNames)
+	public void setSelectedColumnNames(String[] selectedColNames)
 	{
-		this.selectedColumnNames = selectedColumnNames;
+		this.selectedColumnNames = selectedColNames;
 	}
 
 	/**
@@ -375,7 +479,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	/**
 	 * @return Returns the values.
 	 */
-	public Map getValues()
+	public Map<Object, Object> getValues()
 	{
 		return values;
 	}
@@ -383,12 +487,14 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	/**
 	 * @param values The values to set.
 	 */
-	public void setValues(Map values)
+	public void setValues(Map<Object, Object> values)
 	{
 		this.values = values;
 	}
 
-	// -------------  variable to store the menu selected --------------------------
+	/**
+	 * variable to store the menu selected.
+	 */
 	private String menuSelected = "";
 
 	/**
@@ -420,22 +526,22 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	/**
 	 * Map to hold values for rows to display calendar icon.
 	 */
-	protected Map showCalendarValues = new HashMap();
+	private Map<Object, Object> showCalendarValues = new HashMap<Object, Object>();
 
 	/**
 	 * @return Returns the showCalendarValues.
 	 */
-	public Map getShowCalendarValues()
+	public Map<Object, Object> getShowCalendarValues()
 	{
 		return showCalendarValues;
 	}
 
 	/**
-	 * @param showCalendarValues The showCalendarValues to set.
+	 * @param showCalValues The showCalendarValues to set.
 	 */
-	public void setShowCalendarValues(Map showCalendarValues)
+	public void setShowCalendarValues(Map<Object, Object> showCalValues)
 	{
-		this.showCalendarValues = showCalendarValues;
+		this.showCalendarValues = showCalValues;
 	}
 
 	/**
@@ -450,7 +556,6 @@ public class SimpleQueryInterfaceForm extends ActionForm
 
 	/**
 	 * Returns the object to which this map maps the specified key.
-	 * 
 	 * @param key
 	 *            the required key.
 	 * @return the object to which this map maps the specified key.
