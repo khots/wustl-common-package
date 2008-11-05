@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +43,8 @@ public class Validator
 	/**
 	 * This is regular expression to validate email id.
 	 */
-	private static final String REGEX_VALID_EMAIL = "^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$";
+	private static final String REGEX_VALID_EMAIL
+	= "^\\w(\\.?[\\w-])*@\\w(\\.?[-\\w])*\\.([a-z]{3,}(\\.[a-z]{2,})?|[a-z]{2,}(\\.[a-z]{2,})?)$";
 	/**
 	 * This is regular expression to validate phone number.
 	 */
@@ -404,35 +406,8 @@ public class Validator
 	/**
 	 * specify date separator.
 	 */
-	private String dtCh = Constants.DATE_SEPARATOR;
-	/**
-	 * specify min year.
-	 */
-	private final int minYear = Integer.parseInt(Constants.MIN_YEAR);
-	/**
-	 * specify max year.
-	 */
-	private final int maxYear = Integer.parseInt(Constants.MAX_YEAR);
-	/**
-	 * specify days in a month.
-	 */
-	private static final int DAYS_IN_A_MONTH_31 = 31;
-	/**
-	 * specify days in a month.
-	 */
-	private static final int DAYS_IN_A_MONTH_30 = 30;
-	/**
-	 * specify days in a month.
-	 */
-	private static final int DAYS_IN_A_MONTH_28 = 28;
-	/**
-	 * specify days in a month.
-	 */
-	private static final int DAYS_IN_A_MONTH_29 = 29;
-	/**
-	 * specify days in a month.
-	 */
-	private static final int TOTAL_MONTHS_IN_YEAR = 12;
+	private static String dtCh = Constants.DATE_SEPARATOR;
+	
 	/**
 	 * specify second in a min.
 	 */
@@ -449,87 +424,6 @@ public class Validator
 	 * specify 1000 number.
 	 */
 	private static final int ONE_THOUSAND = 1000;
-	/**
-	 * specify feb month.
-	 */
-	private static final int MONTH_FEB = 2;
-	/**
-	 * specify April month.
-	 */
-	private static final int MONTH_APRIL = 4;
-	/**
-	 * specify June month.
-	 */
-	private static final int MONTH_JUNE = 6;
-	/**
-	 *  specify September month.
-	 */
-	private static final int MONTH_SEP = 9;
-	/**
-	 * specify November month.
-	 */
-	private static final int MONTH_NOV = 11;
-	/**
-	 * specify Digits in year.
-	 */
-	private static final int DIGITS_IN_YEAR = 4;
-	/**
-	 * specify four number.
-	 */
-	private static final int FOUR = 4;
-	/**
-	 * specify number 100.
-	 */
-	private static final int HUNDRED = 100;
-	/**
-	 * specify number 400.
-	 */
-	private static final int FOUR_HUNDRED = 400;
-
-	/**
-	 * February days.
-	 * @param year year
-	 * @return days in Feb
-	 */
-	private int daysInFebruary(int year)
-	{
-		// February has 29 days in any year evenly divisible by four,
-		// EXCEPT for centurial years which are not also divisible by 400.
-		int daysInFeb = DAYS_IN_A_MONTH_28;
-		if ((year % FOUR == 0) && ((!(year % HUNDRED == 0)) || (year % FOUR_HUNDRED == 0)))
-		{
-			daysInFeb = DAYS_IN_A_MONTH_29;
-
-		}
-		return daysInFeb;
-	}
-
-	/**
-	 * Days in month.
-	 * @param monthNum total months in year
-	 * @return Days in month.
-	 */
-	private int[] daysArray(int monthNum)
-	{
-		int[] dayArray = new int[monthNum + 1];
-		dayArray[0] = 0;
-		boolean isDays30 = false;
-		for (int i = 1; i <= monthNum; i++)
-		{
-			dayArray[i] = DAYS_IN_A_MONTH_31;
-			isDays30 = (i == MONTH_APRIL) || (i == MONTH_JUNE) || (i == MONTH_SEP)
-					|| (i == MONTH_NOV);
-			if (isDays30)
-			{
-				dayArray[i] = DAYS_IN_A_MONTH_30;
-			}
-			if (i == MONTH_FEB)
-			{
-				dayArray[i] = DAYS_IN_A_MONTH_29;
-			}
-		}
-		return dayArray;
-	}
 
 	/**
 	 * To check date value.
@@ -539,51 +433,30 @@ public class Validator
 	private boolean isDate(String dtStr)
 	{
 		boolean isDate = true;
-		String errorMess = TextConstants.EMPTY_STRING;
+		SimpleDateFormat dateFormat= new SimpleDateFormat("MM"+dtCh+"dd"+dtCh+"yyyy");
+		int minYear = Integer.parseInt(Constants.MIN_YEAR);
+		int maxYear = Integer.parseInt(Constants.MAX_YEAR);
 		try
 		{
-			int[] daysInMonth = daysArray(TOTAL_MONTHS_IN_YEAR);
-			int pos1 = dtStr.indexOf(dtCh);
-			int pos2 = dtStr.indexOf(dtCh, pos1 + 1);
-			String strMonth = dtStr.substring(0, pos1);
-			String strDay = dtStr.substring(pos1 + 1, pos2);
-			String strYear = dtStr.substring(pos2 + 1);
-			String strYr = strYear;
-			int month = Integer.parseInt(strMonth);
-			int day = Integer.parseInt(strDay);
-			int year = Integer.parseInt(strYr);
-			if (pos1 == -1 || pos2 == -1)
+			Date date= dateFormat.parse(dtStr);
+			isDate=dtStr.equals(dateFormat.format(date));
+			if(isDate)
 			{
-				errorMess = "The date format should be : mm/dd/yyyy";
-				isDate = false;
-			}
-			if (strMonth.length() < 1 || month < 1 || month > TOTAL_MONTHS_IN_YEAR)
-			{
-				errorMess = "Please enter a valid month";
-				isDate = false;
-			}
-			if (strDay.length() < 1 || day < 1 || day > DAYS_IN_A_MONTH_31
-					|| (month == MONTH_FEB && day > daysInFebruary(year))
-					|| day > daysInMonth[month])
-			{
-				errorMess = "Please enter a valid day";
-				isDate = false;
-			}
-			if (strYear.length() != DIGITS_IN_YEAR || year == 0 || year < minYear || year > maxYear)
-			{
-				errorMess = "Please enter a valid 4 digit year between " + minYear + " and "
-						+ maxYear;
-				isDate = false;
+				Calendar gcalendar = new GregorianCalendar();
+		        gcalendar.setTime(date);
+				gcalendar.setTime(date);
+				int year=gcalendar.get(Calendar.YEAR);
+				isDate^=(year < minYear || year > maxYear);
 			}
 		}
-		catch (Exception exp)
+		catch (ParseException exp)
 		{
 			logger.error("Date is not valid:" + dtStr, exp);
 			isDate = false;
 		}
 		if (!isDate)
 		{
-			logger.error(errorMess);
+			logger.error("Date is not valid:" + dtStr);
 		}
 		return isDate;
 	}
@@ -688,7 +561,7 @@ public class Validator
 	 * Error messages for empty date, Invalid date, and Future dates are formatted .
 	 * @param strDate date
 	 * @param checkFutureDate boolean value
-	 * @return string
+	 * @return string error-key in property file
 	 */
 	public String validateDate(String strDate, boolean checkFutureDate)
 	{
