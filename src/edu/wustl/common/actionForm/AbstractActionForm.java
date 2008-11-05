@@ -29,6 +29,11 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 {
 
 	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = 1815115874068324152L;
+
+	/**
 	 * Specifies whether the id is mutable or not.
 	 */
 	private boolean mutable = true;
@@ -36,24 +41,27 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	/**
 	 * System generated unique identifier.
 	 * */
-	protected long id;
+	private long id;
 
 	/**
 	 * Specifies the page associated with this form bean.
 	 */
-	protected String pageOf;
+	private String pageOf;
 
 	/**
 	 * A String containing the operation(Add/Edit) to be performed.
 	 * */
-	protected String operation;
+	private String operation;
 
 	/**
 	 * Activity Status.
 	 */
-	protected String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
+	private String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
 
-	protected String objectId = "";
+	/**
+	 * Specifies object Id.
+	 */
+	private String objectId = "";
 
 	/**
 	 * @return Returns the mutable.
@@ -89,7 +97,9 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	public void setId(long identifier)
 	{
 		if (isMutable())
+		{
 			this.id = identifier;
+		}
 	}
 
 	/**
@@ -118,12 +128,12 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	 * */
 	public boolean isAddOperation()
 	{
-		return (operation.equals(Constants.ADD));
+		return operation.equals(Constants.ADD);
 	}
 
 	/**
 	 * Returns specified page associated with this form bean.
-	 * @return
+	 * @return specified page .
 	 */
 	public String getPageOf()
 	{
@@ -132,7 +142,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 
 	/**
 	 * Sets the page associated with this form bean.
-	 * @param pageOf
+	 * @param pageOf the page associated with this form bean.
 	 */
 	public void setPageOf(String pageOf)
 	{
@@ -140,7 +150,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Returns the activity status
+	 * Returns the activity status.
 	 * @return the activityStatus.
 	 * @see #setActivityStatus(String)
 	 */
@@ -177,10 +187,12 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	 */
 
 	/**
-	 * Checks the validity of string value of the component and adds an ActionError object in the ActionErrors object.
+	 * Checks the validity of string value of the component and
+	 * adds an ActionError object in the ActionErrors object.
 	 * @param componentName Component which is to be checked.
 	 * @param labelName Label of the component on the jsp page which is checked.
 	 * @param errors ActionErrors Object.
+	 * @param validator Validator Object.
 	 */
 	protected void checkValidString(String componentName, String labelName, ActionErrors errors,
 			Validator validator)
@@ -201,10 +213,12 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Checks the validity of numeric value of the component and adds an ActionError object in the ActionErrors object.
+	 * Checks the validity of numeric value of the component and
+	 * adds an ActionError object in the ActionErrors object.
 	 * @param componentName Component which is to be checked.
 	 * @param labelName Label of the component on the jsp page which is checked.
 	 * @param errors ActionErrors Object.
+	 * @param validator Validator Object.
 	 */
 	protected void checkValidNumber(String componentName, String labelName, ActionErrors errors,
 			Validator validator)
@@ -227,15 +241,22 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	/**
 	 * Resets the values of all the fields.
 	 * This method defined in ActionForm is overridden in this class.
+	 * @param mapping ActionMapping object.
+	 * @param request HttpServletRequest object.
 	 */
 	public void reset(ActionMapping mapping, HttpServletRequest request)
 	{
 		reset();
 	}
 
+	/**
+	 * Resets the values.
+	 */
 	protected abstract void reset();
 
-	// -------- Add new
+	/**
+	 *  -------- Add new.
+	 */
 	private String redirectTo = null;
 
 	/**
@@ -254,17 +275,26 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 		this.redirectTo = redirectTo;
 	}
 
+	/**
+	 * Set Redirect Value.
+	 * @param validator Validator object.
+	 */
 	public void setRedirectValue(Validator validator)
 	{
-		String cf = getRedirectTo();
-		if (validator.isEmpty(cf))
-			cf = "";
-		setRedirectTo(cf);
+		String redirectValue = getRedirectTo();
+		if (validator.isEmpty(redirectValue))
+		{
+			redirectValue = "";
+		}
+		setRedirectTo(redirectValue);
 	}
 
 	// -------- For success pages
 
-	protected String onSubmit;
+	/**
+	 * Specifies onSubmit.
+	 */
+	private String onSubmit;
 
 	/**
 	 * @return Returns the onSubmit.
@@ -282,8 +312,10 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 		this.onSubmit = onSubmit;
 	}
 
-	// ----------------- forwardTo-------------
-	protected String forwardTo = "success";
+	/**
+	 * Specifies forwardTo.
+	 */
+	private String forwardTo = "success";
 
 	/**
 	 * @return Returns the forwardTo.
@@ -301,8 +333,10 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 		this.forwardTo = forwardTo;
 	}
 
-	//	----------------- submittedFor -------------
-	protected String submittedFor = null;
+	/**
+	 * Specifies submittedFor.
+	 */
+	private String submittedFor = null;
 
 	/**
 	 * @return Returns submittedFor value
@@ -321,17 +355,26 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * This method set Identifier of newly added object by AddNew operation into FormBean which initiliazed AddNew operation
-	 * @param formBeanId - ID of FormBean added by AddNew operation
+	 * This method set Identifier of newly added object by AddNew operation into FormBean
+	 * which initiliazed AddNew operation.
+	 * @param addNewFor - add New For.
 	 * @param addObjectIdentifier - Identifier of newly added object by AddNew operation
 	 */
 	public void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier){}
-	
+
+	/**
+	 * Gets object id.
+	 * @return object Id.
+	 */
 	public String getObjectId()
 	{
 		return objectId;
 	}
 
+	/**
+	 * Sets object Id.
+	 * @param objectId object Id.
+	 */
 	public void setObjectId(String objectId)
 	{
 		this.objectId = objectId;
