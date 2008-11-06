@@ -2,6 +2,7 @@ package edu.wustl.common.util.global;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.mail.internet.AddressException;
@@ -15,25 +16,27 @@ import javax.mail.internet.InternetAddress;
 public class EmailDetails
 {
 	/**
-	 * to Address.
+	 * Message recipient's e-mail address as to.
 	 */
 	private List<String> toAddress;
+
 	/**
-	 * cc Address.
+	 * Message recipient's e-mail address as carbon copy(cc).
 	 */
 	private List<String> ccAddress;
+
 	/**
-	 * bcc Address.
+	 * Message recipient's e-mail address as blind carbon copy(bcc).
 	 */
 	private List<String> bccAddress;
 
 	/**
-	 * email subject.
+	 * E-mail subject.
 	 */
 	private String subject;
 
 	/**
-	 * Email body.
+	 * E-mail body.
 	 */
 	private String body;
 
@@ -47,8 +50,8 @@ public class EmailDetails
 		bccAddress = new ArrayList<String>();
 	}
 	/**
-	 * Add to recipient address.
-	 * @param toAddress Address to add in recipient.
+	 * This method adds e-mail address in main recipient's address(to) list.
+	 * @param toAddress E-mail address to add in address list.
 	 */
 	public void addToAddress(String toAddress)
 	{
@@ -56,8 +59,8 @@ public class EmailDetails
 	}
 
 	/**
-	 * Remove address from recipient list.
-	 * @param toAddress -Address to remove from recipient.
+	 * Remove an e-mail address from main recipient's address list.
+	 * @param toAddress -Address to remove from address list.
 	 */
 	public void removeToAddress(String toAddress)
 	{
@@ -65,15 +68,8 @@ public class EmailDetails
 	}
 
 	/**
-	 * @param toAddress TO email address.
-	 */
-	public void setToAddress(List<String> toAddress)
-	{
-		this.toAddress=toAddress;
-	}
-
-	/**
-	 * @param toAddress TO email address.
+	 * Set main recipient(to) address list.
+	 * @param toAddress TO e-mail address as String array.
 	 */
 	public void setToAddress(String[] toAddress)
 	{
@@ -81,39 +77,43 @@ public class EmailDetails
 	}
 
 	/**
-	 * @return the toAddress.
+	 * @return main recipient address(to) list.
 	 */
-	public List<String> getToAddress()
+	public Collection<String> getToAddress()
 	{
 	 return this.toAddress;
 	}
 
 	/**
-	 * @return return to address as array of InternetAddress.
+	 * @return main recipient(to) address list as array of InternetAddress.
 	 * @throws AddressException This exception thrown when a wrongly formatted address is encountered
 	 */
 	public InternetAddress[] getToInternetAddrArray() throws AddressException
 	{
 		return convertToInternetAddrArray(toAddress);
 	}
+
 	/**
-	 * @return the ccAddress
+	 * Add to carbon copy(cc) recipient address list.
+	 * @param ccAddress Address a address in cc address list..
 	 */
-	public List<String> getCcAddress()
+	public void addCcAddress(String ccAddress)
 	{
-		return ccAddress;
+		this.ccAddress.add(ccAddress);
 	}
 
 	/**
-	 * @param ccAddress the ccAddress to set
+	 * Remove from carbon copy(cc) recipient address list.
+	 * @param ccAddress -Address to remove from recipient address list.
 	 */
-	public void setCcAddress(List<String> ccAddress)
+	public void removeCcAddress(String ccAddress)
 	{
-		this.ccAddress = ccAddress;
+		this.ccAddress.remove(ccAddress);
 	}
 
 	/**
-	 * @param ccAddress the ccAddress to set
+	 * This method set carbon copy(cc) recipient address list.
+	 * @param ccAddress cc e-mail address list as String array.
 	 */
 	public void setCcAddress(String[] ccAddress)
 	{
@@ -121,25 +121,15 @@ public class EmailDetails
 	}
 
 	/**
-	 * Add to cc address.
-	 * @param toAddress Address to add in recipient.
+	 * @return the carbon copy(cc) recipient address list.
 	 */
-	public void addCcAddress(String toAddress)
+	public Collection<String> getCcAddress()
 	{
-		this.ccAddress.add(toAddress);
+		return ccAddress;
 	}
 
 	/**
-	 * Remove from cc address.
-	 * @param toAddress -Address to remove from recipient.
-	 */
-	public void removeCcAddress(String toAddress)
-	{
-		this.ccAddress.add(toAddress);
-	}
-
-	/**
-	 * @return return cc address as array of InternetAddress.
+	 * @return return carbon copy(cc) recipient address list as array of InternetAddress.
 	 * @throws AddressException This exception thrown when a wrongly formatted address is encountered
 	 */
 	public InternetAddress[] getCcInternetAddrArray() throws AddressException
@@ -148,23 +138,26 @@ public class EmailDetails
 	}
 
 	/**
-	 * @return the bccAddress
+	 * Add an e-mail address to blind carbon copy(bcc) recipient address list.
+	 * @param bccAddress Address to add in blind carbon copy(bcc) recipient address list.
 	 */
-	public List<String> getBccAddress()
+	public void addBccAddress(String bccAddress)
 	{
-		return bccAddress;
+		this.bccAddress.add(bccAddress);
 	}
 
 	/**
-	 * @param bccAddress the bccAddress to set
+	 * Remove a e-mail id from bcc address list.
+	 * @param bccAddress -Address to remove from blind carbon copy(bcc) recipient address list.
 	 */
-	public void setBccAddress(List<String> bccAddress)
+	public void removeBccAddress(String bccAddress)
 	{
-		this.bccAddress = bccAddress;
+		this.bccAddress.remove(bccAddress);
 	}
 
 	/**
-	 * @param bccAddress the bccAddress to set
+	 *  This method set blind carbon copy(cc) recipient address list.
+	 * @param bccAddress the e-mail address list as String array
 	 */
 	public void setBccAddress(String[] bccAddress)
 	{
@@ -172,25 +165,15 @@ public class EmailDetails
 	}
 
 	/**
-	 * Add to bcc address.
-	 * @param toAddress Address to add in recipient.
+	 * @return the blind carbon copy(bcc) recipient address list.
 	 */
-	public void addBccAddress(String toAddress)
+	public Collection<String> getBccAddress()
 	{
-		this.bccAddress.add(toAddress);
+		return bccAddress;
 	}
 
 	/**
-	 * Remove from bcc address.
-	 * @param toAddress -Address to remove from recipient.
-	 */
-	public void removeBccAddress(String toAddress)
-	{
-		this.bccAddress.add(toAddress);
-	}
-
-	/**
-	 * @return return bcc address as array of InternetAddress.
+	 * @return bcc e-mail address list as array of InternetAddress.
 	 * @throws AddressException This exception thrown when a wrongly formatted address is encountered
 	 */
 	public InternetAddress[] getBccInternetAddrArray() throws AddressException
@@ -248,7 +231,6 @@ public class EmailDetails
 		{
 			internetAddress[i] = new InternetAddress(arrayToConvert.get(i));
 		}
-		
 		return internetAddress;
 	}
 }
