@@ -31,9 +31,10 @@ import edu.wustl.common.dao.queryExecutor.IQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.locator.InterfaceLocator;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -47,23 +48,144 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	private Connection connection = null;
 	protected AuditManager auditManager;
 	private static org.apache.log4j.Logger logger = Logger.getLogger(JDBCDAOImpl.class);
+	
+	/**
+	 * This method will be used to establish the session with the database.
+	 * Declared in AbstractDAO class.
+	 * 
+	 * @throws DAOException
+	 */
+	public void openSession(SessionDataBean sessionDataBean) throws DAOException
+	{
+		auditManager = new AuditManager();
+		if (sessionDataBean != null)
+		{
+			auditManager.setUserId(sessionDataBean.getUserId());
+			auditManager.setIpAddress(sessionDataBean.getIpAddress());
+		}
+		else
+		{
+			auditManager.setUserId(null);
+		}
 
-	public abstract void closeSession() throws DAOException;
+		try
+		{
+			//Creates a connection.
+			connection = DBUtil.getConnection();// getConnection(database, loginName, password);
+			connection.setAutoCommit(false);
+		}
+		catch (Exception sqlExp)
+		{
+			//throw new DAOException(sqlExp.getMessage(),sqlExp);
+			logger.error(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
+		}
+	}
 	
+	/**
+	 * This method will be used to close the session with the database.
+	 * Declared in AbstractDAO class.
+	 * @throws DAOException
+	 */
+	public void closeSession() throws DAOException
+	{
+		try
+		{
+			auditManager = null;
+			DBUtil.closeConnection();
+			//        	if (connection != null && !connection.isClosed())
+			//        	    connection.close();
+		}
+		catch (Exception sqlExp)
+		{
+			//            new DAOException(sqlExp.getMessage(),sqlExp);
+			logger.error(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
 
-	public abstract void commit() throws DAOException;
-	
+		}
+	}
 
-	public abstract void openSession(SessionDataBean sessionDataBean) throws DAOException;
-	
+	/**
+	 * Commit the database level changes.
+	 * Declared in AbstractDAO class.
+	 * @throws DAOException
+	 * @throws SMException
+	 */
+	public void commit() throws DAOException
+	{
+		try
+		{
+			auditManager.insert(this);
 
-	public abstract void rollback() throws DAOException;
-	
-	
-	
-	public abstract void delete(String tableName) throws DAOException;
-	
+			if (connection != null)
+				connection.commit();
+		}
+		catch (SQLException dbex)
+		{
+			logger.error(dbex.getMessage(), dbex);
+			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
+		}
+	}
 
+	/**
+	 * Rollback all the changes after last commit. 
+	 * Declared in AbstractDAO class. 
+	 * @throws DAOException
+	 */
+	public void rollback()
+	{
+		try
+		{
+			if (connection != null)
+				connection.rollback();
+		}
+		catch (SQLException dbex)
+		{
+			logger.error(dbex.getMessage(), dbex);
+		}
+	}
+	
+	
+	public void executeUpdate(String query) throws DAOException
+	{
+		PreparedStatement stmt = null;
+		try
+		{
+			stmt = connection.prepareStatement(query.toString());
+
+			stmt.executeUpdate();
+		}
+		catch (SQLException sqlExp)
+		{
+
+			throw new DAOException(sqlExp.getMessage(), sqlExp);
+		}
+		finally
+		{
+			try
+			{
+				if (stmt != null)
+					stmt.close();
+			}
+			catch (SQLException ex)
+			{
+				throw new DAOException(ex.getMessage(), ex);
+			}
+		}
+	}
+	
+	public Statement getConnectionStmt() throws SQLException
+	{
+		Statement statement = connection.createStatement();
+		return statement;
+	}
+
+	public void createTable(String tableName, String[] columnNames) throws DAOException
+	{
+		String query = createTableQuery(tableName,columnNames);
+		executeUpdate(query);
+	}
+	
 	/**
 	 * Creates a table with the query specified.
 	 * @param query Query create table.
@@ -74,7 +196,23 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		logger.debug("Create Table Query " + query.toString());
 		executeUpdate(query.toString());
 	}
+	
+	private final String createTableQuery(String tableName, String[] columnNames) throws DAOException
+	{
+		StringBuffer query = new StringBuffer("CREATE TABLE " + tableName + " (");
+		int i = 0;
 
+		for (; i < (columnNames.length - 1); i++)
+		{
+			query = query.append(columnNames[i] + " VARCHAR(50),");
+		}
+
+		query.append(columnNames[i] + " VARCHAR(50));");
+
+		logger.debug("Create Table*************************" + query.toString());
+		
+		return  query.toString();
+	}
 	/**
 	 * Returns the ResultSet containing all the rows in the table represented in sourceObjectName. 
 	 * @param sourceObjectName The table name.
@@ -84,7 +222,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 */
 	public List retrieve(String sourceObjectName) throws DAOException
 	{
-		return retrieve(sourceObjectName, null, null, null, null, null);
+		return retrieve(sourceObjectName, null, null, null, null, null,false);
 	}
 
 	/**
@@ -99,7 +237,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 */
 	public List retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
 	{
-		return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
+		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,false);
 	}
 
 	/**
@@ -120,6 +258,39 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
 				onlyDistinctRows);
 	}
+	
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
+	 * @param selectColumnName An array of field names in select clause.
+	 * @param whereColumnName An array of field names in where clause.
+	 * @param whereColumnCondition The comparision condition for the field values. 
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
+	 * @param The session object.
+	 */
+	public List retrieve(String sourceObjectName, String[] selectColumnName,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition) throws DAOException
+	{
+		return retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
+				whereColumnValue, joinCondition, false);
+	}
+
+	/**
+	 * (non-Javadoc)
+	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
+	 */
+	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
+			throws DAOException
+	{
+		String whereColumnNames[] = {whereColumnName};
+		String whereColumnConditions[] = {"="};
+		Object whereColumnValues[] = {whereColumnValue};
+
+		return retrieve(sourceObjectName, null, whereColumnNames, whereColumnConditions,
+				whereColumnValues, Constants.AND_JOIN_CONDITION,false);
+	}
+
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
@@ -200,23 +371,8 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		return list;
 	}
 
-	/**
-	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
-	 * @param selectColumnName An array of field names in select clause.
-	 * @param whereColumnName An array of field names in where clause.
-	 * @param whereColumnCondition The comparision condition for the field values. 
-	 * @param whereColumnValue An array of field values.
-	 * @param joinCondition The join condition.
-	 * @param The session object.
-	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws DAOException
-	{
-		return retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
-				whereColumnValue, joinCondition, false);
-	}
-
+		
+	
 	/**
 	 * Executes the query.
 	 * @param query
@@ -336,21 +492,6 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
-	 */
-	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
-			throws DAOException
-	{
-		String whereColumnNames[] = {whereColumnName};
-		String whereColumnConditions[] = {"="};
-		Object whereColumnValues[] = {whereColumnValue};
-
-		return retrieve(sourceObjectName, null, whereColumnNames, whereColumnConditions,
-				whereColumnValues, Constants.AND_JOIN_CONDITION);
-	}
-
 	private Timestamp isColumnValueDate(Object value)
 	{
 		//logger.out.debug("Column value: " + value);
@@ -396,7 +537,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	{
 		//Get metadate for temp table to set default values in date fields
 		String sql = "Select * from " + tableName + " where 1!=1";
-		Statement statement = connection.createStatement();
+		Statement statement = getConnectionStmt();
 		ResultSet resultSet = statement.executeQuery(sql.toString());
 		ResultSetMetaData metaData = resultSet.getMetaData();
 		
@@ -482,48 +623,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		}
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * @see edu.wustl.common.dao.AbstractDAO#update(java.lang.Object, SessionDataBean, boolean, boolean, boolean)
-	 */
-	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException,
-			UserNotAuthorizedException
-	{
-		// TODO Auto-generated method stub
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.dao.AbstractDAO#delete(java.lang.Object)
-	 */
-	public void delete(Object obj) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		//return false;
-	}
-
-	/**
-	 * Creates a table with the name and columns specified.
-	 * @param tableName Name of the table to create.
-	 * @param columnNames Columns in the table.
-	 * @throws DAOException
-	 */
-	public void create(String tableName, String[] columnNames) throws DAOException
-	{
-		StringBuffer query = new StringBuffer("CREATE TABLE " + tableName + " (");
-		int i = 0;
-
-		for (; i < (columnNames.length - 1); i++)
-		{
-			query = query.append(columnNames[i] + " VARCHAR(50),");
-		}
-
-		query.append(columnNames[i] + " VARCHAR(50));");
-
-		logger.debug("Create Table*************************" + query.toString());
-
-		executeUpdate(query.toString());
-	}
+	
 	
 	/**
 	 * (non-Javadoc)
@@ -542,61 +642,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		}
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * @see edu.wustl.common.dao.DAO#insert(java.lang.Object, boolean)
-	 */
-	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
-	{
-		// TODO Auto-generated method stub
-		//		if(isAuditable)
-		//		auditManager.compare((AbstractDomainObject)obj,null,"INSERT");
-	}
-
-	public void executeUpdate(String query) throws DAOException
-	{
-		PreparedStatement stmt = null;
-		try
-		{
-			stmt = connection.prepareStatement(query.toString());
-
-			stmt.executeUpdate();
-		}
-		catch (SQLException sqlExp)
-		{
-
-			throw new DAOException(sqlExp.getMessage(), sqlExp);
-		}
-		finally
-		{
-			try
-			{
-				if (stmt != null)
-					stmt.close();
-			}
-			catch (SQLException ex)
-			{
-				throw new DAOException(ex.getMessage(), ex);
-			}
-		}
-	}
-
-	public void disableRelatedObjects(String tableName, String whereColumnName,
-			Long whereColumnValues[]) throws DAOException
-	{
-	}
-
-	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
-	{
-		return null;
-	}
-
-	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
-			boolean isAuditable) throws DAOException
-	{
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
 	 */
@@ -606,15 +652,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		return retrieveAttribute(objClass.getName(), id, attributeName);
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
-	 */
-	public Object retrieveAttribute(String sourceObjectName, Long id, String attributeName)
-			throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	
 	private void getPreparedStatement(PreparedStatement stmt,List dateColumns,List tinyIntColumns,List numberColumns,List columnValues) throws SQLException
 	{

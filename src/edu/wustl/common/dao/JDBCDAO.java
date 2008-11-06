@@ -124,7 +124,7 @@ public interface JDBCDAO extends DAO
 	   * @param columnNames Columns in the table.
 	   * @throws DAOException generic DAOException
 	   */
-	void create(String tableName, String[] columnNames) throws DAOException;
+	void createTable(String tableName, String[] columnNames) throws DAOException;
 
 	/**
 	   * Deletes the specified table.
