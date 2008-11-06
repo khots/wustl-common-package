@@ -210,5 +210,22 @@ public interface DAO
 	 * @throws DAOException
 	 */
 	public abstract void rollback() throws DAOException;
+	
+	
+	
+	String getDatePattern();
+	
+	
+	String getTimePattern();
+	
+	String getDateFormatFunction();
+	
+	String getTimeFormatFunction();
+	
+	String getDateTostrFunction();
+	
+	String getStrTodateFunction();
+	
+	
 
 }

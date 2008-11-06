@@ -180,9 +180,9 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		return statement;
 	}
 	
-	public PreparedStatement getPreparedStatement(String query)
+	public PreparedStatement getPreparedStatement(String query) throws SQLException
 	{
-		return (connection.prepareStatement(query));
+		return(connection.prepareStatement(query));
 		
 	}	
 
