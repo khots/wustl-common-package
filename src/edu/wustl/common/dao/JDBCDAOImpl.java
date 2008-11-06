@@ -179,6 +179,12 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		Statement statement = connection.createStatement();
 		return statement;
 	}
+	
+	public PreparedStatement getPreparedStatement(String query)
+	{
+		return (connection.prepareStatement(query));
+		
+	}	
 
 	public void createTable(String tableName, String[] columnNames) throws DAOException
 	{
@@ -387,8 +393,13 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException
 	{
-		return executeQuery(query, sessionDataBean, isSecureExecute, false,
-				queryResultObjectDataMap, -1, -1).getResult();
+		
+		//return executeQuery(query, sessionDataBean, isSecureExecute, false,
+			//	queryResultObjectDataMap, -1, -1).getResult();
+		
+		return getQueryResultList(query, sessionDataBean, isSecureExecute,
+				false, queryResultObjectDataMap, -1, -1).getResult();
+	
 	}
 
 	/**
@@ -413,8 +424,21 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		 * Calling executeQuery method with StartIndex parameter as -1, so that it will return all records from result.
 		 */
 
-		return executeQuery(query, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
-				queryResultObjectDataMap, -1, -1).getResult();
+		/*return executeQuery(query, sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
+				queryResultObjectDataMap, -1, -1).getResult();*/
+		
+		if (Constants.SWITCH_SECURITY && isSecureExecute)
+		{
+			if (sessionDataBean == null)
+			{
+				//logger.out.debug("Session data is null");
+				return null;
+			}
+		}
+		
+		
+		return getQueryResultList(query, sessionDataBean, isSecureExecute,
+				hasConditionOnIdentifiedField, queryResultObjectDataMap, -1, -1).getResult();
 	}
 
 	/**
@@ -459,7 +483,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @return
 	 * @throws DAOException
 	 */
-	private PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean,
+	public PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws DAOException
 	{
@@ -492,139 +516,6 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 
 	}
 
-	private Timestamp isColumnValueDate(Object value)
-	{
-		//logger.out.debug("Column value: " + value);
-		try
-		{
-			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-			formatter.setLenient(false);
-			java.util.Date date = formatter.parse((String) value);
-			Timestamp t = new Timestamp(date.getTime());
-			// Date sqlDate = new Date(date.getTime());
-
-			//logger.out.debug("Column date value: " + date);
-			if (value.toString().equals("") == false)
-			{
-				//logger.out.debug("Return true: " + value);
-				return t;
-			}
-		}
-		catch (Exception e)
-		{
-
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
-	 */
-	public void insert(String tableName, List columnValues) throws DAOException, SQLException
-	{
-		insert(tableName, columnValues, null);
-	}
-
-	/**
-	 * @param tableName
-	 * @param columnValues
-	 * @param columnNames
-	 * @throws DAOException
-	 * @throws SQLException
-	 */
-	public void insert(String tableName, List columnValues, List<String>... columnNames)
-			throws DAOException, SQLException
-	{
-		//Get metadate for temp table to set default values in date fields
-		String sql = "Select * from " + tableName + " where 1!=1";
-		Statement statement = getConnectionStmt();
-		ResultSet resultSet = statement.executeQuery(sql.toString());
-		ResultSetMetaData metaData = resultSet.getMetaData();
-		
-		List dateColumns = new ArrayList();
-		List numberColumns = new ArrayList();
-
-		List<String> columnNames_t;
-		if (columnNames != null && columnNames.length > 0)
-		{
-			columnNames_t = columnNames[0];
-		}
-		else
-		{
-			columnNames_t = new ArrayList<String>();
-			for (int i = 1; i <= metaData.getColumnCount(); i++)
-			{
-				columnNames_t.add(metaData.getColumnName(i));
-			}
-		}
-
-		/* Desciption: Make a list of tinyint columns.
-		* Tinyint datatype is used as a replacement for boolean in MySQL.
-		*/
-		List tinyIntColumns = new ArrayList();
-		updateColumns(metaData,dateColumns,tinyIntColumns,numberColumns);
-
-		resultSet.close();
-		statement.close();
-		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + "(");
-
-		Iterator<String> columnIterator = columnNames_t.iterator();
-		while (columnIterator.hasNext())
-		{
-			query.append(columnIterator.next());
-			if (columnIterator.hasNext())
-			{
-				query.append(",");
-			}
-			else
-			{
-				query.append(") values(");
-			}
-		}
-
-		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
-		//Changed implementation with column names
-	
-		Iterator it = columnValues.iterator();
-		while (it.hasNext())
-		{
-			it.next();
-			query.append("?");
-
-			if (it.hasNext())
-				query.append(",");
-			else
-				query.append(")");
-		}
-
-		PreparedStatement stmt = null;
-		try
-		{
-			stmt = connection.prepareStatement(query.toString());
-			getPreparedStatement(stmt,dateColumns,tinyIntColumns,numberColumns,columnValues);
-			stmt.executeUpdate();
-		}
-		catch (SQLException sqlExp)
-		{
-			sqlExp.printStackTrace();
-			throw new DAOException(sqlExp.getMessage(), sqlExp);
-		}
-		finally
-		{
-			try
-			{
-				if (stmt != null)
-					stmt.close();
-			}
-			catch (SQLException ex)
-			{
-				throw new DAOException(ex.getMessage(), ex);
-			}
-		}
-	}
-
-	
-	
 	/**
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.Long)
@@ -654,94 +545,6 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 
 	
 	
-	private void getPreparedStatement(PreparedStatement stmt,List dateColumns,List tinyIntColumns,List numberColumns,List columnValues) throws SQLException
-	{
-		for (int i = 0; i < columnValues.size(); i++)
-		{
-			Object obj = columnValues.get(i);
-			/**
-			 * For Number -1 is used as MarkUp data For Date 1-1-9999 is used as markUp data.
-			 * Please refer bug 3576
-			 */
-
-			if (dateColumns.contains(Integer.valueOf((i + 1))) && obj.toString().equals("##"))
-			{
-				java.util.Date date = null;
-				try
-				{
-					date = Utility.parseDate("1-1-9999", "mm-dd-yyyy");
-				}
-				catch (ParseException e)
-				{
-					e.printStackTrace();
-				}
-				Date sqlDate = new Date(date.getTime());
-				stmt.setDate(i + 1, sqlDate);
-			}
-			
-			/**
-			* Desciption: If the value of the column is true set 1 in the statement else set 0.
-			* This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-			* If this is not done then all values will be set as 0 
-			* irrespective of whether the value is true or false.
-			*/
-			else if (tinyIntColumns.contains(Integer.valueOf((i + 1))))
-			{
-				if (obj.equals("true") || obj.equals("TRUE"))
-				{
-					stmt.setObject(i + 1, 1);
-				}
-				else
-				{
-					stmt.setObject(i + 1, 0);
-				}
-			}
-			else
-			{
-				Timestamp date = isColumnValueDate(obj);
-				if (date != null)
-				{
-					stmt.setObject(i + 1, date);
-					//logger.out.debug("t.toString(): " + "---" + date);
-				}
-				else
-				{
-					if (numberColumns.contains(Integer.valueOf(i + 1))
-							&& obj.toString().equals("##"))
-					{
-						stmt.setObject(i + 1,Integer.valueOf(-1));
-					}
-					else
-					{
-						stmt.setObject(i + 1, obj);
-					}
-				}
-			}
-		}
-	}
-	
-	private void updateColumns(ResultSetMetaData metaData,List dateColumns,List tinyIntColumns,List numberColumns) throws SQLException
-	{
-		
-		for (int i = 1; i <= metaData.getColumnCount(); i++)
-		{
-			String type = metaData.getColumnTypeName(i);
-			if ("DATE".equals(type))
-			{
-				dateColumns.add(Integer.valueOf(i));
-			}	
-			if ("NUMBER".equals(type))
-			{
-				numberColumns.add(Integer.valueOf(i));
-			}
-			if ("TINYINT".equals(type))
-			{	
-				tinyIntColumns.add(Integer.valueOf(i));
-			}
-
-		}
-		
-	}
 	
 
 }
