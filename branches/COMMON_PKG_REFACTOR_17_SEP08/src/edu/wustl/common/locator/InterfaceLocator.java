@@ -39,41 +39,48 @@ public class InterfaceLocator
 	private static final String ATTR_CLASS_NAME="className";
 
 
-	private static Map<String,String> interfaceMap ;
-	private static InterfaceLocator locator = null;
+	private Map<String,String> interfaceMap ;
+	/**
+	 * private instance will be created when the class is loaded.
+	 */
+	private static InterfaceLocator locator = new InterfaceLocator();
+	/**
+	 * Making this class singleton
+	 */
+	private InterfaceLocator()
+	{
+		init();
+	}
+	/**
+	 * returning the same instance every time
+	 * @return InterfaceLocator
+	 */
 	public static InterfaceLocator getInstance()
 	{
-		if(locator == null)
-		{
-			locator = new InterfaceLocator(); 
-			init();
-		}
 		return locator;
 	}
 	/**
 	 * 
 	 * @param interfaceName
-	 * @return
+	 * @return ClassNameForInterface
 	 */
 	public String getClassNameForInterface(String interfaceName)
 	{
 		return interfaceMap.get(interfaceName);
 	}
-
 	/**
 	 * This method load the interfaces into map.
 	 */
-	private static void init()
+	private void init()
 	{
 		Document doc =XMLParserUtility.getDocument(INTERFACE_CONF_FILE);
 		NodeList interfacesList = doc.getElementsByTagName(ELE_INTERFACE);
 		populateMaps(interfacesList);
 	}
-
 	/**
 	 * @param interfacesList this method populate xml data to maps.
 	 */
-	private static void populateMaps(NodeList interfacesList)
+	private void populateMaps(NodeList interfacesList)
 	{
 		Node interfaceNode;
 		interfaceMap= new HashMap<String, String>();
@@ -86,11 +93,10 @@ public class InterfaceLocator
 			}
 		}
 	}
-
 	/**
 	 * @param interfaceNode Node- xml interface node
 	 */
-	private static void addNewInterfaceToMap(Node interfaceNode)
+	private void addNewInterfaceToMap(Node interfaceNode)
 	{
 		String name;
 		String className;
