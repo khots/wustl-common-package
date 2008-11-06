@@ -49,40 +49,34 @@ public class SendEmail
 	private String host;
 
 	/**
+	 * Constructor with host and from e-mail address.
+	 * @param host -host address of man server.
+	 * @param from - Sender email address.
+	 * @throws MessagingException Throws exception if host is null.
+	 */
+	public SendEmail(String host,String from) throws MessagingException
+	{
+		if(null==host)
+		{
+			logger.fatal("Host can't be null");
+			throw new MessagingException("Host can't be null");
+		}
+		this.host=host;
+		this.from=from;
+	}
+	/**
 	 * Used to send the mail with given parameters.
 	 *
-	 * @param emailDetails EmailDetails object
+	 * @param emailDetails EmailDetails object which contains email subject, body recipient address.
 	 * @return true if mail was successfully sent, false if it fails
 	 */
-	public boolean sendmail(EmailDetails emailDetails)
+	public boolean sendMail(EmailDetails emailDetails)
 	{
-
-		// create some properties and get the default Session
-		Properties props = new Properties();
-		props.put("mail.smtp.host", host);
-
-		Session session = Session.getDefaultInstance(props, null);
-		session.setDebug(false);
 		boolean sendStatus;
-
+		Session session = getEmailSession();
 		try
 		{
-
-			MimeMessage msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress(from));
-
-			msg.setRecipients(Message.RecipientType.CC, emailDetails.getCcInternetAddrArray());
-			msg.setRecipients(Message.RecipientType.BCC, emailDetails.getBccInternetAddrArray());
-			msg.setRecipients(Message.RecipientType.TO, emailDetails.getToInternetAddrArray());
-			msg.setSubject(emailDetails.getSubject());
-			msg.setSentDate(new Date());
-			// create and fill the first message part
-			MimeBodyPart messageBodyPart = new MimeBodyPart();
-			messageBodyPart.setText(emailDetails.getBody());
-			Multipart multiPart = new MimeMultipart();
-			multiPart.addBodyPart(messageBodyPart);
-			// add the Multipart to the message
-			msg.setContent(multiPart);
+			MimeMessage msg = setEmailInfo(emailDetails,session);
 			Transport.send(msg);
 			sendStatus = true;
 		}
@@ -94,6 +88,43 @@ public class SendEmail
 		return sendStatus;
 	}
 
+	/**
+	 * @param emailDetails EmailDetails object which contains email subject, body recipient address.
+	 * @param session Email Session.
+	 * @return message with updated
+	 * @throws MessagingException This exception thrown if email parameters are wrongly formatted.
+	 */
+	public MimeMessage setEmailInfo(EmailDetails emailDetails,Session session)
+			throws MessagingException
+	{
+		MimeMessage msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress(from));
+		msg.setRecipients(Message.RecipientType.CC, emailDetails.getCcInternetAddrArray());
+		msg.setRecipients(Message.RecipientType.BCC, emailDetails.getBccInternetAddrArray());
+		msg.setRecipients(Message.RecipientType.TO, emailDetails.getToInternetAddrArray());
+		msg.setSubject(emailDetails.getSubject());
+		msg.setSentDate(new Date());
+		// create and fill the first message part
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setText(emailDetails.getBody());
+		Multipart multiPart = new MimeMultipart();
+		multiPart.addBodyPart(messageBodyPart);
+		// add the Multipart to the message
+		msg.setContent(multiPart);
+		return msg;
+	}
+
+	/**
+	 * @return Default mail Session.
+	 */
+	private Session getEmailSession()
+	{
+		Properties props = new Properties();
+		props.put("mail.smtp.host", host);
+		Session session = Session.getDefaultInstance(props, null);
+		session.setDebug(false);
+		return session;
+	}
 	/**
 	 * @return the from
 	 */
