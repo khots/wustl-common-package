@@ -60,32 +60,32 @@ public class Variables
 	/**
 	 * specify date Pattern.
 	 */
-	public static String datePattern = CONST_VARIABLES_VALUE;
+	//public static String datePattern = CONST_VARIABLES_VALUE;
 
 	/**
 	 * specify time pattern.
 	 */
-	public static String timePattern = CONST_VARIABLES_VALUE;
+	//public static String timePattern = CONST_VARIABLES_VALUE;
 
 	/**
 	 * specify timeFormatFunction.
 	 */
-	public static String timeFormatFunction = CONST_VARIABLES_VALUE;
+	//public static String timeFormatFunction = CONST_VARIABLES_VALUE;
 
 	/**
 	 * specify dateFormatFunction.
 	 */
-	public static String dateFormatFunction = CONST_VARIABLES_VALUE;
+	//public static String dateFormatFunction = CONST_VARIABLES_VALUE;
 
 	/**
 	 * specify string To date Function.
 	 */
-	public static String strTodateFunction = CONST_VARIABLES_VALUE;
+	//public static String strTodateFunction = CONST_VARIABLES_VALUE;
 
 	/**
 	 * specify dateTostrFunction.
 	 */
-	public static String dateTostrFunction = CONST_VARIABLES_VALUE;
+	//public static String dateTostrFunction = CONST_VARIABLES_VALUE;
 
 	/**
 	 * specify catissueURL.

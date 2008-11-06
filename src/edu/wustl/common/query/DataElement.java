@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
@@ -98,6 +100,7 @@ public class DataElement implements Serializable
 	 */
 	public String toSQLString(int tableSufix) throws SQLException
 	{
+		DAO dao = DAOFactory.getInstance().getJDBCDAO();
 		if (table.toSQLString() == null || field == null)
 		{
 			return null;
@@ -106,15 +109,15 @@ public class DataElement implements Serializable
 		if ((fieldType != null)
 				&& (Constants.FIELD_TYPE_TIMESTAMP_TIME.equalsIgnoreCase(fieldType)))
 		{
-			fieldName = Variables.timeFormatFunction + "(" + fieldName + ",'"
-					+ Variables.timePattern + "') ";
+			fieldName = dao.getTimeFormatFunction() + "(" + fieldName + ",'"
+					+ dao.getTimePattern() + "') ";
 		}
 		else if ((fieldType != null)
 				&& (Constants.FIELD_TYPE_TIMESTAMP_DATE.equalsIgnoreCase(fieldType)))
 		{
-			fieldName = Variables.strTodateFunction + "(" + Variables.dateFormatFunction + "("
-					+ fieldName + ",'" + Variables.datePattern + "')" + ",'"
-					+ Variables.datePattern + "')";
+			fieldName = dao.getStrTodateFunction() + "(" + dao.getDateFormatFunction()+ "("
+					+ fieldName + ",'" + dao.getDatePattern() + "')" + ",'"
+					+ dao.getDatePattern() + "')";
 		}
 
 		return fieldName;

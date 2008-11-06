@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import edu.wustl.common.cde.CDEManager;
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -296,6 +298,7 @@ public class Condition
 			{
 				Date date = new Date();
 				date = Utility.parseDate(newValue);
+				DAO dao = DAOFactory.getInstance().getJDBCDAO();
 
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);
@@ -303,8 +306,8 @@ public class Condition
 						+ calendar.get(Calendar.DAY_OF_MONTH) + "-"
 						+ calendar.get(Calendar.YEAR);
 
-				newValue = Variables.strTodateFunction + "('" + value + "','"
-						+ Variables.datePattern + "')";
+				newValue = dao.getStrTodateFunction()+ "('" + value + "','"
+						+ dao.getDatePattern() + "')";
 			}
 			catch (ParseException parseExp)
 			{
