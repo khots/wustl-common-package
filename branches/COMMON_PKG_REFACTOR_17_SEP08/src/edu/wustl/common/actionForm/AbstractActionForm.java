@@ -39,7 +39,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	private boolean mutable = true;
 
 	/**
-	 * System generated unique identifier.
+	 * Specifies unique identifier.
 	 * */
 	private long id;
 
@@ -80,8 +80,8 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Returns system generated unique identifier.
-	 * @return system generated unique identifier.
+	 * Returns unique identifier.
+	 * @return unique identifier.
 	 * @see #setId(long)
 	 * */
 	public long getId()
@@ -90,8 +90,8 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Sets system generated unique identifier.
-	 * @param identifier system generated unique identifier.
+	 * Sets unique identifier.
+	 * @param identifier unique identifier.
 	 * @see #getId()
 	 * */
 	public void setId(long identifier)
@@ -142,7 +142,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 
 	/**
 	 * Sets the page associated with this form bean.
-	 * @param pageOf the page associated with this form bean.
+	 * @param pageOf the page name to associate with this form bean.
 	 */
 	public void setPageOf(String pageOf)
 	{
@@ -150,8 +150,8 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Returns the activity status.
-	 * @return the activityStatus.
+	 * This method gets the activity status.
+	 * @return the activity Status.
 	 * @see #setActivityStatus(String)
 	 */
 	public String getActivityStatus()
@@ -160,7 +160,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Sets the activity status.
+	 * This method sets the activity status.
 	 * @param activityStatus activity status.
 	 * @see #getActivityStatus()
 	 */
@@ -176,19 +176,8 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	public abstract int getFormId();
 
 	/**
-	 * Copies all the values from the Object object.
-	 * @param obj The Object object.
-	 */
-	//public abstract void setAllValues(AbstractDomainObject abstractDomain);
-	/**
-	 * Copies all the values from the Object object.
-	 * @param obj The Object object.
-	 	public void setAllVal(Object object){};
-	 */
-
-	/**
-	 * Checks the validity of string value of the component and
-	 * adds an ActionError object in the ActionErrors object.
+	 * This method validates component for string value and
+	 * updates ActionError object accordingly.
 	 * @param componentName Component which is to be checked.
 	 * @param labelName Label of the component on the jsp page which is checked.
 	 * @param errors ActionErrors Object.
@@ -213,8 +202,8 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	}
 
 	/**
-	 * Checks the validity of numeric value of the component and
-	 * adds an ActionError object in the ActionErrors object.
+	 * This method validates component for numeric value and
+	 * updates ActionError object accordingly.
 	 * @param componentName Component which is to be checked.
 	 * @param labelName Label of the component on the jsp page which is checked.
 	 * @param errors ActionErrors Object.
@@ -255,7 +244,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	protected abstract void reset();
 
 	/**
-	 *  -------- Add new.
+	 *  Specifies redirectTo.
 	 */
 	private String redirectTo = null;
 
@@ -360,7 +349,9 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	 * @param addNewFor - add New For.
 	 * @param addObjectIdentifier - Identifier of newly added object by AddNew operation
 	 */
-	public void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier){}
+	public void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier)
+	{
+	}
 
 	/**
 	 * Gets object id.

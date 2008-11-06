@@ -250,7 +250,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		}
 		else
 		{
-			boolean tableError = false, attributeError = false, conditionError = false;
+			boolean tableError = false, attrError = false, conditionError = false;
 			String errorKeyForTable = "simpleQuery.object.required";
 			String errorKeyForField = "simpleQuery.attribute.required";
 			for (int i = 1; i <= Integer.parseInt(counter); i++)
@@ -258,9 +258,8 @@ public class SimpleQueryInterfaceForm extends ActionForm
 				String condDataElement = i + "_Condition_DataElement_table";
 				tableError = isError(errors, tableError, errorKeyForTable, condDataElement);
 
-				condDataElement = i+"_Condition_DataElement_field";
-				attributeError = isError(errors, attributeError, errorKeyForField,
-						condDataElement);
+				condDataElement = i + "_Condition_DataElement_field";
+				attrError = isError(errors, attrError, errorKeyForField, condDataElement);
 
 				if (!conditionError)
 				{
@@ -282,15 +281,16 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 * @return errorValue true or false.
 	 * @param condDataElement condition Data Element.
 	 */
-	private boolean isError(ActionErrors errors, boolean error,
-			String actionErrorKey, String condDataElement)
+	private boolean isError(ActionErrors errors, boolean error, String actionErrorKey,
+			String condDataElement)
 	{
 		boolean errorValue = error;
-		if(!error)
+		if (!error)
 		{
 			Validator validator = new Validator();
-			String key = "SimpleConditionsNode:" + condDataElement;
-			String enteredValue = (String) getValue(key);
+			StringBuffer key = new StringBuffer();
+			key.append("SimpleConditionsNode:").append(condDataElement);
+			String enteredValue = (String) getValue(key.toString());
 			if (!validator.isValidOption(enteredValue))
 			{
 				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(actionErrorKey));
@@ -332,9 +332,10 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	{
 		boolean conditionError = false;
 		Validator validator = new Validator();
-		String operatorKey = "SimpleConditionsNode:" + integerValue
-				+ "_Condition_Operator_operator";
-		String operatorValue = (String) getValue(operatorKey);
+		StringBuffer operatorKey = new StringBuffer();
+		operatorKey.append("SimpleConditionsNode:").append(integerValue).append(
+				"_Condition_Operator_operator");
+		String operatorValue = (String) getValue(operatorKey.toString());
 		if (!validator.isEmpty(operatorValue)
 				&& !(operatorValue.equals(Operator.IS_NULL) || operatorValue
 						.equals(Operator.IS_NOT_NULL)))
@@ -404,7 +405,8 @@ public class SimpleQueryInterfaceForm extends ActionForm
 			if (!enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_YES)
 					&& !enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_NO))
 			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+				errors
+						.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 								"simpleQuery.tinyint.format"));
 				conditionError = true;
 			}
