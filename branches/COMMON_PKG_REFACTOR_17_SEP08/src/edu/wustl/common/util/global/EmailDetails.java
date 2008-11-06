@@ -46,8 +46,6 @@ public class EmailDetails
 	public EmailDetails()
 	{
 		toAddress = new ArrayList<String>();
-		ccAddress = new ArrayList<String>();
-		bccAddress = new ArrayList<String>();
 	}
 	/**
 	 * This method adds e-mail address in main recipient's address(to) list.
@@ -99,6 +97,10 @@ public class EmailDetails
 	 */
 	public void addCcAddress(String ccAddress)
 	{
+		if(null==ccAddress)
+		{
+			this.ccAddress = new ArrayList<String>();
+		}
 		this.ccAddress.add(ccAddress);
 	}
 
@@ -143,6 +145,10 @@ public class EmailDetails
 	 */
 	public void addBccAddress(String bccAddress)
 	{
+		if(null==bccAddress)
+		{
+			this.bccAddress = new ArrayList<String>();
+		}
 		this.bccAddress.add(bccAddress);
 	}
 
@@ -217,20 +223,18 @@ public class EmailDetails
 	/**
 	 * This method convert Array To InternetAddrArray.
 	 * Added by kiran_pinnamaneni. code reviewer abhijit_naik
-	 * @param arrayToConvert convert int internet address array
+	 * @param emailAddrList convert into internet address array
 	 * @return internetAddress
 	 * @throws AddressException This exception thrown when a wrongly formatted address is encountered
 	 */
-	private InternetAddress[] convertToInternetAddrArray(List<String> arrayToConvert)
+	private InternetAddress[] convertToInternetAddrArray(List<String> emailAddrList)
 		throws AddressException
-
 	{
-		int noOfAddress=arrayToConvert.size();
-		InternetAddress[] internetAddress = new InternetAddress[noOfAddress];
-		for (int i = 0; i < noOfAddress; i++)
+		List<InternetAddress> internetAddrList= new ArrayList<InternetAddress>();
+		for (String emailAddr:emailAddrList)
 		{
-			internetAddress[i] = new InternetAddress(arrayToConvert.get(i));
+			internetAddrList.add( new InternetAddress(emailAddr));
 		}
-		return internetAddress;
+		return (InternetAddress[])internetAddrList.toArray(new InternetAddress[emailAddrList.size()]);
 	}
 }
