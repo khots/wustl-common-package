@@ -819,40 +819,4 @@ public class HibernateDAOImpl implements HibernateDAO
 		return sqlQuery;
 	}
 
-	public String getDateFormatFunction()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getDatePattern()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getDateTostrFunction()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getStrTodateFunction()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getTimeFormatFunction()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getTimePattern()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -107,12 +107,12 @@ public class DAOFactory
 		return dao;
 	}
 	
-	public DAO getJDBCDAO()
+	public JDBCDAO getJDBCDAO()
 	{
-		DAO dao = null;
+		JDBCDAO dao = null;
 		try {
 		
-			dao = (DAO)Class.forName(DaoProperties.getValue("jdbcDao")).newInstance();
+			dao = (JDBCDAO)Class.forName(DaoProperties.getValue("jdbcDao")).newInstance();
 	
 		} catch (InstantiationException inExcp ) {
 			

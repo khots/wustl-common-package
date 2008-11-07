@@ -423,7 +423,7 @@ public class ExportReport
 	 */
 	private List<List<String>> executeQuery(String sql) throws DAOException, ClassNotFoundException
 	{
-		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getJDBCDAO();
 		dao.openSession(null);
 		return (List<List<String>>) dao.executeQuery(sql, null, false, null);
 

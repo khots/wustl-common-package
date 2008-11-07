@@ -150,12 +150,12 @@ public class Constants
 	public static final boolean PRIVILEGE_ASSIGN = true;
 
 	//DAO Constants.
-	public static final int HIBERNATE_DAO = 1;
-	public static final int JDBC_DAO = 2;
+	//public static final int HIBERNATE_DAO = 1;
+	//public static final int JDBC_DAO = 2;
 
-	public static final String ORACLE_DATABASE = "ORACLE";
-	public static final String MYSQL_DATABASE = "MYSQL";
-	public static final String POSTGRESQL_DATABASE = "POSTGRESQL";
+	//public static final String ORACLE_DATABASE = "ORACLE";
+	//public static final String MYSQL_DATABASE = "MYSQL";
+	//public static final String POSTGRESQL_DATABASE = "POSTGRESQL";
 
 	// The unique key voilation message is "Duplicate entry %s for key %d"
 	// This string is used for searching " for key " string in the above error message
