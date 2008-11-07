@@ -92,21 +92,7 @@ public class Variables
 	 */
 	public static String catissueURL = CONST_VARIABLES_VALUE;
 
-	/**
-	 * specify entityCPSqlMap.
-	 */
-	public static Map<String, String> entityCPSqlMap = new HashMap<String, String>();
-
-	/**
-	 * specify mainProtocolObject.
-	 */
-	public static String mainProtocolObject = CONST_VARIABLES_VALUE;
-
-	/**
-	 * specify queryReadDeniedObjectList.
-	 */
-	public static List<String> queryReadDeniedObjectList = new ArrayList<String>();
-
+	
 	/**
 	 *  Ravi : for Multi Site Rep. changes.
 	 *  specify privilege Details Map.
@@ -117,9 +103,4 @@ public class Variables
 	 * specify privilegeGroupingMap.
 	 */
 	public static Map<String, List<NameValueBean>> privilegeGroupingMap = new HashMap<String, List<NameValueBean>>();
-
-	/**
-	 * specify validatorClassname.
-	 */
-	public static String validatorClassname = CONST_VARIABLES_VALUE;
 }
