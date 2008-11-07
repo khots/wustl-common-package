@@ -30,15 +30,18 @@ public class AbstractBizLogicFactory
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractBizLogicFactory.class);
 
 	/**
-	 * Returns DAO instance according to the form bean type.
-	 * @param FORM_TYPE The form bean type.
-	 * @return An AbstractDAO object.
+	 * This method gets IBizLogic object.
+	 * @param bizLogicFactoryName bizLogic Factory Name.
+	 * @param methodName method Name
+	 * @param formId form Id
+	 * @return bizLogic.
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	public static final IBizLogic getBizLogic(String bizLogicFactoryName, String methodName,
 			int formId) throws BizLogicException
 	{
 		IBizLogic bizLogic = new DefaultBizLogic();
-
+		String erroMess = "Please contact the caTissue Core support at catissue_support@mga.wustl.edu";
 		try
 		{
 			//Invokes the singleton method.
@@ -56,34 +59,30 @@ public class AbstractBizLogicFactory
 		catch (ClassNotFoundException classNotFndExp)
 		{
 			logger.debug("AbstractBizLogicFactory : BizLogic with class name "
-					+ bizLogicFactoryName + " not present");
-			logger.debug(classNotFndExp.getMessage(), classNotFndExp);
-			throw new BizLogicException(
-					"Server Error #1: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+					+ bizLogicFactoryName + " not present", classNotFndExp);
+
+			throw new BizLogicException("Server Error #1: " + erroMess);
 		}
 		catch (NoSuchMethodException noMethodExp)
 		{
 			logger.debug("AbstractBizLogicFactory : No such method " + methodName
 					+ " in bizLogic class " + bizLogicFactoryName);
 			logger.debug(noMethodExp.getMessage(), noMethodExp);
-			throw new BizLogicException(
-					"Server Error #2: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+			throw new BizLogicException("Server Error #2: " + erroMess);
 		}
 		catch (InvocationTargetException invTrgtExp)
 		{
 			logger.debug("AbstractBizLogicFactory : No such method " + methodName
 					+ " in bizLogic class " + bizLogicFactoryName);
 			logger.debug(invTrgtExp.getMessage(), invTrgtExp);
-			throw new BizLogicException(
-					"Server Error #3: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+			throw new BizLogicException("Server Error #3: " + erroMess);
 		}
 		catch (IllegalAccessException illAccEcp)
 		{
 			logger.debug("AbstractBizLogicFactory : No access to method " + methodName
 					+ " in bizLogic class " + bizLogicFactoryName);
 			logger.debug(illAccEcp.getMessage(), illAccEcp);
-			throw new BizLogicException(
-					"Server Error #4: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+			throw new BizLogicException("Server Error #4: " + erroMess);
 		}
 		return bizLogic;
 	}

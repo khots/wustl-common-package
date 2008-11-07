@@ -20,12 +20,13 @@ public abstract class AbstractActionFormFactory
 {
 
 	/**
-	 * Returns the formbean corressponding to the domain object passed 
-	 * and the operation to be performed. 
+	 * Returns the formbean corressponding to the domain object passed
+	 * and the operation to be performed.
 	 * @param domainObject The domain object whose form bean is required.
 	 * @param operation The operation to be performed.
 	 * @return the formbean corressponding to the domain object passed
 	 * and the operation to be performed.
+	 * @throws Exception Exception
 	 */
 	public abstract AbstractActionForm getFormBean(Object domainObject, String operation)
 			throws Exception;

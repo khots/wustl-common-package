@@ -22,18 +22,19 @@ public abstract class AbstractDomainObjectFactory
 {
 
 	/**
-	 * Returns an AbstractDomain object copy of the form bean object. 
-	 * @param FORM_TYPE Form bean Id.
+	 * This method returns an AbstractDomain object copy of the form bean object.
+	 * @param formType Form bean Id.
 	 * @param form Form bean object.
 	 * @return an AbstractDomain object copy of the form bean object.
+	 * @throws AssignDataException Assign Data Exception.
 	 */
-	public abstract AbstractDomainObject getDomainObject(int FORM_TYPE, AbstractActionForm form)
+	public abstract AbstractDomainObject getDomainObject(int formType, AbstractActionForm form)
 			throws AssignDataException;
 
 	/**
 	 * Returns the fully qualified name of the class according to the form bean type.
-	 * @param FORM_TYPE Form bean Id.
+	 * @param formType Form bean Id.
 	 * @return the fully qualified name of the class according to the form bean type.
 	 */
-	public abstract String getDomainObjectName(int FORM_TYPE);
+	public abstract String getDomainObjectName(int formType);
 }
