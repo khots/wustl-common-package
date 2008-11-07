@@ -354,11 +354,13 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	private boolean validateCondition(ActionErrors errors, int integerValue)
 	{
 		boolean conditionError;
-		String key = "SimpleConditionsNode:" + integerValue + "_Condition_value";
-		String enteredValue = (String) getValue(key);
-		String dataElement = "SimpleConditionsNode:" + integerValue
-				+ "_Condition_DataElement_field";
-		String selectedField = (String) getValue(dataElement);
+		StringBuffer key = new StringBuffer();
+		key.append("SimpleConditionsNode:").append(integerValue).append("_Condition_value");
+		String enteredValue = (String) getValue(key.toString());
+		StringBuffer dataElement = new StringBuffer();
+		dataElement.append("SimpleConditionsNode:").append(integerValue).append(
+				"_Condition_DataElement_field");
+		String selectedField = (String) getValue(dataElement.toString());
 		StringTokenizer strTok = new StringTokenizer(selectedField, ".");
 		int tokenCnt = 1;
 		String dataType = "";

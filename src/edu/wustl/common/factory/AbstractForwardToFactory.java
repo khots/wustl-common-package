@@ -27,18 +27,21 @@ public class AbstractForwardToFactory
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractForwardToFactory.class);
-	
+	private static org.apache.log4j.Logger logger = Logger
+			.getLogger(AbstractForwardToFactory.class);
+
 	/**
-	 * Returns DAO instance according to the form bean type.
-	 * @param FORM_TYPE The form bean type.
-	 * @return An AbstractDAO object.
+	 * This method returns AbstractForwardToProcessor object.
+	 * @param forwardToFactoryName forward To Factory Name.
+	 * @param methodName method Name
+	 * @return AbstractForwardToProcessor
+	 * @throws BizLogicException BizLogic Exception
 	 */
 	public static final AbstractForwardToProcessor getForwardToProcessor(
 			String forwardToFactoryName, String methodName) throws BizLogicException
 	{
 		AbstractForwardToProcessor forwardToProcessor;// = new AbstractForwardToProcessor();
-
+		String erroMess = "Please contact the caTissue Core support at catissue_support@mga.wustl.edu";
 		try
 		{
 			Class forwardToClass = Class.forName(forwardToFactoryName);
@@ -54,7 +57,7 @@ public class AbstractForwardToFactory
 					+ forwardToFactoryName + " not present");
 			logger.debug(classNotFndExp.getMessage(), classNotFndExp);
 			throw new BizLogicException(
-					"Server Error #1: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+					"Server Error #1: "+erroMess);
 		}
 		catch (NoSuchMethodException noMethodExp)
 		{
@@ -62,7 +65,7 @@ public class AbstractForwardToFactory
 					+ " in ForwardToFactory class " + forwardToFactoryName);
 			logger.debug(noMethodExp.getMessage(), noMethodExp);
 			throw new BizLogicException(
-					"Server Error #2: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+					"Server Error #2: "+erroMess);
 		}
 		catch (InvocationTargetException invTrgtExp)
 		{
@@ -70,7 +73,7 @@ public class AbstractForwardToFactory
 					+ " in ForwardToFactory class " + forwardToFactoryName);
 			logger.debug(invTrgtExp.getMessage(), invTrgtExp);
 			throw new BizLogicException(
-					"Server Error #3: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+					"Server Error #3: "+erroMess);
 		}
 		catch (IllegalAccessException illAccEcp)
 		{
@@ -78,7 +81,7 @@ public class AbstractForwardToFactory
 					+ " in ForwardToFactory class " + forwardToFactoryName);
 			logger.debug(illAccEcp.getMessage(), illAccEcp);
 			throw new BizLogicException(
-					"Server Error #4: Please contact the caTissue Core support at catissue_support@mga.wustl.edu");
+					"Server Error #4: "+erroMess);
 		}
 
 		return forwardToProcessor;
