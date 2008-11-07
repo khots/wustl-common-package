@@ -132,16 +132,6 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 					Date sqlDate = new Date(date.getTime());
 					stmt.setDate(i + 1, sqlDate);
 				}
-				/** Name : Aarti Sharma
-				* Reviewer:  Prafull Kadam
-				* Bug ID: 4126
-				* Patch ID: 4126_2
-				* See also: 4126_1
-				* Desciption: If the value of the column is true set 1 in the statement else set 0.
-				* This is necessary for MySQL since all boolean values in MySQL are stored in tinyint.
-				* If this is not done then all values will be set as 0
-				* irrespective of whether the value is true or false.
-				*/
 				else if (tinyIntColumns.contains(new Integer(i + 1)))
 				{
 					if (obj != null && (obj.equals("true") || obj.equals("TRUE") || obj.equals("1")))
@@ -271,7 +261,7 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 		//StringBuffer query = new StringBuffer("INSERT INTO " + tableName + " values(");
 		//Changed implementation with column names
 
-		
+
 		Iterator it = columnValues.iterator();
 		while (it.hasNext())
 		{

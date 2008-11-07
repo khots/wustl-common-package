@@ -10,18 +10,9 @@
 package edu.wustl.common.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +23,6 @@ import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.locator.InterfaceLocator;
 import edu.wustl.common.security.exceptions.SMException;
-import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.global.Constants;
@@ -48,11 +38,11 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	private Connection connection = null;
 	protected AuditManager auditManager;
 	private static org.apache.log4j.Logger logger = Logger.getLogger(JDBCDAOImpl.class);
-	
+
 	/**
 	 * This method will be used to establish the session with the database.
 	 * Declared in AbstractDAO class.
-	 * 
+	 *
 	 * @throws DAOException
 	 */
 	public void openSession(SessionDataBean sessionDataBean) throws DAOException
@@ -205,17 +195,15 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	
 	private final String createTableQuery(String tableName, String[] columnNames) throws DAOException
 	{
-		StringBuffer query = new StringBuffer("CREATE TABLE " + tableName + " (");
-		int i = 0;
+		StringBuffer query = new StringBuffer("CREATE TABLE ").append(tableName).append(" (");
+		int i;
 
-		for (; i < (columnNames.length - 1); i++)
+		for ( i=0; i < (columnNames.length - 1); i++)
 		{
-			query = query.append(columnNames[i] + " VARCHAR(50),");
+			query = query.append(columnNames[i]).append(" VARCHAR(50),");
 		}
 
-		query.append(columnNames[i] + " VARCHAR(50));");
-
-		logger.debug("Create Table*************************" + query.toString());
+		query.append(columnNames[i]).append(" VARCHAR(50));");
 		
 		return  query.toString();
 	}
@@ -317,38 +305,13 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 
 		try
 		{
-			StringBuffer query = new StringBuffer("SELECT ");
 			
+
+			StringBuffer query = getSelectFromQueryPart(sourceObjectName, selectColumnName, onlyDistinctRows);
 			if (joinCondition == null)
 				condition = Constants.AND_JOIN_CONDITION;
 			else 
 				condition = joinCondition;
-
-			//Prepares the select clause of the query.
-			if ((selectColumnName != null) && (selectColumnName.length > 0))
-			{
-				//Bug# 2003: Limiting the define view does not remove duplicates
-				if (onlyDistinctRows)
-				{
-					//logger.out.debug(" Adding distinct to query ");
-					query.append(" DISTINCT ");
-				}
-				//END Bug# 2003
-				int i;
-				for (i = 0; i < (selectColumnName.length - 1); i++)
-				{
-					query.append(selectColumnName[i] + " ");
-					query.append(",");
-				}
-				query.append(selectColumnName[i] + " ");
-			}
-			else
-			{
-				query.append("* ");
-			}
-
-			//Prepares the from clause of the query.
-			query.append("FROM " + sourceObjectName);
 
 			//Prepares the where clause of the query.
 			if ((whereColumnName != null && whereColumnName.length > 0)
@@ -375,6 +338,39 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		}
 
 		return list;
+	}
+
+	private StringBuffer getSelectFromQueryPart(String sourceObjectName, String[] selectColumnName,
+			boolean onlyDistinctRows)
+	{
+		StringBuffer query = new StringBuffer("SELECT ");
+
+		//Prepares the select clause of the query.
+		if ((selectColumnName != null) && (selectColumnName.length > 0))
+		{
+			//Bug# 2003: Limiting the define view does not remove duplicates
+			if (onlyDistinctRows)
+			{
+				//logger.out.debug(" Adding distinct to query ");
+				query.append(" DISTINCT ");
+			}
+			//END Bug# 2003
+			int i;
+			for (i = 0; i < (selectColumnName.length - 1); i++)
+			{
+				query.append(selectColumnName[i] + " ");
+				query.append(",");
+			}
+			query.append(selectColumnName[i] + " ");
+		}
+		else
+		{
+			query.append("* ");
+		}
+
+		//Prepares the from clause of the query.
+		query.append("FROM " + sourceObjectName);
+		return query;
 	}
 
 		
