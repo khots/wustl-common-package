@@ -148,5 +148,20 @@ public interface JDBCDAO extends DAO
 	 * @throws DAOException generic DAOException.
 	 */
 	void executeUpdate(String sql) throws DAOException;
+	
+	
+	String getDatePattern();
+		
+	String getTimePattern();
+	
+	String getDateFormatFunction();
+	
+	String getTimeFormatFunction();
+	
+	String getDateTostrFunction();
+	
+	String getStrTodateFunction();
+	
+	String formatMessage(Exception excp, Object[] args);
 
 }

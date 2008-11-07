@@ -7,11 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import edu.wustl.common.cde.CDEManager;
-import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -298,7 +297,7 @@ public class Condition
 			{
 				Date date = new Date();
 				date = Utility.parseDate(newValue);
-				DAO dao = DAOFactory.getInstance().getJDBCDAO();
+				JDBCDAO dao = DAOFactory.getInstance().getJDBCDAO();
 
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);

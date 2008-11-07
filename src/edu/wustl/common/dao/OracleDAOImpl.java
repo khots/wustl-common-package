@@ -1,5 +1,6 @@
 package edu.wustl.common.dao;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.exceptionformatter.ConstraintViolationFormatter;
+import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
@@ -337,6 +341,76 @@ public class OracleDAOImpl extends JDBCDAOImpl
 		}
 		return null;
 	}
+	
+	
+	public String formatMessage(Exception excp, Object[] args)
+	{
+		String tableName = "";
+		String columnName = "";
+		String formattedErrMsg = null; // Formatted Error Message return by this method
+		Exception objExcp = excp;
+		if (excp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
+		{
+
+			objExcp = (Exception) objExcp.getCause();
+			logger.debug(objExcp);
+		}
+		try
+		{
+			//        	 Get database metadata object for the connection
+			Connection connection = null;
+			if (args[1] != null)
+			{
+				connection = (Connection) args[1];
+			}
+			else
+			{
+				logger.debug("Error Message: Connection object not given");
+			}
+			// Get Contraint Name from messages         		
+			String sqlMessage = ConstraintViolationFormatter.generateErrorMessage(objExcp);
+			int tempstartIndexofMsg = sqlMessage.indexOf("(");
+
+			String temp = sqlMessage.substring(tempstartIndexofMsg);
+			int startIndexofMsg = temp.indexOf(".");
+			int endIndexofMsg = temp.indexOf(")");
+			String strKey = temp.substring((startIndexofMsg + 1), endIndexofMsg);
+			logger.debug("Contraint Name: " + strKey);
+
+			String Query = "select COLUMN_NAME,TABLE_NAME from user_cons_columns where constraint_name = '"
+					+ strKey + "'";
+			logger.debug("ExceptionFormatter Query: " + Query);
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(Query);
+			while (rs.next())
+			{
+				columnName += rs.getString("COLUMN_NAME") + ",";
+				logger.debug("columnName: " + columnName);
+				tableName = rs.getString("TABLE_NAME");
+				logger.debug("tableName: " + tableName);
+			}
+			if (columnName.length() > 0 && tableName.length() > 0)
+			{
+				columnName = columnName.substring(0, columnName.length() - 1);
+				logger.debug("columnName befor formatting: " + columnName);
+				String displayName = ExceptionFormatterFactory
+						.getDisplayName(tableName, connection);
+
+				Object[] arguments = new Object[]{displayName, columnName};
+				formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,
+						arguments);
+			}
+			rs.close();
+			statement.close();
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage(), e);
+			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
+		}
+		return formattedErrMsg;
+	}
+
 	
 
 	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
