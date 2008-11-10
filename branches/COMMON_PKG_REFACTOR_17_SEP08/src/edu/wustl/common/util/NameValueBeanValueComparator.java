@@ -1,11 +1,11 @@
 
 package edu.wustl.common.util;
 
-/**
- * This comparator is used where soritng shound be done on value of NameValueBean
- */
-import edu.wustl.common.beans.NameValueBean;
 
+import edu.wustl.common.beans.NameValueBean;
+/**
+ * This comparator is used where soritng shound be done on value of NameValueBean.
+ */
 public class NameValueBeanValueComparator implements java.util.Comparator<Object>
 {
 
