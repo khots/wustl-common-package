@@ -1,11 +1,11 @@
 
 package edu.wustl.common.util;
 
+
+import edu.wustl.common.beans.NameValueBean;
 /**
  * This comparator is used where sorting should be done on relevance counter of NameValueBean.
  */
-import edu.wustl.common.beans.NameValueBean;
-
 public class NameValueBeanRelevanceComparator implements java.util.Comparator<Object>
 {
 	/**
