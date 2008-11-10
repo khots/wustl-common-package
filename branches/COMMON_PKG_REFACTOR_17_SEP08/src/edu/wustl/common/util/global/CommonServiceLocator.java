@@ -11,9 +11,9 @@ import edu.wustl.common.util.logger.Logger;
 
 
 /**
- *
+ * This class is a common service locator. Different parameter like application url,
+ * properties file directory etc. are set when this class loads. are set when this class loads.
  * @author ravi_kumar
- *
  */
 public final class CommonServiceLocator
 {
@@ -30,12 +30,9 @@ public final class CommonServiceLocator
 	 * Application Name.
 	 */
 	private static String appName;
+
 	/**
-	 * Application Version.
-	 */
-	private static String appVersion;
-	/**
-	 * Application Home.
+	 * Application Home directory.
 	 */
 	private static String appHome;
 	/**
@@ -102,26 +99,6 @@ public final class CommonServiceLocator
 	{
 		appName=props.getProperty("app.name");
 	}
-
-
-	/**
-	 * @return the application version.
-	 */
-	public String getAppVersion()
-	{
-		return appVersion;
-	}
-
-
-	/**
-	 * Set the application version.
-	 * @param props Object of Properties
-	 */
-	private void setAppVersion(Properties props)
-	{
-		appVersion=props.getProperty("app.version");
-	}
-
 
 	/**
 	 * @return the application home directory where application is running.
