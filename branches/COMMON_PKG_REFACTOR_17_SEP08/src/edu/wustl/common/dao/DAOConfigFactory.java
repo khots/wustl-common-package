@@ -7,24 +7,24 @@ import edu.wustl.common.util.global.DaoProperties;
 import edu.wustl.common.util.logger.Logger;
 
 
-public class AbstractDAOFactory
+public class DAOConfigFactory
 {
 	/**
 	 * Singleton instace.
 	 */
-	private static AbstractDAOFactory daoFactory = null;
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractDAOFactory.class);
+	private static DAOConfigFactory daoFactory = null;
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOConfigFactory.class);
 	private static Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
 
 	static
 	{
-		daoFactory = new AbstractDAOFactory();
+		daoFactory = new DAOConfigFactory();
 	}
 
 	/**
 	 * Constructor.
 	 */
-	public AbstractDAOFactory()
+	public DAOConfigFactory()
 	{
 		populateDaoFactoryMap();
 				
@@ -35,7 +35,7 @@ public class AbstractDAOFactory
 	 * Getter method in singleton class is to setup mock unit testing.
 	 * @return factory
 	 */
-	public static AbstractDAOFactory getInstance()
+	public static DAOConfigFactory getInstance()
 	{
 		return daoFactory;
 	}
@@ -64,7 +64,6 @@ public class AbstractDAOFactory
 			daoFactory.setJDBCDAOClassName(DaoProperties.getValue("jdbcDao"));
 			daoFactory.setApplicationName(DaoProperties.getValue("application.name"));
 			daoFactory.setConfigurationFile(DaoProperties.getValue("configuration.file").trim());		
-			
 			daoFactory.buildSessionFactory();
 			
 			daoFactoryMap.put(daoFactory.getApplicationName(),daoFactory);
