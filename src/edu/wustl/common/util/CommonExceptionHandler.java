@@ -14,8 +14,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ExceptionHandler;
 import org.apache.struts.config.ExceptionConfig;
 
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -56,8 +56,8 @@ public class CommonExceptionHandler extends ExceptionHandler
 		*/
 		request.getSession().setAttribute(
 				Constants.ERROR_DETAIL,
-				"Unhandled Exception occured in " + Variables.applicationName + " : "
-						+ exception.getMessage());
+				"Unhandled Exception occured in " + CommonServiceLocator.getInstance().getAppURL()
+				+ " : "+ exception.getMessage());
 		return super.execute(exception, exConfig, mapping, formInstance, request, response);
 
 	}
@@ -75,8 +75,9 @@ public class CommonExceptionHandler extends ExceptionHandler
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintWriter printWriter = new PrintWriter(baos, true);
 			exception.printStackTrace(printWriter);
-			msg.append("Unhandled Exception occured in caTISSUE Core \nMessage: ").append(exception.getMessage())
-				.append("\nStackTrace: ").append(baos.toString());
+			msg.append("Unhandled Exception occured in caTISSUE Core \nMessage: ")
+			.append(exception.getMessage())
+			.append("\nStackTrace: ").append(baos.toString());
 		}
 
 		return msg.toString();
