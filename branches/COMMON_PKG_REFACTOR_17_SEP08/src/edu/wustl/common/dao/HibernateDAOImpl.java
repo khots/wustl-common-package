@@ -64,7 +64,17 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * specify isUpdated.
 	 */
 	private boolean isUpdated = false;
-
+	
+	private IConnectionManager connectionManager = null ;
+	
+		
+	public HibernateDAOImpl(IConnectionManager connectionManager)
+	{
+		//System.out.println("---got the constructor connectionManager --" +connectionManager);
+		this.connectionManager  = connectionManager;
+		
+	}
+	
 	/**
 	 * This method will be used to establish the session with the database.
 	 * Declared in AbstractDAO class.

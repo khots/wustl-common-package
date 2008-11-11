@@ -22,7 +22,7 @@ import edu.wustl.common.util.dbmanager.DAOException;
  */
 public interface DAO
 {
-
+	
 	/**
 	 * Insert the Object in the database.
 	 * @param obj Object to be inserted in database
