@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Applications>
+	<Application name = "catissuecore">
+		<DAOFactory name="edu.wustl.common.dao.DAOFactory">
+			<DefaultDAO>
+				<Class-name name = "edu.wustl.common.dao.HibernateDAOImpl"/>
+				<Config-file name = "hibernate.cfg.xml"/>
+			</DefaultDAO>
+			<jdbcDAO name = "edu.wustl.common.dao.MySQLDAOImpl"/>
+		</DAOFactory>
+		<ConnectionManager name= "edu.wustl.common.dao.IConnectionManager"/>
+	 </Application>
+	 <Application name = "DE">
+		<DAOFactory name="edu.wustl.common.dao.DAOFactory">
+			<DefaultDAO>
+				<Class-name name = "edu.wustl.common.dao.HibernateDAOImpl"/>
+				<Config-file name = "hibernate.cfg.xml"/>
+			</DefaultDAO>
+			<jdbcDAO name = "edu.wustl.common.dao.MySQLDAOImpl"/>
+		</DAOFactory>
+		<ConnectionManager name= "edu.wustl.common.dao.IConnectionManager"/>
+	 </Application>
+</Applications>
