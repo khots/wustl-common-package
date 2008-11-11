@@ -12,6 +12,7 @@ package edu.wustl.common.dao;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.DOMWriter;
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -33,10 +35,6 @@ import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.util.global.DaoProperties;
 import edu.wustl.common.util.logger.Logger;
 
-/**
- * DAOFactory is a factory for JDBC DAO instances of various domain objects.
- * @author gautam_shetty
- */
 public class DAOFactory extends AbstractDAOFactory implements IConnectionManager,IDAOFactory
 {
 	private String connectionManagerName;
@@ -44,13 +42,11 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 	private String jdbcDAOClassName;
 	private String applicationName;
 	private String configurationFile;
-	private Map<String,Session> applicationSessionMap = new HashMap<String, Session>(); 
-	
-	
 	private static final EntityResolver entityResolver = XMLHelper.DEFAULT_DTD_RESOLVER;
 	private Configuration cfg;
 	private SessionFactory m_sessionFactory;
-	 // ThreadLocal to hold the Session for the current executing thread.
+	
+	// ThreadLocal to hold the Session for the current executing thread.
     private static final ThreadLocal<Map> threadLocal = new ThreadLocal<Map>();
 	
 
@@ -92,27 +88,42 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 		} 
 		return dao;
 	}
+	
+	public Connection getConnection() throws HibernateException
+	{
+		return currentSession().connection();
+	}
+
 
 	public void closeConnection() throws HibernateException
 	{
-		// TODO Auto-generated method stub
+		closeSession();
 		
 	}
 
 	public void closeSession() throws HibernateException
 	{
-		// TODO Auto-generated method stub
-		
+		Map applicationSessionMap = (Map) threadLocal.get();
+		if(applicationSessionMap.containsKey(applicationName))
+		{
+			Session session = (Session)applicationSessionMap.get(applicationName);
+			if(session != null) {
+				session.close();
+			}
+			applicationSessionMap.remove(applicationName);
+			threadLocal.set(applicationSessionMap);
+				
+		}
 	}
 
 	public Session currentSession() throws HibernateException
 	{
 
-		applicationSessionMap = threadLocal.get();
-		Session session = null;
-           // Open a new Session, if this Thread has none yet
-        if (applicationSessionMap == null || !(applicationSessionMap.containsKey(applicationName)) ) {
-        	session = newSession();
+		Map applicationSessionMap = (Map)threadLocal.get();
+	    // Open a new Session, if this Thread has none yet
+    
+		if (applicationSessionMap == null || !(applicationSessionMap.containsKey(applicationName)) ) {
+        	Session session = newSession();
         	applicationSessionMap.put(applicationName, session);
             threadLocal.set(applicationSessionMap);
         }
@@ -122,29 +133,33 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 	
 	public Session newSession() throws HibernateException
 	{
-		
-		return null;
-		
+		Session session = m_sessionFactory.openSession();
+        session.setFlushMode(FlushMode.COMMIT);
+        try {
+            session.connection().setAutoCommit(false);
+        } catch (SQLException ex) {
+            throw new HibernateException(ex.getMessage(), ex);
+        }
+        return session;
+			
 	}
 
 	public Session getCleanSession() throws BizLogicException
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public Connection getConnection() throws HibernateException
-	{
-		// TODO Auto-generated method stub
-		return null;
+		Session session = null;
+		try
+		{
+			session = m_sessionFactory.openSession();
+			return session;
+		}
+		catch (HibernateException e)
+		{
+			throw new BizLogicException(e);
+		}
+	
 	}
-
-	public Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	public void buildSessionFactory()
 	{
 		 cfg = new Configuration(); 
@@ -241,11 +256,10 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 		
 	}
 
-	
-
-	
-
-	
-	
+	public Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
