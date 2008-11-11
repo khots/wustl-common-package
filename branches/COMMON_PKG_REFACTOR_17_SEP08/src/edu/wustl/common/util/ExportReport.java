@@ -104,31 +104,15 @@ public class ExportReport
 	}
 
 	/**
-	 * This method writes data of parameters passed to zip file.
-	 * @param values List list of values.
-	 * @param delimiter String comma
-	 * @param mainEntityIdsList List list of entity.
-	 * @throws IOException I/O exception.
-	 */
-	public void writeDataToZip(List values, String delimiter, List mainEntityIdsList)
-			throws IOException
-	{
-		writeDataToZip(values, delimiter, 0, 0, mainEntityIdsList);
-	}
-
-	/**
 	 * This method creates a zip file which contains a csv file and other data files.
 	 * The file is according to delimeter specified.
 	 *
 	 * @param values values list. It is List of List.
 	 * @param delimiter delimiter used for separating individual fields.
-	 * @param noblankLines No of blank lines added before values
-	 * @param columnIndent No columns that will be left blank for values
 	 * @param mainEntityIdsList list of main entity ids : required in case of file exports.
 	 * @throws IOException I/O exception.
 	 */
-	public void writeDataToZip(List values, String delimiter, int noblankLines, int columnIndent,
-			List mainEntityIdsList) throws IOException
+	public void writeDataToZip(List values, String delimiter,List mainEntityIdsList) throws IOException
 	{
 		List<String> files = new ArrayList<String>();
 		Map<String, String> idFileNameMap = new HashMap<String, String>();
@@ -147,7 +131,7 @@ public class ExportReport
 			sql.append(')');
 			createDataFiles(sql.toString());
 		}
-		createCSVFile(values, delimiter, noblankLines, columnIndent, idFileNameMap);
+		createCSVFile(values, delimiter,idFileNameMap);
 		closeFile();
 		files.add(fileName);
 		createZip(files);
@@ -220,18 +204,12 @@ public class ExportReport
 	 * Creates a csv file.
 	 * @param values List data
 	 * @param delimiter String comma
-	 * @param noblankLines int no of blank lines.
-	 * @param columnIndent int column indent.
 	 * @param idFileNameMap Map of type String map which stores id and file name
 	 * @throws IOException I/O exception.
 	 */
-	private void createCSVFile(List values, String delimiter, int noblankLines, int columnIndent,
-			Map<String, String> idFileNameMap) throws IOException
+	private void createCSVFile(List values, String delimiter,Map<String, String> idFileNameMap)
+		throws IOException
 	{
-		for (int i = 0; i < noblankLines; i++)
-		{
-			cvsFileWriter.write(TextConstants.LINE_SEPARATOR);
-		}
 		if (values != null)
 		{
 			Iterator itr = values.iterator();
@@ -239,11 +217,6 @@ public class ExportReport
 			{
 				List rowValues = (List) itr.next();
 				Iterator rowItr = rowValues.iterator();
-
-				for (int i = 0; i < columnIndent; i++)
-				{
-					cvsFileWriter.write(delimiter);
-				}
 				while (rowItr.hasNext())
 				{
 					String tempStr = (String) rowItr.next();
@@ -254,12 +227,7 @@ public class ExportReport
 						String fName = idFileNameMap.get(entityId);
 						tempStr = fName;
 					}
-					if (tempStr == null)
-					{
-						tempStr = TextConstants.EMPTY_STRING;
-					}
-					tempStr = tempStr.replaceAll("\"", "'");
-					tempStr = "\"" + tempStr + "\"";
+					tempStr = getStrWithoutDoubleQuotes(tempStr);
 					cvsFileWriter.write(tempStr + delimiter);
 				}
 				cvsFileWriter.write(TextConstants.LINE_SEPARATOR);
@@ -267,6 +235,23 @@ public class ExportReport
 		}
 	}
 
+	/**
+	 * This method removes double quotes from string and adds at start and end.
+	 * @param str String in which double quotes has to remove.
+	 * @return  String without double quotes.
+	 */
+	private String getStrWithoutDoubleQuotes(String str)
+	{
+		String tempStr=str;
+		if (tempStr == null)
+		{
+			tempStr = TextConstants.EMPTY_STRING;
+		}
+		tempStr = tempStr.replaceAll("\"", "'");
+		StringBuffer stringBuffer=new StringBuffer("\"");
+		stringBuffer.append(tempStr).append('\"');
+		return stringBuffer.toString();
+	}
 	/**
 	 * Closes file stream.
 	 * @throws IOException I/O exception.
@@ -294,12 +279,7 @@ public class ExportReport
 	public void writeData(List values, String delimiter, int noblankLines, int columnIndent)
 			throws IOException
 	{
-		//Writes the list of data into file
-		for (int i = 0; i < noblankLines; i++)
-		{
-			temp.write(TextConstants.LINE_SEPARATOR);
-		}
-
+		addLineSeparator(noblankLines);
 		if (values != null)
 		{
 			Iterator itr = values.iterator();
@@ -316,16 +296,24 @@ public class ExportReport
 				while (rowItr.hasNext())
 				{
 					String tempStr = (String) rowItr.next();
-					if (tempStr == null)
-					{
-						tempStr = TextConstants.EMPTY_STRING;
-					}
-					tempStr = tempStr.replaceAll("\"", "'");
-					tempStr = "\"" + tempStr + "\"";
+					tempStr = getStrWithoutDoubleQuotes(tempStr);
 					temp.write(tempStr + delimiter);
 				}
 				temp.write(TextConstants.LINE_SEPARATOR);
 			}
+		}
+	}
+
+	/**
+	 * @param noblankLines Number of non blank lines.
+	 * @throws IOException generic IO exception
+	 */
+	private void addLineSeparator(int noblankLines) throws IOException
+	{
+		//Writes the list of data into file
+		for (int i = 0; i < noblankLines; i++)
+		{
+			temp.write(TextConstants.LINE_SEPARATOR);
 		}
 	}
 
@@ -407,7 +395,8 @@ public class ExportReport
 				out.write(token.getBytes(), 0, token.length());
 
 			}
-			out.write(TextConstants.LINE_SEPARATOR.getBytes(), 0, TextConstants.LINE_SEPARATOR.length());
+			out.write(TextConstants.LINE_SEPARATOR.getBytes(), 0,
+					TextConstants.LINE_SEPARATOR.length());
 		}
 		out.closeEntry();
 		bufRdr.close();
