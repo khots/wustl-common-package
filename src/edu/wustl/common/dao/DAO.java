@@ -213,5 +213,7 @@ public interface DAO
 	
 	void setConnectionManager(IConnectionManager connectionManager);
 	
+	IConnectionManager setConnectionManager();
+	
 	
 }

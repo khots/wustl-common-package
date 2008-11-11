@@ -35,7 +35,7 @@ public class ApplicationPropertiesParser
 	{
 		try
 		{
-			parseXmlFile();
+			readFile();
 			parseDocument();
 		}
 		catch (Exception e)
@@ -48,7 +48,7 @@ public class ApplicationPropertiesParser
 	/**
 	 * This method parse Xml File.
 	 */
-	private void parseXmlFile()
+	private void readFile()
 	{
 		//get the factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -59,7 +59,7 @@ public class ApplicationPropertiesParser
 			DocumentBuilder db = dbf.newDocumentBuilder();
 
 			//parse using builder to get DOM representation of the XML file
-			dom = db.parse("DAOProperties.xml");
+			dom = db.parse("ApplicationDAOProperties.xml");
 
 		}
 		catch (ParserConfigurationException pce)
@@ -88,11 +88,11 @@ public class ApplicationPropertiesParser
 
 			if (child.getNodeName().equals("Application"))
 			{
-				setApplicationVariables(child);
+				setApplicationProperties(child);
 			}
 
 			IDAOFactory daoFactory = (IDAOFactory) Class.forName(daoFactoryName).newInstance();
-			daoFactory.setConnectionManager(connectionManager);
+			daoFactory.setConnectionManagerName(connectionManager);
 			daoFactory.setDefaultDAOClassName(className);
 			daoFactory.setJDBCDAOClassName(jdbcDAOName);
 			daoFactory.setApplicationName(applicationName);
@@ -120,7 +120,7 @@ public class ApplicationPropertiesParser
 	 * @param child
 	 * @throws DOMException
 	 */
-	private void setApplicationVariables(Node child) throws DOMException
+	private void setApplicationProperties(Node child) throws DOMException
 	{
 		NamedNodeMap attributeMap = child.getAttributes();
 		applicationName = ((Node)attributeMap.item(0)).getNodeValue();
@@ -133,7 +133,7 @@ public class ApplicationPropertiesParser
 
 			if (child1.getNodeName().equals("DAOFactory"))
 			{
-				setDAOFactoryVariables(child1);
+				setDAOFactoryProperties(child1);
 			}
 			if (child1.getNodeName().equals("ConnectionManager"))
 			{
@@ -144,7 +144,7 @@ public class ApplicationPropertiesParser
 		}
 	}
 	
-	private void setDAOFactoryVariables(Node childNode)
+	private void setDAOFactoryProperties(Node childNode)
 	{
 		NamedNodeMap attrMap = childNode.getAttributes();
 		daoFactoryName = ((Node)attrMap.item(0)).getNodeValue();
@@ -154,23 +154,27 @@ public class ApplicationPropertiesParser
 			Node childrenDAOFactory = childlist.item(m);
 			if (childrenDAOFactory.getNodeName().equals("DefaultDAO"))
 			{
-				setDefaultDaoVariables(childrenDAOFactory);
+				setDefaultDAOProperties(childrenDAOFactory);
 			}
 			if (childrenDAOFactory.getNodeName().equals("jdbcDAO"))
 			{
-				NamedNodeMap attMap = childrenDAOFactory.getAttributes();
-				Node attNode = attMap.item(0);
-				jdbcDAOName = attNode.getNodeValue();
+				setJDBCDAOProperties(childrenDAOFactory);
 			}
 		}
 	
+	}
+	private void setJDBCDAOProperties(Node childrenDAOFactory)
+	{
+		NamedNodeMap attMap = childrenDAOFactory.getAttributes();
+		Node attNode = attMap.item(0);
+		jdbcDAOName = attNode.getNodeValue();
 	}
 
 	/**
 	 * @param childrenDAOFactory
 	 * @throws DOMException
 	 */
-	private void setDefaultDaoVariables(Node childrenDAOFactory) throws DOMException
+	private void setDefaultDAOProperties(Node childrenDAOFactory) throws DOMException
 	{
 		NodeList childDefaultDAO = childrenDAOFactory.getChildNodes();
 		for (int l = 0; l < childDefaultDAO.getLength(); l++)

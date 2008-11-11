@@ -3,7 +3,6 @@ package edu.wustl.common.dao;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.wustl.common.util.global.DaoProperties;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -58,15 +57,19 @@ public class DAOConfigFactory
 	{
 		try
 		{
+			ApplicationPropertiesParser applicationPropertiesParser = new ApplicationPropertiesParser();
+			daoFactoryMap = applicationPropertiesParser.getDaoFactoryMap();
+
+			/*
 			IDAOFactory daoFactory = (IDAOFactory)Class.forName(DaoProperties.getValue("daoFactory.name")).newInstance();
-			daoFactory.setConnectionManager(DaoProperties.getValue("connectionManager"));
+			daoFactory.setConnectionManagerName(DaoProperties.getValue("connectionManager"));
 			daoFactory.setDefaultDAOClassName(DaoProperties.getValue("defaultDao"));
 			daoFactory.setJDBCDAOClassName(DaoProperties.getValue("jdbcDao"));
 			daoFactory.setApplicationName(DaoProperties.getValue("application.name"));
 			daoFactory.setConfigurationFile(DaoProperties.getValue("configuration.file").trim());		
 			daoFactory.buildSessionFactory();
 			
-			daoFactoryMap.put(daoFactory.getApplicationName(),daoFactory);
+			daoFactoryMap.put(daoFactory.getApplicationName(),daoFactory);*/
 			
 		}
 		catch (Exception e)
@@ -75,5 +78,6 @@ public class DAOConfigFactory
 			e.printStackTrace();
 		}
 	}
+		
 
 }
