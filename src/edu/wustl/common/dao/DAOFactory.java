@@ -32,7 +32,7 @@ import org.xml.sax.InputSource;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.logger.Logger;
 
-public class DAOFactory extends DAOConfigFactory implements IConnectionManager,IDAOFactory
+public class DAOFactory implements IConnectionManager,IDAOFactory
 {
 	private String connectionManagerName;
 	private String defaultDAOClassName;
