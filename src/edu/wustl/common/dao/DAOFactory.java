@@ -42,16 +42,21 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	private static final EntityResolver entityResolver = XMLHelper.DEFAULT_DTD_RESOLVER;
 	private Configuration cfg;
 	private SessionFactory m_sessionFactory;
+	private IConnectionManager connectionManager;
 	
 	// ThreadLocal to hold the Session for the current executing thread.
     private static final ThreadLocal<Map> threadLocal = new ThreadLocal<Map>();
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOFactory.class);
 	
 	static {
+		
 		Map applicationSessionMap = new HashMap<String, Session>();
 		threadLocal.set(applicationSessionMap);
 	}
 	
+	/**
+	 * @return
+	 */
 	public DAO getDAO()
 	{
 		DAO dao = null;
@@ -59,9 +64,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		try {
 		
 		   dao = (DAO)Class.forName(defaultDAOClassName).newInstance();
-		   IConnectionManager connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
-		   connectionManager.setApplicationName(applicationName);
-		   dao.setConnectionManager(connectionManager);
+		   dao.setConnectionManager(connectionManager);			
 		  		
 		} catch (Exception inExcp ) {
 			
@@ -71,6 +74,9 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		return dao;
 	}
 	
+	/**
+	 * @return
+	 */
 	public JDBCDAO getJDBCDAO()
 	{
 		JDBCDAO dao = null;
@@ -78,9 +84,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		try {
 		
 			   dao = (JDBCDAO) Class.forName(jdbcDAOClassName).newInstance();
-			   IConnectionManager connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
-			   connectionManager.setApplicationName(applicationName);
-			   dao.setConnectionManager(connectionManager);								
+			   dao.setConnectionManager(connectionManager);							
         
 		} catch (Exception inExcp ) {
 			
@@ -158,10 +162,29 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	}
 	
 	public void buildSessionFactory()
+	{		
+		try
+		{
+			 cfg = new Configuration(); 
+			 addConfigurationFile(configurationFile, cfg);
+			 m_sessionFactory = cfg.buildSessionFactory();
+			 setConnectionManager();
+			 
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		  
+	}
+
+	private void setConnectionManager() throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
-		 cfg = new Configuration(); 
-		 addConfigurationFile(configurationFile, cfg);
-		 m_sessionFactory = cfg.buildSessionFactory();
+		connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
+		connectionManager.setApplicationName(applicationName);
+		connectionManager.setSessionFactory(m_sessionFactory);
+		connectionManager.setConfigurationFile(cfg);
 	}
 	
 	
@@ -192,7 +215,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
     }
 	
 
-	public void setConnectionManager(String connectionManagerName)
+	public void setConnectionManagerName(String connectionManagerName)
 	{
 		this.connectionManagerName = connectionManagerName;
 		
@@ -201,42 +224,35 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	public void setDefaultDAOClassName(String defaultDAOClassName)
 	{
 		this.defaultDAOClassName = defaultDAOClassName;
-		
 	}
 
 	public void setJDBCDAOClassName(String jdbcDAOClassName)
 	{
 		this.jdbcDAOClassName = jdbcDAOClassName;
-		
 	}
 
 	public void setApplicationName(String applicationName)
 	{
 		this.applicationName = applicationName;
-		
 	}
 
 	public String getApplicationName()
 	{
-		
 		return applicationName;
 	}
 
-	public String getConnectionManager()
+	public String getConnectionManagerName()
 	{
-		
 		return connectionManagerName;
 	}
 
 	public String getDefaultDAOClassName()
 	{
-		
 		return defaultDAOClassName;
 	}
 
 	public String getJDBCDAOClassName()
 	{
-		
 		return jdbcDAOClassName;
 	}
 
@@ -248,13 +264,31 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	public void setConfigurationFile(String configurationFile)
 	{
 		this.configurationFile = configurationFile;
-		
 	}
 
 	public Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
 	{
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public SessionFactory getSessionFactory()
+	{
+		return m_sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory)
+	{
+		this.m_sessionFactory = sessionFactory;
+	}
+
+	public Configuration getConfigurationFile()
+	{
+		return cfg;
+	}
+
+	public void setConfigurationFile(Configuration cfg)
+	{
+		this.cfg = cfg;
 	}
 
 }

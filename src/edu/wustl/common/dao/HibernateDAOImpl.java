@@ -829,4 +829,16 @@ public class HibernateDAOImpl implements HibernateDAO
 		return sqlQuery;
 	}
 
+	public void setConnectionManager(IConnectionManager connectionManager)
+	{
+		this.connectionManager = connectionManager;
+		
+	}
+
+	public IConnectionManager setConnectionManager()
+	{
+		
+		return connectionManager;
+	}
+
 }

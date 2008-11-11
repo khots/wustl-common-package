@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
  * @author prashant_bandal
  *
  */
-public class ApplicationPropertiesParser
+public class ApplicationDAOPropertiesParser
 {
 	private Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
 	private Document dom;

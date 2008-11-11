@@ -4,6 +4,8 @@ import java.sql.Connection;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.exception.BizLogicException;
 
@@ -28,5 +30,13 @@ public interface IConnectionManager
 	void setApplicationName(String applicationName);
 	
 	String getApplicationName();
+	
+	void setSessionFactory(SessionFactory sessionFactory);
+	
+	SessionFactory getSessionFactory();
+	
+	void setConfigurationFile(Configuration cfg);
+	
+	Configuration getConfigurationFile();
 	
 }
