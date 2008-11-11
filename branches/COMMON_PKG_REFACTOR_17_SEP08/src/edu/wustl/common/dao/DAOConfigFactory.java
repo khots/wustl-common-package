@@ -57,7 +57,7 @@ public class DAOConfigFactory
 	{
 		try
 		{
-			ApplicationPropertiesParser applicationPropertiesParser = new ApplicationPropertiesParser();
+			ApplicationDAOPropertiesParser applicationPropertiesParser = new ApplicationDAOPropertiesParser();
 			daoFactoryMap = applicationPropertiesParser.getDaoFactoryMap();
 
 			/*

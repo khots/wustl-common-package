@@ -44,7 +44,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	private Connection connection = null;
 	protected AuditManager auditManager;
 	private static org.apache.log4j.Logger logger = Logger.getLogger(JDBCDAOImpl.class);
-
+	private IConnectionManager connectionManager = null ;
 	
 	/**
 	 * This method will be used to establish the session with the database.
@@ -774,6 +774,17 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		}
 				
 		return timestamp;
+	}
+	
+	public void setConnectionManager(IConnectionManager connectionManager)
+	{
+		this.connectionManager = connectionManager;
+		
+	}
+	
+	public IConnectionManager setConnectionManager()
+	{
+		return connectionManager;
 	}
 	
 	
