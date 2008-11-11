@@ -1,7 +1,6 @@
 package edu.wustl.common.dao;
 
 import java.sql.Connection;
-import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -16,7 +15,7 @@ public interface IConnectionManager
 	
 	void closeConnection() throws HibernateException;
 	
-	Map newSession() throws HibernateException;
+	Session newSession() throws HibernateException;
 	
 	void closeSession() throws HibernateException;
 	

@@ -108,17 +108,19 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 	public Session currentSession() throws HibernateException
 	{
 
-		Map appicationSessionMap = threadLocal.get();
+		applicationSessionMap = threadLocal.get();
+		Session session = null;
            // Open a new Session, if this Thread has none yet
-        if (appicationSessionMap == null || !(appicationSessionMap.containsKey(applicationName)) ) {
-        	appicationSessionMap = newSession();
-            threadLocal.set(appicationSessionMap);
+        if (applicationSessionMap == null || !(applicationSessionMap.containsKey(applicationName)) ) {
+        	session = newSession();
+        	applicationSessionMap.put(applicationName, session);
+            threadLocal.set(applicationSessionMap);
         }
-        return (Session)appicationSessionMap.get(applicationName);
+        return (Session)applicationSessionMap.get(applicationName);
     
 	}
 	
-	public Map newSession() throws HibernateException
+	public Session newSession() throws HibernateException
 	{
 		
 		return null;
