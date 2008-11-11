@@ -211,5 +211,7 @@ public interface DAO
 	 */
 	public abstract void rollback() throws DAOException;
 	
+	void setConnectionManager(IConnectionManager connectionManager);
+	
 	
 }

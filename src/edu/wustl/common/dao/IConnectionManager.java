@@ -24,4 +24,9 @@ public interface IConnectionManager
 	Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException;
 
 	Session getCleanSession() throws BizLogicException;
+	
+	void setApplicationName(String applicationName);
+	
+	String getApplicationName();
+	
 }

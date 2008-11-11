@@ -10,7 +10,6 @@
 package edu.wustl.common.dao;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,11 +30,9 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.hibernate.HibernateUtil;
-import edu.wustl.common.util.global.DaoProperties;
 import edu.wustl.common.util.logger.Logger;
 
-public class DAOFactory extends AbstractDAOFactory implements IConnectionManager,IDAOFactory
+public class DAOFactory extends DAOConfigFactory implements IConnectionManager,IDAOFactory
 {
 	private String connectionManagerName;
 	private String defaultDAOClassName;
@@ -48,20 +45,24 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 	
 	// ThreadLocal to hold the Session for the current executing thread.
     private static final ThreadLocal<Map> threadLocal = new ThreadLocal<Map>();
-	
-
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOFactory.class);
+	
+	static {
+		Map applicationSessionMap = new HashMap<String, Session>();
+		threadLocal.set(applicationSessionMap);
+	}
 	
 	public DAO getDAO()
 	{
 		DAO dao = null;
+		
 		try {
 		
-		   //dao = (DAO)Class.forName(DaoProperties.getValue("defaultDao")).newInstance();
-		   Constructor daoConstructor = Class.forName(DaoProperties.getValue("defaultDao")).
-		   										getConstructor(new Class[]{IConnectionManager.class});
-		   dao = (DAO)daoConstructor.newInstance(this);
-		   
+		   dao = (DAO)Class.forName(defaultDAOClassName).newInstance();
+		   IConnectionManager connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
+		   connectionManager.setApplicationName(applicationName);
+		   dao.setConnectionManager(connectionManager);
+		  		
 		} catch (Exception inExcp ) {
 			
 			logger.error(inExcp.getMessage() + "Class not be instantiated,it may be Interface or Abstract class " + inExcp);
@@ -73,18 +74,17 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 	public JDBCDAO getJDBCDAO()
 	{
 		JDBCDAO dao = null;
+		
 		try {
 		
-			//dao = (JDBCDAO)Class.forName(DaoProperties.getValue("jdbcDao")).newInstance();
-			  Constructor daoConstructor = Class.forName(DaoProperties.getValue("jdbcDao")).
-			  										getConstructor(new Class[]{IConnectionManager.class});
-              dao = (JDBCDAO)daoConstructor.newInstance(this);
-			
-	
+			   dao = (JDBCDAO) Class.forName(jdbcDAOClassName).newInstance();
+			   IConnectionManager connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
+			   connectionManager.setApplicationName(applicationName);
+			   dao.setConnectionManager(connectionManager);								
+        
 		} catch (Exception inExcp ) {
 			
 			logger.error(inExcp.getMessage() + "Class not be instantiated,it may be Interface or Abstract class " + inExcp);
-			
 		} 
 		return dao;
 	}
@@ -111,21 +111,19 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 				session.close();
 			}
 			applicationSessionMap.remove(applicationName);
-			threadLocal.set(applicationSessionMap);
-				
 		}
 	}
+	
 
 	public Session currentSession() throws HibernateException
 	{
 
-		Map applicationSessionMap = (Map)threadLocal.get();
+		Map<String, Session> applicationSessionMap = (Map)threadLocal.get();
 	    // Open a new Session, if this Thread has none yet
     
-		if (applicationSessionMap == null || !(applicationSessionMap.containsKey(applicationName)) ) {
+		if (!(applicationSessionMap.containsKey(applicationName)) ) {
         	Session session = newSession();
         	applicationSessionMap.put(applicationName, session);
-            threadLocal.set(applicationSessionMap);
         }
         return (Session)applicationSessionMap.get(applicationName);
     
@@ -146,7 +144,6 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 
 	public Session getCleanSession() throws BizLogicException
 	{
-
 		Session session = null;
 		try
 		{
@@ -165,13 +162,11 @@ public class DAOFactory extends AbstractDAOFactory implements IConnectionManager
 		 cfg = new Configuration(); 
 		 addConfigurationFile(configurationFile, cfg);
 		 m_sessionFactory = cfg.buildSessionFactory();
-		
 	}
 	
 	
 	 /**
      * This method adds configuration file to Hibernate Configuration.
-     * 
      * @param configurationfile name of the file that needs to be added
      * @param cfg Configuration to which this file is added.
      */
