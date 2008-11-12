@@ -30,6 +30,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.util.logger.Logger;
 
 public class DAOFactory implements IConnectionManager,IDAOFactory
@@ -269,9 +270,28 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		this.configurationFile = configurationFile;
 	}
 
+	/**
+	 * This method opens a new session, loads an object with given class and Id,
+	 * and closes the session. This method should be used only when an object is
+	 * to be opened in separate session.
+	 *
+	 * @param objectClass class of the object
+	 * @param identifier id of the object
+	 * @return object
+	 * @throws HibernateException exception of Hibernate.
+	 */
 	public Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
 	{
-		return null;
+		Session session = null;
+		try
+		{
+			session = HibernateUtil.getSessionFactory().openSession();
+			return session.load(objectClass, identifier);
+		}
+		finally
+		{
+			session.close();
+		}
 	}
 
 	public SessionFactory getSessionFactory()
