@@ -304,6 +304,7 @@ public class QueryBizLogic extends DefaultBizLogic
 		identifiedData.add("MIDDLE_NAME");
 		identifiedData.add("BIRTH_DATE");
 		identifiedData.add("SOCIAL_SECURITY_NUMBER");
+		identifiedData.add("DEATH_DATE");
 		Client.identifiedDataMap.put(Query.PARTICIPANT, identifiedData);
 
 		//For CollectionProtocolRegistration
@@ -320,6 +321,32 @@ public class QueryBizLogic extends DefaultBizLogic
 		identifiedData = new Vector();
 		identifiedData.add("SURGICAL_PATHOLOGICAL_NUMBER");
 		Client.identifiedDataMap.put(Query.CLINICAL_REPORT, identifiedData);
+		
+		
+		identifiedData = new Vector();
+		identifiedData.add("CREATED_ON_DATE");
+		Client.identifiedDataMap.put(Query.SPECIMEN, identifiedData);
+		
+		identifiedData = new Vector();
+		identifiedData.add("START_DATE");
+		Client.identifiedDataMap.put(Query.USER, identifiedData);
+		
+		identifiedData = new Vector();
+		identifiedData.add("END_DATE");
+		identifiedData.add("START_DATE");
+		Client.identifiedDataMap.put(Query.SPECIMEN_PROTOCOL, identifiedData);
+		
+		identifiedData = new Vector();
+		identifiedData.add("EVENT_TIMESTAMP");
+		Client.identifiedDataMap.put(Query.DISTRIBUTION, identifiedData);
+		
+		identifiedData = new Vector();
+		identifiedData.add("EVENT_TIMESTAMP");
+		Client.identifiedDataMap.put(Query.DISTRIBUTION_ARRAY, identifiedData);
+		
+		identifiedData = new Vector();
+		identifiedData.add("REPORTED_DATE");
+		Client.identifiedDataMap.put(Query.REPORTED_PROBLEM, identifiedData);
 
 		//        Client.identifiedClassNames.add(Participant.class.getName());
 		//        Client.identifiedClassNames.add(CollectionProtocolRegistration.class.getName());
