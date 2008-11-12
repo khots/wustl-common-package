@@ -13,7 +13,9 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -99,7 +101,9 @@ public class DataElement implements Serializable
 	 */
 	public String toSQLString(int tableSufix) throws SQLException
 	{
-		JDBCDAO dao = DAOFactory.getInstance().getJDBCDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO dao = daofactory.getJDBCDAO();
+		
 		if (table.toSQLString() == null || field == null)
 		{
 			return null;

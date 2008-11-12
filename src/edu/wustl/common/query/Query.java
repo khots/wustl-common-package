@@ -12,7 +12,9 @@ import java.util.Set;
 import java.util.Vector;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.util.Utility;
@@ -221,7 +223,8 @@ public abstract class Query
 	{
 		try
 		{
-			JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			JDBCDAO dao = daofactory.getJDBCDAO();
 			dao.openSession(null);
 			String sql = getString();
 			Logger.out.debug("SQL************" + sql);
@@ -866,7 +869,8 @@ public abstract class Query
 		Set relatedTableNames = new HashSet();
 		try
 		{
-			JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			JDBCDAO dao = daofactory.getJDBCDAO();
 			dao.openSession(null);
 			// Commenting this variable as its not used in code.			
 			//			String sqlString = "SELECT tableData2.ALIAS_NAME from CATISSUE_QUERY_TABLE_DATA tableData2 "
