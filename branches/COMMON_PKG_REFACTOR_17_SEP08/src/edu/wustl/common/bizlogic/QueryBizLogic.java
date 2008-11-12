@@ -29,7 +29,10 @@ import java.util.Vector;
 import oracle.sql.CLOB;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.dao.QuerySessionData;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
@@ -112,7 +115,9 @@ public class QueryBizLogic extends DefaultBizLogic
 		JDBCDAO dao = null;
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			dao = daofactory.getJDBCDAO();
+			
 			dao.openSession(null);
 			list = dao.executeQuery(ALIAS_NAME_TABLE_NAME_MAP_QUERY, null, false, null);
 
@@ -160,7 +165,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		JDBCDAO dao = null;
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			dao = daofactory.getJDBCDAO();
 			dao.openSession(null);
 			list = dao.executeQuery(ALIAS_NAME_PRIVILEGE_TYPE_MAP_QUERY, null, false, null);
 
@@ -217,7 +223,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		HashMap relationConditionsForRelatedTables = new HashMap();
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			dao = daofactory.getJDBCDAO();
 			dao.openSession(null);
 			list = dao.executeQuery(GET_RELATION_DATA, null, false, null);
 
@@ -340,7 +347,9 @@ public class QueryBizLogic extends DefaultBizLogic
 	 */
 	public String getAliasName(String columnName, Object columnValue) throws DAOException
 	{
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDAO  = daofactory.getJDBCDAO();
+		
 		jdbcDAO.openSession(null);
 		String[] selectColumnNames = {Constants.TABLE_ALIAS_NAME_COLUMN};
 		String[] whereColumnNames = {columnName};
@@ -394,7 +403,10 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		logger.debug("SQL*****************************" + sql);
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
+		
+		
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
@@ -453,7 +465,9 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		logger.debug("TABLE SQL*****************************" + sql);
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
+		
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
@@ -465,13 +479,13 @@ public class QueryBizLogic extends DefaultBizLogic
 		objectList.add(nameValueBean);
 
 		//Adding the NameValueBean of previous selected object.
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
-		jdbcDAO.openSession(null);
+		
+		jdbcDao.openSession(null);
 
 		sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='" + prevValue
 				+ "'";
-		List prevValueDisplayNameList = jdbcDAO.executeQuery(sql, null, false, null);
-		jdbcDAO.closeSession();
+		List prevValueDisplayNameList = jdbcDao.executeQuery(sql, null, false, null);
+		jdbcDao.closeSession();
 
 		if (!prevValueDisplayNameList.isEmpty())
 		{
@@ -514,7 +528,8 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ " where TABLE_R.PARENT_TABLE_ID = TABLE_A.TABLE_ID and "
 				+ " TABLE_R.CHILD_TABLE_ID = TABLE_B.TABLE_ID ";
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
 		jdbcDao.openSession(null);
 		List checkList = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
@@ -557,7 +572,8 @@ public class QueryBizLogic extends DefaultBizLogic
 	{
 		String prevValueDisplayName = null;
 
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDAO = daofactory.getJDBCDAO();
 		jdbcDAO.openSession(null);
 		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where ALIAS_NAME='"
 				+ aliasName + "'";
@@ -584,7 +600,8 @@ public class QueryBizLogic extends DefaultBizLogic
 	{
 		String prevValueDisplayName = null;
 
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDAO = daofactory.getJDBCDAO();
 		jdbcDAO.openSession(null);
 		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"
 				+ tableName + "'";
@@ -630,7 +647,8 @@ public class QueryBizLogic extends DefaultBizLogic
 			whereColumnValues[1] = alias;
 		}
 
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDAO = daofactory.getJDBCDAO();
 		jdbcDAO.openSession(null);
 		List tableList = jdbcDAO.retrieve(Constants.TABLE_DATA_TABLE_NAME, selectColumnNames,
 				whereColumnNames, whereColumnConditions, whereColumnValues, null);
@@ -672,7 +690,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		JDBCDAO dao = null;
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			dao = daofactory.getJDBCDAO();
 			dao.openSession(null);
 			list = dao.executeQuery(sql, null, false, null);
 
@@ -723,7 +742,8 @@ public class QueryBizLogic extends DefaultBizLogic
 		JDBCDAO dao = null;
 		try
 		{
-			dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			dao = daofactory.getJDBCDAO();
 			dao.openSession(null);
 			list = dao.executeQuery(GET_RELATED_TABLE_ALIAS_PART1 + "'" + aliasName + "'"
 					+ GET_RELATED_TABLE_ALIAS_PART2, null, false, null);
@@ -778,7 +798,8 @@ public class QueryBizLogic extends DefaultBizLogic
 
 		logger.debug("SQL*****************************" + sql);
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
@@ -823,7 +844,10 @@ public class QueryBizLogic extends DefaultBizLogic
 				+ aliasName + "' ";
 		logger.debug("SQL*****************************" + sql);
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
+		
+		
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
@@ -847,7 +871,8 @@ public class QueryBizLogic extends DefaultBizLogic
 	public String getTableIdFromAliasName(String aliasName) throws DAOException
 	{
 
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDAO = daofactory.getJDBCDAO();
 		jdbcDAO.openSession(null);
 		String[] selectColumnNames = {"TABLE_ID"};
 		String[] whereColumnNames = {"ALIAS_NAME"};
@@ -909,7 +934,9 @@ public class QueryBizLogic extends DefaultBizLogic
 	{
 		logger.debug("SQL*****************************" + sql);
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
+		
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();
@@ -1025,7 +1052,9 @@ public class QueryBizLogic extends DefaultBizLogic
 		try
 		{
 			// Database connection established
-			jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			jdbcDAO = daofactory.getJDBCDAO();
+			
 			jdbcDAO.openSession(null);
 
 			summaryDataMap = new HashMap<String, Object>();
@@ -1280,7 +1309,9 @@ public class QueryBizLogic extends DefaultBizLogic
 			ClassNotFoundException
 	{
 
-		JDBCDAO jdbcDAO = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		 JDBCDAO jdbcDAO = daofactory.getJDBCDAO();
 		try
 		{
 
@@ -1325,7 +1356,9 @@ public class QueryBizLogic extends DefaultBizLogic
 	public PagenatedResultData execute(SessionDataBean sessionDataBean,
 			QuerySessionData querySessionData, int startIndex) throws DAOException
 	{
-		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO dao = daofactory.getJDBCDAO();
+		
 		try
 		{
 			dao.openSession(null);
@@ -1362,7 +1395,9 @@ public class QueryBizLogic extends DefaultBizLogic
 	{
 		logger.debug("SQL to get cardinality between 2 entities... " + sql);
 
-		JDBCDAO jdbcDao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO jdbcDao = daofactory.getJDBCDAO();
+		
 		jdbcDao.openSession(null);
 		List list = jdbcDao.executeQuery(sql, null, false, null);
 		jdbcDao.closeSession();

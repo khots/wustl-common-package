@@ -15,8 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
+import edu.wustl.common.dao.IDAOFactory;
+import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.domain.QueryTableData;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -35,7 +39,9 @@ public class QueryDataCache
 	 */
 	public static Map getQueryData() throws DAOException
 	{
-		HibernateDAO dao = (HibernateDAO) DAOFactory.getInstance().getDAO(Constants.HIBERNATE_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
+		
 
 		dao.openSession(null);
 		List list = dao.retrieve(QueryTableData.class.getName());

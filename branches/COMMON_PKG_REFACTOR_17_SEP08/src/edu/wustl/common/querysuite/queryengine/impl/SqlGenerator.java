@@ -35,7 +35,9 @@ import edu.common.dynamicextensions.entitymanager.EntityManager;
 import edu.common.dynamicextensions.util.global.Constants.InheritanceStrategy;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
@@ -1630,7 +1632,8 @@ public class SqlGenerator implements ISqlGenerator
 			{
 				Date date = new Date();
 				date = Utility.parseDate(value);
-				JDBCDAO dao = DAOFactory.getInstance().getJDBCDAO();
+				IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+				JDBCDAO dao = daofactory.getJDBCDAO();
 
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);

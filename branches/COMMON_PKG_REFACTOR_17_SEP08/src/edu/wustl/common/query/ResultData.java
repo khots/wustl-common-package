@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -55,7 +57,8 @@ public class ResultData
 			Logger.out.debug("arrayvalues:"+whereColumnName[0]+":"+whereColumnName[1]+":"+whereColumnValue[0]+":"+whereColumnValue[1]);*/
 		List dataList = new ArrayList();
 		//Bug#2003: For having unique records in result view
-		JDBCDAO dao = (JDBCDAO) DAOFactory.getInstance().getDAO(Constants.JDBC_DAO);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO dao = daofactory.getJDBCDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
