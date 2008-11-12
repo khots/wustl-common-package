@@ -165,10 +165,10 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	{		
 		try
 		{
-			 cfg = new Configuration(); 
-			 addConfigurationFile(configurationFile, cfg);
-			 m_sessionFactory = cfg.buildSessionFactory();
-			 setConnectionManager();
+			Configuration cfg = new Configuration(); ;
+			addConfigurationFile(configurationFile, cfg);
+			SessionFactory sessionFactory = cfg.buildSessionFactory();
+			setConnectionManager(sessionFactory,cfg);
 			 
 		}
 		catch (Exception e)
@@ -179,12 +179,15 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		  
 	}
 
-	private void setConnectionManager() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+	private void setConnectionManager(SessionFactory sessionFactory ,Configuration cfg) throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
-		connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
-		connectionManager.setApplicationName(applicationName);
-		connectionManager.setSessionFactory(m_sessionFactory);
-		connectionManager.setConfigurationFile(cfg);
+		/*
+		 * Is writing this is valid here ...confirm !!!
+		 */
+		this.connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
+		this.connectionManager.setApplicationName(applicationName);
+		this.connectionManager.setSessionFactory(sessionFactory);
+		this.connectionManager.setConfigurationFile(cfg);
 	}
 	
 	

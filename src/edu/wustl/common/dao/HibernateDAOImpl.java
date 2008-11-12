@@ -86,8 +86,9 @@ public class HibernateDAOImpl implements HibernateDAO
 
 		try
 		{
-			session = DBUtil.currentSession();
-
+			IConnectionManager connectionManager = getConnectionManager();
+			session = connectionManager.currentSession();
+			
 			transaction = session.beginTransaction();
 
 			auditManager = new AuditManager();
@@ -835,7 +836,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		
 	}
 
-	public IConnectionManager setConnectionManager()
+	public IConnectionManager getConnectionManager()
 	{
 		
 		return connectionManager;

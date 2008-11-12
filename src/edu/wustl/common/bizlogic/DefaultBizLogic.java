@@ -27,8 +27,10 @@ import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
@@ -197,7 +199,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 
 		List list = null;
 
@@ -288,7 +291,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 
 		Object object = null;
 
@@ -799,7 +803,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws DAOException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 
 		Object attribute = null;
 
@@ -832,7 +837,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws DAOException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 
 		Object attribute = null;
 

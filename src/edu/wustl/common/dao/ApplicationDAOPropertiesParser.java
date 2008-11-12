@@ -38,17 +38,17 @@ public class ApplicationDAOPropertiesParser
 	/**
 	 * Specifies dao Factory Map.
 	 */
-	private final transient Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
+	private final Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
 
 	/**
 	 * Specifies Document object.
 	 */
-	private transient Document dom;
+	private Document dom;
 
 	/**
 	 * Specifies application variables.
 	 */
-	private transient String connectionManager, applicationName, daoFactoryName, defaultDaoName,
+	private String connectionManager, applicationName, daoFactoryName, defaultDaoName,
 			configFile, jdbcDAOName;
 
 	/**

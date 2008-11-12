@@ -87,9 +87,11 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		try
 		{
 			auditManager.insert(this);
+			
+			if(connection == null)
+				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
 
-			if (connection != null)
-				connection.commit();
+			connection.commit();
 		}
 		catch (SQLException dbex)
 		{
@@ -101,18 +103,23 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	/**
 	 * Rollback all the changes after last commit. 
 	 * Declared in AbstractDAO class. 
+	 * @throws DAOException 
 	 * @throws DAOException
 	 */
-	public void rollback()
+	public void rollback() throws DAOException
 	{
 		try
 		{
-			if (connection != null)
-				connection.rollback();
+			if(connection == null)
+				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
+
+			connection.rollback();
 		}
 		catch (SQLException dbex)
 		{
 			logger.error(dbex.getMessage(), dbex);
+			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
+			
 		}
 	}
 	
@@ -149,7 +156,8 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		}
 		catch (SQLException sqlExp)
 		{
-			sqlExp.printStackTrace();
+			logger.error(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
 		}
 		finally
 		{
@@ -782,7 +790,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		
 	}
 	
-	public IConnectionManager setConnectionManager()
+	public IConnectionManager getConnectionManager()
 	{
 		return connectionManager;
 	}
