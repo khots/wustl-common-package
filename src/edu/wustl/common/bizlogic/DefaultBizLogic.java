@@ -28,8 +28,8 @@ import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.HibernateDAO;
+import edu.wustl.common.dao.IConnectionManager;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
@@ -39,7 +39,6 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -944,10 +943,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List executeQuery(String query) throws ClassNotFoundException, DAOException
 	{
 		List returner = null;
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
+		IConnectionManager connectionManager = dao.getConnectionManager();
 		Session session = null;
 		try
 		{
-			session = DBUtil.getCleanSession();
+			session = connectionManager.getCleanSession();
 			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
 		}

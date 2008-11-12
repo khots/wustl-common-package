@@ -24,7 +24,7 @@ import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IConnectionManager;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
@@ -36,7 +36,6 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -1054,22 +1053,27 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public String formatException(Exception exception, Object obj, String operation)
 	{
 		String errMsg;
-		if (exception == null)
-		{
-			errMsg = null;
-		}
-		String roottableName = null;
 		String tableName = null;
 		try
 		{
+			if (exception == null)
+			{
+				errMsg = null;
+			}
+			String roottableName = null;
 			// Get ExceptionFormatter
 			ExceptionFormatter ef = ExceptionFormatterFactory.getFormatter(exception);
+			
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			DAO dao = daofactory.getDAO();
+			IConnectionManager connectionManager = dao.getConnectionManager();
+			
 			// call for Formating Message
 			if (ef != null)
 			{
 				roottableName = HibernateMetaData.getRootTableName(obj.getClass());
 				tableName = HibernateMetaData.getTableName(obj.getClass());
-				Object[] arguments = {roottableName, DBUtil.currentSession().connection(),
+				Object[] arguments = {roottableName, connectionManager.currentSession().connection(),
 						tableName};
 				errMsg = ef.formatMessage(exception, arguments);
 			}

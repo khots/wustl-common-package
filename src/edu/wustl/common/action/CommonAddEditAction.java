@@ -35,6 +35,10 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.bizlogic.QueryBizLogic;
+import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOConfigFactory;
+import edu.wustl.common.dao.IConnectionManager;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
@@ -46,7 +50,6 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.AbstractForwardToProcessor;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
@@ -376,9 +379,12 @@ public class CommonAddEditAction extends Action
 		String objectName = getObjectName(abstractDomainObjectFactory, abstractForm);
 		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long.valueOf(abstractForm
 				.getId()), abstractForm);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
+		IConnectionManager connectionManager = dao.getConnectionManager();
 		if (abstractDomain != null)
 		{
-			Session sessionClean = DBUtil.getCleanSession();
+			Session sessionClean = connectionManager.getCleanSession();
 			AbstractDomainObject abstractDomainOld = null;
 			try
 			{

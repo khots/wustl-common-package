@@ -30,11 +30,9 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.queryExecutor.IQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
-import edu.wustl.common.locator.InterfaceLocator;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -56,7 +54,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		try
 		{
 			initializeAuditManager(sessionDataBean);
-			connection = DBUtil.getConnection();
+			connection = connectionManager.getConnection();
 			connection.setAutoCommit(false);
 		}
 		catch (SQLException sqlExp)
@@ -73,7 +71,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	public void closeSession() throws DAOException
 	{
 		auditManager = null;
-		DBUtil.closeConnection();
+		connectionManager.closeConnection();
 	}
 
 	/**

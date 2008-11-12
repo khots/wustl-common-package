@@ -31,7 +31,6 @@ import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.dbmanager.DBUtil;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -65,15 +64,15 @@ public class HibernateDAOImpl implements HibernateDAO
 	 */
 	private boolean isUpdated = false;
 	
-	private IConnectionManager connectionManager = null ;
+	private IConnectionManager connectionManager;
 	
 		
-	public HibernateDAOImpl(IConnectionManager connectionManager)
+	/*public HibernateDAOImpl(IConnectionManager connectionManager)
 	{
 		//System.out.println("---got the constructor connectionManager --" +connectionManager);
 		this.connectionManager  = connectionManager;
 		
-	}
+	}*/
 	
 	/**
 	 * This method will be used to establish the session with the database.
@@ -86,7 +85,7 @@ public class HibernateDAOImpl implements HibernateDAO
 
 		try
 		{
-			IConnectionManager connectionManager = getConnectionManager();
+			
 			session = connectionManager.currentSession();
 			
 			transaction = session.beginTransaction();
@@ -117,10 +116,11 @@ public class HibernateDAOImpl implements HibernateDAO
 	 */
 	public void closeSession() throws DAOException
 	{
+		
 
 		try
 		{
-			DBUtil.closeSession();
+			connectionManager.closeSession();
 
 		}
 		catch (HibernateException dx)
