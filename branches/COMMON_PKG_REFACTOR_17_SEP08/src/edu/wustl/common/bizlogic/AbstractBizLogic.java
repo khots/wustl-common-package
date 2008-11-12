@@ -23,7 +23,9 @@ import titli.model.TitliException;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
@@ -206,7 +208,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public void delete(Object obj, int daoType) throws UserNotAuthorizedException,
 			BizLogicException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO(daoType);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(null);
@@ -257,7 +260,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public void delete(Object obj) throws UserNotAuthorizedException,
 			BizLogicException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(null);
@@ -340,7 +344,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			boolean isInsertOnly) throws UserNotAuthorizedException, BizLogicException
 	{
 		long startTime = System.currentTimeMillis();
-		DAO dao = DAOFactory.getInstance().getDAO(daoType);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
@@ -403,7 +408,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	throws UserNotAuthorizedException, BizLogicException
 	{
 		long startTime = System.currentTimeMillis();
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
@@ -469,7 +475,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly)
 			throws BizLogicException, UserNotAuthorizedException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO(daoType);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
@@ -525,7 +532,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			SessionDataBean sessionDataBean, boolean isInsertOnly)
 			throws BizLogicException, UserNotAuthorizedException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
@@ -704,7 +712,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			UserNotAuthorizedException
 	{
 		long startTime = System.currentTimeMillis();
-		DAO dao = DAOFactory.getInstance().getDAO(daoType);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
@@ -780,7 +789,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	throws BizLogicException,UserNotAuthorizedException
 	{
 		long startTime = System.currentTimeMillis();
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(sessionDataBean);
@@ -930,7 +940,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO(daoType);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
@@ -988,7 +999,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws SMException, BizLogicException
 	{
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
@@ -1136,7 +1148,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		long startTime = System.currentTimeMillis();
 		boolean isSuccess = false;
 
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		try
 		{
 			dao.openSession(null);
@@ -1198,7 +1211,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			IValueObject uiForm) throws DAOException, BizLogicException, AssignDataException
 	{
 		long startTime = System.currentTimeMillis();
-		DAO dao = DAOFactory.getInstance().getDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao = daofactory.getDAO();
 		AbstractDomainObject abstractDomain = null;
 
 		try

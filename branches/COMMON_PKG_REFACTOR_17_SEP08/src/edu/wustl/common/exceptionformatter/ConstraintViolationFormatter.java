@@ -18,7 +18,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 
 import edu.wustl.common.dao.DAO;
+import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -41,7 +43,9 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 	public String formatMessage(Exception objExcp, Object[] args)
 	{
 		String errMessage = null;
-		JDBCDAO dao = DAOFactory.getInstance().getJDBCDAO();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		JDBCDAO dao = daofactory.getJDBCDAO();
+	
 		errMessage = dao.formatMessage(objExcp, args);
 		
 		if (errMessage == null)
