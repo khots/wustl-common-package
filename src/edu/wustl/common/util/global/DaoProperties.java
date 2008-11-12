@@ -1,23 +1,17 @@
 package edu.wustl.common.util.global;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ResourceBundle;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import edu.wustl.common.dao.DAO;
-import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.dao.DaoFactoryNew;
-import edu.wustl.common.dao.HibernateDAOImpl;
 import edu.wustl.common.dao.IConnectionManager;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.logger.Logger;
 
 
-public class DaoProperties implements IConnectionManager
+public class DaoProperties
 {
 
 	
@@ -71,19 +65,7 @@ public class DaoProperties implements IConnectionManager
 		return val;
 	}
 	
-	public void method()
-	{
-		try
-		{
-			DaoProperties daoProperties = new DaoProperties(this);;
-			System.out.println(" ****daoProperties ***"+daoProperties.getClass().getName());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-	}
+	
 	
 	public static void main (String[] argv)
 	{
@@ -92,15 +74,7 @@ public class DaoProperties implements IConnectionManager
 		
 		try
 		{
-			IConnectionManager iConnectionManager =(IConnectionManager)dAOFactory;
-			
-		//Constructor c = Class.forName(DaoProperties.getValue("defaultDao")).getConstructor(new Class[]{IConnectionManager.class});
-		//DAO  dao1 = (DAO)c.newInstance(this);
-			
-			DaoProperties daoProperties = new DaoProperties(iConnectionManager);
-			//String defaultDao = daoProperties.getValue("defaultDao");
-			
-			//System.out.println(" ****daoProperties ***"+dao1.getClass().getName());
+	
 		}
 		catch (Exception e)
 		{
