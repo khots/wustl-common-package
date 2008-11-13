@@ -166,10 +166,9 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	{		
 		try
 		{
-			Configuration cfg = new Configuration();
-			addConfigurationFile(configurationFile, cfg);
-			SessionFactory sessionFactory = cfg.buildSessionFactory();
-			setConnectionManager(sessionFactory,cfg);
+			Configuration configuration = setConfiguration(configurationFile);
+			SessionFactory sessionFactory = configuration.buildSessionFactory();
+			setConnectionManager(sessionFactory,configuration);
 			 
 		}
 		catch (Exception exp)
@@ -182,7 +181,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		  
 	}
 
-	private void setConnectionManager(SessionFactory sessionFactory ,Configuration cfg) throws InstantiationException, IllegalAccessException, ClassNotFoundException
+	private void setConnectionManager(SessionFactory sessionFactory,Configuration configuration) throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
 		/*
 		 * Is writing this is valid here ...confirm !!!
@@ -190,7 +189,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		IConnectionManager connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
 		connectionManager.setApplicationName(applicationName);
 		connectionManager.setSessionFactory(sessionFactory);
-		connectionManager.setConfiguration(cfg);
+		connectionManager.setConfiguration(configuration);
 		setConnectionManager(connectionManager);
 	}
 	
@@ -198,12 +197,13 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	 /**
      * This method adds configuration file to Hibernate Configuration.
      * @param configurationfile name of the file that needs to be added
-     * @param cfg Configuration to which this file is added.
+     * @param config Configuration to which this file is added.
 	 * @throws DAOException 
      */
-    private void addConfigurationFile(String configurationfile, Configuration cfg) throws DAOException {
+    private Configuration setConfiguration(String configurationfile) throws DAOException {
         try {
         	
+        	Configuration configuration = new Configuration();
             //InputStream inputStream = DAOFactory.class.getClassLoader().getResourceAsStream(configurationfile);
         	InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(configurationfile);
             List<Object> errors = new ArrayList<Object>();
@@ -216,12 +216,16 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
             DOMWriter writer = new DOMWriter();
             org.w3c.dom.Document doc = writer.write(document);
             // configure
-            cfg.configure(doc);
+            configuration.configure(doc);
+            
+            return configuration;
         } catch (DocumentException e) {
             throw new DAOException(e);
         } catch (HibernateException e) {
             throw new DAOException(e);
         }
+        
+       
     }
 	
 

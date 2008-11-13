@@ -956,12 +956,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (HibernateException e)
 		{
 			throw (new DAOException(e));
-		}
-		catch (BizLogicException e)
-		{
-			throw new DAOException("Failed to create Session Object" + e.getMessage());
-		}
-		finally
+		} finally
 		{
 			session.close();
 		}

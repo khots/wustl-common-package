@@ -7,9 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.dbmanager.DAOException;
-
 
 public interface IConnectionManager
 {

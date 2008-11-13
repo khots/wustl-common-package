@@ -476,6 +476,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @param noOfRecords
 	 * @return
 	 * @throws DAOException
+	 * 
+	 * 
+	 * -- TODO have to look into this 
 	 */
 	public PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
@@ -484,7 +487,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		PagenatedResultData pagenatedResultData = null;
 		//
 		
-		try {
+		/*try {
 			IQueryExecutor queryExecutor = (IQueryExecutor)Class.forName(queryExecutorClassName).newInstance();
 			pagenatedResultData = queryExecutor.getQueryResultList(query, connection,
 					sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
@@ -495,7 +498,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			throw new DAOException(e);
 		} catch (ClassNotFoundException e) {
 			throw new DAOException(e);
-		}
+		}*/
 		return pagenatedResultData;
 
 	}
