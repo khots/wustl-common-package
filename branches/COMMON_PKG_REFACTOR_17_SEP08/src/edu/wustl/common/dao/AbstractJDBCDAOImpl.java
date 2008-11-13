@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import edu.wustl.common.audit.AuditManager;
@@ -30,18 +31,17 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.queryExecutor.IQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
-import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
-public abstract class JDBCDAOImpl implements JDBCDAO
+public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 {
 
 	private Connection connection = null;
 	protected AuditManager auditManager;
-	private static org.apache.log4j.Logger logger = Logger.getLogger(JDBCDAOImpl.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractJDBCDAOImpl.class);
 	private IConnectionManager connectionManager = null ;
 	
 	/**
@@ -86,8 +86,9 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		{
 			auditManager.insert(this);
 			
-			if(connection == null)
+			if(connection == null) {
 				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
+			}	
 
 			connection.commit();
 		}
@@ -108,8 +109,9 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	{
 		try
 		{
-			if(connection == null)
+			if(connection == null) {
 				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
+			}	
 
 			connection.rollback();
 		}
@@ -128,14 +130,13 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	private void initializeAuditManager(SessionDataBean sessionDataBean)
 	{
 		auditManager = new AuditManager();
-		if (sessionDataBean != null)
-		{
+		if (sessionDataBean == null) {
+		
+			auditManager.setUserId(null);
+		} else {
+		
 			auditManager.setUserId(sessionDataBean.getUserId());
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
-		}
-		else
-		{
-			auditManager.setUserId(null);
 		}
 	}
 	
@@ -149,24 +150,25 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		PreparedStatement stmt = null;
 		try
 		{
-			stmt = connection.prepareStatement(query.toString());
+			stmt = connection.prepareStatement(query);
 			stmt.executeUpdate();
 		}
 		catch (SQLException sqlExp)
 		{
 			logger.error(sqlExp.getMessage(), sqlExp);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
+			throw new DAOException(sqlExp);
 		}
 		finally
 		{
 			try
 			{
-				if (stmt != null)
+				if (stmt != null) {
 					stmt.close();
+				}	
 			}
 			catch (SQLException sqlExp)
 			{
-				sqlExp.printStackTrace();
+				logger.error(sqlExp.getMessage(), sqlExp);
 			}
 		}
 	}
@@ -177,8 +179,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 */
 	protected Statement getConnectionStmt() throws SQLException
 	{
-		Statement statement = connection.createStatement();
-		return statement;
+		return (Statement)connection.createStatement();
 	}
 	
 	/**
@@ -188,8 +189,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 */
 	protected PreparedStatement getPreparedStatement(String query) throws SQLException
 	{
-		return(connection.prepareStatement(query));
-		
+		return connection.prepareStatement(query);
 	}	
 
 	/* (non-Javadoc)
@@ -208,8 +208,8 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 */
 	public void createTable(String query) throws DAOException
 	{
-		logger.debug("Create Table Query " + query.toString());
-		executeUpdate(query.toString());
+		logger.debug("Create Table Query " + query);
+		executeUpdate(query);
 	}
 	
 	/**
@@ -221,14 +221,14 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	private final String createTableQuery(String tableName, String[] columnNames) throws DAOException
 	{
 		StringBuffer query = new StringBuffer("CREATE TABLE ").append(tableName).append(" (");
-		int i;
+		int index;
 
-		for ( i=0; i < (columnNames.length - 1); i++)
+		for ( index=0; index < (columnNames.length - 1); index++)
 		{
-			query = query.append(columnNames[i]).append(" VARCHAR(50),");
+			query = query.append(columnNames[index]).append(" VARCHAR(50),");
 		}
 
-		query.append(columnNames[i]).append(" VARCHAR(50));");
+		query.append(columnNames[index]).append(" VARCHAR(50));");
 		
 		return  query.toString();
 	}
@@ -239,7 +239,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List retrieve(String sourceObjectName) throws DAOException
+	public List<Object> retrieve(String sourceObjectName) throws DAOException
 	{
 		return retrieve(sourceObjectName, null, null, null, null, null,false);
 	}
@@ -254,7 +254,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
 	{
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,false);
 	}
@@ -270,7 +270,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
 	{
 		//logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
@@ -287,7 +287,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @param joinCondition The join condition.
 	 * @param The session object.
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
@@ -299,7 +299,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
 	 */
-	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
+	public List<Object> retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
 			throws DAOException
 	{
 		String whereColumnNames[] = {whereColumnName};
@@ -320,21 +320,22 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @param joinCondition The join condition.
 	 * @param onlyDistictRows true if only distict rows should be selected
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, boolean onlyDistinctRows) throws DAOException
 	{
 		//logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
-		List list = null;
+		List<Object> list = null;
 		String condition;
 
 		try
 		{
 			StringBuffer query = getSelectFromQueryPart(sourceObjectName, selectColumnName, onlyDistinctRows);
-			if (joinCondition == null)
+			if (joinCondition == null) {
 				condition = Constants.AND_JOIN_CONDITION;
-			else 
+			} else {
 				condition = joinCondition;
+			}
 
 			//Prepares the where clause of the query.
 			if ((whereColumnName != null && whereColumnName.length > 0)
@@ -342,15 +343,15 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 					&& (whereColumnValue != null && whereColumnName.length == whereColumnValue.length))
 			{
 				query.append(" WHERE ");
-				int i;
-				for (i = 0; i < (whereColumnName.length - 1); i++)
+				int index;
+				for (index = 0; index < (whereColumnName.length - 1); index++)
 				{
-					query.append(sourceObjectName + "." + whereColumnName[i] + " "
-							+ whereColumnCondition[i] + " " + whereColumnValue[i]);
+					query.append(sourceObjectName + "." + whereColumnName[index] + " "
+							+ whereColumnCondition[index] + " " + whereColumnValue[index]);
 					query.append(" " + condition + " ");
 				}
-				query.append(sourceObjectName + "." + whereColumnName[i] + " "
-						+ whereColumnCondition[i] + " " + whereColumnValue[i]);
+				query.append(sourceObjectName + "." + whereColumnName[index] + " "
+						+ whereColumnCondition[index] + " " + whereColumnValue[index]);
 			}
 			logger.debug("JDBC Query " + query);
 			list = executeQuery(query.toString(), null, false, null);
@@ -379,19 +380,19 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 			{
 				query.append(" DISTINCT ");
 			}
-			int i;
-			for (i = 0; i < (selectColumnName.length - 1); i++)
+			int index;
+			for (index = 0; index < (selectColumnName.length - 1); index++)
 			{
-				query.append(selectColumnName[i] + " ");
-				query.append(",");
+				query.append(selectColumnName[index]).append("  ,");
+			
 			}
-			query.append(selectColumnName[i] + " ");
+			query.append(selectColumnName[index]).append("  ");
 		}
 		else
 		{
 			query.append("* ");
 		}
-		query.append("FROM " + sourceObjectName);
+		query.append("FROM ").append(sourceObjectName);
 		return query;
 	}
 
@@ -407,7 +408,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List executeQuery(String query, SessionDataBean sessionDataBean,
+	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException
 	{
@@ -429,20 +430,18 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public List executeQuery(String query, SessionDataBean sessionDataBean,
+	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
 	{
+		List pagenatedResultData = null;
 			
-		if (Constants.SWITCH_SECURITY && isSecureExecute)
+		if (!(Constants.SWITCH_SECURITY && isSecureExecute && sessionDataBean == null))
 		{
-			if (sessionDataBean == null)
-			{
-				return null;
-			}
+			pagenatedResultData = (List)getQueryResultList(query, sessionDataBean, isSecureExecute,hasConditionOnIdentifiedField, queryResultObjectDataMap, -1, -1).getResult();
+			
 		}
-		return getQueryResultList(query, sessionDataBean, isSecureExecute,
-				hasConditionOnIdentifiedField, queryResultObjectDataMap, -1, -1).getResult();
+		return pagenatedResultData;
 	}
 
 	/**
@@ -454,15 +453,14 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 			Map queryResultObjectDataMap, int startIndex, int noOfRecords)
 			throws ClassNotFoundException, DAOException
 	{
-		if (Constants.SWITCH_SECURITY && isSecureExecute)
+		PagenatedResultData pagenatedResultData = null;
+		if (!(Constants.SWITCH_SECURITY && isSecureExecute && sessionDataBean == null))
 		{
-			if (sessionDataBean == null)
-			{
-				return null;
-			}
+			pagenatedResultData = (PagenatedResultData)getQueryResultList(query, sessionDataBean, isSecureExecute,
+					hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
+			
 		}
-		return getQueryResultList(query, sessionDataBean, isSecureExecute,
-				hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
+		return pagenatedResultData;
 	}
 
 	/**
@@ -487,16 +485,16 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 		//
 		
 		try {
-			IQueryExecutor qe = (IQueryExecutor)Class.forName(queryExecutorClassName).newInstance();
-			pagenatedResultData = qe.getQueryResultList(query, connection,
+			IQueryExecutor queryExecutor = (IQueryExecutor)Class.forName(queryExecutorClassName).newInstance();
+			pagenatedResultData = queryExecutor.getQueryResultList(query, connection,
 					sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
 					queryResultObjectDataMap, startIndex, noOfRecords);
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			throw new DAOException(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			throw new DAOException(e);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			throw new DAOException(e);
 		}
 		return pagenatedResultData;
 
@@ -506,7 +504,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.Long)
 	 */
-	public Object retrieve(String sourceObjectName, Long id) throws DAOException
+	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 		try
 		{
@@ -523,10 +521,10 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.DAO#retrieveAttribute(java.lang.Class, java.lang.Long, java.lang.String)
 	 */
-	public Object retrieveAttribute(Class<AbstractDomainObject> objClass, Long id,
+	public Object retrieveAttribute(Class<AbstractDomainObject> objClass, Long identifier,
 			String attributeName) throws DAOException
 	{
-		return retrieveAttribute(objClass.getName(), id, attributeName);
+		return retrieveAttribute(objClass.getName(), identifier, attributeName);
 	}
 
 	/**
@@ -536,18 +534,21 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @param tinyIntColumns
 	 * @throws SQLException
 	 */
-	protected void updateColumns(ResultSetMetaData metaData,List dateColumns,
-			List numberColumns,List tinyIntColumns) throws SQLException
+	protected void updateColumns(ResultSetMetaData metaData,List<Integer> dateColumns,
+			List<Integer> numberColumns,List<Integer> tinyIntColumns) throws SQLException
 	{
 		for (int i = 1; i <= metaData.getColumnCount(); i++)
 		{
 			String type = metaData.getColumnTypeName(i);
-			if (type.equals("DATE"))
-				dateColumns.add(new Integer(i));
-			if (type.equals("NUMBER"))
-				numberColumns.add(new Integer(i));
-			if (type.equals("TINYINT"))
-				tinyIntColumns.add(new Integer(i));
+			if (("DATE").equals(type)) {
+				dateColumns.add(Integer.valueOf(i));
+			}	
+			if (("NUMBER").equals(type)) {
+				numberColumns.add(Integer.valueOf(i));
+			}	
+			if (("TINYINT").equals(type)) {
+				tinyIntColumns.add(Integer.valueOf(i));
+			}	
 
 		}
 		
@@ -563,12 +564,12 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @return
 	 * @throws SQLException
 	 */
-	protected List getColumns(String tableName, List columnValues, List dateColumns,
-			List numberColumns,List tinyIntColumns,List<String>... columnNames) throws SQLException
+	protected List<String> getColumns(String tableName, List<Integer> dateColumns,
+			List<Integer> numberColumns,List<Integer> tinyIntColumns,List<String>... columnNames) throws SQLException
 	{
 		List<String> columnNames_t = new ArrayList<String>();
 		
-		ResultSetMetaData metaData = getMetadataAndUpdatedColumns(tableName, columnValues,columnNames_t,columnNames);
+		ResultSetMetaData metaData = getMetadataAndUpdatedColumns(tableName, columnNames_t,columnNames);
 		updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
 		
 		return columnNames_t;
@@ -583,8 +584,9 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @throws SQLException
 	 */
 	private final ResultSetMetaData getMetadataAndUpdatedColumns(String tableName,
-			List columnValues,List columnNames_t,List<String>... columnNames) throws SQLException
+			List<String> columnNameslist,List<String>... columnNames) throws SQLException
 	{
+		List<String> columnNames_t = columnNameslist;
 		StringBuffer sql = new StringBuffer("Select ");
 		Statement statement = getConnectionStmt();
 		ResultSet resultSet = null;
@@ -598,7 +600,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 				sql.append(columnNames_t.get(i));
 				if (i != columnNames_t.size() - 1)
 				{
-					sql.append(",");
+					sql.append("  ,");
 				}
 			}
 			sql.append(" from " + tableName + " where 1!=1");
@@ -630,8 +632,10 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @param columnNames_t
 	 * @param columnValues
 	 * @return
+	 * Have to refractor this !!!!!!! columnValues might not needed
+	 * 
 	 */
-	protected String createInsertQuery(String tableName,List columnNames_t,List columnValues)
+	protected String createInsertQuery(String tableName,List<String> columnNames_t,List<Object> columnValues)
 	{
 		StringBuffer query = new StringBuffer("INSERT INTO " + tableName + "(");
 
@@ -641,23 +645,24 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 			query.append(columnIterator.next());
 			if (columnIterator.hasNext())
 			{
-				query.append(",");
+				query.append(", ");
 			}
 			else
 			{
 				query.append(") values(");
 			}
 		}
-		Iterator it = columnValues.iterator();
-		while (it.hasNext())
+		Iterator<Object> iterator = columnValues.iterator();
+		while (iterator.hasNext())
 		{
-			it.next();
-			query.append("?");
+			iterator.next();
+			query.append("? ");
 
-			if (it.hasNext())
-				query.append(",");
-			else
-				query.append(")");
+			if (iterator.hasNext()) {
+				query.append(", ");
+			} else {
+				query.append(") ");
+			}	
 		}
 		return query.toString();
 	}
@@ -666,19 +671,19 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	/**
 	 * @param numberColumns
 	 * @param stmt
-	 * @param i
+	 * @param index
 	 * @param obj
 	 * @throws SQLException
 	 */
-	protected void setNumberColumns(List numberColumns, PreparedStatement stmt, int i, Object obj) throws SQLException
+	protected void setNumberColumns(List<Integer> numberColumns, PreparedStatement stmt, int index, Object obj) throws SQLException
 	{
-		if (obj != null && numberColumns.contains(new Integer(i + 1)) && obj.toString().equals("##"))
+		if (obj != null && numberColumns.contains(Integer.valueOf(index + 1)) && obj.toString().equals("##"))
 		{
-			stmt.setObject(i + 1, new Integer(-1));
+			stmt.setObject(index + 1, Integer.valueOf(-1));
 		}
 		else
 		{
-			stmt.setObject(i + 1, obj);
+			stmt.setObject(index + 1, obj);
 		}
 	}
 
@@ -710,18 +715,23 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @param tinyIntColumns
 	 * @throws SQLException
 	 */
-	protected void setTinyIntColumns(PreparedStatement stmt, int index, Object obj,List tinyIntColumns) throws SQLException
+	protected void setTinyIntColumns(PreparedStatement stmt, int index, Object obj,List<Integer> tinyIntColumns) throws SQLException
 	{
-		if (tinyIntColumns.contains(new Integer(index + 1)))
+		if (tinyIntColumns.contains(Integer.valueOf(index + 1)))
 		{	
-			if (obj != null && (obj.equals("true") || obj.equals("TRUE") || obj.equals("1")))
-			{
-				stmt.setObject(index + 1, 1);
-			}
-			else
-			{
-				stmt.setObject(index + 1, 0);
-			}
+			setTinyIntColumns(stmt, index, obj);
+		}
+	}
+
+	private void setTinyIntColumns(PreparedStatement stmt, int index, Object obj)
+			throws SQLException {
+		if (obj != null && (obj.equals("true") || obj.equals("TRUE") || obj.equals("1")))
+		{
+			stmt.setObject(index + 1, 1);
+		}
+		else
+		{
+			stmt.setObject(index + 1, 0);
 		}
 	}
 
@@ -734,10 +744,11 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	 * @param obj
 	 * @param dateColumns
 	 * @throws SQLException
+	 * @throws DAOException 
 	 */
-	protected void setDateColumns(PreparedStatement stmt, int index,Object obj,List dateColumns) throws SQLException
+	protected void setDateColumns(PreparedStatement stmt, int index,Object obj,List<Integer> dateColumns) throws SQLException, DAOException
 	{
-		if (obj != null && dateColumns.contains(new Integer(index + 1)) && obj.toString().equals("##"))
+		if (obj != null && dateColumns.contains(Integer.valueOf(index + 1)) && obj.toString().equals("##"))
 		{
 			java.util.Date date = null;
 			try
@@ -746,7 +757,7 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 			}
 			catch (ParseException e)
 			{
-				e.printStackTrace();
+				throw new DAOException(e);
 			}
 			Date sqlDate = new Date(date.getTime());
 			stmt.setDate(index + 1, sqlDate);
@@ -757,20 +768,24 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	/**
 	 * @param value
 	 * @return
+	 * 
 	 */
 	private final Timestamp isColumnValueDate(Object value)
 	{
 		Timestamp timestamp = null;
 		try
 		{
-			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy",Locale.getDefault());
 			formatter.setLenient(false);
 			java.util.Date date;
 			date = formatter.parse((String) value);
-			timestamp = new Timestamp(date.getTime());
-			if (value != null && value.toString().equals("") == false)
+			/*
+			 * Recheck if some issues occurs.
+			 */
+			Timestamp timestampInner = new Timestamp(date.getTime());
+			if (value != null && !value.toString().equals(""))
 			{
-				return timestamp;
+				timestamp = timestampInner;
 			}
 		}
 		catch (ParseException parseExp)
@@ -792,7 +807,23 @@ public abstract class JDBCDAOImpl implements JDBCDAO
 	{
 		return connectionManager;
 	}
+	private Connection getConnection() {
+		
+		return connection ;
+	}
+	private void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
 	
+	
+	private AuditManager getAuditManager() {
+		return auditManager;
+	}
+
+	private void setAuditManager(AuditManager auditManager) {
+		this.auditManager = auditManager;
+	}
 	
 	
 

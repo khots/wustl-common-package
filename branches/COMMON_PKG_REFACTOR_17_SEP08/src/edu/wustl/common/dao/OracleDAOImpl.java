@@ -21,7 +21,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 
-public class OracleDAOImpl extends JDBCDAOImpl
+public class OracleDAOImpl extends AbstractJDBCDAOImpl
 {
 
 	private static org.apache.log4j.Logger logger = Logger.getLogger(OracleDAOImpl.class);
@@ -39,15 +39,15 @@ public class OracleDAOImpl extends JDBCDAOImpl
 		try
 		{
 			Statement statement = getConnectionStmt();
-			ResultSet rs = statement.executeQuery(query.toString());
-			boolean isTableExists = rs.next();
+			ResultSet resultSet = statement.executeQuery(query.toString());
+			boolean isTableExists = resultSet.next();
 			logger.debug("ORACLE****" + query.toString() + isTableExists);
 			if (isTableExists)
 			{
 				logger.debug("Drop Table");
 				executeUpdate("DROP TABLE " + tableName + " cascade constraints");
 			}
-			rs.close();
+			resultSet.close();
 			statement.close();
 		}
 		catch (Exception sqlExp)
@@ -62,43 +62,42 @@ public class OracleDAOImpl extends JDBCDAOImpl
 		
 	public String getDatePattern()
 	{
-		String datePattern = "mm-dd-yyyy";
-		return datePattern;
+		
+		return "mm-dd-yyyy";
 	}
 	
 	public String getTimePattern()
 	{
-		String timePattern = "hh-mi-ss";
-		return timePattern;
+		
+		return "hh-mi-ss";
 	}
 	public String getDateFormatFunction()
 	{
-		String dateFormatFunction = "TO_CHAR";
-		return dateFormatFunction;
+		
+		return "TO_CHAR";
 	}
 	public String getTimeFormatFunction()
 	{
-		String timeFormatFunction = "TO_CHAR";
-		return timeFormatFunction;
+		return "TO_CHAR";
 	}
 	
 	public String getDateTostrFunction()
 	{
-		String timeFormatFunction = "TO_CHAR";
-		return timeFormatFunction;
+		
+		return "TO_CHAR";
 	}
 	
 	public String getStrTodateFunction()
 	{
-		String timeFormatFunction = "TO_DATE";
-		return timeFormatFunction;
+		
+		return "TO_DATE";
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
 	 */
-	public void insert(String tableName, List columnValues) throws DAOException, SQLException
+	public void insert(String tableName, List<Object> columnValues) throws DAOException, SQLException
 	{
 		insert(tableName, columnValues, null);
 	}
@@ -110,12 +109,12 @@ public class OracleDAOImpl extends JDBCDAOImpl
 	 * @throws DAOException
 	 * @throws SQLException
 	 */
-	public void insert(String tableName, List columnValues, List<String>... columnNames) throws DAOException, SQLException
+	public void insert(String tableName, List<Object> columnValues, List<String>... columnNames) throws DAOException, SQLException
 	{
-		List dateColumns = new ArrayList();
-		List numberColumns = new ArrayList();
-		List tinyIntColumns = new ArrayList();
-		List columnNames_t = getColumns(tableName, columnValues,
+		List<Integer> dateColumns = new ArrayList<Integer>();
+		List<Integer> numberColumns = new ArrayList<Integer>();
+		List<Integer> tinyIntColumns = new ArrayList<Integer>();
+		List<String> columnNames_t = getColumns(tableName,
 				dateColumns,numberColumns,tinyIntColumns,columnNames);
 
 		String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
@@ -140,15 +139,16 @@ public class OracleDAOImpl extends JDBCDAOImpl
 		}
 		catch (SQLException sqlExp)
 		{
-			sqlExp.printStackTrace();
+			logger.error(sqlExp.getMessage(),sqlExp);
 			throw new DAOException(sqlExp.getMessage(), sqlExp);
 		}
 		finally
 		{
 			try
 			{
-				if (stmt != null)
+				if (stmt != null) {
 					stmt.close();
+				}	
 			}
 			catch (SQLException ex)
 			{

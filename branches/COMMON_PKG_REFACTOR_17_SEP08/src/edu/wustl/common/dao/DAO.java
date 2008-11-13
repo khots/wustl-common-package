@@ -80,7 +80,7 @@ public interface DAO
 	 * @return the list of all source objects that satisfy the seasch conditions.
 	 * @throws DAOException generic DAOException.
 	 */
-	List retrieve(String sourceObjectName, String[] selectColumnName,
+	List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException;
 
@@ -93,7 +93,7 @@ public interface DAO
 	 * @return the list of all source objects for given condition on a single column.
 	 * @throws DAOException generic DAOException.
 	 */
-	List retrieve(String sourceObjectName, String whereColumnName,
+	List<Object> retrieve(String sourceObjectName, String whereColumnName,
 			Object whereColumnValue) throws DAOException;
 
 	/**
@@ -102,7 +102,7 @@ public interface DAO
 	 * @return the list of all source objects available in database.
 	 * @throws DAOException generic DAOException.
 	 */
-	List retrieve(String sourceObjectName) throws DAOException;
+	List<Object> retrieve(String sourceObjectName) throws DAOException;
 
 	/**
 	 * Returns the list of all objects with the select columns specified.
@@ -111,7 +111,7 @@ public interface DAO
 	 * @return the list of all objects with the select columns specified.
 	 * @throws DAOException generic DAOException.
 	 */
-	List retrieve(String sourceObjectName, String[] selectColumnName)
+	List<Object> retrieve(String sourceObjectName, String[] selectColumnName)
 			throws DAOException;
 
 	/**
@@ -143,7 +143,7 @@ public interface DAO
 	 * @throws ClassNotFoundException Class Not Found Exception.
 	 * @throws DAOException generic DAOException.
 	 */
-	List executeQuery(String query, SessionDataBean sessionDataBean,
+	List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException;
 
@@ -158,7 +158,7 @@ public interface DAO
 	 * @throws ClassNotFoundException Class Not Found Exception.
 	 * @throws DAOException generic DAOException.
 	 */
-	List executeQuery(String query, SessionDataBean sessionDataBean,
+	List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
 
@@ -190,26 +190,26 @@ public interface DAO
 	 * 
 	 * @throws DAOException
 	 */
-	public abstract void openSession(SessionDataBean sessionDataBean) throws DAOException;
+	void openSession(SessionDataBean sessionDataBean) throws DAOException;
 
 	/**
 	 * This method will be used to close the session with the database.
 	 * @throws DAOException
 	 */
-	public abstract void closeSession() throws DAOException;
+	void closeSession() throws DAOException;
 
 	/**
 	 * Commit the database level changes  
 	 * @throws DAOException
 	 */
-	public abstract void commit() throws DAOException;
+	void commit() throws DAOException;
 
 	/**
 	 * Rollback all the changes after last commit.  
 	 * @throws DAOException 
 	 * @throws DAOException
 	 */
-	public abstract void rollback() throws DAOException;
+	void rollback() throws DAOException;
 	
 	void setConnectionManager(IConnectionManager connectionManager);
 	

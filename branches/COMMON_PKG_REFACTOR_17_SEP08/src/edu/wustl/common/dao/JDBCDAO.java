@@ -30,7 +30,7 @@ public interface JDBCDAO extends DAO
 	* from the table represented in sourceObjectName.
 	* @throws DAOException generic DAOException.
 	*/
-	List retrieve(String sourceObjectName, String[] selectColumnName, boolean onlyDistinctRows)
+	List<Object> retrieve(String sourceObjectName, String[] selectColumnName, boolean onlyDistinctRows)
 			throws DAOException;
 
 	/**
@@ -47,7 +47,7 @@ public interface JDBCDAO extends DAO
 	   * from the table represented in sourceObjectName.
 	   * @throws DAOException generic DAOException.
 	   */
-	List retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
+	List<Object> retrieve(String sourceObjectName, String[] selectColumnName, String[] whereColumnName,
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition,
 			boolean onlyDistinctRows) throws DAOException;
 
@@ -61,7 +61,7 @@ public interface JDBCDAO extends DAO
 	   * @throws ClassNotFoundException Class Not Found Exception.
 	   * @throws DAOException generic DAOException.
 	   */
-	List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
+	List<Object> executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
 
 	/**
@@ -75,7 +75,7 @@ public interface JDBCDAO extends DAO
 	   * @throws ClassNotFoundException Class Not Found Exception.
 	   * @throws DAOException generic DAOException.
 	   */
-	List executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
+	List<Object> executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
 			boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap)
 			throws ClassNotFoundException, DAOException;
 
@@ -104,7 +104,7 @@ public interface JDBCDAO extends DAO
 	 * @throws DAOException generic DAOException
 	 * @throws SQLException SQL Exception.
 	 */
-	void insert(String tableName, List columnValues) throws DAOException, SQLException;
+	void insert(String tableName, List<Object> columnValues) throws DAOException, SQLException;
 
 	/**
 	* Inserts records in given table.
@@ -115,7 +115,7 @@ public interface JDBCDAO extends DAO
 	* @throws DAOException generic DAOException
 	* @throws SQLException SQL Exception.
 	*/
-	void insert(String tableName, List columnValues, List<String>... columnNames)
+	void insert(String tableName, List<Object> columnValues, List<String>... columnNames)
 			throws DAOException, SQLException;
 
 	/**

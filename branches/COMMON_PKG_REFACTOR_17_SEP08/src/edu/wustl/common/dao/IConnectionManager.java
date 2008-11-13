@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.util.dbmanager.DAOException;
 
 
 public interface IConnectionManager
@@ -25,7 +26,7 @@ public interface IConnectionManager
 	
 	Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException;
 
-	Session getCleanSession() throws BizLogicException;
+	Session getCleanSession() throws DAOException;
 	
 	void setApplicationName(String applicationName);
 	
@@ -35,8 +36,8 @@ public interface IConnectionManager
 	
 	SessionFactory getSessionFactory();
 	
-	void setConfigurationFile(Configuration cfg);
+	void setConfiguration(Configuration cfg);
 	
-	Configuration getConfigurationFile();
+	Configuration getConfiguration();
 	
 }

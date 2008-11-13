@@ -18,7 +18,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 
-public class MySQLDAOImpl extends JDBCDAOImpl
+public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 {
 	
 	private static org.apache.log4j.Logger logger = Logger.getLogger(MySQLDAOImpl.class);
@@ -31,49 +31,44 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 	public void delete(String tableName) throws DAOException
 	{
 		StringBuffer query;
-		query = new StringBuffer("DROP TABLE IF EXISTS " + tableName);
+		query = new StringBuffer("DROP TABLE IF EXISTS ").append(tableName);
 			executeUpdate(query.toString());
 	}
 		
 	public String getDatePattern()
 	{
-		String datePattern = "%m-%d-%Y";
-		return datePattern;
+		return "%m-%d-%Y";
 	}
 	
 	public String getTimePattern()
 	{
-		String timePattern = "%H:%i:%s";
-		return timePattern;
+		return "%H:%i:%s";
 	}
 	public String getDateFormatFunction()
 	{
-		String dateFormatFunction = "DATE_FORMAT";
-		return dateFormatFunction;
+		return "DATE_FORMAT";
 	}
 	public String getTimeFormatFunction()
 	{
-		String timeFormatFunction = "TIME_FORMAT";
-		return timeFormatFunction;
+		return "TIME_FORMAT";
 	}
 	
 	public String getDateTostrFunction()
 	{
-		String timeFormatFunction = "TO_CHAR";
-		return timeFormatFunction;
+		return "TO_CHAR";
 	}
 	
 	public String getStrTodateFunction()
 	{
-		String timeFormatFunction = "STR_TO_DATE";
-		return timeFormatFunction;
+		
+		return "STR_TO_DATE";
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.dao.JDBCDAO#insert(java.lang.String, java.util.List)
 	 */
-	public void insert(String tableName, List columnValues) throws DAOException, SQLException
+	public void insert(String tableName, List<Object> columnValues) throws DAOException, SQLException
 	{
 		insert(tableName, columnValues, null);
 	}
@@ -85,12 +80,12 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 	 * @throws DAOException
 	 * @throws SQLException
 	 */
-	public void insert(String tableName, List columnValues, List<String>... columnNames) throws DAOException, SQLException
+	public void insert(String tableName, List<Object> columnValues, List<String>... columnNames) throws DAOException, SQLException
 	{
-		List dateColumns = new ArrayList();
-		List numberColumns = new ArrayList();
-		List tinyIntColumns = new ArrayList();
-		List columnNames_t = getColumns(tableName, columnValues,
+		List<Integer> dateColumns = new ArrayList<Integer>();
+		List<Integer> numberColumns = new ArrayList<Integer>();
+		List<Integer> tinyIntColumns = new ArrayList<Integer>();
+		List <String>columnNames_t = getColumns(tableName,
 				dateColumns,numberColumns,tinyIntColumns,columnNames);
 
 		String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
@@ -117,19 +112,20 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 		}
 		catch (SQLException sqlExp)
 		{
-			sqlExp.printStackTrace();
+			logger.error(sqlExp.getMessage(),sqlExp);
 			throw new DAOException(sqlExp.getMessage(), sqlExp);
 		}
 		finally
 		{
 			try
 			{
-				if (stmt != null)
+				if (stmt != null) {
 					stmt.close();
+				}	
 			}
 			catch (SQLException ex)
 			{
-				throw new DAOException(ex.getMessage(), ex);
+				logger.error(ex.getMessage(), ex);
 			}
 		}
 	}
@@ -149,14 +145,12 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 		String formattedErrMsg = null; // Formatted Error Message return by this method
 		Connection connection = null;
 
-		if (args[0] != null)
-		{
-			tableName = (String) args[0];
-		}
-		else
-		{
+		if (args[0] == null) {
 			logger.debug("Table Name not specified");
 			tableName = "Unknown Table";
+			
+		} else {
+			tableName = (String) args[0];
 		}
 		logger.debug("Table Name:" + tableName);
 		dispTableName = tableName;
@@ -237,50 +231,43 @@ public class MySQLDAOImpl extends JDBCDAOImpl
 
 	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+			return null;
 	}
 
 
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		
+			
 	}
 
 
 	public void delete(Object obj) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		
+			
 	}
 
 
 	public void disableRelatedObjects(String tableName, String whereColumnName, Long[] whereColumnValues) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 
 	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
 	{
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 
 	public Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+			return null;
 	}
 
 
 	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
 	{
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 

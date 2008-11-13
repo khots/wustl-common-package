@@ -1,22 +1,30 @@
 package edu.wustl.common.dao;
 
+import edu.wustl.common.util.dbmanager.DAOException;
+
 
 
 public interface IDAOFactory
 {	
-	void buildSessionFactory ();
-	void setDefaultDAOClassName(String defaultDAOClassName);
-	void setJDBCDAOClassName(String jdbcDAOClassName);
-	void setConnectionManagerName(String connectionManagerName);
-	void setApplicationName(String applicationName);
-	void setConfigurationFile(String configurationFile);
+	void buildSessionFactory ()throws DAOException;
 	
+	void setDefaultDAOClassName(String defaultDAOClassName);
 	String getDefaultDAOClassName();
-	String getJDBCDAOClassName();
+	
+	void setJdbcDAOClassName(String jdbcDAOClassName);
+	String getJdbcDAOClassName();
+	
+	void setConnectionManagerName(String connectionManagerName);
 	String getConnectionManagerName();
+	
+	void setApplicationName(String applicationName);
 	String getApplicationName();
-	String getconfigurationFile();
+	
+	void setConfigurationFile(String configurationFile);
+	String getConfigurationFile();
+	
 	DAO getDAO();
+	
 	JDBCDAO getJDBCDAO();
 
 }

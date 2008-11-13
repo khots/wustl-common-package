@@ -29,8 +29,8 @@ import org.hibernate.util.XMLHelper;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.hibernate.HibernateUtil;
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
 public class DAOFactory implements IConnectionManager,IDAOFactory
@@ -41,17 +41,17 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	private String applicationName;
 	private String configurationFile;
 	private static final EntityResolver entityResolver = XMLHelper.DEFAULT_DTD_RESOLVER;
-	private Configuration cfg;
-	private SessionFactory m_sessionFactory;
+	private Configuration configuration;
+	private SessionFactory sessionFactory;
 	private IConnectionManager connectionManager;
 	
 	// ThreadLocal to hold the Session for the current executing thread.
-    private static final ThreadLocal<Map> threadLocal = new ThreadLocal<Map>();
+    private static final ThreadLocal<Map<String, Session>> threadLocal = new ThreadLocal<Map<String, Session>>();
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOFactory.class);
 	
 	static {
 		
-		Map applicationSessionMap = new HashMap<String, Session>();
+		Map<String, Session> applicationSessionMap = new HashMap<String, Session>();
 		threadLocal.set(applicationSessionMap);
 	}
 	
@@ -108,7 +108,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 
 	public void closeSession() throws HibernateException
 	{
-		Map applicationSessionMap = (Map) threadLocal.get();
+		Map<String, Session> applicationSessionMap = (Map<String, Session>) threadLocal.get();
 		if(applicationSessionMap.containsKey(applicationName))
 		{
 			Session session = (Session)applicationSessionMap.get(applicationName);
@@ -123,7 +123,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	public Session currentSession() throws HibernateException
 	{
 
-		Map<String, Session> applicationSessionMap = (Map)threadLocal.get();
+		Map<String, Session> applicationSessionMap = (Map<String, Session>)threadLocal.get();
 	    // Open a new Session, if this Thread has none yet
     
 		if (!(applicationSessionMap.containsKey(applicationName)) ) {
@@ -136,7 +136,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	
 	public Session newSession() throws HibernateException
 	{
-		Session session = m_sessionFactory.openSession();
+		Session session = sessionFactory.openSession();
         session.setFlushMode(FlushMode.COMMIT);
         try {
             session.connection().setAutoCommit(false);
@@ -147,34 +147,36 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 			
 	}
 
-	public Session getCleanSession() throws BizLogicException
+	public Session getCleanSession() throws DAOException
 	{
 		Session session = null;
 		try
 		{
-			session = m_sessionFactory.openSession();
+			session = sessionFactory.openSession();
 			return session;
 		}
-		catch (HibernateException e)
+		catch (HibernateException exp)
 		{
-			throw new BizLogicException(e);
+			throw new DAOException("Problem in Clossing the session :"+exp);
 		}
 	
 	}
 	
-	public void buildSessionFactory()
+	public void buildSessionFactory() throws DAOException
 	{		
 		try
 		{
-			Configuration cfg = new Configuration(); ;
+			Configuration cfg = new Configuration();
 			addConfigurationFile(configurationFile, cfg);
 			SessionFactory sessionFactory = cfg.buildSessionFactory();
 			setConnectionManager(sessionFactory,cfg);
 			 
 		}
-		catch (Exception e)
+		catch (Exception exp)
 		{
-			e.printStackTrace();
+			logger.error(exp.getMessage(),exp);
+			throw new DAOException("Problem in building Sessoin Factory :"+exp);
+			
 		}
 		
 		  
@@ -185,10 +187,11 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		/*
 		 * Is writing this is valid here ...confirm !!!
 		 */
-		this.connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
-		this.connectionManager.setApplicationName(applicationName);
-		this.connectionManager.setSessionFactory(sessionFactory);
-		this.connectionManager.setConfigurationFile(cfg);
+		IConnectionManager connectionManager = (IConnectionManager)Class.forName(connectionManagerName).newInstance();
+		connectionManager.setApplicationName(applicationName);
+		connectionManager.setSessionFactory(sessionFactory);
+		connectionManager.setConfiguration(cfg);
+		setConnectionManager(connectionManager);
 	}
 	
 	
@@ -196,11 +199,14 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
      * This method adds configuration file to Hibernate Configuration.
      * @param configurationfile name of the file that needs to be added
      * @param cfg Configuration to which this file is added.
+	 * @throws DAOException 
      */
-    private void addConfigurationFile(String configurationfile, Configuration cfg) {
+    private void addConfigurationFile(String configurationfile, Configuration cfg) throws DAOException {
         try {
-            InputStream inputStream = DAOFactory.class.getClassLoader().getResourceAsStream(configurationfile);
-            List errors = new ArrayList();
+        	
+            //InputStream inputStream = DAOFactory.class.getClassLoader().getResourceAsStream(configurationfile);
+        	InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(configurationfile);
+            List<Object> errors = new ArrayList<Object>();
             // hibernate api to read configuration file and convert it to
             // Document(dom4j) object.
             XMLHelper xmlHelper = new XMLHelper();
@@ -212,9 +218,9 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
             // configure
             cfg.configure(doc);
         } catch (DocumentException e) {
-            throw new RuntimeException(e);
+            throw new DAOException(e);
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            throw new DAOException(e);
         }
     }
 	
@@ -230,7 +236,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		this.defaultDAOClassName = defaultDAOClassName;
 	}
 
-	public void setJDBCDAOClassName(String jdbcDAOClassName)
+	public void setJdbcDAOClassName(String jdbcDAOClassName)
 	{
 		this.jdbcDAOClassName = jdbcDAOClassName;
 	}
@@ -255,12 +261,12 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		return defaultDAOClassName;
 	}
 
-	public String getJDBCDAOClassName()
+	public String getJdbcDAOClassName()
 	{
 		return jdbcDAOClassName;
 	}
 
-	public String getconfigurationFile()
+	public String getConfigurationFile()
 	{
 		return configurationFile;
 	}
@@ -279,6 +285,8 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	 * @param identifier id of the object
 	 * @return object
 	 * @throws HibernateException exception of Hibernate.
+	 * 
+	 * Have to remove this method::::
 	 */
 	public Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException
 	{
@@ -296,22 +304,30 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 
 	public SessionFactory getSessionFactory()
 	{
-		return m_sessionFactory;
+		return sessionFactory;
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory)
 	{
-		this.m_sessionFactory = sessionFactory;
+		this.sessionFactory = sessionFactory;
 	}
 
-	public Configuration getConfigurationFile()
+	public Configuration getConfiguration()
 	{
-		return cfg;
+		return configuration;
 	}
 
-	public void setConfigurationFile(Configuration cfg)
+	public void setConfiguration(Configuration cfg)
 	{
-		this.cfg = cfg;
+		this.configuration = cfg;
+	}
+	
+	private IConnectionManager getConnectionManager() {
+		return connectionManager;
+	}
+
+	private void setConnectionManager(IConnectionManager connectionManager) {
+		this.connectionManager = connectionManager;
 	}
 
 }
