@@ -413,13 +413,13 @@ public class ExportReport
 	 * @throws ClassNotFoundException exception for class not found.
 	 * @throws DAOException DAO exception.
 	 */
-	private List<List<String>> executeQuery(String sql) throws DAOException, ClassNotFoundException
+	private List<Object> executeQuery(String sql) throws DAOException, ClassNotFoundException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = daofactory.getJDBCDAO();
 	
 		dao.openSession(null);
-		return (List<List<String>>) dao.executeQuery(sql, null, false, null);
+		return (List<Object>)dao.executeQuery(sql, null, false, null);
 
 	}
 }

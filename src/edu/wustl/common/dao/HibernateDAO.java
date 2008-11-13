@@ -3,6 +3,8 @@ package edu.wustl.common.dao;
 
 import java.util.Collection;
 
+import edu.wustl.common.util.dbmanager.DAOException;
+
 /** This interface defines methods which are specific to Hibernate operations .*/
 
 public interface HibernateDAO extends DAO
@@ -15,7 +17,7 @@ public interface HibernateDAO extends DAO
 	 * @return Object
 	 * @throws Exception Exception.
 	 */
-	Object loadCleanObj(String sourceObjectName, Long identifier) throws Exception;
+	Object loadCleanObj(String sourceObjectName, Long identifier) throws DAOException;
 
 	/**
 	 * Add AuditEvent Logs.

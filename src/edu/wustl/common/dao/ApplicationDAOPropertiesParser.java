@@ -12,7 +12,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -38,17 +37,17 @@ public class ApplicationDAOPropertiesParser
 	/**
 	 * Specifies dao Factory Map.
 	 */
-	private final Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
+	private transient final Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
 
 	/**
 	 * Specifies Document object.
 	 */
-	private Document dom;
+	private transient Document dom;
 
 	/**
 	 * Specifies application variables.
 	 */
-	private String connectionManager, applicationName, daoFactoryName, defaultDaoName,
+	private transient String connectionManager, applicationName, daoFactoryName, defaultDaoName,
 			configFile, jdbcDAOName;
 
 	/**
@@ -124,7 +123,7 @@ public class ApplicationDAOPropertiesParser
 			IDAOFactory daoFactory = (IDAOFactory) Class.forName(daoFactoryName).newInstance();
 			daoFactory.setConnectionManagerName(connectionManager);
 			daoFactory.setDefaultDAOClassName(defaultDaoName);
-			daoFactory.setJDBCDAOClassName(jdbcDAOName);
+			daoFactory.setJdbcDAOClassName(jdbcDAOName);
 			daoFactory.setApplicationName(applicationName);
 			daoFactory.setConfigurationFile(configFile);
 			daoFactoryMap.put(daoFactory.getApplicationName(), daoFactory);

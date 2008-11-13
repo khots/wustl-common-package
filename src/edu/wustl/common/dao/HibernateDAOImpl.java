@@ -194,6 +194,8 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @param whereColumnName Column name to be included in where clause.
 	 * @param whereColumnValues Value of the Column name that included in where clause.
 	 * @throws DAOException generic DAOException.
+	 * 
+	 * --have to check this
 	 */
 	public void disableRelatedObjects(String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException
@@ -208,10 +210,9 @@ public class HibernateDAOImpl implements HibernateDAO
 				buff.append(whereColumnValues[i].longValue());
 				if ((i + 1) < whereColumnValues.length)
 				{
-					buff.append(",");
+					buff.append("  ,");
 				}
 			}
-
 			String sql = "UPDATE " + tableName + " SET ACTIVITY_STATUS = '"
 					+ Constants.ACTIVITY_STATUS_DISABLED + "' WHERE "
 					+ whereColumnName + " IN ( "
@@ -430,7 +431,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
-	public List retrieve(String sourceObjectName) throws DAOException
+	public List<Object> retrieve(String sourceObjectName) throws DAOException
 	{
 		return retrieve(sourceObjectName, null, null, null, null, null);
 	}
@@ -443,7 +444,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
-	public List retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
+	public List<Object> retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
 			throws DAOException
 	{
 		String [] whereColumnNames = {whereColumnName};
@@ -462,7 +463,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
 	{
 		String[] whereColumnName = null;
 		String[] whereColumnCondition = null;
@@ -484,11 +485,11 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
-		List list = null;
+		List<Object> list = null;
 		try
 		{
 			StringBuffer sqlBuff = new StringBuffer();
@@ -559,9 +560,9 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @param sourceObjectName source Object Name.
 	 * @param identifier identifier.
 	 * @return object.
-	 * @throws Exception Exception.
+	 * @throws DAOException 
 	 */
-	public Object loadCleanObj(String sourceObjectName, Long identifier) throws Exception
+	public Object loadCleanObj(String sourceObjectName, Long identifier) throws DAOException
 	{
 		Object obj = retrieve(sourceObjectName, identifier);
 		session.evict(obj);
@@ -578,11 +579,11 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @throws ClassNotFoundException Class Not Found Exception.
 	 * @throws DAOException generic DAOException.
 	 */
-	public List executeQuery(String query, SessionDataBean sessionDataBean,
+	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException
 	{
-		List returner = null;
+		List<Object> returner = null;
 
 		try
 		{
@@ -609,7 +610,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @throws ClassNotFoundException Class Not Found Exception.
 	 * @throws DAOException generic DAOException
 	 */
-	public List executeQuery(String query, SessionDataBean sessionDataBean,
+	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
 	{
@@ -635,9 +636,9 @@ public class HibernateDAOImpl implements HibernateDAO
 
 		StringBuffer queryStringBuffer = new StringBuffer();
 		queryStringBuffer.append("Select ").append(simpleName).append(".").append(nameOfAttribute)
-				.append(" from ").append(objClassName).append(" ").append(simpleName).append(
+				.append(" from ").append(objClassName).append("    ").append(simpleName).append(
 						" where ").append(simpleName).append(".").append(
-						Constants.SYSTEM_IDENTIFIER).append("=").append(identifier);
+						Constants.SYSTEM_IDENTIFIER).append("=  ").append(identifier);
 		try
 		{
 			return session.createQuery(queryStringBuffer.toString()).list();
@@ -668,7 +669,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		String[] whereColumnCondition = {"="};
 		Object[] whereColumnValue = {identifier};
 
-		List result = retrieve(sourceObjectName, selectColumnNames, whereColumnName,
+		List<Object> result = retrieve(sourceObjectName, selectColumnNames, whereColumnName,
 				whereColumnCondition, whereColumnValue, null);
 		Object attribute = null;
 
@@ -677,14 +678,10 @@ public class HibernateDAOImpl implements HibernateDAO
 		 */
 		if (Utility.isColumnNameContainsElements(attributeName))
 		{
-			Collection collection = new HashSet();
+			Collection<Object> collection = new HashSet<Object>();
 			attribute = collection;
 			for (int i = 0; i < result.size(); i++)
 			{
-				/**
-				 * Name: Prafull
-				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
-				 */
 				collection.add(HibernateMetaData.getProxyObjectImpl(result.get(i)));
 			}
 		}
@@ -693,8 +690,7 @@ public class HibernateDAOImpl implements HibernateDAO
 			if (!result.isEmpty())
 			{
 				/**
-				 * Name: Prafull
-				 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+				 * * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
 				 */
 				attribute = HibernateMetaData.getProxyObjectImpl(result.get(0));
 			}
@@ -725,7 +721,7 @@ public class HibernateDAOImpl implements HibernateDAO
 					sqlBuff.append(", ");
 				}
 			}
-			sqlBuff.append(" ");
+			sqlBuff.append("   ");
 		}
 	}
 
@@ -765,17 +761,8 @@ public class HibernateDAOImpl implements HibernateDAO
 			sqlBuff.append(className + "." + whereColumnName[i] + " ");
 			if (whereColumnCondition[i].indexOf("in") != -1)
 			{
-				sqlBuff.append(whereColumnCondition[i] + "(  ");
-				Object [] valArr = (Object[]) whereColumnValue[i];
-				for (int j = 0; j < valArr.length; j++)
-				{
-					sqlBuff.append("? ");
-					if ((j + 1) < valArr.length)
-					{
-						sqlBuff.append(", ");
-					}
-				}
-				sqlBuff.append(") ");
+				setInClauseOfWherePart(whereColumnCondition, whereColumnValue,
+						sqlBuff, i);
 			}
 			else if (whereColumnCondition[i].indexOf("is not null") != -1)
 			{
@@ -802,13 +789,9 @@ public class HibernateDAOImpl implements HibernateDAO
 		//Adds the column values in where clause
 		for (int i = 0; i < whereColumnValue.length; i++)
 		{
-			if (whereColumnCondition[i].equals("is null")
-					|| whereColumnCondition[i].equals("is not null"))
+			if (!(whereColumnCondition[i].equals("is null") || whereColumnCondition[i].equals("is not null")))
 			{
-			}
-			else
-			{
-
+			
 				Object obj = whereColumnValue[i];
 				if (obj instanceof Object[])
 				{
@@ -828,6 +811,21 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 
 		return sqlQuery;
+	}
+
+	private void setInClauseOfWherePart(String[] whereColumnCondition,
+			Object[] whereColumnValue, StringBuffer sqlBuff, int i) {
+		sqlBuff.append(whereColumnCondition[i] + "(  ");
+		Object [] valArr = (Object[]) whereColumnValue[i];
+		for (int j = 0; j < valArr.length; j++)
+		{
+			sqlBuff.append("? ");
+			if ((j + 1) < valArr.length)
+			{
+				sqlBuff.append(", ");
+			}
+		}
+		sqlBuff.append(") ");
 	}
 
 	public void setConnectionManager(IConnectionManager connectionManager)
