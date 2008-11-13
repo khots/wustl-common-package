@@ -36,11 +36,6 @@ public class ApplicationDAOPropertiesParser
 			.getLogger(ApplicationDAOPropertiesParser.class);
 
 	/**
-	 * Specifies dao Factory Map.
-	 */
-	private transient final Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
-
-	/**
 	 * Specifies Document object.
 	 */
 	private transient Document dom;
@@ -57,10 +52,11 @@ public class ApplicationDAOPropertiesParser
 	 */
 	public Map<String, IDAOFactory> getDaoFactoryMap()
 	{
+		Map<String, IDAOFactory> daoFactoryMap = new HashMap<String, IDAOFactory>();
 		try
 		{
 			readFile();
-			parseDocument();
+			parseDocument(daoFactoryMap);
 		}
 		catch (Exception exception)
 		{
@@ -107,7 +103,7 @@ public class ApplicationDAOPropertiesParser
 	 * @throws ClassNotFoundException Class Not Found Exception
 	 * @throws DAOException 
 	 */
-	private void parseDocument() throws InstantiationException, IllegalAccessException,
+	private void parseDocument(Map<String, IDAOFactory> daoFactoryMap) throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException, DAOException
 	{
 		//get the root elememt

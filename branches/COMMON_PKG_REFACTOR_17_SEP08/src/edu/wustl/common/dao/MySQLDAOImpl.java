@@ -237,25 +237,25 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean, boolean isAuditable) throws DAOException
 	{
-			
+			//default imp
 	}
 
 
 	public void delete(Object obj) throws DAOException
 	{
-			
+		//default imp
 	}
 
 
 	public void disableRelatedObjects(String tableName, String whereColumnName, Long[] whereColumnValues) throws DAOException
 	{
-				
+		//default imp	
 	}
 
 
 	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
 	{
-				
+		//default imp	
 	}
 
 
@@ -267,7 +267,7 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 
 	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
 	{
-				
+		//default imp	
 	}
 
 

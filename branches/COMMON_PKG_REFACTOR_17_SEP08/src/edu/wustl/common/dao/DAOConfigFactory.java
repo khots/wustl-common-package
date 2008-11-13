@@ -10,7 +10,7 @@ import edu.wustl.common.util.logger.Logger;
 public class DAOConfigFactory
 {
 	/**
-	 * Singleton instace.
+	 * Singleton instance.
 	 */
 	private static DAOConfigFactory daoConfigurationFactory;
 	private static IDAOFactory defaultDAOFactory;
@@ -60,7 +60,7 @@ public class DAOConfigFactory
 			ApplicationDAOPropertiesParser applicationPropertiesParser = new ApplicationDAOPropertiesParser();
 			daoFactoryMap = applicationPropertiesParser.getDaoFactoryMap();
 			
-			/*
+			/*TODO
 			 * Is this right approach ...have to confirm with abhijit
 			 * or we can keep default field in xml doc and save it in Map with key as defaultapplication 
 			 */
