@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -104,9 +105,10 @@ public class ApplicationDAOPropertiesParser
 	 * @throws InstantiationException Instantiation Exception
 	 * @throws IllegalAccessException Illegal Access Exception
 	 * @throws ClassNotFoundException Class Not Found Exception
+	 * @throws DAOException 
 	 */
 	private void parseDocument() throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException
+			ClassNotFoundException, DAOException
 	{
 		//get the root elememt
 		Element root = dom.getDocumentElement();
@@ -126,6 +128,7 @@ public class ApplicationDAOPropertiesParser
 			daoFactory.setJdbcDAOClassName(jdbcDAOName);
 			daoFactory.setApplicationName(applicationName);
 			daoFactory.setConfigurationFile(configFile);
+			daoFactory.buildSessionFactory();
 			daoFactoryMap.put(daoFactory.getApplicationName(), daoFactory);
 			resetApplicationProperties();
 		}
