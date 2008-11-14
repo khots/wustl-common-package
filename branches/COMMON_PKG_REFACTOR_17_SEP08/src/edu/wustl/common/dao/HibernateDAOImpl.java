@@ -27,6 +27,7 @@ import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AuditException;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -757,5 +758,33 @@ public class HibernateDAOImpl implements HibernateDAO
 		
 		return connectionManager;
 	}
+	
+	/**
+	 * This method opens a new session, loads an object with given class and Id,
+	 * and closes the session. This method should be used only when an object is
+	 * to be opened in separate session.
+	 *
+	 * @param objectClass class of the object
+	 * @param identifier id of the object
+	 * @return object
+	 * @throws HibernateException exception of Hibernate.
+	 * 
+	 * Have to remove this method::::
+	 */
+	public Object loadCleanObj(Class<Object> objectClass, Long identifier) throws HibernateException
+	{
+		Session session = null;
+		try
+		{
+			session = connectionManager.getSessionFactory().openSession();
+			return session.load(objectClass, identifier);
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+	
+	
 
 }

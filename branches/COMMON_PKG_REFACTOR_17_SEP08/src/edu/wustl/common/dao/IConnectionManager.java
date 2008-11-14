@@ -22,8 +22,6 @@ public interface IConnectionManager
 	
 	Session currentSession() throws HibernateException;
 	
-	Object loadCleanObj(Class objectClass, Long identifier) throws HibernateException;
-
 	Session getCleanSession() throws DAOException;
 	
 	void setApplicationName(String applicationName);
