@@ -53,8 +53,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		try
 		{
 			initializeAuditManager(sessionDataBean);
-			connection = connectionManager.getConnection();
-			connection.setAutoCommit(false);
+			setConnection(getConnectionManager().getConnection());
+			getConnection().setAutoCommit(false);
 		}
 		catch (SQLException sqlExp)
 		{
@@ -69,8 +69,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public void closeSession() throws DAOException
 	{
-		auditManager = null;
-		connectionManager.closeConnection();
+		setAuditManager(null);
+		getConnectionManager().closeConnection();
 	}
 
 	/**
@@ -83,13 +83,13 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	{
 		try
 		{
-			auditManager.insert(this);
+			getAuditManager().insert(this);
 			
-			if(connection == null) {
+			if(getConnection() == null) {
 				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
 			}	
 
-			connection.commit();
+			getConnection().commit();
 		}
 		catch (SQLException dbex)
 		{
@@ -108,11 +108,11 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	{
 		try
 		{
-			if(connection == null) {
+			if(getConnection() == null) {
 				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
 			}	
 
-			connection.rollback();
+			getConnection().rollback();
 		}
 		catch (SQLException dbex)
 		{
@@ -128,14 +128,14 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	private void initializeAuditManager(SessionDataBean sessionDataBean)
 	{
-		auditManager = new AuditManager();
+		setAuditManager(new AuditManager());
 		if (sessionDataBean == null) {
 		
-			auditManager.setUserId(null);
+			getAuditManager().setUserId(null);
 		} else {
 		
-			auditManager.setUserId(sessionDataBean.getUserId());
-			auditManager.setIpAddress(sessionDataBean.getIpAddress());
+			getAuditManager().setUserId(sessionDataBean.getUserId());
+			getAuditManager().setIpAddress(sessionDataBean.getIpAddress());
 		}
 	}
 	
@@ -149,7 +149,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		PreparedStatement stmt = null;
 		try
 		{
-			stmt = connection.prepareStatement(query);
+			stmt = getConnection().prepareStatement(query);
 			stmt.executeUpdate();
 		}
 		catch (SQLException sqlExp)
@@ -178,7 +178,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	protected Statement getConnectionStmt() throws SQLException
 	{
-		return (Statement)connection.createStatement();
+		return (Statement)getConnection().createStatement();
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	protected PreparedStatement getPreparedStatement(String query) throws SQLException
 	{
-		return connection.prepareStatement(query);
+		return getConnection().prepareStatement(query);
 	}	
 
 	/* (non-Javadoc)
@@ -622,31 +622,24 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			List<String> columnNameslist,List<String>... columnNames) throws SQLException
 	{
 		List<String> columnNames_t = columnNameslist;
-		StringBuffer sql = new StringBuffer("Select ");
+		StringBuffer sqlBuff = new StringBuffer("Select ");
 		Statement statement = getConnectionStmt();
-		ResultSet resultSet = null;
-		ResultSetMetaData metaData = null;
+		ResultSet resultSet;
+		ResultSetMetaData metaData;
 		
 		if (columnNames != null && columnNames.length > 0)
 		{
 			columnNames_t = columnNames[0];
-			for (int i = 0; i < columnNames_t.size(); i++)
-			{
-				sql.append(columnNames_t.get(i));
-				if (i != columnNames_t.size() - 1)
-				{
-					sql.append("  ,");
-				}
-			}
-			sql.append(" from " + tableName + " where 1!=1");
-			resultSet = statement.executeQuery(sql.toString());
+			generateSelectSql(columnNames_t, sqlBuff);
+			sqlBuff.append(" from " + tableName + " where 1!=1");
+			resultSet = statement.executeQuery(sqlBuff.toString());
 			metaData = resultSet.getMetaData();
 
 		}
 		else
 		{
-			sql.append("* from " + tableName + " where 1!=1");
-			resultSet = statement.executeQuery(sql.toString());
+			sqlBuff.append("* from " + tableName + " where 1!=1");
+			resultSet = statement.executeQuery(sqlBuff.toString());
 			metaData = resultSet.getMetaData();
 
 			columnNames_t = new ArrayList<String>();
@@ -659,6 +652,17 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		resultSet.close();
 		statement.close();
 		return metaData;
+	}
+
+	private void generateSelectSql(List<String> columnNames_t, StringBuffer sql) {
+		for (int i = 0; i < columnNames_t.size(); i++)
+		{
+			sql.append(columnNames_t.get(i));
+			if (i != columnNames_t.size() - 1)
+			{
+				sql.append("  ,");
+			}
+		}
 	}
 	
 	
@@ -843,14 +847,12 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		return connectionManager;
 	}
 	private Connection getConnection() {
-		
-		return connection ;
+		return connection;
 	}
+
 	private void setConnection(Connection connection) {
 		this.connection = connection;
 	}
-
-	
 	
 	private AuditManager getAuditManager() {
 		return auditManager;

@@ -65,7 +65,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		try {
 		
 		   dao = (DAO)Class.forName(defaultDAOClassName).newInstance();
-		   dao.setConnectionManager(connectionManager);			
+		   dao.setConnectionManager(getConnectionManager());			
 		  		
 		} catch (Exception inExcp ) {
 			
@@ -85,7 +85,7 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		try {
 		
 			   dao = (JDBCDAO) Class.forName(jdbcDAOClassName).newInstance();
-			   dao.setConnectionManager(connectionManager);							
+			   dao.setConnectionManager(getConnectionManager());							
         
 		} catch (Exception inExcp ) {
 			
