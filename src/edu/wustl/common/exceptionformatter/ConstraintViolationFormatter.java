@@ -157,4 +157,162 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		}
 		return columnNames;
 	}
+	
+	
+	public static Object[] createMessageFormatArguments(String tableName,
+			Connection connection, StringBuffer columnNames) {
+		String dispTableName;
+		String columnName;
+		// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
+		Object[] arguments = new Object[2];
+		dispTableName = ExceptionFormatterFactory.getDisplayName(tableName, connection);
+		arguments[0] = dispTableName;
+		columnName = columnNames.toString();
+		columnName = columnName.substring(0, columnName.length());
+		arguments[1] = columnName;
+		logger.debug("Column Name: " + columnNames.toString());
+		return arguments;
+	}
+
+	public static StringBuffer getColumNames(String tableName, Connection connection,
+			int key) throws SQLException {
+		// Get database metadata object for the connection
+		DatabaseMetaData dbmd = connection.getMetaData();
+
+		//  Get a description of the given table's indices and statistics
+		ResultSet resultSet = dbmd.getIndexInfo(connection.getCatalog(), null, tableName, true, false);
+		StringBuffer columnNames = getColumnInfo(resultSet,key);
+		resultSet.close();
+		return columnNames;
+	}
+
+	public static Connection getConnection(Object[] args, Connection connection) {
+		if (args[1] != null)
+		{
+			connection = (Connection) args[1];
+		}
+		else
+		{
+			logger.debug("Error Message: Connection object not given");
+		}
+		return connection;
+	}
+
+	public static String setDisplayTableName(Object[] args, String tableName) {
+		String dispTableName;
+		if (args[2] != null)
+		{
+			dispTableName = (String) args[2];
+		}
+		else
+		{
+			logger.debug("Table Name not specified");
+			dispTableName = tableName;
+		}
+		return dispTableName;
+	}
+
+	public static String getTableName(Object[] args) {
+		String tableName;
+		if (args[0] == null) {
+			logger.debug("Table Name not specified");
+			tableName = "Unknown Table";
+			
+		} else {
+			tableName = (String) args[0];
+		}
+		return tableName;
+	}
+	
+	
+	public static String getFormattedErrorMessage(Object[] args, Exception objExcp,
+			String tableName)
+			throws ClassNotFoundException, SQLException {
+		String formattedErrMsg;
+		Connection connection = null;
+		//get Class name from message "could not insert [classname]"
+		tableName = getTableNameFromMessage(tableName,objExcp);
+		// Generate Error Message by appending all messages of previous cause Exceptions
+		String sqlMessage = generateErrorMessage(objExcp);
+		// From the MySQL error msg and extract the key ID 
+		// The unique key voilation message is "Duplicate entry %s for key %d"
+
+		int key = -1;
+		int indexofMsg = 0;
+		indexofMsg = sqlMessage.indexOf(Constants.MYSQL_DUPL_KEY_MSG);
+		indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
+
+		// Get the %d part of the string
+		String strKey = sqlMessage.substring(indexofMsg, sqlMessage.length() - 1);
+		key = Integer.parseInt(strKey);
+		// For the key extracted frm the string, get the column name on which the 
+		// costraint has failed get connection from arguments
+		connection = getConnection(args, connection);
+		StringBuffer columnNames = getColumNames(tableName, connection, key);
+		Object[] arguments = createMessageFormatArguments(tableName,
+				connection, columnNames);
+
+		// Insert Table_Name and Column_Name in  CONSTRAINT_VOILATION_ERROR message   
+		formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR, arguments);
+		return formattedErrMsg;
+	}
+	
+	public static String getFormatedErrorMessageForOracle(Object[] args,Exception objExcp)
+			throws SQLException {
+		
+		String formattedErrMsg = "" ;
+		String tableName = "" ; 
+		String columnName = "" ;
+		//        	 Get database metadata object for the connection
+		Connection connection = null;
+		if (args[1] != null)
+		{
+			connection = (Connection) args[1];
+		}
+		else
+		{
+			logger.debug("Error Message: Connection object not given");
+		}
+		// Get Contraint Name from messages         		
+		String sqlMessage = generateErrorMessage(objExcp);
+		int tempstartIndexofMsg = sqlMessage.indexOf("(");
+
+		String temp = sqlMessage.substring(tempstartIndexofMsg);
+		int startIndexofMsg = temp.indexOf(".");
+		int endIndexofMsg = temp.indexOf(")");
+		String strKey = temp.substring((startIndexofMsg + 1), endIndexofMsg);
+		logger.debug("Contraint Name: " + strKey);
+
+		String Query = "select COLUMN_NAME,TABLE_NAME from user_cons_columns where constraint_name = '"
+				+ strKey + "'";
+		logger.debug("ExceptionFormatter Query: " + Query);
+		Statement statement = connection.createStatement();
+		ResultSet rs = statement.executeQuery(Query);
+		while (rs.next())
+		{
+			columnName += rs.getString("COLUMN_NAME") + ",";
+			logger.debug("columnName: " + columnName);
+			tableName = rs.getString("TABLE_NAME");
+			logger.debug("tableName: " + tableName);
+		}
+		if (columnName.length() > 0 && tableName.length() > 0)
+		{
+			columnName = columnName.substring(0, columnName.length() - 1);
+			logger.debug("columnName befor formatting: " + columnName);
+			String displayName = ExceptionFormatterFactory
+					.getDisplayName(tableName, connection);
+
+			Object[] arguments = new Object[]{displayName, columnName};
+			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,
+					arguments);
+		}
+		rs.close();
+		statement.close();
+		
+		return formattedErrMsg;
+	}
+	
+	
+	
+	
 }
