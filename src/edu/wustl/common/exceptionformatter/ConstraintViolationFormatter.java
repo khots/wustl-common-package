@@ -17,14 +17,11 @@ import java.util.HashMap;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 
-import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 public class ConstraintViolationFormatter implements ExceptionFormatter

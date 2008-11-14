@@ -27,7 +27,6 @@ import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AuditException;
-import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
@@ -52,7 +51,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * specify Session instance.
 	 */
 	protected Session session = null;
-	/**
+		/**
 	 * specify Transaction instance.
 	 */
 	protected Transaction transaction = null;
@@ -63,7 +62,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	/**
 	 * specify isUpdated.
 	 */
-	private boolean isUpdated = false;
+	private boolean updated = false;
 	
 	private IConnectionManager connectionManager;
 	
@@ -78,17 +77,14 @@ public class HibernateDAOImpl implements HibernateDAO
 
 		try
 		{
-			
-			session = connectionManager.currentSession();
-			
-			transaction = session.beginTransaction();
-
-			auditManager = new AuditManager();
+			setSession(getConnectionManager().currentSession());
+			setTransaction(getSession().beginTransaction());
+			setAuditManager(new AuditManager());
 
 			if (sessionDataBean != null)
 			{
-				auditManager.setUserId(sessionDataBean.getUserId());
-				auditManager.setIpAddress(sessionDataBean.getIpAddress());
+				getAuditManager().setUserId(sessionDataBean.getUserId());
+				getAuditManager().setIpAddress(sessionDataBean.getIpAddress());
 			}
 		/*
 		 * TODO Removed ..check if some issues occur because of this 
@@ -114,16 +110,16 @@ public class HibernateDAOImpl implements HibernateDAO
 	{
 		try
 		{
-			connectionManager.closeSession();
+			getConnectionManager().closeSession();
 		}
 		catch (HibernateException dx)
 		{
 			logger.error(dx.getMessage(), dx);
 			throw handleError(Constants.GENERIC_DATABASE_ERROR, dx);
 		}
-		session = null;
-		transaction = null;
-		auditManager = null;
+		setSession(null);
+		setTransaction(null);
+		setAuditManager(null);
 	}
 
 	/**
@@ -135,11 +131,11 @@ public class HibernateDAOImpl implements HibernateDAO
 	{
 		try
 		{
-			auditManager.insert(this);
+			getAuditManager().insert(this);
 
-			if (transaction != null)
+			if (getTransaction() != null)
 			{
-				transaction.commit();
+				getTransaction().commit();
 			}
 		}
 		catch (HibernateException dbex)
@@ -164,13 +160,13 @@ public class HibernateDAOImpl implements HibernateDAO
 		 * Because of this roll back is not happining on parent object.
 		 *
 		 */
-		if (isUpdated)
+		if (isUpdated())
 		{
 			try
 			{
-				if (transaction != null)
+				if (getTransaction() != null)
 				{
-					transaction.rollback();
+					getTransaction().rollback();
 				}
 			}
 			catch (HibernateException dbex)
@@ -195,7 +191,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	{
 		try
 		{
-			Statement statement = session.connection().createStatement();
+			Statement statement = getSession().connection().createStatement();
 
 			StringBuffer buff = new StringBuffer();
 			for (int i = 0; i < whereColumnValues.length; i++)
@@ -249,9 +245,9 @@ public class HibernateDAOImpl implements HibernateDAO
 			*/
 			if (isAuthorized)
 			{
-				session.save(obj);
+				getSession().save(obj);
 				isObjectAuditable(obj, isAuditable);
-				isUpdated = true;
+				setUpdated(true);
 			}
 			else
 			{
@@ -278,7 +274,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		
 		if (obj instanceof Auditable && isAuditable)
 		{
-			auditManager.compare((Auditable) obj, null, "INSERT");
+			getAuditManager().compare((Auditable) obj, null, "INSERT");
 		}
 	}
 
@@ -360,8 +356,8 @@ public class HibernateDAOImpl implements HibernateDAO
 
 			if (isAuthorized)
 			{
-				session.update(obj);
-				isUpdated = true;
+				getSession().update(obj);
+				setUpdated(true);
 			}
 			else
 			{
@@ -394,7 +390,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		{
 			if (obj instanceof Auditable && isAuditable)
 			{
-				auditManager.compare((Auditable) obj, (Auditable) oldObj, "UPDATE");
+				getAuditManager().compare((Auditable) obj, (Auditable) oldObj, "UPDATE");
 			}
 		}
 		catch (AuditException hibExp)
@@ -409,7 +405,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 */
 	public void addAuditEventLogs(Collection auditEventDetailsCollection)
 	{
-		auditManager.addAuditEventLogs(auditEventDetailsCollection);
+		getAuditManager().addAuditEventLogs(auditEventDetailsCollection);
 	}
 
 	/**
@@ -421,7 +417,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	{
 		try
 		{
-			session.delete(obj);
+			getSession().delete(obj);
 		}
 		catch (HibernateException hibExp)
 		{
@@ -521,12 +517,12 @@ public class HibernateDAOImpl implements HibernateDAO
 			if (queryWhereClauseImpl.isConditionSatisfied())
 			{
 				sqlBuff.append(queryWhereClauseImpl.toString(className));
-				query = session.createQuery(sqlBuff.toString());
+				query = getSession().createQuery(sqlBuff.toString());
 				queryWhereClauseImpl.setParametersToQuery(query);
 			}
 			else
 			{
-				query = session.createQuery(sqlBuff.toString());
+				query = getSession().createQuery(sqlBuff.toString());
 			}
 
 			list = query.list();
@@ -563,7 +559,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	{
 		try
 		{
-			Object object = session.load(Class.forName(sourceObjectName), identifier);
+			Object object = getSession().load(Class.forName(sourceObjectName), identifier);
 			return HibernateMetaData.getProxyObjectImpl(object);
 		}
 		catch (ClassNotFoundException cnFoundExp)
@@ -588,7 +584,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	public Object loadCleanObj(String sourceObjectName, Long identifier) throws DAOException
 	{
 		Object obj = retrieve(sourceObjectName, identifier);
-		session.evict(obj);
+		getSession().evict(obj);
 		return obj;
 	}
 
@@ -610,7 +606,7 @@ public class HibernateDAOImpl implements HibernateDAO
 
 		try
 		{
-			Query hibernateQuery = session.createQuery(query);
+			Query hibernateQuery = getSession().createQuery(query);
 			returner = hibernateQuery.list();
 
 		}
@@ -664,7 +660,7 @@ public class HibernateDAOImpl implements HibernateDAO
 						Constants.SYSTEM_IDENTIFIER).append("=  ").append(identifier);
 		try
 		{
-			return session.createQuery(queryStringBuffer.toString()).list();
+			return getSession().createQuery(queryStringBuffer.toString()).list();
 		}
 		catch (HibernateException exception)
 		{
@@ -776,13 +772,46 @@ public class HibernateDAOImpl implements HibernateDAO
 		Session session = null;
 		try
 		{
-			session = connectionManager.getSessionFactory().openSession();
+			session = getConnectionManager().getSessionFactory().openSession();
 			return session.load(objectClass, identifier);
 		}
 		finally
 		{
 			session.close();
 		}
+	}
+	
+	
+	private Session getSession() {
+		return session;
+	}
+
+	private void setSession(Session session) {
+		this.session = session;
+	}
+
+	private Transaction getTransaction() {
+		return transaction;
+	}
+
+	private void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+	}
+
+	private AuditManager getAuditManager() {
+		return auditManager;
+	}
+
+	private void setAuditManager(AuditManager auditManager) {
+		this.auditManager = auditManager;
+	}
+
+	private boolean isUpdated() {
+		return updated;
+	}
+
+	private void setUpdated(boolean isUpdated) {
+		this.updated = isUpdated;
 	}
 	
 	
