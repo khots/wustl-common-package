@@ -151,7 +151,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean)
 			throws DAOException, UserNotAuthorizedException
 	{
-		dao.update(obj, sessionDataBean, true, true, false);
+		dao.update(obj, sessionDataBean, true, true);
 		dao.audit(obj, oldObj, sessionDataBean, true);
 	}
 
@@ -536,7 +536,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				Long objectId = (Long) iterator.next();
 				IActivityStatus object = (IActivityStatus) dao.retrieve(sourceClass, objectId);
 				object.setActivityStatus(Constants.ACTIVITY_STATUS_DISABLED);
-				dao.update(object, null, false, false, false);
+				dao.update(object, null, false, false);
 				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
 			}
 
@@ -808,7 +808,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
 	{
-		dao.update(obj, null, false, false, false);
+		dao.update(obj, null, false, false);
 	}
 
 	/**

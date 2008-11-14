@@ -343,7 +343,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	 * @throws UserNotAuthorizedException User Not Authorized Exception.
 	 */
 	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException,
+			boolean isSecureUpdate) throws DAOException,
 			UserNotAuthorizedException
 	{
 		boolean isAuthorized = true;
@@ -742,7 +742,7 @@ public class HibernateDAOImpl implements HibernateDAO
 		            sqlBuff.append(", ");
 		        }
 		    }
-		    sqlBuff.append("     ");
+		    sqlBuff.append("   ");
 		}
 	}
 
