@@ -31,6 +31,7 @@ import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.HibernateDAO;
 import edu.wustl.common.dao.IConnectionManager;
 import edu.wustl.common.dao.IDAOFactory;
+import edu.wustl.common.dao.QueryWhereClauseImpl;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
@@ -194,21 +195,24 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 * @return list
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName,
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = daofactory.getDAO();
 
-		List list = null;
+		List<Object> list = null;
 
 		try
 		{
 			dao.openSession(null);
 
-			list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
-					whereColumnCondition, whereColumnValue, joinCondition);
+			QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+			queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+					whereColumnValue,joinCondition);
+			
+			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
 		}
 		catch (DAOException daoExp)
 		{
@@ -608,9 +612,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String[] whereColumnCondition = {"in"};
 		Object[] whereColumnValue = {objIDArr};
 		String joinCondition = Constants.AND_JOIN_CONDITION;
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
 
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
-				whereColumnCondition, whereColumnValue, joinCondition);
+		List<Object> list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
 		list = Utility.removeNull(list);
 		logger.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
@@ -636,8 +644,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Object[] whereColumnValue = {objIDArr};
 		String joinCondition = Constants.AND_JOIN_CONDITION;
 
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
-				whereColumnCondition, whereColumnValue, joinCondition);
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
+		
+		List<Object> list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
 		logger.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		list = Utility.removeNull(list);
@@ -660,8 +672,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String sourceObjectName = sourceClass.getName();
 		String joinCondition = Constants.AND_JOIN_CONDITION;
 		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnName,
-				whereColumnCondition, whereColumnValue, joinCondition);
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
+		List<Object> list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
 
 		list = Utility.removeNull(list);
 		return list;
@@ -753,9 +769,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String[] colConditions = {"="};
 		Object[] whereColumnValues = {indetifier};
 		String[] selectColumnName = {Constants.ACTIVITY_STATUS};
-		List list = dao.retrieve(sourceObjectName, selectColumnName, whereColumnNames,
-				colConditions, whereColumnValues, Constants.AND_JOIN_CONDITION);
-
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnNames, colConditions,
+				whereColumnValues,Constants.AND_JOIN_CONDITION);
+		
+		
+		List<Object> list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClauseImpl);
 		String activityStatus = "";
 		if (!list.isEmpty())
 		{

@@ -35,6 +35,7 @@ import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.dao.QuerySessionData;
+import edu.wustl.common.dao.QueryWhereClauseImpl;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.query.Client;
 import edu.wustl.common.query.DataElement;
@@ -355,14 +356,20 @@ public class QueryBizLogic extends DefaultBizLogic
 		String[] whereColumnNames = {columnName};
 		String[] whereColumnConditions = {"="};
 		Object[] whereColumnValues = {columnValue};
-		List list = jdbcDAO.retrieve(Constants.TABLE_DATA_TABLE_NAME, selectColumnNames,
-				whereColumnNames, whereColumnConditions, whereColumnValues, null);
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnNames, whereColumnConditions,
+				whereColumnValues,null);
+		
+		
+		
+		List<Object> list = jdbcDAO.retrieve(Constants.TABLE_DATA_TABLE_NAME, selectColumnNames,queryWhereClauseImpl);
 		jdbcDAO.closeSession();
 
 		String aliasName = null;
 		if (!list.isEmpty())
 		{
-			List row = (List) list.get(0);
+			List<Object> row = (List) list.get(0);
 			aliasName = (String) row.get(0);
 		}
 
@@ -650,8 +657,13 @@ public class QueryBizLogic extends DefaultBizLogic
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		JDBCDAO jdbcDAO = daofactory.getJDBCDAO();
 		jdbcDAO.openSession(null);
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnNames, whereColumnConditions,
+				whereColumnValues,null);
+		
 		List tableList = jdbcDAO.retrieve(Constants.TABLE_DATA_TABLE_NAME, selectColumnNames,
-				whereColumnNames, whereColumnConditions, whereColumnValues, null);
+				queryWhereClauseImpl);
 		jdbcDAO.closeSession();
 
 		Set objectNameValueBeanList = new TreeSet();
@@ -878,8 +890,15 @@ public class QueryBizLogic extends DefaultBizLogic
 		String[] whereColumnNames = {"ALIAS_NAME"};
 		String[] whereColumnConditions = {"="};
 		String[] whereColumnValues = {"'" + aliasName + "'"};
+		
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnNames, whereColumnConditions,
+				whereColumnValues,null);
+		
 		List list = jdbcDAO.retrieve("CATISSUE_QUERY_TABLE_DATA", selectColumnNames,
-				whereColumnNames, whereColumnConditions, whereColumnValues, null);
+				queryWhereClauseImpl);
+		
 		jdbcDAO.closeSession();
 		logger.debug("List of Ids size: " + list.size() + " list " + list);
 		String tableIdString = "";

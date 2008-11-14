@@ -269,6 +269,8 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 	{
 		//default imp	
 	}
+	
+	
 
 
 
