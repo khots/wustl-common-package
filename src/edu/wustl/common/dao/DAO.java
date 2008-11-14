@@ -80,9 +80,13 @@ public interface DAO
 	 * @return the list of all source objects that satisfy the seasch conditions.
 	 * @throws DAOException generic DAOException.
 	 */
-	List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
+	
+	List<Object> retrieve(String sourceObjectName, String[] selectColumnName,QueryWhereClauseImpl queryWhereClauseImpl) throws DAOException;
+	
+	
+	/*List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws DAOException;
+			String joinCondition) throws DAOException;*/
 
 	/**
 	 * Retrive and returns the list of all source objects for given

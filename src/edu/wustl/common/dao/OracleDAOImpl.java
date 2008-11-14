@@ -5,10 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,30 +149,9 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 			}
 			catch (SQLException ex)
 			{
-				throw new DAOException(ex.getMessage(), ex);
+				logger.error(ex.getMessage(), ex);
 			}
 		}
-	}
-		
-	private Timestamp isColumnValueDate(Object value)
-	{
-	
-		try
-		{
-			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-			formatter.setLenient(false);
-			java.util.Date date = formatter.parse((String) value);
-			Timestamp t = new Timestamp(date.getTime());
-			if (value != null && value.toString().equals("") == false)
-			{
-				return t;
-			}
-		}
-		catch (Exception e)
-		{
-
-		}
-		return null;
 	}
 	
 	
@@ -290,6 +266,5 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		// TODO Auto-generated method stub
 		
 	}
-	
 	
 }

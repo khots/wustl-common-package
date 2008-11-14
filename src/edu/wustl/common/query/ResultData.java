@@ -17,6 +17,7 @@ import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.dao.QueryWhereClauseImpl;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -64,8 +65,13 @@ public class ResultData
 			dao.openSession(sessionDataBean);
 			boolean onlyDistinctRows = true;
 			Logger.out.debug("Get only distinct rows:" + onlyDistinctRows);
-			dataList = dao.retrieve(tmpResultsTableName, columnList, whereColumnName,
-					whereColumnCondition, whereColumnValue, null, onlyDistinctRows);
+			
+			QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+			queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+					whereColumnValue,null);
+			
+			dataList = dao.retrieve(tmpResultsTableName, columnList, queryWhereClauseImpl, onlyDistinctRows);
+			
 			Logger.out.debug("List of spreadsheet data for advance search:" + dataList);
 
 			//End of Bug#2003: For having unique records in result view

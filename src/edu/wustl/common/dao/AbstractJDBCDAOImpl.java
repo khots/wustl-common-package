@@ -28,9 +28,9 @@ import java.util.Map;
 
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.queryExecutor.IQueryExecutor;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -241,7 +241,17 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public List<Object> retrieve(String sourceObjectName) throws DAOException
 	{
-		return retrieve(sourceObjectName, null, null, null, null, null,false);
+		
+		String[] whereColumnName = null;
+		String[] whereColumnCondition = null;
+		Object[] whereColumnValue = null;
+		String joinCondition = null;
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
+		return retrieve(sourceObjectName, null, queryWhereClauseImpl,false);
 	}
 
 	/**
@@ -256,7 +266,16 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
 	{
-		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,false);
+		String[] whereColumnName = null;
+		String[] whereColumnCondition = null;
+		Object[] whereColumnValue = null;
+		String joinCondition = null;
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
+		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
 	}
 
 	/**
@@ -273,8 +292,16 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
 	{
-		//logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
-		return retrieve(sourceObjectName, selectColumnName, null, null, null, null,
+		String[] whereColumnName = null;
+		String[] whereColumnCondition = null;
+		Object[] whereColumnValue = null;
+		String joinCondition = null;
+	
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
+		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,
 				onlyDistinctRows);
 	}
 	
@@ -286,13 +313,28 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
 	 * @param The session object.
+	 * @deprecated : This method holds large number of parameters .Use method List<Object> retrieve(String sourceObjectName, String[] selectColumnName,QueryWhereClauseImpl queryWhereClauseImpl,
+			 boolean onlyDistinctRows) throws DAOException
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
 	{
-		return retrieve(sourceObjectName, selectColumnName, whereColumnName, whereColumnCondition,
-				whereColumnValue, joinCondition, false);
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
+		
+		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
+		
+	}
+	
+	public List<Object> retrieve(String sourceObjectName,
+			String[] selectColumnName, QueryWhereClauseImpl queryWhereClauseImpl)
+			throws DAOException {
+	
+		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
 	}
 
 	/**
@@ -305,9 +347,14 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		String whereColumnNames[] = {whereColumnName};
 		String whereColumnConditions[] = {"="};
 		Object whereColumnValues[] = {whereColumnValue};
+		String[] selectColumnName = null;
+		
+		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
+		queryWhereClauseImpl.setWhereClause(whereColumnNames, whereColumnConditions,
+				whereColumnValues,  Constants.AND_JOIN_CONDITION);
+		
 
-		return retrieve(sourceObjectName, null, whereColumnNames, whereColumnConditions,
-				whereColumnValues, Constants.AND_JOIN_CONDITION,false);
+		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
 	}
 
 
@@ -320,41 +367,24 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @param joinCondition The join condition.
 	 * @param onlyDistictRows true if only distict rows should be selected
 	 */
-	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition, boolean onlyDistinctRows) throws DAOException
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,QueryWhereClauseImpl queryWhereClauseImpl,
+			 boolean onlyDistinctRows) throws DAOException
 	{
-		//logger.out.debug(" Only distinct rows:" + onlyDistinctRows);
 		List<Object> list = null;
-		String condition;
+		
+		QueryWhereClauseJDBCImpl queryWhereClauseJDBCImpl = (QueryWhereClauseJDBCImpl)queryWhereClauseImpl;
 
 		try
 		{
-			StringBuffer query = getSelectFromQueryPart(sourceObjectName, selectColumnName, onlyDistinctRows);
-			if (joinCondition == null) {
-				condition = Constants.AND_JOIN_CONDITION;
-			} else {
-				condition = joinCondition;
+			StringBuffer queryStrBuff = getSelectFromQueryPart(selectColumnName, onlyDistinctRows);
+			getFromPartOfQuery(sourceObjectName, queryStrBuff);
+			
+			if(queryWhereClauseJDBCImpl.isConditionSatisfied()) {
+				queryStrBuff.append(queryWhereClauseJDBCImpl.jdbcQueryWhereClause(sourceObjectName));
 			}
-
-			//Prepares the where clause of the query.
-			if ((whereColumnName != null && whereColumnName.length > 0)
-					&& (whereColumnCondition != null && whereColumnCondition.length == whereColumnName.length)
-					&& (whereColumnValue != null && whereColumnName.length == whereColumnValue.length))
-			{
-				query.append(" WHERE ");
-				int index;
-				for (index = 0; index < (whereColumnName.length - 1); index++)
-				{
-					query.append(sourceObjectName + "." + whereColumnName[index] + " "
-							+ whereColumnCondition[index] + " " + whereColumnValue[index]);
-					query.append(" " + condition + " ");
-				}
-				query.append(sourceObjectName + "." + whereColumnName[index] + " "
-						+ whereColumnCondition[index] + " " + whereColumnValue[index]);
-			}
-			logger.debug("JDBC Query " + query);
-			list = executeQuery(query.toString(), null, false, null);
+			
+			logger.debug("JDBC Query " + queryStrBuff);
+			list = executeQuery(queryStrBuff.toString(), null, false, null);
 		}
 		catch (ClassNotFoundException classExp)
 		{
@@ -370,7 +400,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @param onlyDistinctRows
 	 * @return
 	 */
-	private StringBuffer getSelectFromQueryPart(String sourceObjectName, String[] selectColumnName,
+	private StringBuffer getSelectFromQueryPart(String[] selectColumnName,
 			boolean onlyDistinctRows)
 	{
 		StringBuffer query = new StringBuffer("SELECT ");
@@ -392,8 +422,11 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		{
 			query.append("* ");
 		}
-		query.append("FROM ").append(sourceObjectName);
 		return query;
+	}
+
+	private void getFromPartOfQuery(String sourceObjectName, StringBuffer queryStrBuff) {
+		queryStrBuff.append("FROM ").append(sourceObjectName);
 	}
 
 		
