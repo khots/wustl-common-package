@@ -261,7 +261,7 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		return null;
 	}
 
-	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException, UserNotAuthorizedException
+	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable, boolean isSecureUpdate) throws DAOException, UserNotAuthorizedException
 	{
 		// TODO Auto-generated method stub
 		

@@ -46,7 +46,7 @@ public interface DAO
 	 * @throws UserNotAuthorizedException TODO
 	 */
 	void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureUpdate, boolean hasObjectLevelPrivilege) throws DAOException,
+			boolean isSecureUpdate) throws DAOException,
 			UserNotAuthorizedException;
 
 	/**

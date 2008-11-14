@@ -30,7 +30,6 @@ import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.domain.AbstractDomainObject;
-import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
@@ -315,7 +314,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @param The session object.
 	 * @deprecated : This method holds large number of parameters .Use method List<Object> retrieve(String sourceObjectName, String[] selectColumnName,QueryWhereClauseImpl queryWhereClauseImpl,
 			 boolean onlyDistinctRows) throws DAOException
-	 */
+	 *//*
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws DAOException
@@ -328,7 +327,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		
 		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
 		
-	}
+	}*/
 	
 	public List<Object> retrieve(String sourceObjectName,
 			String[] selectColumnName, QueryWhereClauseImpl queryWhereClauseImpl)

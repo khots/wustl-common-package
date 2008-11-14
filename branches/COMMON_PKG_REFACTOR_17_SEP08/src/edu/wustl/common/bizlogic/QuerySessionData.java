@@ -1,4 +1,4 @@
-package edu.wustl.common.dao;
+package edu.wustl.common.bizlogic;
 
 import java.util.Map;
 
