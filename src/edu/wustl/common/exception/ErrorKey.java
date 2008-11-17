@@ -10,6 +10,7 @@ public final class ErrorKey
 	private String errorKey;
 	private String errorMessage;
 	private Object []messageValues;
+	private static ErrorKey DefaultErrorkey;
 	
 	private static HashMap<String, ErrorKey> errorKeyMap = new HashMap<String, ErrorKey>();
 	
@@ -33,5 +34,27 @@ public final class ErrorKey
 	private static void init()
 	{
 
+	}
+	/**
+	 * Default error key
+	 * @return
+	 */
+	public static ErrorKey getDefaultErrorKey()
+	{
+		return DefaultErrorkey;
+	}
+
+	/**
+	 * @return the errorMessage
+	 */
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	/**
+	 * @param errorMessage the errorMessage to set
+	 */
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 }
