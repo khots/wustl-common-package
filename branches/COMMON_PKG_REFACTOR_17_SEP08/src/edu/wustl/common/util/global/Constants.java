@@ -44,8 +44,6 @@ public class Constants
 
 	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
 
-	public static final Map<String, String[]> STATIC_PROTECTION_GROUPS_FOR_OBJECT_TYPES
-						= new HashMap<String, String[]>();
 
 	// Mandar: Used for Date Validations in Validator Class
 	public static final String DATE_SEPARATOR = "-";
@@ -58,14 +56,6 @@ public class Constants
 
 	public static final String ADD = "add";
 
-	public static final String getCollectionProtocolPGName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "COLLECTION_PROTOCOL_";
-		}
-		return "COLLECTION_PROTOCOL_" + identifier;
-	}
 
 	public static final String getCollectionProtocolPIGroupName(Long identifier)
 	{
@@ -85,23 +75,6 @@ public class Constants
 		return "COORDINATORS_COLLECTION_PROTOCOL_" + identifier;
 	}
 
-	public static final String getDistributionProtocolPGName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "DISTRIBUTION_PROTOCOL_";
-		}
-		return "DISTRIBUTION_PROTOCOL_" + identifier;
-	}
-
-	public static final String getDistributionProtocolPIGroupName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "PI_DISTRIBUTION_PROTOCOL_";
-		}
-		return "PI_DISTRIBUTION_PROTOCOL_" + identifier;
-	}
 
 	public static final String getStorageContainerPGName()
 	{
@@ -149,13 +122,13 @@ public class Constants
 	//Assign Privilege Constants.
 	public static final boolean PRIVILEGE_ASSIGN = true;
 
-	//DAO Constants.
-	//public static final int HIBERNATE_DAO = 1;
-	//public static final int JDBC_DAO = 2;
+//	DAO Constants.
+	public static final int HIBERNATE_DAO = 1;
+	public static final int JDBC_DAO = 2;
 
-	//public static final String ORACLE_DATABASE = "ORACLE";
-	//public static final String MYSQL_DATABASE = "MYSQL";
-	//public static final String POSTGRESQL_DATABASE = "POSTGRESQL";
+	public static final String ORACLE_DATABASE = "ORACLE";
+	public static final String MYSQL_DATABASE = "MYSQL";
+	public static final String POSTGRESQL_DATABASE = "POSTGRESQL";
 
 	// The unique key voilation message is "Duplicate entry %s for key %d"
 	// This string is used for searching " for key " string in the above error message
