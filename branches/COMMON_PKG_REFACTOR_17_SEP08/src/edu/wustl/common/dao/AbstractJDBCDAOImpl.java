@@ -20,7 +20,6 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -592,66 +591,67 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	/**
 	 * @param tableName
 	 * @param columnValues
-	 * @param dateColumns
-	 * @param numberColumns
-	 * @param tinyIntColumns
-	 * @param columnNames
-	 * @return
-	 * @throws SQLException
-	 */
-	protected List<String> getColumns(String tableName, List<Integer> dateColumns,
-			List<Integer> numberColumns,List<Integer> tinyIntColumns,List<String>... columnNames) throws SQLException
-	{
-		List<String> columnNames_t = new ArrayList<String>();
-		
-		ResultSetMetaData metaData = getMetadataAndUpdatedColumns(tableName, columnNames_t,columnNames);
-		updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
-		
-		return columnNames_t;
-	}
-	
-	/**
-	 * @param tableName
-	 * @param columnValues
 	 * @param columnNames_t
 	 * @param columnNames
 	 * @return
+	 * @throws DAOException 
+	 * @throws SQLException 
 	 * @throws SQLException
 	 */
-	private final ResultSetMetaData getMetadataAndUpdatedColumns(String tableName,
-			List<String> columnNameslist,List<String>... columnNames) throws SQLException
+	protected final ResultSetMetaData getMetadataAndUpdatedColumns(String tableName,
+			List<String> columnNameslist,List<String>... columnNames) throws DAOException, SQLException
 	{
 		List<String> columnNames_t = columnNameslist;
 		StringBuffer sqlBuff = new StringBuffer("Select ");
-		Statement statement = getConnectionStmt();
-		ResultSet resultSet;
+		Statement statement = null;
+		ResultSet resultSet = null;
 		ResultSetMetaData metaData;
 		
-		if (columnNames != null && columnNames.length > 0)
-		{
-			columnNames_t = columnNames[0];
-			generateSelectSql(columnNames_t, sqlBuff);
-			sqlBuff.append(" from " + tableName + " where 1!=1");
-			resultSet = statement.executeQuery(sqlBuff.toString());
-			metaData = resultSet.getMetaData();
+		try {
+			statement = getConnectionStmt();
+			if (columnNames != null && columnNames.length > 0) {
+				
+				columnNames_t = columnNames[0];
+				generateSelectSql(columnNames_t, sqlBuff);
+				sqlBuff.append(" from " + tableName + " where 1!=1");
+				resultSet = statement.executeQuery(sqlBuff.toString());
+				metaData = resultSet.getMetaData();
 
-		}
-		else
-		{
-			sqlBuff.append("* from " + tableName + " where 1!=1");
-			resultSet = statement.executeQuery(sqlBuff.toString());
-			metaData = resultSet.getMetaData();
-
-			columnNames_t = new ArrayList<String>();
-			for (int i = 1; i <= metaData.getColumnCount(); i++)
-			{
-				columnNames_t.add(metaData.getColumnName(i));
+			} else {
+				
+				sqlBuff.append("* from " + tableName + " where 1!=1");
+				resultSet = statement.executeQuery(sqlBuff.toString());
+				metaData = resultSet.getMetaData();
+				getColumnNames(metaData,columnNames_t);
 			}
+		} catch (SQLException sqlExp) {
+			
+			logger.error(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(sqlExp.getMessage(),sqlExp);
+			
+		} finally {
+			
+			closeDatabaseConnections(statement, resultSet);
 		}
-		
-		resultSet.close();
-		statement.close();
 		return metaData;
+	}
+
+	private void closeDatabaseConnections(Statement statement,
+			ResultSet resultSet) throws SQLException {
+		
+		if(resultSet != null ) {
+			resultSet.close();
+		}
+		if (statement != null) {
+			statement.close();
+		}
+	}
+
+	private void getColumnNames(ResultSetMetaData metaData,List<String> columnNames_t) throws SQLException {
+			
+		for (int i = 1; i <= metaData.getColumnCount(); i++) {
+			columnNames_t.add(metaData.getColumnName(i));
+		}
 	}
 
 	private void generateSelectSql(List<String> columnNames_t, StringBuffer sql) {

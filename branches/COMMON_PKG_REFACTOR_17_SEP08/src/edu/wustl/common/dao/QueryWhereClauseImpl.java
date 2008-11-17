@@ -54,16 +54,17 @@ public class QueryWhereClauseImpl {
 		Object[] whereColumnValue = getWhereColumnValue();
 		
 		sqlBuff.append(className + "." + whereColumnName[index] + " ");
-		if(whereColumnCondition[index].indexOf("in")!=-1)
+		//TODO check this twice with original
+		if(whereColumnCondition[index].contains("in"))
 		{
 			inClauseOfWhereQuery(whereColumnCondition, whereColumnValue,
 					sqlBuff, index);
 		}
-		else if(whereColumnCondition[index].indexOf("is not null")!=-1)
+		else if(whereColumnCondition[index].contains("is not null"))
 		{
 			sqlBuff.append(whereColumnCondition[index]);
 		}
-		else if(whereColumnCondition[index].indexOf("is null")!=-1)
+		else if(whereColumnCondition[index].contains("is null"))
 		{
 			sqlBuff.append(whereColumnCondition[index]);
 		}

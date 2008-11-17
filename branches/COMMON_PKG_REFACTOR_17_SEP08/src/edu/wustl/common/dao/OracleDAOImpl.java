@@ -2,6 +2,7 @@ package edu.wustl.common.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -108,9 +109,10 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		List<Integer> dateColumns = new ArrayList<Integer>();
 		List<Integer> numberColumns = new ArrayList<Integer>();
 		List<Integer> tinyIntColumns = new ArrayList<Integer>();
-		List<String> columnNames_t = getColumns(tableName,
-				dateColumns,numberColumns,tinyIntColumns,columnNames);
-
+		List<String> columnNames_t = new ArrayList<String>();
+		
+		ResultSetMetaData metaData  = getMetadataAndUpdatedColumns(tableName,columnNames_t,columnNames);
+		updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
 		String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
 		
 		PreparedStatement stmt = null;

@@ -1,6 +1,7 @@
 package edu.wustl.common.dao;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +78,13 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 	 */
 	public void insert(String tableName, List<Object> columnValues, List<String>... columnNames) throws DAOException, SQLException
 	{
-		List<Integer> dateColumns = new ArrayList<Integer>();
-		List<Integer> numberColumns = new ArrayList<Integer>();
-		List<Integer> tinyIntColumns = new ArrayList<Integer>();
-		List <String>columnNames_t = getColumns(tableName,
-				dateColumns,numberColumns,tinyIntColumns,columnNames);
-
+		List<Integer>dateColumns = new ArrayList<Integer>();
+		List<Integer>numberColumns = new ArrayList<Integer>();
+		List<Integer>tinyIntColumns = new ArrayList<Integer>();
+		List<String>columnNames_t = new ArrayList<String>();
+		
+		ResultSetMetaData metaData = getMetadataAndUpdatedColumns(tableName,columnNames_t,columnNames);
+		updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
 		String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
 		
 		PreparedStatement stmt = null;
