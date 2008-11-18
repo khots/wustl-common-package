@@ -147,30 +147,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public void executeUpdate(String query) throws DAOException
 	{
-		PreparedStatement stmt = null;
-		try
-		{
-			stmt = connection.prepareStatement(query);
-			stmt.executeUpdate();
-		}
-		catch (SQLException sqlExp)
-		{
-			logger.error(DAOConstants.EXECUTE_UPDATE_ERROR, sqlExp);
-			throw new DAOException(DAOConstants.EXECUTE_UPDATE_ERROR,sqlExp);
-		}
-		finally
-		{
-			try
-			{
-				if (stmt != null) {
-					stmt.close();
-				}	
-			}
-			catch (SQLException sqlExp)
-			{
-				logger.error(DAOConstants.CONNECTIONS_CLOSING_ISSUE, sqlExp);
-			}
-		}
+		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
+		databaseConnectionParams.setConnection(connection);
+		databaseConnectionParams.executeUpdate(query);
 	}
 	
 	/**
