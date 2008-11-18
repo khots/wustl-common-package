@@ -16,6 +16,7 @@ import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.dao.QueryParams;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
@@ -228,9 +229,18 @@ public abstract class Query
 			dao.openSession(null);
 			String sql = getString();
 			Logger.out.debug("SQL************" + sql);
-			PagenatedResultData pagenatedResultData = dao.executeQuery(sql, sessionDataBean,
-					isSecureExecute, hasConditionOnIdentifiedField, queryResultObjectDataMap,
-					startIndex, totoalRecords);
+			
+			QueryParams queryParams = new QueryParams();
+			queryParams.setQuery(sql);
+			queryParams.setSessionDataBean(sessionDataBean);
+			queryParams.setSecureToExecute(isSecureExecute);
+			queryParams.setHasConditionOnIdentifiedField(hasConditionOnIdentifiedField);
+			queryParams.setQueryResultObjectDataMap(queryResultObjectDataMap);
+			queryParams.setStartIndex(startIndex);
+			queryParams.setNoOfRecords(totoalRecords);
+			
+			PagenatedResultData pagenatedResultData = dao.executeQuery(queryParams);
+			
 			dao.closeSession();
 			return pagenatedResultData;
 		}

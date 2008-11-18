@@ -32,6 +32,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.dao.DAOConfigFactory;
 import edu.wustl.common.dao.IDAOFactory;
 import edu.wustl.common.dao.JDBCDAO;
+import edu.wustl.common.dao.QueryParams;
 import edu.wustl.common.dao.QueryWhereClauseImpl;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.query.Client;
@@ -1378,11 +1379,19 @@ public class QueryBizLogic extends DefaultBizLogic
 		try
 		{
 			dao.openSession(null);
+			QueryParams queryParams = new QueryParams();
+			
+			queryParams.setQuery(querySessionData.getSql());
+			queryParams.setSessionDataBean(sessionDataBean);
+			queryParams.setSecureToExecute(querySessionData.isSecureExecute());
+			queryParams.setHasConditionOnIdentifiedField(querySessionData.isHasConditionOnIdentifiedField());
+			queryParams.setQueryResultObjectDataMap(querySessionData.getQueryResultObjectDataMap());
+			queryParams.setStartIndex(startIndex);
+			queryParams.setNoOfRecords(querySessionData.getRecordsPerPage());
+			
+			
 			edu.wustl.common.dao.queryExecutor.PagenatedResultData pagenatedResultData = dao
-					.executeQuery(querySessionData.getSql(), sessionDataBean, querySessionData
-							.isSecureExecute(), querySessionData.isHasConditionOnIdentifiedField(),
-							querySessionData.getQueryResultObjectDataMap(), startIndex,
-							querySessionData.getRecordsPerPage());
+					.executeQuery(queryParams);
 
 			return pagenatedResultData;
 		}

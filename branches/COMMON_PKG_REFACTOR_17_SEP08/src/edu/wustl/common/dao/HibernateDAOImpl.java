@@ -76,13 +76,13 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 { 
 
 		try { 
-			setSession(getConnectionManager().currentSession());
-			setTransaction(getSession().beginTransaction());
-			setAuditManager(new AuditManager());
+			session = connectionManager.currentSession();
+			transaction = session.beginTransaction();
+			auditManager = new AuditManager();
 
 			if (sessionDataBean != null) { 
-				getAuditManager().setUserId(sessionDataBean.getUserId());
-				getAuditManager().setIpAddress(sessionDataBean.getIpAddress());
+				auditManager.setUserId(sessionDataBean.getUserId());
+				auditManager.setIpAddress(sessionDataBean.getIpAddress());
 			}
 		/*
 		 * TODO Removed ..check if some issues occur because of this 
@@ -111,9 +111,9 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			logger.error(dx.getMessage(), dx);
 			throw handleError(Constants.GENERIC_DATABASE_ERROR, dx);
 		}
-		setSession(null);
-		setTransaction(null);
-		setAuditManager(null);
+		session = null;
+		transaction = null;
+		auditManager = null;
 	}
 
 	/**
@@ -123,10 +123,10 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 */
 	public void commit() throws DAOException { 
 		try { 
-			getAuditManager().insert(this);
+			auditManager.insert(this);
 
-			if (getTransaction() != null) { 
-				getTransaction().commit();
+			if (transaction != null) { 
+				transaction.commit();
 			}
 		}
 		catch (HibernateException dbex) { 
@@ -136,7 +136,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	}
 
 	/**
-	 * Rollback all the changes after last commit.
+	 * RollBack all the changes after last commit.
 	 * Declared in AbstractDAO class.
 	 * @throws DAOException generic DAOException.
 	 */
@@ -149,10 +149,10 @@ public class HibernateDAOImpl implements HibernateDAO  {
 		 * Because of this roll back is not happining on parent object.
 		 *
 		 */
-		if (isUpdated()) { 
+		if (updated) { 
 			try	 { 
-				if (getTransaction() != null) { 
-					getTransaction().rollback();
+				if (transaction != null) { 
+					transaction.rollback();
 				}
 			}
 			catch (HibernateException dbex)	 { 
@@ -174,7 +174,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	public void disableRelatedObjects(String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException { 
 		try { 
-			Statement statement = getSession().connection().createStatement();
+			Statement statement = session.connection().createStatement();
 
 			StringBuffer buff = new StringBuffer();
 			for (int i = 0; i < whereColumnValues.length; i++) { 
@@ -219,9 +219,9 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			* By Default :: we return as 'true' i.e. user authorized
 			*/
 			if (isAuthorized) { 
-				getSession().save(obj);
+				session.save(obj);
 				isObjectAuditable(obj, isAuditable);
-				setUpdated(true);
+				updated = true;
 			} else { 
 				throw new UserNotAuthorizedException("Not Authorized to insert");
 			}
@@ -239,7 +239,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			throws AuditException  { 
 		
 		if (obj instanceof Auditable && isAuditable) { 
-			getAuditManager().compare((Auditable) obj, null, "INSERT");
+			auditManager.compare((Auditable) obj, null, "INSERT");
 		}
 	}
 
@@ -308,8 +308,8 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			*/
 
 			if (isAuthorized) { 
-				getSession().update(obj);
-				setUpdated(true);
+				session.update(obj);
+				updated = true;
 			} else { 
 				throw new UserNotAuthorizedException("Not Authorized to update");
 			}
@@ -333,7 +333,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			boolean isAuditable) throws DAOException { 
 		try { 
 			if (obj instanceof Auditable && isAuditable) { 
-				getAuditManager().compare((Auditable) obj, (Auditable) oldObj, "UPDATE");
+				auditManager.compare((Auditable) obj, (Auditable) oldObj, "UPDATE");
 			}
 		} catch (AuditException hibExp) { 
 			throw handleError("", hibExp);
@@ -345,7 +345,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @param auditEventDetailsCollection audit Event Details Collection.
 	 */
 	public void addAuditEventLogs(Collection auditEventDetailsCollection) { 
-		getAuditManager().addAuditEventLogs(auditEventDetailsCollection);
+		auditManager.addAuditEventLogs(auditEventDetailsCollection);
 	}
 
 	/**
@@ -355,7 +355,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 */
 	public void delete(Object obj) throws DAOException { 
 		try { 
-			getSession().delete(obj);
+			session.delete(obj);
 		} catch (HibernateException hibExp) { 
 			logger.error(hibExp.getMessage() , hibExp);
 			throw new DAOException("Error in delete" , hibExp);
@@ -447,10 +447,10 @@ public class HibernateDAOImpl implements HibernateDAO  {
 						
 			if (queryWhereClauseImpl.isConditionSatisfied()) { 
 				sqlBuff.append(queryWhereClauseImpl.toString(className));
-				query = getSession().createQuery(sqlBuff.toString());
+				query = session.createQuery(sqlBuff.toString());
 				queryWhereClauseImpl.setParametersToQuery(query);
 			} else { 
-				query = getSession().createQuery(sqlBuff.toString());
+				query = session.createQuery(sqlBuff.toString());
 			}
 
 			list = query.list();
@@ -482,7 +482,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	public Object retrieve(String sourceObjectName, Long identifier)
 	 throws DAOException { 
 		try { 
-			Object object = getSession().load(Class.forName(sourceObjectName), identifier);
+			Object object = session.load(Class.forName(sourceObjectName), identifier);
 			return HibernateMetaData.getProxyObjectImpl(object);
 		} catch (ClassNotFoundException cnFoundExp) { 
 			logger.error(cnFoundExp.getMessage(), cnFoundExp);
@@ -503,7 +503,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	public Object loadCleanObj(String sourceObjectName, Long identifier)
 	 throws DAOException { 
 		Object obj = retrieve(sourceObjectName, identifier);
-		getSession().evict(obj);
+		session.evict(obj);
 		return obj;
 	}
 
@@ -522,7 +522,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			DAOException { 
 		List < Object > returner = null;
 		try { 
-			Query hibernateQuery = getSession().createQuery(query);
+			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
 
 		} catch (HibernateException e) { 
@@ -530,25 +530,6 @@ public class HibernateDAOImpl implements HibernateDAO  {
 		}
 
 		return returner;
-	}
-
-	/**
-	 * Executes the HQL query.
-	 * @param query HQL query.
-	 * @param sessionDataBean sessionData
-	 * @param isSecureExecute is Secure Execute.
-	 * @param hasConditionOnIdentifiedField has Condition On Identified Field.
-	 * @param queryResultObjectDataMap query Result Object Data Map.
-	 * @return List.
-	 * @throws ClassNotFoundException Class Not Found Exception.
-	 * @throws DAOException generic DAOException
-	 */
-	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
-	 { 
-
-		return null;
 	}
 
 	/**
@@ -574,7 +555,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 						Constants.SYSTEM_IDENTIFIER).append("=  ").append(identifier);
 		try
 		 { 
-			return getSession().createQuery(queryStringBuffer.toString()).list();
+			return session.createQuery(queryStringBuffer.toString()).list();
 		}
 		catch (HibernateException exception)
 		 { 
@@ -664,8 +645,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	}
 
 	public IConnectionManager getConnectionManager()
-	 { 
-		
+	{ 
 		return connectionManager;
 	}
 	
@@ -696,37 +676,12 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	}
 	
 	
-	private Session getSession()  { 
-		return session;
-	}
+	
 
-	private void setSession(Session session)  { 
-		this.session = session;
-	}
+	
 
-	private Transaction getTransaction()  { 
-		return transaction;
-	}
 
-	private void setTransaction(Transaction transaction)  { 
-		this.transaction = transaction;
-	}
-
-	private AuditManager getAuditManager()  { 
-		return auditManager;
-	}
-
-	private void setAuditManager(AuditManager auditManager)  { 
-		this.auditManager = auditManager;
-	}
-
-	private boolean isUpdated()  { 
-		return updated;
-	}
-
-	private void setUpdated(boolean isUpdated)  { 
-		this.updated = isUpdated;
-	}
+	
 	
 	
 

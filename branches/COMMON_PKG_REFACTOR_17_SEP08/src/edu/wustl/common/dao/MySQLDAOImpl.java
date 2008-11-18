@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.exceptionformatter.ConstraintViolationFormatter;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.query.executor.MysqlQueryExecutor;
 
 
 public class MySQLDAOImpl extends AbstractJDBCDAOImpl
@@ -76,34 +78,42 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 	 * @throws DAOException
 	 * @throws SQLException
 	 */
+	
 	public void insert(String tableName, List<Object> columnValues, List<String>... columnNames) throws DAOException, SQLException
 	{
 		List<Integer>dateColumns = new ArrayList<Integer>();
 		List<Integer>numberColumns = new ArrayList<Integer>();
 		List<Integer>tinyIntColumns = new ArrayList<Integer>();
 		List<String>columnNames_t = new ArrayList<String>();
-		
-		ResultSetMetaData metaData = getMetadataAndUpdatedColumns(tableName,columnNames_t,columnNames);
-		updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
-		String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
-		
+		ResultSetMetaData metaData;
+		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
+		databaseConnectionParams.setConnection(getConnection());
 		PreparedStatement stmt = null;
-		try
-		{
-			stmt = getPreparedStatement(insertQuery);
+		try	{
+
+			if(columnNames != null && columnNames.length > 0){
+				metaData = getMetaData(tableName, columnNames[0]);
+			} else {
+				metaData = getMetaDataAndUpdateColumns(tableName,columnNames_t);
+			}
+			
+			updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
+			String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
+			stmt = databaseConnectionParams.getPreparedStatement(insertQuery);
+			
 			for (int i = 0; i < columnValues.size(); i++)
 			{
 				Object obj = columnValues.get(i);
-				
+
 				setDateColumns(stmt, i,obj, dateColumns);
-				
+
 				setTinyIntColumns(stmt, i, obj,tinyIntColumns);
-				
+
 				setTimeStampColumn(stmt, i, obj);
-				
+
 				setNumberColumns(numberColumns, stmt, i, obj);
-					
-				
+
+
 			}
 			stmt.executeUpdate();
 		}
@@ -114,16 +124,7 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 		}
 		finally
 		{
-			try
-			{
-				if (stmt != null) {
-					stmt.close();
-				}	
-			}
-			catch (SQLException ex)
-			{
-				logger.error(ex.getMessage(), ex);
-			}
+			databaseConnectionParams.closeConnectionParams();
 		}
 	}
 
@@ -152,10 +153,35 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 
 	}
 
-	
+	/**
+	 * This method executed query, parses the result and returns List of rows after doing security checks
+	 * for user's right to view a record/field
+	 * @param query
+	 * @param sessionDataBean
+	 * @param isSecureExecute
+	 * @param hasConditionOnIdentifiedField
+	 * @param queryResultObjectDataMap
+	 * @param startIndex The offset value, from which the result will be returned. 
+	 * 		This will be used for pagination purpose, 
+	 * @param noOfRecords
+	 * @return
+	 * @throws DAOException
+	 * 
+	 * 
+	 * -- TODO have to look into this 
+	 */
+	public PagenatedResultData getQueryResultList(QueryParams queryParams) throws DAOException
+	{
+		PagenatedResultData pagenatedResultData = null;
+				
+		queryParams.setConnection(getConnectionManager().getConnection());
+		MysqlQueryExecutor mysqlQueryExecutor = new MysqlQueryExecutor();
+		pagenatedResultData = mysqlQueryExecutor.getQueryResultList(queryParams);
+		
+		return pagenatedResultData;
 
+	}
 	
-
 	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
 	{
 			return null;
@@ -196,11 +222,14 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 	{
 		//default imp	
 	}
+
+	public Object retrieve(String sourceObjectName, Long identifier)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
-	
-
-
-
 	
 		
 }

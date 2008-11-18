@@ -64,38 +64,16 @@ public interface JDBCDAO extends DAO
 			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
 
 	/**
-	   * Executes the query.
-	   * @param query query  to be execute.
-	   * @param sessionDataBean session specific Data.
-	   * @param isSecureExecute is Secure Execute.
-	   * @param hasConditionOnIdentifiedField hasConditionOnIdentifiedField.
-	   * @param queryResultObjectDataMap query Result Object Data Map.
-	   * @return list.
-	   * @throws ClassNotFoundException Class Not Found Exception.
-	   * @throws DAOException generic DAOException.
-	   */
-	List<Object> executeQuery(String query, SessionDataBean sessionDataBean, boolean isSecureExecute,
-			boolean hasConditionOnIdentifiedField, Map queryResultObjectDataMap)
-			throws ClassNotFoundException, DAOException;
-
-	/**
-	 * Executes the query & returns the results specified by the offset values i.e. startIndex & noOfRecords.
-	 * @param query The SQL String
-	 * @param sessionDataBean Session databeab reference
-	 * @param isSecureExecute is Secure Execute.
-	 * @param hasConditionOnIdentifiedField has Condition On Identified Field.
-	 * @param queryResultObjectDataMap query Result Object Data Map.
-	 * @param startIndex start Index.
-	 * @param noOfRecords no Of Records.
-	 * @return PagenatedResultData.
-	 * @throws ClassNotFoundException Class Not Found Exception
-	 * @throws DAOException generic DAOException.
+	 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
+	 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
+	 * @param queryParams
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws DAOException
 	 */
-	PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap, int startIndex, int noOfRecords)
-			throws ClassNotFoundException, DAOException;
-
+	PagenatedResultData executeQuery(QueryParams  queryParams)
+	throws ClassNotFoundException, DAOException;
+	
 	/**
 	 * Inserts records in given table.
 	 * @param tableName Name of the table in which record to be inserted
