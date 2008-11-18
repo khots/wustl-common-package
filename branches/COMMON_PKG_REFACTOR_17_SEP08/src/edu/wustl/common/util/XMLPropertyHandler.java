@@ -112,31 +112,55 @@ public class XMLPropertyHandler
 	private static String extractValue(String propertyName, Node child)
 	{
 		NodeList subChildNodes = child.getChildNodes();
-		boolean isNameFound = false;
 		String value=null;
 		for (int j = 0; j < subChildNodes.getLength(); j++)
 		{
 			Node subchildNode = subChildNodes.item(j);
 			String subNodeName = subchildNode.getNodeName();
-			if ("name".equals(subNodeName))
-			{
-				String pName = (String) subchildNode.getFirstChild().getNodeValue();
-				if (propertyName.equals(pName))
-				{
-					isNameFound = true;
-				}
-			}
-
-			if (isNameFound && "value".equals(subNodeName))
-			{
-				String pValue = "";
-				if (subchildNode != null && subchildNode.getFirstChild() != null)
-				{
-					pValue = (String) subchildNode.getFirstChild().getNodeValue();
-				}
-				value=pValue;
-			}
+			boolean isNameFound = isNameFound(propertyName, subchildNode, subNodeName);
+			value = getNodeValue(isNameFound,subchildNode, subNodeName);
 		}
 		return value;
+	}
+
+	/**
+	 * @param isNameFound if name tag found.
+	 * @param subchildNode Child Node object.
+	 * @param subNodeName sub node value.
+	 * @return node value if name tag already found or null.
+	 */
+	private static String getNodeValue(boolean isNameFound,Node subchildNode,String subNodeName)
+	{
+		String value=null;
+		if (isNameFound && "value".equals(subNodeName))
+		{
+			String pValue = "";
+			if (subchildNode != null && subchildNode.getFirstChild() != null)
+			{
+				pValue = (String) subchildNode.getFirstChild().getNodeValue();
+			}
+			value=pValue;
+		}
+		return value;
+	}
+
+	/**
+	 * @param propertyName Property Name.
+	 * @param subchildNode child Node object.
+	 * @param subNodeName  sub node value.
+	 * @return true if name tag found else false.
+	 */
+	private static boolean isNameFound(String propertyName,Node subchildNode,String subNodeName)
+	{
+		boolean isNameFound=false;
+		if ("name".equals(subNodeName))
+		{
+			String pName = (String) subchildNode.getFirstChild().getNodeValue();
+			if (propertyName.equals(pName))
+			{
+				isNameFound = true;
+			}
+		}
+		return isNameFound;
 	}
 }
