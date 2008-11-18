@@ -10,8 +10,6 @@
 
 package edu.wustl.common.dao;
 
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -756,7 +754,8 @@ public class HibernateDAOImpl implements HibernateDAO
 		}
 		finally
 		{ 
-			if(session != null) {
+			if(session != null)
+			{
 				session.close();
 			}
 		}

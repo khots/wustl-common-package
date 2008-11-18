@@ -757,15 +757,18 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		return timestamp;
 	}
 	
-	public void setConnectionManager(IConnectionManager connectionManager) {
+	public void setConnectionManager(IConnectionManager connectionManager)
+	{
 		this.connectionManager = connectionManager;
 	}
 	
-	public IConnectionManager getConnectionManager() {
+	public IConnectionManager getConnectionManager()
+	{
 		return connectionManager;
 	}
 	
-	protected Connection getConnection() {
+	protected Connection getConnection()
+	{
 		return connection;
 	}
 	
