@@ -29,10 +29,10 @@ public class KeyComparator implements Comparator<Object>
 		String key2 = (String) object2;
 
 		int index1 = key1.indexOf('_');
-		outer1 = getOuter(outer1, key1, index1);
+		outer1 = getIntValue(outer1, key1, index1);
 
 		int index2 = key2.indexOf('_');
-		outer2 = getOuter(outer2, key2, index2);
+		outer2 = getIntValue(outer2, key2, index2);
 
 		if (outer1 > outer2)
 		{
@@ -46,11 +46,11 @@ public class KeyComparator implements Comparator<Object>
 		{
 			String innerKey1 = key1.substring(index1 + 1);
 			index1 = innerKey1.indexOf('_');
-			inner1 = getOuter(inner1, innerKey1, index1);
+			inner1 = getIntValue(inner1, innerKey1, index1);
 
 			String innerKey2 = key2.substring(index2 + 1);
 			index2 = innerKey2.indexOf('_');
-			inner2 = getOuter(inner2, innerKey2, index2);
+			inner2 = getIntValue(inner2, innerKey2, index2);
 			retValue = getRetValue(inner1, inner2);
 		}
 		return retValue;
@@ -62,12 +62,12 @@ public class KeyComparator implements Comparator<Object>
 	 * @param index index of '_' in key object.
 	 * @return int integer value after ':'
 	 */
-	private int getOuter(int outer, String key, int index)
+	private int getIntValue(int outer, String key, int index)
 	{
 		int outer1=outer;
 		if (index != -1)
 		{
-			outer1 = getKey(key, index);
+			outer1 = getIntValueInKey(key, index);
 		}
 		return outer1;
 	}
@@ -102,7 +102,7 @@ public class KeyComparator implements Comparator<Object>
 	 * @param index int index.
 	 * @return int integer value after ':' chanracter.
 	 */
-	private int getKey(String key, int index)
+	private int getIntValueInKey(String key, int index)
 	{
 		String outerKey1 = key.substring(0, index);
 		return Integer.parseInt(outerKey1.substring(outerKey1.indexOf(':') + 1));
