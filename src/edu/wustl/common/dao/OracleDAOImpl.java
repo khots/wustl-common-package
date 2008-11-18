@@ -30,27 +30,49 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 	 */
 	public void delete(String tableName) throws DAOException
 	{
-		StringBuffer query;
-		query = new StringBuffer("select tname from tab where tname='" + tableName + "'");
-		
+		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
+		ResultSet resultSet = null;
 		try
 		{
-			Statement statement = getConnectionStmt();
-			ResultSet resultSet = statement.executeQuery(query.toString());
+			
+			databaseConnectionParams.setConnection(getConnection());
+						
+			StringBuffer query = new StringBuffer("select tname from tab where tname='" + tableName + "'");
+			resultSet = databaseConnectionParams.getResultSet(query.toString());
 			boolean isTableExists = resultSet.next();
+			
 			logger.debug("ORACLE :" + query.toString() + isTableExists);
+			
 			if (isTableExists)
 			{
+				
 				logger.debug("Drop Table");
-				executeUpdate("DROP TABLE " + tableName + " cascade constraints");
+				databaseConnectionParams.executeUpdate("DROP TABLE " + tableName + " cascade constraints");
 			}
-			resultSet.close();
-			statement.close();
-		}
+			
+		} 
 		catch (Exception sqlExp)
 		{
+			
 			logger.error(sqlExp.getMessage(), sqlExp);
 			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
+			
+		}
+		finally
+		{
+			try
+			{
+				if (resultSet != null)
+				{
+					resultSet.close();
+				}
+				databaseConnectionParams.closeConnectionParams();
+				
+			}
+			catch(SQLException sqlExp)
+			{
+				logger.fatal(DAOConstants.CONNECTIONS_CLOSING_ISSUE, sqlExp);
+			}
 		}
 		
 	}
@@ -117,8 +139,9 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		if(columnNames != null && columnNames.length > 0)
 		{
 			metaData = getMetaData(tableName, columnNames[0]);
-			
-		} else {
+		} 
+		else
+		{
 			metaData = getMetaDataAndUpdateColumns(tableName,columnNames_t);
 		}
 		
@@ -129,10 +152,11 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		databaseConnectionParams.setConnection(getConnection());
 		
 		PreparedStatement stmt = null;
-		try	{
+		try
+		{
 			stmt = databaseConnectionParams.getPreparedStatement(insertQuery);
-			for (int i = 0; i < columnValues.size(); i++) {
-				
+			for (int i = 0; i < columnValues.size(); i++)
+			{
 				Object obj = columnValues.get(i);
 				setDateColumns(stmt, i,obj, dateColumns);
 				setTinyIntColumns(stmt, i, obj,tinyIntColumns);
@@ -140,11 +164,16 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 				setNumberColumns(numberColumns, stmt, i, obj);
 			}
 			stmt.executeUpdate();
-		} catch (SQLException sqlExp) {
+		}
+		catch (SQLException sqlExp)
+		{
 			
 			logger.error(sqlExp.getMessage(),sqlExp);
 			throw new DAOException(sqlExp.getMessage(), sqlExp);
-		} finally {
+			
+		}
+		finally
+		{
 			databaseConnectionParams.closeConnectionParams();
 		}
 	}
@@ -153,14 +182,13 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 	public String formatMessage(Exception excp, Object[] args)
 	{
 		
-		String formattedErrMsg = ""; // Formatted Error Message return by this method
+		String formattedErrMsg; // Formatted Error Message return by this method
 		Exception objExcp = excp;
 		
 		try
 		{
 			if (excp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
 			{
-
 				objExcp = (Exception) objExcp.getCause();
 				logger.debug(objExcp);
 			}

@@ -19,17 +19,20 @@ public class QueryWhereClauseJDBCImpl extends QueryWhereClauseImpl
 		return isConditionSatisfied;
 	}
 
-	private boolean isWhereColumnValue() {
+	private boolean isWhereColumnValue() 
+	{
 		
 		return whereColumnValue != null && whereColumnName.length == whereColumnValue.length;
 	}
 	
 	
-	public String jdbcQueryWhereClause(String sourceObjectName) {
+	public String jdbcQueryWhereClause(String sourceObjectName)
+	{
 		
 		StringBuffer queryStrBuff = new StringBuffer();
 		
-		if (joinCondition == null) {
+		if (joinCondition == null)
+		{
 			joinCondition = Constants.AND_JOIN_CONDITION;
 		}
 	
