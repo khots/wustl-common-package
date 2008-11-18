@@ -1,6 +1,7 @@
 package edu.wustl.common.dao;
 
-public class DAOConstants {
+public class DAOConstants 
+{
 
 	public static final String OPEN_SESSION_ERROR = "Problem occurred while opening session :";
 	public static final String NO_CONNECTION_TO_DB ="Problem occurred during a database operation: No connection to the database :";

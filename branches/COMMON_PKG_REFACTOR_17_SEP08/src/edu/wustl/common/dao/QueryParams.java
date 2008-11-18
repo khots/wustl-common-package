@@ -5,7 +5,8 @@ import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
 
-public class QueryParams {
+public class QueryParams
+{
 	
 	private String query;
 	private Connection connection;
@@ -16,56 +17,71 @@ public class QueryParams {
 	private int startIndex;
 	private int noOfRecords;
 	
-	public String getQuery() {
+	public String getQuery()
+	{
 		return query;
 	}
-	public void setQuery(String query) {
+	public void setQuery(String query)
+	{
 		this.query = query;
 	}
-	public Connection getConnection() {
+	public Connection getConnection()
+	{
 		return connection;
 	}
-	public void setConnection(Connection connection) {
+	public void setConnection(Connection connection)
+	{
 		this.connection = connection;
 	}
-	public SessionDataBean getSessionDataBean() {
+	public SessionDataBean getSessionDataBean()
+	{
 		return sessionDataBean;
 	}
-	public void setSessionDataBean(SessionDataBean sessionDataBean) {
+	public void setSessionDataBean(SessionDataBean sessionDataBean)
+	{
 		this.sessionDataBean = sessionDataBean;
 	}
-	public boolean isSecureToExecute() {
+	public boolean isSecureToExecute()
+	{
 		return secureToExecute;
 	}
-	public void setSecureToExecute(boolean isSecureExecute) {
+	public void setSecureToExecute(boolean isSecureExecute)
+	{
 		this.secureToExecute = isSecureExecute;
 	}
-	public boolean isHasConditionOnIdentifiedField() {
+	public boolean isHasConditionOnIdentifiedField()
+	{
 		return hasConditionOnIdentifiedField;
 	}
 	public void setHasConditionOnIdentifiedField(
-			boolean hasConditionOnIdentifiedField) {
+			boolean hasConditionOnIdentifiedField)
+	{
 		this.hasConditionOnIdentifiedField = hasConditionOnIdentifiedField;
  	}
-	public Map getQueryResultObjectDataMap() {
+	public Map getQueryResultObjectDataMap()
+	{
 		return queryResultObjectDataMap;
 	}
-	public void setQueryResultObjectDataMap(Map queryResultObjectDataMap) {
+	public void setQueryResultObjectDataMap(Map queryResultObjectDataMap)
+	{
 		this.queryResultObjectDataMap = queryResultObjectDataMap;
 	}
-	public int getStartIndex() {
+	public int getStartIndex()
+	{
 		return startIndex;
 	}
-	public void setStartIndex(int startIndex) {
+	public void setStartIndex(int startIndex)
+	{
 		this.startIndex = startIndex;
 	}
-	public int getNoOfRecords() {
+	public int getNoOfRecords()
+	{
 		return noOfRecords;
 	}
-	public void setNoOfRecords(int noOfRecords) {
+	public void setNoOfRecords(int noOfRecords)
+	{
 		this.noOfRecords = noOfRecords;
 	}
-	
 	
 
 }

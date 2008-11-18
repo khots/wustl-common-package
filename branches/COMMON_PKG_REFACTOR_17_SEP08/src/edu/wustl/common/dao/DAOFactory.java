@@ -49,7 +49,8 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
     private static final ThreadLocal<Map<String, Session>> threadLocal = new ThreadLocal<Map<String, Session>>();
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DAOFactory.class);
 	
-	static {
+	static
+	{
 		
 		Map<String, Session> applicationSessionMap = new HashMap<String, Session>();
 		threadLocal.set(applicationSessionMap);
@@ -62,13 +63,14 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	{
 		DAO dao = null;
 		
-		try {
-		
+		try 
+		{
 		   dao = (DAO)Class.forName(defaultDAOClassName).newInstance();
 		   dao.setConnectionManager(getConnectionManager());			
 		  		
-		} catch (Exception inExcp ) {
-			
+		}
+		catch (Exception inExcp )
+		{
 			logger.error(inExcp.getMessage() + "Class not be instantiated,it may be Interface or Abstract class " + inExcp);
 		}	
 	
@@ -82,13 +84,14 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	{
 		JDBCDAO dao = null;
 		
-		try {
-		
+		try
+		{
 			   dao = (JDBCDAO) Class.forName(jdbcDAOClassName).newInstance();
 			   dao.setConnectionManager(getConnectionManager());							
         
-		} catch (Exception inExcp ) {
-			
+		}
+		catch (Exception inExcp )
+		{
 			logger.error(inExcp.getMessage() + "Class not be instantiated,it may be Interface or Abstract class " + inExcp);
 		} 
 		return dao;
@@ -112,7 +115,8 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		if(applicationSessionMap.containsKey(applicationName))
 		{
 			Session session = (Session)applicationSessionMap.get(applicationName);
-			if(session != null) {
+			if(session != null)
+			{
 				session.close();
 			}
 			applicationSessionMap.remove(applicationName);
@@ -126,7 +130,8 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		Map<String, Session> applicationSessionMap = (Map<String, Session>)threadLocal.get();
 	    // Open a new Session, if this Thread has none yet
     
-		if (!(applicationSessionMap.containsKey(applicationName)) ) {
+		if (!(applicationSessionMap.containsKey(applicationName)) )
+		{
         	Session session = newSession();
         	applicationSessionMap.put(applicationName, session);
         }
@@ -138,9 +143,12 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	{
 		Session session = sessionFactory.openSession();
         session.setFlushMode(FlushMode.COMMIT);
-        try {
+        try
+        {
             session.connection().setAutoCommit(false);
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex)
+        {
             throw new HibernateException(ex.getMessage(), ex);
         }
         return session;
@@ -201,7 +209,8 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 	 * @throws DAOException 
      */
     private Configuration setConfiguration(String configurationfile) throws DAOException {
-        try {
+        try
+        {
         	
         	Configuration configuration = new Configuration();
             //InputStream inputStream = DAOFactory.class.getClassLoader().getResourceAsStream(configurationfile);
@@ -219,9 +228,13 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
             configuration.configure(doc);
             
             return configuration;
-        } catch (DocumentException e) {
+        }
+        catch (DocumentException e)
+        {
             throw new DAOException(e);
-        } catch (HibernateException e) {
+        }
+        catch (HibernateException e)
+        {
             throw new DAOException(e);
         }
         

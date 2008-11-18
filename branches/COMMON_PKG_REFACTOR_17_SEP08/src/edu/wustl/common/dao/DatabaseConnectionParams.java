@@ -10,7 +10,8 @@ import com.mysql.jdbc.PreparedStatement;
 
 import edu.wustl.common.util.logger.Logger;
 
-public class DatabaseConnectionParams {
+public class DatabaseConnectionParams
+{
 
 	private Statement statement;
 	private ResultSet resultSet;
@@ -19,28 +20,51 @@ public class DatabaseConnectionParams {
 		
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DatabaseConnectionParams.class);
 	
-	public void getDatabaseStatement() {
-		try {
+	public Statement getDatabaseStatement()
+	{
+		try
+		{
 			
 			statement = connection.createStatement();
 			
-		} catch (SQLException sqlExp) {
+		}
+		catch (SQLException sqlExp)
+		{
 			
 			logger.fatal("Problem Occured while creating database connection parameters", sqlExp);
 		}
+		return statement;
 		
+	}
+	
+	public ResultSet getResultSet(String query)
+	{
+		try
+		{
+			resultSet = statement.executeQuery(query);
+			
+		}
+		catch (SQLException sqlExp)
+		{
+			
+			logger.fatal("Problem Occured while creating database connection parameters", sqlExp);
+		}
+		return resultSet;
 	}
 	
 	public ResultSetMetaData getMetaData(String query)
 	{
 		ResultSetMetaData metaData = null;
-		try {
+		try
+		{
 			
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery(query);
 			metaData = resultSet.getMetaData();
 			
-		} catch (SQLException sqlExp) {
+		} 
+		catch (SQLException sqlExp)
+		{
 			
 			logger.fatal("Problem Occured while creating database connection parameters", sqlExp);
 		}
@@ -50,22 +74,29 @@ public class DatabaseConnectionParams {
 	
 	public void closeConnectionParams()
 	{
-		try {
+		try
+		{
 			
-			if(connection != null) {
+			if(connection != null)
+			{
 				connection.close();
 			}
-			if(resultSet != null ) {
+			if(resultSet != null )
+			{
 				resultSet.close();
 			}
-			if (statement != null) {
+			if (statement != null)
+			{
 				statement.close();
 			}
-			if (preparedStatement != null) {
+			if (preparedStatement != null)
+			{
 				preparedStatement.close();
 			}
 			
-		} catch(SQLException sqlExp){
+		}
+		catch(SQLException sqlExp)
+		{
 			
 			logger.fatal(DAOConstants.CONNECTIONS_CLOSING_ISSUE, sqlExp);
 		}
@@ -73,31 +104,32 @@ public class DatabaseConnectionParams {
 	
 	public PreparedStatement getPreparedStatement(String query)
 	{
-		try {
-			
+		try 
+		{
 			preparedStatement = (PreparedStatement) connection.prepareStatement(query);
-		
-		} catch (SQLException sqlExp) {
+		}
+		catch (SQLException sqlExp)
+		{
 			
 			logger.fatal("Problem Occured while creating database connection parameters", sqlExp);
 		}
 		return preparedStatement;
 	}
 	
-	public void executeUpdate(String query)	{	
-	
+	public void executeUpdate(String query)
+	{	
 		PreparedStatement stmt = null;
-		try	{
-			
+		try
+		{
 			stmt = getPreparedStatement(query);
 			stmt.executeUpdate();
-			
-		} catch (SQLException sqlExp) {
-			
+		} 
+		catch (SQLException sqlExp)
+		{
 			logger.error(DAOConstants.EXECUTE_UPDATE_ERROR, sqlExp);
-			
-		} finally {
-			
+		}
+		finally 
+		{
 			closeConnectionParams();
 		}
 	}

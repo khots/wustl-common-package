@@ -89,14 +89,16 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
 		databaseConnectionParams.setConnection(getConnection());
 		PreparedStatement stmt = null;
-		try	{
-
-			if(columnNames != null && columnNames.length > 0){
+		try
+		{
+			if(columnNames != null && columnNames.length > 0)
+			{
 				metaData = getMetaData(tableName, columnNames[0]);
-			} else {
+			}
+			else
+			{
 				metaData = getMetaDataAndUpdateColumns(tableName,columnNames_t);
 			}
-			
 			updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
 			String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
 			stmt = databaseConnectionParams.getPreparedStatement(insertQuery);
@@ -104,16 +106,10 @@ public class MySQLDAOImpl extends AbstractJDBCDAOImpl
 			for (int i = 0; i < columnValues.size(); i++)
 			{
 				Object obj = columnValues.get(i);
-
 				setDateColumns(stmt, i,obj, dateColumns);
-
 				setTinyIntColumns(stmt, i, obj,tinyIntColumns);
-
 				setTimeStampColumn(stmt, i, obj);
-
 				setNumberColumns(numberColumns, stmt, i, obj);
-
-
 			}
 			stmt.executeUpdate();
 		}

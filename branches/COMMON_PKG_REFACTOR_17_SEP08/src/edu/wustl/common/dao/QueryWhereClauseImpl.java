@@ -4,7 +4,8 @@ import org.hibernate.Query;
 
 import edu.wustl.common.util.global.Constants;
 
-public class QueryWhereClauseImpl {
+public class QueryWhereClauseImpl
+{
 	
 	protected String[] whereColumnName;
 	protected String[] whereColumnCondition;
@@ -25,7 +26,8 @@ public class QueryWhereClauseImpl {
 	{
 		StringBuffer sqlBuff = new StringBuffer();
 		
-		 if (joinCondition == null) {
+		 if (joinCondition == null) 
+		 {
 			 joinCondition = Constants.AND_JOIN_CONDITION;
 		 }
         
@@ -35,7 +37,8 @@ public class QueryWhereClauseImpl {
         {
         	setClausesOfWherePart(className,sqlBuff, i);	
         	
-        	if (i < (whereColumnName.length - 1)) {
+        	if (i < (whereColumnName.length - 1))
+        	{
     			sqlBuff.append(" " + joinCondition + " ");
     		}
         }
@@ -47,7 +50,8 @@ public class QueryWhereClauseImpl {
 
 
 	protected void setClausesOfWherePart(String className,
-			StringBuffer sqlBuff, int index) {
+			StringBuffer sqlBuff, int index)
+	{
 				
 		sqlBuff.append(className + "." + whereColumnName[index] + " ");
 		//TODO check this twice with original
@@ -73,7 +77,8 @@ public class QueryWhereClauseImpl {
 	}
 
 	protected void inClauseOfWhereQuery(String[] whereColumnCondition,
-			Object[] whereColumnValue, StringBuffer sqlBuff, int index) {
+			Object[] whereColumnValue, StringBuffer sqlBuff, int index) 
+	{
 		
 		sqlBuff.append(whereColumnCondition[index]).append("(  ");
 		Object valArr[] = (Object [])whereColumnValue[index];
@@ -81,7 +86,8 @@ public class QueryWhereClauseImpl {
 		{
 			//Logger.out.debug(sqlBuff);
 			sqlBuff.append("? ");
-			if((j+1)<valArr.length) {
+			if((j+1)<valArr.length)
+			{
 				sqlBuff.append(", ");
 			}	
 		}
@@ -106,11 +112,13 @@ public class QueryWhereClauseImpl {
 		return isConditionSatisfied;
 	}
 
-	protected boolean isWhereColumnCondition() {
+	protected boolean isWhereColumnCondition()
+	{
 		return whereColumnCondition != null && whereColumnCondition.length == whereColumnName.length;
 	}
 
-	protected boolean isWhereColumnName() {
+	protected boolean isWhereColumnName()
+	{
 		return whereColumnName != null && whereColumnName.length > 0;
 	}
 	

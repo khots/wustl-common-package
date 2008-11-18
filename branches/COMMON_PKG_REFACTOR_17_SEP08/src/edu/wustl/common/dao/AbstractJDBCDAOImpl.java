@@ -84,7 +84,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		{
 			auditManager.insert(this);
 		
-			if(connection == null) {
+			if(connection == null)
+			{
 				logger.fatal(DAOConstants.NO_CONNECTION_TO_DB);
 			}	
 
@@ -107,7 +108,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	{
 		try
 		{
-			if(connection == null) {
+			if(connection == null)
+			{
 				logger.fatal(DAOConstants.NO_CONNECTION_TO_DB);
 			}	
 
@@ -129,11 +131,13 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	private void initializeAuditManager(SessionDataBean sessionDataBean)
 	{
 		auditManager = new AuditManager();
-		if (sessionDataBean == null) {
+		if (sessionDataBean == null) 
+		{
 		
 			auditManager.setUserId(null);
-		} else {
-		
+		} 
+		else 
+		{
 			auditManager.setUserId(sessionDataBean.getUserId());
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
 		}
@@ -205,7 +209,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		StringBuffer query = new StringBuffer("CREATE TABLE ").append(tableName).append(" (");
 		int index;
 
-		for ( index=0; index < (columnNames.length - 1); index++) {
+		for ( index=0; index < (columnNames.length - 1); index++)
+		{
 			
 			query = query.append(columnNames[index]).append(" VARCHAR(50),");
 		}
@@ -340,7 +345,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			StringBuffer queryStrBuff = getSelectPartOfQuery(selectColumnName, onlyDistinctRows);
 			getFromPartOfQuery(sourceObjectName, queryStrBuff);
 			
-			if(queryWhereClauseJDBCImpl.isConditionSatisfied()) {
+			if(queryWhereClauseJDBCImpl.isConditionSatisfied())
+			{
 				queryStrBuff.append(queryWhereClauseJDBCImpl.jdbcQueryWhereClause(sourceObjectName));
 			}
 			
@@ -362,20 +368,24 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @return It will return the select clause of Query.
 	 */
 	private StringBuffer getSelectPartOfQuery(String[] selectColumnName,
-			boolean onlyDistinctRows) {
+			boolean onlyDistinctRows)
+	{
 		StringBuffer query = new StringBuffer("SELECT ");
-		if ((selectColumnName != null) && (selectColumnName.length > 0)) {
-
-			if (onlyDistinctRows) {
+		if ((selectColumnName != null) && (selectColumnName.length > 0))
+		{
+			if (onlyDistinctRows)
+			{
 				query.append(" DISTINCT ");
 			}
 			int index;
-
-			for (index = 0; index < (selectColumnName.length - 1); index++)	{
+			for (index = 0; index < (selectColumnName.length - 1); index++)
+			{
 				query.append(selectColumnName[index]).append("  ,");
 			}
 			query.append(selectColumnName[index]).append("  ");
-		} else {
+		} 
+		else
+		{
 			query.append("* ");
 		}
 		return query;
@@ -429,7 +439,6 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		if (!(Constants.SWITCH_SECURITY && queryParams.isSecureToExecute() && queryParams.getSessionDataBean() == null))
 		{
 		  pagenatedResultData = (PagenatedResultData)getQueryResultList(queryParams);
-			
 		}
 		return pagenatedResultData;
 	}
@@ -475,13 +484,16 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		for (int i = 1; i <= metaData.getColumnCount(); i++)
 		{
 			String type = metaData.getColumnTypeName(i);
-			if (("DATE").equals(type)) {
+			if (("DATE").equals(type))
+			{
 				dateColumns.add(Integer.valueOf(i));
 			}	
-			if (("NUMBER").equals(type)) {
+			if (("NUMBER").equals(type))
+			{
 				numberColumns.add(Integer.valueOf(i));
 			}	
-			if (("TINYINT").equals(type)) {
+			if (("TINYINT").equals(type))
+			{
 				tinyIntColumns.add(Integer.valueOf(i));
 			}	
 
@@ -503,7 +515,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		ResultSetMetaData metaData;
 		StringBuffer sqlBuff = new StringBuffer("Select ");
 		
-		try {
+		try
+		{
 			
 			databaseConnectionParams.setConnection(connection);
 			for (int i = 0; i < columnNames.size(); i++)
@@ -517,7 +530,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			sqlBuff.append(" from " + tableName + " where 1!=1");
 			metaData = databaseConnectionParams.getMetaData(sqlBuff.toString());		
 		
-		} finally {
+		}
+		finally 
+		{
 			
 			databaseConnectionParams.closeConnectionParams();
 		}
@@ -539,23 +554,29 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
 		ResultSetMetaData metaData;
 		
-		try {
+		try
+		{
 			
 			databaseConnectionParams.setConnection(connection);
 			StringBuffer sqlBuff = new StringBuffer();
 			sqlBuff.append("Select * from " ).append(tableName).append(" where 1!=1");
 			metaData = databaseConnectionParams.getMetaData(sqlBuff.toString());
 			
-			for (int i = 1; i <= metaData.getColumnCount(); i++) {
+			for (int i = 1; i <= metaData.getColumnCount(); i++)
+			{
 				columnNames.add(metaData.getColumnName(i));
 			}
 			
-		} catch (SQLException sqlExp) {
+		} 
+		catch (SQLException sqlExp)
+		{
 			
 			logger.fatal(sqlExp.getMessage(), sqlExp);
 			throw new DAOException(sqlExp);
 			
-		} finally {
+		} 
+		finally 
+		{
 			databaseConnectionParams.closeConnectionParams();
 		}
 		return metaData;
@@ -592,9 +613,12 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			iterator.next();
 			query.append("? ");
 
-			if (iterator.hasNext()) {
+			if (iterator.hasNext())
+			{
 				query.append(", ");
-			} else {
+			}
+			else 
+			{
 				query.append(") ");
 			}	
 		}
@@ -710,7 +734,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	private final Timestamp isColumnValueDate(Object value)
 	{
 		Timestamp timestamp = null;
-		try	{
+		try	
+		{
 			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy",Locale.getDefault());
 			formatter.setLenient(false);
 			java.util.Date date;
@@ -723,7 +748,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			{
 				timestamp = timestampInner;
 			}
-		} catch (ParseException parseExp) {
+		} 
+		catch (ParseException parseExp)
+		{
 			logger.error(parseExp.getMessage(),parseExp);
 		}
 		

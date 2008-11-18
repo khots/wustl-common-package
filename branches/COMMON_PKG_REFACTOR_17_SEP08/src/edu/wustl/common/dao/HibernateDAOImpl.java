@@ -39,7 +39,8 @@ import edu.wustl.common.util.logger.Logger;
  * Default implemention of AbstractDAO through Hibernate ORM tool.
  * @author kapil_kaveeshwar
  */
-public class HibernateDAOImpl implements HibernateDAO  { 
+public class HibernateDAOImpl implements HibernateDAO
+{ 
 
     /**
      * logger Logger - Generic logger.
@@ -73,14 +74,16 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @throws DAOException generic DAOException.
 	 */
 	public void openSession(SessionDataBean sessionDataBean) throws DAOException
-	 { 
+	{ 
 
-		try { 
+		try
+		{ 
 			session = connectionManager.currentSession();
 			transaction = session.beginTransaction();
 			auditManager = new AuditManager();
 
-			if (sessionDataBean != null) { 
+			if (sessionDataBean != null) 
+			{ 
 				auditManager.setUserId(sessionDataBean.getUserId());
 				auditManager.setIpAddress(sessionDataBean.getIpAddress());
 			}
@@ -92,7 +95,8 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			}
 		 */	
 		}
-		catch (HibernateException dbex)	 { 
+		catch (HibernateException dbex)
+		{ 
 			logger.error(dbex.getMessage(), dbex);
 			throw handleError(Constants.GENERIC_DATABASE_ERROR, dbex);
 		}
@@ -103,11 +107,14 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * Declared in AbstractDAO class.
 	 * @throws DAOException generic DAOException.
 	 */
-	public void closeSession() throws DAOException { 
-		try	 { 
+	public void closeSession() throws DAOException
+	{ 
+		try	
+		{ 
 			getConnectionManager().closeSession();
 		}
-		catch (HibernateException dx) { 
+		catch (HibernateException dx)
+		{ 
 			logger.error(dx.getMessage(), dx);
 			throw handleError(Constants.GENERIC_DATABASE_ERROR, dx);
 		}
@@ -121,15 +128,19 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * Declared in AbstractDAO class.
 	 * @throws DAOException generic DAOException.
 	 */
-	public void commit() throws DAOException { 
-		try { 
+	public void commit() throws DAOException
+	{ 
+		try
+		{ 
 			auditManager.insert(this);
 
-			if (transaction != null) { 
+			if (transaction != null)
+			{ 
 				transaction.commit();
 			}
 		}
-		catch (HibernateException dbex) { 
+		catch (HibernateException dbex)
+		{ 
 			logger.error(dbex.getMessage() , dbex);
 			throw handleError("Error in commit: " , dbex) ;
 		}
@@ -145,17 +156,21 @@ public class HibernateDAOImpl implements HibernateDAO  {
 		 * the isUpdated==true is removed because if there is cascade save-update
 		 * and the association collection objects
 		 * is violating constaring then in insert() method session.save() is throwing exception
-		 * and isUpdated is not gettting set to true.
-		 * Because of this roll back is not happining on parent object.
+		 * and isUpdated is not getting set to true.
+		 * Because of this roll back is not happening on parent object.
 		 *
 		 */
-		if (updated) { 
-			try	 { 
-				if (transaction != null) { 
+		if (updated)
+		{ 
+			try
+			{ 
+				if (transaction != null)
+				{ 
 					transaction.rollback();
 				}
 			}
-			catch (HibernateException dbex)	 { 
+			catch (HibernateException dbex)
+			{ 
 				logger.error(dbex.getMessage(), dbex);
 				throw handleError("Error in rollback: ", dbex);
 			}
@@ -172,14 +187,18 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * --have to check this
 	 */
 	public void disableRelatedObjects(String tableName, String whereColumnName,
-			Long[] whereColumnValues) throws DAOException { 
-		try { 
+			Long[] whereColumnValues) throws DAOException 
+	{ 
+		try
+		{ 
 			Statement statement = session.connection().createStatement();
 
 			StringBuffer buff = new StringBuffer();
-			for (int i = 0; i < whereColumnValues.length; i++) { 
+			for (int i = 0; i < whereColumnValues.length; i++)
+			{ 
 				buff.append(whereColumnValues[i].longValue());
-				if ((i + 1) < whereColumnValues.length) { 
+				if ((i + 1) < whereColumnValues.length) 
+				{ 
 					buff.append("  ,");
 				}
 			}
@@ -187,11 +206,17 @@ public class HibernateDAOImpl implements HibernateDAO  {
 					+ Constants.ACTIVITY_STATUS_DISABLED + "' WHERE "
 					+ whereColumnName + " IN ( "
 					+ buff.toString() + ")";
+			statement.executeUpdate(sql);
+			
 			statement.close();
-		} catch (HibernateException dbex) { 
+		} 
+		catch (HibernateException dbex)
+		{ 
 			logger.error(dbex.getMessage(), dbex);
 			throw handleError("Error in JDBC connection: ", dbex);
-		} catch (SQLException sqlEx) { 
+		}
+		catch (SQLException sqlEx)
+		{ 
 			logger.error(sqlEx.getMessage(), sqlEx);
 			throw handleError("Error in disabling Related Objects: ", sqlEx);
 		}
@@ -207,10 +232,12 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @throws UserNotAuthorizedException User Not Authorized Exception.
 	 */
 	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
-			boolean isSecureInsert) throws DAOException, UserNotAuthorizedException { 
+			boolean isSecureInsert) throws DAOException, UserNotAuthorizedException
+	{ 
 		boolean isAuthorized = true;
 
-		try { 
+		try
+		{ 
 			/**
 			* Now, Authorizations on Objects will be done in corresponding biz logic
 			* for the Object through DefaultBizLogic's 'isAuthorized' method
@@ -218,27 +245,38 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			* for objects which require secured access
 			* By Default :: we return as 'true' i.e. user authorized
 			*/
-			if (isAuthorized) { 
+			if (isAuthorized)
+			{ 
 				session.save(obj);
 				isObjectAuditable(obj, isAuditable);
 				updated = true;
-			} else { 
+			}
+			else
+			{ 
 				throw new UserNotAuthorizedException("Not Authorized to insert");
 			}
-		} catch (HibernateException hibExp) { 
+		} 
+		catch (HibernateException hibExp)
+		{ 
 			throw handleError("", hibExp);
-		} catch (AuditException hibExp) { 
+		}
+		catch (AuditException hibExp) 
+		{ 
 			throw handleError("", hibExp);
-		} catch (SMException smex) { 
+		}
+		catch (SMException smex) 
+		{ 
 			throw handleError("", smex);
 		}
 
 	}
 
 	private void isObjectAuditable(Object obj, boolean isAuditable)
-			throws AuditException  { 
+			throws AuditException  
+	{ 
 		
-		if (obj instanceof Auditable && isAuditable) { 
+		if (obj instanceof Auditable && isAuditable)
+		{ 
 			auditManager.compare((Auditable) obj, null, "INSERT");
 		}
 	}
@@ -249,7 +287,8 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @param hibExp Exception
 	 * @return DAOException
 	 */
-	private DAOException handleError(String message, Exception hibExp) { 
+	private DAOException handleError(String message, Exception hibExp)
+	{ 
 		logger.error(hibExp.getMessage(), hibExp);
 		String msg = generateErrorMessage(message, hibExp);
 		return new DAOException(msg, hibExp);
@@ -261,24 +300,32 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @param exception Exception
 	 * @return message.
 	 */
-	private String generateErrorMessage(String messageToAdd, Exception exception) { 
+	private String generateErrorMessage(String messageToAdd, Exception exception)
+	{ 
 		String returnMessage;
-		if (exception instanceof HibernateException) { 
+		if (exception instanceof HibernateException)
+		{ 
 			HibernateException hibernateException = (HibernateException) exception;
 			StringBuffer message = new StringBuffer(messageToAdd);
 			String [] str = hibernateException.getMessages();
 			
 			//TODO have to look for this message won't be null ever . 
-			if (message != null) { 
-				for (int i = 0; i < str.length; i++) { 
+			if (message != null)
+			{ 
+				for (int i = 0; i < str.length; i++)
+				{ 
 					message.append(str[i]).append("   ");
 				}
 				returnMessage = message.toString();
-			} else { 
+			}
+			else
+			{ 
 				returnMessage = "Unknown Error";
 			}
 			
-		} else { 
+		}
+		else 
+		{ 
 			returnMessage = exception.getMessage();
 		}
 		return returnMessage;
@@ -296,9 +343,11 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 */
 	public void update(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
 			boolean isSecureUpdate) throws DAOException,
-			UserNotAuthorizedException { 
+			UserNotAuthorizedException 
+	{ 
 		boolean isAuthorized = true;
-		try { 
+		try
+		{ 
 			/**
 			* Now, Authorizations on Objects will be done in corresponding biz logic
 			* for the Object through DefaultBizLogic's 'isAuthorized' method
@@ -307,15 +356,22 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			* By Default :: we return as 'true' i.e. user authorized
 			*/
 
-			if (isAuthorized) { 
+			if (isAuthorized) 
+			{ 
 				session.update(obj);
 				updated = true;
-			} else { 
+			}
+			else
+			{
 				throw new UserNotAuthorizedException("Not Authorized to update");
 			}
-		} catch (HibernateException hibExp) { 
+		}
+		catch (HibernateException hibExp)
+		{ 
 			throw handleError("", hibExp);
-		} catch (SMException smex) { 
+		}
+		catch (SMException smex) 
+		{ 
 			throw handleError("", smex);
 		}
 
@@ -330,12 +386,18 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @throws DAOException generic DAOException.
 	 */
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
-			boolean isAuditable) throws DAOException { 
-		try { 
-			if (obj instanceof Auditable && isAuditable) { 
+			boolean isAuditable) throws DAOException 
+	{ 
+		try
+		{ 
+			if (obj instanceof Auditable && isAuditable)
+			{ 
 				auditManager.compare((Auditable) obj, (Auditable) oldObj, "UPDATE");
 			}
-		} catch (AuditException hibExp) { 
+			
+		}
+		catch (AuditException hibExp)
+		{ 
 			throw handleError("", hibExp);
 		}
 	}
@@ -344,7 +406,8 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * add Audit Event Logs.
 	 * @param auditEventDetailsCollection audit Event Details Collection.
 	 */
-	public void addAuditEventLogs(Collection auditEventDetailsCollection) { 
+	public void addAuditEventLogs(Collection<Object> auditEventDetailsCollection)
+	{ 
 		auditManager.addAuditEventLogs(auditEventDetailsCollection);
 	}
 
@@ -353,10 +416,16 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @param obj The object to be deleted.
 	 * @throws DAOException generic DAOException.
 	 */
-	public void delete(Object obj) throws DAOException { 
-		try { 
+	public void delete(Object obj) throws DAOException
+	{ 
+		try
+		{ 
 			session.delete(obj);
-		} catch (HibernateException hibExp) { 
+			
+		}
+		catch (HibernateException hibExp)
+		{
+			
 			logger.error(hibExp.getMessage() , hibExp);
 			throw new DAOException("Error in delete" , hibExp);
 		}
@@ -364,33 +433,31 @@ public class HibernateDAOImpl implements HibernateDAO  {
 
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
-	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
+	 * @param sourceObjectName Contains the class Name whose records are to be retrieved.
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
-	public List<Object> retrieve(String sourceObjectName) throws DAOException { 
+	public List<Object> retrieve(String sourceObjectName) throws DAOException
+	{ 
 		String[] selectColumnName = null;
-		String[] whereColumnName = null;
-		String[] whereColumnCondition = null;
-		Object[] whereColumnValue = null;
-		String joinCondition = null;
 		
 		QueryWhereClauseImpl queryWhereClause = new QueryWhereClauseImpl();
-		queryWhereClause.setWhereClause(whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+		queryWhereClause.setWhereClause(null, null, null, null);
 		
 		return retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 	}
 
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
-	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
+	 * @param sourceObjectName Contains the class Name whose records are to be retrieved.
 	 * @param whereColumnName Column name to be included in where clause.
 	 * @param whereColumnValue Value of the Column name that included in where clause.
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
 	public List<Object> retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
-			throws DAOException { 
+			throws DAOException
+	{ 
 		String [] whereColumnNames =  { whereColumnName};
 		String [] colConditions =  { "="};
 		Object [] whereColumnValues =  { whereColumnValue};
@@ -405,19 +472,17 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	/**
 	 * (non-Javadoc).
 	 * @see edu.wustl.common.dao.AbstractDAO#retrieve(java.lang.String, java.lang.String[])
-	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
+	 * @param sourceObjectName Contains the class Name whose records are to be retrieved.
 	 * @param selectColumnName select Column Name.
 	 * @return List.
 	 * @throws DAOException generic DAOException.
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName)
-	throws DAOException { 
-		String[] whereColumnName = null;
-		String[] whereColumnCondition = null;
-		Object[] whereColumnValue = null;
-		String joinCondition = null;
+	throws DAOException
+	{ 
+		
 		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
+		queryWhereClauseImpl.setWhereClause(null, null, null, null);
 	
 		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
 	}
@@ -426,7 +491,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * Retrieves the records for class name in sourceObjectName according
 	 * to field values passed in the passed session.
 	 * @param whereColumnName An array of field names.
-	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnCondition The comparison condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
 	 * @param sourceObjectName source Object Name.
@@ -435,30 +500,39 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @throws DAOException generic DAOException.
 	 */
 	public List<Object> retrieve(String sourceObjectName,String[] selectColumnName,
-			QueryWhereClauseImpl queryWhereClauseImpl) throws DAOException { 
-		List<Object> list = null;
-		try { 
+			QueryWhereClauseImpl queryWhereClauseImpl) throws DAOException
+	{ 
+		List<Object> list;
+		try
+		{ 
 			StringBuffer sqlBuff = new StringBuffer();
 			String className = Utility.parseClassName(sourceObjectName);
-			Query query = null;
+			Query query;
 
 			generateSelectPartOfQuery(selectColumnName, sqlBuff, className);
 			generateFromPartOfQuery(sourceObjectName, sqlBuff, className);
 						
-			if (queryWhereClauseImpl.isConditionSatisfied()) { 
+			if (queryWhereClauseImpl.isConditionSatisfied())
+			{ 
 				sqlBuff.append(queryWhereClauseImpl.toString(className));
 				query = session.createQuery(sqlBuff.toString());
 				queryWhereClauseImpl.setParametersToQuery(query);
-			} else { 
+			} 
+			else
+			{ 
 				query = session.createQuery(sqlBuff.toString());
 			}
 
 			list = query.list();
 
-		} catch (HibernateException hibExp) { 
+		}
+		catch (HibernateException hibExp) 
+		{ 
 			logger.error(hibExp.getMessage(), hibExp);
 			throw new DAOException("Error in retrieve " + hibExp.getMessage(), hibExp);
-		} catch (Exception exp) { 
+		}
+		catch (Exception exp) 
+		{ 
 			logger.error(exp.getMessage(), exp);
 			throw new DAOException("Logical Erroe in retrieve method " + exp.getMessage(), exp);
 		}
@@ -480,14 +554,20 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @throws DAOException generic DAOException.
 	 */
 	public Object retrieve(String sourceObjectName, Long identifier)
-	 throws DAOException { 
-		try { 
+	 throws DAOException
+	 { 
+		try
+		{ 
 			Object object = session.load(Class.forName(sourceObjectName), identifier);
 			return HibernateMetaData.getProxyObjectImpl(object);
-		} catch (ClassNotFoundException cnFoundExp) { 
+		}
+		catch (ClassNotFoundException cnFoundExp)
+		{ 
 			logger.error(cnFoundExp.getMessage(), cnFoundExp);
 			throw new DAOException("Error in retrieve " + cnFoundExp.getMessage(), cnFoundExp);
-		} catch (HibernateException hibExp) { 
+		} 
+		catch (HibernateException hibExp)
+		{ 
 			logger.error(hibExp.getMessage(), hibExp);
 			throw new DAOException("Error in retrieve " + hibExp.getMessage(), hibExp);
 		}
@@ -501,7 +581,8 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 * @throws DAOException 
 	 */
 	public Object loadCleanObj(String sourceObjectName, Long identifier)
-	 throws DAOException { 
+	 throws DAOException
+	{ 
 		Object obj = retrieve(sourceObjectName, identifier);
 		session.evict(obj);
 		return obj;
@@ -519,13 +600,17 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 */
 	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
-			DAOException { 
-		List < Object > returner = null;
-		try { 
+			DAOException
+	{ 
+		List < Object > returner;
+		try
+		{ 
 			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
 
-		} catch (HibernateException e) { 
+		}
+		catch (HibernateException e)
+		{ 
 			throw (new DAOException(e));
 		}
 
@@ -543,22 +628,22 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	public Object retrieveAttribute(Class<AbstractDomainObject> objClass, Long identifier,
 			String attributeName) throws DAOException
 	 { 
-
-		String objClassName = objClass.getName();
-		String simpleName = objClass.getSimpleName();
-		String nameOfAttribute = Utility.createAttributeNameForHQL(simpleName, attributeName);
-
-		StringBuffer queryStringBuffer = new StringBuffer();
-		queryStringBuffer.append("Select ").append(simpleName).append(".").append(nameOfAttribute)
+		try
+		{
+			String objClassName = objClass.getName();
+			String simpleName = objClass.getSimpleName();
+			String nameOfAttribute = Utility.createAttributeNameForHQL(simpleName, attributeName);
+			StringBuffer queryStringBuffer = new StringBuffer();
+			
+			queryStringBuffer.append("Select ").append(simpleName).append(".").append(nameOfAttribute)
 				.append(" from ").append(objClassName).append("    ").append(simpleName).append(
 						" where ").append(simpleName).append(".").append(
 						Constants.SYSTEM_IDENTIFIER).append("=  ").append(identifier);
-		try
-		 { 
+		 
 			return session.createQuery(queryStringBuffer.toString()).list();
 		}
 		catch (HibernateException exception)
-		 { 
+		{ 
 			throw new DAOException(exception.getMessage(), exception);
 		}
 	}
@@ -597,7 +682,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 			Collection<Object> collection = new HashSet<Object>();
 			attribute = collection;
 			for (int i = 0; i < result.size(); i++)
-			 { 
+			{ 
 				collection.add(HibernateMetaData.getProxyObjectImpl(result.get(i)));
 			}
 		}
@@ -630,7 +715,7 @@ public class HibernateDAOImpl implements HibernateDAO  {
 		     { 
 		        sqlBuff.append(Utility.createAttributeNameForHQL(className, selectColumnName[i]));
 		        if (i != selectColumnName.length - 1)
-		         { 
+		        { 
 		            sqlBuff.append(", ");
 		        }
 		    }
@@ -665,24 +750,16 @@ public class HibernateDAOImpl implements HibernateDAO  {
 	 { 
 		Session session = null;
 		try
-		 { 
+		{ 
 			session = getConnectionManager().getSessionFactory().openSession();
 			return session.load(objectClass, identifier);
 		}
 		finally
-		 { 
-			session.close();
+		{ 
+			if(session != null) {
+				session.close();
+			}
 		}
 	}
-	
-	
-	
-
-	
-
-
-	
-	
-	
 
 }

@@ -65,7 +65,8 @@ public class DAOConfigFactory
 			 * or we can keep default field in xml doc and save it in Map with key as defaultapplication 
 			 */
 			Iterator<String> mapKeySetIterator = daoFactoryMap.keySet().iterator();
-			if(mapKeySetIterator.hasNext())	{
+			if(mapKeySetIterator.hasNext())
+			{
 					defaultDAOFactory = (IDAOFactory)daoFactoryMap.get(mapKeySetIterator.next());
 			}	
 		}
