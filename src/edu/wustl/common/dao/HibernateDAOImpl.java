@@ -189,9 +189,11 @@ public class HibernateDAOImpl implements HibernateDAO
 	public void disableRelatedObjects(String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException 
 	{ 
+		DatabaseConnectionParams  databaseConnectionParams = new DatabaseConnectionParams();
 		try
 		{ 
-			Statement statement = session.connection().createStatement();
+			databaseConnectionParams.setConnection(session.connection());
+			//Statement statement = session.connection().createStatement();
 
 			StringBuffer buff = new StringBuffer();
 			for (int i = 0; i < whereColumnValues.length; i++)
@@ -206,20 +208,18 @@ public class HibernateDAOImpl implements HibernateDAO
 					+ Constants.ACTIVITY_STATUS_DISABLED + "' WHERE "
 					+ whereColumnName + " IN ( "
 					+ buff.toString() + ")";
-			statement.executeUpdate(sql);
-			
-			statement.close();
+			databaseConnectionParams.executeUpdate(sql);
 		} 
 		catch (HibernateException dbex)
 		{ 
 			logger.error(dbex.getMessage(), dbex);
 			throw handleError("Error in JDBC connection: ", dbex);
 		}
-		catch (SQLException sqlEx)
-		{ 
-			logger.error(sqlEx.getMessage(), sqlEx);
-			throw handleError("Error in disabling Related Objects: ", sqlEx);
+		finally 
+		{
+			databaseConnectionParams.closeConnectionParams();
 		}
+		
 	}
 
 	/**
