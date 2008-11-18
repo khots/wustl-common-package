@@ -108,8 +108,7 @@ public class TitliResultGroup
 		if (columnList == null)
 		{
 			columnList = new ArrayList<String>();
-			TableInterface table = null;
-			table = group.getMatchList().get(0).fetch().getTable();
+			TableInterface table = group.getMatchList().get(0).fetch().getTable();
 			for (Name column : table.getColumns().keySet())
 			{
 				columnList.add(column.toString());
@@ -133,8 +132,7 @@ public class TitliResultGroup
 			for (MatchInterface match : group.getMatchList())
 			{
 				List<String> dataRow = new ArrayList<String>();
-				Map<ColumnInterface, String> columns = null;
-				columns = match.fetch().getColumnMap();
+				Map<ColumnInterface, String> columns = match.fetch().getColumnMap();
 				//populate the data row
 				for (String value : columns.values())
 				{
@@ -169,8 +167,7 @@ public class TitliResultGroup
 		{
 			MatchInterface match = iterator.next();
 			dataRow = new ArrayList<String>();
-			Map<ColumnInterface, String> columns = null;
-			columns = match.fetch().getColumnMap();
+			Map<ColumnInterface, String> columns = match.fetch().getColumnMap();
 			//populate the data row
 			for (String value : columns.values())
 			{
