@@ -12,5 +12,5 @@ public interface MessageSubscriber
 	/**
 	 * This method is used to initialize the connection 
 	 * */
-	public void initialize();
+	void initialize();
 }

@@ -38,12 +38,12 @@ public class ApplicationDAOPropertiesParser
 	/**
 	 * Specifies Document object.
 	 */
-	private transient Document dom;
+	private Document dom;
 
 	/**
 	 * Specifies application variables.
 	 */
-	private transient String connectionManager, applicationName, daoFactoryName, defaultDaoName,
+	private String connectionManager, applicationName, daoFactoryName, defaultDaoName,
 			configFile, jdbcDAOName;
 
 	/**

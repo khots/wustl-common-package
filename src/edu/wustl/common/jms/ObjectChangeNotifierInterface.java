@@ -15,5 +15,5 @@ public interface ObjectChangeNotifierInterface extends Serializable
 	/**
 	 * This method is used to read the object 
 	 * */
-	public void read(Object obj);
+	void read(Object obj);
 }

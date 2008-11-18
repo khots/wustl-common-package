@@ -151,20 +151,7 @@ public interface DAO
 			boolean isSecureExecute, Map queryResultObjectDataMap) throws ClassNotFoundException,
 			DAOException;
 
-	/**
-	 * Execute Query.
-	 * @param query query
-	 * @param sessionDataBean session Data.
-	 * @param isSecureExecute is Secure Execute.
-	 * @param hasConditionOnIdentifiedField has Condition On Identified Field.
-	 * @param queryResultObjectDataMap query Result Object Data Map.
-	 * @return List.
-	 * @throws ClassNotFoundException Class Not Found Exception.
-	 * @throws DAOException generic DAOException.
-	 */
-	List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException;
+	
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.

@@ -1,6 +1,6 @@
 /**
- * <p>Title: JDBCDAO Class>
- * <p>Description:	JDBCDAO is default implementation of AbstractDAO through JDBC.
+ * <p>Title: AbstractJDBCDAOImpl Class>
+ * <p>Description:	JDBCDAO is default implementation of DAO and JDBCDAO through JDBC.
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
  * @author Gautam Shetty
@@ -12,7 +12,6 @@ package edu.wustl.common.dao;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -44,7 +43,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	
 	/**
 	 * This method will be used to establish the session with the database.
-	 * Declared in AbstractDAO class.
+	 * Declared in DAO class.
 	 * @throws DAOException
 	 */
 	public void openSession(SessionDataBean sessionDataBean) throws DAOException
@@ -52,29 +51,30 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		try
 		{
 			initializeAuditManager(sessionDataBean);
-			setConnection(getConnectionManager().getConnection());
-			getConnection().setAutoCommit(false);
+			connection = connectionManager.getConnection();
+			connection.setAutoCommit(false);
 		}
 		catch (SQLException sqlExp)
 		{
 			logger.error(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(DAOConstants.OPEN_SESSION_ERROR,sqlExp);
 		}
 	}
 	
 	/**
 	 * This method will be used to close the session with the database.
-	 * Declared in AbstractDAO class.
+	 * Declared in DAO class.
 	 * @throws DAOException
 	 */
 	public void closeSession() throws DAOException
 	{
-		setAuditManager(null);
+		auditManager = null;
 		getConnectionManager().closeConnection();
 	}
 
 	/**
 	 * Commit the database level changes.
-	 * Declared in AbstractDAO class.
+	 * Declared in DAO class.
 	 * @throws DAOException
 	 * @throws SMException
 	 */
@@ -82,24 +82,24 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	{
 		try
 		{
-			getAuditManager().insert(this);
-			
-			if(getConnection() == null) {
-				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
+			auditManager.insert(this);
+		
+			if(connection == null) {
+				logger.fatal(DAOConstants.NO_CONNECTION_TO_DB);
 			}	
 
-			getConnection().commit();
+			connection.commit();
 		}
 		catch (SQLException dbex)
 		{
 			logger.error(dbex.getMessage(), dbex);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
+			throw new DAOException(DAOConstants.COMMIT_DATA_ERROR, dbex);
 		}
 	}
 
 	/**
-	 * Rollback all the changes after last commit. 
-	 * Declared in AbstractDAO class. 
+	 * RollBack all the changes after last commit. 
+	 * Declared in DAO class. 
 	 * @throws DAOException 
 	 * @throws DAOException
 	 */
@@ -107,54 +107,56 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	{
 		try
 		{
-			if(getConnection() == null) {
-				throw new DAOException(Constants.GENERIC_DATABASE_ERROR);
+			if(connection == null) {
+				logger.fatal(DAOConstants.NO_CONNECTION_TO_DB);
 			}	
 
-			getConnection().rollback();
+			connection.rollback();
 		}
 		catch (SQLException dbex)
 		{
 			logger.error(dbex.getMessage(), dbex);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, dbex);
+			throw new DAOException(DAOConstants.ROLLBACK_ERROR, dbex);
 			
 		}
 	}
 	
 	
 	/**
+	 * This will be called to initialized the Audit Manager
 	 * @param sessionDataBean
 	 */
 	private void initializeAuditManager(SessionDataBean sessionDataBean)
 	{
-		setAuditManager(new AuditManager());
+		auditManager = new AuditManager();
 		if (sessionDataBean == null) {
 		
-			getAuditManager().setUserId(null);
+			auditManager.setUserId(null);
 		} else {
 		
-			getAuditManager().setUserId(sessionDataBean.getUserId());
-			getAuditManager().setIpAddress(sessionDataBean.getIpAddress());
+			auditManager.setUserId(sessionDataBean.getUserId());
+			auditManager.setIpAddress(sessionDataBean.getIpAddress());
 		}
 	}
 	
-	
-	
-	/* (non-Javadoc)
+	/** 
+	 * This method will be called for executing a static SQL statement.
 	 * @see edu.wustl.common.dao.JDBCDAO#executeUpdate(java.lang.String)
+	 * @param query
+	 * 
 	 */
 	public void executeUpdate(String query) throws DAOException
 	{
 		PreparedStatement stmt = null;
 		try
 		{
-			stmt = getConnection().prepareStatement(query);
+			stmt = connection.prepareStatement(query);
 			stmt.executeUpdate();
 		}
 		catch (SQLException sqlExp)
 		{
-			logger.error(sqlExp.getMessage(), sqlExp);
-			throw new DAOException(sqlExp);
+			logger.error(DAOConstants.EXECUTE_UPDATE_ERROR, sqlExp);
+			throw new DAOException(DAOConstants.EXECUTE_UPDATE_ERROR,sqlExp);
 		}
 		finally
 		{
@@ -166,33 +168,36 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			}
 			catch (SQLException sqlExp)
 			{
-				logger.error(sqlExp.getMessage(), sqlExp);
+				logger.error(DAOConstants.CONNECTIONS_CLOSING_ISSUE, sqlExp);
 			}
 		}
 	}
 	
 	/**
-	 * @return
+	 * This method will be called to return Database Statement Object
+	 * @return : Database Statement Object
 	 * @throws SQLException
 	 */
 	protected Statement getConnectionStmt() throws SQLException
 	{
-		return (Statement)getConnection().createStatement();
+		return (Statement)connection.createStatement();
 	}
 	
 	/**
+	 * This method will be called to return Database PreparedStatement Object
 	 * @param query
-	 * @return
+	 * @return Database PreparedStatement Object
 	 * @throws SQLException
 	 */
 	protected PreparedStatement getPreparedStatement(String query) throws SQLException
 	{
-		return getConnection().prepareStatement(query);
+		return connection.prepareStatement(query);
 	}	
 
-	/* (non-Javadoc)
-	 * @see edu.wustl.common.dao.JDBCDAO#createTable(java.lang.String, java.lang.String[])
-	 */
+	/* @see edu.wustl.common.dao.JDBCDAO#createTable(java.lang.String, java.lang.String[])
+	 * This method will Create and execute a table with the name and columns specified 
+	 * */
+	
 	public void createTable(String tableName, String[] columnNames) throws DAOException
 	{
 		String query = createTableQuery(tableName,columnNames);
@@ -206,14 +211,14 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public void createTable(String query) throws DAOException
 	{
-		logger.debug("Create Table Query " + query);
 		executeUpdate(query);
 	}
 	
 	/**
-	 * @param tableName
-	 * @param columnNames
-	 * @return
+	 * Generates the Create Table Query
+	 * @param tableName Name of the table to create.
+	 * @param columnNames Columns in the table.
+	 * @return Create Table Query
 	 * @throws DAOException
 	 */
 	private final String createTableQuery(String tableName, String[] columnNames) throws DAOException
@@ -221,11 +226,10 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		StringBuffer query = new StringBuffer("CREATE TABLE ").append(tableName).append(" (");
 		int index;
 
-		for ( index=0; index < (columnNames.length - 1); index++)
-		{
+		for ( index=0; index < (columnNames.length - 1); index++) {
+			
 			query = query.append(columnNames[index]).append(" VARCHAR(50),");
 		}
-
 		query.append(columnNames[index]).append(" VARCHAR(50));");
 		
 		return  query.toString();
@@ -239,15 +243,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public List<Object> retrieve(String sourceObjectName) throws DAOException
 	{
-		
-		String[] whereColumnName = null;
-		String[] whereColumnCondition = null;
-		Object[] whereColumnValue = null;
-		String joinCondition = null;
-		
 		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-				whereColumnValue,joinCondition);
+		queryWhereClauseImpl.setWhereClause(null, null,
+				null,null);
 		
 		return retrieve(sourceObjectName, null, queryWhereClauseImpl,false);
 	}
@@ -264,14 +262,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
 	{
-		String[] whereColumnName = null;
-		String[] whereColumnCondition = null;
-		Object[] whereColumnValue = null;
-		String joinCondition = null;
-		
 		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-				whereColumnValue,joinCondition);
+		queryWhereClauseImpl.setWhereClause(null, null,
+				null,null);
 		
 		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
 	}
@@ -290,44 +283,26 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
 	{
-		String[] whereColumnName = null;
-		String[] whereColumnCondition = null;
-		Object[] whereColumnValue = null;
-		String joinCondition = null;
-	
 		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-				whereColumnValue,joinCondition);
+		queryWhereClauseImpl.setWhereClause(null, null,
+				null,null);
 		
 		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,
 				onlyDistinctRows);
 	}
-	
+		
 	/**
-	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
-	 * @param selectColumnName An array of field names in select clause.
-	 * @param whereColumnName An array of field names in where clause.
-	 * @param whereColumnCondition The comparision condition for the field values. 
-	 * @param whereColumnValue An array of field values.
-	 * @param joinCondition The join condition.
-	 * @param The session object.
-	 * @deprecated : This method holds large number of parameters .Use method List<Object> retrieve(String sourceObjectName, String[] selectColumnName,QueryWhereClauseImpl queryWhereClauseImpl,
-			 boolean onlyDistinctRows) throws DAOException
-	 *//*
-	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws DAOException
-	{
-		
-		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-				whereColumnValue,joinCondition);
-		
-		
-		return retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl,false);
-		
-	}*/
-	
+	 * Returns the ResultSet containing all the rows according to the columns specified 
+	 * from the table represented in sourceObjectName as per the where clause. 
+	 * @param sourceObjectName The table name.
+	 * @param selectColumnName The column names in select clause.
+	 * @param queryWhereClauseImpl The where condition clause which holds the where column name, 
+	 * value and conditions applied 
+	 * @return The ResultSet containing all the rows according to the columns specified 
+	 * from the table represented in sourceObjectName which satisfies the where condition 
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public List<Object> retrieve(String sourceObjectName,
 			String[] selectColumnName, QueryWhereClauseImpl queryWhereClauseImpl)
 			throws DAOException {
@@ -336,8 +311,16 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.String, java.lang.Object)
+	 * Returns the ResultSet containing all the rows from the table represented in sourceObjectName
+	 * according to the where clause.It will create the where condition clause which holds where column name, 
+	 * value and conditions applied 
+	 * @param sourceObjectName The table name.
+	 * @param whereColumnName The column names in where clause.
+	 * @param whereColumnValue The column values in where clause.
+	 * @return The ResultSet containing all the rows from the table represented
+	 * in sourceObjectName which satisfies the where condition 
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
 	 */
 	public List<Object> retrieve(String sourceObjectName, String whereColumnName, Object whereColumnValue)
 			throws DAOException
@@ -359,11 +342,12 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed in the passed session.
 	 * @param selectColumnName An array of field names in select clause.
-	 * @param whereColumnName An array of field names in where clause.
-	 * @param whereColumnCondition The comparision condition for the field values. 
-	 * @param whereColumnValue An array of field values.
-	 * @param joinCondition The join condition.
-	 * @param onlyDistictRows true if only distict rows should be selected
+	 * @param queryWhereClauseImpl This will hold the where clause.It holds following 
+	 * whereColumnName : An array of field names in where clause.
+	 * whereColumnCondition : The comparison condition for the field values. 
+	 * whereColumnValue : An array of field values.
+	 * joinCondition : The join condition.
+	 * @param onlyDistictRows true if only distinct rows should be selected
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,QueryWhereClauseImpl queryWhereClauseImpl,
 			 boolean onlyDistinctRows) throws DAOException
@@ -374,7 +358,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 
 		try
 		{
-			StringBuffer queryStrBuff = getSelectFromQueryPart(selectColumnName, onlyDistinctRows);
+			StringBuffer queryStrBuff = getSelectPartOfQuery(selectColumnName, onlyDistinctRows);
 			getFromPartOfQuery(sourceObjectName, queryStrBuff);
 			
 			if(queryWhereClauseJDBCImpl.isConditionSatisfied()) {
@@ -393,42 +377,40 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * @param sourceObjectName
-	 * @param selectColumnName
-	 * @param onlyDistinctRows
-	 * @return
+	 * This method will return the select clause of Query 
+	 * @param selectColumnName An array of field names in select clause.
+	 * @param onlyDistinctRows true if only distinct rows should be selected
+	 * @return It will return the select clause of Query.
 	 */
-	private StringBuffer getSelectFromQueryPart(String[] selectColumnName,
-			boolean onlyDistinctRows)
-	{
+	private StringBuffer getSelectPartOfQuery(String[] selectColumnName,
+			boolean onlyDistinctRows) {
 		StringBuffer query = new StringBuffer("SELECT ");
-		if ((selectColumnName != null) && (selectColumnName.length > 0))
-		{
-			if (onlyDistinctRows)
-			{
+		if ((selectColumnName != null) && (selectColumnName.length > 0)) {
+
+			if (onlyDistinctRows) {
 				query.append(" DISTINCT ");
 			}
 			int index;
-			for (index = 0; index < (selectColumnName.length - 1); index++)
-			{
+
+			for (index = 0; index < (selectColumnName.length - 1); index++)	{
 				query.append(selectColumnName[index]).append("  ,");
-			
 			}
 			query.append(selectColumnName[index]).append("  ");
-		}
-		else
-		{
+		} else {
 			query.append("* ");
 		}
 		return query;
 	}
 
+	/**
+	 * This will generate the from clause of Query
+	 * @param sourceObjectName The table name.
+	 * @param queryStrBuff Query buffer
+	 */
 	private void getFromPartOfQuery(String sourceObjectName, StringBuffer queryStrBuff) {
 		queryStrBuff.append("FROM ").append(sourceObjectName);
 	}
 
-		
-	
 	/**
 	 * Executes the query.
 	 * @param query
@@ -444,58 +426,37 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			DAOException
 	{
 		
-		return getQueryResultList(query, sessionDataBean, isSecureExecute,
-				false, queryResultObjectDataMap, -1, -1).getResult();
+		QueryParams queryParams = new QueryParams();
+		queryParams.setQuery(query);
+		queryParams.setSessionDataBean(sessionDataBean);
+		queryParams.setSecureToExecute(isSecureExecute);
+		queryParams.setHasConditionOnIdentifiedField(false);
+		queryParams.setQueryResultObjectDataMap(queryResultObjectDataMap);
+		queryParams.setStartIndex(-1);
+		queryParams.setNoOfRecords(-1);
+		
+		return getQueryResultList(queryParams).getResult();
 	}
 
-	/**
-	 * Executes the query.
-	 * Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
-	 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
-	 * Calling executeQuery method with StartIndex parameter as -1, so that it will return all records from result.
-	 * @param query
-	 * @param sessionDataBean TODO
-	 * @param isSecureExecute TODO
-	 * @param columnIdsMap
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap) throws ClassNotFoundException, DAOException
-	{
-		List pagenatedResultData = null;
-			
-		if (!(Constants.SWITCH_SECURITY && isSecureExecute && sessionDataBean == null))
-		{
-			pagenatedResultData = (List)getQueryResultList(query, sessionDataBean, isSecureExecute,hasConditionOnIdentifiedField, queryResultObjectDataMap, -1, -1).getResult();
-			
-		}
-		return pagenatedResultData;
-	}
-
+	
 	/**
 	 *Description: Query performance issue. Instead of saving complete query results in session, resultd will be fetched for each result page navigation.
 	 * object of class QuerySessionData will be saved session, which will contain the required information for query execution while navigating through query result pages.
 	 * */
-	public PagenatedResultData executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap, int startIndex, int noOfRecords)
+	public PagenatedResultData executeQuery(QueryParams  queryParams)
 			throws ClassNotFoundException, DAOException
 	{
 		PagenatedResultData pagenatedResultData = null;
-		if (!(Constants.SWITCH_SECURITY && isSecureExecute && sessionDataBean == null))
+		if (!(Constants.SWITCH_SECURITY && queryParams.isSecureToExecute() && queryParams.getSessionDataBean() == null))
 		{
-			pagenatedResultData = (PagenatedResultData)getQueryResultList(query, sessionDataBean, isSecureExecute,
-					hasConditionOnIdentifiedField, queryResultObjectDataMap, startIndex, noOfRecords);
+		  pagenatedResultData = (PagenatedResultData)getQueryResultList(queryParams);
 			
 		}
 		return pagenatedResultData;
 	}
 
 	/**
-	 * This method exeuted query, parses the result and returns List of rows after doing security checks
+	 * This method executed query, parses the result and returns List of rows after doing security checks
 	 * for user's right to view a record/field
 	 * @param query
 	 * @param sessionDataBean
@@ -507,49 +468,10 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	 * @param noOfRecords
 	 * @return
 	 * @throws DAOException
-	 * 
-	 * 
-	 * -- TODO have to look into this 
 	 */
-	public PagenatedResultData getQueryResultList(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, boolean hasConditionOnIdentifiedField,
-			Map queryResultObjectDataMap, int startIndex, int noOfRecords) throws DAOException
-	{
-		PagenatedResultData pagenatedResultData = null;
-		//
-		
-		/*try {
-			IQueryExecutor queryExecutor = (IQueryExecutor)Class.forName(queryExecutorClassName).newInstance();
-			pagenatedResultData = queryExecutor.getQueryResultList(query, connection,
-					sessionDataBean, isSecureExecute, hasConditionOnIdentifiedField,
-					queryResultObjectDataMap, startIndex, noOfRecords);
-		} catch (InstantiationException e) {
-			throw new DAOException(e);
-		} catch (IllegalAccessException e) {
-			throw new DAOException(e);
-		} catch (ClassNotFoundException e) {
-			throw new DAOException(e);
-		}*/
-		return pagenatedResultData;
-
-	}
-
-	/**
-	 * (non-Javadoc)
-	 * @see edu.wustl.common.dao.DAO#retrieve(java.lang.String, java.lang.Long)
-	 */
-	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
-	{
-		try
-		{
-			return null;
-		}
-		catch (Exception hibExp)
-		{
-			logger.error(hibExp.getMessage(), hibExp);
-			throw new DAOException(Constants.GENERIC_DATABASE_ERROR, hibExp);
-		}
-	}
+	public abstract PagenatedResultData getQueryResultList(QueryParams queryParams) throws DAOException;
+	
+	
 
 	
 	/* (non-Javadoc)
@@ -562,8 +484,8 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	}
 
 	/**
-	 * @param metaData
-	 * @param dateColumns
+	 * @param metaData ResultSetMetaData 
+	 * @param dateColumns 
 	 * @param numberColumns
 	 * @param tinyIntColumns
 	 * @throws SQLException
@@ -589,90 +511,84 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	}
 	
 	/**
-	 * @param tableName
-	 * @param columnValues
-	 * @param columnNames_t
-	 * @param columnNames
-	 * @return
-	 * @throws DAOException 
-	 * @throws SQLException 
-	 * @throws SQLException
+	 * This method returns the metaData associated to the table specified in tableName. 
+	 * @param tableName Name of the table whose metaData is requested
+	 * @param columnNames Table columns
+	 * @return It will return the metaData associated to the table.
+	 * @throws DAOException
 	 */
-	protected final ResultSetMetaData getMetadataAndUpdatedColumns(String tableName,
-			List<String> columnNameslist,List<String>... columnNames) throws DAOException, SQLException
+	protected final ResultSetMetaData getMetaData(String tableName,List<String> columnNames)throws DAOException
 	{
-		List<String> columnNames_t = columnNameslist;
+		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
+	
+		ResultSetMetaData metaData;
 		StringBuffer sqlBuff = new StringBuffer("Select ");
-		Statement statement = null;
-		ResultSet resultSet = null;
+		
+		try {
+			
+			databaseConnectionParams.setConnection(connection);
+			for (int i = 0; i < columnNames.size(); i++)
+			{
+				sqlBuff.append(columnNames.get(i));
+				if (i != columnNames.size() - 1)
+				{
+					sqlBuff.append("  ,");
+				}
+			}
+			sqlBuff.append(" from " + tableName + " where 1!=1");
+			metaData = databaseConnectionParams.getMetaData(sqlBuff.toString());		
+		
+		} finally {
+			
+			databaseConnectionParams.closeConnectionParams();
+		}
+		
+		return metaData;
+		
+	}
+	
+	/**
+	 * This method will returns the metaData associated to the table specified in tableName
+	 * and update the list columnNames. 
+	 * @param tableName Name of the table whose metaData is requested
+	 * @param columnNames Table columns
+	 * @return It will return the metaData associated to the table.
+	 * @throws DAOException
+	 */
+	protected final ResultSetMetaData getMetaDataAndUpdateColumns(String tableName,List<String> columnNames)throws DAOException
+	{
+		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
 		ResultSetMetaData metaData;
 		
 		try {
-			statement = getConnectionStmt();
-			if (columnNames != null && columnNames.length > 0) {
-				
-				columnNames_t = columnNames[0];
-				generateSelectSql(columnNames_t, sqlBuff);
-				sqlBuff.append(" from " + tableName + " where 1!=1");
-				resultSet = statement.executeQuery(sqlBuff.toString());
-				metaData = resultSet.getMetaData();
-
-			} else {
-				
-				sqlBuff.append("* from " + tableName + " where 1!=1");
-				resultSet = statement.executeQuery(sqlBuff.toString());
-				metaData = resultSet.getMetaData();
-				getColumnNames(metaData,columnNames_t);
+			
+			databaseConnectionParams.setConnection(connection);
+			StringBuffer sqlBuff = new StringBuffer();
+			sqlBuff.append("Select * from " ).append(tableName).append(" where 1!=1");
+			metaData = databaseConnectionParams.getMetaData(sqlBuff.toString());
+			
+			for (int i = 1; i <= metaData.getColumnCount(); i++) {
+				columnNames.add(metaData.getColumnName(i));
 			}
+			
 		} catch (SQLException sqlExp) {
 			
-			logger.error(sqlExp.getMessage(), sqlExp);
-			throw new DAOException(sqlExp.getMessage(),sqlExp);
+			logger.fatal(sqlExp.getMessage(), sqlExp);
+			throw new DAOException(sqlExp);
 			
 		} finally {
-			
-			closeDatabaseConnections(statement, resultSet);
+			databaseConnectionParams.closeConnectionParams();
 		}
 		return metaData;
 	}
-
-	private void closeDatabaseConnections(Statement statement,
-			ResultSet resultSet) throws SQLException {
-		
-		if(resultSet != null ) {
-			resultSet.close();
-		}
-		if (statement != null) {
-			statement.close();
-		}
-	}
-
-	private void getColumnNames(ResultSetMetaData metaData,List<String> columnNames_t) throws SQLException {
-			
-		for (int i = 1; i <= metaData.getColumnCount(); i++) {
-			columnNames_t.add(metaData.getColumnName(i));
-		}
-	}
-
-	private void generateSelectSql(List<String> columnNames_t, StringBuffer sql) {
-		for (int i = 0; i < columnNames_t.size(); i++)
-		{
-			sql.append(columnNames_t.get(i));
-			if (i != columnNames_t.size() - 1)
-			{
-				sql.append("  ,");
-			}
-		}
-	}
-	
 	
 	/**
+	 * This method generates the Insert query 
 	 * @param tableName
 	 * @param columnNames_t
 	 * @param columnValues
 	 * @return
 	 * Have to refractor this !!!!!!! columnValues might not needed
-	 * 
 	 */
 	protected String createInsertQuery(String tableName,List<String> columnNames_t,List<Object> columnValues)
 	{
@@ -708,6 +624,7 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 	
 	
 	/**
+	 * This method called to set Number value to PreparedStatement
 	 * @param numberColumns
 	 * @param stmt
 	 * @param index
@@ -726,12 +643,10 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		}
 	}
 
-
-
-
 	/**
-	 * @param stmt
-	 * @param i
+	 * This method called to set TimeStamp value to PreparedStatement
+	 * @param stmt :PreparedStatement
+	 * @param i :
 	 * @param obj
 	 * @throws SQLException
 	 */
@@ -743,9 +658,6 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			stmt.setObject(index + 1, date);
 		}	
 	}
-
-
-
 
 	/**
 	 * @param stmt
@@ -762,6 +674,14 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		}
 	}
 
+	/**
+	 * This method is called to set TinyInt value
+	 * to prepared statement.
+	 * @param stmt
+	 * @param index
+	 * @param obj
+	 * @throws SQLException
+	 */
 	private void setTinyIntColumns(PreparedStatement stmt, int index, Object obj)
 			throws SQLException {
 		if (obj != null && (obj.equals("true") || obj.equals("TRUE") || obj.equals("1")))
@@ -774,10 +694,9 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		}
 	}
 
-
-
-
 	/**
+	 * This method used to set Date values
+	 * to prepared statement
 	 * @param stmt
 	 * @param index
 	 * @param obj
@@ -805,15 +724,14 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 		
 	
 	/**
+	 * This method checks the TimeStamp value.
 	 * @param value
-	 * @return
-	 * 
-	 */
+	 * @return It returns the TimeStamp value
+	 * */
 	private final Timestamp isColumnValueDate(Object value)
 	{
 		Timestamp timestamp = null;
-		try
-		{
+		try	{
 			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy",Locale.getDefault());
 			formatter.setLenient(false);
 			java.util.Date date;
@@ -826,42 +744,24 @@ public abstract class AbstractJDBCDAOImpl implements JDBCDAO
 			{
 				timestamp = timestampInner;
 			}
-		}
-		catch (ParseException parseExp)
-		{
+		} catch (ParseException parseExp) {
 			logger.error(parseExp.getMessage(),parseExp);
-			
 		}
-				
+		
 		return timestamp;
 	}
 	
-	public void setConnectionManager(IConnectionManager connectionManager)
-	{
+	public void setConnectionManager(IConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
-		
 	}
 	
-	public IConnectionManager getConnectionManager()
-	{
+	public IConnectionManager getConnectionManager() {
 		return connectionManager;
 	}
-	private Connection getConnection() {
+	
+	protected Connection getConnection() {
 		return connection;
 	}
-
-	private void setConnection(Connection connection) {
-		this.connection = connection;
-	}
-	
-	private AuditManager getAuditManager() {
-		return auditManager;
-	}
-
-	private void setAuditManager(AuditManager auditManager) {
-		this.auditManager = auditManager;
-	}
-	
 	
 
 }

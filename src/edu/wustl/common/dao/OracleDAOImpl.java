@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.exceptionformatter.ConstraintViolationFormatter;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.query.executor.OracleQueryExecutor;
 
 
 public class OracleDAOImpl extends AbstractJDBCDAOImpl
@@ -111,45 +113,39 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		List<Integer> tinyIntColumns = new ArrayList<Integer>();
 		List<String> columnNames_t = new ArrayList<String>();
 		
-		ResultSetMetaData metaData  = getMetadataAndUpdatedColumns(tableName,columnNames_t,columnNames);
+		ResultSetMetaData metaData;
+		if(columnNames != null && columnNames.length > 0)
+		{
+			metaData = getMetaData(tableName, columnNames[0]);
+			
+		} else {
+			metaData = getMetaDataAndUpdateColumns(tableName,columnNames_t);
+		}
+		
 		updateColumns(metaData, dateColumns,numberColumns, tinyIntColumns);
 		String insertQuery = createInsertQuery(tableName,columnNames_t,columnValues);
 		
+		DatabaseConnectionParams databaseConnectionParams = new DatabaseConnectionParams();
+		databaseConnectionParams.setConnection(getConnection());
+		
 		PreparedStatement stmt = null;
-		try
-		{
-			stmt = getPreparedStatement(insertQuery);
-			for (int i = 0; i < columnValues.size(); i++)
-			{
+		try	{
+			stmt = databaseConnectionParams.getPreparedStatement(insertQuery);
+			for (int i = 0; i < columnValues.size(); i++) {
+				
 				Object obj = columnValues.get(i);
-				
 				setDateColumns(stmt, i,obj, dateColumns);
-				
 				setTinyIntColumns(stmt, i, obj,tinyIntColumns);
-				
 				setTimeStampColumn(stmt, i, obj);
-				
 				setNumberColumns(numberColumns, stmt, i, obj);
 			}
 			stmt.executeUpdate();
-		}
-		catch (SQLException sqlExp)
-		{
+		} catch (SQLException sqlExp) {
+			
 			logger.error(sqlExp.getMessage(),sqlExp);
 			throw new DAOException(sqlExp.getMessage(), sqlExp);
-		}
-		finally
-		{
-			try
-			{
-				if (stmt != null) {
-					stmt.close();
-				}	
-			}
-			catch (SQLException ex)
-			{
-				logger.error(ex.getMessage(), ex);
-			}
+		} finally {
+			databaseConnectionParams.closeConnectionParams();
 		}
 	}
 	
@@ -177,12 +173,18 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 		}
 		return formattedErrMsg;
 	}
-
-
-
 	
+	public PagenatedResultData getQueryResultList(QueryParams queryParams) throws DAOException
+	{
+		PagenatedResultData pagenatedResultData = null;
+				
+		queryParams.setConnection(getConnectionManager().getConnection());
+		OracleQueryExecutor oracleQueryExecutor = new OracleQueryExecutor();
+		pagenatedResultData = oracleQueryExecutor.getQueryResultList(queryParams);
+		
+		return pagenatedResultData;
 
-	
+	}
 
 	public String getActivityStatus(String sourceObjectName, Long indetifier) throws DAOException
 	{
@@ -224,6 +226,14 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	public Object retrieve(String sourceObjectName, Long identifier)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

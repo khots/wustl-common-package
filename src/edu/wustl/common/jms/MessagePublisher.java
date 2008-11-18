@@ -13,11 +13,11 @@ public interface MessagePublisher
 	/**
 	 * This method is used to initialize the connection 
 	 * */
-	public void initialize();
+	void initialize();
 
 	/**
 	 * @param obj
 	 * This method is used to publish message or data 
 	 */
-	public void update(Object obj);
+	void update(Object obj);
 }

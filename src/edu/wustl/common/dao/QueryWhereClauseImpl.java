@@ -6,28 +6,27 @@ import edu.wustl.common.util.global.Constants;
 
 public class QueryWhereClauseImpl {
 	
-	private String[] whereColumnName;
-	private String[] whereColumnCondition;
-	private Object[] whereColumnValue;
-	private String joinCondition;
+	protected String[] whereColumnName;
+	protected String[] whereColumnCondition;
+	protected Object[] whereColumnValue;
+	protected String joinCondition;
 		
 	
 	public void setWhereClause(String[] whereColumnName,String[] whereColumnCondition,
 			Object[] whereColumnValue,String joinCondition)
 	{
-		setJoinCondition(joinCondition);
-		setWhereColumnCondition(whereColumnCondition);
-		setWhereColumnName(whereColumnName);
-		setWhereColumnValue(whereColumnValue);
+		this.joinCondition = joinCondition;
+		this.whereColumnCondition = whereColumnCondition;
+		this.whereColumnName = whereColumnName;
+		this.whereColumnValue = whereColumnValue;
 	}
 	
 	protected String queryWhereClause(String className)
 	{
-		String[] whereColumnName = getWhereColumnName();
 		StringBuffer sqlBuff = new StringBuffer();
 		
-		 if (getJoinCondition() == null) {
-            setJoinCondition(Constants.AND_JOIN_CONDITION);
+		 if (joinCondition == null) {
+			 joinCondition = Constants.AND_JOIN_CONDITION;
 		 }
         
 		 sqlBuff.append(" where ");
@@ -37,7 +36,7 @@ public class QueryWhereClauseImpl {
         	setClausesOfWherePart(className,sqlBuff, i);	
         	
         	if (i < (whereColumnName.length - 1)) {
-    			sqlBuff.append(" " + getJoinCondition() + " ");
+    			sqlBuff.append(" " + joinCondition + " ");
     		}
         }
 		
@@ -49,10 +48,7 @@ public class QueryWhereClauseImpl {
 
 	protected void setClausesOfWherePart(String className,
 			StringBuffer sqlBuff, int index) {
-		
-		String[] whereColumnCondition = getWhereColumnCondition();
-		Object[] whereColumnValue = getWhereColumnValue();
-		
+				
 		sqlBuff.append(className + "." + whereColumnName[index] + " ");
 		//TODO check this twice with original
 		if(whereColumnCondition[index].contains("in"))
@@ -99,8 +95,6 @@ public class QueryWhereClauseImpl {
 	
 	public boolean isConditionSatisfied()
 	{
-		Object[] whereColumnValue = getWhereColumnValue();
-				
 		boolean isConditionSatisfied = false;
 		if ((isWhereColumnName())
                 && (isWhereColumnCondition())
@@ -113,22 +107,15 @@ public class QueryWhereClauseImpl {
 	}
 
 	protected boolean isWhereColumnCondition() {
-		String[] whereColumnCondition = getWhereColumnCondition();
-		String[] whereColumnName = getWhereColumnName();
 		return whereColumnCondition != null && whereColumnCondition.length == whereColumnName.length;
 	}
 
 	protected boolean isWhereColumnName() {
-		String[] whereColumnName = getWhereColumnName();
 		return whereColumnName != null && whereColumnName.length > 0;
 	}
 	
 	public void setParametersToQuery(Query query)
 	{
-		
-		String[] whereColumnCondition = getWhereColumnCondition();
-		Object[] whereColumnValue = getWhereColumnValue();
-		
 		int index = 0;
 		//Adds the column values in where clause
 		for (int i = 0; i < whereColumnValue.length; i++)
@@ -160,42 +147,5 @@ public class QueryWhereClauseImpl {
 		}
 		return index;
 	}
-	
-	
-	protected String[] getWhereColumnName() {
-		return whereColumnName;
-	}
-	
-	protected void setWhereColumnName(String[] whereColumnName) {
-		this.whereColumnName = whereColumnName;
-	}
-
-	protected String[] getWhereColumnCondition() {
-		return whereColumnCondition;
-	}
-
-	protected void setWhereColumnCondition(String[] whereColumnCondition) {
-		this.whereColumnCondition = whereColumnCondition;
-	}
-
-	protected Object[] getWhereColumnValue() {
-		return whereColumnValue;
-	}
-
-	protected void setWhereColumnValue(Object[] whereColumnValue) {
-		this.whereColumnValue = whereColumnValue;
-	}
-
-	protected String getJoinCondition() {
-		return joinCondition;
-	}
-
-	protected void setJoinCondition(String joinCondition) {
-		this.joinCondition = joinCondition;
-	}
-
-	
-	
-	
 
 }
