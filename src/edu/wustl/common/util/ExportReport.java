@@ -23,9 +23,7 @@ import java.util.zip.ZipOutputStream;
 import oracle.sql.CLOB;
 import edu.wustl.common.dao.DAO;
 import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.DAOFactory;
 import edu.wustl.common.dao.IDAOFactory;
-import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.SqlConstants;
@@ -230,8 +228,7 @@ public class ExportReport
 						String fName = idFileNameMap.get(entityId);
 						tempStr = fName;
 					}
-					tempStr = getStrWithoutDoubleQuotes(tempStr);
-					cvsFileWriter.write(tempStr + delimiter);
+					cvsFileWriter.write(getStrWithoutDoubleQuotes(tempStr) + delimiter);
 				}
 				cvsFileWriter.write(TextConstants.LINE_SEPARATOR);
 			}
@@ -299,8 +296,7 @@ public class ExportReport
 				while (rowItr.hasNext())
 				{
 					String tempStr = (String) rowItr.next();
-					tempStr = getStrWithoutDoubleQuotes(tempStr);
-					temp.write(tempStr + delimiter);
+					temp.write(getStrWithoutDoubleQuotes(tempStr) + delimiter);
 				}
 				temp.write(TextConstants.LINE_SEPARATOR);
 			}
@@ -417,7 +413,7 @@ public class ExportReport
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = daofactory.getJDBCDAO();
-	
+
 		dao.openSession(null);
 		return (List<Object>)dao.executeQuery(sql, null, false, null);
 
