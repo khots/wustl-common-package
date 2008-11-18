@@ -4,7 +4,7 @@ package edu.wustl.common.util;
 
 import edu.wustl.common.beans.NameValueBean;
 /**
- * This comparator is used where soritng shound be done on value of NameValueBean.
+ * This comparator is used where sorting is to be done on value of NameValueBean.
  */
 public class NameValueBeanValueComparator implements java.util.Comparator<Object>
 {
