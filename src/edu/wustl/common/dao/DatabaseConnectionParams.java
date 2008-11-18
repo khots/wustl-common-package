@@ -84,6 +84,24 @@ public class DatabaseConnectionParams {
 		return preparedStatement;
 	}
 	
+	public void executeUpdate(String query)	{	
+	
+		PreparedStatement stmt = null;
+		try	{
+			
+			stmt = getPreparedStatement(query);
+			stmt.executeUpdate();
+			
+		} catch (SQLException sqlExp) {
+			
+			logger.error(DAOConstants.EXECUTE_UPDATE_ERROR, sqlExp);
+			
+		} finally {
+			
+			closeConnectionParams();
+		}
+	}
+	
 	public Connection getConnection() {
 		return connection;
 	}
