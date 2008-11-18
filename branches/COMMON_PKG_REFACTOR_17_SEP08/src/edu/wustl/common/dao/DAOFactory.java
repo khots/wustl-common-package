@@ -339,11 +339,13 @@ public class DAOFactory implements IConnectionManager,IDAOFactory
 		this.configuration = cfg;
 	}
 	
-	private IConnectionManager getConnectionManager() {
+	private IConnectionManager getConnectionManager()
+	{
 		return connectionManager;
 	}
 
-	private void setConnectionManager(IConnectionManager connectionManager) {
+	private void setConnectionManager(IConnectionManager connectionManager)
+	{
 		this.connectionManager = connectionManager;
 	}
 

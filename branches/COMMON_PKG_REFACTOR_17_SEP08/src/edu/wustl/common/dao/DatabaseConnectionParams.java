@@ -134,11 +134,13 @@ public class DatabaseConnectionParams
 		}
 	}
 	
-	public Connection getConnection() {
+	public Connection getConnection()
+	{
 		return connection;
 	}
 
-	public void setConnection(Connection connection) {
+	public void setConnection(Connection connection)
+	{
 			this.connection = connection;
 	}
 	

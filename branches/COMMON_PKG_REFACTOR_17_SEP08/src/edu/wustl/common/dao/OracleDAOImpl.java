@@ -259,7 +259,8 @@ public class OracleDAOImpl extends AbstractJDBCDAOImpl
 
 
 	public Object retrieve(String sourceObjectName, Long identifier)
-			throws DAOException {
+			throws DAOException
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
