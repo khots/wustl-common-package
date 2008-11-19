@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataTypes>
+<DataType name = "bigint" className = "edu.wustl.common.actionform.NumericValidator"/>
+<DataType name = "integer" className = "edu.wustl.common.actionform.NumericValidator"/>
+<DataType name = "double" className = "edu.wustl.common.actionform.DoubleValidator"/>
+<DataType name = "tinyint" className = "edu.wustl.common.actionform.TinyIntValidator"/>
+<DataType name = "timestamptime" className = "edu.wustl.common.actionform.TimeStampTimeValidator"/>
+<DataType name = "date" className = "edu.wustl.common.actionform.DateValidator"/>
+<DataType name = "timestampdate" className = "edu.wustl.common.actionform.DateValidator"/>
+</DataTypes>

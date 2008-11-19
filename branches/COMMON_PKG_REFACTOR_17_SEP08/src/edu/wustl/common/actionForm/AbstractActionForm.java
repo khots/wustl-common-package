@@ -349,9 +349,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	 * @param addNewFor - add New For.
 	 * @param addObjectIdentifier - Identifier of newly added object by AddNew operation
 	 */
-	public void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier)
-	{
-	}
+	public abstract void setAddNewObjectIdentifier(String addNewFor, Long addObjectIdentifier);
 
 	/**
 	 * Gets object id.

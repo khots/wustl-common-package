@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.query.Operator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * SimpleQueryInterfaceForm Class is used to encapsulate all the request parameters passed.
@@ -40,12 +39,6 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 * Serial Version Unique Identifier.
 	 */
 	private static final long serialVersionUID = 9041513259017953749L;
-
-	/**
-	 * logger Logger - Generic logger.
-	 */
-	private static org.apache.log4j.Logger logger = Logger
-			.getLogger(SimpleQueryInterfaceForm.class);
 
 	/**
 	 * Specifies whether the id is mutable or not.
@@ -332,9 +325,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	{
 		boolean conditionError = false;
 		Validator validator = new Validator();
-		StringBuffer operatorKey = new StringBuffer();
-		operatorKey.append("SimpleConditionsNode:").append(integerValue).append(
-				"_Condition_Operator_operator");
+		String key = "SimpleConditionsNode:#_Condition_Operator_operator";
+		String newKey = replaceAll(key, "#", Integer.toString(integerValue));
+		StringBuffer operatorKey = new StringBuffer(newKey);
 		String operatorValue = (String) getValue(operatorKey.toString());
 		if (!validator.isEmpty(operatorValue)
 				&& !(operatorValue.equals(Operator.IS_NULL) || operatorValue
@@ -354,13 +347,12 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	private boolean validateCondition(ActionErrors errors, int integerValue)
 	{
 		boolean conditionError;
-		StringBuffer key = new StringBuffer();
-		key.append("SimpleConditionsNode:").append(integerValue).append("_Condition_value");
-		String enteredValue = (String) getValue(key.toString());
-		StringBuffer dataElement = new StringBuffer();
-		dataElement.append("SimpleConditionsNode:").append(integerValue).append(
-				"_Condition_DataElement_field");
-		String selectedField = (String) getValue(dataElement.toString());
+		String keyString = "SimpleConditionsNode:#_Condition_value";
+		String newKey = replaceAll(keyString, "#", Integer.toString(integerValue));
+		String enteredValue = (String) getValue(newKey);
+		String dataElement = "SimpleConditionsNode:#_Condition_DataElement_field";
+		String dataElementKey = replaceAll(dataElement, "#", Integer.toString(integerValue));
+		String selectedField = (String) getValue(dataElementKey);
 		StringTokenizer strTok = new StringTokenizer(selectedField, ".");
 		int tokenCnt = 1;
 		String dataType = "";
@@ -383,6 +375,32 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	}
 
 	/**
+	 * This method replace string.
+	 * @param source source String
+	 * @param toReplace toReplace String
+	 * @param replacement replacement String
+	 * @return String.
+	 */
+	public static String replaceAll(String source, String toReplace, String replacement)
+	{
+		String sourceString = source;
+		int idx = sourceString.lastIndexOf(toReplace);
+		if (idx != -1)
+		{
+			StringBuffer ret = new StringBuffer(sourceString);
+			ret.replace(idx, idx + toReplace.length(), replacement);
+			idx = sourceString.lastIndexOf(toReplace, idx - 1);
+			while (idx != -1)
+			{
+				ret.replace(idx, idx + toReplace.length(), replacement);
+			}
+			sourceString = ret.toString();
+		}
+
+		return sourceString;
+	}
+
+	/**
 	 * validate Data Type.
 	 * @param dataType data Type to validate.
 	 * @param enteredValue entered Value.
@@ -391,72 +409,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	private boolean validateDataType(String dataType, String enteredValue, ActionErrors errors)
 	{
-		Validator validator = new Validator();
-		boolean conditionError = false;
-		if ((dataType.trim().equals("bigint") || dataType.trim().equals("integer")))
-		{
-			conditionError = validateInteger(enteredValue, errors, validator);
-		}
-		else if ((dataType.trim().equals("double")) && !validator.isDouble(enteredValue, false))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.decvalue.required"));
-			conditionError = true;
-		}
-		else if (dataType.trim().equals("tinyint"))
-		{
-			if (!enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_YES)
-					&& !enteredValue.trim().equalsIgnoreCase(Constants.BOOLEAN_NO))
-			{
-				errors
-						.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-								"simpleQuery.tinyint.format"));
-				conditionError = true;
-			}
-		}
-		else if (dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_TIME))
-		{
-			if (!(validator.isValidTime(enteredValue, Constants.TIME_PATTERN_HH_MM_SS)))
-			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.time.format"));
-				conditionError = true;
-			}
-		}
-		else if (dataType.trim().equals(Constants.FIELD_TYPE_DATE)
-				|| dataType.trim().equals(Constants.FIELD_TYPE_TIMESTAMP_DATE))
-		{
-			if (!(validator.checkDate(enteredValue)))
-			{
-				errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.date.format"));
-				conditionError = true;
-			}
-		}
-		return conditionError;
-	}
-
-	/**
-	 * @param enteredValue entered Value.
-	 * @param errors errors
-	 * @param validator Validator object.
-	 * @return returns true if valid data type else false.
-	 */
-	private boolean validateInteger(String enteredValue, ActionErrors errors, Validator validator)
-	{
-		boolean conditionError = false;
-		logger.debug(" Check for integer");
-		if (validator.convertToLong(enteredValue) == null)
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.required"));
-			conditionError = true;
-			logger.debug(enteredValue + " is not a valid integer");
-		}
-		else if (!validator.isPositiveNumeric(enteredValue, 0))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-					"simpleQuery.intvalue.poisitive.required"));
-			conditionError = true;
-			logger.debug(enteredValue + " is not a positive integer");
-		}
-		return conditionError;
+		ValidatorDataTypeInterface validatorDataType = ControlConfigurationsFactory.getInstance()
+				.getValidatorDataType(dataType);
+		return validatorDataType.validate(enteredValue, errors);
 	}
 
 	/**
