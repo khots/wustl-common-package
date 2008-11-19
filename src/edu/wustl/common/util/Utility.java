@@ -56,7 +56,7 @@ public class Utility
 {
 
 	/**
-	 * logger -Generic Logger
+	 * logger -Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(Utility.class);
 	/**
@@ -64,26 +64,24 @@ public class Utility
 	 * @param date the string containing date.
 	 * @param pattern the pattern in which the date is present.
 	 * @return the string format of date in the given format and returns the Data object.
-	 * @throws ParseException
+	 * @throws ParseException throws ParseException if date is not in pattern specified.
 	 */
 	public static Date parseDate(String date, String pattern) throws ParseException
 	{
 		Date dateObj=null;
-		if (date != null && !date.trim().equals(TextConstants.EMPTY_STRING))
+		if (date != null && !TextConstants.EMPTY_STRING.equals(date.trim()))
 		{
 			try
 			{
 				SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 				dateObj = dateFormat.parse(date);
 			}
-			catch (ParseException e)
+			catch (ParseException exception)
 			{
-				if (pattern == null || TextConstants.EMPTY_STRING.equals(pattern))
-				{
-					throw new ParseException( new StringBuffer("Date '")
-					.append(date).append("' is not in format of ")
-					.append(Constants.DATE_PATTERN_MM_DD_YYYY).toString(), 0);
-				}
+				String message=new StringBuffer("Date '").append(date)
+				.append("' is not in format : ").append(pattern).toString();
+				logger.debug(message,exception);
+				throw new ParseException(message,0);
 			}
 		}
 		return dateObj;
@@ -92,9 +90,8 @@ public class Utility
 	/**
 	 * Parses the string format of date in the given format and returns the Data object.
 	 * @param date the string containing date.
-	 * @param pattern the pattern in which the date is present.
 	 * @return the string format of date in the given format and returns the Data object.
-	 * @throws ParseException
+	 * @throws ParseException throws ParseException if date is not valid.
 	 */
 	public static Date parseDate(String date) throws ParseException
 	{
@@ -103,99 +100,42 @@ public class Utility
 		return parseDate(date, pattern);
 	}
 
+	/**
+	 * Returns matching date pattern.
+	 * @param strDate Date as string
+	 * @return matched date pattern.
+	 */
 	public static String datePattern(String strDate)
 	{
-		String datePattern = "";
-		String dtSep = "";
-		boolean result = true;
-		try
-		{
-			Pattern regExp = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
-			Matcher mat = regExp.matcher(strDate);
-			result = mat.matches();
-
-			if (result)
-			{
-				dtSep = Constants.DATE_SEPARATOR;
-				datePattern = "MM" + dtSep + "dd" + dtSep + "yyyy";
-			}
-
-			// check for  / separator
-			if (!result)
-			{
-				regExp = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
-				mat = regExp.matcher(strDate);
-				result = mat.matches();
-				//System.out.println("is Valid Date Pattern : / : "+result);
-				if (result)
-				{
-					dtSep = Constants.DATE_SEPARATOR_SLASH;
-					datePattern = "MM" + dtSep + "dd" + dtSep + "yyyy";
-				}
-			}
-
-			if (!result)
-			{
-				regExp = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
-				mat = regExp.matcher(strDate);
-				result = mat.matches();
-
-				if (result)
-				{
-					dtSep = Constants.DATE_SEPARATOR;
-					datePattern = "yyyy" + dtSep + "mm" + dtSep + "dd";
-				}
-			}
-
-			// check for  / separator
-			if (!result)
-			{
-				regExp = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
-				mat = regExp.matcher(strDate);
-				result = mat.matches();
-				if (result)
-				{
-					dtSep = Constants.DATE_SEPARATOR_SLASH;
-					datePattern = "yyyy" + dtSep + "mm" + dtSep + "dd";
-				}
-			}
-		}
-		catch (Exception exp)
-		{
-			logger.error("No pattern for date:" +strDate,exp);
-		}
-		/*if(dtSep.trim().length()>0)
-		    datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";*/
-		/*else
-		{
-		    try
-		    {
-		        Pattern re = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}", Pattern.CASE_INSENSITIVE);
-		        Matcher  mat =re.matcher(strDate); 
-		        result = mat.matches();
-		        
-		        if(result)
-		            dtSep  = Constants.DATE_SEPARATOR; 
-		        
-		        // check for  / separator
-		        if(!result)
-		        {
-		            re = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}", Pattern.CASE_INSENSITIVE);
-		            mat =re.matcher(strDate); 
-		            result = mat.matches();
-		            //System.out.println("is Valid Date Pattern : / : "+result);
-		            if(result)
-		                dtSep  = Constants.DATE_SEPARATOR_SLASH; 
-			}
-		}
-		catch(Exception exp)
-		{
-			logger.error("Utility.datePattern() : exp : " + exp);
-		}
-		if(dtSep.trim().length()>0)
-		        datePattern = "yyyy"+dtSep+"mm"+dtSep+"dd";
-		}*/
-		return datePattern;
+		String datePattern="";
+    	List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
+    	datePatternList.add(new SimpleDateFormat("MM-dd-yyyy"));
+    	datePatternList.add(new SimpleDateFormat("MM/dd/yyyy"));
+    	datePatternList.add(new SimpleDateFormat("yyyy-MM-dd"));
+    	datePatternList.add(new SimpleDateFormat("yyyy/MM/dd"));
+    	Date date=null;
+    	String matchingPattern=null;
+    	for(SimpleDateFormat dtPattern:datePatternList)
+    	{
+    		try
+    		{
+    			date=dtPattern.parse(strDate);
+    			if(date!=null)
+    			{
+    				matchingPattern=dtPattern.toPattern();
+    				if(strDate.equals(dtPattern.format(date)))
+    				{
+    					datePattern=matchingPattern;
+    				}
+    				break;
+    			}
+    		}
+    		catch(ParseException exception)
+    		{
+    			logger.info("not in formate:"+dtPattern.toString());
+    		}
+    	}
+        return datePattern;
 	}
 
 	public static String createAccessorMethodName(String attr, boolean isSetter)
@@ -632,7 +572,7 @@ public class Utility
 	 * @param selectedMenuID Menu that is clicked
 	 * @param currentMenuID Menu that is being checked
 	 * @param normalMenuClass style class for normal menu
-	 * @param selectedMenuClass style class for selected menu 
+	 * @param selectedMenuClass style class for selected menu
 	 * @param menuHoverClass  style class for hover effect
 	 * @return The String generated for the TD tag. Creates the selected menu or normal menu.
 	 */
