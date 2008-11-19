@@ -1,3 +1,4 @@
+
 package edu.wustl.common.util.global;
 
 import java.io.File;
@@ -35,70 +36,50 @@ public class XMLParserUtility
 	 * @param elementName -Element name for which value has to be return
 	 * @return String Role name
 	 */
-	public static String getElementValue(Element element,String elementName)
+	public static String getElementValue(Element element, String elementName)
 	{
 		String roleName;
 		NodeList roleNmElmntLst = element.getElementsByTagName(elementName);
 		Element roleNmElmnt = (Element) roleNmElmntLst.item(0);
 		NodeList roleNm = roleNmElmnt.getChildNodes();
-		roleName=((Node) roleNm.item(0)).getNodeValue();
+		roleName = ((Node) roleNm.item(0)).getNodeValue();
 		return roleName;
 	}
+
 	/**
 	 * This method returns the Document object for xml file.
 	 * @param fileName File name.
 	 * @return Document xml document.
+	 * @throws ParserConfigurationException throws this excaption if DocumentBuilderFactory not created.
+	 * @throws IOException throws this excaption if file not found.
+	 * @throws SAXException throws this excaption if not able to parse xml file.
 	 */
-	public static Document getDocument(String fileName)
+	public static Document getDocument(String fileName) throws ParserConfigurationException,
+			SAXException, IOException
 	{
-		Document doc=null;
-		try
-		{
-			File file = new File(fileName);
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-			doc=documentBuilder.parse(file);
-		}
-		catch (ParserConfigurationException exception)
-		{
-			logger.error("DocumentBuilder cannot be created",exception);
-		}
-		catch (SAXException exception)
-		{
-			logger.error("Can not parse the xml file:"+fileName,exception);
-		}
-		catch (IOException exception)
-		{
-			logger.error("Can not parse the xml file:"+fileName,exception);
-		}
-		return doc;
+		File file = new File(fileName);
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+		return documentBuilder.parse(file);
 	}
 
 	/**
 	 * This method returns the Document object for input stream.
 	 * @param inputStream InputStream of xml file .
 	 * @return Document object for input stream.
+	 * @throws ParserConfigurationException throws this excaption if DocumentBuilderFactory not created.
+	 * @throws IOException throws this excaption if file not found.
+	 * @throws SAXException throws this excaption if not able to parse xml file.
 	 */
 	public static Document getDocument(InputStream inputStream)
+			throws ParserConfigurationException, SAXException, IOException
 	{
-		Document doc=null;
+		Document document;
 		try
 		{
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-			doc=documentBuilder.parse(inputStream);
-		}
-		catch (ParserConfigurationException exception)
-		{
-			logger.error("DocumentBuilder cannot be created",exception);
-		}
-		catch (SAXException exception)
-		{
-			logger.error("Can not parse the xml Input Stream",exception);
-		}
-		catch (IOException exception)
-		{
-			logger.error("Can not parse the xml Input Stream",exception);
+			document = documentBuilder.parse(inputStream);
 		}
 		finally
 		{
@@ -108,10 +89,10 @@ public class XMLParserUtility
 			}
 			catch (IOException exception)
 			{
-				logger.error("Exception in TitliTableMapper ",exception);
+				logger.error("Not able to close input stream", exception);
 			}
 		}
-		return doc;
+		return document;
 	}
 
 }
