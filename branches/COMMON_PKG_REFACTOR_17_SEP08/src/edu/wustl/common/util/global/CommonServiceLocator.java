@@ -51,7 +51,7 @@ public final class CommonServiceLocator
 	private CommonServiceLocator()
 	{	Properties props=initProps();
 		setAppName(props);
-		setAppVersion(props);
+		//setAppVersion(props);
 		setAppHome(props);
 		setPropDirPath();
 	}

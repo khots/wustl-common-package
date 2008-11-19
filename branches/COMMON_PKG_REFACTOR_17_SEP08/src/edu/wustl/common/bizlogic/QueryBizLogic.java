@@ -29,11 +29,6 @@ import java.util.Vector;
 import oracle.sql.CLOB;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.IDAOFactory;
-import edu.wustl.common.dao.JDBCDAO;
-import edu.wustl.common.dao.QueryParams;
-import edu.wustl.common.dao.QueryWhereClauseImpl;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.query.Client;
 import edu.wustl.common.query.DataElement;
@@ -41,10 +36,16 @@ import edu.wustl.common.query.Operator;
 import edu.wustl.common.query.Query;
 import edu.wustl.common.query.Relation;
 import edu.wustl.common.query.RelationCondition;
+import edu.wustl.common.util.QueryParams;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.QueryWhereClauseImpl;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
+
 
 /**
  *<p>Title: </p>

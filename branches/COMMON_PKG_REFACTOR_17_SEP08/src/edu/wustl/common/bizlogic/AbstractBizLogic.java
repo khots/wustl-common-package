@@ -22,10 +22,7 @@ import titli.model.Titli;
 import titli.model.TitliException;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.DAO;
-import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.IConnectionManager;
-import edu.wustl.common.dao.IDAOFactory;
+
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
@@ -39,6 +36,10 @@ import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.DAO;
+import edu.wustl.dao.connectionmanager.IConnectionManager;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 
 /**
  * AbstractBizLogic is the base class of all the Biz Logic classes.
