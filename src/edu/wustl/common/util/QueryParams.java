@@ -1,4 +1,4 @@
-package edu.wustl.common.dao;
+package edu.wustl.common.util;
 
 import java.sql.Connection;
 import java.util.Map;

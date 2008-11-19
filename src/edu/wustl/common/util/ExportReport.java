@@ -21,9 +21,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import oracle.sql.CLOB;
-import edu.wustl.common.dao.DAO;
-import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.IDAOFactory;
+import edu.wustl.dao.DAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.SqlConstants;

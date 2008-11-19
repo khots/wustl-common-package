@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import edu.wustl.common.dao.DAO;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
@@ -23,6 +22,7 @@ import edu.wustl.common.util.dbmanager.ClassRelationshipData;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.DAO;
 
 /**
  * AuditManager is an algorithm to figure out the changes with respect to database due to 

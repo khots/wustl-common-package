@@ -13,12 +13,12 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.dao.IDAOFactory;
-import edu.wustl.common.dao.JDBCDAO;
+
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 
 /**
  * @author aarti_sharma

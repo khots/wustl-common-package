@@ -12,16 +12,15 @@ import java.util.Set;
 import java.util.Vector;
 
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.dao.DAOConfigFactory;
-import edu.wustl.common.dao.DAOFactory;
-import edu.wustl.common.dao.IDAOFactory;
-import edu.wustl.common.dao.JDBCDAO;
-import edu.wustl.common.dao.QueryParams;
 import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
+import edu.wustl.common.util.QueryParams;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 
 /**
  * <p>

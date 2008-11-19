@@ -24,12 +24,12 @@ import edu.wustl.common.cde.CDEImpl;
 import edu.wustl.common.cde.CDEManager;
 import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
-import edu.wustl.common.dao.DAO;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.CDETreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.tree.TreeNode;
 import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.DAO;
 
 /**
  * This is biz Logic class for the CDEs.
