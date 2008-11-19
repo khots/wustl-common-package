@@ -4,38 +4,26 @@
 
 package edu.wustl.common.util;
 
-import java.io.IOException;
 import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import edu.wustl.common.util.global.TextConstants;
-import edu.wustl.common.util.logger.Logger;
 
 import titli.controller.Name;
 import titli.model.TitliException;
+import edu.wustl.common.util.global.TextConstants;
+import edu.wustl.common.util.global.XMLParserUtility;
 
 /**
  * This class reads the mapping  xml file and gets the tree into the memory.
- * it's a sigleton
+ * it's a singleton
  *
  * @author Juber Patel
  *
  */
 public final class TitliTableMapper
 {
-
-	/**
-	 * logger Logger - Generic logger.
-	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliTableMapper.class);
 	/**
 	 * the only instance of this class.
 	 */
@@ -47,44 +35,15 @@ public final class TitliTableMapper
 	private Document document=null;
 
 	/**
-	 * the private constructor for singleton behaviour.
+	 * the private constructor for singleton behavior.
 	 * it reads the xml file and creates the Document.
 	 *
 	 */
 	private TitliTableMapper()
 	{
-		InputStream inputStream = this.getClass().getClassLoader().
-									getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
-		DocumentBuilder builder = null;
-			try
-			{
-
-				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				document = builder.parse(inputStream);
-			}
-			catch(IOException exception)
-			{
-				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
-			}
-			catch (ParserConfigurationException exception)
-			{
-				logger.error("Could not locate a JAXP parser:"+TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
-			}
-			catch (SAXException exception)
-			{
-				logger.error("cannot parse the file "+TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
-			}
-			finally
-			{
-				try
-				{
-					inputStream.close();
-				}
-				catch (IOException e)
-				{
-					logger.error("Exception in TitliTableMapper ",e);
-				}
-			}
+		InputStream inputStream = this.getClass()
+		.getClassLoader().getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
+		document=XMLParserUtility.getDocument(inputStream);
 	}
 
 	/**
