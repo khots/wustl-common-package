@@ -2,6 +2,7 @@ package edu.wustl.common.util.global;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,4 +73,45 @@ public class XMLParserUtility
 		}
 		return doc;
 	}
+
+	/**
+	 * This method returns the Document object for input stream.
+	 * @param inputStream InputStream of xml file .
+	 * @return Document object for input stream.
+	 */
+	public static Document getDocument(InputStream inputStream)
+	{
+		Document doc=null;
+		try
+		{
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+			doc=documentBuilder.parse(inputStream);
+		}
+		catch (ParserConfigurationException exception)
+		{
+			logger.error("DocumentBuilder cannot be created",exception);
+		}
+		catch (SAXException exception)
+		{
+			logger.error("Can not parse the xml Input Stream",exception);
+		}
+		catch (IOException exception)
+		{
+			logger.error("Can not parse the xml Input Stream",exception);
+		}
+		finally
+		{
+			try
+			{
+				inputStream.close();
+			}
+			catch (IOException exception)
+			{
+				logger.error("Exception in TitliTableMapper ",exception);
+			}
+		}
+		return doc;
+	}
+
 }
