@@ -7,7 +7,6 @@
 
 package edu.wustl.common.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,18 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.beans.NameValueBean;
@@ -185,7 +178,7 @@ public class Utility
 		{
 			object = method.getParameterTypes()[0].newInstance();
 		}
-		Object objArr[] = {object};
+		Object []objArr = {object};
 		//set the newInstance to the setter nethod of parent obj
 		method.invoke(obj, objArr);
 		return object;
@@ -249,7 +242,7 @@ public class Utility
 
 	/**
 	 * Changes the format of the string compatible to Grid Format,
-	 * removing escape characters and special characters from the string
+	 * removing escape characters and special characters from the string.
 	 * @param obj - Unformatted obj to be printed in Grid Format
 	 * @return obj - Foratted obj to print in Grid Format
 	 */
@@ -309,7 +302,7 @@ public class Utility
 
 	public static Object[] addElement(Object[] array, Object obj)
 	{
-		Object newObjectArr[] = new Object[array.length + 1];
+		Object []newObjectArr = new Object[array.length + 1];
 
 		if (array instanceof String[])
 		{
@@ -405,7 +398,7 @@ public class Utility
 	}
 
 	/**
-	 * Check whether the select Column start with "elements" & ends with ")" or not
+	 * Check whether the select Column start with "elements" & ends with ")" or not.
 	 * @param columnName The columnName
 	 * @return true if the select Column start with "elements" & ends with ")" or not
 	 */
@@ -416,7 +409,7 @@ public class Utility
 	}
 
 	/**
-	 * Returns name of FormBean specified in struts-config.xml for passed Object of FormBean
+	 * Returns name of FormBean specified in struts-config.xml for passed Object of FormBean.
 	 * @param obj - FormBean object 
 	 * @return String - name of FormBean object
 	 */
@@ -471,7 +464,7 @@ public class Utility
 	public static Long[] toLongArray(Collection<Long> collection)
 	{
 
-		Long obj[] = new Long[collection.size()];
+		Long []obj = new Long[collection.size()];
 
 		int index = 0;
 		Iterator<Long> iterator = collection.iterator();
@@ -525,7 +518,7 @@ public class Utility
 	}
 
 	/**
-	 * checking whether key's value is persisted or not
+	 * checking whether key's value is persisted or not.
 	 *
 	 */
 	public static boolean isPersistedValue(Map map, String key)
@@ -647,7 +640,7 @@ public class Utility
 	}
 
 	/**
-	 * Remove special characters and white space from a string.Added for Bug#5142 
+	 * Remove special characters and white space from a string. 
 	 * @param str string.
 	 * @return String after removing special characters.
 	 */
@@ -726,7 +719,7 @@ public class Utility
 	}
 
 	/**
-	 * Forms display name for attribute as className : attribute name
+	 * Forms display name for attribute as className : attribute name.
 	 * @param attribute AttributeInterface
 	 * @return columnDisplayName
 	 */
@@ -849,7 +842,7 @@ public class Utility
 	}
 
 	/**
-	 * returns Privilege List
+	 * returns Privilege List.
 	 * @param root
 	 * @param tagName
 	 * @return
@@ -870,7 +863,7 @@ public class Utility
 	}
 	
 	/**
-	 * For MSR changes
+	 * For MSR changes.
 	 */
 	public static List getAllPrivileges()
 	{
@@ -888,10 +881,10 @@ public class Utility
 		return allPrivileges;
 	}
 
-	
+
 
 	/**
-	 * This method returns records per page from session
+	 * This method returns records per page from session.
 	 * @param session HttpSession
 	 * @return no of records per page has been extracted.
 	 */
