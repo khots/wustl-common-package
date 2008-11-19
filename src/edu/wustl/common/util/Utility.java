@@ -44,6 +44,7 @@ import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Variables;
+import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -618,12 +619,12 @@ public class Utility
 	}
 
 	/**
-	 * This method is used in JSP pages to get the width of columns for the html fields. 
+	 * This method is used in JSP pages to get the width of columns for the html fields.
 	 * It acts as a wrapper for the HibernateMetaData getColumnWidth() method.
 	 * @param className Class name of the field
 	 * @param attributeName Attribute name of the field.
-	 * @return Length of the column. 
-	 * @see HibernateMetaData.getColumnWidth()  
+	 * @return Length of the column.
+	 * @see HibernateMetaData.getColumnWidth()
 	 */
 	public static String getColumnWidth(Class className, String attributeName)
 	{
@@ -657,9 +658,9 @@ public class Utility
 	}
 
 	/**
-	 * Returns the label for objects name. It compares ascii value of each char for lower or upper case and 
-	 * then forms a capitalized lebel. 
-	 * eg firstName is converted to First Name
+	 * Returns the label for objects name. It compares ascii value of each char for lower or upper case and
+	 * then forms a capitalized label.
+	 * e.g. firstName is converted to First Name
 	 * @param objectName name of the attribute
 	 * @return capitalized label
 	 */
@@ -680,7 +681,7 @@ public class Utility
 				}
 				else
 				{
-					attrLabel.append(' ').append(attrChar);
+					attrLabel.append(Constants.CONST_SPACE_CAHR).append(attrChar);
 				}
 				for (int k = i + 1; k < len; k++)
 				{
@@ -690,7 +691,8 @@ public class Utility
 					{
 						if (isPrevLetLCase)
 						{
-							attrLabel.append(' ').append(attrChar);
+							attrLabel.append(Constants.CONST_SPACE_CAHR)
+							.append(attrChar);
 							isPrevLetLCase = false;
 						}
 						else
@@ -815,52 +817,34 @@ public class Utility
 	}
 
 	/**
-	 * For MSR changes
+	 * For MSR changes.
 	 */
 
 	public static void initializePrivilegesMap()
 	{
 		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
 		Map<String, List<NameValueBean>> privGroupMap = Variables.privilegeGroupingMap;
-		try
+		InputStream inputXmlFile = Utility.class.getClassLoader().getResourceAsStream(
+			TextConstants.PERMSN_MAP_DET_FILE);
+		if (inputXmlFile != null)
 		{
-			InputStream inputXmlFile = Utility.class.getClassLoader().getResourceAsStream(
-				TextConstants.PERMSN_MAP_DET_FILE);
-			if (inputXmlFile != null)
+			Document doc = XMLParserUtility.getDocument(inputXmlFile);
+			Element root = doc.getDocumentElement();
+			NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
+			int length = nodeList.getLength();
+			for (int counter = 0; counter < length; counter++)
 			{
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder builder = factory.newDocumentBuilder();
-				Document doc = builder.parse(inputXmlFile);
-				Element root = null;
-				root = doc.getDocumentElement();
-				NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
-				int length = nodeList.getLength();
-				for (int counter = 0; counter < length; counter++)
-				{
-					Element element = (Element) (nodeList.item(counter));
-					String key = element.getAttribute("key");
-					String value = element.getAttribute("value");
+				Element element = (Element) (nodeList.item(counter));
+				String key = element.getAttribute("key");
+				String value = element.getAttribute("value");
 
-					privDetMap.put(key, value);
-				}
-				privGroupMap.put("SITE", getPriviligesList(root,"siteMapping"));
-				privGroupMap.put("CP", getPriviligesList(root,"collectionProtocolMapping"));
-				privGroupMap.put("SCIENTIST", getPriviligesList(root,"scientistMapping"));
-				privGroupMap.put("GLOBAL", getPriviligesList(root,"globalMapping"));
-
+				privDetMap.put(key, value);
 			}
-		}
-		catch (ParserConfigurationException excp)
-		{
-			logger.error("Not able to parse the file"+TextConstants.PERMSN_MAP_DET_FILE, excp);
-		}
-		catch (SAXException excp)
-		{
-			logger.error("Not able to parse the file"+TextConstants.PERMSN_MAP_DET_FILE, excp);
-		}
-		catch (IOException excp)
-		{
-			logger.error("Not able to parse the file"+TextConstants.PERMSN_MAP_DET_FILE, excp);
+			privGroupMap.put("SITE", getPriviligesList(root,"siteMapping"));
+			privGroupMap.put("CP", getPriviligesList(root,"collectionProtocolMapping"));
+			privGroupMap.put("SCIENTIST", getPriviligesList(root,"scientistMapping"));
+			privGroupMap.put("GLOBAL", getPriviligesList(root,"globalMapping"));
+
 		}
 	}
 
