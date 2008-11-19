@@ -14,7 +14,7 @@ import edu.wustl.common.util.global.Validator;
  * @author prashant_bandal
  *
  */
-public class TimeStampTimeValidator implements ValidatorDataTypeInterface
+public class TimeStampTimeValidator implements IDBDataType
 {
 
 	/* (non-Javadoc)

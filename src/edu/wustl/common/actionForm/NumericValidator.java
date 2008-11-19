@@ -14,7 +14,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author prashant_bandal
  *
  */
-public class NumericValidator implements ValidatorDataTypeInterface
+public class NumericValidator implements IDBDataType
 {
 
 	/**

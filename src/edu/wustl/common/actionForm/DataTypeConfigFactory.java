@@ -22,67 +22,65 @@ import org.xml.sax.SAXException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
+ * 
  * @author prashant_bandal
  *
  */
-public final class ControlConfigurationsFactory
+public final class DataTypeConfigFactory
 {
 
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger
-			.getLogger(ControlConfigurationsFactory.class);
+	private final static org.apache.log4j.Logger logger = Logger.getLogger(DataTypeConfigFactory.class);
 
 	/**
 	 * Specifies ControlConfigurationsFactory instance.
 	 */
-	private static ControlConfigurationsFactory instance = new ControlConfigurationsFactory();
+	private static DataTypeConfigFactory dataTypeConfig = new DataTypeConfigFactory();
 
 	/**
 	 * Specifies dataType Configuration Map.
 	 */
-	private static Map<String, DataTypeConfigurationObject> dataTypeConfigurationMap;
+	private Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
 
 	/**
 	 * Specifies Document object.
 	 */
-	private static Document dom;
+	private Document dom;
 
 	/**
 	 * ControlConfigurationsFactory constructor.
 	 */
-	private ControlConfigurationsFactory()
+	private DataTypeConfigFactory()
 	{
-		dataTypeConfigurationMap = new HashMap<String, DataTypeConfigurationObject>();
+		dataTypeConfigurationMap = new HashMap<String, DataTypeConfigObject>();
 
 		parseXML("DataTypeConfigurations.xml");
+
 	}
 
 	/**
 	 * This method gets ControlConfigurationsFactory Instance.
 	 * @return ControlConfigurationsFactory instance.
 	 */
-	public static ControlConfigurationsFactory getInstance()
+	public static DataTypeConfigFactory getInstance()
 	{
-		return instance;
+		return dataTypeConfig;
 	}
 
 	/**
 	 * This method parse xml File.
 	 * @param xmlFile xml File
 	 */
-	private static void parseXML(String xmlFile)
+	private void parseXML(String xmlFile)
 	{
-		//get the factory
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
 		try
 		{
-			//Using factory get an instance of document builder
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
 
-			//parse using builder to get DOM representation of the XML file
 			dom = documentBuilder.parse(xmlFile);
 			parseDocument();
 		}
@@ -103,7 +101,7 @@ public final class ControlConfigurationsFactory
 	/**
 	 * This method parse document.
 	 */
-	private static void parseDocument()
+	private void parseDocument()
 	{
 		//get the root elememt
 		Element root = dom.getDocumentElement();
@@ -124,16 +122,17 @@ public final class ControlConfigurationsFactory
 	}
 
 	/**
+	 * 
 	 * @param validationDataTypeNode validation Data Type Node.
 	 * @throws DOMException
 	 */
-	private static void insertInToMap(Node validationDataTypeNode)
+	private void insertInToMap(Node validationDataTypeNode)
 	{
 		Node dataTypeNameNode;
 		Node dataTypeClassNode;
 		NamedNodeMap dataTypeAttributes;
 		String dataTypeName = null;
-		DataTypeConfigurationObject dataTypeConfigurationObject = new DataTypeConfigurationObject();
+		DataTypeConfigObject dataTypeConfigurationObject = new DataTypeConfigObject();
 		dataTypeAttributes = validationDataTypeNode.getAttributes();
 		if (dataTypeAttributes != null)
 		{
@@ -154,22 +153,20 @@ public final class ControlConfigurationsFactory
 	 * @param dataType data Type
 	 * @return dataTypeInterface
 	 */
-	public ValidatorDataTypeInterface getValidatorDataType(String dataType)
+	public IDBDataType getValidatorDataType(String dataType)
 	{
-		DataTypeConfigurationObject dataTypeConfiguration =
-			(DataTypeConfigurationObject) dataTypeConfigurationMap
-				.get(dataType);
-		ValidatorDataTypeInterface dataTypeInterface = null;
-		Class dataTypeClass;
 		try
 		{
-			dataTypeClass = Class.forName(dataTypeConfiguration.getDataTypeClassName());
-			dataTypeInterface = (ValidatorDataTypeInterface) dataTypeClass.newInstance();
+
+			DataTypeConfigObject dataTypeConfig = dataTypeConfigurationMap.get(dataType);
+			String className = dataTypeConfig.getClassName();
+			Class<IDBDataType> dataTypeClass = (Class<IDBDataType>)Class.forName(className);
+			return dataTypeClass.newInstance();
 		}
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
 		}
-		return dataTypeInterface;
+		
 	}
 }

@@ -8,7 +8,7 @@ package edu.wustl.common.actionForm;
  * @author prashant_bandal
  *
  */
-public class DataTypeConfigurationObject
+public class DataTypeConfigObject
 {
 
 	/**
@@ -48,7 +48,7 @@ public class DataTypeConfigurationObject
 	/**
 	 * @return the dataTypeClassName
 	 */
-	public String getDataTypeClassName()
+	public String getClassName()
 	{
 		return dataTypeClassName;
 	}
