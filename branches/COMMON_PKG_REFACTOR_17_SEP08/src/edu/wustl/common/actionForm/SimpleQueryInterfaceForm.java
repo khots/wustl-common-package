@@ -10,8 +10,10 @@
 
 package edu.wustl.common.actionForm;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -89,7 +91,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	/**
 	 * Specifies columnNames neccessary for Configuration of Simple Search.
 	 */
-	private String[] columnNames;
+	private List<String> columnNameList;
 
 	/**
 	 * @return Returns the mutable.
@@ -353,23 +355,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		String dataElement = "SimpleConditionsNode:#_Condition_DataElement_field";
 		String dataElementKey = replaceAll(dataElement, "#", Integer.toString(integerValue));
 		String selectedField = (String) getValue(dataElementKey);
-		StringTokenizer strTok = new StringTokenizer(selectedField, ".");
-		int tokenCnt = 1;
-		String dataType = "";
-		while (strTok.hasMoreTokens())
-		{
-			if (tokenCnt == INDEX_FOR_DATA_TYPE)
-			{
-				dataType = strTok.nextToken();
-			}
-			else
-			{
-				strTok.nextToken();
-			}
-			tokenCnt++;
-		}
-		//Bug# 1698 :
-		//Proper error message should be shown for negative integers.
+		String[] selectedFieldsArray = selectedField.split(".");
+
+		String dataType = selectedFieldsArray[INDEX_FOR_DATA_TYPE];
 		conditionError = validateDataType(dataType, enteredValue, errors);
 		return conditionError;
 	}
@@ -409,9 +397,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	private boolean validateDataType(String dataType, String enteredValue, ActionErrors errors)
 	{
-		ValidatorDataTypeInterface validatorDataType = ControlConfigurationsFactory.getInstance()
+		IDBDataType dbDataType = DataTypeConfigFactory.getInstance()
 				.getValidatorDataType(dataType);
-		return validatorDataType.validate(enteredValue, errors);
+		return dbDataType.validate(enteredValue, errors);
 	}
 
 	/**
@@ -435,7 +423,8 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public String[] getColumnNames()
 	{
-		return columnNames;
+		String[] columnNames = new String[columnNameList.size()];
+		return columnNameList.toArray(columnNames);
 	}
 
 	/**
@@ -443,7 +432,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public void setColumnNames(String[] columnNames)
 	{
-		this.columnNames = columnNames;
+		columnNameList = Arrays.asList(columnNames);
 	}
 
 	/**

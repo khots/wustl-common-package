@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionErrors;
  * @author prashant_bandal
  *
  */
-public interface ValidatorDataTypeInterface
+public interface IDBDataType
 {
 	/**
 	 * This method validate various data types.

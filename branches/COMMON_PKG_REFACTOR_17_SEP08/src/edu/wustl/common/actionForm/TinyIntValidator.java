@@ -13,7 +13,7 @@ import edu.wustl.common.util.global.Constants;
  * @author prashant_bandal
  *
  */
-public class TinyIntValidator implements ValidatorDataTypeInterface
+public class TinyIntValidator implements IDBDataType
 {
 
 	/* (non-Javadoc)

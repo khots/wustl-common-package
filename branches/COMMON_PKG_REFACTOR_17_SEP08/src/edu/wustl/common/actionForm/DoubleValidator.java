@@ -13,7 +13,7 @@ import edu.wustl.common.util.global.Validator;
  * @author prashant_bandal
  *
  */
-public class DoubleValidator implements ValidatorDataTypeInterface
+public class DoubleValidator implements IDBDataType
 {
 
 	/* (non-Javadoc)
