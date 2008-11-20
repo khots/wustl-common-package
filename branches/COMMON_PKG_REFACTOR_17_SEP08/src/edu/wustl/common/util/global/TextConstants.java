@@ -39,4 +39,7 @@ public class TextConstants
 	 * XML file name to initialize Privileges Map.
 	 */
 	public static final String PERMSN_MAP_DET_FILE="PermissionMapDetails.xml";
+
+	public static final String ERROR_KEY_FOR_TABLE = "simpleQuery.object.required";
+	public static final String ERROR_KEY_FOR_FIELD = "simpleQuery.attribute.required";
 }
