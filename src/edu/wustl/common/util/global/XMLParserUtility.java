@@ -50,9 +50,9 @@ public class XMLParserUtility
 	 * This method returns the Document object for xml file.
 	 * @param fileName File name.
 	 * @return Document xml document.
-	 * @throws ParserConfigurationException throws this excaption if DocumentBuilderFactory not created.
-	 * @throws IOException throws this excaption if file not found.
-	 * @throws SAXException throws this excaption if not able to parse xml file.
+	 * @throws ParserConfigurationException throws this exception if DocumentBuilderFactory not created.
+	 * @throws IOException throws this exception if file not found.
+	 * @throws SAXException throws this exception if not able to parse xml file.
 	 */
 	public static Document getDocument(String fileName) throws ParserConfigurationException,
 			SAXException, IOException
@@ -67,9 +67,9 @@ public class XMLParserUtility
 	 * This method returns the Document object for input stream.
 	 * @param inputStream InputStream of xml file .
 	 * @return Document object for input stream.
-	 * @throws ParserConfigurationException throws this excaption if DocumentBuilderFactory not created.
-	 * @throws IOException throws this excaption if file not found.
-	 * @throws SAXException throws this excaption if not able to parse xml file.
+	 * @throws ParserConfigurationException throws this exception if DocumentBuilderFactory not created.
+	 * @throws IOException throws this exception if file not found.
+	 * @throws SAXException throws this exception if not able to parse xml file.
 	 */
 	public static Document getDocument(InputStream inputStream)
 			throws ParserConfigurationException, SAXException, IOException
