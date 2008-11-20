@@ -76,12 +76,8 @@ public class AuditManager
 	 */
 	private boolean isVariable(Object obj)
 	{
-		boolean objectType = false;
-		if (obj instanceof Number || obj instanceof String || obj instanceof Boolean
-				|| obj instanceof Character || obj instanceof Date)
-		{
-			objectType = true;
-		}
+		boolean objectType = obj instanceof Number || obj instanceof String || obj instanceof Boolean
+				|| obj instanceof Character || obj instanceof Date;
 		return objectType;
 	}
 
