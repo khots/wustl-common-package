@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,8 +24,12 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.query.Operator;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Validator;
 
 /**
@@ -86,12 +89,12 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	/**
 	 * Specifies selected Column Names neccessary for Configuration of Simple Search.
 	 */
-	private String[] selectedColumnNames;
+	private List<String> selectedColumnNames;
 
 	/**
 	 * Specifies columnNames neccessary for Configuration of Simple Search.
 	 */
-	private List<String> columnNameList;
+	private List<String> columnNames;
 
 	/**
 	 * @return Returns the mutable.
@@ -246,15 +249,16 @@ public class SimpleQueryInterfaceForm extends ActionForm
 		else
 		{
 			boolean tableError = false, attrError = false, conditionError = false;
-			String errorKeyForTable = "simpleQuery.object.required";
-			String errorKeyForField = "simpleQuery.attribute.required";
+
 			for (int i = 1; i <= Integer.parseInt(counter); i++)
 			{
 				String condDataElement = i + "_Condition_DataElement_table";
-				tableError = isError(errors, tableError, errorKeyForTable, condDataElement);
+				tableError = isError(errors, tableError, TextConstants.ERROR_KEY_FOR_TABLE,
+						condDataElement);
 
 				condDataElement = i + "_Condition_DataElement_field";
-				attrError = isError(errors, attrError, errorKeyForField, condDataElement);
+				attrError = isError(errors, attrError, TextConstants.ERROR_KEY_FOR_FIELD,
+						condDataElement);
 
 				if (!conditionError)
 				{
@@ -322,8 +326,10 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 * @param errors errors.
 	 * @param integerValue integer Value.
 	 * @return conditionError.
+	 * @throws ParseException ParseException
 	 */
 	private boolean validateOperatorValue(ActionErrors errors, int integerValue)
+			throws ParseException
 	{
 		boolean conditionError = false;
 		Validator validator = new Validator();
@@ -345,8 +351,9 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 * @param errors ActionErrors object.
 	 * @param integerValue integer Value for key generation.
 	 * @return conditionError
+	 * @throws ParseException ParseException
 	 */
-	private boolean validateCondition(ActionErrors errors, int integerValue)
+	private boolean validateCondition(ActionErrors errors, int integerValue) throws ParseException
 	{
 		boolean conditionError;
 		String keyString = "SimpleConditionsNode:#_Condition_value";
@@ -394,11 +401,12 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 * @param enteredValue entered Value.
 	 * @param errors ActionErrors.
 	 * @return returns true if valid data type else false.
+	 * @throws ParseException Parse Exception.
 	 */
 	private boolean validateDataType(String dataType, String enteredValue, ActionErrors errors)
+			throws ParseException
 	{
-		IDBDataType dbDataType = DataTypeConfigFactory.getInstance()
-				.getValidatorDataType(dataType);
+		IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getValidatorDataType(dataType);
 		return dbDataType.validate(enteredValue, errors);
 	}
 
@@ -407,7 +415,8 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public String[] getSelectedColumnNames()
 	{
-		return selectedColumnNames;
+		String[] selectedColNames = new String[selectedColumnNames.size()];
+		return selectedColumnNames.toArray(selectedColNames);
 	}
 
 	/**
@@ -415,7 +424,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public void setSelectedColumnNames(String[] selectedColNames)
 	{
-		this.selectedColumnNames = selectedColNames;
+		selectedColumnNames = Arrays.asList(selectedColNames);
 	}
 
 	/**
@@ -423,8 +432,8 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public String[] getColumnNames()
 	{
-		String[] columnNames = new String[columnNameList.size()];
-		return columnNameList.toArray(columnNames);
+		String[] colNames = new String[columnNames.size()];
+		return columnNames.toArray(colNames);
 	}
 
 	/**
@@ -432,7 +441,7 @@ public class SimpleQueryInterfaceForm extends ActionForm
 	 */
 	public void setColumnNames(String[] columnNames)
 	{
-		columnNameList = Arrays.asList(columnNames);
+		this.columnNames = Arrays.asList(columnNames);
 	}
 
 	/**

@@ -4,25 +4,23 @@
 
 package edu.wustl.common.actionForm;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * 
+ * This class configure factory for data types.
  * @author prashant_bandal
  *
  */
@@ -32,7 +30,7 @@ public final class DataTypeConfigFactory
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private final static org.apache.log4j.Logger logger = Logger.getLogger(DataTypeConfigFactory.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DataTypeConfigFactory.class);
 
 	/**
 	 * Specifies ControlConfigurationsFactory instance.
@@ -42,12 +40,17 @@ public final class DataTypeConfigFactory
 	/**
 	 * Specifies dataType Configuration Map.
 	 */
-	private Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
+	private final Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
 
 	/**
 	 * Specifies Document object.
 	 */
 	private Document dom;
+
+	/**
+	 * Specifies success.
+	 */
+	private static boolean success = true;
 
 	/**
 	 * ControlConfigurationsFactory constructor.
@@ -56,45 +59,52 @@ public final class DataTypeConfigFactory
 	{
 		dataTypeConfigurationMap = new HashMap<String, DataTypeConfigObject>();
 
-		parseXML("DataTypeConfigurations.xml");
+		try
+		{
+			parseXML("DataTypeConfigurations.xml");
+		}
+		catch (ParseException exception)
+		{
+			success = false;
+		}
 
 	}
 
 	/**
 	 * This method gets ControlConfigurationsFactory Instance.
 	 * @return ControlConfigurationsFactory instance.
+	 * @throws ParseException Parse Exception.
 	 */
-	public static DataTypeConfigFactory getInstance()
+	public static DataTypeConfigFactory getInstance() throws ParseException
 	{
-		return dataTypeConfig;
+		if (success)
+		{
+			return dataTypeConfig;
+		}
+		else
+		{
+			throw new ParseException(null,null,"");
+		}
 	}
 
 	/**
 	 * This method parse xml File.
 	 * @param xmlFile xml File
+	 * @throws ParseException Parse Exception.
 	 */
-	private void parseXML(String xmlFile)
+	private void parseXML(String xmlFile) throws ParseException
 	{
 
 		try
 		{
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-
-			dom = documentBuilder.parse(xmlFile);
+			dom = XMLParserUtility.getDocument(xmlFile);
 			parseDocument();
 		}
-		catch (ParserConfigurationException pce)
-		{
-			logger.error(pce.getMessage(), pce);
-		}
-		catch (SAXException se)
-		{
-			logger.error(se.getMessage(), se);
-		}
-		catch (IOException ioe)
+		catch (Exception ioe)
 		{
 			logger.error(ioe.getMessage(), ioe);
+			ErrorKey errorKey = null;
+			throw new ParseException(errorKey,ioe,"");
 		}
 	}
 
@@ -122,7 +132,7 @@ public final class DataTypeConfigFactory
 	}
 
 	/**
-	 * 
+	This method inserts dataType Name and DataTypeConfigObject into Map.
 	 * @param validationDataTypeNode validation Data Type Node.
 	 * @throws DOMException
 	 */
@@ -152,21 +162,22 @@ public final class DataTypeConfigFactory
 	 * This method gets Validator DataType object.
 	 * @param dataType data Type
 	 * @return dataTypeInterface
+	 * @throws ParseException Parse Exception
 	 */
-	public IDBDataType getValidatorDataType(String dataType)
+	public IDBDataType getValidatorDataType(String dataType) throws ParseException
 	{
 		try
 		{
-
 			DataTypeConfigObject dataTypeConfig = dataTypeConfigurationMap.get(dataType);
 			String className = dataTypeConfig.getClassName();
-			Class<IDBDataType> dataTypeClass = (Class<IDBDataType>)Class.forName(className);
+			Class<IDBDataType> dataTypeClass = (Class<IDBDataType>) Class.forName(className);
 			return dataTypeClass.newInstance();
 		}
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
+			ErrorKey errorKey = null;
+			throw new ParseException(errorKey,exception,"");
 		}
-		
 	}
 }

@@ -18,5 +18,8 @@ import java.io.Serializable;
 public interface Auditable extends Serializable
 {
 
-	public abstract Long getId();
+	/**
+	 * @return id.
+	 */
+	Long getId();
 }
