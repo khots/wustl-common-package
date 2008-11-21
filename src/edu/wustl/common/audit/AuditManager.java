@@ -76,8 +76,8 @@ public class AuditManager
 	 */
 	private boolean isVariable(Object obj)
 	{
-		boolean objectType = obj instanceof Number || obj instanceof String || obj instanceof Boolean
-				|| obj instanceof Character || obj instanceof Date;
+		boolean objectType = obj instanceof Number || obj instanceof String
+				|| obj instanceof Boolean || obj instanceof Character || obj instanceof Date;
 		return objectType;
 	}
 
@@ -139,8 +139,8 @@ public class AuditManager
 		//check the class for both objects are equals or not.
 		if (previousObjClass.equals(currentObjClass))
 		{
-			Set auditEventDetailsCollection = processMethods(currentObj, previousObj,
-					currentObjClass);
+			Set<AuditEventDetails> auditEventDetailsCollection = processMethods(currentObj,
+					previousObj, currentObjClass);
 
 			if (!auditEventDetailsCollection.isEmpty())
 			{
@@ -158,12 +158,12 @@ public class AuditManager
 	 * @return audit Event Details Collection.
 	 * @throws Exception Exception
 	 */
-	private Set processMethods(Auditable currentObj, Auditable previousObj, Class currentObjClass)
-			throws Exception
+	private Set<AuditEventDetails> processMethods(Auditable currentObj, Auditable previousObj,
+			Class currentObjClass) throws Exception
 	{
 		//Retrieve all the methods defined in the class.
 		Method[] methods = currentObjClass.getMethods();
-		Set auditEventDetailsCollection = new HashSet();
+		Set<AuditEventDetails> auditEventDetailsCollection = new HashSet<AuditEventDetails>();
 		for (int i = 0; i < methods.length; i++)
 		{
 			//filter only getter methods.
@@ -326,18 +326,20 @@ public class AuditManager
 		try
 		{
 			dao.insert(auditEvent, null, false, false);
-			Iterator auditLogIterator = auditEvent.getAuditEventLogCollection().iterator();
+			Iterator<AuditEventLog> auditLogIterator = auditEvent.getAuditEventLogCollection()
+					.iterator();
 			while (auditLogIterator.hasNext())
 			{
 				AuditEventLog auditEventLog = (AuditEventLog) auditLogIterator.next();
 				auditEventLog.setAuditEvent(auditEvent);
 				dao.insert(auditEventLog, null, false, false);
 
-				Iterator auditEventDetailsIterator = auditEventLog.getAuditEventDetailsCollcetion()
-						.iterator();
+				Iterator<AuditEventDetails> auditEventDetailsIterator = auditEventLog
+						.getAuditEventDetailsCollcetion().iterator();
 				while (auditEventDetailsIterator.hasNext())
 				{
-					AuditEventDetails auditEventDetails = (AuditEventDetails) auditEventDetailsIterator
+					AuditEventDetails auditEventDetails =
+						(AuditEventDetails) auditEventDetailsIterator
 							.next();
 					auditEventDetails.setAuditEventLog(auditEventLog);
 					dao.insert(auditEventDetails, null, false, false);
@@ -356,7 +358,7 @@ public class AuditManager
 	 * This method adds Audit Event Logs.
 	 * @param auditEventLogsCollection audit Event Logs Collection.
 	 */
-	public void addAuditEventLogs(Collection auditEventLogsCollection)
+	public void addAuditEventLogs(Collection<AuditEventLog> auditEventLogsCollection)
 	{
 		auditEvent.getAuditEventLogCollection().addAll(auditEventLogsCollection);
 	}
