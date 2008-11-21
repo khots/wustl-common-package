@@ -7,7 +7,6 @@ package edu.wustl.common.actionForm;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
