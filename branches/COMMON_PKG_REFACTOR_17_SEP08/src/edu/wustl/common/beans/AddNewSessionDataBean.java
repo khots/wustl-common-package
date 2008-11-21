@@ -19,8 +19,19 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 public class AddNewSessionDataBean
 {
 
+	/**
+	 * Specifies AbstractActionForm object.
+	 */
 	private AbstractActionForm abstractActionForm;
+
+	/**
+	 * Specifies forward To.
+	 */
 	private String forwardTo;
+
+	/**
+	 * Specifies add New For.
+	 */
 	private String addNewFor;
 
 	/**
@@ -48,7 +59,7 @@ public class AddNewSessionDataBean
 	}
 
 	/**
-	 * @param redirectToPath The redirectToPath to set
+	 * @param forwardTo The forwardTo to set.
 	 */
 	public void setForwardTo(String forwardTo)
 	{
