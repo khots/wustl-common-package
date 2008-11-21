@@ -530,4 +530,5 @@ public class Constants
 	public static final int CONST_Z=90;
 	public static final int CONST_SPACE=32;
 	public static final int CONST_UNDERSCORE=95;
+	public static final char CONST_SPACE_CAHR=' ';
 }
