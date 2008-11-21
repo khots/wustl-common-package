@@ -255,13 +255,12 @@ public class AuditManager
 	 */
 	private AuditEventDetails compareValue(Object prevVal, Object currVal)
 	{
-		boolean flag = false;
-		AuditEventDetails auditEventDetails = null;
+		AuditEventDetails auditEventDetails;
 		if (prevVal == null && currVal == null)
 		{
-			flag = true;
+			auditEventDetails = null;
 		}
-		if (!flag)
+		else
 		{
 			auditEventDetails = compareValLogic(prevVal, currVal);
 		}
@@ -277,12 +276,12 @@ public class AuditManager
 	 */
 	private AuditEventDetails compareValLogic(Object prevVal, Object currVal)
 	{
-		AuditEventDetails auditEventDetails = null;
+		AuditEventDetails auditEventDetails;
 		if (prevVal == null || currVal == null)
 		{
 			auditEventDetails = compareLogic(prevVal, currVal);
 		}
-		else if (!prevVal.equals(currVal))
+		else
 		{
 			auditEventDetails = new AuditEventDetails();
 			auditEventDetails.setPreviousValue(prevVal.toString());
@@ -300,18 +299,14 @@ public class AuditManager
 	 */
 	private AuditEventDetails compareLogic(Object prevVal, Object currVal)
 	{
-		AuditEventDetails auditEventDetails = null;
-		if (prevVal == null && currVal != null)
+		AuditEventDetails auditEventDetails = new AuditEventDetails();
+		if (prevVal == null)
 		{
-			auditEventDetails = new AuditEventDetails();
-			auditEventDetails.setPreviousValue(null);
 			auditEventDetails.setCurrentValue(currVal.toString());
 		}
-		else if (prevVal != null && currVal == null)
+		else
 		{
-			auditEventDetails = new AuditEventDetails();
 			auditEventDetails.setPreviousValue(prevVal.toString());
-			auditEventDetails.setCurrentValue(null);
 		}
 		return auditEventDetails;
 	}
