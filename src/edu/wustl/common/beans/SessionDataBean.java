@@ -21,24 +21,62 @@ package edu.wustl.common.beans;
 public class SessionDataBean
 {
 
+	/**
+	 * Specifies first Name.
+	 */
 	private String firstName;
+
+	/**
+	 * Specifies last Name.
+	 */
 	private String lastName;
 
+	/**
+	 * Specifies csm User Id.
+	 */
 	private String csmUserId;
-	private String userName;
-	private String ipAddress;
-	private Long userId = null;
-	private boolean securityRequired =Boolean.FALSE;
-	private boolean isAdmin = false;
 
+	/**
+	 * Specifies user Name.
+	 */
+	private String userName;
+
+	/**
+	 * Specifies ip Address.
+	 */
+	private String ipAddress;
+
+	/**
+	 * Specifies user Id.
+	 */
+	private Long userId = null;
+
+	/**
+	 * Specifies security Required.
+	 */
+	private boolean securityRequired = Boolean.FALSE;
+
+	/**
+	 * Specifies is Admin.
+	 */
+	private boolean isAdminUser = false;
+
+	/**
+	 * This method returns isAdminUser.
+	 * @return isAdminUser
+	 */
 	public boolean isAdmin()
 	{
-		return isAdmin;
+		return isAdminUser;
 	}
 
+	/**
+	 * This method sets Admin.
+	 * @param isAdmin is Admin.
+	 */
 	public void setAdmin(boolean isAdmin)
 	{
-		this.isAdmin = isAdmin;
+		this.isAdminUser = isAdmin;
 	}
 
 	/**
@@ -105,29 +143,45 @@ public class SessionDataBean
 		this.userId = userId;
 	}
 
+	/**
+	 * This method gets First Name.
+	 * @return the First Name.
+	 */
 	public String getFirstName()
 	{
 		return firstName;
 	}
 
+	/**
+	 * This method sets the First Name.
+	 * @param firstName the First Name.
+	 */
 	public void setFirstName(String firstName)
 	{
 		this.firstName = firstName;
 	}
 
+	/**
+	 * This method gets Last Name.
+	 * @return the last name.
+	 */
 	public String getLastName()
 	{
 		return lastName;
 	}
 
+	/**
+	 * This method sets the Last Name.
+	 * @param lastName the Last Name.
+	 */
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
 	}
 
 	/**
-	 * This method returns boolean value for securityRequired
-	 * @return
+	 * This method returns boolean value for securityRequired.
+	 * @return security Required.
 	 */
 	public boolean isSecurityRequired()
 	{
@@ -135,8 +189,8 @@ public class SessionDataBean
 	}
 
 	/**
-	 * This method sets the boolen value of securityRequired
-	 * @param securityRequired
+	 * This method sets the boolen value of securityRequired.
+	 * @param securityRequired security Required.
 	 */
 	public void setSecurityRequired(boolean securityRequired)
 	{
