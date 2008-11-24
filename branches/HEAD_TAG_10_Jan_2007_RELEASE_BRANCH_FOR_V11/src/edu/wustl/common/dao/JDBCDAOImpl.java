@@ -685,6 +685,30 @@ public class JDBCDAOImpl implements JDBCDAO
 			query = new StringBuffer("DROP TABLE IF EXISTS " + tableName);
 			executeUpdate(query.toString());
 		}
+		else if (Variables.databaseName.equals(Constants.DB2_DATABASE))
+        {
+              Logger.out.debug("DB2*****************************");
+              query = new StringBuffer("select 1 from SYSCAT.TABLES where upper(tabname)=" + "upper('"+ tableName + "')");
+              try
+              {
+                    Statement statement = connection.createStatement();
+                    ResultSet rs = statement.executeQuery(query.toString());
+                    boolean isTableExists = rs.next();
+                    Logger.out.debug("DB2****" + query.toString() + isTableExists);
+                    if (isTableExists)
+                    {
+                          Logger.out.debug("Drop Table");
+                          executeUpdate("DROP TABLE " + tableName);
+                    }
+                    rs.close();
+                    statement.close();
+              }
+              catch (Exception sqlExp)
+  			{
+  				Logger.out.error(sqlExp.getMessage(), sqlExp);
+  				throw new DAOException(Constants.GENERIC_DATABASE_ERROR, sqlExp);
+  			}
+        }
 		else
 		{
 			Logger.out.debug("ORACLE*****************************");
