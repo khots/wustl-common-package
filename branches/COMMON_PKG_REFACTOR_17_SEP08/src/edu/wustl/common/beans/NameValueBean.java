@@ -12,6 +12,8 @@ package edu.wustl.common.beans;
 
 import java.io.Serializable;
 
+import edu.wustl.common.util.logger.Logger;
+
 /**
  *<p>Title: </p>
  *<p>Description:  </p>
@@ -21,49 +23,61 @@ import java.io.Serializable;
  *@version 1.0
  */
 
-public class NameValueBean implements Comparable, Serializable
+public class NameValueBean implements Comparable<NameValueBean>, Serializable
 {
 
 	/**
-	 * 
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(NameValueBean.class);
+	/**
+	 * Specifies serial Version UID.
 	 */
 	private static final long serialVersionUID = 861314614541823827L;
-	private Object name;
-	private Object value;
-	/*
-	 * we are using this field to improve performance
-	 */
-	private String nameLowerCase;
 
-	//Relevence counter field is for sorting according to relevance
+	/**
+	 * Specifies name Object.
+	 */
+	private Object name;
+
+	/**
+	 * Specifies value Object.
+	 */
+	private Object value;
+
+	/**
+	 * Relevence counter field is for sorting according to relevance.
+	 */
 	private Long relevanceCounter;
 
+	/**
+	 * Specifies Constructor.
+	 */
 	public NameValueBean()
 	{
 
 	}
 
+	/**
+	 * Specifies parameterised Constructor.
+	 * @param name name
+	 * @param value value
+	 */
 	public NameValueBean(Object name, Object value)
 	{
 		this.name = name;
-
-		if (this.name instanceof String)
-		{
-			this.nameLowerCase = ((String) this.name).toLowerCase();
-		}
-
 		this.value = value;
 	}
 
+	/**
+	 * Specifies parameterised Constructor.
+	 * @param name name
+	 * @param value value
+	 * @param relevanceCounter relevance Counter
+	 */
 	public NameValueBean(Object name, Object value, Long relevanceCounter)
 	{
 		this.name = name;
-
-		if (this.name instanceof String)
-		{
-			this.nameLowerCase = ((String) this.name).toLowerCase();
-		}
-
 		this.value = value;
 		this.relevanceCounter = relevanceCounter;
 	}
@@ -77,17 +91,12 @@ public class NameValueBean implements Comparable, Serializable
 	}
 
 	/**
+	 * This method sets the name.
 	 * @param name The name to set.
 	 */
 	public void setName(Object name)
 	{
 		this.name = name;
-
-		if (this.name instanceof String)
-		{
-			this.nameLowerCase = ((String) this.name).toLowerCase();
-		}
-
 	}
 
 	/**
@@ -125,97 +134,84 @@ public class NameValueBean implements Comparable, Serializable
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	/**
+	 * This method convert to string.
+	 * @return String.
+	 */
 	public String toString()
 	{
 		return new String("name:" + name.toString() + " value:" + value.toString());
 	}
 
-	public int compareTo(Object obj)
+	/**
+	 * This method compare Object.
+	 * @param nameValueBean nameValueBean Object.
+	 * @return int.
+	 */
+	public int compareTo(NameValueBean nameValueBean)
 	{
 
-		if (obj instanceof NameValueBean)
-		{
-			NameValueBean nameValueBean = (NameValueBean) obj;
-			if (nameValueBean.name instanceof String && name instanceof String)
-			{
-				return nameLowerCase.compareTo(nameValueBean.nameLowerCase);
-			}
-			else
-			{
-				return compareObject(obj);
-			}
-		}
-		return 0;
+		Comparable comparable;
+		comparable = (Comparable) name;
+		return compareObject(comparable, nameValueBean);
 	}
 
-	private int compareObject(Object tmpobj)
+	/**
+	 * This method compare Object.
+	 * @param comparable comparable
+	 * @param nameValueBean nameValueBean Object
+	 * @return int
+	 */
+	private int compareObject(Comparable comparable, NameValueBean nameValueBean)
 	{
-		NameValueBean obj = (NameValueBean) tmpobj;
-		//Logger.out.debug(name.getClass()+" : " +  obj.name.getClass() );
-
-		if (name.getClass() == obj.name.getClass())
+		int cmpResult;
+		try
 		{
-
-			if (name.getClass().getName().equalsIgnoreCase("java.lang.Long"))
-			{
-				Long numOne = (Long) name;
-				Long numTwo = (Long) obj.name;
-				return numOne.compareTo(numTwo);
-			}
-			else if (name.getClass().getName().equalsIgnoreCase("java.lang.Double"))
-			{
-				Double numOne = (Double) name;
-				Double numTwo = (Double) (obj.name);
-				return numOne.compareTo(numTwo);
-			}
-			else if (name.getClass().getName().equalsIgnoreCase("java.lang.Float"))
-			{
-				Float numOne = (Float) name;
-				Float numTwo = (Float) (obj.name);
-				return numOne.compareTo(numTwo);
-			}
-			else if (name.getClass().getName().equalsIgnoreCase("java.lang.Integer"))
-			{
-				Integer numOne = (Integer) name;
-				Integer numTwo = (Integer) (obj.name);
-				return numOne.compareTo(numTwo);
-			}
+			cmpResult = comparable.compareTo(nameValueBean.name);
 		}
-		//		Logger.out.debug("Number type didnot match");
-		return 0;
+		catch (ClassCastException exception)
+		{
+			logger.error("Objects to compared must be of same class.", exception);
+			cmpResult = 0;
+		}
+
+		return cmpResult;
 	}
 
-	//-----------
+	/**
+	 * This method compare Object.
+	 * @param object object.
+	 * @return true if object is equal.
+	 */
 	public boolean equals(Object object)
 
 	{
-
+		boolean equal = false;
 		if (this.getClass().getName().equals(object.getClass().getName()))
 
 		{
-
 			NameValueBean nvb = (NameValueBean) object;
 
 			if (this.getName().equals(nvb.getName()) && this.getValue().equals(nvb.getValue()))
-
-				return true;
-
+			{
+				equal = true;
+			}
 		}
-
-		return false;
-
+		return equal;
 	}
 
+	/**
+	 * This method returns hash Code.
+	 * @return int.
+	 */
 	public int hashCode()
 
 	{
-
+		int hashCode = super.hashCode();
 		if (this.getName() != null && this.getValue() != null)
-
-			return this.getName().hashCode() * this.getValue().hashCode();
-
-		return super.hashCode();
-
+		{
+			hashCode = this.getName().hashCode() * this.getValue().hashCode();
+		}
+		return hashCode;
 	}
-
 }
