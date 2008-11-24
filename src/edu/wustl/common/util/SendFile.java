@@ -10,7 +10,8 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import edu.common.dynamicextensions.util.global.Constants;
+
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -66,11 +67,13 @@ public class SendFile
 		{
 			OutputStream opstream = response.getOutputStream();
 			bis = new BufferedInputStream(new FileInputStream(file));
-			int count;
+
 			byte[] buf = new byte[Constants.FOUR_KILO_BYTES];
-			while ((count = bis.read(buf)) > -1)
+			int count=bis.read(buf);
+			while (count > -1)
 			{
 				opstream.write(buf, 0, count);
+				count = bis.read(buf);
 			}
 			opstream.flush();
 			bis.close();
