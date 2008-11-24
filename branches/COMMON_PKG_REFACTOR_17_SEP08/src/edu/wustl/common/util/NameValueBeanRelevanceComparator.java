@@ -40,22 +40,11 @@ public class NameValueBeanRelevanceComparator implements java.util.Comparator<Ob
 	 */
 	private int getDiffOfNameValueBeans(NameValueBean nvb1, NameValueBean nvb2)
 	{
-		int retValue=0;
-
-		//Compare according to relevance counter
-		int cmp = nvb1.getRelevanceCounter().compareTo(nvb2.getRelevanceCounter());
-		//If relevance counter are equal then compare on basis of name.
-		if (cmp == 0)
+		int retValue = nvb1.getRelevanceCounter().compareTo(nvb2.getRelevanceCounter());
+		if (retValue == 0 && nvb1.getName() != null && nvb2.getName() != null)
 		{
-			if (nvb1.getName() != null && nvb2.getName() != null)
-			{
 				retValue= nvb1.getName().toString().toLowerCase().compareTo(
 						nvb2.getName().toString().toLowerCase());
-			}
-		}
-		else
-		{
-			retValue=cmp;
 		}
 		return retValue;
 	}
