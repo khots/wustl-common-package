@@ -190,11 +190,12 @@ public class ExportReport
 			File outFile = new File(dataFileName);
 			FileWriter out = new FileWriter(outFile);
 			StringBuffer strOut = new StringBuffer();
-			String aux;
-			while ((aux = bufferReader.readLine()) != null)
+			String aux=bufferReader.readLine();
+			while (aux != null)
 			{
 				strOut.append(aux);
 				strOut.append(TextConstants.LINE_SEPARATOR);
+				aux=bufferReader.readLine();
 			}
 			out.write(strOut.toString());
 			out.close();
@@ -361,10 +362,11 @@ public class ExportReport
 		byte[] buf = new byte[Constants.ONE_KILO_BYTES];
 		FileInputStream inputReader = new FileInputStream(fileName);
 		out.putNextEntry(new ZipEntry(fileName));
-		int len;
-		while ((len = inputReader.read(buf)) > 0)
+		int len=inputReader.read(buf);
+		while (len  > 0)
 		{
 			out.write(buf, 0, len);
+			len = inputReader.read(buf);
 		}
 		out.closeEntry();
 		inputReader.close();
@@ -380,10 +382,10 @@ public class ExportReport
 	private void putCSVFileToZip(ZipOutputStream out, String fileName) throws IOException
 	{
 		BufferedReader bufRdr = new BufferedReader(new FileReader(fileName));
-		String line = null;
 		StringTokenizer tokenizer;
 		out.putNextEntry(new ZipEntry(fileName));
-		while ((line = bufRdr.readLine()) != null)
+		String line = bufRdr.readLine();
+		while (line!= null)
 		{
 			tokenizer = new StringTokenizer(line, ",");
 			while (tokenizer.hasMoreTokens())
@@ -396,6 +398,7 @@ public class ExportReport
 			}
 			out.write(TextConstants.LINE_SEPARATOR.getBytes(), 0,
 					TextConstants.LINE_SEPARATOR.length());
+			line = bufRdr.readLine();
 		}
 		out.closeEntry();
 		bufRdr.close();
