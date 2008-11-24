@@ -23,77 +23,40 @@ public class KeyComparator implements Comparator<Object>
 	 */
 	public int compare(Object object1, Object object2)
 	{
-		int retValue;
-		int outer1 = 0, outer2 = 0, inner1 = 0, inner2 = 0;
 		String key1 = (String) object1;
 		String key2 = (String) object2;
-
-		int index1 = key1.indexOf('_');
-		outer1 = getIntValue(outer1, key1, index1);
-
-		int index2 = key2.indexOf('_');
-		outer2 = getIntValue(outer2, key2, index2);
-
-		if (outer1 > outer2)
+		int outer1 = getIntValue( key1);
+		int outer2 = getIntValue(key2);
+		int retValue=outer1 - outer2;
+		if (retValue == 0)
 		{
-			retValue=1;
-		}
-		else if (outer1 < outer2)
-		{
-			retValue= -1;
-		}
-		else
-		{
-			String innerKey1 = key1.substring(index1 + 1);
-			index1 = innerKey1.indexOf('_');
-			inner1 = getIntValue(inner1, innerKey1, index1);
+			String innerKey1 = key1.substring(key1.indexOf('_') + 1);
 
-			String innerKey2 = key2.substring(index2 + 1);
-			index2 = innerKey2.indexOf('_');
-			inner2 = getIntValue(inner2, innerKey2, index2);
-			retValue = getRetValue(inner1, inner2);
+			int inner1 = getIntValue(innerKey1);
+			String innerKey2 = key2.substring(key2.indexOf('_') + 1);
+			int inner2 = getIntValue(innerKey2);
+			retValue = inner1 - inner2;
 		}
 		return retValue;
 	}
 
 	/**
-	 * @param outer outer key.
 	 * @param key String value to compare.
-	 * @param index index of '_' in key object.
 	 * @return int integer value after ':'
 	 */
-	private int getIntValue(int outer, String key, int index)
+	private int getIntValue(String key)
 	{
-		int outer1=outer;
-		if (index != -1)
+		int val;
+		int index = key.indexOf('_');
+		if (index == -1)
 		{
-			outer1 = getIntValueInKey(key, index);
-		}
-		return outer1;
-	}
-
-	/**
-	 * This method compare the two integers passed as parameters.
-	 * @param inner1 int comparable value.
-	 * @param inner2 int comparable value.
-	 * @return int return value after comparison.
-	 */
-	private int getRetValue(int inner1, int inner2)
-	{
-		int retValue;
-		if (inner1 > inner2)
-		{
-			retValue=1;
-		}
-		else if (inner1 == inner2)
-		{
-			retValue=0;
+			val=0;
 		}
 		else
 		{
-			retValue=-1;
+			val = getIntValueInKey(key, index);
 		}
-		return retValue;
+		return val;
 	}
 
 	/**
