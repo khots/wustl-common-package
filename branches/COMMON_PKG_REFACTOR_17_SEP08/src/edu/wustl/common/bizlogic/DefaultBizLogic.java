@@ -22,7 +22,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import edu.common.dynamicextensions.util.global.Variables;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
@@ -36,6 +35,7 @@ import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;

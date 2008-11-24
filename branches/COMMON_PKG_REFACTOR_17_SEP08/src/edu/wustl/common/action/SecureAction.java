@@ -8,9 +8,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.common.dynamicextensions.util.global.Variables;
+
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 
 /**
  * Class intercepts the struts action call and performs authorization to ensure
