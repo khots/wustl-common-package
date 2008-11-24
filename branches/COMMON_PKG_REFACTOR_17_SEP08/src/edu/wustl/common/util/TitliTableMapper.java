@@ -14,6 +14,7 @@ import titli.controller.Name;
 import titli.model.TitliException;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.XMLParserUtility;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class reads the mapping  xml file and gets the tree into the memory.
@@ -24,6 +25,10 @@ import edu.wustl.common.util.global.XMLParserUtility;
  */
 public final class TitliTableMapper
 {
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliTableMapper.class);
 	/**
 	 * the only instance of this class.
 	 */
@@ -43,7 +48,15 @@ public final class TitliTableMapper
 	{
 		InputStream inputStream = this.getClass()
 		.getClassLoader().getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
-		document=XMLParserUtility.getDocument(inputStream);
+		try
+		{
+			document=XMLParserUtility.getDocument(inputStream);
+		}
+		catch (Exception exception)
+		{
+			logger.fatal("Not able to initialize the xml document object for file:"+
+					TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
+		}
 	}
 
 	/**
@@ -55,7 +68,7 @@ public final class TitliTableMapper
 	{
 		if(null==mapper.document)
 		{
-			throw new TitliException("Can not create instance, error in ");
+			throw new TitliException("Can not create instance, document object is null.");
 		}
 		return mapper;
 	}
