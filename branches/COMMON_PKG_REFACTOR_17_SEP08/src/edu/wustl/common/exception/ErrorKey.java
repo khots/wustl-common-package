@@ -128,7 +128,7 @@ public final class ErrorKey
 	{
 		Properties errorKeyPros = new Properties();
 		errorKeyPros.load(stream);
-		Enumeration enumerator = errorKeyPros.keys();
+		Enumeration<Object> enumerator = errorKeyPros.keys();
 		while(enumerator.hasMoreElements())
 		{
 			String key =(String) enumerator.nextElement();
@@ -215,7 +215,7 @@ public final class ErrorKey
 
 	/**
 	 * sets the error number.
-	 * @param errorNumber
+	 * @param errorNumber error Number.
 	 */
 	protected void setErrorNumber(String errorNumber)
 	{

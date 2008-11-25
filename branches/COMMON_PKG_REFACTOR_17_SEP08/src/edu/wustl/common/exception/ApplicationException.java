@@ -12,6 +12,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class ApplicationException extends Exception
 {
+
 	/**
 	 * The unique serial version UID.
 	 */
@@ -20,7 +21,7 @@ public class ApplicationException extends Exception
 	/**
 	 * Logger object used to log messages.
 	 */
-	private static final org.apache.log4j.Logger logger=Logger.getLogger(ApplicationException.class);
+	private static final org.apache.log4j.Logger logger = Logger.getLogger(ApplicationException.class);
 
 	/**
 	 *The errorKey object for the exception occurred.
@@ -49,7 +50,7 @@ public class ApplicationException extends Exception
 	{
 		super(throwable);
 
-		if(errorKey == null)
+		if (errorKey == null)
 		{
 			logger.fatal("While constructing application exception errorKey object must not be null");
 			throw new AppRunTimeException();
@@ -98,7 +99,6 @@ public class ApplicationException extends Exception
 		return errorKey;
 	}
 
-
 	/**
 	 * Sets errorKey object. This function accessible only by child classes
 	 * @param errorKey erroKey object to be set.
@@ -117,7 +117,6 @@ public class ApplicationException extends Exception
 		return this.errorMsg;
 	}
 
-
 	/**
 	 * This function checks the custom error parameter. If it has values for
 	 * errorKey message text then sets custom error blank and sets those values to
@@ -130,7 +129,7 @@ public class ApplicationException extends Exception
 		if (ApplicationException.ERR_MSG_VALUES_SEPARATOR.contains(errorValParam))
 		{
 			this.errorMsg = TextConstants.EMPTY_STRING;
-			String [] errorValues = errorValParam.split(ERR_MSG_VALUES_SEPARATOR);
+			String[] errorValues = errorValParam.split(ERR_MSG_VALUES_SEPARATOR);
 			errorKey.setMessageValues(errorValues);
 		}
 	}
@@ -141,6 +140,7 @@ public class ApplicationException extends Exception
 	 */
 	private class AppRunTimeException extends RuntimeException
 	{
+
 		/**
 		 * A unique serial versionUID.
 		 */
@@ -151,9 +151,9 @@ public class ApplicationException extends Exception
 		 */
 		public AppRunTimeException()
 		{
-		super("Failed to construct ApplicationException object. Please see the comple error log above");
+			super("Failed to construct ApplicationException object."
+					+ " Please see the comple error log above");
 		}
 	}
-
 
 }
