@@ -422,12 +422,12 @@ public class Utility
 
 	/**
 	 * To Create the attribute name for HQL select part.
-	 * If the  selectColumnName is in format "elements(<attributeName>)" then it will return String
-	 * as *  "elments(<className>.<AttributeName>)"
-	 * else it will return String in format "<className>.<AttributeName>"
+	 * If the  selectColumnName is in format "elements(attributeName)" then it will return String
+	 * as *  "elments(className.AttributeName)"
+	 * else it will return String in format "className.AttributeName"
 	 * @param className The className
 	 * @param selectColumnName The select column name passed to form HQL. either in format
-	 *  "elements(<attributeName>)" or "<AttributeName>"
+	 *  "elements(attributeName)" or "AttributeName"
 	 * @return The Select column name for the HQL.
 	 */
 	public static String createAttributeNameForHQL(String className, String selectColumnName)
