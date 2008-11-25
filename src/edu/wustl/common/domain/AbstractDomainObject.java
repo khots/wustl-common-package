@@ -24,10 +24,14 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 {
 
 	/**
-	 * Serial Version Unique Identifier
+	 * Serial Version Unique Identifier.
 	 */
 	private static final long serialVersionUID = 1234567890L;
 
+	/**
+	 * This method gets Object Id.
+	 * @return Return Object Id.
+	 */
 	public String getObjectId()
 	{
 		return this.getClass().getName() + "_" + this.getId();
@@ -35,7 +39,7 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 
 	/**
 	 * Parses the fully qualified class  name and returns only the class name.
-	 * @param qualifiedName The fully qualified classname. 
+	 * @param qualifiedName The fully qualified classname.
 	 * @return The qualified class name.
 	 */
 	public static String parseClassName(String qualifiedName)
@@ -43,7 +47,7 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 		String className;
 		try
 		{
-			className = qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1);
+			className = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
 		}
 		catch (Exception e)
 		{
@@ -56,10 +60,11 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 	 * @param abstractForm The AbstractForm object
 	 */
 	//  public abstract void setAllValues(AbstractActionForm abstractForm) throws AssignDataException;
-	
+
 	/**
 	 * Copies all values from the AbstractForm object and set it in relevant variable.
 	 * @param valueObject The IValueObject.
+	 * @throws AssignDataException Assign Data Exception.
 	 */
 	public abstract void setAllValues(IValueObject valueObject) throws AssignDataException;
 
@@ -72,14 +77,14 @@ public abstract class AbstractDomainObject implements Auditable, Serializable
 
 	/**
 	 * Sets an system Identifier for the domain object.
-	 * @param system Identifier system Identifier for the domain object.
+	 * @param identifier Identifier for the domain object.
 	 * @see #getId()
 	 * */
-	public abstract void setId(Long id);
+	public abstract void setId(Long identifier);
 
 	/**
-	 * Returns message label to display on success of add or edit
-	 * @return message. 
+	 * Returns message label to display on success of add or edit.
+	 * @return message.
 	 */
 	public String getMessageLabel()
 	{

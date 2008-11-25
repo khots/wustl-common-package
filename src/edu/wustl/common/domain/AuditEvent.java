@@ -12,6 +12,9 @@ import java.util.HashSet;
 public class AuditEvent implements java.io.Serializable
 {
 
+	/**
+	 * Serial Version Unique Identifier.
+	 */
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
@@ -39,6 +42,9 @@ public class AuditEvent implements java.io.Serializable
 	 */
 	private String ipAddress;
 
+	/**
+	 * Specifies audit Event Log Collection.
+	 */
 	private Collection<AuditEventLog> auditEventLogCollection = new HashSet<AuditEventLog>();
 
 	/**
@@ -47,7 +53,7 @@ public class AuditEvent implements java.io.Serializable
 	 * @see #setId(Integer)
 	 * @hibernate.id name="id" column="IDENTIFIER" type="long" length="30"
 	 * unsaved-value="null" generator-class="native"
-	 * @hibernate.generator-param name="sequence" value="CATISSUE_AUDIT_EVENT_PARAM_SEQ" 
+	 * @hibernate.generator-param name="sequence" value="CATISSUE_AUDIT_EVENT_PARAM_SEQ"
 	 */
 	public Long getId()
 	{
@@ -56,19 +62,19 @@ public class AuditEvent implements java.io.Serializable
 
 	/**
 	 * Sets unique id.
-	 * @param id Identifier to be set.
+	 * @param identifier Identifier to be set.
 	 * @see #getId()
 	 */
-	public void setId(Long id)
+	public void setId(Long identifier)
 	{
-		this.id = id;
+		this.id = identifier;
 	}
 
 	/**
-	 * Returns date and time of the event. 
+	 * Returns date and time of the event.
 	 * @return Date and time of the event.
 	 * @see #setTimestamp(Date)
-	 * @hibernate.property name="timestamp" type="timestamp" 
+	 * @hibernate.property name="timestamp" type="timestamp"
 	 * column="EVENT_TIMESTAMP"
 	 */
 	public Date getTimestamp()
@@ -96,7 +102,7 @@ public class AuditEvent implements java.io.Serializable
 	}
 
 	/**
-	 * @param userId, set the Id of the user.
+	 * @param userId set the Id of the user.
 	 */
 	public void setUserId(Long userId)
 	{
@@ -104,10 +110,10 @@ public class AuditEvent implements java.io.Serializable
 	}
 
 	/**
-	 * Returns text comments on this event. 
+	 * Returns text comments on this event.
 	 * @return Text comments on this event.
 	 * @see #setComments(String)
-	 * @hibernate.property name="comments" type="string" 
+	 * @hibernate.property name="comments" type="string"
 	 * column="COMMENTS" length="500"
 	 */
 	public String getComments()
@@ -127,17 +133,20 @@ public class AuditEvent implements java.io.Serializable
 
 	/**
 	 * get the Ip address.
+	 * @return the Ip address.
 	 * @hibernate.property name="ipAddress" type="string"
-	 * column="IP_ADDRESS" length="20" 
+	 * column="IP_ADDRESS" length="20"
 	 **/
 	public String getIpAddress()
 	{
 		return ipAddress;
 	}
+
 	/**
 	 * set the Ip address.
+	 * @param ipAddress the Ip address.
 	 * @hibernate.property name="ipAddress" type="string"
-	 * column="IP_ADDRESS" length="20" 
+	 * column="IP_ADDRESS" length="20"
 	 **/
 	public void setIpAddress(String ipAddress)
 	{
@@ -146,6 +155,7 @@ public class AuditEvent implements java.io.Serializable
 
 	/**
 	 * return the collection where audit event is added.
+	 * @return the collection.
 	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
@@ -154,8 +164,10 @@ public class AuditEvent implements java.io.Serializable
 	{
 		return auditEventLogCollection;
 	}
+
 	/**
 	 * set the vlue in audit event collection.
+	 * @param auditEventLogCollection audit Event Log Collection.
 	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"

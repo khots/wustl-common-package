@@ -20,7 +20,7 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 {
 
 	/**
-	 * serialVersionUID serial version UID for serialization
+	 * serialVersionUID serial version UID for serialization.
 	 */
 	private static final long serialVersionUID = -4180953341688220631L;
 	/**
@@ -110,7 +110,8 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 	}
 
 	/**
-	 * @param tableName The tableName to set.
+	 * This method set column Name.
+	 * @param columnName The column Name to set.
 	 */
 	public void setColumnName(String columnName)
 	{
@@ -136,6 +137,7 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 	/**
 	 * set the values from the ui form and set it into object.
 	 * @param abstractForm from where the data has to be retrieved.
+	 * @throws AssignDataException Assign Data Exception.
 	 */
 	public void setAllValues(IValueObject abstractForm) throws AssignDataException
 	{
@@ -150,9 +152,10 @@ public class QueryColumnData extends AbstractDomainObject implements Serializabl
 		return null;
 	}
 	/**
-	 * set the Id.
+	 * set the identifier.
+	 * @param identifier identifier to be set.
 	 */
-	public void setId(Long id)
+	public void setId(Long identifier)
 	{
 	}
 }
