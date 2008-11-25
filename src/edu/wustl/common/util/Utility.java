@@ -53,6 +53,7 @@ public class Utility
 	 * logger -Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(Utility.class);
+
 	/**
 	 * Parses the string format of date in the given format and returns the Data object.
 	 * @param date the string containing date.
@@ -62,7 +63,7 @@ public class Utility
 	 */
 	public static Date parseDate(String date, String pattern) throws ParseException
 	{
-		Date dateObj=null;
+		Date dateObj = null;
 		if (date != null && !TextConstants.EMPTY_STRING.equals(date.trim()))
 		{
 			try
@@ -72,10 +73,10 @@ public class Utility
 			}
 			catch (ParseException exception)
 			{
-				String message=new StringBuffer("Date '").append(date)
-				.append("' is not in format : ").append(pattern).toString();
-				logger.debug(message,exception);
-				throw new ParseException(message,0);
+				String message = new StringBuffer("Date '").append(date).append(
+						"' is not in format : ").append(pattern).toString();
+				logger.debug(message, exception);
+				throw new ParseException(message, 0);
 			}
 		}
 		return dateObj;
@@ -101,37 +102,43 @@ public class Utility
 	 */
 	public static String datePattern(String strDate)
 	{
-		String datePattern="";
-    	List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
-    	datePatternList.add(new SimpleDateFormat("MM-dd-yyyy"));
-    	datePatternList.add(new SimpleDateFormat("MM/dd/yyyy"));
-    	datePatternList.add(new SimpleDateFormat("yyyy-MM-dd"));
-    	datePatternList.add(new SimpleDateFormat("yyyy/MM/dd"));
-    	Date date=null;
-    	String matchingPattern=null;
-    	for(SimpleDateFormat dtPattern:datePatternList)
-    	{
-    		try
-    		{
-    			date=dtPattern.parse(strDate);
-    			if(date!=null)
-    			{
-    				matchingPattern=dtPattern.toPattern();
-    				if(strDate.equals(dtPattern.format(date)))
-    				{
-    					datePattern=matchingPattern;
-    				}
-    				break;
-    			}
-    		}
-    		catch(ParseException exception)
-    		{
-    			logger.info("not in formate:"+dtPattern.toString());
-    		}
-    	}
-        return datePattern;
+		String datePattern = "";
+		List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
+		datePatternList.add(new SimpleDateFormat("MM-dd-yyyy"));
+		datePatternList.add(new SimpleDateFormat("MM/dd/yyyy"));
+		datePatternList.add(new SimpleDateFormat("yyyy-MM-dd"));
+		datePatternList.add(new SimpleDateFormat("yyyy/MM/dd"));
+		Date date = null;
+		String matchingPattern = null;
+		for (SimpleDateFormat dtPattern : datePatternList)
+		{
+			try
+			{
+				date = dtPattern.parse(strDate);
+				if (date != null)
+				{
+					matchingPattern = dtPattern.toPattern();
+					if (strDate.equals(dtPattern.format(date)))
+					{
+						datePattern = matchingPattern;
+					}
+					break;
+				}
+			}
+			catch (ParseException exception)
+			{
+				logger.info("not in formate:" + dtPattern.toString());
+			}
+		}
+		return datePattern;
 	}
 
+	/**
+	 * This method creates Accessor Method Name.
+	 * @param attr attribute
+	 * @param isSetter specifies is Setter.
+	 * @return Method Name.
+	 */
 	public static String createAccessorMethodName(String attr, boolean isSetter)
 	{
 		String firstChar = attr.substring(0, 1);
@@ -143,6 +150,13 @@ public class Utility
 		return str + firstChar.toUpperCase() + attr.substring(1);
 	}
 
+	/**
+	 * Create the getter method of attribute.
+	 * @param obj Object
+	 * @param attrName attribute Name.
+	 * @return Object.
+	 * @throws Exception Exception
+	 */
 	public static Object getValueFor(Object obj, String attrName) throws Exception
 	{
 		//Create the getter method of attribute
@@ -155,16 +169,17 @@ public class Utility
 
 	/**
 	 * Start: Change for API Search   --- Jitendra 06/10/2006
-	 * In Case of Api Search, previoulsy it was failing since there was default 
-	 * class level initialization 
-	 * on domain object. For example in ParticipantMedicalIdentifier object, it was initialized as 
+	 * In Case of Api Search, previoulsy it was failing since there was default
+	 * class level initialization
+	 * on domain object. For example in ParticipantMedicalIdentifier object, it was initialized as
 	 * protected Site site= new Site(); So we removed default class level initialization on domain object.
-	 * Hence getValueFor() method was returning null. So write new method SetValueFor() which will 
+	 * Hence getValueFor() method was returning null. So write new method SetValueFor() which will
 	 * instantiate new Object and set it in parent object.
-	 * @param obj
-	 * @param attrName
-	 * @return
-	 * @throws Exception
+	 * @param obj Object
+	 * @param attrName attribute Name.
+	 * @param attrValue attribute Value.
+	 * @return Object.
+	 * @throws Exception Exception.
 	 */
 	public static Object setValueFor(Object obj, String attrName, Object attrValue)
 			throws Exception
@@ -173,43 +188,59 @@ public class Utility
 		//create the setter method for the attribute.
 		String methodName = Utility.createAccessorMethodName(attrName, true);
 		Method method = findMethod(obj.getClass(), methodName);
-		Object object=attrValue;
+		Object object = attrValue;
 		if (object == null)
 		{
 			object = method.getParameterTypes()[0].newInstance();
 		}
-		Object []objArr = {object};
+		Object[] objArr = {object};
 		//set the newInstance to the setter nethod of parent obj
 		method.invoke(obj, objArr);
 		return object;
 
 	}
 
+	/**
+	 * Finds method of given method Name.
+	 * @param objClass Class.
+	 * @param methodName the method Name
+	 * @return Method
+	 * @throws Exception Exception
+	 */
 	private static Method findMethod(Class objClass, String methodName) throws Exception
 	{
-		Method []methods = objClass.getMethods();
-		Method method=null;
+		Method[] methods = objClass.getMethods();
+		Method method = null;
 		for (int i = 0; i < methods.length; i++)
 		{
 			if (methods[i].getName().equals(methodName))
 			{
-				method= methods[i];
+				method = methods[i];
 				break;
 			}
 		}
 		return method;
 	}
 
-	public static Object getValueFor(Object obj, Method method) 
-				throws IllegalAccessException, InvocationTargetException
+	/**
+	 * This method returns method object.
+	 * @param obj Object
+	 * @param method method
+	 * @return the method object.
+	 * @throws IllegalAccessException Illegal Access Exception
+	 * @throws InvocationTargetException Invocation Target Exception.
+	 */
+	public static Object getValueFor(Object obj, Method method) throws IllegalAccessException,
+			InvocationTargetException
 	{
 		return method.invoke(obj, new Object[0]);
 
 	}
 
 	/**
-	 * @param objectIds
-	 * @return
+	 * This method gets Array String of Object Array.
+	 * @param objectIds Array of object Ids.
+	 * @return Array String.
 	 */
 	public static String getArrayString(Object[] objectIds)
 	{
@@ -222,8 +253,9 @@ public class Utility
 	}
 
 	/**
+	 * This method gets Class Object.
 	 * @param fullClassName Full qualified name
-	 * @return
+	 * @return Class.
 	 */
 	public static Class getClassObject(String fullClassName)
 	{
@@ -234,7 +266,7 @@ public class Utility
 		}
 		catch (ClassNotFoundException classNotExcp)
 		{
-			logger.warn("Didn't find any class as "+fullClassName,classNotExcp);
+			logger.warn("Didn't find any class as " + fullClassName, classNotExcp);
 		}
 
 		return className;
@@ -248,7 +280,7 @@ public class Utility
 	 */
 	public static Object toGridFormat(Object obj)
 	{
-		Object retObj=obj;
+		Object retObj = obj;
 		if (obj instanceof String)
 		{
 			StringBuffer tokenedString = new StringBuffer();
@@ -264,12 +296,17 @@ public class Utility
 		return retObj;
 	}
 
+	/**
+	 * This method checks for null value.
+	 * @param obj Object to be check.
+	 * @return true if null else false.
+	 */
 	public static boolean isNull(Object obj)
 	{
-		boolean isNull=false;
+		boolean isNull = false;
 		if (obj == null)
 		{
-			isNull= true;
+			isNull = true;
 		}
 		return isNull;
 	}
@@ -290,19 +327,25 @@ public class Utility
 		}
 		catch (InstantiationException instExp)
 		{
-			logger.debug("Can not create instance of class:"+className,instExp);
+			logger.debug("Can not create instance of class:" + className, instExp);
 		}
 		catch (IllegalAccessException illAccExp)
 		{
-			logger.debug("Can not create instance of class:"+className,illAccExp);
+			logger.debug("Can not create instance of class:" + className, illAccExp);
 		}
 
 		return object;
 	}
 
+	/**
+	 * This method add Element in object array.
+	 * @param array object array.
+	 * @param obj Object to be add.
+	 * @return object array.
+	 */
 	public static Object[] addElement(Object[] array, Object obj)
 	{
-		Object []newObjectArr = new Object[array.length + 1];
+		Object[] newObjectArr = new Object[array.length + 1];
 
 		if (array instanceof String[])
 		{
@@ -314,6 +357,12 @@ public class Utility
 		return newObjectArr;
 	}
 
+	/**
+	 * This method parse Attribute Name.
+	 * @param methodName method Name to be parse.
+	 * @return attribute Name.
+	 * @throws Exception Exception
+	 */
 	public static String parseAttributeName(String methodName) throws Exception
 	{
 		String attributeName = "";
@@ -329,8 +378,9 @@ public class Utility
 	}
 
 	/**
-	 * @param list
-	 * @return
+	 * This method removes null values from given list.
+	 * @param list list.
+	 * @return List without null values.
 	 */
 	public static List removeNull(List list)
 	{
@@ -347,20 +397,20 @@ public class Utility
 
 	/**
 	 * Parses the fully qualified classname and returns only the classname.
-	 * @param qualifiedName The fully qualified classname. 
+	 * @param qualifiedName The fully qualified classname.
 	 * @return The classname.
 	 */
 	public static String parseClassName(String qualifiedName)
 	{
-		String className=qualifiedName;
+		String className = qualifiedName;
 		try
 		{
-			className=qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+			className = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
 		}
 		catch (Exception e)
 		{
-			className=qualifiedName;
-			logger.warn("Not able to parse class name:"+qualifiedName);
+			className = qualifiedName;
+			logger.warn("Not able to parse class name:" + qualifiedName);
 		}
 		return className;
 	}
@@ -373,7 +423,7 @@ public class Utility
 	/**
 	 * To Create the attribute name for HQL select part.
 	 * If the  selectColumnName is in format "elements(<attributeName>)" then it will return String
-	 * as *  "elments(<className>.<AttributeName>)" 
+	 * as *  "elments(<className>.<AttributeName>)"
 	 * else it will return String in format "<className>.<AttributeName>"
 	 * @param className The className
 	 * @param selectColumnName The select column name passed to form HQL. either in format
@@ -404,19 +454,20 @@ public class Utility
 	 */
 	public static boolean isColumnNameContainsElements(String columnName)
 	{
-		String colName=columnName.toLowerCase().trim();
+		String colName = columnName.toLowerCase().trim();
 		return colName.startsWith(ELEMENTS) && colName.endsWith(")");
 	}
 
 	/**
 	 * Returns name of FormBean specified in struts-config.xml for passed Object of FormBean.
-	 * @param obj - FormBean object 
+	 * @param obj - FormBean object
 	 * @return String - name of FormBean object
 	 */
 	public static String getFormBeanName(Object obj)
 	{
 		String objClassName = obj.getClass().toString();
-		objClassName = objClassName.substring((objClassName.lastIndexOf('.') + 1),(objClassName.length()));
+		objClassName = objClassName.substring((objClassName.lastIndexOf('.') + 1), (objClassName
+				.length()));
 		String classNamefstChar = objClassName.substring(0, 1);
 		String formBeanName = classNamefstChar.toLowerCase()
 				+ objClassName.substring(1, (objClassName.length()));
@@ -427,7 +478,7 @@ public class Utility
 	 * Parses the Date in given format and returns the string representation.
 	 * @param date the Date to be parsed.
 	 * @param pattern the pattern of the date.
-	 * @return
+	 * @return returns the string representation of Date.
 	 */
 	public static String parseDateToString(Date date, String pattern)
 	{
@@ -440,17 +491,27 @@ public class Utility
 		return dateStr;
 	}
 
+	/**
+	 * This method converts object to string.
+	 * @param obj object to be convert.
+	 * @return string object.
+	 */
 	public static String toString(Object obj)
 	{
-		String retValue=TextConstants.EMPTY_STRING;
-		if (obj!= null)
+		String retValue = TextConstants.EMPTY_STRING;
+		if (obj != null)
 		{
-			retValue=obj.toString();
+			retValue = obj.toString();
 		}
 
 		return retValue;
 	}
 
+	/**
+	 * This method gets time.
+	 * @param date Date.
+	 * @return time.
+	 */
 	public static String[] getTime(Date date)
 	{
 		String[] time = new String[2];
@@ -461,10 +522,15 @@ public class Utility
 		return time;
 	}
 
+	/**
+	 * This method converts collection to Long Array.
+	 * @param collection Collection to be convert.
+	 * @return long array.
+	 */
 	public static Long[] toLongArray(Collection<Long> collection)
 	{
 
-		Long []obj = new Long[collection.size()];
+		Long[] obj = new Long[collection.size()];
 
 		int index = 0;
 		Iterator<Long> iterator = collection.iterator();
@@ -476,6 +542,11 @@ public class Utility
 		return obj;
 	}
 
+	/**
+	 * This method convert object to int.
+	 * @param obj Object to be convert.
+	 * @return int value.
+	 */
 	public static int toInt(Object obj)
 	{
 		int value = 0;
@@ -491,6 +562,11 @@ public class Utility
 		return value;
 	}
 
+	/**
+	 * This method convert object to Long.
+	 * @param obj Object to be convert.
+	 * @return long value.
+	 */
 	public static long toLong(Object obj)
 	{
 		long value = 0;
@@ -507,10 +583,15 @@ public class Utility
 
 	}
 
+	/**
+	 *  This method convert object to Double.
+	 * @param obj Object to be convert.
+	 * @return Double value.
+	 */
 	public static double toDouble(Object obj)
 	{
 		double value = 0;
-		if (obj!= null)		
+		if (obj != null)
 		{
 			value = ((Double) obj).doubleValue();
 		}
@@ -519,20 +600,23 @@ public class Utility
 
 	/**
 	 * checking whether key's value is persisted or not.
-	 *
+	 * @param map map.
+	 * @param key key.
+	 * @return Return true if Persisted Value in map else false.
 	 */
 	public static boolean isPersistedValue(Map map, String key)
 	{
 		Object obj = map.get(key);
 		String val = null;
-		boolean isPersistedValue=false;
+		boolean isPersistedValue = false;
 		if (obj != null)
 		{
 			val = obj.toString();
 		}
-		if ((val != null && !(TextConstants.STR_ZERO.equals(val))) && !(TextConstants.EMPTY_STRING.equals(val)))
+		if ((val != null && !(TextConstants.STR_ZERO.equals(val)))
+				&& !(TextConstants.EMPTY_STRING.equals(val)))
 		{
-			isPersistedValue= true;
+			isPersistedValue = true;
 		}
 		return isPersistedValue;
 	}
@@ -621,7 +705,7 @@ public class Utility
 	 */
 	public static String getColumnWidth(Class className, String attributeName)
 	{
-		return Integer.toString((HibernateMetaData.getColumnWidth(className,attributeName)));
+		return Integer.toString((HibernateMetaData.getColumnWidth(className, attributeName)));
 
 	}
 
@@ -640,7 +724,7 @@ public class Utility
 	}
 
 	/**
-	 * Remove special characters and white space from a string. 
+	 * Remove special characters and white space from a string.
 	 * @param str string.
 	 * @return String after removing special characters.
 	 */
@@ -684,8 +768,7 @@ public class Utility
 					{
 						if (isPrevLetLCase)
 						{
-							attrLabel.append(Constants.CONST_SPACE_CAHR)
-							.append(attrChar);
+							attrLabel.append(Constants.CONST_SPACE_CAHR).append(attrChar);
 							isPrevLetLCase = false;
 						}
 						else
@@ -733,23 +816,47 @@ public class Utility
 		return columnDisplayName.toString();
 	}
 
+	/**
+	 * Specifies date pattern.
+	 */
 	private static String pattern = "MM-dd-yyyy";
 
+	/**
+	 * This method gets month from given date.
+	 * @param date date
+	 * @return month.
+	 */
 	public static int getMonth(String date)
 	{
-		return  getCalendar(date, pattern).get(Calendar.MONTH) + 1;
+		return getCalendar(date, pattern).get(Calendar.MONTH) + 1;
 	}
 
+	/**
+	 * This method gets day from given date.
+	 * @param date date
+	 * @return day.
+	 */
 	public static int getDay(String date)
 	{
-		return  getCalendar(date, pattern).get(Calendar.DAY_OF_MONTH);
+		return getCalendar(date, pattern).get(Calendar.DAY_OF_MONTH);
 	}
 
+	/**
+	 * This method gets Year from given date.
+	 * @param date date
+	 * @return Year.
+	 */
 	public static int getYear(String date)
 	{
 		return getCalendar(date, pattern).get(Calendar.YEAR);
 	}
 
+	/**
+	 * This method gets Calendar.
+	 * @param date date
+	 * @param pattern pattern.
+	 * @return Calendar
+	 */
 	private static Calendar getCalendar(String date, String pattern)
 	{
 		Calendar calendar;
@@ -762,14 +869,19 @@ public class Utility
 		}
 		catch (ParseException exception)
 		{
-			logger.error("exception in getCalendar: date="+date,exception);
+			logger.error("exception in getCalendar: date=" + date, exception);
 			calendar = Calendar.getInstance();
 		}
 		return calendar;
 	}
 
+	/**
+	 * This method gets Display Label For Underscore.
+	 * @param objectName object Name.
+	 * @return Label.
+	 */
 	public static String getDisplayLabelForUnderscore(String objectName)
-	{		
+	{
 		StringBuffer attrLabel = new StringBuffer();
 		int len = objectName.length();
 		for (int i = 0; i < len; i++)
@@ -779,8 +891,8 @@ public class Utility
 
 			if (asciiValueCurrent >= Constants.CONST_A && asciiValueCurrent <= Constants.CONST_Z)
 			{
-				if (i == 0 || objectName.charAt(i - 1) == Constants.CONST_UNDERSCORE || 
-						objectName.charAt(i - 1) == Constants.CONST_SPACE)
+				if (i == 0 || objectName.charAt(i - 1) == Constants.CONST_UNDERSCORE
+						|| objectName.charAt(i - 1) == Constants.CONST_SPACE)
 				{
 					attrLabel.append(attrChar);
 				}
@@ -818,7 +930,7 @@ public class Utility
 		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
 		Map<String, List<NameValueBean>> privGroupMap = Variables.privilegeGroupingMap;
 		InputStream inputXmlFile = Utility.class.getClassLoader().getResourceAsStream(
-			TextConstants.PERMSN_MAP_DET_FILE);
+				TextConstants.PERMSN_MAP_DET_FILE);
 		if (inputXmlFile != null)
 		{
 			Document doc = XMLParserUtility.getDocument(inputXmlFile);
@@ -833,37 +945,38 @@ public class Utility
 
 				privDetMap.put(key, value);
 			}
-			privGroupMap.put("SITE", getPriviligesList(root,"siteMapping"));
-			privGroupMap.put("CP", getPriviligesList(root,"collectionProtocolMapping"));
-			privGroupMap.put("SCIENTIST", getPriviligesList(root,"scientistMapping"));
-			privGroupMap.put("GLOBAL", getPriviligesList(root,"globalMapping"));
+			privGroupMap.put("SITE", getPriviligesList(root, "siteMapping"));
+			privGroupMap.put("CP", getPriviligesList(root, "collectionProtocolMapping"));
+			privGroupMap.put("SCIENTIST", getPriviligesList(root, "scientistMapping"));
+			privGroupMap.put("GLOBAL", getPriviligesList(root, "globalMapping"));
 
 		}
 	}
 
 	/**
 	 * returns Privilege List.
-	 * @param root
-	 * @param tagName
-	 * @return
+	 * @param root root Element.
+	 * @param tagName tag Name.
+	 * @return Priviliges List.
 	 */
 	private static List<NameValueBean> getPriviligesList(Element root, String tagName)
 	{
-		NodeList nodeList1 = root.getElementsByTagName(tagName);				
-		int length1 = nodeList1.getLength();				
+		NodeList nodeList1 = root.getElementsByTagName(tagName);
+		int length1 = nodeList1.getLength();
 		List<NameValueBean> sitePrivList = new ArrayList<NameValueBean>();
 		NameValueBean nmv = new NameValueBean();
 		for (int counter = 0; counter < length1; counter++)
 		{
 			Element element = (Element) (nodeList1.item(counter));
-			nmv = new NameValueBean(element.getAttribute("name"),element.getAttribute("id"));
+			nmv = new NameValueBean(element.getAttribute("name"), element.getAttribute("id"));
 			sitePrivList.add(nmv);
 		}
 		return sitePrivList;
 	}
-	
+
 	/**
 	 * For MSR changes.
+	 * @return All Privileges.
 	 */
 	public static List getAllPrivileges()
 	{
@@ -873,15 +986,13 @@ public class Utility
 		List<NameValueBean> list2 = Variables.privilegeGroupingMap.get("CP");
 		List<NameValueBean> list3 = Variables.privilegeGroupingMap.get("SCIENTIST");
 		List<NameValueBean> list4 = Variables.privilegeGroupingMap.get("GLOBAL");
-		
+
 		allPrivileges.addAll(list1);
 		allPrivileges.addAll(list2);
 		allPrivileges.addAll(list3);
 		allPrivileges.addAll(list4);
 		return allPrivileges;
 	}
-
-
 
 	/**
 	 * This method returns records per page from session.
@@ -891,8 +1002,7 @@ public class Utility
 	public static int getRecordsPerPage(HttpSession session)
 	{
 		int recordsPerPage;
-		String recPerPageSessVal = (String) session
-				.getAttribute(Constants.RESULTS_PER_PAGE);
+		String recPerPageSessVal = (String) session.getAttribute(Constants.RESULTS_PER_PAGE);
 		if (recPerPageSessVal == null)
 		{
 			recordsPerPage = Integer.parseInt(XMLPropertyHandler
