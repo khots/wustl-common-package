@@ -21,4 +21,9 @@ package edu.wustl.common.exception;
 public class UserNotAuthenticatedException extends Exception
 {
 
+	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = -1911300691338053557L;
+
 }

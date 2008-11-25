@@ -16,24 +16,40 @@ package edu.wustl.common.exception;
 public class AssignDataException extends Exception
 {
 
-	private Exception wrapException;
+	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = -3191673172998892548L;
 
+	/**
+	 * Constructor.
+	 */
 	public AssignDataException()
 	{
 
 	}
 
+	/**
+	 * Parameterised constructor.
+	 * @param message exeption message.
+	 */
 	public AssignDataException(String message)
 	{
 		this(message, null);
 	}
 
-	public AssignDataException(Exception ex)
+	/**
+	 * Parameterised constructor.
+	 * @param exception Exception
+	 */
+	public AssignDataException(Exception exception)
 	{
-		this("", ex);
+		this("", exception);
 	}
 
 	/**
+	 * Parameterised constructor.
+	 * @param message exeption message.
 	 * @param wrapException The wrapException to set.
 	 */
 	public AssignDataException(String message, Exception wrapException)
@@ -42,11 +58,14 @@ public class AssignDataException extends Exception
 		 * code reviewer :- abhijit_naik
 		 */
 		super(message, wrapException);
-		this.wrapException = wrapException;
 	}
 
+	/**
+	 *
+	 * @param args arguments
+	 */
 	public static void main(String[] args)
 	{
-						
+
 	}
 }

@@ -1,8 +1,8 @@
 /**
- * 
+ *
  */
-package edu.wustl.common.exception;
 
+package edu.wustl.common.exception;
 
 /**
  * @author prashant_bandal
@@ -17,13 +17,14 @@ public class ParseException extends ApplicationException
 	private static final long serialVersionUID = 6683027539524802184L;
 
 	/**
-	 * @param errorKey
-	 * @param t
-	 * @param msgValues
+	 * Constructor.
+	 * @param errorKey error Key
+	 * @param throwable Throwable
+	 * @param msgValues mssage Values.
 	 */
-	public ParseException(ErrorKey errorKey, Throwable t, String msgValues)
+	public ParseException(ErrorKey errorKey, Throwable throwable, String msgValues)
 	{
-		super(errorKey, t, msgValues);
+		super(errorKey, throwable, msgValues);
 		// TODO Auto-generated constructor stub
 	}
 

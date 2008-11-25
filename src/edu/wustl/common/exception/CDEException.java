@@ -7,6 +7,11 @@ public class CDEException extends Exception
 {
 
 	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = 6734202360827158521L;
+
+	/**
 	 * No argument constructor.
 	 */
 	public CDEException()

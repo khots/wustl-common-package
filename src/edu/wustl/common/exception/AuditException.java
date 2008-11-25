@@ -16,4 +16,9 @@ package edu.wustl.common.exception;
 public class AuditException extends Exception
 {
 
+	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = 5720766957546246226L;
+
 }

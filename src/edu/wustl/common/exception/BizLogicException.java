@@ -17,24 +17,40 @@ package edu.wustl.common.exception;
 public class BizLogicException extends Exception
 {
 
-	private Exception wrapException;
+	/**
+	 * Serial Version Unique Identifier.
+	 */
+	private static final long serialVersionUID = -8514900107659307676L;
 
+	/**
+	 * Constructor.
+	 */
 	public BizLogicException()
 	{
 
 	}
 
+	/**
+	 * Parameterised constructor.
+	 * @param message exeption message.
+	 */
 	public BizLogicException(String message)
 	{
 		this(message, null);
 	}
 
-	public BizLogicException(Exception ex)
+	/**
+	 * Parameterised constructor.
+	 * @param exception Exception
+	 */
+	public BizLogicException(Exception exception)
 	{
-		this("", ex);
+		this("", exception);
 	}
 
 	/**
+	 * Parameterised constructor.
+	 * @param message exeption message.
 	 * @param wrapException The wrapException to set.
 	 */
 	public BizLogicException(String message, Exception wrapException)
@@ -43,23 +59,6 @@ public class BizLogicException extends Exception
 		 * code reviewer :- abhijit_naik
 		 */
 		super(message, wrapException);
-		this.wrapException = wrapException;
-	}
-
-	/**
-	 * @return Returns the wrapException.
-	 */
-	private Exception getWrapException()
-	{
-		return wrapException;
-	}
-
-	/**
-	 * @param wrapException The wrapException to set.
-	 */
-	private void setWrapException(Exception wrapException)
-	{
-		this.wrapException = wrapException;
 	}
 
 }
