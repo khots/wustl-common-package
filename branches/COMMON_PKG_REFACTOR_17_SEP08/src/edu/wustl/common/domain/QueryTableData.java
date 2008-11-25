@@ -18,6 +18,10 @@ import edu.wustl.common.exception.AssignDataException;
  */
 public class QueryTableData extends AbstractDomainObject implements Serializable
 {
+
+	/**
+	 * Serial Version Unique Identifier.
+	 */
 	private static final long serialVersionUID = 731008569234191793L;
 	/**
 	 * identifier to identify the query.
@@ -107,14 +111,17 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
 	{
 		this.aliasName = aliasName;
 	}
+
 	/**
 	 * set the values from the ui form and set it into object.
 	 * @param abstractForm from where the data has to be retrieved.
-	 */	
+	 * @throws AssignDataException Assign Data Exception.
+	 */
 	public void setAllValues(IValueObject abstractForm) throws AssignDataException
 	{
 		// TODO Auto-generated method stub
 	}
+
 	/**
 	 * @return Returns the Id.
 	 */
@@ -123,10 +130,12 @@ public class QueryTableData extends AbstractDomainObject implements Serializable
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	/**
-	 * set the Id.
+	 * set the identifier.
+	 * @param identifier identifier to be set.
 	 */
-	public void setId(Long id)
+	public void setId(Long identifier)
 	{
 	}
 }
