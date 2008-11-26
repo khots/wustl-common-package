@@ -12,9 +12,9 @@ package edu.wustl.common.factory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -40,50 +40,81 @@ public class AbstractBizLogicFactory
 	public static final IBizLogic getBizLogic(String bizLogicFactoryName, String methodName,
 			int formId) throws BizLogicException
 	{
-		IBizLogic bizLogic = new DefaultBizLogic();
-		String erroMess = "Please contact the caTissue Core support at catissue_support@mga.wustl.edu";
 		try
 		{
 			//Invokes the singleton method.
-			Class bizLogicFactoryClass = Class.forName(bizLogicFactoryName);
-			Method getInstanceMethod = bizLogicFactoryClass.getMethod("getInstance", null);
-			Object bizLogicFactory = getInstanceMethod.invoke(null, null);
+			Class bizLogicFactoryClass = getBizLogicFactoryClass(bizLogicFactoryName);
+			Method getInstanceMethod = getInstanceMethod(bizLogicFactoryClass, (Class[]) null,
+					bizLogicFactoryName, "getInstance");
+			Object bizLogicFactory = getInstanceMethod.invoke((Object) null, (Object) null);
 
 			//Invokes getBizLogic method using reflection API.
 			Class[] parameterTypes = new Class[]{int.class};
 			Object[] parameterValues = new Object[]{Integer.valueOf(formId)};
 
-			Method getBizLogicMethod = bizLogicFactoryClass.getMethod(methodName, parameterTypes);
-			bizLogic = (IBizLogic) getBizLogicMethod.invoke(bizLogicFactory, parameterValues);
+			Method getBizLogicMethod = getInstanceMethod(bizLogicFactoryClass, parameterTypes,
+					bizLogicFactoryName, methodName);
+			return (IBizLogic) getBizLogicMethod.invoke(bizLogicFactory, parameterValues);
+		}
+		catch (InvocationTargetException invTrgtExp)
+		{
+			logger.debug("AbstractBizLogicFactory : No such method " + methodName
+					+ " in bizLogic class " + bizLogicFactoryName);
+			throw new BizLogicException("Server Error #3: " + TextConstants.ERROR_MESSAGE,
+					invTrgtExp);
+		}
+		catch (IllegalAccessException illAccEcp)
+		{
+			logger.debug("AbstractBizLogicFactory : No access to method " + methodName
+					+ " in bizLogic class " + bizLogicFactoryName);
+			throw new BizLogicException("Server Error #4: " + TextConstants.ERROR_MESSAGE,
+					illAccEcp);
+		}
+	}
+
+	/**
+	 * @param bizLogicFactoryClass bizLogic Factory Class.
+	 * @param parameterTypes parameter Types.
+	 * @param methodName method Name.
+	 * @param bizLogicFactoryName bizLogic Factory Name.
+	 * @return Method.
+	 * @throws BizLogicException BizLogic Exception.
+	 */
+	private static Method getInstanceMethod(Class bizLogicFactoryClass, Class[] parameterTypes,
+			String bizLogicFactoryName, String methodName) throws BizLogicException
+	{
+		try
+		{
+			return bizLogicFactoryClass.getMethod(methodName, parameterTypes);
+		}
+		catch (NoSuchMethodException noMethodExp)
+		{
+			logger.debug("AbstractBizLogicFactory : No such method " + methodName
+					+ " in bizLogic class " + bizLogicFactoryName);
+			throw new BizLogicException("Server Error #2: " + TextConstants.ERROR_MESSAGE,
+					noMethodExp);
+		}
+	}
+
+	/**
+	 * @param bizLogicFactoryName bizLogic Factory Name.
+	 * @return Class.
+	 * @throws BizLogicException BizLogic Exception.
+	 */
+	private static Class getBizLogicFactoryClass(String bizLogicFactoryName)
+			throws BizLogicException
+	{
+		try
+		{
+			return Class.forName(bizLogicFactoryName);
 		}
 		catch (ClassNotFoundException classNotFndExp)
 		{
 			logger.debug("AbstractBizLogicFactory : BizLogic with class name "
 					+ bizLogicFactoryName + " not present", classNotFndExp);
 
-			throw new BizLogicException("Server Error #1: " + erroMess);
+			throw new BizLogicException("Server Error #1: " + TextConstants.ERROR_MESSAGE,
+					classNotFndExp);
 		}
-		catch (NoSuchMethodException noMethodExp)
-		{
-			logger.debug("AbstractBizLogicFactory : No such method " + methodName
-					+ " in bizLogic class " + bizLogicFactoryName);
-			logger.debug(noMethodExp.getMessage(), noMethodExp);
-			throw new BizLogicException("Server Error #2: " + erroMess);
-		}
-		catch (InvocationTargetException invTrgtExp)
-		{
-			logger.debug("AbstractBizLogicFactory : No such method " + methodName
-					+ " in bizLogic class " + bizLogicFactoryName);
-			logger.debug(invTrgtExp.getMessage(), invTrgtExp);
-			throw new BizLogicException("Server Error #3: " + erroMess);
-		}
-		catch (IllegalAccessException illAccEcp)
-		{
-			logger.debug("AbstractBizLogicFactory : No access to method " + methodName
-					+ " in bizLogic class " + bizLogicFactoryName);
-			logger.debug(illAccEcp.getMessage(), illAccEcp);
-			throw new BizLogicException("Server Error #4: " + erroMess);
-		}
-		return bizLogic;
 	}
 }
