@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.AbstractForwardToProcessor;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -40,50 +41,55 @@ public class AbstractForwardToFactory
 	public static final AbstractForwardToProcessor getForwardToProcessor(
 			String forwardToFactoryName, String methodName) throws BizLogicException
 	{
-		AbstractForwardToProcessor forwardToProcessor;// = new AbstractForwardToProcessor();
-		String erroMess = "Please contact the caTissue Core support at catissue_support@mga.wustl.edu";
 		try
 		{
-			Class forwardToClass = Class.forName(forwardToFactoryName);
+			Class forwardToClass = getforwardToClass(forwardToFactoryName);
 			Class[] parameterTypes = new Class[]{};
 			Method getForwardToMethod = forwardToClass.getMethod(methodName, parameterTypes);
 			Object[] parameterValues = new Object[]{};
-			forwardToProcessor = (AbstractForwardToProcessor) getForwardToMethod.invoke(null,
-					parameterValues);
-		}
-		catch (ClassNotFoundException classNotFndExp)
-		{
-			logger.debug("AbstractForwardToFactory : ForwardToFactory with class name "
-					+ forwardToFactoryName + " not present");
-			logger.debug(classNotFndExp.getMessage(), classNotFndExp);
-			throw new BizLogicException(
-					"Server Error #1: "+erroMess);
+			return (AbstractForwardToProcessor) getForwardToMethod.invoke(null, parameterValues);
 		}
 		catch (NoSuchMethodException noMethodExp)
 		{
 			logger.debug("AbstractForwardToFactory : No such method " + methodName
 					+ " in ForwardToFactory class " + forwardToFactoryName);
-			logger.debug(noMethodExp.getMessage(), noMethodExp);
-			throw new BizLogicException(
-					"Server Error #2: "+erroMess);
+			throw new BizLogicException("Server Error #2: " + TextConstants.ERROR_MESSAGE,
+					noMethodExp);
 		}
 		catch (InvocationTargetException invTrgtExp)
 		{
 			logger.debug("AbstractForwardToFactory : No such method " + methodName
 					+ " in ForwardToFactory class " + forwardToFactoryName);
-			logger.debug(invTrgtExp.getMessage(), invTrgtExp);
-			throw new BizLogicException(
-					"Server Error #3: "+erroMess);
+			throw new BizLogicException("Server Error #3: " + TextConstants.ERROR_MESSAGE,
+					invTrgtExp);
 		}
 		catch (IllegalAccessException illAccEcp)
 		{
 			logger.debug("AbstractForwardToFactory : No access to method " + methodName
 					+ " in ForwardToFactory class " + forwardToFactoryName);
-			logger.debug(illAccEcp.getMessage(), illAccEcp);
-			throw new BizLogicException(
-					"Server Error #4: "+erroMess);
+			throw new BizLogicException("Server Error #4: " + TextConstants.ERROR_MESSAGE,
+					illAccEcp);
 		}
 
-		return forwardToProcessor;
+	}
+
+	/**
+	 * @param forwardToFactoryName forward To Factory Name.
+	 * @return Class.
+	 * @throws BizLogicException BizLogic Exception.
+	 */
+	private static Class getforwardToClass(String forwardToFactoryName) throws BizLogicException
+	{
+		try
+		{
+			return Class.forName(forwardToFactoryName);
+		}
+		catch (ClassNotFoundException classNotFndExp)
+		{
+			logger.debug("AbstractForwardToFactory : ForwardToFactory with class name "
+					+ forwardToFactoryName + " not present");
+			throw new BizLogicException("Server Error #1: " + TextConstants.ERROR_MESSAGE,
+					classNotFndExp);
+		}
 	}
 }
