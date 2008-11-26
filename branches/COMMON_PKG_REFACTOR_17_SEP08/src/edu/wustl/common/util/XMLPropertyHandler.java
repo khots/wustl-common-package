@@ -11,18 +11,13 @@
 
 package edu.wustl.common.util;
 
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -44,39 +39,23 @@ public class XMLPropertyHandler
 
 	/**
 	 * @param path String path for logger information.
-	 * @throws SAXException sax related exception.
-	 * @throws IOException I/O exception.
-	 * @throws ParserConfigurationException configuration exception at the time of parsing.
+	 * @throws ParseException throws this exception if
+	 * specified xml file not found or not able to parse the file.
 	 */
-	public static void init(String path) throws SAXException,IOException,ParserConfigurationException
+	public static void init(String path) throws ParseException
 	{
 		logger.info("path" + path);
-		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 		try
 		{
-			DocumentBuilder dbuilder = dbfactory.newDocumentBuilder();
-			if (path != null)
-			{
-				document = dbuilder.parse(path);
-			}
+			document=XMLParserUtility.getDocument(path);
 		}
-		catch (SAXException e)
+		catch (Exception ioe)
 		{
-			logger.error(e.getMessage(), e);
-			throw e;
-		}
-		catch (IOException e)
-		{
-			logger.error(e.getMessage(), e);
-			throw e;
-		}
-		catch (ParserConfigurationException e)
-		{
-			logger.error("Could not locate a JAXP parser: " + e.getMessage(), e);
-			throw e;
+			logger.error(ioe.getMessage(), ioe);
+			ErrorKey errorKey = null;
+			throw new ParseException(errorKey,ioe,"");
 		}
 	}
-
 	/**
 	 * <p>
 	 * Description:This method takes the property name as String argument and
@@ -86,81 +65,49 @@ public class XMLPropertyHandler
 	 * @param propertyName String name of property.
 	 * @return String value of property.
 	 */
-
 	public static String getValue(String propertyName)
 	{
-		String value=null;
-		Element root = document.getDocumentElement();
-		NodeList children = root.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++)
+		String value="";
+		Element docEle = document.getDocumentElement();
+		NodeList propNodeList= docEle.getElementsByTagName("property");
+		for (int i = 0; i < propNodeList.getLength(); i++)
 		{
-			Node child = children.item(i);
-			if (child instanceof Element)
+			Element propElement = (Element)propNodeList.item(i);
+			String name = getTextValue(propElement,"name");
+			if(name.equals(propertyName))
 			{
-				value = extractValue(propertyName, child);
+				value= getTextValue(propElement,"value");
+				break;
 			}
 		}
 		return value;
 	}
 
 	/**
-	 * This method extract value from a child.
-	 * @param propertyName String name of property.
-	 * @param child Node child node.
-	 * @return String name of child node.
+	 * This class return the value of Element.
+	 * e.g if Element for following property tag is passed
+	 * <property>
+	 *		<name>server.port</name>
+	 *		<value>8080</value>
+	 *	</property>
+	 * then it will return server.port or 8080 depends on second argument.
+	 * @param elements Element object
+	 * @param tagName tag name.
+	 * @return value of element passed.
 	 */
-	private static String extractValue(String propertyName, Node child)
+	private static String getTextValue(Element elements, String tagName)
 	{
-		NodeList subChildNodes = child.getChildNodes();
-		String value=null;
-		for (int j = 0; j < subChildNodes.getLength(); j++)
+		String textVal = "";
+		NodeList nodeList = elements.getElementsByTagName(tagName);
+		if(nodeList != null && nodeList.getLength() > 0)
 		{
-			Node subchildNode = subChildNodes.item(j);
-			String subNodeName = subchildNode.getNodeName();
-			boolean isNameFound = isNameFound(propertyName, subchildNode, subNodeName);
-			value = getNodeValue(isNameFound,subchildNode, subNodeName);
-		}
-		return value;
-	}
-
-	/**
-	 * @param isNameFound if name tag found.
-	 * @param subchildNode Child Node object.
-	 * @param subNodeName sub node value.
-	 * @return node value if name tag already found or null.
-	 */
-	private static String getNodeValue(boolean isNameFound,Node subchildNode,String subNodeName)
-	{
-		String value=null;
-		if (isNameFound && "value".equals(subNodeName))
-		{
-			String pValue = "";
-			if (subchildNode != null && subchildNode.getFirstChild() != null)
+			Element element = (Element)nodeList.item(0);
+			if(null!=element.getFirstChild())
 			{
-				pValue = (String) subchildNode.getFirstChild().getNodeValue();
-			}
-			value=pValue;
-		}
-		return value;
-	}
-
-	/**
-	 * @param propertyName Property Name.
-	 * @param subchildNode child Node object.
-	 * @param subNodeName  sub node value.
-	 * @return true if name tag found else false.
-	 */
-	private static boolean isNameFound(String propertyName,Node subchildNode,String subNodeName)
-	{
-		boolean isNameFound=false;
-		if ("name".equals(subNodeName))
-		{
-			String pName = (String) subchildNode.getFirstChild().getNodeValue();
-			if (propertyName.equals(pName))
-			{
-				isNameFound = true;
+				textVal = element.getFirstChild().getNodeValue();
 			}
 		}
-		return isNameFound;
+
+		return textVal;
 	}
 }
