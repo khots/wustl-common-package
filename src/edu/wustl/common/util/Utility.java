@@ -30,8 +30,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
@@ -43,8 +43,6 @@ import edu.wustl.common.util.logger.Logger;
 /**
  * @author kapil_kaveeshwar
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class Utility
 {
@@ -802,21 +800,6 @@ public class Utility
 	}
 
 	/**
-	 * Forms display name for attribute as className : attribute name.
-	 * @param attribute AttributeInterface
-	 * @return columnDisplayName
-	 */
-	public static String getDisplayNameForColumn(AttributeInterface attribute)
-	{
-		StringBuffer columnDisplayName = new StringBuffer();
-		String className = parseClassName(attribute.getEntity().getName());
-		className = getDisplayLabel(className);
-		String attributeLabel = getDisplayLabel(attribute.getName());
-		columnDisplayName.append(className).append(" : ").append(attributeLabel);
-		return columnDisplayName.toString();
-	}
-
-	/**
 	 * Specifies date pattern.
 	 */
 	private static String pattern = "MM-dd-yyyy";
@@ -923,9 +906,11 @@ public class Utility
 
 	/**
 	 * For MSR changes.
+	 * @throws edu.wustl.common.exception.ParseException throws this exception if
+	 * specified xml file not found or not able to parse the file.
 	 */
 
-	public static void initializePrivilegesMap()
+	public static void initializePrivilegesMap() throws edu.wustl.common.exception.ParseException
 	{
 		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
 		Map<String, List<NameValueBean>> privGroupMap = Variables.privilegeGroupingMap;
@@ -933,7 +918,17 @@ public class Utility
 				TextConstants.PERMSN_MAP_DET_FILE);
 		if (inputXmlFile != null)
 		{
-			Document doc = XMLParserUtility.getDocument(inputXmlFile);
+			Document doc;
+			try
+			{
+				doc = XMLParserUtility.getDocument(inputXmlFile);
+			}
+			catch (Exception ioe)
+			{
+				logger.error(ioe.getMessage(), ioe);
+				ErrorKey errorKey = null;
+				throw new edu.wustl.common.exception.ParseException(errorKey,ioe,"");
+			}
 			Element root = doc.getDocumentElement();
 			NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
 			int length = nodeList.getLength();
