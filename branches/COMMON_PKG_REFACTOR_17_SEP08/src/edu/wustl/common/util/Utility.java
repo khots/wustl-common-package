@@ -431,19 +431,19 @@ public class Utility
 	 */
 	public static String createAttributeNameForHQL(String className, String selectColumnName)
 	{
-		String attribute;
+		StringBuffer attribute=new StringBuffer();
 		// Check whether the select Column start with "elements" & ends with ")" or not
 		if (isColumnNameContainsElements(selectColumnName))
 		{
 			int startIndex = selectColumnName.indexOf('(') + 1;
-			attribute = selectColumnName.substring(0, startIndex) + className + "."
-					+ selectColumnName.substring(startIndex);
+			attribute.append(selectColumnName.substring(0, startIndex)).append(className).append('.').
+					append(selectColumnName.substring(startIndex));
 		}
 		else
 		{
-			attribute = className + "." + selectColumnName;
+			attribute.append(className).append('.').append(selectColumnName);
 		}
-		return attribute;
+		return attribute.toString();
 	}
 
 	/**
@@ -464,13 +464,7 @@ public class Utility
 	 */
 	public static String getFormBeanName(Object obj)
 	{
-		String objClassName = obj.getClass().toString();
-		objClassName = objClassName.substring((objClassName.lastIndexOf('.') + 1), (objClassName
-				.length()));
-		String classNamefstChar = objClassName.substring(0, 1);
-		String formBeanName = classNamefstChar.toLowerCase()
-				+ objClassName.substring(1, (objClassName.length()));
-		return formBeanName;
+		return obj.getClass().getSimpleName().toLowerCase();
 	}
 
 	/**
@@ -750,24 +744,15 @@ public class Utility
 				tempStr=objectName.substring(prevIndex, i);
 				if(!TextConstants.EMPTY_STRING.equals(tempStr))
 				{
-					getStringWithFirstLetterCaps(formatedStr, tempStr);
+					formatedStr.append(initCap(tempStr));
 					formatedStr.append(Constants.CONST_SPACE_CAHR);
 				}
 				prevIndex=i;
 			}
 		}
 		tempStr=objectName.substring(prevIndex,objectName.length());
-		getStringWithFirstLetterCaps(formatedStr, tempStr);
+		formatedStr.append(initCap(tempStr));
 		return formatedStr.toString();
-	}
-	/**
-	 * @param formatedStr StringBuffer to save formated String.
-	 * @param tempStr String to format
-	 */
-	private static void getStringWithFirstLetterCaps(StringBuffer formatedStr, String tempStr)
-	{
-		formatedStr.append(Character.toUpperCase(tempStr.charAt(0)));
-		formatedStr.append(tempStr.substring(1).toLowerCase());
 	}
 
 	/**
@@ -842,7 +827,7 @@ public class Utility
 		{
 			if(!TextConstants.EMPTY_STRING.equals(tokens[i]))
 			{
-				getStringWithFirstLetterCaps(formatedStr, tokens[i]);
+				formatedStr.append(initCap(tokens[i]));
 				formatedStr.append(Constants.CONST_SPACE_CAHR);
 			}
 		}
