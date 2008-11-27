@@ -741,62 +741,34 @@ public class Utility
 	 */
 	public static String getDisplayLabel(String objectName)
 	{
-		StringBuffer attrLabel = new StringBuffer();
-		boolean isPrevLetLCase = false;
-		int len = objectName.length();
-		for (int i = 0; i < len; i++)
+		StringBuffer formatedStr=new StringBuffer();
+		int prevIndex=0;
+		String tempStr;
+		for(int i=0;i<objectName.length();i++)
 		{
-			char attrChar = objectName.charAt(i);
-			int asciiValue = attrChar;
-			if (asciiValue >= Constants.CONST_A && asciiValue <= Constants.CONST_Z)
+			if(Character.isUpperCase(objectName.charAt(i)))
 			{
-				if (i == 0)
+				tempStr=objectName.substring(prevIndex, i);
+				if(!TextConstants.EMPTY_STRING.equals(tempStr))
 				{
-					attrLabel.append(attrChar);
+					getStringWithFirstLetterCaps(formatedStr, tempStr);
+					formatedStr.append(Constants.CONST_SPACE_CAHR);
 				}
-				else
-				{
-					attrLabel.append(Constants.CONST_SPACE_CAHR).append(attrChar);
-				}
-				for (int k = i + 1; k < len; k++)
-				{
-					attrChar = objectName.charAt(k);
-					asciiValue = attrChar;
-					if (asciiValue >= Constants.CONST_A && asciiValue <= Constants.CONST_Z)
-					{
-						if (isPrevLetLCase)
-						{
-							attrLabel.append(Constants.CONST_SPACE_CAHR).append(attrChar);
-							isPrevLetLCase = false;
-						}
-						else
-						{
-							attrLabel.append(attrChar);
-						}
-						i++;
-					}
-					else
-					{
-						isPrevLetLCase = true;
-						attrLabel.append(attrChar);
-						i++;
-					}
-				}
-			}
-			else
-			{
-				if (i == 0)
-				{
-					int capitalAsciiValue = asciiValue - Constants.CONST_SPACE;
-					attrLabel.append(capitalAsciiValue);
-				}
-				else
-				{
-					attrLabel.append(attrChar);
-				}
+				prevIndex=i;
 			}
 		}
-		return attrLabel.toString();
+		tempStr=objectName.substring(prevIndex,objectName.length());
+		getStringWithFirstLetterCaps(formatedStr, tempStr);
+		return formatedStr.toString();
+	}
+	/**
+	 * @param formatedStr
+	 * @param tempStr
+	 */
+	private static void getStringWithFirstLetterCaps(StringBuffer formatedStr, String tempStr)
+	{
+		formatedStr.append(Character.toUpperCase(tempStr.charAt(0)));
+		formatedStr.append(tempStr.substring(1).toLowerCase());
 	}
 
 	/**
@@ -865,43 +837,17 @@ public class Utility
 	 */
 	public static String getDisplayLabelForUnderscore(String objectName)
 	{
-		StringBuffer attrLabel = new StringBuffer();
-		int len = objectName.length();
-		for (int i = 0; i < len; i++)
+		StringBuffer formatedStr=new StringBuffer();
+		String []tokens=objectName.split("_");
+		for(int i=0;i<tokens.length;i++)
 		{
-			char attrChar = objectName.charAt(i);
-			int asciiValueCurrent = attrChar;
-
-			if (asciiValueCurrent >= Constants.CONST_A && asciiValueCurrent <= Constants.CONST_Z)
+			if(!TextConstants.EMPTY_STRING.equals(tokens[i]))
 			{
-				if (i == 0 || objectName.charAt(i - 1) == Constants.CONST_UNDERSCORE
-						|| objectName.charAt(i - 1) == Constants.CONST_SPACE)
-				{
-					attrLabel.append(attrChar);
-				}
-				else
-				{
-					asciiValueCurrent = asciiValueCurrent + Constants.CONST_SPACE;
-					attrLabel.append(asciiValueCurrent);
-				}
-			}
-			else if (asciiValueCurrent == Constants.CONST_UNDERSCORE)
-			{
-				if (i == 0 || i == len - 1)
-				{
-					continue;
-				}
-				else
-				{
-					attrLabel.append(' ');
-				}
-			}
-			else
-			{
-				attrLabel.append(attrChar);
+				getStringWithFirstLetterCaps(formatedStr, tokens[i]);
+				formatedStr.append(Constants.CONST_SPACE_CAHR);
 			}
 		}
-		return attrLabel.toString();
+		return formatedStr.toString();
 	}
 
 	/**
