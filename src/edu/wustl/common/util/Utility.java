@@ -74,7 +74,7 @@ public class Utility
 				String message = new StringBuffer("Date '").append(date).append(
 						"' is not in format : ").append(pattern).toString();
 				logger.debug(message, exception);
-				throw new ParseException(message, 0);
+				throw new ParseException(message,exception.getErrorOffset());
 			}
 		}
 		return dateObj;
@@ -139,13 +139,15 @@ public class Utility
 	 */
 	public static String createAccessorMethodName(String attr, boolean isSetter)
 	{
-		String firstChar = attr.substring(0, 1);
 		String str = "get";
 		if (isSetter)
 		{
 			str = "set";
 		}
-		return str + firstChar.toUpperCase() + attr.substring(1);
+		StringBuffer mathodname=new StringBuffer(attr);
+		mathodname.setCharAt(0, Character.toUpperCase(attr.charAt(0)));
+		mathodname.insert(0,str);
+		return mathodname.toString();
 	}
 
 	/**
@@ -343,15 +345,16 @@ public class Utility
 	 */
 	public static Object[] addElement(Object[] array, Object obj)
 	{
-		Object[] newObjectArr = new Object[array.length + 1];
+		int arraySize=array.length + 1;
+		Object[] newObjectArr = new Object[arraySize];
 
 		if (array instanceof String[])
 		{
-			newObjectArr = new String[array.length + 1];
+			newObjectArr = new String[arraySize];
 		}
 
 		System.arraycopy(array, 0, newObjectArr, 0, array.length);
-		newObjectArr[newObjectArr.length - 1] = obj;
+		newObjectArr[array.length] = obj;
 		return newObjectArr;
 	}
 
@@ -363,16 +366,14 @@ public class Utility
 	 */
 	public static String parseAttributeName(String methodName) throws Exception
 	{
-		String attributeName = "";
+		StringBuffer attributeName=new StringBuffer();
 		int index = methodName.indexOf("get");
 		if (index != -1)
 		{
-			attributeName = methodName.substring(index + "get".length());
+			attributeName.append(methodName.substring(index + "get".length()));
 		}
-
-		String firstChar = (attributeName.charAt(0) + "").toLowerCase();
-		attributeName = firstChar + attributeName.substring(1);
-		return attributeName;
+		attributeName.setCharAt(0, Character.toLowerCase(attributeName.charAt(0)));
+		return attributeName.toString();
 	}
 
 	/**
@@ -394,20 +395,20 @@ public class Utility
 	}
 
 	/**
-	 * Parses the fully qualified classname and returns only the classname.
-	 * @param qualifiedName The fully qualified classname.
-	 * @return The classname.
+	 * Parses the fully qualified class name and returns only the class name.
+	 * @param qualifiedName The fully qualified class name.
+	 * @return The class name.
 	 */
 	public static String parseClassName(String qualifiedName)
 	{
-		String className = qualifiedName;
+		String className=qualifiedName;
 		try
 		{
-			className = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+			Class clazz=Class.forName(qualifiedName);
+			className=clazz.getSimpleName();
 		}
 		catch (Exception e)
 		{
-			className = qualifiedName;
 			logger.warn("Not able to parse class name:" + qualifiedName);
 		}
 		return className;
@@ -678,19 +679,17 @@ public class Utility
 	 */
 	public static String initCap(String str)
 	{
-		String retStr = TextConstants.EMPTY_STRING;
-		if (str != null && str.trim().length() > 0)
-		{
-			String firstCharacter = str.substring(0, 1);
-			String otherData = str.substring(1);
-			retStr = firstCharacter.toUpperCase() + otherData.toLowerCase();
+		StringBuffer retStr;
+		if (str != null && !TextConstants.EMPTY_STRING.equals(str.trim()))
+		{	retStr= new StringBuffer(str.toLowerCase());
+			retStr.setCharAt(0, Character.toUpperCase(str.charAt(0)));
 		}
 		else
 		{
+			retStr= new StringBuffer();
 			logger.debug("Utility.initCap : - String provided is either empty or null" + str);
 		}
-
-		return retStr;
+		return retStr.toString();
 	}
 
 	/**
@@ -762,8 +761,8 @@ public class Utility
 		return formatedStr.toString();
 	}
 	/**
-	 * @param formatedStr
-	 * @param tempStr
+	 * @param formatedStr StringBuffer to save formated String.
+	 * @param tempStr String to format
 	 */
 	private static void getStringWithFirstLetterCaps(StringBuffer formatedStr, String tempStr)
 	{
