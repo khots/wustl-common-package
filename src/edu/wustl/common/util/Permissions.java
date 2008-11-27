@@ -38,5 +38,5 @@ public interface Permissions {
 	public static final String GENERAL_SITE_ADMINISTRATION = "GENERAL_SITE_ADMINISTRATION";
 	public static final String GENERAL_ADMINISTRATION = "GENERAL_ADMINISTRATION";
 	public static final String SHIPMENT_PROCESSING = "SHIPMENT_PROCESSING";
-	
+	public static final String EXECUTE_QUERY="EXECUTE_QUERY";
 }
