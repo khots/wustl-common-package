@@ -36,6 +36,7 @@ import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
+import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
@@ -674,14 +675,15 @@ public class Utility
 	public static String initCap(String str)
 	{
 		StringBuffer retStr;
-		if (str != null && !TextConstants.EMPTY_STRING.equals(str.trim()))
-		{	retStr= new StringBuffer(str.toLowerCase());
-			retStr.setCharAt(0, Character.toUpperCase(str.charAt(0)));
-		}
-		else
+		if (Validator.isEmpty(str))
 		{
 			retStr= new StringBuffer();
 			logger.debug("Utility.initCap : - String provided is either empty or null" + str);
+		}
+		else
+		{
+			retStr= new StringBuffer(str.toLowerCase());
+			retStr.setCharAt(0, Character.toUpperCase(str.charAt(0)));
 		}
 		return retStr.toString();
 	}
@@ -932,7 +934,7 @@ public class Utility
 		{
 			recordsPerPage = Integer.parseInt(XMLPropertyHandler
 					.getValue(Constants.RECORDS_PER_PAGE_PROPERTY_NAME));
-			session.setAttribute(Constants.RESULTS_PER_PAGE, recordsPerPage + "");
+			session.setAttribute(Constants.RESULTS_PER_PAGE, String.valueOf(recordsPerPage));
 		}
 		else
 		{
