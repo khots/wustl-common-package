@@ -44,7 +44,6 @@ public class Constants
 
 	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
 
-
 	// Mandar: Used for Date Validations in Validator Class
 	public static final String DATE_SEPARATOR = "-";
 	public static final String DATE_SEPARATOR_SLASH = "/";
@@ -55,7 +54,6 @@ public class Constants
 	public static final String ACTIVITY_STATUS_ACTIVE = "Active";
 
 	public static final String ADD = "add";
-
 
 	public static final String getCollectionProtocolPIGroupName(Long identifier)
 	{
@@ -75,7 +73,6 @@ public class Constants
 		return "COORDINATORS_COLLECTION_PROTOCOL_" + identifier;
 	}
 
-
 	public static final String getStorageContainerPGName()
 	{
 		return "USER_";
@@ -90,10 +87,8 @@ public class Constants
 		return "SITE_" + identifier;
 	}
 
-	public static final String COLLECTION_PROTOCOL_CLASS_NAME
-		= "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
-	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME
-	= "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
+	public static final String COLLECTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
+	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
 	// Aarti: Constants for security parameter required
 	// while retrieving data from DAOs
 	public static final int INSECURE_RETRIEVE = 0;
@@ -119,10 +114,7 @@ public class Constants
 	// User Roles
 	public static final String ADMINISTRATOR = "Administrator";
 
-	//Assign Privilege Constants.
-	public static final boolean PRIVILEGE_ASSIGN = true;
-
-//	DAO Constants.
+	//	DAO Constants.
 	public static final int HIBERNATE_DAO = 1;
 	public static final int JDBC_DAO = 2;
 
@@ -134,12 +126,9 @@ public class Constants
 	// This string is used for searching " for key " string in the above error message
 	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
 
-	public static final String GENERIC_DATABASE_ERROR
-		="An error occurred during a database operation. Please report this problem to the administrator";
-	public static final String CONSTRAINT_VOILATION_ERROR
-					="Submission failed since a {0} with the same {1} already exists";
-	public static final String OBJECT_NOT_FOUND_ERROR
-			= "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
+	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation. Please report this problem to the administrator";
+	public static final String CONSTRAINT_VOILATION_ERROR = "Submission failed since a {0} with the same {1} already exists";
+	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
 
 	public static final String ACTIVITY_STATUS_DISABLED = "Disabled";
 	public static final String ACTIVITY_STATUS_CLOSED = "Closed";
@@ -492,43 +481,15 @@ public class Constants
 	public static final String CP_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";
 	public static final String EXPORT_FILE_NAME_START = "Report_Content_";
 
-	public static final String SECURITY_MANAGER_PROP_FILE = "SecurityManager.properties";
-	public static final String APPLN_CONTEXT_NAME = "application.context.name";
-	public static final String SECURITY_MANAGER_CLASSNAME = "class.name";
-
-	public static final String MAIN_PROTOCOL_OBJECT = "mainprotocolobject.classname";
-	public static final String READ_DENIED_OBJECTS = "readdeniedobjects";
-	public static final String CSM_PROPERTY_FILE = "csm.properties";
-	public static final String ROLE_ADMINISTRATOR = "Administrator";
-	public static final String TECHNICIAN = "Technician";
-	public static final String SUPERVISOR = "Supervisor";
-	public static final String SCIENTIST = "Scientist";
-	public static final String ROLE_SUPER_ADMINISTRATOR = "SUPERADMINISTRATOR";
-
-	public static final String SUPER_ADMINISTRATOR_ROLE = "SUPER_ADMINISTRATOR_ROLE";
-	public static final String ADMINISTRATOR_ROLE = "ADMINISTRATOR_ROLE";
-	public static final String SUPERVISOR_ROLE = "SUPERVISOR_ROLE";
-	public static final String TECHNICIAN_ROLE = "TECHNICIAN_ROLE";
-	public static final String PUBLIC_ROLE = "PUBLIC_ROLE";
-	public static final String ADMINISTRATOR_GROUP_ID = "ADMINISTRATOR_GROUP_ID";
-	public static final String SUPERVISOR_GROUP_ID = "SUPERVISOR_GROUP_ID";
-	public static final String TECHNICIAN_GROUP_ID = "TECHNICIAN_GROUP_ID";
-	public static final String PUBLIC_GROUP_ID = "PUBLIC_GROUP_ID";
-	public static final String SUPER_ADMINISTRATOR_GROUP_ID = "SUPER_ADMINISTRATOR_GROUP_ID";
 	public static final String APPLICATION_CLINPORTAL = "clinportal";
-	public static final String ALLOW_OPERATION = "allowOperation";
-	public static final String REGISTRATION = "REGISTRATION";
-	public static final String PHI_ACCESS = "PHI_ACCESS";
-	public static final String READ_DENIED = "READ_DENIED";
-	public static final String VALIDATOR_CLASSNAME = "validator.classname";
-	public static final String HASHED_OUT = "##";
+
 	public static final int ONE = 1;
 	public static final int INITIALIZE = -1;
-	public static final int ONE_KILO_BYTES=1024;
-	public static final int FOUR_KILO_BYTES=4096;
-	public static final int CONST_A=65;
-	public static final int CONST_Z=90;
-	public static final int CONST_SPACE=32;
-	public static final int CONST_UNDERSCORE=95;
-	public static final char CONST_SPACE_CAHR=' ';
+	public static final int ONE_KILO_BYTES = 1024;
+	public static final int FOUR_KILO_BYTES = 4096;
+	public static final int CONST_A = 65;
+	public static final int CONST_Z = 90;
+	public static final int CONST_SPACE = 32;
+	public static final int CONST_UNDERSCORE = 95;
+	public static final char CONST_SPACE_CAHR = ' ';
 }
