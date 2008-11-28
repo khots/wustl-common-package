@@ -176,10 +176,7 @@ public class Constants
 
 	public static final String IDENTIFIER = "IDENTIFIER";
 
-	public static final String FIELD_TYPE_BIGINT = "bigint";
-	public static final String FIELD_TYPE_VARCHAR = "varchar";
-	public static final String FIELD_TYPE_TEXT = "text";
-	public static final String FIELD_TYPE_TINY_INT = "tinyint";
+	
 	public static final String FIELD_TYPE_DATE = "date";
 	public static final String FIELD_TYPE_TIMESTAMP_DATE = "timestampdate";
 
@@ -191,12 +188,7 @@ public class Constants
 
 	public static final String TABLE_ID_COLUMN = "TABLE_ID";
 
-	public static final String NULL = "NULL";
-
-	public static final String CONDITION_VALUE_YES = "yes";
-
-	public static final String TINY_INT_VALUE_ONE = "1";
-	public static final String TINY_INT_VALUE_ZERO = "0";
+	
 
 	public static final String FIELD_TYPE_TIMESTAMP_TIME = "timestamptime";
 
@@ -204,35 +196,29 @@ public class Constants
 
 	public static final String UPPER = "UPPER";
 
-	public static final String PARENT_SPECIMEN_ID_COLUMN = "PARENT_SPECIMEN_ID";
-
-	// Query results view temporary table name.
-	public static final String QUERY_RESULTS_TABLE = "CATISSUE_QUERY_RESULTS";
+	
 
 	public static final String TIME_PATTERN_HH_MM_SS = "HH:mm:ss";
 
-	public static final int SIMPLE_QUERY_INTERFACE_ID = 40;
+	
 
 	// -- menu selection related
 	public static final String MENU_SELECTED = "menuSelected";
 
-	public static final String SIMPLE_QUERY_MAP = "simpleQueryMap";
+	
 
 	public static final String IDENTIFIER_FIELD_INDEX = "identifierFieldIndex";
 	/*
 	 * Patch ID: SimpleSearchEdit_3
 	 * Description: Constants required for this feature plus Delimeter used in the DHTML grid.
 	*/
-	public static final String HYPERLINK_COLUMN_MAP = "hyperlinkColumnMap";
+	
 	public static final String DHTMLXGRID_DELIMETER = "|@|";
 	public static final String PAGEOF_SIMPLE_QUERY_INTERFACE = "pageOfSimpleQueryInterface";
-	public static final String SIMPLE_QUERY_ALIAS_NAME = "simpleQueryAliasName";
-
-	public static final String SIMPLE_QUERY_INTERFACE_ACTION = "/SimpleQueryInterface.do";
-
+	
 	public static final String PAGEOF = "pageOf";
 	public static final String STORAGE_CONTAINER = "storageContainerName";
-	public static final String TABLE_ALIAS_NAME = "aliasName";
+	
 	public static final String SIMPLE_QUERY_NO_RESULTS = "noResults";
 	public static final String SEARCH_OBJECT_ACTION = "/SearchObject.do";
 
@@ -267,9 +253,7 @@ public class Constants
 
 	public static final String COLUMN = "Column";
 
-	public static final String ATTRIBUTE_NAME_LIST = "attributeNameList";
-	public static final String ATTRIBUTE_CONDITION_LIST = "attributeConditionList";
-
+	
 	public static final String[] ATTRIBUTE_NAME_ARRAY = {SELECT_OPTION};
 
 	public static final String[] ATTRIBUTE_CONDITION_ARRAY = {"=", "<", ">"};
@@ -282,7 +266,6 @@ public class Constants
 	public static final String ACCESS_DENIED_BIOSPECIMEN = "access_denied_biospecimen";
 
 	// Constants for type of query results view.
-	public static final String SPREADSHEET_VIEW = "Spreadsheet View";
 	public static final String OBJECT_VIEW = "Edit View";
 
 	public static final String COLLECTION_PROTOCOL = "CollectionProtocol";
@@ -355,9 +338,8 @@ public class Constants
 
 	//Constant for redefine operation for Advance and Simple Query
 	public static final String REDEFINE = "redefine";
-	public static final String ORIGINAL_SIMPLE_QUERY_OBJECT = "originalSimpleQueryObject";
-	public static final String ORIGINAL_SIMPLE_QUERY_COUNTER = "counter";
-	public static final String SIMPLE_QUERY_COUNTER = "counter";
+	
+	
 	/***  Added New Constansts.  ***/
 
 	//	Activity Status values
@@ -460,9 +442,7 @@ public class Constants
 	public static final String CSM_USER_ID = "csmUserId";
 
 	public static final String REPORTED_PROBLEM_CLASS_NAME = "edu.wustl.catissuecore.domain.ReportedProblem";
-	public static final String PARTICIPANT = "Participant";
-	public static final String SPECIMEN = "Specimen";
-	public static final String SPECIMEN_COLLECTION_GROUP = "SpecimenCollectionGroup";
+
 	public static final String ALL = "All";
 	public static final int[] RESULT_PERPAGE_OPTIONS = {10, 50, 100, 500, Integer.MAX_VALUE};
 	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
@@ -492,4 +472,8 @@ public class Constants
 	public static final int CONST_SPACE = 32;
 	public static final int CONST_UNDERSCORE = 95;
 	public static final char CONST_SPACE_CAHR = ' ';
+	/**
+	 * constant for ALLOW_OPERATION.
+	 */
+	public static final String ALLOW_OPERATION = "allowOperation";
 }
