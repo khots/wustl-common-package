@@ -25,13 +25,13 @@ public class PagenatedResultData
 	/**
 	 * Holds the Result or Subset of query result.
 	 */
-	private List result;
+	private transient List result;
 	/**
 	 * Total number of records that will be returned by the query. result.siez() will be always
 	 * less than or equal to totalRecords.
 	 */
 
-	private int totalRecords;
+	private transient int totalRecords;
 
 	/**
 	 * Constructor to instanciate object of this class.

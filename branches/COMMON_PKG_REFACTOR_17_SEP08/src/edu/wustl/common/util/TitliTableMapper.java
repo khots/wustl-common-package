@@ -37,7 +37,7 @@ public final class TitliTableMapper
 	/**
 	 * the in-memory document constructed from the xml file.
 	 */
-	private Document document=null;
+	private  transient Document document;
 
 	/**
 	 * the private constructor for singleton behavior.

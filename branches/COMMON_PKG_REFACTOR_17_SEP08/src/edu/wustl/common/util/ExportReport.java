@@ -45,23 +45,23 @@ public class ExportReport
 	/**
 	 * temp BufferedWriter temporary buffered writer.
 	 */
-	private BufferedWriter temp;
+	private transient BufferedWriter temp;
 	/**
 	 * zipFileName String zipped file name.
 	 */
-	private String zipFileName;
+	private transient String zipFileName;
 	/**
 	 * path String path.
 	 */
-	private String path;
+	private transient String path;
 	/**
 	 * cvsFileWriter BufferedWriter cvs file buffered writer.
 	 */
-	private BufferedWriter cvsFileWriter;
+	private transient BufferedWriter cvsFileWriter;
 	/**
 	 * fileName String file name.
 	 */
-	private String fileName;
+	private transient String fileName;
 	/**
 	 * logger Logger - Generic logger.
 	 */
