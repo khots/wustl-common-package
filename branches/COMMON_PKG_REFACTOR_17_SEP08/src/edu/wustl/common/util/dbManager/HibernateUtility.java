@@ -4,7 +4,6 @@ package edu.wustl.common.util.dbmanager;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -23,11 +22,9 @@ public class HibernateUtility
 	 * @param queryName String name of query.
 	 * @param values List of type Object object list.
 	 * @return Collection containing details of query.
-	 * @throws HibernateException exception of Hibernate.
 	 */
 
 	public static Collection executeHQL(String queryName, List<Object> values)
-			throws HibernateException
 	{
 		try
 		{
@@ -39,9 +36,7 @@ public class HibernateUtility
 				for (int counter = 0; counter < values.size(); counter++)
 				{
 					Object value = values.get(counter);
-					String objectType = value.getClass().getName();
-					String onlyClassName = objectType.substring(objectType.lastIndexOf('.')
-							+ 1,objectType.length());
+					String onlyClassName = value.getClass().getSimpleName();
 					if (String.class.getSimpleName().equals(onlyClassName))
 					{
 						query.setString(counter, (String) value);
@@ -68,9 +63,8 @@ public class HibernateUtility
 	 * Return the output of execution of query.
 	 * @param queryName String name of query.
 	 * @return Collection containing output of execution of query.
-	 * @throws HibernateException exception of Hibernate.
 	 */
-	public static Collection executeHQL(String queryName) throws HibernateException
+	public static Collection executeHQL(String queryName)
 	{
 		return executeHQL(queryName, null);
 	}
