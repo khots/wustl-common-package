@@ -465,7 +465,7 @@ public class HibernateMetaData
 		{
 			HibernateProxy hp  = (HibernateProxy)domainObject;
 			Object obj = hp.getHibernateLazyInitializer().getImplementation();
-			Logger.out.debug(obj+" : obj");
+			//Logger.out.debug(obj+" : obj");
 			return (AbstractDomainObject)obj;
 		}
         return domainObject;
