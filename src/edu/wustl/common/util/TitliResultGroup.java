@@ -27,27 +27,27 @@ public class TitliResultGroup
 	/**
 	 * group ResultGroupInterface group of result group.
 	 */
-	private ResultGroupInterface group;
+	private transient ResultGroupInterface group;
 	/**
 	 * pageOf String current page.
 	 */
-	private String pageOf;
+	private transient String pageOf;
 	/**
 	 * label String label name.
 	 */
-	private String label;
+	private transient String label;
 	/**
 	 * columnList List of type String - list of columns.
 	 */
-	private List<String> columnList;
+	private transient List<String> columnList;
 	/**
 	 * dataList List of type String - list of data.
 	 */
-	private List<List<String>> dataList;
+	private transient List<List<String>> dataList;
 	/**
 	 * iterator Iterator of match interface.
 	 */
-	private Iterator<MatchInterface> iterator;
+	private  transient Iterator<MatchInterface> iterator;
 
 	/**
 	 * The constructor.
