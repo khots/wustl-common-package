@@ -84,9 +84,14 @@ public class ApplicationException extends Exception
 	public String getLogMessage()
 	{
 		StringBuffer logMsg = new StringBuffer(getFormattedMessage());
-		logMsg.append(" Error caused at- ").append(getErrorMsg());
-		logMsg.append("\n Root cause ").append(getMessage());
-
+		if (getErrorMsg().equals(TextConstants.EMPTY_STRING))
+		{
+			logMsg.append(" Error caused at- ").append(getErrorMsg());
+		}
+		if(getMessage()!=null)
+		{
+			logMsg.append("\n Root cause ").append(getMessage());
+		}
 		return logMsg.toString();
 	}
 
