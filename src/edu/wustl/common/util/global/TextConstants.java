@@ -40,6 +40,15 @@ public class TextConstants
 	 */
 	public static final String PERMSN_MAP_DET_FILE="PermissionMapDetails.xml";
 
+	/**
+	 * ERROR KEY FOR TABLE.
+	 */
 	public static final String ERROR_KEY_FOR_TABLE = "simpleQuery.object.required";
+
+	/**
+	 * ERROR KEY FOR FIELD.
+	 */
 	public static final String ERROR_KEY_FOR_FIELD = "simpleQuery.attribute.required";
+
+	public static final String ERROR_MESSAGE = "Please contact the caTissue Core support at catissue_support@mga.wustl.edu"; 
 }
