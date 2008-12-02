@@ -38,11 +38,15 @@ public class XMLParserUtility
 	 */
 	public static String getElementValue(Element element, String elementName)
 	{
-		String roleName;
-		NodeList roleNmElmntLst = element.getElementsByTagName(elementName);
-		Element roleNmElmnt = (Element) roleNmElmntLst.item(0);
-		NodeList roleNm = roleNmElmnt.getChildNodes();
-		roleName = ((Node) roleNm.item(0)).getNodeValue();
+		String roleName=TextConstants.EMPTY_STRING;
+		NodeList elementList = element.getElementsByTagName(elementName);
+		Element ele = (Element) elementList.item(0);
+		NodeList valueNodeList = ele.getChildNodes();
+		Node node=((Node) valueNodeList.item(0));
+		if(node!=null)
+		{
+			roleName = node.getNodeValue();
+		}
 		return roleName;
 	}
 
