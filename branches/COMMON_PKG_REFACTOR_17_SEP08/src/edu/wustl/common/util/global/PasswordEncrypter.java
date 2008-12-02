@@ -35,21 +35,37 @@ public class PasswordEncrypter
 	/**
 	 * Minimum number of arguments required.
 	 */
-	private static final int MIN_NO_ARGS=7;
+	private static final int MIN_NO_ARGS=9;
 	/**
 	 * The name of the csm table whose password field is to be encrypted.
 	 */
-	private static final String CSM_DATABASE_TABLE_NAME = "csm_user";
-
-	/**
-	 * The name of the catissue table whose password field is to be encrypted.
-	 */
-	private static final String CATISSUE_DATABASE_TABLE_NAME = "catissue_password";
+	private static String csmDbTableName="csm_user";
 
 	/**
 	 * The name of the field whose row values have to be encrypted.
 	 */
-	private static final String DATABASE_TABLE_FIELD_NAME = "password";
+	private static final int INDEX_CSM_DB_TABLE_NAME = 9;
+
+	/**
+	 * The name of the catissue table whose password field is to be encrypted.
+	 */
+	private static String dbTableName;
+
+	/**
+	 * The name of the catissue table whose password field is to be encrypted.
+	 */
+	private static final int INDEX_DB_TABLE_NAME=7;
+
+	/**
+	 * The name of the field whose row values have to be encrypted.
+	 */
+	private static String dbTableFieldName;
+
+	/**
+	 * The name of the field whose row values have to be encrypted.
+	 */
+	private static final int INDEX_DB_TABLE_FIELD_NAME = 8;
+
 	/**
 	 * Main method.
 	 * @param args arguments to main methods.
@@ -65,12 +81,12 @@ public class PasswordEncrypter
 			Connection connection = dbUtility.getConnection();
 
 			//Encrypting password for csm_user table
-			String sql = "SELECT " + CSM_DATABASE_TABLE_NAME + ".* FROM " + CSM_DATABASE_TABLE_NAME;
+			String sql = "SELECT " + csmDbTableName + ".* FROM " + csmDbTableName;
 			updatePasswords(connection, sql);
 
 			//Encrypting password for catissue_password table
-			sql = "SELECT " + CATISSUE_DATABASE_TABLE_NAME + ".* FROM "
-					+ CATISSUE_DATABASE_TABLE_NAME;
+			sql = "SELECT " + dbTableName + ".* FROM "
+					+ dbTableName;
 			updatePasswords(connection, sql);
 		}
 		catch (ClassNotFoundException exception)
@@ -100,13 +116,13 @@ public class PasswordEncrypter
 		{
 		while (resultSet.next())
 		{
-			String userPassword = resultSet.getString(DATABASE_TABLE_FIELD_NAME);
+			String userPassword = resultSet.getString(dbTableFieldName);
 			if (!StringUtilities.isBlank(userPassword))
 			{
 					//Encrypting the password and updating the database.
 					String encryptedPasswordWithNewEncryption = PasswordManager
 							.encrypt(PasswordManager.decode(userPassword));
-					resultSet.updateString(DATABASE_TABLE_FIELD_NAME,
+					resultSet.updateString(dbTableFieldName,
 							encryptedPasswordWithNewEncryption);
 					resultSet.updateRow();
 				}
@@ -130,13 +146,28 @@ public class PasswordEncrypter
 	 */
 	private static void configureDBConnection(String[] args) throws Exception
 	{
-		if (args.length == MIN_NO_ARGS)
+		if (args.length >= MIN_NO_ARGS)
 		{
 			dbUtility.setDbParams(args);
+			setOtherParams(args);
 		}
 		else
 		{
 			throw new Exception("Incorrect number of parameters!!!!");
+		}
+	}
+
+	/**
+	 * This method set parameters related to this class.
+	 * @param args String array of configuration info
+	 */
+	private static void setOtherParams(String[] args)
+	{
+		dbTableName=args[INDEX_DB_TABLE_NAME];
+		dbTableFieldName=args[INDEX_DB_TABLE_FIELD_NAME];
+		if(args.length>MIN_NO_ARGS)
+		{
+			csmDbTableName=args[INDEX_CSM_DB_TABLE_NAME];
 		}
 	}
 }
