@@ -476,4 +476,6 @@ public class Constants
 	 * constant for ALLOW_OPERATION.
 	 */
 	public static final String ALLOW_OPERATION = "allowOperation";
+	public static final String  DB2_DATABASE = "DB2";
+	public static final String BIRTH_DATE_TAG_NAME = "IS_BIRTH_DATE";
 }

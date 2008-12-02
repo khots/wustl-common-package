@@ -324,7 +324,10 @@ public class Utility
 		try
 		{
 			Class classObject = Utility.getClassObject(className);
-			object = classObject.newInstance();
+			if(classObject != null)
+			{
+				object = classObject.newInstance();
+			}
 		}
 		catch (InstantiationException instExp)
 		{

@@ -83,7 +83,10 @@ public abstract class BaseAction extends Action
 		/** Added by amit_doshi
 		 *  code reviewer abhijit_naik
 		 */
-		Utility.setApplicationURL(request.getRequestURL().toString());
+		if(request.getRequestURL()!=null)
+		{
+			Utility.setApplicationURL(request.getRequestURL().toString());
+		}
 	}
 
 	/**
