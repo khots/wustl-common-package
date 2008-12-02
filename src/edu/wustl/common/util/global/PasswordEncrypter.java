@@ -42,27 +42,27 @@ public class PasswordEncrypter
 	private static String csmDbTableName="csm_user";
 
 	/**
-	 * The name of the field whose row values have to be encrypted.
+	 * Index for csm table parameter.
 	 */
 	private static final int INDEX_CSM_DB_TABLE_NAME = 9;
 
 	/**
-	 * The name of the catissue table whose password field is to be encrypted.
+	 * The name of the application table whose password field is to be encrypted.
 	 */
 	private static String dbTableName;
 
 	/**
-	 * The name of the catissue table whose password field is to be encrypted.
+	 * Index for database table name whose password field is to be encrypted.
 	 */
 	private static final int INDEX_DB_TABLE_NAME=7;
 
 	/**
-	 * The name of the field whose row values have to be encrypted.
+	 * The name of the field in table whose row values have to be encrypted.
 	 */
 	private static String dbTableFieldName;
 
 	/**
-	 * The name of the field whose row values have to be encrypted.
+	 * Index for field-name in table.
 	 */
 	private static final int INDEX_DB_TABLE_FIELD_NAME = 8;
 
