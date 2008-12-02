@@ -34,6 +34,11 @@ public class ApplicationException extends Exception
 	private String errorMsg;
 
 	/**
+	 * Parameters for error message.
+	 */
+	private String msgValues;
+	
+	/**
 	 * The String of error message values to be send to ApplicationException should
 	 * use this constant separator to separate values.
 	 */
@@ -134,6 +139,7 @@ public class ApplicationException extends Exception
 		if (ApplicationException.ERR_MSG_VALUES_SEPARATOR.contains(errorValParam))
 		{
 			this.errorMsg = TextConstants.EMPTY_STRING;
+			setMsgValues(errorValParam);
 			String[] errorValues = errorValParam.split(ERR_MSG_VALUES_SEPARATOR);
 			errorKey.setMessageValues(errorValues);
 		}
@@ -161,4 +167,47 @@ public class ApplicationException extends Exception
 		}
 	}
 
+	
+	/**
+	 * returns error message parameters.
+	 * @return message parameters
+	 */
+	public String getMsgValues()
+	{
+		
+		return msgValues;
+	}
+
+	public String[] toMsgValuesArray()
+	{
+		String [] valueArr;
+		if (msgValues == null)
+		{
+			valueArr =new String[1];
+			valueArr[0]=errorMsg;
+		}
+		else
+		{
+			valueArr =msgValues.split(ERR_MSG_VALUES_SEPARATOR);
+		}
+		return valueArr;
+	}
+	
+	/**
+	 * sets error message parameters.
+	 * @param msgValues parameters.
+	 */
+	public final void setMsgValues(String msgValues)
+	{
+		this.msgValues = msgValues;
+	}
+	
+	/**
+	 * This function is used to get key value set for the Error Key.
+	 * @return Unique key value of ErrorKey.
+	 */
+	public String getErrorKeyAsString()
+	{
+		return errorKey.getErrorKey();
+	}
 }
