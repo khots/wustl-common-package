@@ -53,9 +53,9 @@ public class DBUtil
 	 * @return Connection get the connection.
 	 * @throws HibernateException exception of Hibernate.
 	 */
-	public static Connection getConnection() throws HibernateException
+	 public static Connection getConnection() throws HibernateException
 	{
-		return HibernateUtil.getConnection();
+		return HibernateUtil.currentSession().connection();
 	}
 
 	/**
