@@ -225,19 +225,23 @@ public class HibernateMetaData
 	 */
 	public static String getDataBaseName()
 	{
-		String dbName = "";
+		String dbName="";
 		String dialect = cfg.getProperty("hibernate.dialect");
-		if (dialect.toLowerCase().indexOf("oracle") != -1)
+		if(dialect.toLowerCase().indexOf("oracle")!=-1)
 		{
-			dbName = Constants.ORACLE_DATABASE;
+			dbName=Constants.ORACLE_DATABASE;
 		}
-		else if (dialect.toLowerCase().indexOf("mysql") != -1)
+		else if(dialect.toLowerCase().indexOf("mysql")!=-1)
 		{
-			dbName = Constants.MYSQL_DATABASE;
+			dbName=Constants.MYSQL_DATABASE;
 		}
 		else if (dialect.toLowerCase().indexOf("postgresql") != -1)
 		{
 			dbName = Constants.POSTGRESQL_DATABASE;
+		}
+		else if (dialect.toLowerCase().indexOf("db2") != -1)
+		{
+			dbName = Constants.DB2_DATABASE;
 		}
 		return dbName;
 	}
