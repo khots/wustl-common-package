@@ -2,6 +2,7 @@ package edu.wustl.common.util.global;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
@@ -49,11 +50,7 @@ public final class CommonServiceLocator
 	 *Here all the properties are set
 	 */
 	private CommonServiceLocator()
-	{	Properties props=initProps();
-		setAppName(props);
-		//setAppVersion(props);
-		setAppHome(props);
-		setPropDirPath();
+	{	initProps();
 	}
 
 	/**
@@ -64,23 +61,29 @@ public final class CommonServiceLocator
 	{
 		return commonServLocator;
 	}
+	
 	/**
 	 * This method loads properties file.
-	 * @return Properties object.
 	 */
-	private Properties initProps()
+	private void initProps()
 	{
-		Properties props= new Properties();
 		URL url = ClassLoader.getSystemResource("ApplicationResources.properties");
+
 	    try
 		{
-			props.load(url.openStream());
+	    	InputStream stream = url.openStream();
+			Properties props= new Properties();
+			props.load(stream);
+			setAppName(props);
+			//setAppVersion(props);
+			setAppHome(props);
+			setPropDirPath();
+			stream.close();
 		}
 		catch (IOException exception)
 		{
 			logger.fatal("Not able to load properties file",exception);
 		}
-	    return props;
 	}
 	/**
 	 * @return the application name.
