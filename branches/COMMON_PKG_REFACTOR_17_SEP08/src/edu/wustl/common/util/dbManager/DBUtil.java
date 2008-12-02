@@ -62,10 +62,10 @@ public class DBUtil
 	 * Close the connection.
 	 * @throws HibernateException exception of Hibernate.
 	 */
-	public static Connection getConnection() throws HibernateException
+	public static void closeConnection() throws HibernateException
 	{
-        return currentSession().connection();
-    }
+		HibernateUtil.closeSession();
+	}
 
 	/**
 	 * This method opens a new session, loads an object with given class and Id,
