@@ -8,6 +8,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.util.logger.Logger;
+
 /**
  * It return class PG Name,PI GroupName or Coordinator GroupName.
  * @author ravi_kumar
@@ -15,6 +19,11 @@ import org.w3c.dom.NodeList;
  */
 public class CSMGroupLocator
 {
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(CSMGroupLocator.class);
+
 	/**
 	 * File name for CSM group configuration.
 	 */
@@ -67,7 +76,7 @@ public class CSMGroupLocator
 	 */
 	public String getPIGroupName(Long identifier,Class className)
 	{
-		return (String)classVsCsmGroupMap.get(className).getPiGroupName()+identifier;
+		return classVsCsmGroupMap.get(className).getPiGroupName()+identifier;
 	}
 
 	/**
@@ -77,18 +86,28 @@ public class CSMGroupLocator
 	 */
 	public String getCoordinatorGroupName(Long identifier,Class className)
 	{
-		return (String)classVsCsmGroupMap.get(className).getCoGroupName()+identifier;
+		return classVsCsmGroupMap.get(className).getCoGroupName()+identifier;
 	}
 
 	/**
 	 * This method load the Privileges into map.
-	 * @throws ClassNotFoundException If Class not found
+	 * @throws ParseException throws this exception if
+	 * specified xml file not found or not able to parse the file.
 	 */
-	public void init() throws ClassNotFoundException
+	public void init() throws ParseException
 	{
-		Document doc =XMLParserUtility.getDocument(CSM_GROUP_CONF_FILE);
-		NodeList csmGrNodeLst = doc.getElementsByTagName(ELE_CSM_GROUP);
-		populateMaps(csmGrNodeLst);
+		try
+		{
+			Document doc =XMLParserUtility.getDocument(CSM_GROUP_CONF_FILE);
+			NodeList csmGrNodeLst = doc.getElementsByTagName(ELE_CSM_GROUP);
+			populateMaps(csmGrNodeLst);
+		}
+		catch(Exception exception)
+		{
+			logger.error(exception.getMessage(), exception);
+			ErrorKey errorKey = null;
+			throw new ParseException(errorKey,exception,"");
+		}
 	}
 
 	/**
