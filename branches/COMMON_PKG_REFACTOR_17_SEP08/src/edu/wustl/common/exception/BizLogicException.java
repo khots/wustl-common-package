@@ -1,20 +1,11 @@
-/*
- * Created on Aug 5, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
-
 package edu.wustl.common.exception;
 
 
 /**
  * @author kapil_kaveeshwar
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * All Bizlogic methods should wrap other exception and throws only this exception.
  */
-public class BizLogicException extends Exception
+public class BizLogicException extends ApplicationException
 {
 
 	/**
@@ -23,42 +14,14 @@ public class BizLogicException extends Exception
 	private static final long serialVersionUID = -8514900107659307676L;
 
 	/**
-	 * Constructor.
+	 * The Only public constructor to restrict creating object without
+	 * initializing mandatory members.
+	 * @param errorKey The object which will represent the root cause of the error.
+	 * @param throwable root exception, if any, which caused this error.
+	 * @param msgValues custom message, additional information.
 	 */
-	public BizLogicException()
+	public BizLogicException(ErrorKey errorKey, Throwable throwable, String msgValues)
 	{
-
+		super(errorKey,throwable,msgValues);
 	}
-
-	/**
-	 * Parameterised constructor.
-	 * @param message exeption message.
-	 */
-	public BizLogicException(String message)
-	{
-		this(message, null);
-	}
-
-	/**
-	 * Parameterised constructor.
-	 * @param exception Exception
-	 */
-	public BizLogicException(Exception exception)
-	{
-		this("", exception);
-	}
-
-	/**
-	 * Parameterised constructor.
-	 * @param message exeption message.
-	 * @param wrapException The wrapException to set.
-	 */
-	public BizLogicException(String message, Exception wrapException)
-	{
-		/**Added by amit_doshi to fix the bug related to exception chaining
-		 * code reviewer :- abhijit_naik
-		 */
-		super(message, wrapException);
-	}
-
 }
