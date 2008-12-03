@@ -55,38 +55,6 @@ public class Constants
 
 	public static final String ADD = "add";
 
-	public static final String getCollectionProtocolPIGroupName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "PI_COLLECTION_PROTOCOL_";
-		}
-		return "PI_COLLECTION_PROTOCOL_" + identifier;
-	}
-
-	public static final String getCollectionProtocolCoordinatorGroupName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "COORDINATORS_COLLECTION_PROTOCOL_";
-		}
-		return "COORDINATORS_COLLECTION_PROTOCOL_" + identifier;
-	}
-
-	public static final String getStorageContainerPGName()
-	{
-		return "USER_";
-	}
-
-	public static final String getSitePGName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "SITE_";
-		}
-		return "SITE_" + identifier;
-	}
-
 	public static final String COLLECTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
 	public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
 	// Aarti: Constants for security parameter required
@@ -398,32 +366,6 @@ public class Constants
 
 	public static final String CDE_NAME_COUNTRY_LIST = "Countries";
 	public static final String CDE_NAME_STATE_LIST = "States";
-
-	/**
-	 * @param id
-	 * @return
-	 */
-	public static String getUserPGName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "USER_";
-		}
-		return "USER_" + identifier;
-	}
-
-	/**
-	 * @param id
-	 * @return
-	 */
-	public static String getUserGroupName(Long identifier)
-	{
-		if (identifier == null)
-		{
-			return "USER_";
-		}
-		return "USER_" + identifier;
-	}
 
 	//  Constants required for Forgot Password
 	public static final String FORGOT_PASSWORD = "forgotpassword";
