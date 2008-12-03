@@ -61,7 +61,7 @@ public final class CommonServiceLocator
 	{
 		return commonServLocator;
 	}
-	
+
 	/**
 	 * This method loads properties file.
 	 */
