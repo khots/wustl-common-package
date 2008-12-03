@@ -17,7 +17,7 @@ import edu.wustl.common.util.logger.Logger;
  * @author ravi_kumar
  *
  */
-public class CSMGroupLocator
+public final class CSMGroupLocator
 {
 	/**
 	 * logger Logger - Generic logger.
@@ -29,6 +29,10 @@ public class CSMGroupLocator
 	 */
 	private static final String CSM_GROUP_CONF_FILE="CSMGroup.xml";
 
+	/**
+	 * object of CSMGroupLocator.
+	 */
+	private static CSMGroupLocator csmGroupLocator= new CSMGroupLocator();
 	/**
 	 * Map of bit-number and Privilege Object.
 	 */
@@ -59,6 +63,41 @@ public class CSMGroupLocator
 	 */
 	private static final String ATTR_CLASS_NAME="class-name";
 
+	/**
+	 * This indicates whether instants has been created successfully or not.
+	 */
+	private static boolean success=true;
+	/**
+	 * No argument constructor.
+	 */
+	private CSMGroupLocator()
+	{
+		try
+		{
+			init();
+		}
+		catch(Exception exception)
+		{
+			success=false;
+			logger.error("can not load configuration file "+exception.getMessage(), exception);
+		}
+	}
+
+	/**
+	 *
+	 * @return object of CSMGroupLocator.
+	 * @throws ParseException if not able to parse the file.
+	 */
+	public CSMGroupLocator getInstance() throws ParseException
+	{
+		if(!success)
+		{
+			logger.error("Can not create instance, Please see the log file for details.");
+			ErrorKey errorKey = null;
+			throw new ParseException(errorKey,null,"");
+		}
+		return csmGroupLocator;
+	}
 	/**
 	 * @param identifier identifier
 	 * @param className Class Name
