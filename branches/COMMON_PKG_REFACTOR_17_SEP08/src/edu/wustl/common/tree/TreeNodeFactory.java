@@ -36,11 +36,6 @@ public class TreeNodeFactory
 			case Constants.STORAGE_CONTAINER_TREE_ID :
 				treeNode = new StorageContainerTreeNode(Long.valueOf(0), null, Constants.CATISSUE_CORE);
 				break;
-			case Constants.QUERY_RESULTS_TREE_ID :
-				treeNode = new AdvanceQueryTreeNode(Long.valueOf(0), Constants.ROOT, Constants.ALL);
-				break;
-			//Added By Ramya.
-			//To display specimen tree hierarchy.
 			case Constants.SPECIMEN_TREE_ID :
 				treeNode = new SpecimenTreeNode(null, Constants.SPECIMEN_TREE_ROOT_NAME);
 				break;
