@@ -22,8 +22,8 @@ import javax.xml.bind.Unmarshaller;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.cde.xml.XMLCDECACHE;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**@author kapil_kaveeshwar
@@ -65,8 +65,9 @@ public class CDEManager
             
             // unmarshal a root instance document into a tree of Java content
             // objects composed of classes from the pspl.cde package.
+            String appHome=CommonServiceLocator.getInstance().getAppHome();
             XMLCDECACHE root = 
-                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(Variables.applicationHome+
+                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(appHome+
                 		System.getProperty("file.separator")+ Constants.CDE_CONF_FILE));
             
             // display the cde details
@@ -264,8 +265,7 @@ public class CDEManager
 	}
 	
 	public static void main(String[] args)
-	{
-		Variables.applicationHome = System.getProperty("user.dir");
+	{		
 		Logger.configure("Application.properties");
 //		Logger.out = org.apache.log4j.Logger.getLogger("");
 //		PropertyConfigurator.configure(Variables.catissueHome+"\\WEB-INF\\src\\"+"ApplicationResources.properties");
