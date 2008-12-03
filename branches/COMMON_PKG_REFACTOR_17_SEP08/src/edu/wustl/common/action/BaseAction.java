@@ -14,7 +14,7 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.UserNotAuthenticatedException;
-import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -85,7 +85,7 @@ public abstract class BaseAction extends Action
 		 */
 		if(request.getRequestURL()!=null)
 		{
-			Utility.setApplicationURL(request.getRequestURL().toString());
+			CommonServiceLocator.getInstance().setAppURL(request.getRequestURL().toString());
 		}
 	}
 

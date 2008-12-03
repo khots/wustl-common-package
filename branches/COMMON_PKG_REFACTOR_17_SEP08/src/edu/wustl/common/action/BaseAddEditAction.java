@@ -26,9 +26,9 @@ import org.apache.struts.action.ActionMessages;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.IBizLogic;
+import edu.wustl.common.bizlogic.IQueryBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
@@ -284,7 +284,7 @@ public abstract class BaseAddEditAction extends Action
 	 * @param objectName String
 	 */
 	protected void addMessage(ActionMessages messages, AbstractDomainObject abstractDomain,
-			String addoredit, QueryBizLogic queryBizLogic, String objectName)
+			String addoredit, IQueryBizLogic queryBizLogic, String objectName)
 	{
 		String message = abstractDomain.getMessageLabel();
 		Validator validator = new Validator();
