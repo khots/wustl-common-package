@@ -98,20 +98,19 @@ public class HibernateMetaData
 	public static Class getSupermostClassInPackage(Object obj) {
 		Class objClass = obj.getClass();
 		Package objPackage = objClass.getPackage();
-		Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
+		//Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
 
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass()!=null) {
 
-			Logger.out.debug(objPackage.getName()+" "+persistentClass.getClassName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
-					);
-			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
-					.equals(objPackage.getName()));
+			//Logger.out.debug(objPackage.getName()+" "+persistentClass.getClassName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName());
+//			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
+//					.equals(objPackage.getName()));
 			do {
 				persistentClass = persistentClass.getSuperclass();
 			}while(persistentClass !=null);
-			Logger.out.debug("Supermost class in the same package:"
-					+ persistentClass.getMappedClass().getName());
+//			Logger.out.debug("Supermost class in the same package:"
+//					+ persistentClass.getMappedClass().getName());
 		} else {
 			return objClass;
 		}
