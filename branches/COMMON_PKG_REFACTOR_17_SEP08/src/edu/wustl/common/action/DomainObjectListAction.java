@@ -23,12 +23,15 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.IBizLogic;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.factory.AbstractBizLogicFactory;
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
+import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -104,12 +107,24 @@ public class DomainObjectListAction extends SecureAction
 	 * @return List
 	 * @throws DAOException  database exception
 	 * @throws BizLogicException biz logic exception
+	 * @throws ApplicationException Application Exception
 	 */
-	private List getList(AbstractActionForm abstractForm) throws DAOException, BizLogicException
+	private List getList(AbstractActionForm abstractForm) throws DAOException, BizLogicException,
+			ApplicationException
 	{
 		List list;
-		IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties
-				.getValue("app.bizLogicFactory"), "getBizLogic", abstractForm.getFormId());
+		IFactory factory;
+		try
+		{
+			factory = AbstractFactoryConfig.getInstance().getBizLogicFactory("bizLogicFactory");
+		}
+		catch (ParseException parseException)
+		{
+			logger.error("Failed to get BizLogic object from BizLogic Factory");
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+					"Failed to get BizLogic in base Add/Edit.");
+		}
+		IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
 		AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
 				.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
 		//If start page is to be shown retrieve the list from the database.
@@ -119,29 +134,28 @@ public class DomainObjectListAction extends SecureAction
 			String[] whereColumnNames = {"activityStatus", "activityStatus"};
 			String[] whereColCond = {"=", "="};
 			String[] whereColumnValues = {"New", "Pending"};
-			list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
-					.getFormId()), whereColumnNames, whereColCond, whereColumnValues,
-					Constants.OR_JOIN_CONDITION);
+			list = bizLogic.retrieve(
+					absDomainObjFact.getDomainObjectName(abstractForm.getFormId()),
+					whereColumnNames, whereColCond, whereColumnValues, Constants.OR_JOIN_CONDITION);
 		}
 		else
 		{
-			list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
-					.getFormId()), "activityStatus", "Pending");
+			list = bizLogic.retrieve(
+					absDomainObjFact.getDomainObjectName(abstractForm.getFormId()),
+					"activityStatus", "Pending");
 		}
 		return list;
 	}
 
-	
 	protected String getObjectId(AbstractActionForm form)
 	{
-	
+
 		return null;
 	}
 
-	
 	protected boolean isAuthorizedToExecute(HttpServletRequest request)
 	{
-		
+
 		return true;
 	}
 }
