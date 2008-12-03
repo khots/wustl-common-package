@@ -619,59 +619,6 @@ public class Utility
 	}
 
 	/**
-	 * @param requestURL URL generated from the request.
-	 * Sets the application URL in the Variables class after generating it in proper format.
-	 */
-	public static void setApplicationURL(String requestURL)
-	{
-		String ourUrl = TextConstants.EMPTY_STRING;
-		try
-		{
-			URL aURL = new URL(requestURL);
-			ourUrl = aURL.getProtocol() + "://" + aURL.getAuthority() + aURL.getPath();
-			ourUrl = ourUrl.substring(0, ourUrl.lastIndexOf('/'));
-			logger.debug("Application URL Generated : " + ourUrl);
-		}
-		catch (MalformedURLException urlExp)
-		{
-			logger.error(urlExp.getMessage(), urlExp);
-		}
-		if (Variables.catissueURL != null && Variables.catissueURL.trim().length() == 0)
-		{
-			Variables.catissueURL = ourUrl;
-			logger.debug("Application URL set: " + Variables.catissueURL);
-		}
-	}
-
-	/**
-	 * @param selectedMenuID Menu that is clicked
-	 * @param currentMenuID Menu that is being checked
-	 * @param normalMenuClass style class for normal menu
-	 * @param selectedMenuClass style class for selected menu
-	 * @param menuHoverClass  style class for hover effect
-	 * @return The String generated for the TD tag. Creates the selected menu or normal menu.
-	 */
-	public static String setSelectedMenuItem(int selectedMenuID, int currentMenuID,
-			String normalMenuClass, String selectedMenuClass, String menuHoverClass)
-	{
-		String returnStr = TextConstants.EMPTY_STRING;
-		if (selectedMenuID == currentMenuID)
-		{
-			returnStr = "<td class=\"" + selectedMenuClass
-					+ "\" onmouseover=\"changeMenuStyle(this,\'" + selectedMenuClass
-					+ "\')\" onmouseout=\"changeMenuStyle(this,\'" + selectedMenuClass + "\')\">";
-		}
-		else
-		{
-			returnStr = "<td class=\"" + normalMenuClass
-					+ "\" onmouseover=\"changeMenuStyle(this,\'" + menuHoverClass
-					+ "\')\" onmouseout=\"changeMenuStyle(this,\'" + normalMenuClass + "\')\">";
-		}
-
-		return returnStr;
-	}
-
-	/**
 	 * @param str String to be converted to Proper case.
 	 * @return The String in Proper case.
 	 */
