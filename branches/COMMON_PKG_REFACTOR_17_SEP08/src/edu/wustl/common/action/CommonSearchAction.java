@@ -30,8 +30,10 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.factory.AbstractBizLogicFactory;
+import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
+import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.DAOException;
@@ -78,7 +80,7 @@ public class CommonSearchAction extends Action
 				request.setAttribute("forwardToHashMap", getForwordTohashMap(request));
 			}
 		}
-		if(target==null)
+		if (target == null)
 		{
 			target = openPageInEdit(form, identifier, request);
 		}
@@ -120,12 +122,12 @@ public class CommonSearchAction extends Action
 		{
 			AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
 					.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
-			String objName = absDomainObjFact.getDomainObjectName(abstractForm
-					.getFormId());
+			String objName = absDomainObjFact.getDomainObjectName(abstractForm.getFormId());
 			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 					Constants.SESSION_DATA);
-			IBizLogic bizLogic = AbstractBizLogicFactory.getBizLogic(ApplicationProperties
-					.getValue("app.bizLogicFactory"), "getBizLogic", abstractForm.getFormId());
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
+					"bizLogicFactory");
+			IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
 			boolean hasPrivilege = true;
 			if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
 			{
@@ -133,10 +135,8 @@ public class CommonSearchAction extends Action
 			}
 			if (!hasPrivilege)
 			{
-				throw new DAOException(
-				"Access denied ! User does not have privilege to view this information.");
+				throw new DAOException("Access denied ! User does not have privilege to view this information.");
 			}
-
 			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
 			if (isSuccess)
 			{
@@ -156,6 +156,10 @@ public class CommonSearchAction extends Action
 		{
 			saveErrors(request, "access.view.action.denied", "");
 			target = Constants.ACCESS_DENIED;
+			logger.error(excp.getMessage(), excp);
+		}
+		catch (ParseException excp)
+		{
 			logger.error(excp.getMessage(), excp);
 		}
 		return target;
