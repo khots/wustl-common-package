@@ -35,8 +35,7 @@ public class BaseTestCase extends TestCase
 
 	protected void setUp()
 	{
-		Variables.applicationHome = System.getProperty("user.dir");
 		Logger.out = org.apache.log4j.Logger.getLogger("");
-		PropertyConfigurator.configure(Variables.applicationHome + "/Logger.properties");
+		PropertyConfigurator.configure(System.getProperty("user.dir") + "/Logger.properties");
 	}
 }
