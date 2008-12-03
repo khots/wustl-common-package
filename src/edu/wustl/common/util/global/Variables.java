@@ -7,7 +7,6 @@
 
 package edu.wustl.common.util.global;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,42 +28,6 @@ public class Variables
 {
 
 	/**
-	 * specify CONST_VARIABLES_VALUE.
-	 */
-	private static final String CONST_VARIABLES_VALUE = "";
-
-	/**
-	 * specify applicationName.
-	 */
-	public static String applicationName = CONST_VARIABLES_VALUE;
-	/**
-	 * specify applicationVersion.
-	 */
-	public static String applicationVersion = CONST_VARIABLES_VALUE;
-
-	/**
-	 * To hold path of application installation directory.
-	 */
-	public static String applicationHome = CONST_VARIABLES_VALUE;
-
-	/**
-	 * specify database name.
-	 */
-	public static String databaseName = CONST_VARIABLES_VALUE;
-
-	/**
-	 * specify propertiesDirPath.
-	 */
-	public static String propertiesDirPath = CONST_VARIABLES_VALUE;
-
-	
-	/**
-	 * specify catissueURL.
-	 */
-	public static String catissueURL = CONST_VARIABLES_VALUE;
-
-	
-	/**
 	 *  Ravi : for Multi Site Rep. changes.
 	 *  specify privilege Details Map.
 	 */
@@ -73,5 +36,6 @@ public class Variables
 	/**
 	 * specify privilegeGroupingMap.
 	 */
-	public static Map<String, List<NameValueBean>> privilegeGroupingMap = new HashMap<String, List<NameValueBean>>();
+	public static Map<String, List<NameValueBean>> privilegeGroupingMap
+	= new HashMap<String, List<NameValueBean>>();
 }
