@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Variables;
 
 /**
@@ -56,7 +57,7 @@ public final class Logger
 	{
 		if (!isConfigured)
 		{
-			if (Variables.propertiesDirPath.length() != 0)
+			if (CommonServiceLocator.getInstance().getPropDirPath().length() != 0)
 			{
 				configureLogger();
 			}
@@ -66,7 +67,8 @@ public final class Logger
 
 	private static void configureLogger()
 	{
-		StringBuffer log4jFilePath = new StringBuffer(Variables.propertiesDirPath);
+
+		StringBuffer log4jFilePath = new StringBuffer(CommonServiceLocator.getInstance().getPropDirPath());
 		try
 		{
 
