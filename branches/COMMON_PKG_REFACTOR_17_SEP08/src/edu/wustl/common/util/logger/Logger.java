@@ -5,8 +5,8 @@
  * Company: Washington University, School of Medicine, St. Louis.
  * @author Kapil Kaveeshwar
  * @version 1.00
- * 
- * FIXME: Java doc. 
+ *
+ * FIXME: Java doc.
  */
 
 package edu.wustl.common.util.logger;
@@ -18,10 +18,10 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.PropertyConfigurator;
 
 import edu.wustl.common.util.global.CommonServiceLocator;
-import edu.wustl.common.util.global.Variables;
+
 
 /**
- * This is an utility class which provides functions to get logger objects. 
+ * This is an utility class which provides functions to get logger objects.
  * This class get neither instantiated nor extended.
  *
  */
@@ -29,16 +29,18 @@ public final class Logger
 {
 
 	/**
-	 * @deprecated 
+	 * @deprecated
 	 */
 	public static org.apache.log4j.Logger out;
-
+	/**
+	 * Indicates whether Logger is configured or not.
+	 */
 	private static boolean isConfigured = false;
 
 	/**
 	 * Configures the logger with the properties of the specified category name in the log4j.xml file.
 	 * The category should be present in the log4j.xml file in the JBOSS_HOME/server/default/conf folder.
-	 * @param categoryName The category name. 
+	 * @param categoryName The category name.
 	 */
 	public static void configure(String categoryName)
 	{
@@ -49,7 +51,7 @@ public final class Logger
 	}
 
 	/**
-	 * Creates new logger object for a given class. 
+	 * Creates new logger object for a given class.
 	 * @param className java class for which logger need to be created.
 	 * @return new logger object.
 	 */
@@ -65,6 +67,9 @@ public final class Logger
 		return org.apache.log4j.Logger.getLogger(className);
 	}
 
+	/**
+	 * This method configure Logger.
+	 */
 	private static void configureLogger()
 	{
 
@@ -98,12 +103,15 @@ public final class Logger
 	}
 
 	/**
-	 * Logger class should not get instantiated from outside. Hence the constructor is private. 
+	 * Logger class should not get instantiated from outside. Hence the constructor is private.
 	 */
 	private Logger()
 	{
 	}
-
+	/**
+	 * This method is used to configure logger with default values.
+	 * @param servletContext generic ServletContext object.
+	 */
 	public static void configDefaultLogger(ServletContext servletContext)
 	{
 		String applicationResourcesPath = servletContext.getRealPath("WEB-INF")

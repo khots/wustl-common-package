@@ -44,7 +44,7 @@ public class HibernateMetaData
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(HibernateMetaData.class);
-	
+
 	/**
 	 * cfg Configuration - Hibernate configuration.
 	 */
@@ -534,8 +534,7 @@ public class HibernateMetaData
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		Variables.applicationHome = System.getProperty("user.dir");
-		PropertyConfigurator.configure(Variables.applicationHome + "\\WEB-INF\\src\\"
+		PropertyConfigurator.configure(System.getProperty("user.dir") + "\\WEB-INF\\src\\"
 				+ "ApplicationResources.properties");
 		DBUtil.currentSession();
 	}
