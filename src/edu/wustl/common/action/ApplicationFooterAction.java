@@ -19,9 +19,9 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.CommonFileReader;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -57,7 +57,8 @@ public class ApplicationFooterAction extends Action
 			String fileName = XMLPropertyHandler.getValue(fileNameKey);
 			CommonFileReader reader = new CommonFileReader();
 			StringBuffer filePath = new StringBuffer();
-			filePath.append(Variables.propertiesDirPath).append(File.separator).append(fileName);
+			filePath.append(CommonServiceLocator.getInstance().getPropDirPath())
+			.append(File.separator).append(fileName);
 			String contents = reader.readData(filePath.toString());
 			request.setAttribute("CONTENTS", contents);
 			request.setAttribute("PAGE_TITLE", pageTitle);
