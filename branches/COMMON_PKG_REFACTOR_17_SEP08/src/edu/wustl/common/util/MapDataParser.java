@@ -8,13 +8,12 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.sql.Blob;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -25,9 +24,9 @@ import java.util.TreeMap;
 
 import org.hibernate.Hibernate;
 
-import edu.wustl.common.query.Table;
+import edu.wustl.common.datatypes.DataTypeConfigFactory;
+import edu.wustl.common.datatypes.IDBDataType;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 public class MapDataParser
@@ -65,9 +64,9 @@ public class MapDataParser
 	 * Create map of specimen data.
 	 * @return map containing specimen data.
 	 */
-	private Map<String,String> createMap()
+	private Map<String, String> createMap()
 	{
-		Map<String,String> map = new TreeMap<String,String>();
+		Map<String, String> map = new TreeMap<String, String>();
 		map.put("DistributedItem:1_Specimen_id", "1");
 		map.put("DistributedItem:1_quantity", "100");
 		map.put("DistributedItem:1_Specimen_className", "Tissue");
@@ -84,82 +83,14 @@ public class MapDataParser
 	 * @return object that refers to the value passed as parameters.
 	 * @throws ParseException parsing exception.
 	 * @throws IOException I/O exception.
+	 * @throws edu.wustl.common.exception.ParseException ParseException.
 	 */
-	private Object toObject(String str, Class type) throws ParseException, IOException
+	private Object toObject(String str, Class type) throws ParseException, IOException,
+			edu.wustl.common.exception.ParseException
 	{
-		Object obj;
-		if (type.equals(String.class))
-		{
-			obj=str;
-		}
-		else
-		{
-			if (TextConstants.EMPTY_STRING.equals(str))
-			{
-				obj=null;
-			}
-			else if (type.equals(Long.class))
-			{
-				obj=Long.valueOf(str);
-			}
-			else if (type.equals(Double.class))
-			{
-				obj=Double.valueOf(str);
-			}
-			else if (type.equals(Float.class))
-			{
-				obj=Float.valueOf(str);
-			}
-			else if (type.equals(Integer.class))
-			{
-				obj=Integer.valueOf(str);
-			}
-			else if (type.equals(Byte.class))
-			{
-				obj=Integer.valueOf(str);
-			}
-			else if (type.equals(Short.class))
-			{
-				obj=Integer.valueOf(str);
-			}
-			else if (type.equals(Table.class))
-			{
-				obj=new Table(str, str);
-			}
-			else if (type.equals(Boolean.class))
-			{
-				obj=Boolean.valueOf(str);
-			}
-			else if (type.equals(Date.class))
-			{
-				obj=Utility.parseDate(str, Utility.datePattern(str));
-			}
-			else if (type.equals(Blob.class))
-			{
-				obj=getBllobObject(str);
-			}
-		}
-		obj=str;
-		return obj;
-	}
-
-	/**
-	 * This method read data from file and create binary object with those data as state.
-	 * @param str String containing  file and data information.
-	 * @return object containing data read from file.
-	 * @throws FileNotFoundException exception for file not found.
-	 * @throws IOException I/O exception.
-	 */
-	private Object getBllobObject(String str) throws IOException
-	{
-		File file = new File(str);
-		DataInputStream dis = new DataInputStream(new BufferedInputStream(
-				new FileInputStream(file)));
-
-		byte[] buff = new byte[(int) file.length()];
-		dis.readFully(buff);
-		dis.close();
-		return Hibernate.createBlob(buff);
+		String dataType = type.getSimpleName().toLowerCase();
+		IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getDataType(dataType);
+		return dbDataType.getObjectValue(str);
 	}
 
 	/**
@@ -171,13 +102,13 @@ public class MapDataParser
 	 */
 	private Method findMethod(Class objClass, String methodName) throws Exception
 	{
-		Method methdName=null;
+		Method methdName = null;
 		Method[] method = objClass.getMethods();
 		for (int i = 0; i < method.length; i++)
 		{
 			if (method[i].getName().equals(methodName))
 			{
-				methdName=method[i];
+				methdName = method[i];
 				break;
 			}
 		}
@@ -192,7 +123,8 @@ public class MapDataParser
 	 * @param parentKey String key of parent object.
 	 * @throws Exception generic exception.
 	 */
-	private void parstData(Object parentObj, String str, String value, String parentKey)throws Exception
+	private void parstData(Object parentObj, String str, String value, String parentKey)
+			throws Exception
 	{
 		StringTokenizer tokenizer = new StringTokenizer(str, "_");
 
@@ -200,8 +132,8 @@ public class MapDataParser
 		if (tokenCount > 1)
 		{
 			String className = tokenizer.nextToken();
-			String mapKey = new StringBuffer(parentKey).append('-').append(str.substring(0, str.indexOf('_')))
-									.toString();
+			String mapKey = new StringBuffer(parentKey).append('-').append(
+					str.substring(0, str.indexOf('_'))).toString();
 			Object obj = parseClassAndGetInstance(parentObj, className, mapKey);
 
 			if (tokenCount == 2)
@@ -210,7 +142,7 @@ public class MapDataParser
 				String methodName = Utility.createAccessorMethodName(attrName, true);
 				Class objClass = obj.getClass();
 				Method method = findMethod(objClass, methodName);
-				Object []objArr = {toObject(value, method.getParameterTypes()[0])};
+				Object[] objArr = {toObject(value, method.getParameterTypes()[0])};
 				method.invoke(obj, objArr);
 			}
 			else
@@ -264,7 +196,7 @@ public class MapDataParser
 				collection = getCollectionObj(parentObj, collectionName);
 			}
 
-			obj=getObjFromList(collection, index, className, mapKey);
+			obj = getObjFromList(collection, index, className, mapKey);
 		}
 		else
 		{
@@ -279,7 +211,7 @@ public class MapDataParser
 			{
 				retObj = Utility.setValueFor(parentObj, className, null);
 			}
-			obj=retObj;
+			obj = retObj;
 		}
 		return obj;
 	}
@@ -362,7 +294,7 @@ public class MapDataParser
 		int start = key.indexOf(':');
 		int end = key.indexOf('_');
 		return Integer.parseInt(key.substring(start + 1, end));
-}
+	}
 
 	/**
 	 * display information about the collection of data.
@@ -399,14 +331,14 @@ public class MapDataParser
 	{
 
 		//whether delete button is clicked or not
-		boolean isDeleteClicked=true;
+		boolean isDeleteClicked = true;
 		if (status == null)
 		{
-			isDeleteClicked=Boolean.getBoolean(Constants.FALSE);
+			isDeleteClicked = Boolean.getBoolean(Constants.FALSE);
 		}
 		else
 		{
-			isDeleteClicked=Boolean.getBoolean(status);
+			isDeleteClicked = Boolean.getBoolean(status);
 		}
 
 		String text;
