@@ -12,9 +12,7 @@ import java.util.List;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
-import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.dao.DAO;
 
 /**
@@ -270,7 +268,6 @@ public interface IBizLogic
 	 * @param roleId role Id.
 	 * @param assignToUser assign To User.
 	 * @param assignOperation Operation
-	 * @throws SMException SMException
 	 * @throws BizLogicException BizLogic Exception
 	 * @deprecated This method uses daoType argument which is not required anymore,please use method
 	 * setPrivilege(String privilegeName, Class objectType, Long[] objectIds,Long userId,
@@ -279,7 +276,7 @@ public interface IBizLogic
 	 */
 	void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws SMException, BizLogicException;
+			boolean assignOperation) throws BizLogicException;
 
 	/**
 	 * sets Privilege.
@@ -291,12 +288,11 @@ public interface IBizLogic
 	 * @param roleId role Id.
 	 * @param assignToUser assign To User.
 	 * @param assignOperation Operation
-	 * @throws SMException SMException
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void setPrivilege(String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws SMException, BizLogicException;
+			boolean assignOperation) throws BizLogicException;
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
@@ -339,10 +335,9 @@ public interface IBizLogic
 	 * @param uiForm object of the class which implements IValueObject
 	 * @return AbstractDomainObject.
 	 * @throws BizLogicException BizLogic Exception.
-	 * @throws AssignDataException Assign Data Exception.
 	 */
 	AbstractDomainObject populateDomainObject(String className, Long identifier,
-			IValueObject uiForm) throws BizLogicException, AssignDataException;
+			IValueObject uiForm) throws BizLogicException;
 
 	/**
 	 * Checkes is ReadDenied.
