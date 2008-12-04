@@ -5,23 +5,37 @@ import java.text.MessageFormat;
 
 import edu.wustl.common.util.global.ApplicationProperties;
 
+/**
+ * Default Exception Formatter class.
+ */
 public class DefaultExceptionFormatter implements ExceptionFormatter
 {
 
+	/**
+	 * format Message.
+	 * @param objExcp Exception
+	 * @param args arguments.
+	 * @return Message.
+	 */
 	public String formatMessage(Exception objExcp, Object[] args)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * get Error Message.
+	 * @param key key
+	 * @param args arguments
+	 * @return Error Message.
+	 */
 	public String getErrorMessage(String key, Object[] args)
 	{
-		String message = null;
-		message = ApplicationProperties.getValue(key);
+		StringBuffer message = new StringBuffer();
+		message.append(ApplicationProperties.getValue(key));
 		if (message != null && args != null)
 		{
-			message = MessageFormat.format(message, args);
+			message.append(MessageFormat.format(message.toString(), args));
 		}
-		return message;
+		return message.toString();
 	}
 }
