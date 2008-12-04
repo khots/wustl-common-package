@@ -15,7 +15,6 @@ import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.AuditException;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
@@ -255,12 +254,8 @@ public class AuditManager
 	 */
 	private AuditEventDetails compareValue(Object prevVal, Object currVal)
 	{
-		AuditEventDetails auditEventDetails;
-		if (prevVal == null && currVal == null)
-		{
-			auditEventDetails = null;
-		}
-		else
+		AuditEventDetails auditEventDetails = null;
+		if (prevVal != null || currVal != null)
 		{
 			auditEventDetails = compareValLogic(prevVal, currVal);
 		}

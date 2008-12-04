@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.hibernate.Session;
 
@@ -218,7 +219,9 @@ public class CommonEdtAction extends BaseAddEditAction
 		{
 			target = pageOf;
 			ActionMessages messages = new ActionMessages();
-			addMessage(messages, abstractDomain, "edit", getQueryBizLogic(), objectName);
+			String [] displayNameParams = addMessage(abstractDomain,objectName);
+			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. edit" 
+					+ ".successOnly", displayNameParams));
 			saveMessages(request, messages);
 		}
 		else
