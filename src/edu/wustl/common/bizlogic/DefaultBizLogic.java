@@ -38,6 +38,9 @@ import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;
+import edu.wustl.dao.QueryWhereClause;
+import edu.wustl.dao.condition.EqualClause;
+import edu.wustl.dao.condition.NotEqualClause;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
@@ -219,31 +222,36 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return list
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws BizLogicException
+			QueryWhereClause queryWhereClause) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 
 		List<Object> list = null;
 
 		try
 		{
-			dao.openSession(null);
-
-			QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-			queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-					whereColumnValue,joinCondition);			
-			
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
+			dao = daofactory.getDAO();
+			dao.openSession(null);		
+			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
 		}
 		catch (DAOException daoExp)
 		{
 			logger.error(daoExp.getMessage(), daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
 		}
 		finally
 		{
-			dao.closeSession();
+			try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			}
 		}
 
 		return list;
@@ -363,21 +371,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			boolean isToExcludeDisabled) throws BizLogicException
 	{
-		String[] whereColumnName = null;
-		String[] whereColumnCondition = null;
-		Object[] whereColumnValue = null;
-		String joinCondition = null;
 		String separatorBetweenFields = ", ";
-
+		QueryWhereClause queryWhereClause= new QueryWhereClause();
+		
 		if (isToExcludeDisabled)
 		{
-			whereColumnName = new String[]{"activityStatus"};
-			whereColumnCondition = new String[]{"!="};
-			whereColumnValue = new String[]{Constants.ACTIVITY_STATUS_DISABLED};
+			queryWhereClause.addCondition(new NotEqualClause("activityStatus",Constants.ACTIVITY_STATUS_DISABLED,sourceObjectName));
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
-				whereColumnCondition, whereColumnValue, joinCondition, separatorBetweenFields);
+		return getList(sourceObjectName,displayNameFields,valueField,queryWhereClause,separatorBetweenFields);
 	}
 
 	/**
@@ -430,8 +432,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition, String separatorBetweenFields) throws BizLogicException
+			QueryWhereClause queryWhereClause,String separatorBetweenFields) throws BizLogicException
 	{
 		//logger.debug("in get list");
 		List nameValuePairs = new ArrayList();
@@ -445,8 +446,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		selectColumnName[displayNameFields.length] = valueField;
 
-		List results = retrieve(sourceObjectName, selectColumnName, whereColumnName,
-				whereColumnCondition, whereColumnValue, joinCondition);
+		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 
 		NameValueBean nameValueBean;
 		Object[] columnArray = null;
@@ -798,17 +798,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier)
 			throws BizLogicException
 	{
-		String[] whereColumnNames = {Constants.SYSTEM_IDENTIFIER};
-		String[] colConditions = {"="};
-		Object[] whereColumnValues = {indetifier};
-		String[] selectColumnName = {Constants.ACTIVITY_STATUS};
-		
-		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnNames, colConditions,
-				whereColumnValues,Constants.AND_JOIN_CONDITION);
-		
-		
-		List<Object> list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClauseImpl);
+		String[] selectColumnName = {Constants.ACTIVITY_STATUS};		
+		QueryWhereClause queryWhereClause = new QueryWhereClause();
+		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER,indetifier.toString(),sourceObjectName));
+				
+		List<Object> list;
+		try
+		{
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
+		}
+		catch (DAOException daoEx)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.activitystatus.error");
+			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogic");
+		}
 		String activityStatus = "";
 		if (!list.isEmpty())
 		{
