@@ -530,16 +530,4 @@ public class HibernateMetaData
 		}
 		return proxyObj;
 	}
-
-	/**
-	 * This function configure the properties file.
-	 * @param args String[]
-	 * @throws Exception generic exception.
-	 */
-	public static void main(String[] args) throws Exception
-	{
-		PropertyConfigurator.configure(System.getProperty("user.dir") + "\\WEB-INF\\src\\"
-				+ "ApplicationResources.properties");
-		DBUtil.currentSession();
-	}
 }
