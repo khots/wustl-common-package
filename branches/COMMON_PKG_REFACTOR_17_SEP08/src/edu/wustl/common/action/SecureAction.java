@@ -8,7 +8,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -52,7 +51,7 @@ public abstract class SecureAction extends BaseAction
 	}
 
 	/**
-	 * Return,about next action to be performed.	
+	 * Return,about next action to be performed.
 	 * @param request HttpServletRequest
 	 * @param mapping ActionMapping
 	 * @return ActionForward
@@ -65,12 +64,11 @@ public abstract class SecureAction extends BaseAction
 	/**
 	 * @param request HttpServletRequest
 	 * @return boolean
-	 * @throws Exception Generic exception
 	 */
-	protected boolean isAuthorizedToExecute(HttpServletRequest request){
+	protected boolean isAuthorizedToExecute(HttpServletRequest request)
+	{
 		return false;
 	}
-	
 
 	/**
 	 * Returns the object id of the protection element that represents
@@ -107,13 +105,12 @@ public abstract class SecureAction extends BaseAction
 			HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 	/**
-	 *
 	 * @param form AbstractActionForm
 	 * @return null value for object Id.
 	 */
-	 protected String getObjectId(AbstractActionForm form)
-	    {
-	    	return null;
-	    }
-	
+	protected String getObjectId(AbstractActionForm form)
+	{
+		return null;
+	}
+
 }

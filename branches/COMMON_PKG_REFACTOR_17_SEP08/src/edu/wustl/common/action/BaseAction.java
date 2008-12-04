@@ -157,17 +157,9 @@ public abstract class BaseAction extends Action
 		{
 			request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_ADD_NEW);
 		}
-
 		else if (Constants.SUBMITTED_FOR_ADD_NEW.equals(submittedForParam))
 		{
-			if (Constants.SUBMITTED_FOR_DEFAULT.equals(submittedFor))
-			{
-				request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_DEFAULT);
-			}
-			else
-			{
-				request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_ADD_NEW);
-			}
+			addNewOperation(request, submittedFor);
 		}
 		else if (Constants.SUBMITTED_FOR_FORWARD_TO.equals(submittedFor))
 		{
@@ -184,6 +176,23 @@ public abstract class BaseAction extends Action
 		else
 		{
 			removeFormBeanStack(request);
+		}
+	}
+
+	/**
+	 * sets required attributes.
+	 * @param request HTTPServletRequest calling the action
+	 * @param submittedFor submitted For.
+	 */
+	private void addNewOperation(HttpServletRequest request, String submittedFor)
+	{
+		if (Constants.SUBMITTED_FOR_DEFAULT.equals(submittedFor))
+		{
+			request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_DEFAULT);
+		}
+		else
+		{
+			request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_ADD_NEW);
 		}
 	}
 

@@ -113,10 +113,29 @@ public class DomainObjectListAction extends SecureAction
 			ApplicationException
 	{
 		List list;
-		IFactory factory;
 		try
 		{
-			factory = AbstractFactoryConfig.getInstance().getBizLogicFactory("bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
+					"bizLogicFactory");
+			IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
+			AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
+					.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
+			//If start page is to be shown retrieve the list from the database.
+
+			if (abstractForm.getFormId() == Constants.APPROVE_USER_FORM_ID)
+			{
+				String[] whereColumnNames = {"activityStatus", "activityStatus"};
+				String[] whereColCond = {"=", "="};
+				String[] whereColumnValues = {"New", "Pending"};
+				list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
+						.getFormId()), whereColumnNames, whereColCond, whereColumnValues,
+						Constants.OR_JOIN_CONDITION);
+			}
+			else
+			{
+				list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
+						.getFormId()), "activityStatus", "Pending");
+			}
 		}
 		catch (ParseException parseException)
 		{
@@ -124,38 +143,26 @@ public class DomainObjectListAction extends SecureAction
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
 					"Failed to get BizLogic in base Add/Edit.");
 		}
-		IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
-		AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
-				.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
-		//If start page is to be shown retrieve the list from the database.
-
-		if (abstractForm.getFormId() == Constants.APPROVE_USER_FORM_ID)
-		{
-			String[] whereColumnNames = {"activityStatus", "activityStatus"};
-			String[] whereColCond = {"=", "="};
-			String[] whereColumnValues = {"New", "Pending"};
-			list = bizLogic.retrieve(
-					absDomainObjFact.getDomainObjectName(abstractForm.getFormId()),
-					whereColumnNames, whereColCond, whereColumnValues, Constants.OR_JOIN_CONDITION);
-		}
-		else
-		{
-			list = bizLogic.retrieve(
-					absDomainObjFact.getDomainObjectName(abstractForm.getFormId()),
-					"activityStatus", "Pending");
-		}
 		return list;
 	}
 
+	/**
+	 * This method gets Object Id.
+	 * @param form AbstractActionForm
+	 * @return Object Id.
+	 */
 	protected String getObjectId(AbstractActionForm form)
 	{
-
 		return null;
 	}
 
+	/**
+	 * This method checks is Authorized To Execute.
+	 * @param request HttpServletRequest
+	 * @return true.
+	 */
 	protected boolean isAuthorizedToExecute(HttpServletRequest request)
 	{
-
 		return true;
 	}
 }

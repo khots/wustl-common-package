@@ -117,20 +117,21 @@ public abstract class BaseAddEditAction extends Action
 	 */
 	public String getActualClassName(String name)
 	{
-		if (name != null && name.trim().length() != 0)
+		String className = name;
+		if (className != null && !className.trim().equals(TextConstants.EMPTY_STRING))
 		{
 			String splitter = "\\.";
-			String[] arr = name.split(splitter);
+			String[] arr = className.split(splitter);
 			if (arr != null && arr.length != 0)
 			{
-				return arr[arr.length - Constants.ONE];
+				className = arr[arr.length - Constants.ONE];
 			}
 		}
-		return name;
+		return className;
 	}
 
 	/**
-	 * @param abstractDomainObjectFactory AbstractDomainObjectFactory
+	 * get Object Name.
 	 * @param abstractForm AbstractActionForm
 	 * @return object name.
 	 */
@@ -160,15 +161,15 @@ public abstract class BaseAddEditAction extends Action
 
 		try
 		{
-			IFactory factory = AbstractFactoryConfig.getInstance()
-					.getBizLogicFactory("bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
+					"bizLogicFactory");
 			return (QueryBizLogic) factory.getBizLogic(Constants.QUERY_INTERFACE_ID);
 		}
-		catch(ParseException parseException)
+		catch (ParseException parseException)
 		{
 			logger.error("Failed to get QueryBizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),parseException,
-			"Failed to get QueryBizLogic in base Add/Edit.");
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+					"Failed to get QueryBizLogic in base Add/Edit.");
 		}
 	}
 
@@ -201,6 +202,7 @@ public abstract class BaseAddEditAction extends Action
 	public SessionDataBean getSessionData(HttpServletRequest request)
 	{
 		Object obj = request.getSession().getAttribute(Constants.SESSION_DATA);
+		SessionDataBean sessionData = null;
 		/**
 		 *  This if loop is specific to Password Security feature.
 		 */
@@ -210,11 +212,9 @@ public abstract class BaseAddEditAction extends Action
 		}
 		if (obj != null)
 		{
-			SessionDataBean sessionData = (SessionDataBean) obj;
-			return sessionData;
+			sessionData = (SessionDataBean) obj;
 		}
-		return null;
-		//return (String) request.getSession().getAttribute(Constants.SESSION_DATA);
+		return sessionData;
 	}
 
 	/**
@@ -222,7 +222,7 @@ public abstract class BaseAddEditAction extends Action
 	 * @param abstractForm	Form submitted
 	 * @param abstractDomain	DomainObject Added/Edited
 	 * @return	HashMap of data required to be forwarded
-	 * @throws BizLogicException Generic exception
+	 * @throws ApplicationException Application Exception.
 	 */
 	protected HashMap generateForwardToHashMap(AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain) throws ApplicationException
@@ -241,7 +241,7 @@ public abstract class BaseAddEditAction extends Action
 		{
 			logger.error("Failed to generateforward hash map", parseException);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
-					"Failed at generateForwardToHashMap in common edit.");
+					"Failed at generateForwardToHashMap in base Add/Edit.");
 
 		}
 	}
@@ -251,26 +251,25 @@ public abstract class BaseAddEditAction extends Action
 	 * @param abstractForm	Form submitted
 	 * @param abstractDomain	DomainObject Added/Edited
 	 * @return	HashMap of data required to be forwarded
-	 * @throws BizLogicException biz logic exception
+	 * @throws ApplicationException Application Exception
 	 */
 	protected HashMap generateForwardToPrintMap(AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain) throws ApplicationException
 	{
 		try
 		{
-			HashMap forwardToPrintMap = null;
 			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory(
 					"forwardToFactory");
 			AbstractForwardToProcessor forwardToProcessor = factory.getForwardToPrintProcessor();
-			forwardToPrintMap = (HashMap) forwardToProcessor.populateForwardToData(abstractForm,
-					abstractDomain);
+			HashMap forwardToPrintMap = (HashMap) forwardToProcessor.populateForwardToData(
+					abstractForm, abstractDomain);
 			return forwardToPrintMap;
 		}
 		catch (ParseException parseException)
 		{
 			logger.error("Failed to generateforward print map", parseException);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
-					"Failed at generateForwardToPrintMap in common edit.");
+					"Failed at generateForwardToPrintMap in base Add/Edit.");
 
 		}
 	}
@@ -287,9 +286,7 @@ public abstract class BaseAddEditAction extends Action
 			String addoredit, IQueryBizLogic queryBizLogic, String objectName)
 	{
 		String message = abstractDomain.getMessageLabel();
-		Validator validator = new Validator();
-		boolean isEmpty = validator.isEmpty(message);
-		String displayName = null;
+		String displayName;
 		try
 		{
 			displayName = queryBizLogic.getDisplayNamebyTableName(HibernateMetaData
@@ -301,15 +298,15 @@ public abstract class BaseAddEditAction extends Action
 			logger.error(excp.getMessage(), excp);
 		}
 
-		if (!isEmpty)
+		if (Validator.isEmpty(message))
 		{
 			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object." + addoredit
-					+ ".success", displayName, message));
+					+ ".successOnly", displayName));
 		}
 		else
 		{
 			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object." + addoredit
-					+ ".successOnly", displayName));
+					+ ".success", displayName, message));
 		}
 	}
 }

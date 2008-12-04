@@ -1,3 +1,4 @@
+
 package edu.wustl.common.action;
 
 import java.util.Stack;
@@ -6,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -27,47 +26,46 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 
-
+/**
+ *  This Class is used to Add data in the database.
+ */
 public class CommonAddAction extends BaseAddEditAction
 {
+
 	/**
 	 * This method get data from form of current session and add it for further operation.
 	 * @param mapping ActionMapping
 	 * @param request HttpServletRequest
-	 * @param abstractForm AbstractActionForm
+	 * @param response HttpServletResponse
+	 * @param form Action Form.
 	 * @return ActionForward
-	 * @throws AssignDataException Generic exception
-	 * @throws BizLogicException biz logic exception
-	 * @throws UserNotAuthorizedException Generic exception
+	 * @throws ApplicationException Application Exceptio.
 	 */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws ApplicationException
+			HttpServletRequest request, HttpServletResponse response) throws ApplicationException
 	{
-		AbstractDomainObject abstractDomain = null;
-		AbstractActionForm abstractForm = (AbstractActionForm)form;
+		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		ActionForward forward;
 		ActionMessages messages = new ActionMessages();
 
 		String target;
 		String objectName = getObjectName(abstractForm);
-		abstractDomain = insertDomainObject(request, abstractForm, messages,objectName);
-		
-		
+		AbstractDomainObject abstractDomain = insertDomainObject(request, abstractForm, messages,
+				objectName);
+
 		abstractForm.setId(abstractDomain.getId().longValue());
 		request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
 		abstractForm.setMutable(false);
 
 		String submittedFor = (String) request.getParameter(Constants.SUBMITTED_FOR);
-		HttpSession session = request.getSession();
 
-		if ("AddNew".equals(submittedFor) )
+		if ("AddNew".equals(submittedFor))
 		{
 			//Retrieving AddNewSessionDataBean from Stack
 			forward = getForwardToFromStack(mapping, request, abstractDomain, objectName);
 
 		}
-		else 
+		else
 		{
 			target = getForwardTo(request, abstractDomain, abstractForm);
 			forward = mapping.findForward(target);
@@ -86,15 +84,23 @@ public class CommonAddAction extends BaseAddEditAction
 		return forward;
 	}
 
+	/**
+	 * Retrieving AddNewSessionDataBean from Stack.
+	 * @param mapping ActionMapping
+	 * @param request HttpServletRequest
+	 * @param abstractDomain AbstractDomainObject
+	 * @param objectName object Name
+	 * @return ActionForward
+	 * @throws ApplicationException Application Exception.
+	 */
 	private ActionForward getForwardToFromStack(ActionMapping mapping, HttpServletRequest request,
-			AbstractDomainObject abstractDomain, String objectName)
-			throws ApplicationException
+			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
-		
+
 		Stack formBeanStack = (Stack) request.getSession().getAttribute(Constants.FORM_BEAN_STACK);
 		ActionForward forward;
-		
-		if(formBeanStack == null)
+
+		if (formBeanStack == null)
 		{
 			forward = mapping.findForward(Constants.SUCCESS);
 		}
@@ -102,16 +108,16 @@ public class CommonAddAction extends BaseAddEditAction
 		{
 			AddNewSessionDataBean addNewSessionDataBean = (AddNewSessionDataBean) formBeanStack
 					.pop();
-	
+
 			if (addNewSessionDataBean == null)
 			{
-				throw new ApplicationException(ErrorKey.getErrorKey("errors.item.unknown"),
-						null,AbstractDomainObject.parseClassName(objectName));
-	
+				throw new ApplicationException(ErrorKey.getErrorKey("errors.item.unknown"), null,
+						AbstractDomainObject.parseClassName(objectName));
+
 			}
 			String forwardTo = addNewSessionDataBean.getForwardTo();
-			AbstractActionForm sessionFormBean = updateSessionForm(
-					abstractDomain, addNewSessionDataBean, formBeanStack, request);
+			AbstractActionForm sessionFormBean = updateSessionForm(abstractDomain,
+					addNewSessionDataBean, formBeanStack, request);
 
 			if ((sessionFormBean.getOperation().equals("edit")))
 			{
@@ -125,8 +131,18 @@ public class CommonAddAction extends BaseAddEditAction
 		return forward;
 	}
 
-	private AbstractDomainObject insertDomainObject(HttpServletRequest request, AbstractActionForm abstractForm,
-			ActionMessages messages, String objectName) throws ApplicationException
+	/**
+	 * inserts Domain Object.
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm
+	 * @param messages ActionMessages
+	 * @param objectName object Name
+	 * @return AbstractDomainObject
+	 * @throws ApplicationException Application Exception
+	 */
+	private AbstractDomainObject insertDomainObject(HttpServletRequest request,
+			AbstractActionForm abstractForm, ActionMessages messages, String objectName)
+			throws ApplicationException
 	{
 		try
 		{
@@ -136,27 +152,34 @@ public class CommonAddAction extends BaseAddEditAction
 					abstractForm);
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
 			bizLogic.insert(abstractDomain, getSessionData(request));
-			String target = new String(Constants.SUCCESS);
 			QueryBizLogic queryBizLogic = getQueryBizLogic();
 			addMessage(messages, abstractDomain, "add", queryBizLogic, objectName);
 			return abstractDomain;
 		}
-		catch(BizLogicException bizLogicException)
+		catch (BizLogicException bizLogicException)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),bizLogicException, 
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
 					"Failed while updating in common add.");
 		}
-		catch(UserNotAuthorizedException excp)
+		catch (UserNotAuthorizedException excp)
 		{
-			throw  getErrorForUserNotAuthorized(request, excp);
+			throw getErrorForUserNotAuthorized(request, excp);
 		}
 		catch (AssignDataException e)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),e, 
-			"Failed while populating domain object in common add.");			
-		}		
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
+					"Failed while populating domain object in common add.");
+		}
 	}
 
+	/**
+	 * This method gets target.
+	 * @param request HttpServletRequest
+	 * @param abstractDomain AbstractDomainObject
+	 * @param abstractForm AbstractActionForm
+	 * @return target
+	 * @throws ApplicationException Application Exception
+	 */
 	private String getForwardTo(HttpServletRequest request, AbstractDomainObject abstractDomain,
 			AbstractActionForm abstractForm) throws ApplicationException
 	{
@@ -166,7 +189,7 @@ public class CommonAddAction extends BaseAddEditAction
 		{
 			request.setAttribute(Constants.SUBMITTED_FOR, "Default");
 			request.setAttribute("forwardToHashMap", generateForwardToHashMap(abstractForm,
-				abstractDomain));
+					abstractDomain));
 		}
 		if (abstractForm.getForwardTo() != null && abstractForm.getForwardTo().trim().length() > 0)
 		{
@@ -176,9 +199,15 @@ public class CommonAddAction extends BaseAddEditAction
 		return target;
 	}
 
+	/**
+	 * This method gets Edit Forward.
+	 * @param mapping ActionMapping
+	 * @param forwardTo forward To.
+	 * @return ActionForward.
+	 */
 	private ActionForward getEditForward(ActionMapping mapping, String forwardTo)
 	{
-		
+
 		ActionForward editForward = new ActionForward();
 		String addPath = (mapping.findForward(forwardTo)).getPath();
 		String editPath = addPath.replaceFirst("operation=add", "operation=edit");
@@ -186,13 +215,21 @@ public class CommonAddAction extends BaseAddEditAction
 		return editForward;
 	}
 
+	/**
+	 * This method updates Session Form.
+	 * @param abstractDomain AbstractDomainObject
+	 * @param addNewSessionDataBean AddNewSessionDataBean
+	 * @param formBeanStack form Bean Stack
+	 * @param request HttpServletRequest
+	 * @return AbstractActionForm.
+	 */
 	private AbstractActionForm updateSessionForm(AbstractDomainObject abstractDomain,
-			AddNewSessionDataBean addNewSessionDataBean, Stack formBeanStack, HttpServletRequest request)
+			AddNewSessionDataBean addNewSessionDataBean, Stack formBeanStack,
+			HttpServletRequest request)
 	{
-		AbstractActionForm sessionFormBean = addNewSessionDataBean
-				.getAbstractActionForm();
-		sessionFormBean.setAddNewObjectIdentifier(
-				addNewSessionDataBean.getAddNewFor(),abstractDomain.getId());
+		AbstractActionForm sessionFormBean = addNewSessionDataBean.getAbstractActionForm();
+		sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(),
+				abstractDomain.getId());
 		sessionFormBean.setMutable(false);
 
 		if (formBeanStack.isEmpty())
@@ -207,7 +244,7 @@ public class CommonAddAction extends BaseAddEditAction
 		}
 		String formBeanName = Utility.getFormBeanName(sessionFormBean);
 		request.setAttribute(formBeanName, sessionFormBean);
-		
+
 		return sessionFormBean;
 	}
 
