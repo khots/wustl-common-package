@@ -216,7 +216,6 @@ public class Constants
 	public static final String COLUMN_DISPLAY_NAMES = "columnDisplayNames";
 
 	public static final String COLUMN_ID_MAP = "columnIdsMap";
-	public static final String PAGEOF_ADVANCE_QUERY_INTERFACE = "pageOfAdvanceQueryInterface";
 	public static final String PAGEOF_QUERY_RESULTS = "pageOfQueryResults";
 
 	public static final String COLUMN = "Column";
