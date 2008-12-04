@@ -29,20 +29,19 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.dbmanager.DAOException;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;
-import edu.wustl.dao.QueryWhereClauseImpl;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
+import edu.wustl.dao.exception.DAOException;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -67,7 +66,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
-			throws DAOException, UserNotAuthorizedException
+			throws BizLogicException
 	{
 
 	}
@@ -90,10 +89,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
-	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
-			throws DAOException, UserNotAuthorizedException
+	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)	throws BizLogicException
 	{
-		dao.insert(obj, sessionDataBean, true, true);
+		try
+		{
+			dao.insert(obj, sessionDataBean, true, true);
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
 	}
 
 	/**
@@ -106,7 +112,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
-			throws DAOException, UserNotAuthorizedException
+			throws BizLogicException
 	{
 
 	}
@@ -118,9 +124,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
-	protected void delete(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
+	protected void delete(Object obj, DAO dao) throws BizLogicException
 	{
-		dao.delete(obj);
+		try
+		{
+			dao.delete(obj);
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
 	}
 
 	/**
@@ -134,7 +148,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void preUpdate(DAO dao, Object currentObj, Object oldObj,
-			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
+			SessionDataBean sessionDataBean) throws BizLogicException
 	{
 
 	}
@@ -149,10 +163,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void update(DAO dao, Object obj, Object oldObj, SessionDataBean sessionDataBean)
-			throws DAOException, UserNotAuthorizedException
+			throws BizLogicException
 	{
-		dao.update(obj, sessionDataBean, true, true);
-		dao.audit(obj, oldObj, sessionDataBean, true);
+		try
+		{
+			dao.update(obj);
+			dao.audit(obj, oldObj, sessionDataBean, true);
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
+		
 	}
 
 	/**
@@ -166,7 +189,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 * */
 	protected void postUpdate(DAO dao, Object currentObj, Object oldObj,
-			SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException
+			SessionDataBean sessionDataBean) throws BizLogicException
 	{
 
 	}
@@ -179,7 +202,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 * @return true
 	 */
-	protected boolean validate(Object obj, DAO dao, String operation) throws DAOException
+	protected boolean validate(Object obj, DAO dao, String operation) throws BizLogicException
 	{
 		return true;
 	}
@@ -197,7 +220,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition) throws DAOException
+			String joinCondition) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = daofactory.getDAO();
@@ -210,7 +233,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 			QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
 			queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-					whereColumnValue,joinCondition);
+					whereColumnValue,joinCondition);			
 			
 			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
 		}
@@ -238,7 +261,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName, String[] whereColumnName,
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
-			throws DAOException
+			throws BizLogicException
 	{
 		return retrieve(sourceObjectName, null, whereColumnName, whereColumnCondition,
 				whereColumnValue, joinCondition);
@@ -252,7 +275,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return records
 	 * @throws DAOException generic DAOException
 	 */
-	public List retrieve(String className, String colName, Object colValue) throws DAOException
+	public List retrieve(String className, String colName, Object colValue) throws BizLogicException
 	{
 		String[] colNames = {colName};
 		String[] colConditions = {"="};
@@ -267,7 +290,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return records
 	 * @throws DAOException generic DAOException
 	 */
-	public List retrieve(String sourceObjectName) throws DAOException
+	public List retrieve(String sourceObjectName) throws BizLogicException
 	{
 		return retrieve(sourceObjectName, null, null, null, null);
 	}
@@ -279,7 +302,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return records
 	 * @throws DAOException generic DAOException
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName) throws DAOException
+	public List retrieve(String sourceObjectName, String[] selectColumnName) throws BizLogicException
 	{
 		return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
 	}
@@ -291,16 +314,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return object.
 	 * @throws DAOException generic DAOException
 	 */
-	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
+	public Object retrieve(String sourceObjectName, Long identifier) throws BizLogicException
 	{
 
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 
 		Object object = null;
 
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(null);
 
 			object = dao.retrieve(sourceObjectName, identifier);
@@ -312,7 +336,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			dao.closeSession();
+			try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			}
 		}
 
 		return object;
@@ -329,7 +361,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
-			boolean isToExcludeDisabled) throws DAOException
+			boolean isToExcludeDisabled) throws BizLogicException
 	{
 		String[] whereColumnName = null;
 		String[] whereColumnCondition = null;
@@ -365,7 +397,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
-			throws DAOException
+			throws BizLogicException
 	{
 		String[] whereColName = {""};
 		String[] whereColCondition = {""};
@@ -399,7 +431,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
-			String joinCondition, String separatorBetweenFields) throws DAOException
+			String joinCondition, String separatorBetweenFields) throws BizLogicException
 	{
 		//logger.debug("in get list");
 		List nameValuePairs = new ArrayList();
@@ -524,7 +556,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	protected void disableAndAuditObjects(DAO dao, String sourceClass, String tablename,
-			List listOfSubElement) throws DAOException
+			List listOfSubElement) throws BizLogicException
 	{
 		Iterator iterator = listOfSubElement.iterator();
 		Collection auditEventLogsCollection = new HashSet();
@@ -536,17 +568,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 				Long objectId = (Long) iterator.next();
 				IActivityStatus object = (IActivityStatus) dao.retrieve(sourceClass, objectId);
 				object.setActivityStatus(Constants.ACTIVITY_STATUS_DISABLED);
-				dao.update(object, null, false, false);
+				dao.update(object);
 				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
 			}
 
 			HibernateDAO hibDAO = (HibernateDAO) dao;
 			hibDAO.addAuditEventLogs(auditEventLogsCollection);
 		}
-		catch (UserNotAuthorizedException ex)
+		catch (DAOException daoEx)
 		{
-			throw new DAOException(ex); //should throw bizlogicexception
-		}
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.disableaudit.error");
+			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogicLogic");
+		}		
 	}
 
 	/**
@@ -603,7 +636,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
-			Long[] objIDArr) throws DAOException
+			Long[] objIDArr) throws BizLogicException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
@@ -667,7 +700,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException.
 	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName,
-			String[] whereColumnValue, String[] whereColumnCondition) throws DAOException
+			String[] whereColumnValue, String[] whereColumnCondition) throws BizLogicException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String joinCondition = Constants.AND_JOIN_CONDITION;
@@ -732,7 +765,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param errorName Dispaly Name of the Element
 	 * @throws DAOException generic DAOException
 	 */
-	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName) throws DAOException
+	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName) throws BizLogicException
 	{
 		if (ado != null)
 		{
@@ -747,8 +780,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 				}
 				if (activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
 				{
-					throw new DAOException(errorName + " "
-							+ ApplicationProperties.getValue("error.object.closed"));
+					ErrorKey errorKey=ErrorKey.getErrorKey("biz.checkstatus.error");
+					throw new BizLogicException(errorKey,null, "DefaultBizLogic");
 				}
 			}
 		}
@@ -763,7 +796,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier)
-			throws DAOException
+			throws BizLogicException
 	{
 		String[] whereColumnNames = {Constants.SYSTEM_IDENTIFIER};
 		String[] colConditions = {"="};
@@ -794,9 +827,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
-	protected void insert(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
+	protected void insert(Object obj, DAO dao) throws BizLogicException
 	{
-		dao.insert(obj, null, false, false);
+		try
+		{
+			dao.insert(obj, null, false, false);
+		}
+		catch (DAOException daoEx)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogic");
+		}
 	}
 
 	/**
@@ -806,9 +847,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
-	protected void update(DAO dao, Object obj) throws DAOException, UserNotAuthorizedException
+	protected void update(DAO dao, Object obj) throws BizLogicException
 	{
-		dao.update(obj, null, false, false);
+		try
+		{
+			dao.update(obj);
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic-User not authorized");
+		}
 	}
 
 	/**
@@ -820,7 +869,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException.
 	 */
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
-			throws DAOException
+			throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = daofactory.getDAO();
@@ -854,7 +903,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * #retrieveAttribute(java.lang.String, java.lang.Long, java.lang.String)
 	 */
 	public Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
-			throws DAOException
+			throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = daofactory.getDAO();
@@ -914,7 +963,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	@Override
 	protected void postInsert(Collection<AbstractDomainObject> objCollection, DAO dao,
-			SessionDataBean sessionDataBean) throws DAOException, UserNotAuthorizedException
+			SessionDataBean sessionDataBean) throws BizLogicException
 	{
 		// TODO Auto-generated method stub
 
@@ -934,7 +983,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * @param domainObject Object on which authorization is reqd.
+	 * @param domainObject Object on which authorization is required.
 	 * @return Privilege Key
 	 */
 	protected String getPrivilegeKey(Object domainObject)
@@ -945,7 +994,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	/**
 	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.DAO, java.lang.Object)
 	 * @param dao The dao object.
-	 * @param domainObject Object on which authorization is reqd.
+	 * @param domainObject Object on which authorization is required.
 	 * @return allow Operation.
 	 */
 	public String getObjectId(DAO dao, Object domainObject)
@@ -960,23 +1009,31 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException.
 	 * @return returner
 	 */
-	public List executeQuery(String query) throws ClassNotFoundException, DAOException
+	public List executeQuery(String query) throws BizLogicException
 	{
 		List returner = null;
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		IConnectionManager connectionManager = dao.getConnectionManager();
 		Session session = null;
 		try
 		{
+			dao = daofactory.getDAO();
 			session = connectionManager.getCleanSession();
 			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
 		}
-		catch (HibernateException e)
+		catch (HibernateException exception)
 		{
-			throw (new DAOException(e));
-		} finally
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.exequery.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.exequery.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
+		finally
 		{
 			session.close();
 		}
