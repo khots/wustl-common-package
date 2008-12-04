@@ -24,11 +24,13 @@ import edu.wustl.common.cde.CDEImpl;
 import edu.wustl.common.cde.CDEManager;
 import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.CDETreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.tree.TreeNode;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.exception.DAOException;
+
 import edu.wustl.dao.DAO;
 
 /**
@@ -59,20 +61,27 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
-			throws DAOException, UserNotAuthorizedException
+			throws BizLogicException
 	{
-		CDEImpl cde = (CDEImpl) obj;
-
-		//Delete the previous CDE data from the database.
-		delete(cde, dao);
-
-		//Insert the new CDE data in teh database.
-		dao.insert(cde, sessionDataBean, false, false);
-		Iterator iterator = cde.getPermissibleValues().iterator();
-		while (iterator.hasNext())
+		try
 		{
-			PermissibleValueImpl permissibleValue = (PermissibleValueImpl) iterator.next();
-			dao.insert(permissibleValue, sessionDataBean, false, false);
+			CDEImpl cde = (CDEImpl) obj;
+	
+			//Delete the previous CDE data from the database.
+			delete(cde, dao);
+	
+			//Insert the new CDE data in teh database.
+			dao.insert(cde, sessionDataBean, false, false);
+			Iterator iterator = cde.getPermissibleValues().iterator();
+			while (iterator.hasNext())
+			{
+				PermissibleValueImpl permissibleValue = (PermissibleValueImpl) iterator.next();
+				dao.insert(permissibleValue, sessionDataBean, false, false);
+			}
+		}
+		catch(DAOException exception)
+		{
+			throw new BizLogicException(exception);
 		}
 	}
 
@@ -83,14 +92,21 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	 * @throws DAOException generic DAOException
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
-	protected void delete(Object obj, DAO dao) throws DAOException, UserNotAuthorizedException
+	protected void delete(Object obj, DAO dao) throws BizLogicException
 	{
-		CDE cde = (CDE) obj;
-		List list = dao.retrieve(CDEImpl.class.getName(), "publicId", cde.getPublicId());
-		if (!list.isEmpty())
+		try
 		{
-			CDEImpl cde1 = (CDEImpl) list.get(0);
-			dao.delete(cde1);
+			CDE cde = (CDE) obj;
+			List list = dao.retrieve(CDEImpl.class.getName(), "publicId", cde.getPublicId());
+			if (!list.isEmpty())
+			{
+				CDEImpl cde1 = (CDEImpl) list.get(0);
+				dao.delete(cde1);
+			}
+		}
+		catch(DAOException exception)
+		{
+			throw new BizLogicException(exception);
 		}
 	}
 

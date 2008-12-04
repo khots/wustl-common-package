@@ -36,7 +36,6 @@ import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.IForwordToFactory;
 import edu.wustl.common.factory.MasterFactory;
-import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.AbstractForwardToProcessor;
 import edu.wustl.common.util.Utility;
@@ -156,14 +155,14 @@ public abstract class BaseAddEditAction extends Action
 	 * @return QueryBizLogic
 	 * @throws ApplicationException Application Exception
 	 */
-	public QueryBizLogic getQueryBizLogic() throws ApplicationException
+	public IQueryBizLogic getQueryBizLogic() throws ApplicationException
 	{
 
 		try
 		{
 			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
 					"bizLogicFactory");
-			return (QueryBizLogic) factory.getBizLogic(Constants.QUERY_INTERFACE_ID);
+			return (IQueryBizLogic) factory.getBizLogic(Constants.QUERY_INTERFACE_ID);
 		}
 		catch (ParseException parseException)
 		{

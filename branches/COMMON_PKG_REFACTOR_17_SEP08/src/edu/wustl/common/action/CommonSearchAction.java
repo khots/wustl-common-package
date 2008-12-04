@@ -38,7 +38,7 @@ import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -121,15 +121,17 @@ public class CommonSearchAction extends Action
 	{
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		String target = Constants.FAILURE;
+
+		AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
+				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
+		String objName = absDomainObjFact.getDomainObjectName(abstractForm.getFormId());
+		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
+				Constants.SESSION_DATA);
+		IBizLogic bizLogic = getBizLogicForEdit(abstractForm);
+		hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
+		
 		try
 		{
-			AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
-					.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
-			String objName = absDomainObjFact.getDomainObjectName(abstractForm.getFormId());
-			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
-					Constants.SESSION_DATA);
-			IBizLogic bizLogic = getBizLogicForEdit(abstractForm);
-			hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
 			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
 			if (isSuccess)
 			{
@@ -145,12 +147,6 @@ public class CommonSearchAction extends Action
 		{
 			logger.error(excp.getMessage(), excp);
 		}
-		catch (DAOException excp)
-		{
-			saveErrors(request, "access.view.action.denied", "");
-			target = Constants.ACCESS_DENIED;
-			logger.error(excp.getMessage(), excp);
-		}
 		return target;
 	}
 
@@ -163,7 +159,7 @@ public class CommonSearchAction extends Action
 	 * @throws DAOException DAO Exception.
 	 */
 	private void hasPrivilege(Long identifier, String objName, SessionDataBean sessionDataBean,
-			IBizLogic bizLogic) throws DAOException
+			IBizLogic bizLogic) throws ApplicationException
 	{
 		boolean hasPrivilege = true;
 		if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
@@ -172,8 +168,8 @@ public class CommonSearchAction extends Action
 		}
 		if (!hasPrivilege)
 		{
-			throw new DAOException("Access denied ! "
-					+ "User does not have privilege to view this information.");
+			throw new ApplicationException(ErrorKey.getErrorKey("access.denied"), null,
+					 "User does not have privilege to view this information.");
 		}
 	}
 
@@ -196,7 +192,7 @@ public class CommonSearchAction extends Action
 		{
 			logger.error(excp.getMessage(), excp);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), excp,
-					"Failed while updating in common add.");
+					"Failed while updating in common search.");
 		}
 	}
 

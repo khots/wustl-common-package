@@ -108,11 +108,6 @@ public class CDECacheManager
 				cdeBizLogic.insert(cde, null);
 				logger.debug(cde.getLongName() + " : CDE inserted in database ... ");
 			}
-			catch (UserNotAuthorizedException userNotAuthExp)
-			{
-				errorLogs.add(userNotAuthExp.getMessage());
-				logger.error(userNotAuthExp.getMessage(), userNotAuthExp);
-			}
 			catch (BizLogicException bizLogicExp)
 			{
 				errorLogs.add(bizLogicExp.getMessage());

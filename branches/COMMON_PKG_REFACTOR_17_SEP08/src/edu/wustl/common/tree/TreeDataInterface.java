@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.exception.DAOException;
 
 /**
  * @author gautam_shetty

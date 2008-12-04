@@ -15,7 +15,8 @@ import java.util.Set;
 import edu.wustl.common.bizlogic.CDEBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.cde.xml.XMLCDE;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -72,21 +73,7 @@ public class CDEHandler
 				else
 				{
 					//Else load the CDE from database cache
-					try
-					{
-						IBizLogic bizLogic = new CDEBizLogic();//BizLogicFactory.getBizLogic(-1);
-						List list = bizLogic.retrieve(CDEImpl.class.getName(),"publicId",publicID);
-						if(!list.isEmpty())
-						{
-							cde =  (CDE)list.get(0);
-							inMemCacheMap.put(publicID, cde);
-						}
-					}
-					catch(DAOException ex)
-					{
-						Logger.out.debug(ex.getMessage(), ex);
-						//throw new Exception("Could not load CDE "+CDEName+" from local DB database: "+ ex.getMessage(), ex);
-					}
+					cde = loadCDEFromDB(publicID, cde);
 				}
 				return cde;
 			}
@@ -107,5 +94,25 @@ public class CDEHandler
 			}
 		}
 		return null;
+	}
+
+	private CDE loadCDEFromDB(String publicID, CDE cde)
+	{
+		try
+		{
+			IBizLogic bizLogic = new CDEBizLogic();//BizLogicFactory.getBizLogic(-1);
+			List list = bizLogic.retrieve(CDEImpl.class.getName(),"publicId",publicID);
+			if(!list.isEmpty())
+			{
+				cde =  (CDE)list.get(0);
+				inMemCacheMap.put(publicID, cde);
+			}
+		}
+		catch(BizLogicException ex)
+		{
+			Logger.out.debug(ex.getMessage(), ex);
+			//throw new Exception("Could not load CDE "+CDEName+" from local DB database: "+ ex.getMessage(), ex);
+		}
+		return cde;
 	}
 }
