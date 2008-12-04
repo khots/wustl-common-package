@@ -129,7 +129,11 @@ public class HibernateMetaData
 	public static String getTableName(Class classObj)
 	{
 		String tableName=TextConstants.EMPTY_STRING;
-		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
+		Table tbl;
+		if((cfg.getClassMapping(classObj.getName())) != null)
+		{
+			tbl = cfg.getClassMapping(classObj.getName()).getTable();
+		}
 		if (tbl != null)
 		{
 			tableName=tbl.getName();
