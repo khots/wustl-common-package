@@ -17,7 +17,7 @@ import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
@@ -323,34 +323,28 @@ public class AuditManager
 			return;
 		}
 
-		try
+		dao.insert(auditEvent, null, false, false);
+		Iterator<AuditEventLog> auditLogIterator = auditEvent.getAuditEventLogCollection()
+				.iterator();
+		while (auditLogIterator.hasNext())
 		{
-			dao.insert(auditEvent, null, false, false);
-			Iterator<AuditEventLog> auditLogIterator = auditEvent.getAuditEventLogCollection()
-					.iterator();
-			while (auditLogIterator.hasNext())
-			{
-				AuditEventLog auditEventLog = (AuditEventLog) auditLogIterator.next();
-				auditEventLog.setAuditEvent(auditEvent);
-				dao.insert(auditEventLog, null, false, false);
+			AuditEventLog auditEventLog = (AuditEventLog) auditLogIterator.next();
+			auditEventLog.setAuditEvent(auditEvent);
+			dao.insert(auditEventLog, null, false, false);
 
-				Iterator<AuditEventDetails> auditEventDetailsIterator = auditEventLog
-						.getAuditEventDetailsCollcetion().iterator();
-				while (auditEventDetailsIterator.hasNext())
-				{
-					AuditEventDetails auditEventDetails =
-						(AuditEventDetails) auditEventDetailsIterator
-							.next();
-					auditEventDetails.setAuditEventLog(auditEventLog);
-					dao.insert(auditEventDetails, null, false, false);
-				}
+			Iterator<AuditEventDetails> auditEventDetailsIterator = auditEventLog
+					.getAuditEventDetailsCollcetion().iterator();
+			while (auditEventDetailsIterator.hasNext())
+			{
+				AuditEventDetails auditEventDetails =
+					(AuditEventDetails) auditEventDetailsIterator
+						.next();
+				auditEventDetails.setAuditEventLog(auditEventLog);
+				dao.insert(auditEventDetails, null, false, false);
 			}
-			auditEvent = new AuditEvent();
 		}
-		catch (UserNotAuthorizedException sme)
-		{
-			logger.debug("Exception:" + sme.getMessage(), sme);
-		}
+		auditEvent = new AuditEvent();
+
 
 	}
 

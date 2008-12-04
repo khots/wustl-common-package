@@ -25,7 +25,7 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.security.exceptions.PasswordEncryptionException;
 import edu.wustl.common.util.XMLPropertyHandler;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.util.StringEncrypter;
 import gov.nih.nci.security.util.StringEncrypter.EncryptionException;

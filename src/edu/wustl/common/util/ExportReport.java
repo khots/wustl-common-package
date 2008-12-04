@@ -24,7 +24,7 @@ import oracle.sql.CLOB;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
-import edu.wustl.common.util.dbmanager.DAOException;
+import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.SqlConstants;
 import edu.wustl.common.util.global.TextConstants;
@@ -418,7 +418,7 @@ public class ExportReport
 		DAO dao = daofactory.getJDBCDAO();
 
 		dao.openSession(null);
-		return (List<Object>)dao.executeQuery(sql, null, false, null);
-
+		return null; //(List<Object>)dao.executeQuery(sql, null, false, null);
+		
 	}
 }

@@ -1,5 +1,7 @@
 package edu.wustl.common.exception;
 
+import edu.wustl.dao.exception.DAOException;
+
 
 /**
  * @author kapil_kaveeshwar
@@ -23,5 +25,14 @@ public class BizLogicException extends ApplicationException
 	public BizLogicException(ErrorKey errorKey, Throwable throwable, String msgValues)
 	{
 		super(errorKey,throwable,msgValues);
+	}
+	
+	/**
+	 * Wrapping daoException to bizLogic Exception.
+	 * @param daoException dao exception.
+	 */
+	public BizLogicException(DAOException daoException)
+	{
+		super(daoException);
 	}
 }

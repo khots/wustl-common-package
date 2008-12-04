@@ -17,11 +17,8 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
-import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
@@ -29,6 +26,7 @@ import edu.wustl.dao.DAO;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
+import edu.wustl.dao.exception.DAOException;
 
 /**
  * This Class is used to Edit data in the database.
@@ -118,16 +116,6 @@ public class CommonEdtAction extends BaseAddEditAction
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
 					"Failed while populating domain object in common edit.");
 		}
-		catch (DAOException e)
-		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
-					"Failed while populating domain object in common edit.");
-		}
-		catch (AssignDataException e)
-		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
-					"Failed while populating domain object in common edit.");
-		}
 	}
 
 	/**
@@ -179,10 +167,6 @@ public class CommonEdtAction extends BaseAddEditAction
 		{
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
 					"Failed while updating in common edit.");
-		}
-		catch (UserNotAuthorizedException excp)
-		{
-			throw getErrorForUserNotAuthorized(request, excp);
 		}
 	}
 

@@ -66,6 +66,15 @@ public class ApplicationException extends Exception
 	}
 
 	/**
+	 * Protected constructor which only child classes can use to reuse
+	 * properties of another exception object.
+	 * @param applicationException an exception whose properties will be reused.
+	 */
+	protected ApplicationException(ApplicationException applicationException)
+	{
+		this(applicationException.errorKey,applicationException,applicationException.msgValues);
+	}
+	/**
 	 * Formats error message to be send to end user.
 	 * @return formatted message.
 	 */
