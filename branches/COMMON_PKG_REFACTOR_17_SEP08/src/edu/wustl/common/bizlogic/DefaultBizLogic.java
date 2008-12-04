@@ -40,6 +40,7 @@ import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.condition.EqualClause;
+import edu.wustl.dao.condition.INClause;
 import edu.wustl.dao.condition.NotEqualClause;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
@@ -521,9 +522,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier,
-			String tablename, String colName, Long[] objIDArr) throws DAOException
+			String tablename, String colName, Long[] objIDArr) throws BizLogicException
 	{
-		dao.disableRelatedObjects(tablename, colName, objIDArr);
+		try
+		{
+			dao.disableRelatedObjects(tablename, colName, objIDArr);
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.disableobj.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
@@ -540,7 +549,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException generic DAOException
 	 */
 	protected List disableObjects(DAO dao, String tablename, Class sourceClass,
-			String classIdentifier, Long[] objIDArr) throws DAOException
+			String classIdentifier, Long[] objIDArr) throws BizLogicException
 	{
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		disableAndAuditObjects(dao, sourceClass.getName(), tablename, listOfSubElement);
@@ -641,17 +650,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String sourceObjectName = sourceClass.getName();
 		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
 
-		String[] whereColumnName = {classIdentifier + "." + Constants.SYSTEM_IDENTIFIER};
-		String[] whereColumnCondition = {"in"};
-		Object[] whereColumnValue = {objIDArr};
-		String joinCondition = Constants.AND_JOIN_CONDITION;
+		String whereColumnName = classIdentifier + "." + Constants.SYSTEM_IDENTIFIER;
+		QueryWhereClause queryWhereClause = new QueryWhereClause();
+		queryWhereClause.addCondition(new INClause(whereColumnName,objIDArr,sourceObjectName));
 		
-		QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-		queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
-				whereColumnValue,joinCondition);
-		
-
-		List<Object> list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
+		List list=null;
+		try
+		{
+			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+		}
+		catch (DAOException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.getrelatedobj.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
 		list = Utility.removeNull(list);
 		logger.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
@@ -739,24 +751,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 		}
 		return abstractDomainObject;
-	}
-
-	/**
-	 * This method handle SMException.
-	 * @param exception -SMException.
-	 * @return DAOException
-	 */
-	protected DAOException handleSMException(SMException exception)
-	{
-		logger.error("Exception in Authorization: " + exception.getMessage(), exception);
-		StringBuffer message = new StringBuffer();
-		message.append("Security Exception: ").append(exception.getMessage());
-		if (exception.getCause() != null)
-		{
-			message.append(" : ").append(exception.getCause().getMessage());
-		}
-		return new DAOException(message.toString(), exception);
-	}
+	}	
 
 	/**
 	 *  Method to check the ActivityStatus of the given identifier.
