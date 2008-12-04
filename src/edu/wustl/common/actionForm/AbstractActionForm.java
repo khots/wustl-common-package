@@ -186,7 +186,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	protected void checkValidString(String componentName, String labelName, ActionErrors errors,
 			Validator validator)
 	{
-		if (validator.isEmpty(componentName))
+		if (Validator.isEmpty(componentName))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.required",
 					ApplicationProperties.getValue(labelName)));

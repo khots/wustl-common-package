@@ -39,17 +39,17 @@ public final class DataTypeConfigFactory
 	/**
 	 * Specifies dataType Configuration Map.
 	 */
-	private final Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
+	private transient final Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
 
 	/**
 	 * Specifies Document object.
 	 */
-	private Document dom;
+	private transient Document dom;
 
 	/**
 	 * Specifies success.
 	 */
-	private static boolean success = true;
+	private static boolean success = false;
 
 	/**
 	 * ControlConfigurationsFactory constructor.
@@ -61,10 +61,11 @@ public final class DataTypeConfigFactory
 		try
 		{
 			parseXML("DataTypeConfigurations.xml");
+			success = true;
 		}
 		catch (ParseException exception)
 		{
-			success = false;
+			//TODO:put logger
 		}
 
 	}

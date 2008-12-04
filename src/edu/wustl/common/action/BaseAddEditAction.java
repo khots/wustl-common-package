@@ -16,12 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.SessionDataBean;
@@ -281,10 +278,30 @@ public abstract class BaseAddEditAction extends Action
 	 * @param queryBizLogic QueryBizLogic
 	 * @param objectName String
 	 */
-	protected void addMessage(ActionMessages messages, AbstractDomainObject abstractDomain,
-			String addoredit, IQueryBizLogic queryBizLogic, String objectName)
+	protected String [] addMessage(AbstractDomainObject abstractDomain,	String objectName)throws ApplicationException
 	{
 		String message = abstractDomain.getMessageLabel();
+		String displayName;
+		String displayparams[];
+		IQueryBizLogic queryBizLogic = getQueryBizLogic();
+		displayName = getDispNameOfDomainObj(abstractDomain, objectName, queryBizLogic);
+		if (Validator.isEmpty(message))
+		{
+			displayparams = new String[1];
+			displayparams[0] = displayName;
+		}
+		else
+		{
+			displayparams = new String[2];
+			displayparams[0] = displayName;
+			displayparams[1] = message;
+		}
+		return displayparams;
+	}
+
+	private String getDispNameOfDomainObj(AbstractDomainObject abstractDomain, String objectName,
+			IQueryBizLogic queryBizLogic)
+	{
 		String displayName;
 		try
 		{
@@ -296,16 +313,6 @@ public abstract class BaseAddEditAction extends Action
 			displayName = AbstractDomainObject.parseClassName(objectName);
 			logger.error(excp.getMessage(), excp);
 		}
-
-		if (Validator.isEmpty(message))
-		{
-			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object." + addoredit
-					+ ".successOnly", displayName));
-		}
-		else
-		{
-			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object." + addoredit
-					+ ".success", displayName, message));
-		}
+		return displayName;
 	}
 }

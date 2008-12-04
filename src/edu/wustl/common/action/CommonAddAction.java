@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
@@ -21,11 +23,8 @@ import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
-import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
-
 /**
  *  This Class is used to Add data in the database.
  */
@@ -50,9 +49,9 @@ public class CommonAddAction extends BaseAddEditAction
 
 		String target;
 		String objectName = getObjectName(abstractForm);
-		AbstractDomainObject abstractDomain = insertDomainObject(request, abstractForm, messages,
-				objectName);
-
+		AbstractDomainObject abstractDomain = insertDomainObject(request, abstractForm);
+		
+		setSuccessMsg(request, messages, objectName, abstractDomain);
 		abstractForm.setId(abstractDomain.getId().longValue());
 		request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
 		abstractForm.setMutable(false);
@@ -73,15 +72,21 @@ public class CommonAddAction extends BaseAddEditAction
 
 		request.setAttribute("forwardToPrintMap", generateForwardToPrintMap(abstractForm,
 				abstractDomain));
-		if (messages != null)
-		{
-			saveMessages(request, messages);
-		}
 		//Status message key.
-		String statusMessageKey = String.valueOf(abstractForm.getFormId() + "."
-				+ String.valueOf(abstractForm.isAddOperation()));
-		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey);
+		StringBuffer statusMessageKey = new StringBuffer(abstractForm.getFormId());
+		statusMessageKey.append('.').append(abstractForm.isAddOperation());
+	
+		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey.toString());
 		return forward;
+	}
+
+	private void setSuccessMsg(HttpServletRequest request, ActionMessages messages, String objectName,
+			AbstractDomainObject abstractDomain) throws ApplicationException
+	{
+		String [] displayNameParams = addMessage(abstractDomain,objectName);
+		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. add" 
+				+ ".successOnly", displayNameParams));
+		saveMessages(request, messages);
 	}
 
 	/**
@@ -141,7 +146,7 @@ public class CommonAddAction extends BaseAddEditAction
 	 * @throws ApplicationException Application Exception
 	 */
 	private AbstractDomainObject insertDomainObject(HttpServletRequest request,
-			AbstractActionForm abstractForm, ActionMessages messages, String objectName)
+			AbstractActionForm abstractForm)
 			throws ApplicationException
 	{
 		try
@@ -152,18 +157,13 @@ public class CommonAddAction extends BaseAddEditAction
 					abstractForm);
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
 			bizLogic.insert(abstractDomain, getSessionData(request));
-			QueryBizLogic queryBizLogic = getQueryBizLogic();
-			addMessage(messages, abstractDomain, "add", queryBizLogic, objectName);
+			
 			return abstractDomain;
 		}
 		catch (BizLogicException bizLogicException)
 		{
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
 					"Failed while updating in common add.");
-		}
-		catch (UserNotAuthorizedException excp)
-		{
-			throw getErrorForUserNotAuthorized(request, excp);
 		}
 		catch (AssignDataException e)
 		{
