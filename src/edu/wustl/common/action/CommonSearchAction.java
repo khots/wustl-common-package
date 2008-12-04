@@ -29,7 +29,9 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
@@ -62,9 +64,11 @@ public class CommonSearchAction extends Action
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
 	 * @exception IOException Generic exception
+	 * @exception ApplicationException Application Exception.
 	 * */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws IOException
+			HttpServletRequest request, HttpServletResponse response) throws IOException,
+			ApplicationException
 	{
 		logger.info("in execute method");
 		//long startTime = System.currentTimeMillis();
@@ -84,9 +88,6 @@ public class CommonSearchAction extends Action
 		{
 			target = openPageInEdit(form, identifier, request);
 		}
-		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName()
-		//+ " : " + (endTime - startTime));
 		return mapping.findForward(target);
 	}
 
@@ -113,8 +114,10 @@ public class CommonSearchAction extends Action
 	 * @param identifier Long
 	 * @param request HttpServletRequest
 	 * @return target page to be opened.
+	 * @throws ApplicationException Application Exception
 	 */
 	private String openPageInEdit(ActionForm form, Long identifier, HttpServletRequest request)
+			throws ApplicationException
 	{
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		String target = Constants.FAILURE;
@@ -125,18 +128,8 @@ public class CommonSearchAction extends Action
 			String objName = absDomainObjFact.getDomainObjectName(abstractForm.getFormId());
 			SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 					Constants.SESSION_DATA);
-			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
-					"bizLogicFactory");
-			IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
-			boolean hasPrivilege = true;
-			if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
-			{
-				hasPrivilege = bizLogic.hasPrivilegeToView(objName, identifier, sessionDataBean);
-			}
-			if (!hasPrivilege)
-			{
-				throw new DAOException("Access denied ! User does not have privilege to view this information.");
-			}
+			IBizLogic bizLogic = getBizLogicForEdit(abstractForm);
+			hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
 			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
 			if (isSuccess)
 			{
@@ -158,11 +151,53 @@ public class CommonSearchAction extends Action
 			target = Constants.ACCESS_DENIED;
 			logger.error(excp.getMessage(), excp);
 		}
+		return target;
+	}
+
+	/**
+	 * This method checks Privilege.
+	 * @param identifier identifier
+	 * @param objName object Name
+	 * @param sessionDataBean session Data Bean
+	 * @param bizLogic IBizLogic
+	 * @throws DAOException DAO Exception.
+	 */
+	private void hasPrivilege(Long identifier, String objName, SessionDataBean sessionDataBean,
+			IBizLogic bizLogic) throws DAOException
+	{
+		boolean hasPrivilege = true;
+		if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
+		{
+			hasPrivilege = bizLogic.hasPrivilegeToView(objName, identifier, sessionDataBean);
+		}
+		if (!hasPrivilege)
+		{
+			throw new DAOException("Access denied ! "
+					+ "User does not have privilege to view this information.");
+		}
+	}
+
+	/**
+	 * get BizLogic For Edit.
+	 * @param abstractForm AbstractActionForm
+	 * @return IBizLogic
+	 * @throws ApplicationException Application Exception
+	 */
+	private IBizLogic getBizLogicForEdit(AbstractActionForm abstractForm)
+			throws ApplicationException
+	{
+		try
+		{
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
+					"bizLogicFactory");
+			return factory.getBizLogic(abstractForm.getFormId());
+		}
 		catch (ParseException excp)
 		{
 			logger.error(excp.getMessage(), excp);
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), excp,
+					"Failed while updating in common add.");
 		}
-		return target;
 	}
 
 	/**

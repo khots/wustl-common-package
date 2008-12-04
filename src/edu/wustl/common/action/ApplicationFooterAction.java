@@ -78,12 +78,11 @@ public class ApplicationFooterAction extends Action
 	{
 		boolean isValid = true;
 		//Added check for xss vulnerable character for bug:8583
-		Validator validator = new Validator();
-		if (validator.isEmpty(pageTitle) || Validator.isXssVulnerable(pageTitle))
+		if (Validator.isEmpty(pageTitle) || Validator.isXssVulnerable(pageTitle))
 		{
 			isValid = false;
 		}
-		if (validator.isEmpty(fileNameKey) || Validator.isXssVulnerable(fileNameKey))
+		if (Validator.isEmpty(fileNameKey) || Validator.isXssVulnerable(fileNameKey))
 		{
 			isValid = false;
 		}

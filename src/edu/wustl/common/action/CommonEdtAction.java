@@ -1,8 +1,6 @@
+
 package edu.wustl.common.action;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,13 +23,16 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.dbmanager.DAOException;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 
-
+/**
+ * This Class is used to Edit data in the database.
+ */
 public class CommonEdtAction extends BaseAddEditAction
 {
 
@@ -39,7 +40,6 @@ public class CommonEdtAction extends BaseAddEditAction
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonEdtAction.class);
-
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -52,48 +52,56 @@ public class CommonEdtAction extends BaseAddEditAction
 	 * @throws ApplicationException Generic exception
 	 * */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws ApplicationException
+			HttpServletRequest request, HttpServletResponse response) throws ApplicationException
 	{
 		String target;
-			logger.debug("in method executeEdit()");
-			AbstractActionForm abstractForm  = (AbstractActionForm)form;
+		logger.debug("in method executeEdit()");
+		AbstractActionForm abstractForm = (AbstractActionForm) form;
 
-			String objectName = getObjectName(abstractForm);
-			AbstractDomainObject  abstractDomain = getDomainObject(abstractForm, objectName);
-			updateDomainObject(request, abstractForm, abstractDomain, objectName);
-			if (Constants.ACTIVITY_STATUS_DISABLED.
-							equals(abstractForm.getActivityStatus()))
-			{
-				target = abstractForm.getOnSubmit();
-			}
-			else if (isStringNotEmpty(abstractForm.getOnSubmit()))
-			{
-				target = abstractForm.getOnSubmit();
-			}
-			else
-			{
-				target = getForwardToTarget(request, abstractForm, abstractDomain, objectName);
-			}
-			//Sets the domain object value in PrintMap for Label Printing
-			request.setAttribute("forwardToPrintMap", generateForwardToPrintMap(abstractForm,
-					abstractDomain));
-			//Status message key.
-			setStatusMsgKey(request, abstractForm);
+		String objectName = getObjectName(abstractForm);
+		AbstractDomainObject abstractDomain = getDomainObject(abstractForm, objectName);
+		updateDomainObject(request, abstractForm, abstractDomain, objectName);
+		if (Constants.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus()))
+		{
+			target = abstractForm.getOnSubmit();
+		}
+		else if (isStringNotEmpty(abstractForm.getOnSubmit()))
+		{
+			target = abstractForm.getOnSubmit();
+		}
+		else
+		{
+			target = getForwardToTarget(request, abstractForm, abstractDomain, objectName);
+		}
+		//Sets the domain object value in PrintMap for Label Printing
+		request.setAttribute("forwardToPrintMap", generateForwardToPrintMap(abstractForm,
+				abstractDomain));
+		//Status message key.
+		setStatusMsgKey(request, abstractForm);
 
 		return mapping.findForward(target);
 	}
 
-
+	/**
+	 * This method sets Status message key.
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm.
+	 */
 	private void setStatusMsgKey(HttpServletRequest request, AbstractActionForm abstractForm)
 	{
 		StringBuffer statusMsgKey = new StringBuffer();
-		statusMsgKey.append(abstractForm.getFormId()).append(".");
+		statusMsgKey.append(abstractForm.getFormId()).append('.');
 		statusMsgKey.append(abstractForm.isAddOperation());
 		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMsgKey.toString());
 	}
 
-
+	/**
+	 * This method gets Domain Object.
+	 * @param abstractForm AbstractActionForm
+	 * @param objectName object Name
+	 * @return AbstractDomainObject
+	 * @throws ApplicationException Application Exception.
+	 */
 	private AbstractDomainObject getDomainObject(AbstractActionForm abstractForm, String objectName)
 			throws ApplicationException
 	{
@@ -101,32 +109,39 @@ public class CommonEdtAction extends BaseAddEditAction
 		{
 			AbstractDomainObject abstractDomain;
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long.valueOf(abstractForm
-					.getId()), abstractForm);
+			abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
+					.valueOf(abstractForm.getId()), abstractForm);
 			return abstractDomain;
-		}catch(BizLogicException bizLogicException)
+		}
+		catch (BizLogicException bizLogicException)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),bizLogicException, 
-			"Failed while populating domain object in common edit.");			
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
+					"Failed while populating domain object in common edit.");
 		}
 		catch (DAOException e)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),e, 
-			"Failed while populating domain object in common edit.");			
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
+					"Failed while populating domain object in common edit.");
 		}
 		catch (AssignDataException e)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),e, 
-			"Failed while populating domain object in common edit.");			
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
+					"Failed while populating domain object in common edit.");
 		}
 	}
 
-
+	/**
+	 * This method updates Domain Object.
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm
+	 * @param abstractDomain AbstractDomainObject
+	 * @param objectName object Name
+	 * @throws ApplicationException Application Exception.
+	 */
 	private void updateDomainObject(HttpServletRequest request, AbstractActionForm abstractForm,
-			AbstractDomainObject abstractDomain, String objectName) 
-			throws ApplicationException
+			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
-		if(abstractDomain == null)
+		if (abstractDomain == null)
 		{
 
 			ActionErrors errors = new ActionErrors();
@@ -134,38 +149,48 @@ public class CommonEdtAction extends BaseAddEditAction
 					.parseClassName(objectName));
 			errors.add(ActionErrors.GLOBAL_ERROR, error);
 			saveErrors(request, errors);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item.unknown"),null,null);
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item.unknown"), null, null);
 		}
 		persistUsingBizLogic(request, abstractForm, abstractDomain, objectName);
 	}
 
-
-	private void persistUsingBizLogic(HttpServletRequest request,AbstractActionForm abstractForm,
-			AbstractDomainObject abstractDomain, String objectName)
-			throws ApplicationException
+	/**
+	 * This method updates Domain Object.
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm
+	 * @param abstractDomain AbstractDomainObject
+	 * @param objectName object Name
+	 * @throws ApplicationException Application Exception.
+	 */
+	private void persistUsingBizLogic(HttpServletRequest request, AbstractActionForm abstractForm,
+			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
 		try
 		{
 			Session sessionClean = getCleanSession();
 			AbstractDomainObject abstractDomainOld;
-			abstractDomainOld = (AbstractDomainObject) 
-			sessionClean.load( objectName, Long.valueOf(abstractForm.getId()));
+			abstractDomainOld = (AbstractDomainObject) sessionClean.load(objectName, Long
+					.valueOf(abstractForm.getId()));
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
-			bizLogic.update(abstractDomain, abstractDomainOld,getSessionData(request));
+			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
 			sessionClean.close();
 		}
-		catch(BizLogicException bizLogicException)
+		catch (BizLogicException bizLogicException)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"),bizLogicException, 
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
 					"Failed while updating in common edit.");
 		}
-		catch(UserNotAuthorizedException excp)
+		catch (UserNotAuthorizedException excp)
 		{
-			throw  getErrorForUserNotAuthorized(request, excp);
+			throw getErrorForUserNotAuthorized(request, excp);
 		}
 	}
 
-
+	/**
+	 * This method gets Clean Session.
+	 * @return Clean Session.
+	 * @throws ApplicationException ApplicationException
+	 */
 	private Session getCleanSession() throws ApplicationException
 	{
 		try
@@ -175,15 +200,23 @@ public class CommonEdtAction extends BaseAddEditAction
 			IConnectionManager connectionManager = dao.getConnectionManager();
 			return connectionManager.getCleanSession();
 		}
-		catch(DAOException exception)
+		catch (DAOException exception)
 		{
 			logger.error("Failed to get clean session during update ");
 			throw new ApplicationException(ErrorKey.getDefaultErrorKey(), exception,
-					"Failed in CommonEdit to get clean session" );
+					"Failed in CommonEdit to get clean session");
 		}
 	}
 
-
+	/**
+	 * This method gets ForwardTo Target.
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm
+	 * @param abstractDomain AbstractDomainObject
+	 * @param objectName object Name
+	 * @return target
+	 * @throws ApplicationException Application Exception
+	 */
 	private String getForwardToTarget(HttpServletRequest request, AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
@@ -193,16 +226,16 @@ public class CommonEdtAction extends BaseAddEditAction
 		String forwardTo = abstractForm.getForwardTo();
 		String pageOf = (String) request.getParameter(Constants.PAGEOF);
 
-		if(isStringNotEmpty(forwardTo))
-		{			
-			target = forwardTo;	
+		if (isStringNotEmpty(forwardTo))
+		{
+			target = forwardTo;
 		}
 		else if (Constants.QUERY.equals(pageOf))
 		{
 			target = pageOf;
 			ActionMessages messages = new ActionMessages();
 			addMessage(messages, abstractDomain, "edit", getQueryBizLogic(), objectName);
-			saveMessages(request, messages);				
+			saveMessages(request, messages);
 		}
 		else
 		{
@@ -212,7 +245,13 @@ public class CommonEdtAction extends BaseAddEditAction
 		return target;
 	}
 
-
+	/**
+	 * This method sets ForwardTo HashMap.
+	 * @param request HttpServletRequest
+	 * @param abstractForm AbstractActionForm
+	 * @param abstractDomain AbstractDomainObject
+	 * @throws ApplicationException Application Exception
+	 */
 	private void setForwardToHashMap(HttpServletRequest request, AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain) throws ApplicationException
 	{
@@ -228,17 +267,17 @@ public class CommonEdtAction extends BaseAddEditAction
 		//----------ForwardTo Ends----------------
 	}
 
+	/**
+	 * This method checks is String Not Empty.
+	 * @param str String
+	 * @return true if not empty else false.
+	 */
 	private boolean isStringNotEmpty(String str)
 	{
-		boolean isNotEmpty;
-		if (str != null
-				&& str.trim().length() > 0)
+		boolean isNotEmpty = false;
+		if (str != null && !str.trim().equals(TextConstants.EMPTY_STRING))
 		{
 			isNotEmpty = true;
-		}
-		else
-		{
-			isNotEmpty = false;
 		}
 		return isNotEmpty;
 	}

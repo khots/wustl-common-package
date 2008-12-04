@@ -56,7 +56,6 @@ public class CommonAddEditAction extends Action
 			ServletException
 	{
 
-		//long startTime = System.currentTimeMillis();
 		logger.info("in execute method");
 		BaseAddEditAction addEditAction;
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
@@ -72,16 +71,15 @@ public class CommonAddEditAction extends Action
 				addEditAction = new CommonEdtAction();
 
 			}
-			actionfwd = addEditAction.execute(mapping, abstractForm,request, response);
+			actionfwd = addEditAction.execute(mapping, abstractForm, request, response);
 		}
-		catch(ApplicationException applicationException)
+		catch (ApplicationException applicationException)
 		{
 			logger.error("Common Add/Edit failed.." + applicationException.getLogMessage(),
 					applicationException);
 			ActionErrors actionErrors = new ActionErrors();
-			ActionError actionError =
-				new ActionError( applicationException.getErrorKeyAsString(),
-						applicationException.toMsgValuesArray());
+			ActionError actionError = new ActionError(applicationException.getErrorKeyAsString(),
+					applicationException.toMsgValuesArray());
 			actionErrors.add(ActionErrors.GLOBAL_ERROR, actionError);
 			saveErrors(request, actionErrors);
 
