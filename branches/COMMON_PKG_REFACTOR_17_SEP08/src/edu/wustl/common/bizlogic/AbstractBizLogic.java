@@ -25,6 +25,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
@@ -191,7 +192,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao;
+		DAO dao=null;
 		try
 		{
 			dao = daofactory.getDAO();
@@ -202,22 +203,19 @@ public abstract class AbstractBizLogic implements IBizLogic
 			//			refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
 		}
 		catch (DAOException ex)
-		{
-			String errMsg = getErrorMessage(ex, obj, "Deleting");
-			if (errMsg == null)
-			{
-				errMsg = ex.getMessage();
-			}
+		{			
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			logger.debug("Error in delete");
-			throw new BizLogicException(errMsg, ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -227,8 +225,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 	}
@@ -242,9 +240,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public void delete(Object obj) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao = null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(null);
 			delete(obj, dao);
 			dao.commit();
@@ -253,21 +252,19 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			String errMsg = getErrorMessage(ex, obj, "Deleting");
-			if (errMsg == null)
-			{
-				errMsg = ex.getMessage();
-			}
+			
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			logger.debug("Error in delete");
-			throw new BizLogicException(errMsg, ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -277,8 +274,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 	}
@@ -293,7 +290,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param operation operation
 	 * @return - error message string
 	 */
-	public String getErrorMessage(DAOException exception, Object obj, String operation)
+	/*public String getErrorMessage(DAOException exception, Object obj, String operation)
 	{
 		String errMsg;
 
@@ -307,7 +304,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 
 		return errMsg;
-	}
+	}*/
 
 	/**
 	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
@@ -324,9 +321,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao = null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(sessionDataBean);
 			// Authorization to ADD object checked here
 			if (isAuthorized(dao, obj, sessionDataBean))
@@ -339,22 +337,19 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 		}
 		catch (DAOException exception)
-		{
-			String errMsg = getErrorMessage(exception, obj, "Inserting");
-			if (errMsg == null)
-			{
-				errMsg = exception.getMessage();
-			}
+		{			
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			logger.debug("Error in insert");
-			throw new BizLogicException(errMsg, exception);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -365,7 +360,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			catch (DAOException daoEx)
 			{
 				//TODO ERROR Handling
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			long endTime = System.currentTimeMillis();
 			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
@@ -387,9 +383,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao= daofactory.getDAO();
 			dao.openSession(sessionDataBean);
 			// Authorization to ADD object checked here
 			if (isAuthorized(dao, obj, sessionDataBean))
@@ -403,21 +400,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException exception)
 		{
-			String errMsg = getErrorMessage(exception, obj, "Inserting");
-			if (errMsg == null)
-			{
-				errMsg = exception.getMessage();
-			}
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			logger.debug("Error in insert");
-			throw new BizLogicException(errMsg, exception);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -427,8 +421,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			long endTime = System.currentTimeMillis();
 			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
@@ -453,9 +447,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 			throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(sessionDataBean);
 
 			preInsert(objCollection, dao, sessionDataBean);
@@ -465,21 +460,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			String errMsg = getErrorMessage(ex, objCollection, "Inserting");
-			if (errMsg == null)
-			{
-				errMsg = ex.getMessage();
-			}
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			logger.debug("Error in insert");
-			throw new BizLogicException(errMsg, ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -489,14 +481,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				String errMsg = getErrorMessage(daoEx, objCollection, "Session Close");
-				errMsg = daoEx.getMessage();
-				throw new BizLogicException(errMsg, daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
@@ -509,9 +499,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 			throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao = null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(sessionDataBean);
 
 			preInsert(objCollection, dao, sessionDataBean);
@@ -521,21 +512,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			String errMsg = getErrorMessage(ex, objCollection, "Inserting");
-			if (errMsg == null)
-			{
-				errMsg = ex.getMessage();
-			}
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			logger.debug("Error in insert");
-			throw new BizLogicException(errMsg, ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -545,9 +533,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				String errMsg = getErrorMessage(daoEx, objCollection, "Session Close");
-				errMsg = daoEx.getMessage();
-				throw new BizLogicException(errMsg, daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 	}
@@ -567,7 +554,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			if (!isAuthorized(dao, obj, sessionDataBean))
 			{
-				throw new UserNotAuthorizedException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.multinsert.error");
+				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User Not Authorized");
 			}
 			else
 			{
@@ -671,15 +659,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(sessionDataBean);
 
 			// Authorization to UPDATE object checked here
 			if (!isAuthorized(dao, currentObj, sessionDataBean))
 			{
-				throw new UserNotAuthorizedException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User not authorized");
 			}
 			else
 			{
@@ -699,23 +689,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			//added to format constrainviolation message
-			String errMsg = getErrorMessage(ex, currentObj, "Updating");
-			if (errMsg == null)
-			{
-				errMsg = ex.getMessage();
-			}
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
-			//TODO ERROR Handling
-			throw new BizLogicException(errMsg, ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -726,7 +710,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			catch (DAOException daoEx)
 			{
 
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			long endTime = System.currentTimeMillis();
 			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
@@ -747,15 +732,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(sessionDataBean);
 
 			// Authorization to UPDATE object checked here
 			if (!isAuthorized(dao, currentObj, sessionDataBean))
 			{
-				throw new UserNotAuthorizedException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,null, "AbstractBizLogic:User Not Authorized");
 			}
 			else
 			{
@@ -774,24 +761,18 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 		}
 		catch (DAOException ex)
-		{
-			//added to format constrainviolation message
-			String errMsg = getErrorMessage(ex, currentObj, "Updating");
-			if (errMsg == null)
-			{
-				errMsg = ex.getMessage();
-			}
+		{			
 			try
 			{
 				dao.rollback();
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
-			//TODO ERROR Handling
-			throw new BizLogicException(errMsg, ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -802,7 +783,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			catch (DAOException daoEx)
 			{
 
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 			long endTime = System.currentTimeMillis();
 			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
@@ -859,7 +841,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws BizLogicException BizLogic Exception
 	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
-	public final void update(Object currentObj) throws BizLogicException,			
+	public final void update(Object currentObj) throws BizLogicException
 	{
 		update(currentObj, null,null, true);
 	}
@@ -885,9 +867,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao = daofactory.getDAO();
 			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
 					+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
 					+ " userId:" + userId + " roleId:" + roleId
@@ -905,12 +888,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-				//throw new BizLogicException(ex.getMessage(), ex);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 
-			throw new BizLogicException(ex.getMessage(), ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -920,8 +903,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException("Unknown Error");
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 	}
@@ -943,9 +926,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao = daofactory.getDAO();
 			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
 					+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
 					+ " userId:" + userId + " roleId:" + roleId
@@ -963,12 +947,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException(daoEx.getMessage(), daoEx);
-				//throw new BizLogicException(ex.getMessage(), ex);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 
-			throw new BizLogicException(ex.getMessage(), ex);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
+			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -978,8 +962,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				//TODO ERROR Handling
-				throw new BizLogicException("Unknown Error");
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 	}
@@ -1097,9 +1081,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 		boolean isSuccess = false;
 
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao=null;
 		try
 		{
+			dao= daofactory.getDAO();
 			dao.openSession(null);
 
 			Object object = dao.retrieve(className, identifier);
@@ -1121,8 +1106,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException daoExp)
 		{
 			logger.error(daoExp.getMessage(), daoExp);
-			String errMsg = daoExp.getMessage();
-			throw new BizLogicException(errMsg, daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popbean.error");
+			throw new BizLogicException(errorKey,daoExp, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -1132,7 +1117,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.popbean.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 
@@ -1158,11 +1144,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		DAO dao =null;
 		AbstractDomainObject abstractDomain = null;
 
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(null);
 
 			Object object = dao.retrieve(className, identifier);
@@ -1183,13 +1170,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException daoExp)
 		{
 			logger.error(daoExp.getMessage(), daoExp);
-			String errMsg = daoExp.getMessage();
-			throw new BizLogicException(errMsg, daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
+			throw new BizLogicException(errorKey,daoExp, "AbstractBizLogic");
 		}
 		catch (AssignDataException daoExp)
 		{
 			logger.error(daoExp.getMessage(), daoExp);
-			throw daoExp;
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
+			throw new BizLogicException(errorKey,daoExp, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -1199,7 +1187,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException daoEx)
 			{
-				throw new BizLogicException();
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
+				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 			}
 		}
 
@@ -1251,7 +1240,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		return false;
 	}
-	
+
 	public boolean isAuthorized(DAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws BizLogicException
 	{
