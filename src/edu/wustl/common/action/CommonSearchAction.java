@@ -128,7 +128,7 @@ public class CommonSearchAction extends Action
 				Constants.SESSION_DATA);
 		IBizLogic bizLogic = getBizLogicForEdit(abstractForm);
 		hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
-		
+
 		try
 		{
 			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
@@ -155,7 +155,7 @@ public class CommonSearchAction extends Action
 	 * @param objName object Name
 	 * @param sessionDataBean session Data Bean
 	 * @param bizLogic IBizLogic
-	 * @throws DAOException DAO Exception.
+	 * @throws ApplicationException Application Exception.
 	 */
 	private void hasPrivilege(Long identifier, String objName, SessionDataBean sessionDataBean,
 			IBizLogic bizLogic) throws ApplicationException

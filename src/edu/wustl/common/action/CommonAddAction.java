@@ -25,6 +25,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+
 /**
  *  This Class is used to Add data in the database.
  */
@@ -50,7 +51,6 @@ public class CommonAddAction extends BaseAddEditAction
 		String target;
 		String objectName = getObjectName(abstractForm);
 		AbstractDomainObject abstractDomain = insertDomainObject(request, abstractForm);
-		
 		setSuccessMsg(request, messages, objectName, abstractDomain);
 		abstractForm.setId(abstractDomain.getId().longValue());
 		request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
@@ -75,17 +75,24 @@ public class CommonAddAction extends BaseAddEditAction
 		//Status message key.
 		StringBuffer statusMessageKey = new StringBuffer(abstractForm.getFormId());
 		statusMessageKey.append('.').append(abstractForm.isAddOperation());
-	
 		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey.toString());
 		return forward;
 	}
 
-	private void setSuccessMsg(HttpServletRequest request, ActionMessages messages, String objectName,
-			AbstractDomainObject abstractDomain) throws ApplicationException
+	/**
+	 * Set Success Message.
+	 * @param request HttpServletRequest
+	 * @param messages ActionMessages
+	 * @param objectName object Name
+	 * @param abstractDomain AbstractDomainObject
+	 * @throws ApplicationException Application Exception.
+	 */
+	private void setSuccessMsg(HttpServletRequest request, ActionMessages messages,
+			String objectName, AbstractDomainObject abstractDomain) throws ApplicationException
 	{
-		String [] displayNameParams = addMessage(abstractDomain,objectName);
-		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. add" 
-				+ ".successOnly", displayNameParams));
+		String[] displayNameParams = addMessage(abstractDomain, objectName);
+		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. add" + ".successOnly",
+				displayNameParams));
 		saveMessages(request, messages);
 	}
 
@@ -140,14 +147,11 @@ public class CommonAddAction extends BaseAddEditAction
 	 * inserts Domain Object.
 	 * @param request HttpServletRequest
 	 * @param abstractForm AbstractActionForm
-	 * @param messages ActionMessages
-	 * @param objectName object Name
 	 * @return AbstractDomainObject
 	 * @throws ApplicationException Application Exception
 	 */
 	private AbstractDomainObject insertDomainObject(HttpServletRequest request,
-			AbstractActionForm abstractForm)
-			throws ApplicationException
+			AbstractActionForm abstractForm) throws ApplicationException
 	{
 		try
 		{
@@ -157,7 +161,7 @@ public class CommonAddAction extends BaseAddEditAction
 					abstractForm);
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
 			bizLogic.insert(abstractDomain, getSessionData(request));
-			
+
 			return abstractDomain;
 		}
 		catch (BizLogicException bizLogicException)

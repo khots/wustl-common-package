@@ -39,7 +39,7 @@ public final class DataTypeConfigFactory
 	/**
 	 * Specifies dataType Configuration Map.
 	 */
-	private transient final Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
+	private final transient Map<String, DataTypeConfigObject> dataTypeConfigurationMap;
 
 	/**
 	 * Specifies Document object.
@@ -65,7 +65,7 @@ public final class DataTypeConfigFactory
 		}
 		catch (ParseException exception)
 		{
-			//TODO:put logger
+			logger.error(exception.getMessage(), exception);
 		}
 
 	}
@@ -152,7 +152,7 @@ public final class DataTypeConfigFactory
 			{
 				dataTypeName = dataTypeNameNode.getNodeValue();
 				dataTypeConfigurationObject.setDataTypeName(dataTypeName);
-				dataTypeConfigurationObject.setDataTypeClassName(dataTypeClassNode.getNodeValue());
+				dataTypeConfigurationObject.setClassName(dataTypeClassNode.getNodeValue());
 			}
 		}
 		dataTypeConfigurationMap.put(dataTypeName, dataTypeConfigurationObject);
