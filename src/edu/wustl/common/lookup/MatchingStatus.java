@@ -1,7 +1,15 @@
 package edu.wustl.common.lookup;
 
-public enum MatchingStatus 
+/**
+ *
+ * MatchingStatus enum.
+ *
+ */
+public enum MatchingStatus
 {
+	/**
+	 * Matching Status values.
+	 */
 	EXACT, PARTIAL, NOMATCH;
 }
 

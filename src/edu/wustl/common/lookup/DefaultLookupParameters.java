@@ -1,6 +1,7 @@
 /**
  * <p>Title: DefaultLookupParameters Class>
- * <p>Description:	This is the implementation class of LookupParameters which stores the object which is to be matched and the cutoff value </p>
+ * <p>Description:	This is the implementation class of LookupParameters
+ *  which stores the object which is to be matched and the cutoff value </p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
  * @author santosh_chandak
@@ -10,17 +11,22 @@ package edu.wustl.common.lookup;
 
 import java.util.List;
 
+/**
+ * DefaultLookupParameters Class.
+ * @author santosh_chandak
+ *
+ */
 public class DefaultLookupParameters implements LookupParameters
 {
 
 	/**
-	 * Object
+	 * Object.
 	 */
-	Object object;
+	private Object object;
 	/**
-	 * List of participants
+	 * List of participants.
 	 */
-	List listOfParticipants;
+	private List listOfParticipants;
 
 	/**
 	 * @return Returns the listOfParticipants.
