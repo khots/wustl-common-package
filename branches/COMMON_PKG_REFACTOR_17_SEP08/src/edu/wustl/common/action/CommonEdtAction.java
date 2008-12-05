@@ -219,8 +219,8 @@ public class CommonEdtAction extends BaseAddEditAction
 		{
 			target = pageOf;
 			ActionMessages messages = new ActionMessages();
-			String [] displayNameParams = addMessage(abstractDomain,objectName);
-			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. edit" 
+			String[] displayNameParams = addMessage(abstractDomain, objectName);
+			messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. edit"
 					+ ".successOnly", displayNameParams));
 			saveMessages(request, messages);
 		}

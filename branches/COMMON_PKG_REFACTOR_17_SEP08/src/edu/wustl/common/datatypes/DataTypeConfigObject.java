@@ -19,7 +19,7 @@ public class DataTypeConfigObject
 	/**
 	 * Specifies dataType Class Name.
 	 */
-	private String dataTypeClassName;
+	private String className;
 
 	/**
 	 * @param dataTypeName the dataTypeName to set
@@ -38,19 +38,19 @@ public class DataTypeConfigObject
 	}
 
 	/**
-	 * @param dataTypeClassName the dataTypeClassName to set
+	 * @param dataTypeClassName the className to set
 	 */
-	public void setDataTypeClassName(String dataTypeClassName)
+	public void setClassName(String dataTypeClassName)
 	{
-		this.dataTypeClassName = dataTypeClassName;
+		this.className = dataTypeClassName;
 	}
 
 	/**
-	 * @return the dataTypeClassName
+	 * @return the className
 	 */
 	public String getClassName()
 	{
-		return dataTypeClassName;
+		return className;
 	}
 
 }

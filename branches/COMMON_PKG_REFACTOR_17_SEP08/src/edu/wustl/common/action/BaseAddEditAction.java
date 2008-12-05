@@ -272,17 +272,17 @@ public abstract class BaseAddEditAction extends Action
 
 	/**
 	 * This method will add the success message into ActionMessages object.
-	 * @param messages ActionMessages
 	 * @param abstractDomain AbstractDomainObject
-	 * @param addoredit String
-	 * @param queryBizLogic QueryBizLogic
 	 * @param objectName String
+	 * @return displayparams.
+	 * @throws ApplicationException Application Exception
 	 */
-	protected String [] addMessage(AbstractDomainObject abstractDomain,	String objectName)throws ApplicationException
+	protected String[] addMessage(AbstractDomainObject abstractDomain, String objectName)
+			throws ApplicationException
 	{
 		String message = abstractDomain.getMessageLabel();
 		String displayName;
-		String displayparams[];
+		String[] displayparams;
 		IQueryBizLogic queryBizLogic = getQueryBizLogic();
 		displayName = getDispNameOfDomainObj(abstractDomain, objectName, queryBizLogic);
 		if (Validator.isEmpty(message))
@@ -299,6 +299,13 @@ public abstract class BaseAddEditAction extends Action
 		return displayparams;
 	}
 
+	/**
+	 * get Display Name Of Domain Object.
+	 * @param abstractDomain AbstractDomainObject
+	 * @param objectName object Name
+	 * @param queryBizLogic IQueryBizLogic
+	 * @return display Name.
+	 */
 	private String getDispNameOfDomainObj(AbstractDomainObject abstractDomain, String objectName,
 			IQueryBizLogic queryBizLogic)
 	{
