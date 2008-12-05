@@ -97,11 +97,11 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
 		String message = cEX.getMessage();
 		logger.debug("message :" + message);
-		int startIndex = message.indexOf("[");
-		int endIndex = message.indexOf("#");
+		int startIndex = message.indexOf('[');
+		int endIndex = message.indexOf('#');
 		if (endIndex == -1)
 		{
-			endIndex = message.indexOf("]");
+			endIndex = message.indexOf(']');
 		}
 		String className = message.substring((startIndex + 1), endIndex);
 		logger.debug("ClassName: " + className);
@@ -345,11 +345,11 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		Connection connection = getConnection(args);
 		// Get Contraint Name from messages.
 		String sqlMessage = generateErrorMessage(objExcp);
-		int tempstartIndexofMsg = sqlMessage.indexOf("(");
+		int tempstartIndexofMsg = sqlMessage.indexOf('(');
 
 		String temp = sqlMessage.substring(tempstartIndexofMsg);
-		int startIndexofMsg = temp.indexOf(".");
-		int endIndexofMsg = temp.indexOf(")");
+		int startIndexofMsg = temp.indexOf('.');
+		int endIndexofMsg = temp.indexOf(')');
 		String strKey = temp.substring((startIndexofMsg + 1), endIndexofMsg);
 		logger.debug("Contraint Name: " + strKey);
 
