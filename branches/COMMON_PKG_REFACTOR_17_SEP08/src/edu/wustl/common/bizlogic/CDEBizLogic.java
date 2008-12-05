@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.cde.CDE;
@@ -25,13 +26,11 @@ import edu.wustl.common.cde.CDEManager;
 import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.tree.CDETreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.tree.TreeNode;
-import edu.wustl.dao.exception.DAOException;
-
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.exception.DAOException;
 
 /**
  * This is biz Logic class for the CDEs.
@@ -57,8 +56,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	 * @param obj The storageType object to be saved.
 	 * @param dao The dao object.
 	 * @param sessionDataBean The session specific data.
-	 * @throws DAOException generic DAOException
-	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException
@@ -66,10 +64,8 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 		try
 		{
 			CDEImpl cde = (CDEImpl) obj;
-	
 			//Delete the previous CDE data from the database.
 			delete(cde, dao);
-	
 			//Insert the new CDE data in teh database.
 			dao.insert(cde, sessionDataBean, false, false);
 			Iterator iterator = cde.getPermissibleValues().iterator();
@@ -89,8 +85,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 	 * Deletes the CDE and the corresponding permissible values from the database.
 	 * @param obj the CDE to be deleted.
 	 * @param dao the DAO object.
-	 * @throws DAOException generic DAOException
-	 * @throws UserNotAuthorizedException User Not Authorized Exception
+	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected void delete(Object obj, DAO dao) throws BizLogicException
 	{
@@ -190,7 +185,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 			PermissibleValue permissibleValue = (PermissibleValue) iterator.next();
 			Set subPermissibleValues = permissibleValue.getSubPermissibleValues();
 			//if there are no sub-permissible values, add to the list
-			if (subPermissibleValues == null || subPermissibleValues.size() == 0)
+			if (subPermissibleValues == null || subPermissibleValues.isEmpty())
 			{
 				permissibleValueList.add(new NameValueBean(permissibleValue.getValue(),
 						permissibleValue.getValue()));
