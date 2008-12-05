@@ -8,6 +8,10 @@
 
 package edu.wustl.common.lookup;
 
+/**
+ * This is the Marker Interface used for sending parameters to Lookup Logic.
+ *
+ */
 public interface LookupParameters
 {
 
