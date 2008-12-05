@@ -50,7 +50,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 
 			// get column value on from message for which object was not found.
 			startIndex = message.indexOf(temp1) + temp1.length();
-			endIndex = message.indexOf(",", startIndex);
+			endIndex = message.indexOf(',', startIndex);
 			String value = message.substring(startIndex, endIndex);
 			logger.debug(value + "  " + value.length());
 
@@ -119,7 +119,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 
 			// get column value on from message for which object was not found.
 			startIndex = message.indexOf(temp1) + temp1.length();
-			endIndex = message.indexOf(",", startIndex);
+			endIndex = message.indexOf(',', startIndex);
 			String value = message.substring(startIndex, endIndex);
 
 			// get class name from message
