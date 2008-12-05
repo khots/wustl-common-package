@@ -21,20 +21,44 @@ import java.util.List;
 public class HTTPMessage implements Serializable
 {
 
-	private List messageList;
+	/**
+	 * serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = -3767645078908289018L;
 
+	/**
+	 * Specifies message List.
+	 */
+	private List<Object> messageList;
+
+	/**
+	 * Specifies response Status.
+	 */
 	private String responseStatus;
 
+	/**
+	 * Specifies session Id.
+	 */
 	private String sessionId;
 
+	/**
+	 * Specifies domain Object Id.
+	 */
 	private Long domainObjectId;
 
+	/**
+	 * Constructor.
+	 */
 	public HTTPMessage()
 	{
-		messageList = new ArrayList();
+		messageList = new ArrayList<Object>();
 	}
 
-	public HTTPMessage(List messageList)
+	/**
+	 * Constructor.
+	 * @param messageList message List.
+	 */
+	public HTTPMessage(List<Object> messageList)
 	{
 		this.messageList = messageList;
 	}
@@ -44,7 +68,7 @@ public class HTTPMessage implements Serializable
 	 * @return the list of error messages.
 	 * @see #setMessageList(List)
 	 */
-	public List getMessageList()
+	public List<Object> getMessageList()
 	{
 		return messageList;
 	}
@@ -54,7 +78,7 @@ public class HTTPMessage implements Serializable
 	* @param message the list of error messages.
 	* @see #getMessageList()
 	*/
-	public void setMessageList(List message)
+	public void setMessageList(List<Object> message)
 	{
 		this.messageList = message;
 	}
@@ -71,7 +95,7 @@ public class HTTPMessage implements Serializable
 	}
 
 	/**
-	 * Returns the Response Status of the operation
+	 * Returns the Response Status of the operation.
 	 * @return the Response Status of the operation
 	 */
 	public String getResponseStatus()
@@ -80,7 +104,7 @@ public class HTTPMessage implements Serializable
 	}
 
 	/**
-	 * Sets Response Status of the operation 
+	 * Sets Response Status of the operation.
 	 * @param responseStatus Response Status of the operation
 	 */
 	public void setResponseStatus(String responseStatus)
@@ -89,7 +113,7 @@ public class HTTPMessage implements Serializable
 	}
 
 	/**
-	 * Returns the Session ID 
+	 * Returns the Session ID.
 	 * @return the Session ID
 	 */
 	public String getSessionId()
@@ -98,7 +122,7 @@ public class HTTPMessage implements Serializable
 	}
 
 	/**
-	 * Sets the Session ID
+	 * Sets the Session ID.
 	 * @param sessionId the Session ID
 	 */
 	public void setSessionId(String sessionId)
@@ -107,7 +131,7 @@ public class HTTPMessage implements Serializable
 	}
 
 	/**
-	 * Sets the ID of Domain Object
+	 * Sets the ID of Domain Object.
 	 * @param domainObjectId the ID of Domain Object
 	 */
 	public void setDomainObjectId(Long domainObjectId)
@@ -116,7 +140,7 @@ public class HTTPMessage implements Serializable
 	}
 
 	/**
-	 * Returns the ID of Domain Object
+	 * Returns the ID of Domain Object.
 	 * @return the ID of Domain Object
 	 */
 	public Long getDomainObjectId()
