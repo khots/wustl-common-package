@@ -23,7 +23,7 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author kapil_kaveeshwar
- * 
+ *
  * TODO To change the template for this generated type comment go to Window - Preferences - Java -
  * Code Style - Code Templates
  */
@@ -33,16 +33,29 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationRequestProcessor.class);
-	
+	private static org.apache.log4j.Logger logger = Logger
+			.getLogger(ApplicationRequestProcessor.class);
+
+	/**
+	 * Constructor.
+	 */
 	public ApplicationRequestProcessor()
 	{
+		super();
 	}
 
+	/**
+	 * This method process Action Form.
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param mapping ActionMapping
+	 * @return ActionForm
+	 */
 	protected ActionForm processActionForm(HttpServletRequest request,
 			HttpServletResponse response, ActionMapping mapping)
 	{
 		logger.debug("contentType " + request.getContentType());
+		ActionForm form = null;
 		if (request.getContentType() != null && request.getContentType().equals(Constants.HTTP_API))
 		{
 			try
@@ -50,63 +63,83 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 				ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
 				HTTPWrapperObject wrapperObject = (HTTPWrapperObject) ois.readObject();
 
-				String operation = wrapperObject.getOperation();
+				setOperation(request, wrapperObject);
 
-				ActionForm form = wrapperObject.getForm();
-
-				if (operation.equals(Constants.LOGIN))
-				{
-					request.setAttribute(Constants.OPERATION, Constants.LOGIN);
-				}
-				else if (operation.equals(Constants.LOGOUT))
-				{
-					request.setAttribute(Constants.OPERATION, Constants.LOGOUT);
-				}
-				else
-				{
-					request.setAttribute(Constants.OPERATION, operation);
-				}
+				form = wrapperObject.getForm();
 
 				logger.debug("mapping.getAttribute() " + mapping.getAttribute());
 
-				if ("request".equals(mapping.getScope()))
-				{
-					if (form != null)
-					{
-						request.setAttribute(mapping.getAttribute(), form);
-					}
-				}
-				else
-				{
-					HttpSession session = request.getSession();
-
-					if (form != null)
-					{
-						session.setAttribute(mapping.getAttribute(), form);
-					}
-				}
-				return form;
+				setMappingAttribute(request, mapping, form);
 			}
 			catch (Exception e)
 			{
 				logger.debug(e.getMessage(), e);
 			}
-			return null;
 		}
 		else
 		{
-			return super.processActionForm(request, response, mapping);
+			form = super.processActionForm(request, response, mapping);
+		}
+		return form;
+	}
+
+	/**
+	 * set Mapping Attribute.
+	 * @param request HttpServletRequest
+	 * @param mapping ActionMapping
+	 * @param form ActionForm
+	 */
+	private void setMappingAttribute(HttpServletRequest request, ActionMapping mapping,
+			ActionForm form)
+	{
+		if (form != null)
+		{
+			if ("request".equals(mapping.getScope()))
+			{
+				request.setAttribute(mapping.getAttribute(), form);
+			}
+			else
+			{
+				HttpSession session = request.getSession();
+				session.setAttribute(mapping.getAttribute(), form);
+			}
 		}
 	}
 
+	/**
+	 * set login/logout Operation.
+	 * @param request HttpServletRequest
+	 * @param wrapperObject HTTPWrapperObject
+	 */
+	private void setOperation(HttpServletRequest request, HTTPWrapperObject wrapperObject)
+	{
+		String operation = wrapperObject.getOperation();
+		if (operation.equals(Constants.LOGIN))
+		{
+			request.setAttribute(Constants.OPERATION, Constants.LOGIN);
+		}
+		else if (operation.equals(Constants.LOGOUT))
+		{
+			request.setAttribute(Constants.OPERATION, Constants.LOGOUT);
+		}
+		else
+		{
+			request.setAttribute(Constants.OPERATION, operation);
+		}
+	}
+
+	/**
+	 * process Populate.
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @param form ActionForm
+	 * @param mapping ActionMapping
+	 * @throws ServletException Servlet Exception
+	 */
 	protected void processPopulate(HttpServletRequest request, HttpServletResponse response,
 			ActionForm form, ActionMapping mapping) throws ServletException
 	{
-		if (request.getContentType() != null && request.getContentType().equals(Constants.HTTP_API))
-		{
-
-		}
-		else
+		if (!(request.getContentType() != null && request.getContentType().equals(Constants.HTTP_API)))
 		{
 			super.processPopulate(request, response, form, mapping);
 		}

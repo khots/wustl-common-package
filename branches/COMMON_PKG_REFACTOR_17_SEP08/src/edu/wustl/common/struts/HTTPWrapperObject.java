@@ -27,14 +27,34 @@ import edu.wustl.common.factory.MasterFactory;
 public class HTTPWrapperObject implements Serializable
 {
 
+	/**
+	 * serial Version Unique ID.
+	 */
 	private static final long serialVersionUID = -4958330782397508598L;
+
+	/**
+	 * Specifies form Bean.
+	 */
 	private ActionForm formBean;
+
+	/**
+	 * Specifies operation.
+	 */
 	private String operation;
 
+	/**
+	 * Specifies constructor.
+	 */
 	public HTTPWrapperObject()
 	{
 	}
 
+	/**
+	 * constructor.
+	 * @param domainObject Object
+	 * @param operation operation
+	 * @throws Exception Exception
+	 */
 	public HTTPWrapperObject(Object domainObject, String operation) throws Exception
 	{
 		//Gautam: Changes done for common package.
@@ -47,7 +67,8 @@ public class HTTPWrapperObject implements Serializable
 	}
 
 	/**
-	 * Returns FormBean object
+	 * Returns FormBean object.
+	 * @return form Bean.
 	 */
 	public ActionForm getForm()
 	{
@@ -55,7 +76,8 @@ public class HTTPWrapperObject implements Serializable
 	}
 
 	/**
-	 * Returns Operation value
+	 * Returns Operation value.
+	 * @return operation
 	 */
 	public String getOperation()
 	{

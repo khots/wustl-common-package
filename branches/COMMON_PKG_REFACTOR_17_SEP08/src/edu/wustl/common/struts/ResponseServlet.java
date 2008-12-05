@@ -1,6 +1,6 @@
 /**
  * <p>Title: ResponseServlet Class>
- * <p>Description:	This servlet generates & sends the response to the HTTP API 
+ * <p>Description:	This servlet generates & sends the response to the HTTP API
  * Client in the form of HTTPMessage object.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
@@ -32,7 +32,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- * This servlet generates & sends the response to the HTTP API Client 
+ * This servlet generates & sends the response to the HTTP API Client.
  * in the form of HTTPMessage object.
  * @author aniruddha_phadnis
  * @author kapil_kaveeshwar
@@ -40,53 +40,57 @@ import edu.wustl.common.util.logger.Logger;
 public class ResponseServlet extends HttpServlet
 {
 
+	/**
+	 * serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = -7659915815532090389L;
+
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ResponseServlet.class);
+
+	/**
+	 * do Get method.
+	 * @param req HttpServletRequest.
+	 * @param res HttpServletResponse
+	 * @throws ServletException Servlet Exception.
+	 * @throws IOException IO Exception.
+	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException,
 			IOException
 	{
 		doPost(req, res);
 	}
 
+	/**
+	 * do Post method.
+	 * @param req HttpServletRequest.
+	 * @param res HttpServletResponse
+	 * @throws ServletException Servlet Exception.
+	 * @throws IOException IO Exception.
+	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException,
 			IOException
 	{
 		HTTPMessage httpMessage = new HTTPMessage();
-
 		ActionMessages messages = (ActionMessages) req.getAttribute(Globals.MESSAGE_KEY);
 		ActionErrors errors = (ActionErrors) req.getAttribute(Globals.ERROR_KEY);
 		String operation = (String) req.getAttribute(Constants.OPERATION);
-		Iterator it = null;
-
-		if (messages != null)
+		Iterator itert = null;
+		itert = setRespStatus(httpMessage, messages, errors, itert);
+		if (itert == null)
 		{
-			it = messages.properties();
-			httpMessage.setResponseStatus(Constants.SUCCESS);
+			setHttpMessage(req, httpMessage, operation);
 		}
-		else if (errors != null)
-		{
-			it = errors.properties();
-			httpMessage.setResponseStatus(Constants.FAILURE);
-		}
-
-		if (it != null)
+		else
 		{
 			Locale local = (Locale) req.getSession().getAttribute(Globals.LOCALE_KEY);
 			MessageResources resources = (MessageResources) req.getAttribute(Globals.MESSAGES_KEY);
-
-			while (it.hasNext())
+			while (itert.hasNext())
 			{
-				String property = (String) it.next();
-
 				Iterator iterator = null;
-
-				if (messages != null)
-				{
-					iterator = messages.get(property);
-				}
-				else
-				{
-					iterator = errors.get(property);
-				}
-
+				iterator = getMessages(messages, errors, itert);
 				while (iterator.hasNext())
 				{
 					ActionMessage actionMessage = (ActionMessage) iterator.next();
@@ -96,7 +100,23 @@ public class ResponseServlet extends HttpServlet
 				}
 			}
 		}
-		else if (operation.equals(Constants.LOGIN))
+		setDomainObjId(req, httpMessage, operation);
+		res.setContentType(Constants.HTTP_API);
+		ObjectOutputStream oos = new ObjectOutputStream(res.getOutputStream());
+		oos.writeObject(httpMessage);
+		oos.flush();
+		oos.close();
+	}
+
+	/**
+	 * set Http Message.
+	 * @param req HttpServletRequest
+	 * @param httpMessage HTTPMessage
+	 * @param operation operation
+	 */
+	private void setHttpMessage(HttpServletRequest req, HTTPMessage httpMessage, String operation)
+	{
+		if (operation.equals(Constants.LOGIN))
 		{
 			httpMessage.setResponseStatus(Constants.SUCCESS);
 			httpMessage.addMessage("Successful Login");
@@ -108,27 +128,77 @@ public class ResponseServlet extends HttpServlet
 			httpMessage.addMessage("Successful Logout");
 			httpMessage.setSessionId(null);
 		}
+	}
 
+	/**
+	 * get Messages.
+	 * @param messages ActionMessages
+	 * @param errors ActionErrors
+	 * @param itert Iterator
+	 * @return Iterator
+	 */
+	private Iterator getMessages(ActionMessages messages, ActionErrors errors, Iterator itert)
+	{
+		Iterator iterator;
+		String property = (String) itert.next();
+		if (messages == null)
+		{
+			iterator = errors.get(property);
+		}
+		else
+		{
+			iterator = messages.get(property);
+		}
+		return iterator;
+	}
+
+	/**
+	 * set Response Status.
+	 * @param httpMessage HTTPMessage
+	 * @param messages ActionMessages
+	 * @param errors ActionErrors
+	 * @param itert Iterator
+	 * @return Iterator
+	 */
+	private Iterator setRespStatus(HTTPMessage httpMessage, ActionMessages messages,
+			ActionErrors errors, Iterator itert)
+	{
+		Iterator iterator = itert;
+		if (messages != null)
+		{
+			iterator = messages.properties();
+			httpMessage.setResponseStatus(Constants.SUCCESS);
+		}
+		else if (errors != null)
+		{
+			iterator = errors.properties();
+			httpMessage.setResponseStatus(Constants.FAILURE);
+		}
+		return iterator;
+	}
+
+	/**
+	 * set Domain Object Id.
+	 * @param req HttpServletRequest
+	 * @param httpMessage HTTPMessage
+	 * @param operation operation
+	 */
+	private void setDomainObjId(HttpServletRequest req, HTTPMessage httpMessage, String operation)
+	{
 		if (!operation.equals(Constants.LOGIN) && !operation.equals(Constants.LOGOUT))
 		{
-			Logger.out.debug("id in ResponseServlet-->"
-					+ req.getAttribute(Constants.SYSTEM_IDENTIFIER));
+			logger
+					.debug("id in ResponseServlet-->"
+							+ req.getAttribute(Constants.SYSTEM_IDENTIFIER));
 
-			if (req.getAttribute(Constants.SYSTEM_IDENTIFIER) != null)
-			{
-				httpMessage.setDomainObjectId((Long) req.getAttribute(Constants.SYSTEM_IDENTIFIER));
-			}
-			else
+			if (req.getAttribute(Constants.SYSTEM_IDENTIFIER) == null)
 			{
 				httpMessage.setDomainObjectId(null);
 			}
+			else
+			{
+				httpMessage.setDomainObjectId((Long)req.getAttribute(Constants.SYSTEM_IDENTIFIER));
+			}
 		}
-
-		res.setContentType(Constants.HTTP_API);
-
-		ObjectOutputStream oos = new ObjectOutputStream(res.getOutputStream());
-		oos.writeObject(httpMessage);
-		oos.flush();
-		oos.close();
 	}
 }
