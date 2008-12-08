@@ -5,6 +5,7 @@ package edu.wustl.common;
  * Main class to run junit test cases.
  */
 
+import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.util.UtilityTestCases;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -32,10 +33,7 @@ public class TestAll
 	{
 		TestSuite suite = new TestSuite("Test suite for Query Interface Classes");
 		suite.addTestSuite(UtilityTestCases.class);
-		/*suite.addTestSuite(ExpressionTestCase.class);
-		suite.addTestSuite(JoinGraphTestCase.class);
-		suite.addTestSuite(SqlGeneratorTestCase.class);
-		suite.addTestSuite(SqlGeneratorGenericTestCase.class);*/
+		suite.addTestSuite(DefaultBizLogicTestCase.class);
 		return suite;
 	}
 }
