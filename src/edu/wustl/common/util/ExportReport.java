@@ -243,16 +243,20 @@ public class ExportReport
 	 */
 	private String getStrWithoutDoubleQuotes(String str)
 	{
-		String tempStr=str;
-		if (tempStr == null)
+		String tempStr;
+		if (str == null)
 		{
 			tempStr = TextConstants.EMPTY_STRING;
 		}
-		tempStr = tempStr.replaceAll("\"", "'");
-		StringBuffer stringBuffer=new StringBuffer("\"");
-		stringBuffer.append(tempStr).append('\"');
-		return stringBuffer.toString();
+		else
+		{
+			tempStr = str.replaceAll( "\"", "'");
+		}
+
+		return new StringBuffer().append('"').append(tempStr).append('"').toString();
+		
 	}
+
 	/**
 	 * Closes file stream.
 	 * @throws IOException I/O exception.
