@@ -20,10 +20,10 @@ public class CommonBaseTestCase extends BaseTestCase
 
 	protected void setUp()
 	{
-		Variables.applicationHome = System.getProperty("user.dir");
-		System.out.println("proppath:"+Variables.propertiesDirPath);
+		//Variables.applicationHome = System.getProperty("user.dir");
+	//	System.out.println("proppath:"+Variables.propertiesDirPath);
 		//System.out.println("logger Name:"+org.apache.log4j.Logger.getLogger("commonpkg.log").getName());
-		Logger.out = org.apache.log4j.Logger.getLogger("");
+	//	Logger.out = org.apache.log4j.Logger.getLogger("");
 		//PropertyConfigurator.configure(Variables.applicationHome + "/Logger.properties");
 	}
 }
