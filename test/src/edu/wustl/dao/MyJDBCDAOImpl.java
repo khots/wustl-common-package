@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.util.PagenatedResultData;
+import edu.wustl.common.dao.queryExecutor.PagenatedResultData;
 import edu.wustl.common.querydatabean.QueryDataBean;
 import edu.wustl.common.util.QueryParams;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
@@ -40,7 +40,7 @@ public class MyJDBCDAOImpl implements JDBCDAO
 		// TODO Auto-generated method stub
 
 	}
-	PagenatedResultData executeQuery(QueryParams  queryParams)throws ClassNotFoundException, DAOException
+	public PagenatedResultData executeQuery(QueryParams  queryParams)throws ClassNotFoundException, DAOException
 	{
 		return null;
 	}
