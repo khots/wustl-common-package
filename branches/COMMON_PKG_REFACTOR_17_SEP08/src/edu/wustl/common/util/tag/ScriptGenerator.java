@@ -22,7 +22,7 @@ import edu.wustl.common.beans.NameValueBean;
  * Maps are strings, and values are either Map or List.
  * Elements of all inner Lists are assumed to be string again.
  */
-public class ScriptGenerator
+public final class ScriptGenerator
 {
 
 	/**
