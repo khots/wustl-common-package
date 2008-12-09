@@ -4,9 +4,9 @@ package edu.wustl.common.exceptionformatter;
 import java.sql.Connection;
 import java.text.MessageFormat;
 
-import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.util.HibernateMetaData;
 
 /**
  * Description: Object Not Found Formatter.
@@ -60,8 +60,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			logger.debug(className + "--" + className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class
-			String displayName = ExceptionFormatterFactory.getDisplayName(HibernateMetaData
-					.getTableName(classObj), connection);
+			String displayName = ExceptionFormatterFactory.getDisplayName(HibernateMetaData.getTableName(classObj), connection);
 
 			Object[] arguments = new Object[]{displayName, columnName, value};
 

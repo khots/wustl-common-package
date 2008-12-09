@@ -31,13 +31,13 @@ import org.w3c.dom.NodeList;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.tree.TreeNodeImpl;
-import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.util.HibernateMetaData;
 
 /**
  * @author kapil_kaveeshwar

@@ -46,6 +46,7 @@ import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.QueryConditions;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -215,19 +216,21 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String joinCondition) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = daofactory.getDAO();
+		
 
 		List<Object> list = null;
-
+		DAO dao = null;
 		try
 		{
+			dao = daofactory.getDAO();
 			dao.openSession(null);
-
-			QueryWhereClauseImpl queryWhereClauseImpl = new QueryWhereClauseImpl();
-			queryWhereClauseImpl.setWhereClause(whereColumnName, whereColumnCondition,
+		
+			QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
+			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
 					whereColumnValue,joinCondition);
-
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClauseImpl);
+			
+			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+			dao.closeSession();
 		}
 		catch (DAOException daoExp)
 		{
@@ -235,7 +238,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			dao.closeSession();
+			//TODO do the changes when exception changes get completed.
+			//dao.closeSession();
 		}
 
 		return list;
@@ -390,16 +394,22 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			boolean isToExcludeDisabled) throws BizLogicException
 	{
+		String[] whereColumnName = null;
+		String[] whereColumnCondition = null;
+		Object[] whereColumnValue = null;
+		String joinCondition = null;
 		String separatorBetweenFields = ", ";
-		QueryWhereClause queryWhereClause= new QueryWhereClause();
 
 		if (isToExcludeDisabled)
 		{
-			queryWhereClause.addCondition(new NotEqualClause("activityStatus",Constants.ACTIVITY_STATUS_DISABLED,sourceObjectName));
+			whereColumnName = new String[]{"activityStatus"};
+			whereColumnCondition = new String[]{"!="};
+			whereColumnValue = new String[]{Constants.ACTIVITY_STATUS_DISABLED};
 		}
 
-		return getList(sourceObjectName,displayNameFields,valueField,queryWhereClause,separatorBetweenFields);
-	}
+		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
+				separatorBetweenFields);
+			}
 
 	/**
 	 * Returns collection of name value pairs.
@@ -444,11 +454,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param separatorBetweenFields separator Between Fields
 	 * @return nameValuePairs.
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @throws DAOException 
 	 */
 	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
-			QueryWhereClause queryWhereClause,String separatorBetweenFields) throws BizLogicException
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition, String separatorBetweenFields) throws BizLogicException
 	{
+		
 		List nameValuePairs = new ArrayList();
+		
+		try
+		{
 		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
 		String[] selectColumnName = new String[displayNameFields.length + 1];
 		for (int i = 0; i < displayNameFields.length; i++)
@@ -457,6 +473,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		selectColumnName[displayNameFields.length] = valueField;
 
+		
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
+		queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
+				whereColumnValue,joinCondition);
+		
 		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 
 		NameValueBean nameValueBean;
@@ -517,6 +538,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 		}
 		Collections.sort(nameValuePairs);
+		}
+		catch(Exception exp)
+		{
+			
+		}
 		return nameValuePairs;
 	}
 
@@ -1074,6 +1100,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public String getReadDeniedPrivilegeName()
 	{
 		return null;
+	}
+
+	@Override
+	protected void setPrivilege(DAO dao, String privilegeName,
+			Class objectType, Long[] objectIds, Long userId, String roleId,
+			boolean assignToUser, boolean assignOperation)
+			throws BizLogicException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.security.exceptions.PasswordEncryptionException;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.logger.Logger;
@@ -559,8 +560,9 @@ public class PasswordManager
 	 * @param userName user Name.
 	 * @return old password of a user.
 	 * @throws DAOException databse exception.
+	 * @throws BizLogicException 
 	 */
-	private static String getOldPassword(String userName) throws DAOException
+	private static String getOldPassword(String userName) throws DAOException, BizLogicException
 	{
 		// retrieve User DomainObject by user name
 		IBizLogic bizLogic = new DefaultBizLogic();
