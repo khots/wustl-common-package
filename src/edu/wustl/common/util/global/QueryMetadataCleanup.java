@@ -17,13 +17,28 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import edu.wustl.common.util.logger.Logger;
+
 /**
  * To remove the Corrupted association from database.
  * @author prafull_kadam
  *
  */
-public class QueryMetadataCleanup
+public final class QueryMetadataCleanup
 {
+
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(QueryMetadataCleanup.class);
+
+	/**
+	 * private constructor.
+	 */
+	private QueryMetadataCleanup()
+	{
+
+	}
 	/**
 	 * specify connection object.
 	 */
@@ -50,7 +65,7 @@ public class QueryMetadataCleanup
 	{
 		if (args.length != 4)
 		{
-			throw new RuntimeException("Incorrect no of Parameners !!!");
+			logger.error("There are no sufficient arguments.");
 		}
 		try
 		{
@@ -59,9 +74,9 @@ public class QueryMetadataCleanup
 			cleanup();
 			writer.close();
 		}
-		catch (Exception e)
+		catch (Exception exception)
 		{
-			throw new RuntimeException(e);
+			logger.error(exception.getMessage(), exception);
 		}
 		finally
 		{
@@ -71,9 +86,9 @@ public class QueryMetadataCleanup
 				{
 					con.close();
 				}
-				catch (SQLException e)
+				catch (SQLException sqlException)
 				{
-					throw new RuntimeException(e);
+					logger.error(sqlException.getMessage(), sqlException);
 				}
 			}
 		}
@@ -120,24 +135,24 @@ public class QueryMetadataCleanup
 	{
 		StringBuffer deletedRecords = new StringBuffer("\nintra_model_association:");
 		Set<Long> intraModelAssociationIds = getIntraModelAssociations(deletedRecords);
-		
+
 		if (intraModelAssociationIds.isEmpty())
 		{
 			return;
 		}
-		
+
 		writer.write("\nTotal Corrupted DE AssociationIds: " + intraModelAssociationIds.size());
 		StringBuffer pathDelSQL = new StringBuffer("delete from path where path_id in (");
 		StringBuffer associationDelSQL = new StringBuffer(
 				"delete from intra_model_association where ASSOCIATION_ID in (");
-		int pathCnt = addToBeDeletedIdsToSQLString(deletedRecords, intraModelAssociationIds, pathDelSQL,
-				associationDelSQL);
+		int pathCnt = addToBeDeletedIdsToSQLString(deletedRecords, intraModelAssociationIds,
+				pathDelSQL, associationDelSQL);
 
 		writer.write("\n------------------------------------");
 		writer.write("\n Total Paths Corrupted:" + pathCnt);
 		writer.write("\n------------------------------------");
 		writer.write("\nExecuting SQL:");
-		
+
 		if (pathCnt != 0)
 		{
 			deleteRecords(pathDelSQL);
@@ -152,6 +167,12 @@ public class QueryMetadataCleanup
 
 	}
 
+	/**
+	 * This method delete Records.
+	 * @param pathDelSQL path Del SQL.
+	 * @throws IOException IO Exception
+	 * @throws SQLException SQL Exception
+	 */
 	private static void deleteRecords(StringBuffer pathDelSQL) throws IOException, SQLException
 	{
 		String pathDESql = pathDelSQL.substring(0, pathDelSQL.length() - 1) + ")";
@@ -159,38 +180,46 @@ public class QueryMetadataCleanup
 		stmt.executeUpdate(pathDESql);
 	}
 
+	/**
+	 * This method add To Be Deleted Ids To SQL String.
+	 * @param deletedRecords deleted Records.
+	 * @param intraModelAssociationIds intra Model Association Ids.
+	 * @param pathDelSQL path Del SQL
+	 * @param associationDelSQL association Del SQL
+	 * @return path Count.
+	 * @throws SQLException SQL Exception
+	 * @throws IOException IO Exception.
+	 */
 	private static int addToBeDeletedIdsToSQLString(StringBuffer deletedRecords,
-			Set<Long> intraModelAssociationIds, StringBuffer pathDelSQL, StringBuffer associationDelSQL)
-			throws SQLException, IOException
+			Set<Long> intraModelAssociationIds, StringBuffer pathDelSQL,
+			StringBuffer associationDelSQL) throws SQLException, IOException
 	{
 		ResultSet resultSet;
 		Map<Long, String> entityNameMap = getEntityNameMap();
-		
+
 		int pathCnt = 0;
 		writer.write("\n------------------------------------");
 		writer.write("\nPaths removed: ");
 		deletedRecords.append("\npath:");
-		
+
 		for (Long id : intraModelAssociationIds)
 		{
 			associationDelSQL.append(id).append(',');
-			String pathSql = SqlConstants.SQL_PATH +"'%"
-					+ id + "%'";
+			String pathSql = SqlConstants.SQL_PATH + "'%" + id + "%'";
 			resultSet = stmt.executeQuery(pathSql);
 			while (resultSet.next())
 			{
-				
+
 				if (isPresentInPath(id, resultSet.getString(3)))
 				{
-					pathDelSQL.append(resultSet.getLong(1)+",");
+					pathDelSQL.append(resultSet.getLong(1) + ",");
 					pathCnt++;
 					writer.write("\n" + entityNameMap.get(resultSet.getLong(2)) + "--->"
 							+ entityNameMap.get(resultSet.getLong(4)));
-					
-					deletedRecords.append('\n').append(resultSet.getLong(1))
-					.append(',').append(resultSet.getLong(2))
-					.append(',').append(resultSet.getString(3))
-					.append(',').append(resultSet.getLong(4));
+
+					deletedRecords.append('\n').append(resultSet.getLong(1)).append(',').
+					append(resultSet.getLong(2)).append(',').append(resultSet.getString(3))
+							.append(',').append(resultSet.getLong(4));
 				}
 
 			}
@@ -198,13 +227,21 @@ public class QueryMetadataCleanup
 		return pathCnt;
 	}
 
-	private static Set<Long> getIntraModelAssociations(StringBuffer deletedRecords) throws SQLException
+	/**
+	 * get Intra Model Associations.
+	 * @param deletedRecords deleted Records
+	 * @return Intra Model Associations.
+	 * @throws SQLException SQL Exception.
+	 */
+	private static Set<Long> getIntraModelAssociations(StringBuffer deletedRecords)
+			throws SQLException
 	{
 		ResultSet resultSet = stmt.executeQuery(SqlConstants.SQL_CORRUPTED_ASSOCIATION);
 		Set<Long> intraModelAssociationIds = new HashSet<Long>();
 		while (resultSet.next())
 		{
-			deletedRecords.append('\n').append(resultSet.getLong(1)).append(',').append(resultSet.getLong(2));
+			deletedRecords.append('\n').append(resultSet.getLong(1)).append(',').append(
+					resultSet.getLong(2));
 			intraModelAssociationIds.add(resultSet.getLong(1));
 		}
 		resultSet.close();
@@ -219,7 +256,7 @@ public class QueryMetadataCleanup
 	 */
 	private static boolean isPresentInPath(Long associationId, String path)
 	{
-		return path.contains("_"+associationId.toString());
+		return path.contains("_" + associationId.toString());
 	}
 
 	/**
@@ -230,8 +267,7 @@ public class QueryMetadataCleanup
 	private static Map<Long, String> getEntityNameMap() throws SQLException
 	{
 		Map<Long, String> entityNameMap = new HashMap<Long, String>();
-		ResultSet resultSet = stmt
-				.executeQuery(SqlConstants.SQL_ENTITY_NAMES);
+		ResultSet resultSet = stmt.executeQuery(SqlConstants.SQL_ENTITY_NAMES);
 		while (resultSet.next())
 		{
 			entityNameMap.put(resultSet.getLong(1), resultSet.getString(2));
