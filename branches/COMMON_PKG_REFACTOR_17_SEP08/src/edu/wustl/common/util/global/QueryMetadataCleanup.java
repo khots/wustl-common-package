@@ -119,67 +119,31 @@ public class QueryMetadataCleanup
 	private static void cleanup() throws SQLException, IOException
 	{
 		StringBuffer deletedRecords = new StringBuffer("\nintra_model_association:");
-		ResultSet resultSet = stmt.executeQuery(SqlConstants.SQL_CORRUPTED_ASSOCIATION);
-		Set<Long> intraModelAssociationIds = new HashSet<Long>();
-		while (resultSet.next())
-		{
-			deletedRecords.append("\n"+ resultSet.getLong(1)+","+resultSet.getLong(2));
-			intraModelAssociationIds.add(resultSet.getLong(1));
-		}
-		resultSet.close();
-		writer.write("\nTotal Corrupted DE AssociationIds: " + intraModelAssociationIds.size());
+		Set<Long> intraModelAssociationIds = getIntraModelAssociations(deletedRecords);
+		
 		if (intraModelAssociationIds.isEmpty())
 		{
 			return;
 		}
+		
+		writer.write("\nTotal Corrupted DE AssociationIds: " + intraModelAssociationIds.size());
 		StringBuffer pathDelSQL = new StringBuffer("delete from path where path_id in (");
 		StringBuffer associationDelSQL = new StringBuffer(
 				"delete from intra_model_association where ASSOCIATION_ID in (");
-		Map<Long, String> entityNameMap = getEntityNameMap();
-		int pathCnt = 0;
-		writer.write("\n------------------------------------");
-		writer.write("\nPaths removed: ");
-		deletedRecords.append("\npath:");
-		for (Long id : intraModelAssociationIds)
-		{
-			associationDelSQL.append(id).append(',');
-			String pathSql = SqlConstants.SQL_PATH +"'%"
-					+ id + "%'";
-			resultSet = stmt.executeQuery(pathSql);
-			while (resultSet.next())
-			{
-				String path = resultSet.getString(3);
-				boolean isPresentId = isPresentInPath(id, path);
-				if (isPresentId)
-				{
-					pathDelSQL.append(resultSet.getLong(1)+",");
-					pathCnt++;
-					writer.write("\n" + entityNameMap.get(resultSet.getLong(2)) + "--->"
-							+ entityNameMap.get(resultSet.getLong(4)));
-					deletedRecords.append('\n').append(resultSet.getLong(1))
-					.append(',').append(resultSet.getLong(2))
-					.append(',').append(resultSet.getString(3))
-					.append(',').append(resultSet.getLong(4));
-				}
-
-			}
-		}
+		int pathCnt = addToBeDeletedIdsToSQLString(deletedRecords, intraModelAssociationIds, pathDelSQL,
+				associationDelSQL);
 
 		writer.write("\n------------------------------------");
 		writer.write("\n Total Paths Corrupted:" + pathCnt);
 		writer.write("\n------------------------------------");
 		writer.write("\nExecuting SQL:");
-		String sql = null;
+		
 		if (pathCnt != 0)
 		{
-			sql = pathDelSQL.substring(0, pathDelSQL.length() - 1) + ")";
-			writer.write("\n" + sql);
-			stmt.executeUpdate(sql);
+			deleteRecords(pathDelSQL);
 		}
 
-		sql = associationDelSQL.substring(0, associationDelSQL.length() - 1) + ")";
-		writer.write("\n" + sql);
-		stmt.executeUpdate(sql);
+		deleteRecords(associationDelSQL);
 		writer.write("\nDeleted following records from corresponding table: ");
 		writer.write(deletedRecords.toString());
 		writer.write("\n------------------------------------");
@@ -188,24 +152,74 @@ public class QueryMetadataCleanup
 
 	}
 
+	private static void deleteRecords(StringBuffer pathDelSQL) throws IOException, SQLException
+	{
+		String pathDESql = pathDelSQL.substring(0, pathDelSQL.length() - 1) + ")";
+		writer.write("\n" + pathDESql);
+		stmt.executeUpdate(pathDESql);
+	}
+
+	private static int addToBeDeletedIdsToSQLString(StringBuffer deletedRecords,
+			Set<Long> intraModelAssociationIds, StringBuffer pathDelSQL, StringBuffer associationDelSQL)
+			throws SQLException, IOException
+	{
+		ResultSet resultSet;
+		Map<Long, String> entityNameMap = getEntityNameMap();
+		
+		int pathCnt = 0;
+		writer.write("\n------------------------------------");
+		writer.write("\nPaths removed: ");
+		deletedRecords.append("\npath:");
+		
+		for (Long id : intraModelAssociationIds)
+		{
+			associationDelSQL.append(id).append(',');
+			String pathSql = SqlConstants.SQL_PATH +"'%"
+					+ id + "%'";
+			resultSet = stmt.executeQuery(pathSql);
+			while (resultSet.next())
+			{
+				
+				if (isPresentInPath(id, resultSet.getString(3)))
+				{
+					pathDelSQL.append(resultSet.getLong(1)+",");
+					pathCnt++;
+					writer.write("\n" + entityNameMap.get(resultSet.getLong(2)) + "--->"
+							+ entityNameMap.get(resultSet.getLong(4)));
+					
+					deletedRecords.append('\n').append(resultSet.getLong(1))
+					.append(',').append(resultSet.getLong(2))
+					.append(',').append(resultSet.getString(3))
+					.append(',').append(resultSet.getLong(4));
+				}
+
+			}
+		}
+		return pathCnt;
+	}
+
+	private static Set<Long> getIntraModelAssociations(StringBuffer deletedRecords) throws SQLException
+	{
+		ResultSet resultSet = stmt.executeQuery(SqlConstants.SQL_CORRUPTED_ASSOCIATION);
+		Set<Long> intraModelAssociationIds = new HashSet<Long>();
+		while (resultSet.next())
+		{
+			deletedRecords.append('\n').append(resultSet.getLong(1)).append(',').append(resultSet.getLong(2));
+			intraModelAssociationIds.add(resultSet.getLong(1));
+		}
+		resultSet.close();
+		return intraModelAssociationIds;
+	}
+
 	/**
 	 * To check whether given association id is present in the given path or not.
-	 * @param associationId The intramodel association id.
+	 * @param associationId The intramodel association id
 	 * @param path The string representing intermediate path.
 	 * @return isPresent return whether given association id is present in the given path or not
 	 */
 	private static boolean isPresentInPath(Long associationId, String path)
 	{
-		String[] splitArray = path.split("_");
-		boolean isPresent = false;
-		for (int index = 0; index < splitArray.length; index++)
-		{
-			if (splitArray[index].equals(associationId.toString()))
-			{
-				isPresent = true;
-			}
-		}
-		return isPresent;
+		return path.contains("_"+associationId.toString());
 	}
 
 	/**
