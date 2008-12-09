@@ -25,8 +25,8 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.security.exceptions.PasswordEncryptionException;
 import edu.wustl.common.util.XMLPropertyHandler;
-import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.exception.DAOException;
 import gov.nih.nci.security.util.StringEncrypter;
 import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
 
@@ -46,6 +46,14 @@ public class PasswordManager
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordManager.class);
+	/**
+	 *  constant for MINIMUM_PASSWORD_LENGTH.
+	 */
+	public static final String MINIMUM_PASSWORD_LENGTH = "minimumPasswordLength";
+	/**
+	 *  constant for USER_CLASS_NAME.
+	 */
+	public static final String USER_CLASS_NAME = "edu.wustl.common.domain.User";
 	/**
 	 * Code for no error.
 	 */
@@ -98,7 +106,7 @@ public class PasswordManager
 	{
 		errorMess= new HashMap<Integer,String>();
 		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
-				.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
+				.getValue(MINIMUM_PASSWORD_LENGTH));
 		List<String> placeHolders = new ArrayList<String>();
 		placeHolders.add(Integer.valueOf(minimumPasswordLength).toString());
 		String errorMsg = ApplicationProperties.getValue("errors.newPassword.length", placeHolders);
@@ -360,7 +368,7 @@ public class PasswordManager
 		if(NOT_FAILED==erNo)
 		{
 			int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
-					.getValue(Constants.MINIMUM_PASSWORD_LENGTH));
+					.getValue(MINIMUM_PASSWORD_LENGTH));
 			// to Check length of password,if not valid return FAIL_LENGTH
 			if (newPassword.length() < minimumPasswordLength)
 			{
@@ -562,7 +570,7 @@ public class PasswordManager
 		String[] whereColumnValues = {userName};
 
 		//Gautam_COMMON_TEMP_FIX USER_CLASS_NAME
-		List userList = bizLogic.retrieve(Constants.USER_CLASS_NAME, selectColumnNames,
+		List userList = bizLogic.retrieve(USER_CLASS_NAME, selectColumnNames,
 				whereColumnNames, whereColumnCondition, whereColumnValues, null);
 		String password = null;
 		if (userList != null && !userList.isEmpty())
