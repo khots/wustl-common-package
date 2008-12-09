@@ -38,6 +38,7 @@ import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TitliSearchConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
@@ -207,7 +208,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			//refresh the index for titli search
 			if(TitliResultGroup.isTitliConfigured == true)
 	        {
-	        	refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
+	        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
 	        }
 		}
 		catch (DAOException ex)
@@ -344,7 +345,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				//refresh the index for titli search
 		        if(TitliResultGroup.isTitliConfigured == true)
 		        {
-		        	refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
 		        }
 				postInsert(obj, dao, sessionDataBean);
 			}
@@ -473,7 +474,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				for(AbstractDomainObject obj : objCollection)
 				{
-				    refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+				    refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
 				}
 			}
 			postInsert(objCollection, dao, sessionDataBean);
@@ -707,7 +708,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				//refresh the index for titli search
 		        if(TitliResultGroup.isTitliConfigured == true)
 		        {
-		        	refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
+		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
 		        }
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
@@ -1084,15 +1085,15 @@ public abstract class AbstractBizLogic implements IBizLogic
 			
 				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
 				
-				if (operation != null && operation.equalsIgnoreCase(Constants.TITLI_INSERT_OPERATION)) 
+				if (operation != null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION)) 
 				{
 					indexRefresher.insert(recordIdentifier);
 				}
-				else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_UPDATE_OPERATION)) 
+				else if (operation != null	&& operation.equalsIgnoreCase(TitliSearchConstants.TITLI_UPDATE_OPERATION)) 
 				{  
 					indexRefresher.update(recordIdentifier);
 				}
-				else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_DELETE_OPERATION)) 
+				else if (operation != null	&& operation.equalsIgnoreCase(TitliSearchConstants.TITLI_DELETE_OPERATION)) 
 				{
 					indexRefresher.delete(recordIdentifier);
 				}

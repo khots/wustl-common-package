@@ -21,6 +21,7 @@ import titli.model.TitliException;
 import edu.wustl.common.actionForm.TitliSearchForm;
 import edu.wustl.common.util.TitliTableMapper;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TitliSearchConstants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -58,7 +59,8 @@ public class TitliSearchAction extends Action
 			MatchListInterface matchList = titli.search(searchString);
 			SortedResultMapInterface sortedResultMap = matchList.getSortedResultMap();
 			titliSearchForm.setSortedResultMap(sortedResultMap);
-			request.getSession().setAttribute(Constants.TITLI_SORTED_RESULT_MAP, sortedResultMap);
+			request.getSession().setAttribute(TitliSearchConstants.TITLI_SORTED_RESULT_MAP,
+					sortedResultMap);
 			titliSearchForm.setDisplaySearchString("TiTLi Search");
 			titliSearchForm.setDisplayStats("Found " + matchList.getNumberOfMatches()
 					+ " matches in " + matchList.getTimeTaken() + " seconds");
@@ -95,8 +97,8 @@ public class TitliSearchAction extends Action
 		//setting the selectedLabel is necessary for getSelectedGroup() to work properly
 		titliSearchForm.setSelectedLabel(label);
 		ActionForward actionForward = new ActionForward();
-		actionForward.setName(Constants.TITLI_SINGLE_RESULT);
-		actionForward.setPath(Constants.TITLI_FETCH_ACTION);
+		actionForward.setName(TitliSearchConstants.TITLI_SINGLE_RESULT);
+		actionForward.setPath(TitliSearchConstants.TITLI_FETCH_ACTION);
 		return actionForward;
 	}
 }

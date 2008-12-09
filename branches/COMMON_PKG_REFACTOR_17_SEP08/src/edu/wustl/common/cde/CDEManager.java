@@ -22,6 +22,7 @@ import javax.xml.bind.Unmarshaller;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.cde.xml.XMLCDE;
 import edu.wustl.common.cde.xml.XMLCDECACHE;
+import edu.wustl.common.util.global.CDEConstants;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -58,7 +59,7 @@ public class CDEManager
 		try
 		{
             // create a JAXBContext capable of handling classes generated into the edu.wustl.common.cde.xml package
-            JAXBContext jaxbContextObject = JAXBContext.newInstance(Constants.CDE_XML_PACKAGE_PATH);
+            JAXBContext jaxbContextObject = JAXBContext.newInstance(CDEConstants.CDE_XML_PACKAGE_PATH);
             
             // create an Unmarshaller which provides the ability to convert XML data into a tree of Java content objects.
             Unmarshaller unmarshallerObject = jaxbContextObject.createUnmarshaller();
@@ -68,7 +69,7 @@ public class CDEManager
             String appHome=CommonServiceLocator.getInstance().getAppHome();
             XMLCDECACHE root = 
                 (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(appHome+
-                		System.getProperty("file.separator")+ Constants.CDE_CONF_FILE));
+                		System.getProperty("file.separator")+ CDEConstants.CDE_CONF_FILE));
             
             // display the cde details
 			List xmlCDEList = root.getXMLCDE();
