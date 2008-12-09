@@ -3,7 +3,11 @@ package edu.wustl.common.bizlogic;
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.dao.MyJDBCDAOImpl;
+import edu.wustl.dao.DAO;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.MyDAOImpl;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 
 /**
  * Test cases for DefaultBizLogic
@@ -15,20 +19,40 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	/**
 	 * Generic Logger.
 	 */
-	//private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogicTestCase.class);
+	private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogicTestCase.class);
+
 
 	public void testInsert()
 	{
-		MyJDBCDAOImpl myJdbcDao = new MyJDBCDAOImpl();
-		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
 		try
 		{
+			DAO myJdbcDao = daoFactory.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			defaultBizLogic.insert(null,myJdbcDao);
+			assertTrue("Data inserted successfully.",true);
 		}
-		catch (BizLogicException exception)
+		catch (Exception exception)
 		{
-			assertTrue("Error:exception should be thrown :",true);
-		//	logger.fatal(exception.getLogMessage());
+			fail("Not able to insert data.");
+			//logger.fatal(exception.getLogMessage());
+		}
+	}
+	public void testInsertFail()
+	{
+		IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
+
+		try
+		{
+			DAO myJdbcDao = daoFactory.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			MyDAOImpl.isTestForFail=true;
+			defaultBizLogic.insert(null,myJdbcDao);
+			fail("Negative test case: should not inserted data.");
+		}
+		catch (Exception exception)
+		{
+			assertTrue("Error:exception should be thrown",true);
 		}
 	}
 }
