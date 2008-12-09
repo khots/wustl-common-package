@@ -343,24 +343,36 @@ public class AutomateImport
 		int numberOfColumns = rsMetaData.getColumnCount();
 		for (int i = 1; i <= numberOfColumns; i++)
 		{
-			columnNameList.append(rsMetaData.getColumnName(i));
-			if (Types.DATE == rsMetaData.getColumnType(i)
-					|| Types.TIMESTAMP == rsMetaData.getColumnType(i))
-			{
-				columnNameList.append(" DATE 'YYYY-MM-DD'");
-			}
-			if (!("HIDDEN".equals(rsMetaData.getColumnName(i)))
-					&& !("FORMAT".equals(rsMetaData.getColumnName(i))))
-			{
-				columnNameList.append(" NULLIF ");
-				columnNameList.append(rsMetaData.getColumnName(i));
-				columnNameList.append("='\\\\N'");
-			}
-			columnNameList.append(',');
+			setColList(columnNameList, rsMetaData, i);
 		}
 		columnNameList.deleteCharAt(columnNameList.length()-1);
 		columnNameList.append(')');
 		return columnNameList;
+	}
+
+	/**
+	 * @param columnNameList column Name List.
+	 * @param rsMetaData rs Meta Data
+	 * @param intVar int Variable
+	 * @throws SQLException SQL Exception.
+	 */
+	private void setColList(StringBuffer columnNameList, ResultSetMetaData rsMetaData, int intVar)
+			throws SQLException
+	{
+		columnNameList.append(rsMetaData.getColumnName(intVar));
+		if (Types.DATE == rsMetaData.getColumnType(intVar)
+				|| Types.TIMESTAMP == rsMetaData.getColumnType(intVar))
+		{
+			columnNameList.append(" DATE 'YYYY-MM-DD'");
+		}
+		if (!("HIDDEN".equals(rsMetaData.getColumnName(intVar)))
+				&& !("FORMAT".equals(rsMetaData.getColumnName(intVar))))
+		{
+			columnNameList.append(" NULLIF ");
+			columnNameList.append(rsMetaData.getColumnName(intVar));
+			columnNameList.append("='\\\\N'");
+		}
+		columnNameList.append(',');
 	}
 }
 /**
