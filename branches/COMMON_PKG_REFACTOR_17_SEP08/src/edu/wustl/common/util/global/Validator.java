@@ -191,14 +191,26 @@ public class Validator
 		}
 		else
 		{
-			if (positiveCheck > 0 && value.longValue() <= 0)
-			{
-				isPosNum = false;
-			}
-			else if (positiveCheck == 0 && value.longValue() < 0)
-			{
-				isPosNum = false;
-			}
+			isPosNum = checkForPositive(positiveCheck,value);
+		}
+		return isPosNum;
+	}
+
+	/**
+	 * @param positiveCheck positive Check
+	 * @param value value
+	 * @return isPosNum
+	 */
+	private boolean checkForPositive(int positiveCheck, Double value)
+	{
+		boolean isPosNum = true;
+		if (positiveCheck > 0 && value.longValue() <= 0)
+		{
+			isPosNum = false;
+		}
+		else if (positiveCheck == 0 && value.longValue() < 0)
+		{
+			isPosNum = false;
 		}
 		return isPosNum;
 	}
