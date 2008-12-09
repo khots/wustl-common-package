@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Applications>
+	<Application name = "commonpackagetest">
+		<DAOFactory name="edu.wustl.dao.MyDAOImpl">
+			<DefaultDAO>
+				<Class-name name = "edu.wustl.dao.MyDAOImpl"/>
+				<Config-file name = "hibernate.cfg.xml"/>
+			</DefaultDAO>
+			<jdbcDAO name = "edu.wustl.dao.MyDAOImpl"/>
+		</DAOFactory>
+		<ConnectionManager name= "edu.wustl.dao.MyDAOImpl"/>
+	 </Application>	
+</Applications>
