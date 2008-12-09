@@ -27,7 +27,7 @@ public class AutomateImport
 	static String DATABASE_SERVER_NAME;
 	// The Port number of the server for the database.
 	static String DATABASE_SERVER_PORT_NUMBER;
-	// The Type of Database. Use one of the two values 'MySQL', 'Oracle'.
+	// The Type of Database. Use one of the three values 'MySQL', 'Oracle', MsSqlServer.
 	static String DATABASE_TYPE;
 	//	Name of the Database.
 	static String DATABASE_NAME;
@@ -53,7 +53,8 @@ public class AutomateImport
 	 * 			- import/export
 	 * 			- path for dumpFileColumnInfo.txt which contains the table name list to be imported/exported
 	 * 			- folder path for CAModelCSVs files
-	 * 			- folder path for CAModelCTLs files required in case of oracle
+	 * 			- folder path for CAModelCTLs files required in case of oracle OR 
+	 * 			  Format File path in case of mssqlserver (arg[10]) 
 	 * 			- oracle.tns.name required in case of oracle 
 	 */
 	public static void main(String[] args) throws Exception
@@ -93,9 +94,21 @@ public class AutomateImport
 						automateImport.createCTLFiles(connection,csvFilePath,ctlFilePath,tableNamesList.get(i));
 					}
 				}
-			}
-			else
-			{
+			} else if (Constants.MSSQLSERVER_DATABASE.equals(DATABASE_TYPE.toUpperCase())) {
+				if(args[7].toLowerCase().equals("import")) {
+					Statement stmt = connection.createStatement();
+					for(int i = 0 ; i < size; i++) {
+						String dumpFilePath = filePath+tableNamesList.get(i)+".csv";
+						String formatFilePath = filePath + tableNamesList.get(i) + Constants.FORMAT_FILE_EXTENTION;
+						automateImport.importDataMsSQLServer(connection,dumpFilePath,tableNamesList.get(i), formatFilePath);
+					}
+				} else {
+					for(int i = 0 ; i < size; i++) {
+						String dumpFilePath = filePath+tableNamesList.get(i)+".csv";
+						automateImport.exportDataMySQL(connection,dumpFilePath,tableNamesList.get(i));
+					}
+				}
+			} else {
 				if(args[7].toLowerCase().equals("import"))
 				{
 					Statement stmt = connection.createStatement();
@@ -201,6 +214,10 @@ public class AutomateImport
 			url = "jdbc:oracle:thin:@" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER
 					+ ":" + DATABASE_NAME;
 		}
+		if("MsSqlServer".equalsIgnoreCase(DATABASE_TYPE)) {
+			url = "jdbc:sqlserver://" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER + ";"
+					+ "databaseName=" + DATABASE_NAME + ";";
+		}
 		System.out.println("URL : " + url);
 		connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
 		return connection;
@@ -224,6 +241,25 @@ public class AutomateImport
        	}     
         finally
         {
+            stmt = null;
+        }
+    }
+    
+    /**
+	 *  This method will insert the data to mssqlserver database.
+	 * @param conn
+	 * @param filename
+	 * @param tableName
+	 */
+    private void importDataMsSQLServer(Connection conn,String dataFileName, String tableName, String formatFileName) throws SQLException {
+        Statement stmt;
+        try {
+        	System.out.println("Loding File : " + dataFileName + " using FormatFile : "+ formatFileName + " to table : " + tableName);
+            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            //String query = "LOAD DATA LOCAL INFILE '"+filename+ "' INTO TABLE "+tableName+" FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n';";
+            String query =  "BULK INSERT " + tableName + " FROM '" + dataFileName + "' WITH ( FIELDTERMINATOR  = ',' , FORMATFILE = '" + formatFileName + "' )";
+            stmt.execute(query);
+       	} finally {
             stmt = null;
         }
     }
