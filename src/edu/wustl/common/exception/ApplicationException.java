@@ -14,6 +14,10 @@ public class ApplicationException extends Exception
 {
 
 	/**
+	 * Wrapped Exception:
+	 */
+	private Exception wrapException;
+	/**
 	 * The unique serial version UID.
 	 */
 	private static final long serialVersionUID = 6277184346384055451L;
@@ -43,6 +47,9 @@ public class ApplicationException extends Exception
 	 * use this constant separator to separate values.
 	 */
 	public static final String ERR_MSG_VALUES_SEPARATOR = ":";
+	
+	
+	
 
 	/**
 	 * The Only public constructor to restrict creating object without
@@ -54,7 +61,7 @@ public class ApplicationException extends Exception
 	public ApplicationException(ErrorKey errorKey, Throwable throwable, String msgValues)
 	{
 		super(throwable);
-
+		this.wrapException = (Exception)throwable;
 		if (errorKey == null)
 		{
 			logger.fatal("While constructing application exception errorKey object must not be null");
@@ -218,5 +225,21 @@ public class ApplicationException extends Exception
 	public String getErrorKeyAsString()
 	{
 		return errorKey.getErrorKey();
+	}
+	
+	/**
+	 * @return Returns the wrapException.
+	 */
+	public Exception getWrapException()
+	{
+		return wrapException;
+	}
+
+	/**
+	 * @param wrapException The wrapException to set.
+	 */
+	private void setWrapException(Exception wrapException)
+	{
+		this.wrapException = wrapException;
 	}
 }

@@ -16,11 +16,11 @@ import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.util.Utility;
-import edu.wustl.dao.exception.DAOException;
-import edu.wustl.common.util.dbmanager.HibernateMetaData;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.HibernateMetaData;
 
 /**
  * AuditManager is an algorithm to figure out the changes with respect to database due to
