@@ -419,4 +419,5 @@ public class Constants
 	public static final String ALLOW_OPERATION = "allowOperation";
 	public static final String  DB2_DATABASE = "DB2";
 	public static final String BIRTH_DATE_TAG_NAME = "IS_BIRTH_DATE";
+	public static final String TABLE_ALIAS_NAME = "aliasName";
 }
