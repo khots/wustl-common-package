@@ -18,33 +18,69 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogicTestCase.class);
-
-
-	public void testInsert()
+	
+	public void testInsertWithSessionDataBean()
 	{
 		IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
 		try
 		{
+			MyDAOImpl.isTestForFail=false;
 			DAO myJdbcDao = daoFactory.getDAO();
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			defaultBizLogic.insert(null,myJdbcDao);
+			defaultBizLogic.insert(null,myJdbcDao,null);
 			assertTrue("Data inserted successfully.",true);
 		}
-		catch (Exception exception)
+		catch (Exception exception)	
 		{
 			fail("Not able to insert data.");
 			logger.fatal(exception.getMessage());
 		}
 	}
-	public void testInsertFail()
+	
+	public void testFailInsertWithSessionDataBean()
+	{
+		IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DAO myJdbcDao = daoFactory.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();			
+			defaultBizLogic.insert(null,myJdbcDao,null);
+			fail("Negative test case: should not inserted data.");
+		}
+		catch (Exception exception)
+		{
+			assertTrue("Error:exception should be thrown",true);
+			logger.fatal(exception.getMessage());
+		}
+	}
+	
+	public void testInsert()
+	{
+		IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DAO myJdbcDao = daoFactory.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.insert(null,myJdbcDao);
+			assertTrue("Data inserted successfully.",true);
+		}
+		catch (Exception exception)	
+		{
+			fail("Not able to insert data.");
+			logger.fatal(exception.getMessage());
+		}
+	}
+	public void testFailInsert()
 	{
 		IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
 
 		try
 		{
-			DAO myJdbcDao = daoFactory.getDAO();
-			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			MyDAOImpl.isTestForFail=true;
+			DAO myJdbcDao = daoFactory.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();			
 			defaultBizLogic.insert(null,myJdbcDao);
 			fail("Negative test case: should not inserted data.");
 		}

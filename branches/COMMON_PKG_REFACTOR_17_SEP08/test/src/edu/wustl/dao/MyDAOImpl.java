@@ -1,5 +1,6 @@
 package edu.wustl.dao;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	
 	public Boolean getIsDefaultDAOFactory()
 	{
-		return null;
+		return true;
 	}
 	
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
@@ -94,8 +95,16 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		if(isTestForFail)
 		{
+			try
+			{
+				ErrorKey.init("-");
+			}
+			catch (IOException exception)
+			{
+				exception.printStackTrace();
+			}
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,new Exception(),"MyJDAOImpl.java :"+
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
 					DAOConstants.EXECUTE_QUERY_ERROR);
 		}
 	}
