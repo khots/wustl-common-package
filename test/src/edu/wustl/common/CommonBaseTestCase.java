@@ -24,6 +24,6 @@ public class CommonBaseTestCase extends BaseTestCase
 
 	protected void setUp()
 	{
-		PropertyConfigurator.configure(System.getProperty("user.dir") + "/Logger.properties");
+		PropertyConfigurator.configure(System.getProperty("user.dir") + "/log4j.properties");
 	}
 }
