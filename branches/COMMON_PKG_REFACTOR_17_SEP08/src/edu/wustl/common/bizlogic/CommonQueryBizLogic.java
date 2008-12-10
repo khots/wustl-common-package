@@ -1,6 +1,7 @@
 package edu.wustl.common.bizlogic;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.PagenatedResultData;
 import edu.wustl.common.util.QueryParams;
 import edu.wustl.common.util.global.QuerySessionData;
@@ -34,7 +35,6 @@ public class CommonQueryBizLogic
 		{
 			dao.openSession(null);
 			QueryParams queryParams = new QueryParams();
-			
 			queryParams.setQuery(querySessionData.getSql());
 			queryParams.setSessionDataBean(sessionDataBean);
 			queryParams.setSecureToExecute(querySessionData.isSecureExecute());
@@ -42,20 +42,20 @@ public class CommonQueryBizLogic
 			queryParams.setQueryResultObjectDataMap(querySessionData.getQueryResultObjectDataMap());
 			queryParams.setStartIndex(startIndex);
 			queryParams.setNoOfRecords(querySessionData.getRecordsPerPage());
-			
-			
-			edu.wustl.common.dao.queryExecutor.PagenatedResultData pagenatedResultData = dao
+			edu.wustl.common.util.PagenatedResultData pagenatedResultData = dao
 					.executeQuery(queryParams);
 
 			return pagenatedResultData;
 		}
 		catch (DAOException daoExp)
 		{
-			throw new DAOException(daoExp.getMessage(), daoExp);
+			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
+			throw new DAOException(errorKey, daoExp,"CommonQueryBizLogic");
 		}
-		catch (ClassNotFoundException classExp)
+		catch (ClassNotFoundException exception)
 		{
-			throw new DAOException(classExp.getMessage(), classExp);
+			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
+			throw new DAOException(errorKey, exception,"CommonQueryBizLogic");
 		}
 		finally
 		{
