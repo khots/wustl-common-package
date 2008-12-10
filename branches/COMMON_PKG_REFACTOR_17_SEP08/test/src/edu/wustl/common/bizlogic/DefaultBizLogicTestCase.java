@@ -1,16 +1,14 @@
 package edu.wustl.common.bizlogic;
 
 import edu.wustl.common.CommonBaseTestCase;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
-import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.MyDAOImpl;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 
 /**
- * Test cases for DefaultBizLogic
+ * Test cases for DefaultBizLogic.
  * @author ravi_kumar
  *
  */
@@ -35,7 +33,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			fail("Not able to insert data.");
-			//logger.fatal(exception.getLogMessage());
+			logger.fatal(exception.getMessage());
 		}
 	}
 	public void testInsertFail()
@@ -53,6 +51,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			assertTrue("Error:exception should be thrown",true);
+			logger.fatal(exception.getMessage());
 		}
 	}
 }
