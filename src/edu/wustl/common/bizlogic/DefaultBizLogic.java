@@ -30,8 +30,6 @@ import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.security.exceptions.SMException;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -41,12 +39,10 @@ import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.condition.EqualClause;
 import edu.wustl.dao.condition.INClause;
-import edu.wustl.dao.condition.NotEqualClause;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.util.QueryConditions;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -687,7 +683,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
 
 		String whereColumnName = classIdentifier + "." + Constants.SYSTEM_IDENTIFIER;
-		QueryWhereClause queryWhereClause = new QueryWhereClause();
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 		queryWhereClause.addCondition(new INClause(whereColumnName,objIDArr,sourceObjectName));
 
 		List list=null;
@@ -826,7 +822,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throws BizLogicException
 	{
 		String[] selectColumnName = {Constants.ACTIVITY_STATUS};
-		QueryWhereClause queryWhereClause = new QueryWhereClause();
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER,indetifier.toString(),sourceObjectName));
 
 		List<Object> list;
