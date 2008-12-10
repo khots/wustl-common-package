@@ -860,6 +860,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
+			logger.debug("Exception during insert operation", daoEx);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
 			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogic");
 		}
