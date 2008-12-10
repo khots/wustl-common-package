@@ -27,6 +27,25 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 {
 
 	public static boolean isTestForFail=false;
+	public String  formatMessage(Exception exception, String message)
+	{
+		return null;
+	}
+	public String  formatMessage(Exception excp,Connection connection)
+	{
+		return null;
+	}
+
+	public void setIsDefaultDAOFactory(Boolean isDefaultDAOFactory )
+	{
+		
+	}
+	
+	public Boolean getIsDefaultDAOFactory()
+	{
+		return null;
+	}
+	
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
 			boolean isAuditable) throws DAOException
 	{
