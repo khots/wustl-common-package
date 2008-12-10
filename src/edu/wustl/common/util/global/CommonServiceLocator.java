@@ -7,9 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import edu.wustl.common.util.XMLPropertyHandler;
-import edu.wustl.common.util.logger.Logger;
-
 
 /**
  * This class is a common service locator. Different parameter like application url,
@@ -21,7 +18,8 @@ public final class CommonServiceLocator
 	/**
 	 * logger Logger - Generic logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonServiceLocator.class);
+	private static org.apache.log4j.Logger logger =
+		org.apache.log4j.Logger.getLogger(CommonServiceLocator.class);
 
 	/**
 	 * object of class CommonServiceLocator.
@@ -50,7 +48,8 @@ public final class CommonServiceLocator
 	 *Here all the properties are set
 	 */
 	private CommonServiceLocator()
-	{	initProps();
+	{
+		initProps();
 	}
 
 	/**
@@ -67,11 +66,10 @@ public final class CommonServiceLocator
 	 */
 	private void initProps()
 	{
-		URL url = ClassLoader.getSystemResource("ApplicationResources.properties");
-
+		InputStream stream = CommonServiceLocator.class.getClassLoader()
+		.getResourceAsStream("ApplicationResources.properties");
 	    try
 		{
-	    	InputStream stream = url.openStream();
 			Properties props= new Properties();
 			props.load(stream);
 			setAppName(props);
@@ -137,14 +135,6 @@ public final class CommonServiceLocator
 	private void setPropDirPath()
 	{
 		String path = System.getProperty("app.propertiesFile");
-		try
-		{
-			XMLPropertyHandler.init(path);
-		}
-		catch(Exception exception)
-		{
-			logger.error("Not able to initialize directory path of property files.");
-		}
     	File propetiesDirPath = new File(path);
     	propDirPath = propetiesDirPath.getParent();
 	}
