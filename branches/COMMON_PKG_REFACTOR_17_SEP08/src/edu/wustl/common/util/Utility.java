@@ -891,4 +891,30 @@ public class Utility
 		return recordsPerPage;
 	}
 
+	/**
+	 * This method replace string.
+	 * This method is used in AutoCompleteTag.java and SimpleQueryInterfaceForm.java(SimpleQuery)
+	 * @param source source String
+	 * @param toReplace toReplace String
+	 * @param replacement replacement String
+	 * @return String.
+	 */
+	public static String replaceAll(String source, String toReplace, String replacement)
+	{
+		String sourceString = source;
+		int idx = sourceString.lastIndexOf(toReplace);
+		if (idx != -1)
+		{
+			StringBuffer ret = new StringBuffer(sourceString);
+			ret.replace(idx, idx + toReplace.length(), replacement);
+			idx = sourceString.lastIndexOf(toReplace, idx - 1);
+			while (idx != -1)
+			{
+				ret.replace(idx, idx + toReplace.length(), replacement);
+			}
+			sourceString = ret.toString();
+		}
+
+		return sourceString;
+	}
 }
