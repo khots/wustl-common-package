@@ -48,6 +48,14 @@ public class QueryParams
 	{
 		this.query = query;
 	}
+	
+	/**
+	 * @return the query
+	 */
+	public String getQuery()
+	{
+		return query;
+	}
 	/**
 	 * @return connection
 	 */
