@@ -489,7 +489,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param displayNameFields display Name Fields
 	 * @param valueField value Field
 	 * @param whereColumnName An array of field names.
-	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnCondition The comparison condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
 	 * @param separatorBetweenFields separator Between Fields
@@ -523,6 +523,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param sourceObjectName source Object Name
 	 * @param displayNameFields display Name Fields
 	 * @param valueField value Field
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnCondition The comparison condition for the field values.
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
 	 * @param separatorBetweenFields separator Between Fields
 	 * @return nameValuePairs.
 	 * @throws BizLogicException Generic BizLogic Exception
@@ -531,28 +535,22 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, String separatorBetweenFields) throws BizLogicException
 	{
-		
-		List nameValuePairs = new ArrayList();
-		
+		String[] selectColumnName = new String[displayNameFields.length + 1];
+		System.arraycopy(displayNameFields,0,selectColumnName,0,displayNameFields.length);
+		selectColumnName[displayNameFields.length] = valueField;
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 		try
 		{
-		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
-		String[] selectColumnName = new String[displayNameFields.length + 1];
-		for (int i = 0; i < displayNameFields.length; i++)
-		{
-			selectColumnName[i] = displayNameFields[i];
+			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
+					whereColumnValue,joinCondition);
 		}
-		selectColumnName[displayNameFields.length] = valueField;
-
-		
-		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
-				whereColumnValue,joinCondition);
-		
+		catch (DAOException exception)
+		{
+			logger.error("Not able to get list.", exception);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.getlist.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
 		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
-
-		NameValueBean nameValueBean;
-		Object[] columnArray = null;
 
 		/**
 		 * For each row in the result a vector will be created.Vector will contain all the columns
@@ -560,6 +558,23 @@ public class DefaultBizLogic extends AbstractBizLogic
 		 * If there is only one column in the result it will be set as the Name for the NameValueBean.
 		 * When more than one columns are present, a string representation will be set.
 		 */
+		List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
+		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
+		getNameValueList(separatorBetweenFields, nameValuePairs, results);
+		Collections.sort(nameValuePairs);
+		return nameValuePairs;
+	}
+
+	/**
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param nameValuePairs list to add attributes.
+	 * @param results results from database.
+	 */
+	private void getNameValueList(String separatorBetweenFields, List<NameValueBean> nameValuePairs,
+				List<Object> results)
+	{
+		NameValueBean nameValueBean;
+		Object[] columnArray;
 		if (results != null)
 		{
 			for (int i = 0; i < results.size(); i++)
@@ -570,51 +585,61 @@ public class DefaultBizLogic extends AbstractBizLogic
 				StringBuffer nameBuff = new StringBuffer();
 				if (columnArray != null)
 				{
-					for (int j = 0; j < columnArray.length - 1; j++)
-					{
-						if (columnArray[j] != null && (!columnArray[j].toString().equals("")))
-						{
-							tmpBuffer.add(columnArray[j]);
-						}
-					}
+					getTempBuffer(columnArray, tmpBuffer);
+					tmpObj = getName(separatorBetweenFields, tmpBuffer, nameBuff);
 					nameValueBean = new NameValueBean();
-
-					//create name data
-					if (tmpBuffer.size() == 1)//	only one column
-					{
-						tmpObj = tmpBuffer.get(0);
-						nameValueBean.setName(tmpObj);
-					}
-					else
-					// multiple columns
-					{
-						for (int j = 0; j < tmpBuffer.size(); j++)
-						{
-							nameBuff.append(tmpBuffer.get(j).toString());
-							if (j < tmpBuffer.size() - 1)
-							{
-								nameBuff.append(separatorBetweenFields);
-							}
-						}
-
-						//logger.debug("nameValueBean Name : : " + nameBuff.toString());
-						nameValueBean.setName(nameBuff.toString());
-					}
-
-					int valueID = columnArray.length - 1;
-					nameValueBean.setValue(columnArray[valueID].toString());
-
+					nameValueBean.setName(tmpObj);
+					nameValueBean.setValue(columnArray[columnArray.length - 1].toString());
 					nameValuePairs.add(nameValueBean);
 				}
 			}
 		}
-		Collections.sort(nameValuePairs);
-		}
-		catch(Exception exp)
+	}
+
+	/**
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param tmpBuffer buffer
+	 * @param nameBuff buffer
+	 * @return name for list
+	 */
+	private Object getName(String separatorBetweenFields, List tmpBuffer, StringBuffer nameBuff)
+	{
+		Object tmpObj;
+		//create name data
+		if (tmpBuffer.size() == 1)//	only one column
 		{
-			
+			tmpObj = tmpBuffer.get(0);
 		}
-		return nameValuePairs;
+		else
+		// multiple columns
+		{
+			for (int j = 0; j < tmpBuffer.size(); j++)
+			{
+				nameBuff.append(tmpBuffer.get(j).toString());
+				if (j < tmpBuffer.size() - 1)
+				{
+					nameBuff.append(separatorBetweenFields);
+				}
+			}
+
+			tmpObj=nameBuff.toString();
+		}
+		return tmpObj;
+	}
+
+	/**
+	 * @param columnArray column array
+	 * @param tmpBuffer buffer
+	 */
+	private void getTempBuffer(Object[] columnArray, List tmpBuffer)
+	{
+		for (int j = 0; j < columnArray.length - 1; j++)
+		{
+			if (columnArray[j] != null && (!columnArray[j].toString().equals("")))
+			{
+				tmpBuffer.add(columnArray[j]);
+			}
+		}
 	}
 
 	/**
