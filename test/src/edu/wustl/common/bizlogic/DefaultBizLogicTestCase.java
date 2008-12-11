@@ -135,6 +135,111 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	}
 
 	/**
+	 * Test case for
+	 * List retrieve(String sourceObjectName, String[] whereColumnName,
+			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition).
+	 */
+	public void testRetrive3()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			String []whereColumnName={"whereColumnName"};
+			String []whereColumnCondition={"="};
+			String []whereColumnValue={"whereColumnValue"};
+			String joinCondition="joinCondition";
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List<Object> list=defaultBizLogic.retrieve("SourceObjName",whereColumnName,whereColumnCondition,
+					whereColumnValue,joinCondition);
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
+	 * Test case for
+	 * List retrieve(String className, String colName, Object colValue).
+	 */
+	public void testRetrive4()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List<Object> list=defaultBizLogic.retrieve("SourceObjName","colName","colValue");
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	
+	/**
+	 * Test case for
+	 * List retrieve(String sourceObjectName).
+	 */
+	public void testRetrive5()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List<Object> list=defaultBizLogic.retrieve("SourceObjName");
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
+	 * Test case for
+	 * List retrieve(String sourceObjectName, String[] selectColumnName).
+	 */
+	public void testRetrive6()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			String []selectColumnName={"selectColumnName"};
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List<Object> list=defaultBizLogic.retrieve("SourceObjName",selectColumnName);
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Test case for
+	 * Object retrieve(String sourceObjectName, Long identifier).
+	 */
+	public void testRetrive7()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Object object=defaultBizLogic.retrieve("SourceObjName",Long.valueOf(1));
+			assertEquals("retObject",object.toString());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
 	 * Positive test case for insert(Object,DAO,SessionDataBean).
 	 */
 	public void testInsertWithSessionDataBean()
