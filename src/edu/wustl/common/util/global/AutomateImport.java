@@ -90,7 +90,7 @@ public class AutomateImport
 							.getTableNamesList(args[INDX_FOR_TABLE_NAMES_FILE]);
 			int size = tableNamesList.size();
 			String filePath = args[INDX_FOR_CSV_FILE_NAME].replaceAll("\\\\", "//");
-			if (Constants.ORACLE_DATABASE.equals(dbUtility.getDbType().toUpperCase()))
+			if (DatabaseUtility.ORACLE_DATABASE.equals(dbUtility.getDbType().toUpperCase()))
 			{
 				oracleTnsName = args[INDX_FOR_TNS_NAME];
 				String filePathCTL = args[INDX_FOR_CTL_FILE_PATH].replaceAll("\\\\", "//");
