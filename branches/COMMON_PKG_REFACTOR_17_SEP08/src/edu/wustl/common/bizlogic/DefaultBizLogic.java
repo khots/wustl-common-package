@@ -204,6 +204,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName	source object name
 	 * @param selectColumnName	An array of field names to be selected
+	 * @param whereColumnName column name used in where clause
+	 * @param whereColumnCondition conditions used in where clause.
+	 * @param whereColumnValue column values used in where clause.
+	 * @param joinCondition join condition used in  where clause.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @return list
 	 */
@@ -212,30 +216,33 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String joinCondition) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		
-
 		List<Object> list = null;
 		DAO dao = null;
 		try
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-		
 			QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
 					whereColumnValue,joinCondition);
-			
 			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
-			dao.closeSession();
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
 		}
 		finally
 		{
-			//TODO do the changes when exception changes get completed.
-			//dao.closeSession();
+			try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			}
 		}
 
 		return list;
@@ -450,7 +457,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param separatorBetweenFields separator Between Fields
 	 * @return nameValuePairs.
 	 * @throws BizLogicException Generic BizLogic Exception
-	 * @throws DAOException 
 	 */
 	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
