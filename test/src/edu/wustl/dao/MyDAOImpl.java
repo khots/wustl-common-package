@@ -32,6 +32,8 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * List to return from retrieve methods.
 	 */
 	public static List<Object> list= new ArrayList<Object>();
+	
+	public static String object="retObject";
 	/**
 	 * @return returns dummy list.
 	 * @throws DAOException  throw DAOException when isTestForFail=true
@@ -71,6 +73,25 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 			list.add(list3);
 		}
 		return (List<Object>)list;
+	}
+
+	public String getObject() throws DAOException
+	{
+		if(isTestForFail)
+		{
+			try
+			{
+				ErrorKey.init("-");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
+					DAOConstants.EXECUTE_QUERY_ERROR);
+		}
+		return object;
 	}
 	public String  formatMessage(Exception exception, String message)
 	{
@@ -192,8 +213,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName,
 			String columnName) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return getObject();
 	}
 
 	public void rollback() throws DAOException
