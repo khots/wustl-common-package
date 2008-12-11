@@ -2,6 +2,8 @@
 package edu.wustl.common.util.tag;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -127,186 +129,25 @@ public class PagenationTag extends TagSupport
 			mshowNext = true;
 			JspWriter out = pageContext.getOut();
 			//pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp)
-			if (getPageName().equals("SpreadsheetView.do"))
-			{
-				out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=98% >");
-			}
-			else
-			{
-				out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=38%>");
-			}
+			setTableTag(out);
 
-			if (pageNum > numLinks)
-			{
-				if (pageNum % numLinks != 0)
-				{
-					mpageLinkStart = ((pageNum / numLinks) * numLinks + 1);
-				}
-				else
-				{
-					mpageLinkStart = (pageNum - numLinks) + 1;
-				}
-			}
-			else
-			{
-				//For first time or for PageNum < 10.
-				mpageLinkStart = 1;
-			}
+			setMPageLinkStart();
 
 			// If user has opted to view all Records on this page.
-			if (numResultsPerPage == Integer.MAX_VALUE)
-			{
-				mpageLinkStart = 1;
-				mpageLinkEnd = 1;
-				mshowNext = false;
-				resultLowRange = 1;
-				resultHighRange = totalResults;
-			}
-			else
-			{
-				if ((totalResults - ((mpageLinkStart - 1) * numResultsPerPage)) >= numResultsPerPage
-						* numLinks)
-				{
-					mpageLinkEnd = mpageLinkStart + (numLinks - 1);
+			setRecordsToShow();
 
-				}
-				else
-				{
-					if ((totalResults - (mpageLinkStart * numResultsPerPage)) > 0)
-					{
-						if (totalResults % numResultsPerPage == 0)
-						{
-							mpageLinkEnd = (mpageLinkStart + (totalResults - (mpageLinkStart * numResultsPerPage))
-									/ numResultsPerPage);
-						}
-						else
-						{
-							mpageLinkEnd = (mpageLinkStart + (totalResults - (mpageLinkStart * numResultsPerPage))
-									/ numResultsPerPage) + 1;
-						}
-					}
-					else
-					{
-						mpageLinkEnd = (mpageLinkStart + (totalResults - (mpageLinkStart * numResultsPerPage))
-								/ numResultsPerPage);
-
-					}
-
-				}
-
-				if ((mpageLinkEnd * numResultsPerPage >= totalResults))
-				{
-					mshowNext = false;
-				}
-
-				resultLowRange = (pageNum - 1) * numResultsPerPage + 1;
-				if (totalResults - ((pageNum - 1) * numResultsPerPage) < numResultsPerPage)
-				{
-					resultHighRange = resultLowRange + totalResults
-							- ((pageNum - 1) * numResultsPerPage) - 1;
-				}
-				else
-				{
-					resultHighRange = resultLowRange + numResultsPerPage - 1;
-				}
-			}
-
-			 //pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp)
+			//pageName = SpreadsheetView for ViewResults page (SimpleSearchDataView.jsp)
 			if (!getPageName().equals("SpreadsheetView.do"))
 			{
 				out.println("<tr> <td class = \"formtextbg\" align=\"CENTER\">" + name + "</td>");
 			}
 
-			if (showPageSizeCombo)
-			{
-				// Showing combo for Records/page values.
+			showCombo(out);
+			setTotalResultsToTag(out);
 
-				String options = "";
+			setPageLink(out);
 
-				int [] possibleResultPerPageValues = putValueIfNotPresent(recordPerPageList,
-						numResultsPerPage);
-
-				for (int i = 0; i < possibleResultPerPageValues.length; i++)
-				{
-					int value = possibleResultPerPageValues[i];
-					String name = possibleResultPerPageValues[i] + "";
-
-					if (value == Integer.MAX_VALUE)
-					{
-						name = "All";
-					}
-
-					if (possibleResultPerPageValues[i] == numResultsPerPage)
-					{
-						options = options + "<option value=\"" + value
-								+ "\" selected=\"selected\" >" + name + "</option>";
-					}
-					else
-					{
-						options = options + "<option value=\"" + value + "\">" + name + "</option>";
-					}
-				}
-
-				out
-						.println("<td>Records Per Page <select name=\"recordPerPage\" size=\"1\" onChange=\"javascript:changeRecordPerPage("
-								+ (mpageLinkStart)
-								+ ",this,'"
-								+ pageName
-								+ "')\""
-								+ " >"
-								+ options + "</select> <td>");
-
-			}
-			//Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. Checking for zero records.
-			if (totalResults > 0)
-			{
-				out.println("<td  align = \"CENTER\" class = \"formtextbg\">" + resultLowRange
-						+ " - " + resultHighRange + " of " + totalResults + "</td>");
-			}
-			else
-			{
-				out.println("<td  align = \"CENTER\" class = \"formtextbg\">Showing Results " + "0"
-						+ " - " + "0" + " of " + "0" + "</td>");
-			}
-			//Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. end
-
-			if ((mpageLinkEnd) > numLinks)
-			{
-				out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + (mpageLinkStart - 1)
-						+ "," + numResultsPerPage + ",'" + prevPage + "','" + pageName + "')"
-						+ "\"> &lt;&lt;  </a></td>");
-			}
-			else
-			{
-
-				out.print("<td align=\"CENTER\">&nbsp;</td>");
-			}
-
-			int i = mpageLinkStart;
-			for (i = mpageLinkStart; i <= mpageLinkEnd; i++)
-			{
-				if (i != pageNum)
-				{
-					out.print("<td align=\"CENTER\"> <a href=\"javascript:send(" + i + ","
-							+ numResultsPerPage + ",'" + prevPage + "','" + pageName + "')" + "\">"
-							+ i + " </a></td>");
-				}
-				else
-				{
-					out.print("<td align=\"CENTER\">" + i + " </td>");
-				}
-			}
-			if (mshowNext)
-			{
-				out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + i + ","
-						+ numResultsPerPage + ",'" + prevPage + "','" + pageName + "')"
-						+ "\"> >>  </a> </td>");
-			}
-			else
-			{
-				out.print("<td align=\"CENTER\">&nbsp;</td>");
-			}
-			out.print("</tr></table>");
+			setPageNum(out);
 
 		}
 		catch (IOException ioe)
@@ -321,6 +162,258 @@ public class PagenationTag extends TagSupport
 	}
 
 	/**
+	 * @param out JspWriter
+	 * @throws IOException IO Exception
+	 */
+	private void setPageNum(JspWriter out) throws IOException
+	{
+		int count = mpageLinkStart;
+		for (count = mpageLinkStart; count <= mpageLinkEnd; count++)
+		{
+			if (count == pageNum)
+			{
+				out.print("<td align=\"CENTER\">" + count + " </td>");
+			}
+			else
+			{
+				out.print("<td align=\"CENTER\"> <a href=\"javascript:send(" + count + ","
+						+ numResultsPerPage + ",'" + prevPage + "','"
+						+ pageName + "')" + "\">" + count + " </a></td>");
+			}
+		}
+		if (mshowNext)
+		{
+			out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + count + ","
+					+ numResultsPerPage + ",'" + prevPage + "','" + pageName + "')"
+					+ "\"> >>  </a> </td>");
+		}
+		else
+		{
+			out.print("<td align=\"CENTER\">&nbsp;</td>");
+		}
+		out.print("</tr></table>");
+	}
+
+	/**
+	 * @param out JspWriter
+	 * @throws IOException IO Exception
+	 */
+	private void setPageLink(JspWriter out) throws IOException
+	{
+		if ((mpageLinkEnd) > numLinks)
+		{
+			out.print("<td align=\"CENTER\"><a href=\"javascript:send(" + (mpageLinkStart - 1)
+					+ "," + numResultsPerPage + ",'" + prevPage + "','"
+					+ pageName + "')" + "\"> &lt;&lt;  </a></td>");
+		}
+		else
+		{
+
+			out.print("<td align=\"CENTER\">&nbsp;</td>");
+		}
+	}
+
+	/**
+	 * @param out Jsp Writer
+	 * @throws IOException IO Exception.
+	 */
+	private void setTotalResultsToTag(JspWriter out) throws IOException
+	{
+		//Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. Checking for zero records.
+		if (totalResults > 0)
+		{
+			out.println("<td  align = \"CENTER\" class = \"formtextbg\">" + resultLowRange
+					+ " - " + resultHighRange + " of " + totalResults + "</td>");
+		}
+		else
+		{
+			out.println("<td  align = \"CENTER\" class = \"formtextbg\">Showing Results " + "0"
+					+ " - " + "0" + " of " + "0" + "</td>");
+		}
+		//Mandar 19-Apr-06 : 1697 :- Summary shows wrong data. end
+	}
+
+	/**
+	 * @param out JspWriter
+	 * @throws IOException IO Exception
+	 */
+	private void showCombo(JspWriter out) throws IOException
+	{
+		if (showPageSizeCombo)
+		{
+			// Showing combo for Records/page values.
+
+			String options = getOptions();
+
+			out
+					.println("<td>Records Per Page <select name=\"recordPerPage\" size=\"1\"" +
+							" onChange=\"javascript:changeRecordPerPage("
+							+ (mpageLinkStart)
+							+ ",this,'"
+							+ pageName
+							+ "')\""
+							+ " >"
+							+ options
+							+ "</select> <td>");
+
+		}
+	}
+
+	/**
+	 * @return options.
+	 */
+	private String getOptions()
+	{
+		StringBuffer options = new StringBuffer();
+
+		int[] possibleResultPerPageValues = putValueIfNotPresent(recordPerPageList,
+				numResultsPerPage);
+
+		for (int i = 0; i < possibleResultPerPageValues.length; i++)
+		{
+			int value = possibleResultPerPageValues[i];
+			String name = Integer.toString(possibleResultPerPageValues[i]);
+
+			if (value == Integer.MAX_VALUE)
+			{
+				name = "All";
+			}
+
+			if (possibleResultPerPageValues[i] == numResultsPerPage)
+			{
+				options.append("<option value=\"").append(value)
+				.append("\" selected=\"selected\" >").append(name).append("</option>");
+			}
+			else
+			{
+				options.append("<option value=\"").append(value)
+				.append("\">").append(name).append("</option>");
+			}
+		}
+		return options.toString();
+	}
+
+	/**
+	 * @param out JspWriter
+	 * @throws IOException IO Exception.
+	 */
+	private void setTableTag(JspWriter out) throws IOException
+	{
+		if (getPageName().equals("SpreadsheetView.do"))
+		{
+			out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=98% >");
+		}
+		else
+		{
+			out.println("<table class=\"black_ar\" border=0 bordercolor=#FFFFFF width=38%>");
+		}
+	}
+
+	/**
+	 * set Records To Show.
+	 */
+	private void setRecordsToShow()
+	{
+		if (numResultsPerPage == Integer.MAX_VALUE)
+		{
+			mpageLinkStart = 1;
+			mpageLinkEnd = 1;
+			mshowNext = false;
+			resultLowRange = 1;
+			resultHighRange = totalResults;
+		}
+		else
+		{
+			setMPageLinkEnd();
+
+			if ((mpageLinkEnd * numResultsPerPage >= totalResults))
+			{
+				mshowNext = false;
+			}
+			setResultRange();
+		}
+	}
+
+	/**
+	 * set Result Range.
+	 */
+	private void setResultRange()
+	{
+		resultLowRange = (pageNum - 1) * numResultsPerPage + 1;
+		if (totalResults - ((pageNum - 1) * numResultsPerPage) < numResultsPerPage)
+		{
+			resultHighRange = resultLowRange + totalResults
+					- ((pageNum - 1) * numResultsPerPage) - 1;
+		}
+		else
+		{
+			resultHighRange = resultLowRange + numResultsPerPage - 1;
+		}
+	}
+
+	/**
+	 * set MPage Link End.
+	 */
+	private void setMPageLinkEnd()
+	{
+		if ((totalResults - ((mpageLinkStart - 1) * numResultsPerPage)) >= numResultsPerPage
+				* numLinks)
+		{
+			mpageLinkEnd = mpageLinkStart + (numLinks - 1);
+
+		}
+		else
+		{
+			if ((totalResults - (mpageLinkStart * numResultsPerPage)) > 0)
+			{
+				if (totalResults % numResultsPerPage == 0)
+				{
+					mpageLinkEnd = (mpageLinkStart
+							+ (totalResults - (mpageLinkStart * numResultsPerPage))
+							/ numResultsPerPage);
+				}
+				else
+				{
+					mpageLinkEnd = (mpageLinkStart
+							+ (totalResults - (mpageLinkStart * numResultsPerPage))
+							/ numResultsPerPage) + 1;
+				}
+			}
+			else
+			{
+				mpageLinkEnd = (mpageLinkStart
+						+ (totalResults - (mpageLinkStart * numResultsPerPage))
+						/ numResultsPerPage);
+
+			}
+
+		}
+	}
+
+	/**
+	 * set MPage Link Start.
+	 */
+	private void setMPageLinkStart()
+	{
+		if (pageNum > numLinks)
+		{
+			if (pageNum % numLinks == 0)
+			{
+				mpageLinkStart = (pageNum - numLinks) + 1;
+			}
+			else
+			{
+				mpageLinkStart = ((pageNum / numLinks) * numLinks + 1);
+			}
+		}
+		else
+		{
+			//For first time or for PageNum < 10.
+			mpageLinkStart = 1;
+		}
+	}
+
+	/**
 	 * This method put Value If Not Present.
 	 * @param originalArray originalArray
 	 * @param value value
@@ -328,33 +421,52 @@ public class PagenationTag extends TagSupport
 	 */
 	private int[] putValueIfNotPresent(int[] originalArray, int value)
 	{
+		int flag = 0;
+		int[] newArray = new int[originalArray.length + 1];
+		flag = isValuePresent(originalArray, value);
+		if (flag == 0)
+		{
+			// array doesn't containe value, hence define new array.
+			int counter = 0;
+			for (; counter < originalArray.length && value > originalArray[counter]; counter++)
+			{
+				// copying all elements less than value.
+				newArray[counter] = originalArray[counter];
+			}
+
+			newArray[counter++] = value;
+			for (; counter < newArray.length; counter++) // moving array elements 1 position next.
+			{
+				newArray[counter] = originalArray[counter - 1];
+			}
+		}
+		else
+		{
+			newArray = originalArray;
+		}
+		return newArray;
+
+	}
+
+	/**
+	 * Check is Value Present.
+	 * @param originalArray original Array.
+	 * @param value value
+	 * @return flag 1 if present else 0.
+	 */
+	private int isValuePresent(int[] originalArray, int value)
+	{
+		int flag = 0;
 		for (int i = 0; i < originalArray.length; i++)
 		{
 			//if array contains the value, then return same array.
 			if (value == originalArray[i])
 			{
-				return originalArray;
+				//return originalArray;
+				flag = 1;
 			}
 		}
-
-		 // array doesn't containe value, hence define new array.
-		int[] newArray = new int[originalArray.length + 1];
-		int i = 0;
-
-		for (; i < originalArray.length && value > originalArray[i]; i++)
-		{
-			// copying all elements less than value.
-			newArray[i] = originalArray[i];
-		}
-
-		newArray[i++] = value;
-
-		for (; i < newArray.length; i++) // moving array elements 1 position next.
-		{
-			newArray[i] = originalArray[i - 1];
-		}
-		return newArray;
-
+		return flag;
 	}
 
 	/**
@@ -377,7 +489,7 @@ public class PagenationTag extends TagSupport
 		catch (NumberFormatException nfe)
 		{
 			this.pageNum = 1;
-			nfe.printStackTrace();
+			logger.error(nfe.getMessage(), nfe);
 		}
 
 	}
@@ -433,7 +545,9 @@ public class PagenationTag extends TagSupport
 	 */
 	public void setSelectedOrgs(String[] selectedOrgs)
 	{
-		this.selectedOrgs = selectedOrgs;
+		List<String> selectedOrgsList = Arrays.asList(selectedOrgs);
+		String[] selectedOrgArray = new String[selectedOrgsList.size()];
+		this.selectedOrgs = selectedOrgsList.toArray(selectedOrgArray);
 	}
 
 	/**
