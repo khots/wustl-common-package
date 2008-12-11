@@ -339,7 +339,36 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName) throws BizLogicException
 	{
-		return retrieve(sourceObjectName, null, null, null, null);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao=null;
+		List<Object> list = null;
+		try
+		{
+			dao = daofactory.getDAO();
+			dao.openSession(null);
+			list = dao.retrieve(sourceObjectName);
+		}
+		catch (DAOException daoExp)
+		{
+			logger.error("not able to retrieve.", daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				logger.error("not able close the session.", exception);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			}
+		}
+
+		return list;
 	}
 
 	/**
@@ -351,7 +380,36 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName, String[] selectColumnName) throws BizLogicException
 	{
-		return retrieve(sourceObjectName, selectColumnName, null, null, null, null);
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		DAO dao=null;
+		List<Object> list = null;
+		try
+		{
+			dao = daofactory.getDAO();
+			dao.openSession(null);
+			list = dao.retrieve(sourceObjectName, selectColumnName);
+		}
+		catch (DAOException daoExp)
+		{
+			logger.error("not able to retrieve.", daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+		}
+		finally
+		{
+			try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				logger.error("not able close the session.", exception);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			}
+		}
+
+		return list;
 	}
 
 	/**
@@ -366,20 +424,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
-
 		Object object = null;
-
 		try
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-
 			object = dao.retrieve(sourceObjectName, identifier);
-			//dao.commit();
 		}
 		catch (DAOException daoExp)
 		{
 			logger.error(daoExp.getMessage(), daoExp);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
+			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
 		}
 		finally
 		{
