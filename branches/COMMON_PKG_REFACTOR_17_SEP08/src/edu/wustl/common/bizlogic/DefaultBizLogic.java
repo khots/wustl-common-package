@@ -210,6 +210,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param joinCondition join condition used in  where clause.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @return list
+	 * @deprecated This method has been deprecated with new DAO implementation.
+	 *  instead of this method retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause)
+			method can be used.
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
