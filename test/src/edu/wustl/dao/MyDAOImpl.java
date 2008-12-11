@@ -32,7 +32,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * List to return from retrieve methods.
 	 */
 	public static List<Object> list= new ArrayList<Object>();
-	
+
 	public static String object="retObject";
 	/**
 	 * @return returns dummy list.
@@ -56,18 +56,9 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		}
 		else
 		{
-			List<String> list1= new ArrayList<String>();
-			list1.add("1");
-			list1.add("John");
-			list1.add("Enterprise");
-			List<String> list2= new ArrayList<String>();
-			list2.add("2");
-			list2.add("Raghu");
-			list2.add("IBM");
-			List<String> list3= new ArrayList<String>();
-			list3.add("3");
-			list3.add("Bame");
-			list3.add("Enterprise");
+			Object []list1= {"1","John","Enterprise"};
+			Object []list2= {"2","Raghu","IBM"};
+			Object []list3= {"3","Bame","Enterprise"};
 			list.add(list1);
 			list.add(list2);
 			list.add(list3);
