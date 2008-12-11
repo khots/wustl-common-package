@@ -34,6 +34,90 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 
 	/**
 	 * Positive test for
+	 * Object retrieveAttribute(Class objClass, Long identifier, String attributeName).
+	 */
+	public void testRetrieveAttribute()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Object object=defaultBizLogic.retrieveAttribute("".getClass(),
+					Long.valueOf(0),"attributeName");
+			assertEquals("retObject",object.toString());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test for
+	 * Object retrieveAttribute(Class objClass, Long identifier, String attributeName).
+	 */
+	public void testFailRetrieveAttribute()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Object object=defaultBizLogic.retrieveAttribute("".getClass(),
+					Long.valueOf(0),"attributeName");
+			fail("Negative test case: Should throw BizLogicException");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case:Thrown BizLogicException",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Positive test for
+	 * Object retrieveAttribute(Class objClass, Long identifier, String attributeName).
+	 */
+	public void testRetrieveAttributeByClassName()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Object object=defaultBizLogic.retrieveAttribute("edu.wustl.common.beans.NameValueBean",
+					Long.valueOf(0),"attributeName");
+			assertEquals("retObject",object.toString());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test for
+	 * Object retrieveAttribute(Class objClass, Long identifier, String attributeName).
+	 */
+	public void testFailRetrieveAttributeByClassName()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Object object=defaultBizLogic.retrieveAttribute("abc".getClass(),
+					Long.valueOf(0),"attributeName");
+			fail("Negative test case: Should throw BizLogicException");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case:Thrown BizLogicException",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Positive test for
 	 * List retrieve(String sourceObjectName, String[] selectColumnName,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition).
