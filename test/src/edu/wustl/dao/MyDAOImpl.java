@@ -3,6 +3,7 @@ package edu.wustl.dao;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,51 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 {
 
 	public static boolean isTestForFail=false;
+
+	/**
+	 * List to return from retrieve methods.
+	 */
+	public static List<Object> list= new ArrayList<Object>();
+	/**
+	 * @return returns dummy list.
+	 * @throws DAOException  throw DAOException when isTestForFail=true
+	 */
+	public static List<Object> getList() throws DAOException
+	{
+		if(isTestForFail)
+		{
+			try
+			{
+				ErrorKey.init("-");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
+					DAOConstants.EXECUTE_QUERY_ERROR);
+		}
+		else
+		{
+			List<String> list1= new ArrayList<String>();
+			list1.add("1");
+			list1.add("John");
+			list1.add("Enterprise");
+			List<String> list2= new ArrayList<String>();
+			list2.add("2");
+			list2.add("Raghu");
+			list2.add("IBM");
+			List<String> list3= new ArrayList<String>();
+			list3.add("3");
+			list3.add("Bame");
+			list3.add("Enterprise");
+			list.add(list1);
+			list.add(list2);
+			list.add(list3);
+		}
+		return (List<Object>)list;
+	}
 	public String  formatMessage(Exception exception, String message)
 	{
 		return null;
@@ -111,8 +157,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public void openSession(SessionDataBean sessionDataBean) throws DAOException
 	{
-		// TODO Auto-generated method stub
-
+		//not to do anything
 	}
 
 	public List<Object> retrieve(String sourceObjectName) throws DAOException
@@ -137,8 +182,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return (List<Object>)getList();
 	}
 
 	public List<Object> retrieve(String sourceObjectName, String whereColumnName,
