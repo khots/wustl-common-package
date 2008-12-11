@@ -162,21 +162,18 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public List<Object> retrieve(String sourceObjectName) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return (List<Object>)getList();
 	}
 
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName)
 			throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return (List<Object>)getList();
 	}
 
 	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "retObject";
 	}
 
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
