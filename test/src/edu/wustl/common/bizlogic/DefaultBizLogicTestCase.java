@@ -32,6 +32,21 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 */
 	private static final  IDAOFactory DAO_FACTORY = DAOConfigFactory.getInstance().getDAOFactory(APP_NAME);
 
+	public void testGetList()
+	{
+		try
+		{
+			String []displayNameFields={"displayNameFields"};
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List list=defaultBizLogic.getList("sourceObjectName",displayNameFields,"valueField",true);
+			assertEquals(MyDAOImpl.list.size()+1,list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
 	/**
 	 * Positive test for
 	 * Object retrieveAttribute(Class objClass, Long identifier, String attributeName).
