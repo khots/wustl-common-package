@@ -239,16 +239,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				logger.error("not able close the session.", exception);
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		return list;
@@ -281,16 +272,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				logger.error("not able close the session.", exception);
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		return list;
@@ -356,16 +338,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				logger.error("not able close the session.", exception);
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		return list;
@@ -397,16 +370,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				logger.error("not able close the session.", exception);
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		return list;
@@ -439,15 +403,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		return object;
@@ -1017,18 +973,27 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				logger.error("Not able to close session.", exception);
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			closeSession(dao);
 		}
 		return attribute;
+	}
+
+	/**
+	 * @param dao DAO object
+	 * @throws BizLogicException :Generic BizLogic Exception- session not closed.
+	 */
+	private void closeSession(DAO dao) throws BizLogicException
+	{
+		try
+		{
+			dao.closeSession();
+		}
+		catch (DAOException exception)
+		{
+			logger.error("Not able to close DAO session.", exception);
+			ErrorKey errorKey=ErrorKey.getErrorKey("biz.closesession.error");
+			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+		}
 	}
 
 	/**
