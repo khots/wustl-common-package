@@ -209,7 +209,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param whereColumnValue column values used in where clause.
 	 * @param joinCondition join condition used in  where clause.
 	 * @throws BizLogicException Generic BizLogic Exception
-	 * @return list
+	 * @return list retrieved objects list
 	 * @deprecated This method has been deprecated with new DAO implementation.
 	 *  instead of this method retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause)
@@ -233,6 +233,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			logger.error("not able to retrieve.", daoExp);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
 			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
 		}
@@ -244,6 +245,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			catch (DAOException exception)
 			{
+				logger.error("not able close the session.", exception);
 				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
 				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
 			}
@@ -251,14 +253,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		return list;
 	}
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param sourceObjectName :source object name
+	 * @param selectColumnName :An array of field names to be selected
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * @return list :retrieved objects list
+	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
-
 		List<Object> list = null;
-
 		try
 		{
 			dao = daofactory.getDAO();
@@ -267,7 +275,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
+			logger.error("not able to retrieve.", daoExp);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
 			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
 		}
@@ -279,6 +287,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			catch (DAOException exception)
 			{
+				logger.error("not able close the session.", exception);
 				ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
 				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
 			}
