@@ -82,6 +82,16 @@ public class DatabaseUtility
 	private static final int  INDX_DB_DRIVER=6;
 
 	/**
+	 * For mysql database.
+	 */
+	public static final String MYSQL_DATABASE="MYSQL";
+
+	/**
+	 * For oracle database.
+	 */
+	public static final String ORACLE_DATABASE="ORACLE";
+
+	/**
 	 * @return the dbServerName
 	 */
 	public String getDbServerNname()
@@ -204,12 +214,12 @@ public class DatabaseUtility
 		Connection connection = null;
 		Class.forName(dbDriver);
 		String url = TextConstants.EMPTY_STRING;
-		if (Constants.MYSQL_DATABASE.equalsIgnoreCase(dbType))
+		if (MYSQL_DATABASE.equalsIgnoreCase(dbType))
 		{
 			url = "jdbc:mysql://" + dbServerName + ":" + dbServerPortNumber + "/"
 					+ dbName;
 		}
-		if (Constants.ORACLE_DATABASE.equalsIgnoreCase(dbType))
+		if (ORACLE_DATABASE.equalsIgnoreCase(dbType))
 		{
 			url = "jdbc:oracle:thin:@" + dbServerName + ":" + dbServerPortNumber
 					+ ":" + dbName;
