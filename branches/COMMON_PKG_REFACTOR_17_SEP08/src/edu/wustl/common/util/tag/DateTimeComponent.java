@@ -7,6 +7,7 @@
 package edu.wustl.common.util.tag;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Calendar;
 
 import javax.servlet.ServletRequest;
@@ -37,92 +38,92 @@ public class DateTimeComponent extends TagSupport
 	/**
 	 * Name of the text field for the date component.
 	 */
-	String name;
+	private String name;
 
 	/**
 	 * Value of the text field for the date component.
 	 */
-	String value;
+	private String value;
 
 	/**
 	 * Id of the text field for the date component.
 	 */
-	String id;
+	private String id;
 
 	/**
 	 * Style class for the text field for the date component.
 	 */
-	String styleClass;
+	private String styleClass = "";
 
 	/**
 	 * Size of the text field for the date component.
 	 */
-	Integer size;
+	private Integer size = Integer.valueOf(10);
 
 	/**
 	 * disabled property for the text field of the date component.
 	 */
-	Boolean disabled;
+	private Boolean disabled = Boolean.FALSE;;
 
 	/**
 	 * Month of year of which the calendar is to be displayed.
 	 */
-	Integer month;
+	private Integer month;
 
 	/**
 	 * Day of month to be selected in the calendar.
 	 */
-	Integer day;
+	private Integer day;
 
 	/**
 	 * Year of date of which the calendar is to be displayed.
 	 */
-	Integer year;
+	private Integer year;
 
 	/**
 	 * Date pattern to be used in displaying date.
 	 */
-	String pattern;
+	private String pattern = "MM-dd-yyyy";;
 
 	/**
 	 * Name of the html form which will contain the date component.
 	 */
-	String formName;
+	private String formName;
 
 	/**
 	 * Start year for the year drop down combo box.
 	 */
-	Integer startYear;
+	private Integer startYear = Integer.valueOf(1900);;
 
 	/**
 	 * End year for the year drop down combo box.
 	 */
-	Integer endYear;
+	private Integer endYear = Integer.valueOf(2020);;
 
 	/**
 	 * Tooltip to be displayed on the calendar icon.
 	 */
-	String iconComment;
+	private String iconComment = "This is a Calendar";;
 
 	/**
 	 * Boolean to decide whether to display time controls.
 	 */
-	Boolean displayTime;
+	private Boolean displayTime = Boolean.FALSE;;
 
 	/**
 	 * Hours to be displayed as selected in the drop down combo for hours.
 	 */
-	Integer hour;
+	private Integer hour = Integer.valueOf(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));;
 
 	/**
 	 * Minutes to be displayed as selected in the drop down combo for minutes.
 	 */
-	Integer minutes;
+	private Integer minutes = Integer.valueOf(Calendar.getInstance().get(Calendar.MINUTE));;
 
 	/**
 	 * Javascript function to be called on click of calendar image.
 	 */
-	String onClickImage;
+	private String onClickImage;
 
 	// ------------ SETTER Methods ----------------------------------
 
@@ -325,47 +326,81 @@ public class DateTimeComponent extends TagSupport
 		{
 			errors = new ActionErrors();
 		}
-
 		// validations for name
-		if (Utility.isNull(name))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is null"));
-			result = false;
-		}
-		else if (name.trim().length() == 0)
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is empty"));
-			result = false;
-		}
-
+		result = validateName(result, errors);
 		//validations for id
-		if (Utility.isNull(id))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is null"));
-			result = false;
-		}
-		else if (id.trim().length() == 0)
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is empty"));
-			result = false;
-		}
+		result = validateId(result, errors);
 
 		//validations for formName
-		if (Utility.isNull(formName))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is null"));
-			result = false;
-		}
-		else if (formName.trim().length() == 0)
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is empty"));
-			result = false;
-		}
+		result = validateFormName(result, errors);
 
 		//setting errors in request
 		request.setAttribute(Globals.ERROR_KEY, errors);
 
 		return result;
+	}
+
+	/**
+	 * @param result result
+	 * @param errors ActionErrors
+	 * @return result
+	 */
+	private boolean validateFormName(boolean result, ActionErrors errors)
+	{
+		boolean reslt = result;
+		if (Utility.isNull(formName))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is null"));
+			reslt = false;
+		}
+		else if ("".equals(formName.trim()))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is empty"));
+			reslt = false;
+		}
+		return reslt;
+	}
+
+	/**
+	 * @param result result
+	 * @param errors ActionErrors
+	 * @return result
+	 */
+	private boolean validateId(boolean result, ActionErrors errors)
+	{
+		boolean reslt = result;
+		if (Utility.isNull(id))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is null"));
+			reslt = false;
+		}
+		else if ("".equals(id.trim()))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is empty"));
+			reslt = false;
+		}
+		return reslt;
+	}
+
+	/**
+	 * @param result result
+	 * @param errors ActionErrors
+	 * @return result
+	 */
+	private boolean validateName(boolean result, ActionErrors errors)
+	{
+		boolean reslt = result;
+		if (Utility.isNull(name))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is null"));
+			reslt = false;
+		}
+		else if ("".equals(name.trim()))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is empty"));
+			reslt = false;
+		}
+		return reslt;
 	}
 
 	//method to generate the required output.
@@ -375,19 +410,48 @@ public class DateTimeComponent extends TagSupport
 	 */
 	private String generateOutput() throws IOException
 	{
-
-		String output = "<INPUT name='" + name + "' id = '" + id + "' value='" + value
-				+ "' class=\"" + styleClass + "\" size=\"10\"";
+		StringBuffer output = new StringBuffer();
+		String inputTag = "<INPUT name=\"{0}\" id = \"{1}\" value=\"{2}\" class=\"{3}\" size=\"{4}\"{5}";
+		String isDisabled = ">";
 		if (disabled.booleanValue())
 		{
-			output = output + " disabled=\"disabled\">";
+			isDisabled = " disabled=\"disabled\">";
+		}
+		Object[] inputTagArgs = {name, id, value, styleClass, size,isDisabled};
+		output.append(MessageFormat.format(inputTag, inputTagArgs));
+		String onClickFunction = getOnClickFunction();
+		String anchorTag = "<A onclick=\"{0}\" href=\"javascript://\"><span valign=middle >"
+				+ "<IMG alt=\"{1}\" src=\"images/calendar.gif\" hspace=0"
+				+ " vspace=0 align=top height=22 width=24 border=0></span></A>";
+		Object[] anchorTagArgs = {onClickFunction, iconComment};
+		output.append(MessageFormat.format(anchorTag, anchorTagArgs));
+		String divTag = "<DIV id=slcalcod{0} style=\"Z-INDEX: 10; LEFT: 100px;"
+				+ " VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
+		Object[] divTagArgs = {id};
+		output.append(MessageFormat.format(divTag, divTagArgs));
+		output.append("<SCRIPT>");
+		if (displayTime.booleanValue())
+		{
+			String timeCalender = "printTimeCalendar(\"{0}\",{1},{2},{3},{4},{5});";
+			Object[] timeCalenderArgs = {id, day, month, year, hour, minutes};
+			output.append(MessageFormat.format(timeCalender, timeCalenderArgs));
 		}
 		else
 		{
-			output = output + ">";
+			String calender = "printCalendar(\"{0}\",{1},{2},{3});";
+			Object[] calenderArgs = {id, day, month, year};
+			output.append(MessageFormat.format(calender, calenderArgs));
 		}
-		String onClickFunction = "";
+		output.append("</SCRIPT></DIV>");
+		return output.toString();
+	}
 
+	/**
+	 * @return onClickFunction.
+	 */
+	private String getOnClickFunction()
+	{
+		String onClickFunction = "";
 		/**
 		 * Changes done by Jitendra to fix the bug if two DateTimeComponent included in the same jsp.
 		 * So to fix this bug, now we are passing id attribute to showCalendar, printCalendar and
@@ -403,32 +467,7 @@ public class DateTimeComponent extends TagSupport
 		{
 			onClickFunction = onClickImage;
 		}
-		output = output + "<A onclick=\"" + onClickFunction + "\" href=\"javascript://\">";
-		output = output
-				+ "<span valign=middle ><IMG alt=\""
-				+ iconComment
-				+ "\" src=\"images/calendar.gif\" hspace=0 vspace=0 align=top height=22 width=24 border=0></span>";
-		output = output + "</A>";
-
-		output = output
-				+ "<DIV id=slcalcod"
-				+ id
-				+ " style=\"Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
-		output = output + "<SCRIPT>";
-
-		if (displayTime.booleanValue())
-		{
-			output = output + "printTimeCalendar('" + id + "'," + day + "," + month + "," + year
-					+ "," + hour + "," + minutes + ");";
-		}
-		else
-		{
-			output = output + "printCalendar('" + id + "'," + day + "," + month + "," + year + ");";
-		}
-		output = output + "</SCRIPT>";
-		output = output + "</DIV>";
-
-		return output;
+		return onClickFunction;
 	}
 
 	/**
@@ -440,74 +479,43 @@ public class DateTimeComponent extends TagSupport
 		{
 			value = "";
 		}
-		if (value.trim().length() > 0)
+		Integer specimenYear = 0;
+		Integer specimenMonth = 0;
+		Integer specimenDay = 0;
+		if (!"".equals(value.trim()))
 		{
-			Integer specimenYear = Integer.valueOf(Utility.getYear(value));
-			Integer specimenMonth = Integer.valueOf(Utility.getMonth(value));
-			Integer specimenDay = Integer.valueOf(Utility.getDay(value));
-			day = specimenDay.intValue();
-			month = specimenMonth.intValue();
-			year = specimenYear.intValue();
-
+			specimenYear = Integer.valueOf(Utility.getYear(value));
+			specimenMonth = Integer.valueOf(Utility.getMonth(value));
+			specimenDay = Integer.valueOf(Utility.getDay(value));
 		}
+		initiializeMonthDayYear(specimenYear, specimenMonth, specimenDay);
+	}
 
-		if (Utility.isNull(month))
+	/**
+	 * This method initiialize Month Day Year.
+	 * @param specimenYear specimen Year
+	 * @param specimenMonth specimen Month
+	 * @param specimenDay specimen Day.
+	 */
+	private void initiializeMonthDayYear(Integer specimenYear, Integer specimenMonth,
+			Integer specimenDay)
+	{
+		day = specimenDay.intValue();
+		month = specimenMonth.intValue();
+		year = specimenYear.intValue();
+
+		if (month == 0)
 		{
 			month = Integer.valueOf((Calendar.getInstance().get(Calendar.MONTH)) + 1);
 		}
-		if (Utility.isNull(day))
+		if (day == 0)
 		{
 			day = Integer.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 		}
-		if (Utility.isNull(year))
+		if (year == 0)
 		{
 			year = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 		}
-		if (Utility.isNull(pattern))
-		{
-			pattern = "MM-dd-yyyy";
-		}
-		if (Utility.isNull(displayTime))
-		{
-			displayTime = Boolean.FALSE;
-		}
-		if (Utility.isNull(hour))
-		{
-			hour = Integer.valueOf(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-		}
-		if (Utility.isNull(minutes))
-		{
-			minutes = Integer.valueOf(Calendar.getInstance().get(Calendar.MINUTE));
-		}
-		if (Utility.isNull(startYear))
-		{
-			startYear = Integer.valueOf(1900);
-		}
-		if (Utility.isNull(endYear))
-		{
-			endYear = Integer.valueOf(2020);
-		}
-		if (Utility.isNull(iconComment))
-		{
-			iconComment = "This is a Calendar";
-		}
-		if (Utility.isNull(value))
-		{
-			value = "";
-		}
-		if (Utility.isNull(styleClass))
-		{
-			styleClass = "";
-		}
-		if (Utility.isNull(size))
-		{
-			size = Integer.valueOf(15);
-		}
-		if (Utility.isNull(disabled))
-		{
-			disabled = Boolean.FALSE;
-		}
-
 	}
 
 	/**
@@ -523,6 +531,5 @@ public class DateTimeComponent extends TagSupport
 		//	obj.onClickImage ="f1()";
 		obj.initializeParameters();
 		obj.generateOutput();
-
 	}
 }

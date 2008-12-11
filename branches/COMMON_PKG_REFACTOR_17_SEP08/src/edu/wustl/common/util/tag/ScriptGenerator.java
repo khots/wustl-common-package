@@ -41,7 +41,8 @@ public final class ScriptGenerator
 	{
 		StringBuffer returner = new StringBuffer(117);
 		returner
-				.append("<script language=\"JavaScript\" type=\"text/javascript\"> \n var outerMostDataTable = new Hashtable(); \n </script>\n");
+				.append("<script language=\"JavaScript\" type=\"text/javascript\">" +
+						" \n var outerMostDataTable = new Hashtable(); \n </script>\n");
 		return returner.toString();
 	}
 
@@ -53,22 +54,26 @@ public final class ScriptGenerator
 	 */
 	public static String getJSEquivalentFor(Map dataMap, String rowNum)
 	{
-		String returner = "<script language=\"JavaScript\" type=\"text/javascript\"> \n";
-		if (dataMap == null || dataMap.size() == 0)
+		StringBuffer returner = new StringBuffer(
+				"<script language=\"JavaScript\" type=\"text/javascript\"> \n");
+		if (dataMap == null || dataMap.isEmpty())
 		{
-			returner += "</script>\n";
-			return returner;
+			returner.append("</script>\n");
 		}
-		int mapDepth = depthOfMap(dataMap);
-		for (int i = 0; i <= mapDepth; i++)
+		else
 		{
-			returner += "var dataTable_" + rowNum + "_" + (i + 1) + "; \n";
+			int mapDepth = depthOfMap(dataMap);
+			for (int i = 0; i <= mapDepth; i++)
+			{
+				returner.append("var dataTable_").append(rowNum).append('_').append((i + 1))
+						.append("; \n");
+			}
+			returner.append((String) getVarInStringForm(dataMap, 0, "", rowNum));
+			returner.append('\n');
+			returner.append("outerMostDataTable.put(\"").append(rowNum).append("\",dataTable_")
+					.append(rowNum).append("_1); \n</script>\n");
 		}
-		returner += (String) getVarInStringForm(dataMap, 0, "", rowNum);
-		returner += "\n";
-		returner += "outerMostDataTable.put(\"" + rowNum + "\",dataTable_" + rowNum + "_1); \n";
-		returner += "</script>\n";
-		return returner;
+		return returner.toString();
 	}
 
 	/**
@@ -118,47 +123,77 @@ public final class ScriptGenerator
 			String rowNumber)
 	{
 		int depth = depthval;
-		String returner = "";
-		String varName = "dataTable_" + rowNumber + "_";
 		depth++;
-
+		StringBuffer returner = new StringBuffer();
 		if (obj instanceof Map)
 		{
-			Map dMap = (Map) obj;
-			returner += varName + depth + " = new Hashtable(); \n";
-
-			Set keySet = dMap.keySet();
-			Object[] keySetObj = keySet.toArray();
-			for (int i = 0; i < keySetObj.length; i++)
-			{
-				Object valObj = dMap.get(keySetObj[i]);
-				//String kValForNext = keySetObj[i].toString();
-				NameValueBean nvb = (NameValueBean) keySetObj[i];
-				String kValForNext = nvb.getValue();
-				returner += getVarInStringForm(valObj, depth, kValForNext, rowNumber);
-
-			}
-			if (!keyValue.equals(""))
-			{
-				returner += varName + (depth - 1) + ".put(\"" + keyValue + "\"," + varName + depth
-						+ "); \n";
-			}
-
+			returner = getMapReturner(obj, keyValue, rowNumber, depth);
 		}
 		else if (obj instanceof List)
 		{
-			List dList = (List) obj;
-
-			returner += varName + depth + " = new Array(); \n";
-			for (int i = 0; i < dList.size(); i++)
-			{
-				NameValueBean nvb = (NameValueBean) dList.get(i);
-				returner += varName + depth + "[" + i + "] = " + nvb.getValue() + "; \n";
-			}
-			returner += varName + (depth - 1) + ".put(\"" + keyValue + "\"," + varName + depth
-					+ "); \n";
+			returner = getListReturner(obj, keyValue, rowNumber, depth);
 		}
 
+		return returner.toString();
+	}
+
+	/**
+	 * @param obj Object
+	 * @param keyValue key Value.
+	 * @param rowNumber row Number.
+	 * @param depth depth.
+	 * @return returner.
+	 */
+	private static StringBuffer getListReturner(Object obj, String keyValue, String rowNumber,
+			int depth)
+	{
+		StringBuffer returner = new StringBuffer();
+		String varName = "dataTable_" + rowNumber + "_";
+		List dList = (List) obj;
+
+		returner.append(varName).append(depth).append(" = new Array(); \n");
+		for (int i = 0; i < dList.size(); i++)
+		{
+			NameValueBean nvb = (NameValueBean) dList.get(i);
+			returner.append(varName).append(depth).append('[').append(i).append("] = ").append(
+					nvb.getValue()).append("; \n");
+		}
+		returner.append(varName).append((depth - 1)).append(".put(\"").append(keyValue).append(
+				"\",").append(varName).append(depth).append("); \n");
+		return returner;
+	}
+
+	/**
+	 * @param obj Object
+	 * @param keyValue key Value
+	 * @param rowNumber row Number
+	 * @param depth depth
+	 * @return returner.
+	 */
+	private static StringBuffer getMapReturner(Object obj, String keyValue, String rowNumber,
+			int depth)
+	{
+		StringBuffer returner = new StringBuffer();
+		String varName = "dataTable_" + rowNumber + "_";
+		Map dMap = (Map) obj;
+		returner.append(varName).append(depth).append(" = new Hashtable(); \n");
+
+		Set keySet = dMap.keySet();
+		Object[] keySetObj = keySet.toArray();
+		for (int i = 0; i < keySetObj.length; i++)
+		{
+			Object valObj = dMap.get(keySetObj[i]);
+			//String kValForNext = keySetObj[i].toString();
+			NameValueBean nvb = (NameValueBean) keySetObj[i];
+			String kValForNext = nvb.getValue();
+			returner.append(getVarInStringForm(valObj, depth, kValForNext, rowNumber));
+
+		}
+		if (!"".equals(keyValue))
+		{
+			returner.append(varName).append((depth - 1)).append(".put(\"").append(keyValue).append(
+					"\",").append(varName).append(depth).append("); \n");
+		}
 		return returner;
 	}
 
@@ -166,7 +201,7 @@ public final class ScriptGenerator
 	 *
 	 * @param args args
 	 */
-	public static void main12(String [] args)
+	public static void main(String[] args)
 	{
 		Map containerMap = new Hashtable();
 
@@ -192,7 +227,7 @@ public final class ScriptGenerator
 		Map fourthMap = new Hashtable();
 		fourthMap.put("@", containerMap);
 
-		String result = getJSEquivalentFor(fourthMap, "1");
+		//String result = getJSEquivalentFor(fourthMap, "1");
 
 	}
 
@@ -200,7 +235,7 @@ public final class ScriptGenerator
 	 *
 	 * @param args args
 	 */
-	public static void main(String [] args)
+	public static void main11(String[] args)
 	{
 		Map containerMap = new Hashtable();
 
@@ -226,7 +261,7 @@ public final class ScriptGenerator
 		Map fourthMap = new Hashtable();
 		fourthMap.put(new NameValueBean("@", "@"), containerMap);
 
-		String result = getJSEquivalentFor(fourthMap, "1");
+		//String result = getJSEquivalentFor(fourthMap, "1");
 
 	}
 }
