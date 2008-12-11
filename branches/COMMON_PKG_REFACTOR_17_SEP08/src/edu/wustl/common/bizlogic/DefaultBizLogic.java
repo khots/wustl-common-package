@@ -1020,6 +1020,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			catch (DAOException exception)
 			{
+				logger.error("Not able to close session.", exception);
 				ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
 				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
 			}
@@ -1050,7 +1051,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-			attribute = dao.retrieveAttribute(sourceObjectName.getClass(), identifier, attributeName,columnName);
+			attribute=dao.retrieveAttribute(sourceObjectName.getClass(),identifier,attributeName,columnName);
 		}
 		catch (DAOException daoExp)
 		{
@@ -1058,15 +1059,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
 			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
 		}
-
-		try
+		finally
 		{
-			dao.closeSession();
-		}
-		catch (DAOException exception)
-		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			try
+			{
+				dao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				logger.error("Not able to close session.", exception);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
+				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			}
 		}
 		return attribute;
 	}
@@ -1098,7 +1102,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 *@param objCollection oject collection.
+	 *@param objCollection object collection.
 	 *@param dao The dao object.
 	 *@param sessionDataBean session specific Data
 	 *@throws BizLogicException Generic BizLogic Exception
@@ -1203,9 +1207,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void setPrivilege(DAO dao, String privilegeName,
 			Class objectType, Long[] objectIds, Long userId, String roleId,
 			boolean assignToUser, boolean assignOperation)
-			throws BizLogicException {
+			throws BizLogicException 
+	{
 		// TODO Auto-generated method stub
-		
 	}
 
 }
