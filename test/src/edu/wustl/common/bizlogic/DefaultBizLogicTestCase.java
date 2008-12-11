@@ -7,9 +7,9 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.MyDAOImpl;
+import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
-import edu.wustl.dao.exception.DAOException;
 
 /**
  * Test cases for DefaultBizLogic.
@@ -56,7 +56,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			fail("Not able to retrieve data.");
-			logger.fatal(exception.getMessage());
+			logger.fatal(exception.getMessage(),exception);
 		}
 	}
 	/**
@@ -83,7 +83,54 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			assertTrue("Negative test case:Thrown BizLogicException",true);
-			logger.fatal(exception.getMessage());
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Positive test for
+	 * public List retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause).
+	 */
+	public void testRetrive2()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			String []selectColumnName={"selectColumnName"};
+			QueryWhereClause queryWhereClause= new QueryWhereClause("SourceObjName");
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List<Object> list=defaultBizLogic.retrieve("SourceObjName",
+						selectColumnName,queryWhereClause);
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
+	 * Negative test for
+	 * public List retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause).
+	 */
+	public void testFailRetrive2()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			String []selectColumnName={"selectColumnName"};
+			QueryWhereClause queryWhereClause= new QueryWhereClause("SourceObjName");
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List<Object> list=defaultBizLogic.retrieve("SourceObjName",
+						selectColumnName,queryWhereClause);
+			fail("Negative test case: Should throw BizLogicException");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case:Thrown BizLogicException",true);
+			logger.fatal(exception.getMessage(),exception);
 		}
 	}
 
@@ -103,7 +150,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			fail("Not able to insert data.");
-			logger.fatal(exception.getMessage());
+			logger.fatal(exception.getMessage(),exception);
 		}
 	}
 
@@ -147,7 +194,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			fail("Not able to insert data.");
-			logger.fatal(exception.getMessage());
+			logger.fatal(exception.getMessage(),exception);
 		}
 	}
 	/**
