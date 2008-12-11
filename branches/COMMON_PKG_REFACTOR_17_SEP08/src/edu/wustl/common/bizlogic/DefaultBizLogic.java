@@ -808,6 +808,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param dao The dao object.
 	 * @param sourceClass source Class
 	 * @param selectColumnName An array of field names.
+	 * @param queryWhereClause object of QueryWhereClause
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
@@ -835,10 +836,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * This method gets related objects.
 	 * @param dao The dao object.
 	 * @param sourceClass source Class
+	 * @param queryWhereClause object of QueryWhereClause
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public List getRelatedObjects(DAO dao, Class sourceClass,QueryWhereClause queryWhereClause) throws BizLogicException
+	public List getRelatedObjects(DAO dao, Class sourceClass,QueryWhereClause queryWhereClause)
+							throws BizLogicException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
@@ -1041,36 +1044,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws BizLogicException
 	{
-		String columnName=Constants.SYSTEM_IDENTIFIER;
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = null;
-
 		Object attribute = null;
-
 		try
 		{
-			dao = daofactory.getDAO();
-			dao.openSession(null);
-			attribute=dao.retrieveAttribute(sourceObjectName.getClass(),identifier,attributeName,columnName);
+
+			Class clazz=Class.forName(sourceObjectName);
+			attribute=retrieveAttribute(clazz,identifier,attributeName);
 		}
-		catch (DAOException daoExp)
+		catch (ClassNotFoundException exception)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
+			logger.error("Not able to find class:"+sourceObjectName, exception);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
-		}
-		finally
-		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException exception)
-			{
-				logger.error("Not able to close session.", exception);
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
-				throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
-			}
+			throw new BizLogicException(errorKey,exception,
+					"DefaultBizLogic-Not able to find class:"+sourceObjectName);
 		}
 		return attribute;
 	}
