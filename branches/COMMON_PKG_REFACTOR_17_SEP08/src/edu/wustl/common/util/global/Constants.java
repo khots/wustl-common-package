@@ -401,10 +401,6 @@ public final class Constants
 	 */
 	public static final String ALLOW_OPERATION = "allowOperation";
 	/**
-	 * constant for DB2_DATABASE.
-	 */
-	public static final String DB2_DATABASE = "DB2";
-	/**
 	 * constant for BIRTH_DATE_TAG_NAME.
 	 */
 	public static final String BIRTH_DATE_TAG_NAME = "IS_BIRTH_DATE";
