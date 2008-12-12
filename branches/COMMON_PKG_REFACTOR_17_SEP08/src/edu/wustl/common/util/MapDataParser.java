@@ -334,7 +334,7 @@ public class MapDataParser
 		boolean isDeleteClicked = true;
 		if (status == null)
 		{
-			isDeleteClicked = Boolean.getBoolean(Constants.FALSE);
+			isDeleteClicked = Boolean.FALSE.booleanValue();
 		}
 		else
 		{
