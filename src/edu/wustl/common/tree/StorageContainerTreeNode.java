@@ -9,7 +9,7 @@ package edu.wustl.common.tree;
 
 import java.io.Serializable;
 
-import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Status;
 
 /**
  * @author gautam_shetty
@@ -29,7 +29,7 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 
 	private String toolTip = "";
 
-	private String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
+	private String activityStatus = Status.ACTIVITY_STATUS_ACTIVE.getStatus();
 
 	/**
 	 * Default constructor. 

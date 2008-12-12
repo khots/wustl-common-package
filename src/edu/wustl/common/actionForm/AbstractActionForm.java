@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Validator;
 
 /**
@@ -56,7 +57,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	/**
 	 * Activity Status.
 	 */
-	private String activityStatus = Constants.ACTIVITY_STATUS_ACTIVE;
+	private String activityStatus = Status.ACTIVITY_STATUS_ACTIVE.getStatus();
 
 	/**
 	 * Specifies object Id.
