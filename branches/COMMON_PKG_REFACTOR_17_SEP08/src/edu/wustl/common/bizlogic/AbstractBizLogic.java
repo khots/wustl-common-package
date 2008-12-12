@@ -1052,7 +1052,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param operation the operation to be performed : "insert", "update" or "delete"
 	 * @param obj the object correspondig to the record to be refreshed
 	 */
-	private void refreshTitliSearchIndex(String operation, Object obj)
+	protected void refreshTitliSearchIndex(String operation, Object obj)
 	{            
 		try
 		{ 
