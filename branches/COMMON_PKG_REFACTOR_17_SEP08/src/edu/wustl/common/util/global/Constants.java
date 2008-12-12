@@ -23,18 +23,6 @@ public final class Constants
 
 	}
 
-	//	constants for TiTLi Search
-	//public static final String TITLI_SORTED_RESULT_MAP = "sortedResultMap";
-	//public static final String TITLI_INSERT_OPERATION = "insert";
-	//public static final String TITLI_UPDATE_OPERATION = "update";
-	//public static final String TITLI_DELETE_OPERATION = "delete";
-	//public static final String TITLI_SINGLE_RESULT = "singleResult";
-	//public static final String TITLI_FETCH_ACTION = "/TitliFetch.do";
-
-	// constants for passwordManager
-
-	//public static final String MINIMUM_PASSWORD_LENGTH = "minimumPasswordLength";
-
 	/**
 	 * Specify SELECT_OPTION.
 	 */
@@ -79,19 +67,6 @@ public final class Constants
 	 * Specify add operation.
 	 */
 	public static final String ADD = "add";
-
-	//public static final String COLLECTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.CollectionProtocol";//CollectionProtocol.class.getName();
-	//public static final String DISTRIBUTION_PROTOCOL_CLASS_NAME = "edu.wustl.catissuecore.domain.DistributionProtocol";//DistributionProtocol.class.getName();
-
-	// Aarti: Constants for security parameter required
-	// while retrieving data from DAOs
-	//public static final int INSECURE_RETRIEVE = 0;
-	//public static final int CLASS_LEVEL_SECURE_RETRIEVE = 1;
-	//public static final int OBJECT_LEVEL_SECURE_RETRIEVE = 2;
-
-	//public static final String CATISSUE_SPECIMEN = "CATISSUE_SPECIMEN";
-
-	// Constants used for authentication module.
 	/**
 	 * Constant for LOGIN.
 	 */
@@ -122,18 +97,19 @@ public final class Constants
 	 */
 	public static final String SYSTEM_IDENTIFIER = "id";
 
-	// User Roles
-	//public static final String ADMINISTRATOR = "Administrator";
+	/**
+	 * Constant for GENERIC_DATABASE_ERROR.
+	 * Used in ObjectNotFoundFormatter.java
+	 */
+	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation."
+			+ " Please report this problem to the administrator";
 
-	// The unique key voilation message is "Duplicate entry %s for key %d"
-	// This string is used for searching " for key " string in the above error message
-
-	//ExceptionFormatter
-	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
-
-	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation. Please report this problem to the administrator";
-	public static final String CONSTRAINT_VOILATION_ERROR = "Submission failed since a {0} with the same {1} already exists";
-	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
+	/**
+	 * Constant for OBJECT_NOT_FOUND_ERROR.
+	 * Used in ObjectNotFoundFormatter.java
+	 */
+	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}:"
+			+ " \"{2}\" does not exists";
 	//DefaultBizLogic.
 	public static final String ACTIVITY_STATUS_DISABLED = "Disabled";
 	public static final String ACTIVITY_STATUS_CLOSED = "Closed";
@@ -286,6 +262,10 @@ public final class Constants
 	public static final int EXPERIMETN_TREE_ID = 5;
 
 	/**
+	 * Constant for APPROVE_USER_FORM_ID.
+	 */
+	public static final int APPROVE_USER_FORM_ID = 6;
+	/**
 	 * Constant for SUBMITTED_FOR.
 	 */
 	public static final String SUBMITTED_FOR = "submittedFor";
@@ -432,4 +412,21 @@ public final class Constants
 	 * constant for TABLE_ALIAS_NAME.
 	 */
 	public static final String TABLE_ALIAS_NAME = "aliasName";
+	/**
+	 * constant for TISSUE_SITE_TREE_ID.
+	 */
+	public static final int TISSUE_SITE_TREE_ID = 1;
+	/**
+	 * constant for STORAGE_CONTAINER_TREE_ID.
+	 */
+	public static final int STORAGE_CONTAINER_TREE_ID = 2;
+	/**
+	 * constant for ROOT.
+	 */
+	public static final String ROOT = "Root";
+	/**
+	 * constant for CATISSUE_CORE.
+	 */
+	public static final String CATISSUE_CORE = "caTissue Core";
+
 }
