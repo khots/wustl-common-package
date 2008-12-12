@@ -15,7 +15,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Status;
 
 /**
  * @author prafull_kadam
@@ -39,7 +39,7 @@ public class StorageContainerRenderer extends DefaultTreeCellRenderer
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		StorageContainerTreeNode treeNode = (StorageContainerTreeNode) node.getUserObject();
 		Icon icon = createImageIcon("disabled.gif");
-		if (Constants.ACTIVITY_STATUS_ACTIVE.equals(treeNode.getActivityStatus()))
+		if (Status.ACTIVITY_STATUS_ACTIVE.equals(treeNode.getActivityStatus()))
 		{
 			icon = createImageIcon("enabled.gif");
 			setIcon(icon);

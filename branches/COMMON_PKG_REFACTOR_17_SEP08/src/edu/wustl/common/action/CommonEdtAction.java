@@ -21,6 +21,7 @@ import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
@@ -60,7 +61,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		String objectName = getObjectName(abstractForm);
 		AbstractDomainObject abstractDomain = getDomainObject(abstractForm, objectName);
 		updateDomainObject(request, abstractForm, abstractDomain, objectName);
-		if (Constants.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus()))
+		if (Status.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus()))
 		{
 			target = abstractForm.getOnSubmit();
 		}

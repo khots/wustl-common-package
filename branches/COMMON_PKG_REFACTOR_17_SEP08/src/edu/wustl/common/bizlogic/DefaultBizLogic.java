@@ -32,6 +32,7 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
@@ -432,7 +433,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			whereColumnName = new String[]{"activityStatus"};
 			whereColumnCondition = new String[]{"!="};
-			whereColumnValue = new String[]{Constants.ACTIVITY_STATUS_DISABLED};
+			whereColumnValue = new String[]{Status.ACTIVITY_STATUS_DISABLED.getStatus()};
 		}
 
 		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
@@ -467,7 +468,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			whereColName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
 			whereColCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
 			whereColValue = Utility
-					.addElement(whereColumnValue, Constants.ACTIVITY_STATUS_DISABLED);
+					.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED.getStatus());
 		}
 
 		return getList(sourceObjectName, displayNameFields, valueField, whereColName,
@@ -664,7 +665,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			{
 				Long objectId = (Long) iterator.next();
 				IActivityStatus object = (IActivityStatus) dao.retrieve(sourceClass, objectId);
-				object.setActivityStatus(Constants.ACTIVITY_STATUS_DISABLED);
+				object.setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 				dao.update(object);
 				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
 			}
@@ -696,7 +697,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
 		auditEventDetails.setElementName(Constants.ACTIVITY_STATUS_COLUMN);
-		auditEventDetails.setCurrentValue(Constants.ACTIVITY_STATUS_DISABLED);
+		auditEventDetails.setCurrentValue(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 
 		auditEventDetailsCollection.add(auditEventDetails);
 
@@ -860,7 +861,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					activityStatus = getActivityStatus(dao, className, identifier);
 				}
-				if (activityStatus.equals(Constants.ACTIVITY_STATUS_CLOSED))
+				if (Status.ACTIVITY_STATUS_CLOSED.equals(activityStatus))
 				{
 					ErrorKey errorKey=ErrorKey.getErrorKey("biz.checkstatus.error");
 					throw new BizLogicException(errorKey,null, "DefaultBizLogic");
@@ -880,7 +881,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public String getActivityStatus(DAO dao, String sourceObjectName, Long indetifier)
 			throws BizLogicException
 	{
-		String[] selectColumnName = {Constants.ACTIVITY_STATUS};
+		String[] selectColumnName = {Status.ACTIVITY_STATUS.getStatus()};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER,indetifier.toString(),sourceObjectName));
 
