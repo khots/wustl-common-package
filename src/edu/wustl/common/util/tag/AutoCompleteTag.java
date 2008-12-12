@@ -18,6 +18,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
 
 /**
  * @author Santosh Chandak
@@ -116,7 +117,7 @@ public class AutoCompleteTag extends TagSupport
 	 * autocompleter.
 	 */
 	private final transient String autocompleter = "var AutoC = new Autocompleter"
-			+ ".Combobox(\"{0}\",\"{1}\",\"{2}\",valuesInList,"
+			+ ".Combobox(\"{0}\",\"divFor{0}\",\"{2}\",valuesInList,"
 			+ "  { tokens: new Array(), fullSearch: true, partialSearch:"
 			+ " true,defaultArray:valuesInList,choices: {3},"
 			+ "autoSelect:true, minChars: {4} });</script>";
@@ -201,8 +202,7 @@ public class AutoCompleteTag extends TagSupport
 		 *  Always pass the function with brackets, appending '()' will not be done
 		 */
 		setOnchangeValue();
-		String div = "divFor" + property;
-		autoCompleteResult.append("<div id=\"").append(div).append(
+		autoCompleteResult.append("<div id=\"divFor").append(property).append(
 				"\" style=\"display: none;\" class=\"autocomplete\"></div>");
 		StringBuffer readOnly = getReadOnlyValue();
 		String nameOfArrow = property + "arrow";
@@ -213,7 +213,7 @@ public class AutoCompleteTag extends TagSupport
 		String autocomplet = "";
 		if (property.equals(Constants.SPECIMEN_TYPE))
 		{
-			Object[] args = {property, div, nameOfArrow, numberOfResults, numberOfCharacters};
+			Object[] args = {property, nameOfArrow, numberOfResults, numberOfCharacters};
 			autocomplet = MessageFormat.format(autocompleter, args);
 		}
 		Object[] arg = {valueList, autocomplet};
@@ -265,7 +265,7 @@ public class AutoCompleteTag extends TagSupport
 	 */
 	private void setOnchangeValue()
 	{
-		if ("".equals(onChange))
+		if (TextConstants.EMPTY_STRING.equals(onChange))
 		{
 			onChange = "trimByAutoTag(this)";
 		}
