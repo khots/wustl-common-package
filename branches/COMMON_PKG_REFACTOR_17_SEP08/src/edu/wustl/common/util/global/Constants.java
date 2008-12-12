@@ -31,7 +31,6 @@ public final class Constants
 	 * Specify SELECT_OPTION_VALUE.
 	 */
 	public static final int SELECT_OPTION_VALUE = -1;
-	//public static final String CDE_CONF_FILE = "CDEConfig.xml";
 	/**
 	 * Specify ANY.
 	 */
@@ -59,9 +58,6 @@ public final class Constants
 	public static final String DATE_SEPARATOR_SLASH = "/";
 	public static final String MIN_YEAR = "1900";
 	public static final String MAX_YEAR = "9999";
-
-	//Activity Status values
-	public static final String ACTIVITY_STATUS_ACTIVE = "Active";
 
 	/**
 	 * Specify add operation.
@@ -110,9 +106,6 @@ public final class Constants
 	 */
 	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}:"
 			+ " \"{2}\" does not exists";
-	//DefaultBizLogic.
-	public static final String ACTIVITY_STATUS_DISABLED = "Disabled";
-	public static final String ACTIVITY_STATUS_CLOSED = "Closed";
 
 	/**
 	 * Constant for AND_JOIN_CONDITION.
@@ -122,8 +115,6 @@ public final class Constants
 	 * Constant for OR_JOIN_CONDITION.
 	 */
 	public static final String OR_JOIN_CONDITION = "OR";
-	//DefaultBizLogic.
-	public static final String ACTIVITY_STATUS = "activityStatus";
 
 	/**
 	 * Constant for EDIT.
@@ -142,22 +133,6 @@ public final class Constants
 	 */
 	public static final String ACTIVITY_STATUS_COLUMN = "ACTIVITY_STATUS";
 
-	/*//Constants for Summary Page
-	public static final String TISSUE = "Tissue";
-	public static final String MOLECULE = "Molecular";
-	public static final String CELL = "Cell";
-	public static final String FLUID = "Fluid";*/
-
-	/*//Tree View constants.
-	public static final String TISSUE_SITE = "Tissue Site";
-	public static final String CLINICAL_DIAGNOSIS = "Clinical Diagnosis";
-	public static final int TISSUE_SITE_TREE_ID = 1;
-	public static final int STORAGE_CONTAINER_TREE_ID = 2;
-	public static final String ROOT = "Root";
-	public static final String CATISSUE_CORE = "caTissue Core";*/
-
-	//Mandar : CDE xml package path.
-	//public static final String CDE_XML_PACKAGE_PATH = "edu.wustl.common.cde.xml";
 	/**
 	 * Constant for BOOLEAN_YES.
 	 */
@@ -183,8 +158,6 @@ public final class Constants
 	 */
 	public static final String PASSWORD_CHANGE_IN_SESSION = "changepassword";
 
-	//public static final String USER_CLASS_NAME = "edu.wustl.common.domain.User";
-
 	/**
 	 * Constant for IDENTIFIER.
 	 */
@@ -193,19 +166,9 @@ public final class Constants
 	public static final String FIELD_TYPE_DATE = "date";
 	public static final String FIELD_TYPE_TIMESTAMP_DATE = "timestampdate";
 
-	//Simple Query
-	/*public static final String TABLE_ALIAS_NAME_COLUMN = "ALIAS_NAME";
-	public static final String TABLE_DATA_TABLE_NAME = "CATISSUE_QUERY_TABLE_DATA";
-	public static final String TABLE_DISPLAY_NAME_COLUMN = "DISPLAY_NAME";
-
-	public static final String TABLE_FOR_SQI_COLUMN = "FOR_SQI";
-
-	public static final String TABLE_ID_COLUMN = "TABLE_ID";*/
 	//SimplQuery and catissue.
 	public static final String FIELD_TYPE_TIMESTAMP_TIME = "timestamptime";
-	//public static final String CDE_NAME_TISSUE_SITE = "Tissue Site";
 
-	//public static final String UPPER = "UPPER";
 	//datatypes
 	public static final String TIME_PATTERN_HH_MM_SS = "HH:mm:ss";
 
@@ -313,26 +276,12 @@ public final class Constants
 	 */
 	public static final String STATUS_MESSAGE_KEY = "statusMessageKey";
 
-	/***  Added New Constansts.  ***/
-
-	//	Activity Status values
-	public static final String ACTIVITY_STATUS_APPROVE = "Approve";
-	public static final String ACTIVITY_STATUS_REJECT = "Reject";
-	public static final String ACTIVITY_STATUS_NEW = "New";
-	public static final String ACTIVITY_STATUS_PENDING = "Pending";
-
-	//Approve User status values.
-	public static final String APPROVE_USER_APPROVE_STATUS = "Approve";
-	public static final String APPROVE_USER_REJECT_STATUS = "Reject";
-	public static final String APPROVE_USER_PENDING_STATUS = "Pending";
-
 	//	Query Interface Results View Constants
 	/**
 	 * Constant for QUERY.
 	 */
 	public static final String QUERY = "query";
 
-	//Approve User Constants.
 	/**
 	 * Constant for ZERO.
 	 */
