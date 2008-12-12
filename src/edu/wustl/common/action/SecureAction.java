@@ -62,12 +62,6 @@ public abstract class SecureAction extends BaseAction
 	}
 
 	/**
-	 * @param request HttpServletRequest
-	 * @return boolean
-	 */
-	protected abstract boolean isAuthorizedToExecute(HttpServletRequest request);
-
-	/**
 	 * Returns the object id of the protection element that represents
 	 * the Action that is being requested for invocation.
 	 * @param request HttpServletRequest
@@ -100,11 +94,5 @@ public abstract class SecureAction extends BaseAction
 	 */
 	protected abstract ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception;
-
-	/**
-	 * @param form AbstractActionForm
-	 * @return null value for object Id.
-	 */
-	protected abstract String getObjectId(AbstractActionForm form);
 
 }
