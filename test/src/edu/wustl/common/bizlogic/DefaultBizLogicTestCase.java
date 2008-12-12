@@ -10,6 +10,7 @@ import edu.wustl.dao.MyDAOImpl;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
+import edu.wustl.dao.exception.DAOException;
 
 /**
  * Test cases for DefaultBizLogic.
@@ -422,6 +423,34 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			fail("Negative test case: should throw only BizLogicException");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Positive test case for disableObjects(DAO dao, Class sourceClass, String classIdentifier,
+			String tablename, String colName, Long[] objIDArr).
+	 */
+	public void testDisableObjects()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.identifierList=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Long []objIDArr={ Long.valueOf(1),Long.valueOf(2)};
+			defaultBizLogic.disableObjects(myJdbcDao,"".getClass(),"classIdentifier","tablename","colName",objIDArr);
+			assertTrue("objects disabled successfully.",true);
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to disable objects.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch (DAOException exception)
+		{
+			fail("DAOException thrown");
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}

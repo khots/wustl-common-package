@@ -27,11 +27,12 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 {
 
 	public static boolean isTestForFail=false;
+	public static boolean identifierList=false;
 
 	/**
 	 * List to return from retrieve methods.
 	 */
-	public static List<Object> list= new ArrayList<Object>();
+	public static List<Object> list;
 
 	public static String object="retObject";
 	/**
@@ -40,6 +41,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public static List<Object> getList() throws DAOException
 	{
+		list= new ArrayList<Object>();
 		if(isTestForFail)
 		{
 			try
@@ -53,6 +55,12 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
 					DAOConstants.EXECUTE_QUERY_ERROR);
+		}
+		else if(identifierList)
+		{
+			list.add(Long.valueOf(1));
+			list.add(Long.valueOf(2));
+			list.add(Long.valueOf(3));
 		}
 		else
 		{
@@ -131,8 +139,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public void disableRelatedObjects(String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException
 	{
-		// TODO Auto-generated method stub
-
+		// Not to do anything.
 	}
 
 	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
