@@ -7,6 +7,7 @@ import java.util.Map;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.impexp.IAutomateImpExp;
 
 /**
  * Database utility class.
@@ -25,7 +26,7 @@ public class DatabaseUtility
 		dbNameVsClassName= new HashMap<String,String>();
 		dbNameVsClassName.put("oracle", "edu.wustl.common.util.global.OracleAutomateImpExp");
 		dbNameVsClassName.put("mysql", "edu.wustl.common.util.global.MySqlAutomateImpExp");
-		dbNameVsClassName.put("mssql", "edu.wustl.common.util.global.MsSqlAutomateImpExp");		
+		dbNameVsClassName.put("mssql", "edu.wustl.common.util.global.MsSqlAutomateImpExp");
 		}
 	/**
 	 * The Name of the server for the database. For example : localhost
@@ -272,6 +273,5 @@ public class DatabaseUtility
 			throw new ApplicationException(errorKey,exception,
 				"Not able to get import/export class. Please make sure databse type is correct.");
 		}
-		
 	}
 }
