@@ -102,11 +102,12 @@ public class AutoCompleteTag extends TagSupport
 	/**
 	 * input Image Tag.
 	 */
-	private final transient String inputImageTag = "<input type=\"text\" class=\"{0}\""
+	private final transient String inputImageTag = "<div id=\"divFor{3}\" style=\"display: none;\""
+			+ " class=\"autocomplete\"></div><input type=\"text\" class=\"{0}\""
 			+ " value=\"{1}\"size=\"{2}\""
-			+ " id=\"{3}\" name=\"{4}\"onmouseover=\"showTip(this.id)\""
-			+ " onmouseout=\"hideTip(this.id)\"{5}/>"
-			+ "<image id='{6}' src='images/autocompleter.gif' alt='Click'"
+			+ " id=\"{3}\" name=\"{3}\"onmouseover=\"showTip(this.id)\""
+			+ " onmouseout=\"hideTip(this.id)\"{4}/>"
+			+ "<image id=\"{3}arrow\" src='images/autocompleter.gif' alt='Click'"
 			+ " width='18' height='19' hspace='0' vspace='0' align='absmiddle' />";
 	/**
 	 * script.
@@ -117,10 +118,10 @@ public class AutoCompleteTag extends TagSupport
 	 * autocompleter.
 	 */
 	private final transient String autocompleter = "var AutoC = new Autocompleter"
-			+ ".Combobox(\"{0}\",\"divFor{0}\",\"{2}\",valuesInList,"
+			+ ".Combobox(\"{0}\",\"divFor{0}\",\"{0}arrow\",valuesInList,"
 			+ "  { tokens: new Array(), fullSearch: true, partialSearch:"
-			+ " true,defaultArray:valuesInList,choices: {3},"
-			+ "autoSelect:true, minChars: {4} });</script>";
+			+ " true,defaultArray:valuesInList,choices: {1},"
+			+ "autoSelect:true, minChars: {2} });</script>";
 
 	/**
 	 * script For Dynamic Property.
@@ -132,19 +133,19 @@ public class AutoCompleteTag extends TagSupport
 	 * input Image Tag For Dynamic Property.
 	 */
 	private final transient String inImTagForDP = "<input type=\"text\" class=\"{0}\""
-			+ " value=\"{1}\"size=\"{2}\" id=\"{3}\" name=\"{4}\""
-			+ "onmouseover=\"showTip(this.id)\" onmouseout=\"hideTip(this.id)\"{5}{6}{7}/>"
-			+ "<image id=\"{8}\" src='images/autocompleter.gif' alt='Click' width='18'"
+			+ " value=\"{1}\"size=\"{2}\" id=\"display{6}\" name=\"display{6}\""
+			+ "onmouseover=\"showTip(this.id)\" onmouseout=\"hideTip(this.id)\"{3}{4}{5}/>"
+			+ "<image id=\"{6}arrow\" src='images/autocompleter.gif' alt='Click' width='18'"
 			+ " height='19' hspace='0' vspace='0' align='absmiddle'/>"
-			+ "<input type=\"hidden\" id=\"{9}\" name=\"{10}\"value=\"{11}\"/>";
+			+ "<input type=\"hidden\" id=\"{6}\" name=\"{6}\"value=\"{7}\"/>";
 
 	/**
 	 * autocompleter For Dynamic Property.
 	 */
-	private final transient String autocompleterDP = "{0}new Autocompleter.Combobox(\"{1}\",\"{2}\",\"{3}\""
-			+ ",valuesInListOf{4},  * tokens: new Array(), fullSearch: true,"
-			+ " partialSearch: true,defaultArray:"
-			+ "valuesInListOf{5},choices: {6},autoSelect:true, minChars: {7} #);";
+	private final transient String autocompleterDP = "{0}new Autocompleter.Combobox(\"display{1}\",\"{2}\",\"{1}arrow\""
+		+ ",valuesInListOfdisplay{1},  * tokens: new Array(), fullSearch: true,"
+		+ " partialSearch: true,defaultArray:"
+		+ "valuesInListOfdisplay{1},choices: {3},autoSelect:true, minChars: {4} #);";
 
 	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag
@@ -168,18 +169,9 @@ public class AutoCompleteTag extends TagSupport
 				autocompleteHTMLStr = getAutocompleteHTMLForDynamicProperty();
 			}
 
-			/**
-			  *  Clearing the variables
-			  */
-			onChange = "";
-			initialValue = "";
-			readOnly = "false";
-			dependsOn = "";
-			size = "300";
-			disabled = "false";
+			clearTagVariables();
 
 			out.print(autocompleteHTMLStr);
-
 		}
 		catch (IOException ioe)
 		{
@@ -187,6 +179,19 @@ public class AutoCompleteTag extends TagSupport
 		}
 
 		return SKIP_BODY;
+	}
+
+	/**
+	  *  Clearing the variables.
+	  */
+	private void clearTagVariables()
+	{
+		onChange = "";
+		initialValue = "";
+		readOnly = "false";
+		dependsOn = "";
+		size = "300";
+		disabled = "false";
 	}
 
 	//	@SuppressWarnings("unchecked")
@@ -202,18 +207,16 @@ public class AutoCompleteTag extends TagSupport
 		 *  Always pass the function with brackets, appending '()' will not be done
 		 */
 		setOnchangeValue();
-		autoCompleteResult.append("<div id=\"divFor").append(property).append(
-				"\" style=\"display: none;\" class=\"autocomplete\"></div>");
+
 		StringBuffer readOnly = getReadOnlyValue();
-		String nameOfArrow = property + "arrow";
-		Object[] arguments = {styleClass, initialValue, size, property, property,
-				readOnly.toString(), nameOfArrow};
+		Object[] arguments = {styleClass, initialValue, size, property, readOnly.toString()};
 		autoCompleteResult.append(MessageFormat.format(inputImageTag, arguments));
 		StringBuffer valueList = getValueInList();
 		String autocomplet = "";
+
 		if (property.equals(Constants.SPECIMEN_TYPE))
 		{
-			Object[] args = {property, nameOfArrow, numberOfResults, numberOfCharacters};
+			Object[] args = {property, numberOfResults, numberOfCharacters};
 			autocomplet = MessageFormat.format(autocompleter, args);
 		}
 		Object[] arg = {valueList, autocomplet};
@@ -235,8 +238,8 @@ public class AutoCompleteTag extends TagSupport
 				for (int i = 0; i < nvbList.size(); i++)
 				{
 					NameValueBean nvb = (NameValueBean) nvbList.get(i);
-					valueList.append("valuesInList[" + i + "] = \"")
-					.append(nvb.getName()).append("\";");
+					valueList.append("valuesInList[" + i + "] = \"").append(nvb.getName()).append(
+							"\";");
 				}
 			}
 		}
@@ -420,11 +423,10 @@ public class AutoCompleteTag extends TagSupport
 		String div = "divFor" + displayProperty;
 		autoCompleteResult.append("<div id=\"").append(div).append(
 				"\" style=\"display: none;\" class=\"autocomplete\"></div>");
-		String nameOfArrow = property + "arrow";
-		setInputImageTag(autoCompleteResult, nameOfArrow, name, value);
+		setInputImageTag(autoCompleteResult, name, value);
 		Object[] scriptArgs = {displayProperty, displayProperty};
 		autoCompleteResult.append(MessageFormat.format(scriptForDynamicProperty, scriptArgs));
-		setAutocompleter(autoCompleteResult, displayProperty, div, nameOfArrow);
+		setAutocompleter(autoCompleteResult, div);
 		autoCompleteResult.append("</script>");
 
 		return autoCompleteResult.toString();
@@ -433,20 +435,16 @@ public class AutoCompleteTag extends TagSupport
 	/**
 	 * set Input Image Tag.
 	 * @param autoCompleteResult autoCompleteResult
-	 * @param nameOfArrow name Of Arrow.
 	 * @param name name
 	 * @param value value
 	 */
-	private void setInputImageTag(StringBuffer autoCompleteResult, String nameOfArrow, String name,
-			String value)
+	private void setInputImageTag(StringBuffer autoCompleteResult, String name, String value)
 	{
-		String displayProperty = "display" + property;
 		String readOnlyValue = "";
 		if (readOnly.toString().equalsIgnoreCase("true"))
 		{
 			readOnlyValue = "readonly";
 		}
-
 		String onBlur = " onblur=\"" + onChange + "\"";
 		String isDisabled = "";
 		if (disabled.toString().equalsIgnoreCase("true"))
@@ -454,19 +452,16 @@ public class AutoCompleteTag extends TagSupport
 			isDisabled = "disabled=\"true\"";
 		}
 
-		Object[] inputtImageTagArgs = {styleClass, name, size, displayProperty, displayProperty,
-				readOnlyValue, onBlur, isDisabled, nameOfArrow, property, property, value};
+		Object[] inputtImageTagArgs = {styleClass, name, size, readOnlyValue, onBlur, isDisabled,
+				property, value};
 		autoCompleteResult.append(MessageFormat.format(inImTagForDP, inputtImageTagArgs));
 	}
 
 	/**
 	 * @param autoCompleteResult autoComplete Result
-	 * @param displayProperty display Property
 	 * @param div div
-	 * @param nameOfArrow name Of Arrow.
 	 */
-	private void setAutocompleter(StringBuffer autoCompleteResult, String displayProperty,
-			String div, String nameOfArrow)
+	private void setAutocompleter(StringBuffer autoCompleteResult, String div)
 	{
 		StringBuffer valueIds = new StringBuffer();
 		if (optionsList instanceof List)
@@ -478,19 +473,17 @@ public class AutoCompleteTag extends TagSupport
 				for (int i = 0; i < nvbList.size(); i++)
 				{
 					NameValueBean nvb = (NameValueBean) nvbList.get(i);
-					valueIds.append("valuesInListOf").append(displayProperty)
-					.append('[').append(i)
-							.append("] = \"").append(nvb.getName()).append("\";");
-					valueIds.append("idsInListOf").append(displayProperty)
-					.append('[').append(i)
-							.append("] = \"").append(nvb.getValue()).append("\";");
+					valueIds.append("valuesInListOf").append("display").append(property)
+							.append('[').append(i).append("] = \"").append(nvb.getName()).append(
+									"\";");
+					valueIds.append("idsInListOf").append("display").append(property).append('[')
+							.append(i).append("] = \"").append(nvb.getValue()).append("\";");
 				}
 				/**
 				 *  Giving call to autocompleter constructor
 				 */
-				Object[] autocompleterArgs = {valueIds, displayProperty, div, nameOfArrow,
-						displayProperty, displayProperty,
-						numberOfResults, numberOfCharacters};
+				Object[] autocompleterArgs = {valueIds, property, div, numberOfResults,
+						numberOfCharacters};
 				String autoCompleteStr = MessageFormat.format(autocompleterDP, autocompleterArgs);
 				Utility.replaceAll(autoCompleteStr, "*", "{");
 				Utility.replaceAll(autoCompleteStr, "#", "}");
