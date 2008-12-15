@@ -24,14 +24,12 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.MasterFactory;
-import edu.wustl.dao.exception.DAOException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -104,13 +102,10 @@ public class DomainObjectListAction extends SecureAction
 	/**
 	 * add the domain object name having new and pending  activity status,in a list.
 	 * @param abstractForm AbstractActionForm
-	 * @return List
-	 * @throws DAOException  database exception
-	 * @throws BizLogicException biz logic exception
+	 * @return List list
 	 * @throws ApplicationException Application Exception
 	 */
-	private List getList(AbstractActionForm abstractForm) throws DAOException, BizLogicException,
-			ApplicationException
+	private List getList(AbstractActionForm abstractForm) throws ApplicationException
 	{
 		List list;
 		try
