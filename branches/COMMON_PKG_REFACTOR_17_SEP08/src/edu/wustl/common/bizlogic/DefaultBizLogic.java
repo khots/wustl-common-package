@@ -1109,11 +1109,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List returner = null;
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
-		IConnectionManager connectionManager = dao.getConnectionManager();
+		IConnectionManager connectionManager =null;
 		Session session = null;
 		try
 		{
 			dao = daofactory.getDAO();
+			connectionManager = dao.getConnectionManager();
 			session = connectionManager.getCleanSession();
 			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
