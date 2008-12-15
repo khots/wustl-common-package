@@ -1,8 +1,12 @@
 package edu.wustl.common.util.global;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.exception.ErrorKey;
 
 /**
  * Database utility class.
@@ -11,6 +15,12 @@ import java.sql.SQLException;
  */
 public class DatabaseUtility
 {
+
+	/**
+	 * This map contains class name for Automate import/export and their database type.
+	 */
+	private static Map<String,String> dbNameVsClassName;
+
 	/**
 	 * The Name of the server for the database. For example : localhost
 	 */
@@ -204,28 +214,25 @@ public class DatabaseUtility
 	}
 
 	/**
+	 * no argument constructor.
+	 */
+	public DatabaseUtility()
+	{
+		dbNameVsClassName= new HashMap<String,String>();
+		dbNameVsClassName.put("oracle", "edu.wustl.common.util.global.OracleAutomateImpExp");
+		dbNameVsClassName.put("mysql", "edu.wustl.common.util.global.MySqlAutomateImpExp");
+		dbNameVsClassName.put("mssql", "edu.wustl.common.util.global.MsSqlAutomateImpExp");
+	}
+	/**
 	 * This method will create a database connection using configuration info.
 	 * @return Connection : Database connection object
-	 * @throws ClassNotFoundException if driver class not found
-	 * @throws SQLException generic SQL exception
+	 * @throws SQLException Generic SQL exception.
+	 * @throws ClassNotFoundException throws this exception if Driver class not found in class path.
+	 * @throws ApplicationException Application Exception
 	 */
-	public Connection getConnection() throws ClassNotFoundException, SQLException
+	public Connection getConnection() throws SQLException, ClassNotFoundException,ApplicationException
 	{
-		Connection connection = null;
-		Class.forName(dbDriver);
-		String url = TextConstants.EMPTY_STRING;
-		if (MYSQL_DATABASE.equalsIgnoreCase(dbType))
-		{
-			url = "jdbc:mysql://" + dbServerName + ":" + dbServerPortNumber + "/"
-					+ dbName;
-		}
-		if (ORACLE_DATABASE.equalsIgnoreCase(dbType))
-		{
-			url = "jdbc:oracle:thin:@" + dbServerName + ":" + dbServerPortNumber
-					+ ":" + dbName;
-		}
-		connection = DriverManager.getConnection(url, dbUserName, dbPassword);
-		return connection;
+		return ((IAutomateImpExp)getAutomatImpExpObj()).getConnection();
 	}
 
 	/**
@@ -243,4 +250,25 @@ public class DatabaseUtility
 		setDbDriver(args[INDX_DB_DRIVER]);
 	}
 
+	/**
+	 * This methods returns object for import/export meta-data according to database type.
+	 * @return object of IAutomateImpExp.
+	 * @throws ApplicationException Application Exception
+	 */
+	public IAutomateImpExp getAutomatImpExpObj() throws ApplicationException
+	{
+		String className=dbNameVsClassName.get(dbType);
+		IAutomateImpExp clazz;
+		try
+		{
+			clazz = (IAutomateImpExp)Class.forName(className).newInstance();
+		}
+		catch (Exception exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("");
+			throw new ApplicationException(errorKey,exception,
+				"Not able to get import/export class. Please make sure databse type is correct.");
+		}
+		return clazz;
+	}
 }
