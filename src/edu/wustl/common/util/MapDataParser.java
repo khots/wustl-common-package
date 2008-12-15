@@ -4,11 +4,6 @@ package edu.wustl.common.util;
 /**
  * @author Kapil Kaveeshwar
  */
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -22,11 +17,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import org.hibernate.Hibernate;
-
 import edu.wustl.common.datatypes.DataTypeConfigFactory;
 import edu.wustl.common.datatypes.IDBDataType;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 public class MapDataParser
