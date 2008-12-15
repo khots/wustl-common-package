@@ -7,8 +7,10 @@
 package edu.wustl.common.util.tag;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Calendar;
+import java.util.Properties;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
@@ -274,6 +276,15 @@ public class DateTimeComponent extends TagSupport
 	// ------------SETTER Methods end ----------------------------------
 
 	/**
+	 * Returns current thread's class loader.
+	 * @return current thread's class loader.
+	 */
+	private static ClassLoader getCurrClassLoader()
+	{
+		return Thread.currentThread().getContextClassLoader();
+	}
+
+	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag for this
 	 * custom tag is encountered.
 	 * @exception JspException jsp exception.
@@ -411,36 +422,34 @@ public class DateTimeComponent extends TagSupport
 	private String generateOutput() throws IOException
 	{
 		StringBuffer output = new StringBuffer();
-		String inputTag = "<INPUT name=\"{0}\" id = \"{1}\" value=\"{2}\" class=\"{3}\" size=\"{4}\"{5}";
+		InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
+		Properties props = new Properties();
+		props.load(stream);
 		String isDisabled = ">";
 		if (disabled.booleanValue())
 		{
 			isDisabled = " disabled=\"disabled\">";
 		}
-		Object[] inputTagArgs = {name, id, value, styleClass, size,isDisabled};
-		output.append(MessageFormat.format(inputTag, inputTagArgs));
+		Object[] inputTagArgs = {name, id, value, styleClass, size, isDisabled};
+		output.append(MessageFormat.format(props.getProperty("DTCinputTag"), inputTagArgs));
 		String onClickFunction = getOnClickFunction();
-		String anchorTag = "<A onclick=\"{0}\" href=\"javascript://\"><span valign=middle >"
-				+ "<IMG alt=\"{1}\" src=\"images/calendar.gif\" hspace=0"
-				+ " vspace=0 align=top height=22 width=24 border=0></span></A>";
+
 		Object[] anchorTagArgs = {onClickFunction, iconComment};
-		output.append(MessageFormat.format(anchorTag, anchorTagArgs));
-		String divTag = "<DIV id=slcalcod{0} style=\"Z-INDEX: 10; LEFT: 100px;"
-				+ " VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
+		output.append(MessageFormat.format(props.getProperty("DTCanchorTag"), anchorTagArgs));
+
 		Object[] divTagArgs = {id};
-		output.append(MessageFormat.format(divTag, divTagArgs));
+		output.append(MessageFormat.format(props.getProperty("DTCdivTag"), divTagArgs));
 		output.append("<SCRIPT>");
 		if (displayTime.booleanValue())
 		{
-			String timeCalender = "printTimeCalendar(\"{0}\",{1},{2},{3},{4},{5});";
 			Object[] timeCalenderArgs = {id, day, month, year, hour, minutes};
-			output.append(MessageFormat.format(timeCalender, timeCalenderArgs));
+			output.append(MessageFormat.format(props.getProperty("DTCtimeCalender"),
+					timeCalenderArgs));
 		}
 		else
 		{
-			String calender = "printCalendar(\"{0}\",{1},{2},{3});";
 			Object[] calenderArgs = {id, day, month, year};
-			output.append(MessageFormat.format(calender, calenderArgs));
+			output.append(MessageFormat.format(props.getProperty("DTCcalender"), calenderArgs));
 		}
 		output.append("</SCRIPT></DIV>");
 		return output.toString();
