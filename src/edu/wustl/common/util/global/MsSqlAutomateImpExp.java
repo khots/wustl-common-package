@@ -30,7 +30,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 			for(int i = 0 ; i < getSize(); i++)
 			{
 				String dumpFilePath = getFilePath()+getTableNamesList().get(i)+".csv";
-				exportDataMySQL(dumpFilePath,getTableNamesList().get(i));
+				exportForMySQLAndMsSql(dumpFilePath,getTableNamesList().get(i));
 			}
 		}
 		catch(Exception exception)
@@ -128,38 +128,4 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
             stmt = null;
         }
     }
-
-    /**
-	 *  This method will export the data to database.
-	 * @param fileName File Name
-	 * @param tableName Table Name
-	 * @throws SQLException Generic SQL exception.
-	 * @throws ClassNotFoundException throws this exception if Driver class not found in class path.
-	 */
-	private void exportDataMySQL(String fileName, String tableName) throws SQLException,ClassNotFoundException
-	{
-		Connection conn=null;
-		Statement stmt=null;
-		try
-		{
-			conn= getConnection();
-			File file = new File(fileName);
-			if (file.exists())
-			{
-				file.delete();
-			}
-			stmt = conn.createStatement
-			(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			StringBuffer query=new StringBuffer("SELECT * INTO OUTFILE '")
-			.append(fileName)
-			.append("' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' FROM ")
-			.append(tableName).append(";");
-			stmt.execute(query.toString());
-		}
-		finally
-		{
-			conn.close();
-			stmt.close();
-		}
-	}
 }
