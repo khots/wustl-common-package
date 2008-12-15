@@ -14,7 +14,7 @@ public class ApplicationException extends Exception
 {
 
 	/**
-	 * Wrapped Exception:
+	 * Wrapped Exception.
 	 */
 	private Exception wrapException;
 	/**
@@ -41,15 +41,13 @@ public class ApplicationException extends Exception
 	 * Parameters for error message.
 	 */
 	private String msgValues;
-	
+
 	/**
 	 * The String of error message values to be send to ApplicationException should
 	 * use this constant separator to separate values.
 	 */
 	public static final String ERR_MSG_VALUES_SEPARATOR = ":";
-	
-	
-	
+
 
 	/**
 	 * The Only public constructor to restrict creating object without
@@ -183,17 +181,18 @@ public class ApplicationException extends Exception
 		}
 	}
 
-	
+
 	/**
 	 * returns error message parameters.
 	 * @return message parameters
 	 */
 	public String getMsgValues()
 	{
-		
 		return msgValues;
 	}
-
+	/**
+	 * @return String[].
+	 */
 	public String[] toMsgValuesArray()
 	{
 		String [] valueArr;
@@ -208,7 +207,7 @@ public class ApplicationException extends Exception
 		}
 		return valueArr;
 	}
-	
+
 	/**
 	 * sets error message parameters.
 	 * @param msgValues parameters.
@@ -217,7 +216,7 @@ public class ApplicationException extends Exception
 	{
 		this.msgValues = msgValues;
 	}
-	
+
 	/**
 	 * This function is used to get key value set for the Error Key.
 	 * @return Unique key value of ErrorKey.
@@ -226,7 +225,7 @@ public class ApplicationException extends Exception
 	{
 		return errorKey.getErrorKey();
 	}
-	
+
 	/**
 	 * @return Returns the wrapException.
 	 */
