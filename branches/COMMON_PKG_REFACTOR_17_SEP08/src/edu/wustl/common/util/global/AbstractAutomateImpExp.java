@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +99,41 @@ public abstract class AbstractAutomateImpExp implements IAutomateImpExp
 		return tableNamesList;
 	}
 
+	/**
+	 *  This is common export method for mysql and mssql server database.
+	 *  This method will export the data from database.
+	 * @param fileName File Name
+	 * @param tableName Table Name
+	 * @throws SQLException Generic SQL exception.
+	 * @throws ClassNotFoundException throws this exception if Driver class not found in class path.
+	 */
+	protected void exportForMySQLAndMsSql(String fileName, String tableName)
+								throws SQLException,ClassNotFoundException
+	{
+		Connection conn=null;
+		Statement stmt=null;
+		try
+		{
+			conn= getConnection();
+			File file = new File(fileName);
+			if (file.exists())
+			{
+				file.delete();
+			}
+			stmt = conn.createStatement
+			(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			StringBuffer query=new StringBuffer("SELECT * INTO OUTFILE '")
+			.append(fileName)
+			.append("' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' FROM ")
+			.append(tableName).append(";");
+			stmt.execute(query.toString());
+		}
+		finally
+		{
+			conn.close();
+			stmt.close();
+		}
+	}
 
 	/**
 	 * @return the size
