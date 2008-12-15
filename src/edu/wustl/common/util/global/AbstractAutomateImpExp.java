@@ -94,7 +94,7 @@ public abstract class AbstractAutomateImpExp implements IAutomateImpExp
 		catch(IOException exception)
 		{
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.tablenamelist.error");
-			throw new ApplicationException(errorKey,exception,"INot able to get import class");
+			throw new ApplicationException(errorKey,exception,"AbstractAutomateImpExp");
 		}
 		return tableNamesList;
 	}

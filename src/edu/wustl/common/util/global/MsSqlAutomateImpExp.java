@@ -38,7 +38,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 		catch(Exception exception)
 		{
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mssqlexport.error");
-			throw new ApplicationException(errorKey,exception,"Insufficient number of arguments");
+			throw new ApplicationException(errorKey,exception,"MsSqlAutomateImpExp");
 		}
 
 	}
@@ -65,7 +65,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 		catch(Exception exception)
 		{
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mssqlimport.error");
-			throw new ApplicationException(errorKey,exception,"Insufficient number of arguments");
+			throw new ApplicationException(errorKey,exception,"MsSqlAutomateImpExp");
 		}
 		finally
 		{
@@ -73,10 +73,10 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 			{
 				conn.close();
 			}
-			catch (SQLException e)
+			catch (SQLException exception)
 			{
 				ErrorKey errorKey=ErrorKey.getErrorKey("");
-				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+				throw new ApplicationException(errorKey,exception,"MsSqlAutomateImpExp");
 			}
 		}
 
