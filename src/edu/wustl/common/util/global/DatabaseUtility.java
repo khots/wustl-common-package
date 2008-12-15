@@ -21,6 +21,12 @@ public class DatabaseUtility
 	 */
 	private static Map<String,String> dbNameVsClassName;
 
+	static {
+		dbNameVsClassName= new HashMap<String,String>();
+		dbNameVsClassName.put("oracle", "edu.wustl.common.util.global.OracleAutomateImpExp");
+		dbNameVsClassName.put("mysql", "edu.wustl.common.util.global.MySqlAutomateImpExp");
+		dbNameVsClassName.put("mssql", "edu.wustl.common.util.global.MsSqlAutomateImpExp");		
+		}
 	/**
 	 * The Name of the server for the database. For example : localhost
 	 */
@@ -218,10 +224,7 @@ public class DatabaseUtility
 	 */
 	public DatabaseUtility()
 	{
-		dbNameVsClassName= new HashMap<String,String>();
-		dbNameVsClassName.put("oracle", "edu.wustl.common.util.global.OracleAutomateImpExp");
-		dbNameVsClassName.put("mysql", "edu.wustl.common.util.global.MySqlAutomateImpExp");
-		dbNameVsClassName.put("mssql", "edu.wustl.common.util.global.MsSqlAutomateImpExp");
+
 	}
 	/**
 	 * This method will create a database connection using configuration info.
@@ -258,10 +261,10 @@ public class DatabaseUtility
 	public IAutomateImpExp getAutomatImpExpObj() throws ApplicationException
 	{
 		String className=dbNameVsClassName.get(dbType);
-		IAutomateImpExp clazz;
+
 		try
 		{
-			clazz = (IAutomateImpExp)Class.forName(className).newInstance();
+			return (IAutomateImpExp)Class.forName(className).newInstance();
 		}
 		catch (Exception exception)
 		{
@@ -269,6 +272,6 @@ public class DatabaseUtility
 			throw new ApplicationException(errorKey,exception,
 				"Not able to get import/export class. Please make sure databse type is correct.");
 		}
-		return clazz;
+		
 	}
 }
