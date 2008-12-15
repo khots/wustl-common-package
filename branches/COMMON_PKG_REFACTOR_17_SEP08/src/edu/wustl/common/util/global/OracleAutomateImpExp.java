@@ -76,8 +76,8 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		}
 		catch(Exception exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("");
-			throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.oraexport.error");
+			throw new ApplicationException(errorKey,exception,"Insufficient number of arguments");
 		}
 
 	}
@@ -106,8 +106,8 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		}
 		catch(Exception exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("");
-			throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.oraimport.error");
+			throw new ApplicationException(errorKey,exception,"Insufficient number of arguments");
 		}
 
 	}
