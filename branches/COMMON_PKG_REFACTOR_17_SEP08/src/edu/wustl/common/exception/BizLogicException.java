@@ -26,7 +26,7 @@ public class BizLogicException extends ApplicationException
 	{
 		super(errorKey,throwable,msgValues);
 	}
-	
+
 	/**
 	 * Wrapping daoException to bizLogic Exception.
 	 * @param daoException dao exception.
