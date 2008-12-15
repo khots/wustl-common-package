@@ -8,7 +8,6 @@ import java.sql.Statement;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.global.DatabaseUtility;
 
 /**
  * This class is for import/export meta data for MSSql server database.

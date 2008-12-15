@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.util.global.DatabaseUtility;
 
 /**
  * This interface is for common Import Export functionality.
