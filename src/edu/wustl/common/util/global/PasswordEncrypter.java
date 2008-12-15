@@ -146,7 +146,7 @@ public class PasswordEncrypter
 	 */
 	private static void configureDBConnection(String[] args) throws Exception
 	{
-		if (args.length >= MIN_NO_ARGS)
+		if (args.length >= MIN_NO_ARGS) 
 		{
 			dbUtility.setDbParams(args);
 			setOtherParams(args);
