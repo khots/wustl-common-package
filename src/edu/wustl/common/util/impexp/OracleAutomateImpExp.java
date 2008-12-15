@@ -15,7 +15,6 @@ import java.sql.Types;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.global.DatabaseUtility;
 
 /**
  * This class is for import/export meta data for Oracle.

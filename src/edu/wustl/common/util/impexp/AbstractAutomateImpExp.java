@@ -13,7 +13,6 @@ import java.util.List;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.global.DatabaseUtility;
 
 /**
  * This class contains some common functionality for import/export process.
