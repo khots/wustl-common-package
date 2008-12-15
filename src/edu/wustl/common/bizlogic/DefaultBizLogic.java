@@ -993,7 +993,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			logger.error("Not able to close DAO session.", exception);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.closesession.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw new BizLogicException(exception);
 		}
 	}
 
