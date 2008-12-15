@@ -31,15 +31,15 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 			{
 				exportForMySQLAndMsSql(dumpFilePath, getTableNamesList().get(i));
 			}
-			catch (SQLException e)
+			catch (SQLException exception)
 			{
 				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlexport.error");
-				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+				throw new ApplicationException(errorKey,exception,"MySqlAutomateImpExp");
 			}
-			catch (ClassNotFoundException e)
+			catch (ClassNotFoundException exception)
 			{
 				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlexport.error");
-				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+				throw new ApplicationException(errorKey,exception,"MySqlAutomateImpExp");
 			}
 		}
 	}
@@ -69,7 +69,7 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 		catch(Exception exception)
 		{
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlimport.error");
-			throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+			throw new ApplicationException(errorKey,exception,"MySqlAutomateImpExp");
 		}
 		finally
 		{
@@ -78,10 +78,10 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 				conn.close();
 				stmt.close();
 			}
-			catch (SQLException e)
+			catch (SQLException exception)
 			{
 				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlimport.error");
-				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
+				throw new ApplicationException(errorKey,exception,"MySqlAutomateImpExp");
 			}
 		}
 
