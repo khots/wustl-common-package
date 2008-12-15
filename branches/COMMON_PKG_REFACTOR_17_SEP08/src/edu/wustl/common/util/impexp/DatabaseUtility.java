@@ -1,4 +1,4 @@
-package edu.wustl.common.util.global;
+package edu.wustl.common.util.impexp;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,7 +7,6 @@ import java.util.Map;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.impexp.IAutomateImpExp;
 
 /**
  * Database utility class.
