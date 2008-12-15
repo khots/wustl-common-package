@@ -1,6 +1,5 @@
 package edu.wustl.common.util.global;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,7 +9,10 @@ import java.sql.Statement;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
 
-
+/**
+ * This class is for import/export meta data for MSSql server database.
+ * @author ravi_kumar
+ */
 public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 {
 	/**
@@ -35,7 +37,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 		}
 		catch(Exception exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("");
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mssqlexport.error");
 			throw new ApplicationException(errorKey,exception,"Insufficient number of arguments");
 		}
 
@@ -62,7 +64,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 		}
 		catch(Exception exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("");
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mssqlimport.error");
 			throw new ApplicationException(errorKey,exception,"Insufficient number of arguments");
 		}
 		finally
@@ -125,7 +127,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
        	}
         finally
         {
-            stmt = null;
+            stmt.close();
         }
     }
 }

@@ -1,6 +1,5 @@
 package edu.wustl.common.util.global;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,12 +33,12 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 			}
 			catch (SQLException e)
 			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("");
+				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlexport.error");
 				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
 			}
 			catch (ClassNotFoundException e)
 			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("");
+				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlexport.error");
 				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
 			}
 		}
@@ -69,7 +68,7 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 		}
 		catch(Exception exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("");
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlimport.error");
 			throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
 		}
 		finally
@@ -81,7 +80,7 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 			}
 			catch (SQLException e)
 			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("");
+				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlimport.error");
 				throw new ApplicationException(errorKey,null,"Insufficient number of arguments");
 			}
 		}
