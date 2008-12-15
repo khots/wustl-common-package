@@ -114,15 +114,9 @@ public final class Status
 	 * @param obj object to be convert.
 	 * @return string object.
 	 */
-	public String toString(Object obj)
+	public String toString()
 	{
-		String retValue = TextConstants.EMPTY_STRING;
-		if (obj != null)
-		{
-			retValue = obj.toString();
-		}
-
-		return retValue;
+		return this.statusName;
 	}
 	/**
 	 * Get status.
