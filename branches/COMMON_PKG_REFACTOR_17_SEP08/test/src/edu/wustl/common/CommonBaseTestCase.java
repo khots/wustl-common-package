@@ -10,7 +10,7 @@ public class CommonBaseTestCase extends BaseTestCase
 {
 	static
 	{
-		System.setProperty("app.propertiesFile","D:/washu-workspace/CommonPackage_REFACTOR/ApplicationResource.properties");
+		System.setProperty("app.propertiesFile",System.getProperty("user.dir")+"/ApplicationResource.properties");
 	}
 	public CommonBaseTestCase()
 	{
