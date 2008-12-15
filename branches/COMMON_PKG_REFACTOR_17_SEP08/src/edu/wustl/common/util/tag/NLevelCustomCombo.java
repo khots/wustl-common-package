@@ -5,11 +5,13 @@
 package edu.wustl.common.util.tag;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -133,30 +135,6 @@ public class NLevelCustomCombo extends TagSupport
 	private String verticalCombosEnd = "";
 
 	/**
-	 * Constant for empty combo HTML.
-	 */
-	private final String emptyComboHTML = "{0}<td class=\"{1}\" nowrap><select size=\"1\""
-			+ " name =\"{2}\" style =\"{3}\" class=\"{4}\""
-			+ " id =\"customListBox_{5}_{6}\"{7} ><option value=\"-1\">---</option>";
-
-	/**
-	 * Constant for combo HTML from Map.
-	 */
-	private final String comboHTMLMap = "{0}<td class=\"{1}\">" + "</td><td class=\"{2}\" nowrap> "
-			+ "<select size=\"1\" name =\"{3}\" style =\"{4}\""
-			+ " onmouseover =\"showTip(this.id)\"\"" + " onmouseout =\"hideTip(this.id)\""
-			+ "\" class=\"{5}\" id =\"customListBox_{6}_{7}\""
-			+ " onChange=\"{8}\"{9} ><option value=\"-1\">---</option>";
-
-	/**
-	 * Constant for combo HTML from List.
-	 */
-	private final String comboHTMLList = "{0}<td class=\"{1}\">"
-			+ "</td><td class=\"{2}\" nowrap> "
-			+ "<select size=\"1\" name =\"{3}\" style =\"{4}\" class=\"{5}\""
-			+ " id =\"customListBox_{6}_{7}\"{8} ><option value=\"-1\">---</option>";
-
-	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag for this
 	 * custom tag is encountered. Call a recursive function to get the work done.
 	 * @return SKIP_BODY
@@ -170,10 +148,13 @@ public class NLevelCustomCombo extends TagSupport
 		{
 			try
 			{
+				InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
+				Properties props = new Properties();
+				props.load(stream);
 				JspWriter out = pageContext.getOut();
 
 				combosHTMLStr = combosHTMLStr + "<table cellpadding='0' cellspacing='0'><tr>";
-				getCombos(dataMap);
+				getCombos(dataMap, props);
 
 				out.print(combosHTMLStr);
 
@@ -444,12 +425,24 @@ public class NLevelCustomCombo extends TagSupport
 	}
 
 	/**
+	 * Returns current thread's class loader.
+	 * @return current thread's class loader.
+	 */
+	private static ClassLoader getCurrClassLoader()
+	{
+		return Thread.currentThread().getContextClassLoader();
+	}
+
+	/**
 	 * A recursive function to construct the html code for n-level combos.
 	 * Number of calls to this function is equivalent to number of combos created.
 	 * @param dMap - a
+	 * @param props Properties object.
+	 * @throws IOException IOException
 	 */
-	private void getCombos(Object dMap)
+	private void getCombos(Object dMap, Properties props) throws IOException
 	{
+
 		if (tdStyleClassArray != null)
 		{
 			tdStyleClass = tdStyleClassArray[comboCounter];
@@ -458,20 +451,21 @@ public class NLevelCustomCombo extends TagSupport
 				|| (dMap instanceof List) && (((List) dMap).size() > 0);
 		if (mapList)
 		{
-			getCombosFromMapOrList(dMap);
+			getCombosFromMapOrList(dMap, props);
 		}
 		else
 		// to handle initial value condition were dMap.size() == 0 , NO RECURSSIVE CALL FROM HERE
 		{
 			// use noOfEmptyCombos here
-			setNoOfEmptyCombos();
+			setEmptyCombos(props);
 		}
 	}
 
 	/**
 	 * set No Of Empty Combos.
+	 * @param props Properties object.
 	 */
-	private void setNoOfEmptyCombos()
+	private void setEmptyCombos(Properties props)
 	{
 		for (int i = 0; i < Integer.parseInt(noOfEmptyCombos); i++)
 		{
@@ -488,15 +482,18 @@ public class NLevelCustomCombo extends TagSupport
 			Object[] arguments = {verticalCombosStart, formLabelStyle,
 					attributeNames[comboCounter], styleClass, tdStyleClass, rowNumber,
 					comboCounter, isDisabled};
-			combosHTMLStr = combosHTMLStr + MessageFormat.format(emptyComboHTML, arguments);
+			combosHTMLStr = combosHTMLStr
+					+ MessageFormat.format(props.getProperty("NLCCemptyComboHTML"), arguments);
 			comboCounter++;
 		}
 	}
 
 	/**
 	 * @param dMap dMap
+	 * @param props Properties object.
+	 * @throws IOException IOException
 	 */
-	private void getCombosFromMapOrList(Object dMap)
+	private void getCombosFromMapOrList(Object dMap, Properties props) throws IOException
 	{
 		if (dMap instanceof Map)
 		{
@@ -507,10 +504,12 @@ public class NLevelCustomCombo extends TagSupport
 			{
 				isDisabled = " disabled = \"true\"";
 			}
-			Object[] arguments = {verticalCombosStart, formLabelStyle, formLabelStyle,
+			Object[] arguments = {verticalCombosStart, formLabelStyle,
 					attributeNames[comboCounter], styleClass, tdStyleClass, rowNumber,
 					comboCounter, onChange, isDisabled};
-			combosHTMLStr = combosHTMLStr + MessageFormat.format(comboHTMLMap, arguments);
+
+			combosHTMLStr = combosHTMLStr
+					+ MessageFormat.format(props.getProperty("NLCCcomboHTMLMap"), arguments);
 
 			String initialValForThisCombo = (String) initialValues[comboCounter];
 			// iterate through keys to get options for the current combo.
@@ -519,7 +518,7 @@ public class NLevelCustomCombo extends TagSupport
 			Object[] keySetArray = keySet.toArray();
 			int indexForNextCombo = getIndexForNextCombo(keySetArray);
 			comboCounter++;
-			getCombos(((Map) dMap).get(keySetArray[indexForNextCombo]));
+			getCombos(((Map) dMap).get(keySetArray[indexForNextCombo]), props);
 		}
 		else if (dMap instanceof List) // Termination condition for recursion
 		{
@@ -530,10 +529,11 @@ public class NLevelCustomCombo extends TagSupport
 			{
 				isDisabled = " disabled = \"true\"";
 			}
-			Object[] args = {verticalCombosStart, formLabelStyle, formLabelStyle,
-					attributeNames[comboCounter], styleClass, tdStyleClass, rowNumber,
-					comboCounter, isDisabled};
-			combosHTMLStr = combosHTMLStr + MessageFormat.format(comboHTMLList, args);
+			Object[] args = {verticalCombosStart, formLabelStyle, attributeNames[comboCounter],
+					styleClass, tdStyleClass, rowNumber, comboCounter, isDisabled};
+
+			combosHTMLStr = combosHTMLStr
+					+ MessageFormat.format(props.getProperty("NLCCcomboHTMLList"), args);
 			getOptionsForList(dList);
 			combosHTMLStr = combosHTMLStr + "</select> </td> " + verticalCombosEnd;
 			comboCounter++;
@@ -606,11 +606,10 @@ public class NLevelCustomCombo extends TagSupport
 	private void getOptionsForCurrentCombo(Set keySet, String initialValForThisCombo)
 	{
 		Iterator keyIter = keySet.iterator();
-		//System.out.println("comboCounter "+comboCounter);
-
-		if ((comboCounter == 0)
+		boolean isCurrentCombo = (comboCounter == 0)
 				|| (comboCounter > 0
-						&& !(((String) initialValues[comboCounter - 1]).equals("-1"))))
+						&& !(((String) initialValues[comboCounter - 1]).equals("-1")));
+		if (isCurrentCombo)
 		{
 			setOptionSelectionForCurrentCombo(initialValForThisCombo, keyIter);
 		}
