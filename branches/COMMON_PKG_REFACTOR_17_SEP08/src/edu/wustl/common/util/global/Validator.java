@@ -103,7 +103,7 @@ public class Validator
 	 * @param str string to be checked.
 	 * @return Returns true if the componentName is empty else returns false.
 	 */
-	static public boolean isEmpty(String str)
+	public static boolean isEmpty(String str)
 	{
 		boolean isEmpty = false;
 		if (str == null || TextConstants.EMPTY_STRING.equals(str.trim()))
