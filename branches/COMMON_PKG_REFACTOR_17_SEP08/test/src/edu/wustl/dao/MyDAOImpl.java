@@ -28,6 +28,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public static boolean isTestForFail=false;
 	public static boolean identifierList=false;
+	public static boolean isTestActivityStatus=false;
 
 	/**
 	 * List to return from retrieve methods.
@@ -53,6 +54,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 			list.add(Long.valueOf(1));
 			list.add(Long.valueOf(2));
 			list.add(Long.valueOf(3));
+		}
+		else if(isTestActivityStatus)
+		{
+			list.add("ActivityStatus");
 		}
 		else
 		{
