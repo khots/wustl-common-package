@@ -131,7 +131,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public void disableRelatedObjects(String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException
 	{
-		// Not to do anything.
+		throwDaoException();
 	}
 
 	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
