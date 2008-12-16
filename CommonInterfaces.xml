@@ -2,4 +2,6 @@
 <interfaces>
 	<interface name="IQueryExecutor" className="edu.wustl.query.executor.AbstractQueryExecutor">
 	</interface>
+	<interface name="ShoppingCartInterface" className="eedu.wustl.catissuecore.shoppingcart.ShoppingCart">
+	</interface>
 </interfaces>
