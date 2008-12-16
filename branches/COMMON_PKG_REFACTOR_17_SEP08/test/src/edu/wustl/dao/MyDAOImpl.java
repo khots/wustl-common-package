@@ -44,14 +44,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		list= new ArrayList<Object>();
 		if(isTestForFail)
 		{
-			try
-			{
-				ErrorKey.init("-");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
 					DAOConstants.EXECUTE_QUERY_ERROR);
@@ -73,23 +65,18 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		}
 		return (List<Object>)list;
 	}
-
-	public String getObject() throws DAOException
+	private void throwDaoException() throws DAOException
 	{
 		if(isTestForFail)
 		{
-			try
-			{
-				ErrorKey.init("-");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
 					DAOConstants.EXECUTE_QUERY_ERROR);
 		}
+	}
+	public String getObject() throws DAOException
+	{
+		throwDaoException();
 		return object;
 	}
 	public String  formatMessage(Exception exception, String message)
@@ -103,18 +90,18 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public void setIsDefaultDAOFactory(Boolean isDefaultDAOFactory )
 	{
-		
+
 	}
-	
+
 	public Boolean getIsDefaultDAOFactory()
 	{
 		return true;
 	}
-	
+
 	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
 			boolean isAuditable) throws DAOException
 	{
-		// TODO Auto-generated method stub
+		throwDaoException();
 
 	}
 
@@ -132,8 +119,8 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public void delete(Object obj) throws DAOException
 	{
-		// TODO Auto-generated method stub
-
+		throwDaoException();
+		//NOT TO DO ANYTHING.
 	}
 
 	public void disableRelatedObjects(String tableName, String whereColumnName,
@@ -158,20 +145,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public void insert(Object obj, SessionDataBean sessionDataBean, boolean isAuditable,
 			boolean isSecureInsert) throws DAOException
 	{
-		if(isTestForFail)
-		{
-			try
-			{
-				ErrorKey.init("-");
-			}
-			catch (IOException exception)
-			{
-				exception.printStackTrace();
-			}
-			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
-					DAOConstants.EXECUTE_QUERY_ERROR);
-		}
+		throwDaoException();
 	}
 
 	public void openSession(SessionDataBean sessionDataBean) throws DAOException
@@ -221,14 +195,13 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	}
 
 	public void setConnectionManager(IConnectionManager connectionManager)
-	{		
+	{
 		this.connectionManager=connectionManager;
 	}
 
 	public void update(Object obj) throws DAOException
 	{
-		// TODO Auto-generated method stub
-
+		throwDaoException();
 	}
 
 	public void addAuditEventLogs(Collection<Object> auditEventDetailsCollection)
