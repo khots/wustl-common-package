@@ -45,14 +45,6 @@ public final class Constants
 	 */
 	public static final String TAB_DELIMETER = "\t";
 
-	//	Misc
-	/**
-	 * Specify SEPARATOR( : ).
-	 */
-	public static final String SEPARATOR = " : ";
-
-	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
-
 	/**
 	 * Specify add operation.
 	 */

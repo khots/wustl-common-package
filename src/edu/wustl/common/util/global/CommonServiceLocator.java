@@ -217,7 +217,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the dateSeparator
 	 */
-	public static String getDateSeparator()
+	public String getDateSeparator()
 	{
 		return dateSeparator;
 	}
@@ -225,7 +225,7 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public static void setDateSeparator(Properties props)
+	public void setDateSeparator(Properties props)
 	{
 		CommonServiceLocator.dateSeparator = props.getProperty("date.separator");
 	}
@@ -233,7 +233,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the dateSeparatorSlash
 	 */
-	public static String getDateSeparatorSlash()
+	public String getDateSeparatorSlash()
 	{
 		return dateSeparatorSlash;
 	}
@@ -241,7 +241,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the minYear
 	 */
-	public static String getMinYear()
+	public String getMinYear()
 	{
 		return minYear;
 	}
@@ -249,7 +249,7 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties.
 	 */
-	public static void setMinYear(Properties props)
+	public void setMinYear(Properties props)
 	{
 		CommonServiceLocator.minYear = props.getProperty("min.year");
 	}
@@ -257,7 +257,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the maxYear
 	 */
-	public static String getMaxYear()
+	public String getMaxYear()
 	{
 		return maxYear;
 	}
@@ -265,7 +265,7 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties.
 	 */
-	public static void setMaxYear(Properties props)
+	public void setMaxYear(Properties props)
 	{
 		CommonServiceLocator.maxYear = props.getProperty("max.year");
 	}
@@ -273,7 +273,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the datePattern
 	 */
-	public static String getDatePattern()
+	public String getDatePattern()
 	{
 		return datePattern;
 	}
@@ -281,7 +281,7 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public static void setDatePattern(Properties props)
+	public void setDatePattern(Properties props)
 	{
 		CommonServiceLocator.datePattern = props.getProperty("date.pattern");
 	}
@@ -289,7 +289,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the timePattern
 	 */
-	public static String getTimePattern()
+	public String getTimePattern()
 	{
 		return timePattern;
 	}
@@ -297,7 +297,7 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public static void setTimePattern(Properties props)
+	public void setTimePattern(Properties props)
 	{
 		CommonServiceLocator.timePattern = props.getProperty("time.pattern");
 	}
@@ -305,7 +305,7 @@ public final class CommonServiceLocator
 	/**
 	 * @return the timeStampPattern
 	 */
-	public static String getTimeStampPattern()
+	public String getTimeStampPattern()
 	{
 		return timeStampPattern;
 	}
@@ -313,7 +313,7 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public static void setTimeStampPattern(Properties props)
+	public void setTimeStampPattern(Properties props)
 	{
 		CommonServiceLocator.timeStampPattern = props.getProperty("timestamp.pattern");
 	}
