@@ -34,6 +34,132 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	private static final  IDAOFactory DAO_FACTORY = DAOConfigFactory.getInstance().getDAOFactory(APP_NAME);
 
 	/**
+	 *  Positive test case for update.
+	 */
+	public void testUpdateWithSessionDataBean()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.update(myJdbcDao,"","",null);
+			assertTrue("Object updated successfuly.", true);
+		}
+		catch (Exception exception)
+		{
+			fail("Not able to update the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test case for delete.
+	 */
+	public void testFailUpdateWithSessionDataBean()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.update(myJdbcDao,"","",null);
+			fail("Negative test case: Should not update the object.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue(true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch (Exception exception)
+		{
+			fail("Negative test case: Should not update the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 *  Positive test case for update.
+	 */
+	public void testUpdate()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.update(myJdbcDao,"");
+			assertTrue("Object updated successfuly.", true);
+		}
+		catch (Exception exception)
+		{
+			fail("Not able to update the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test case for delete.
+	 */
+	public void testFailUpdate()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.update(myJdbcDao,"");
+			fail("Negative test case: Should not update the object.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue(true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch (Exception exception)
+		{
+			fail("Negative test case: Should not update the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
+	 * Positive test case for delete.
+	 */
+	public void testDelete()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.delete("");
+			assertTrue("Object deleted successfuly.", true);
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to delete the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test case for delete. 
+	 */
+	public void testFailDelete()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.delete("");
+			fail("Negative test case: Should not delete the object.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue(true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
 	 * Positive test for
 	 * List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			boolean isToExcludeDisabled).
@@ -42,6 +168,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
+			MyDAOImpl.isTestForFail=false;
 			String []displayNameFields={"displayNameFields"};
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			List list=defaultBizLogic.getList("sourceObjectName",displayNameFields,"valueField",true);
@@ -65,6 +192,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
+			MyDAOImpl.isTestForFail=false;
 			String []displayNameFields={"displayNameFields"};
 			String []selectColumnName={"selectColumnName"};
 			String []whereColumnCondition={"="};
