@@ -616,7 +616,94 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
+	/**
+	 * Positive test case.
+	 */
+	public void testGetRelatedObjectWithWhereClause()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=false;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass(), null);
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (Exception exception)
+		{
+			fail("Not able to get related object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
 
+	/**
+	 * Negative test case.
+	 */
+	public void testFailGetRelatedObjectWithWhereClause()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=false;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass(), null);
+			fail("Negative test case: must throw exception.");
+		}
+		catch (Exception exception)
+		{
+			assertTrue("Negative test case:Thrown BizLogicException",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
+	 * Positive test case.
+	 */
+	public void testGetRelatedObjWithWhereClauseAndColName()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=false;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			String []selectColumnName={"selectColumnName"};
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass(),selectColumnName,null);
+			assertEquals(MyDAOImpl.list.size(), list.size());
+		}
+		catch (Exception exception)
+		{
+			fail("Not able to get related object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test case.
+	 */
+	public void testFailGetRelatedObjWithWhereClauseAndColName()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=false;
+			String []selectColumnName={"selectColumnName"};
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass(),selectColumnName, null);
+			fail("Negative test case: must throw exception.");
+		}
+		catch (Exception exception)
+		{
+			assertTrue("Negative test case:Thrown BizLogicException",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
 	/**
 	 * Positive test.
 	 */
