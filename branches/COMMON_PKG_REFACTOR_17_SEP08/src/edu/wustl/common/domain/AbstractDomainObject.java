@@ -16,6 +16,7 @@ import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.audit.Auditable;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.util.Identifiable;
+import edu.wustl.common.util.Utility;
 
 /**
  * AbstractDomain class is the superclass of all the domain classes.
@@ -45,16 +46,7 @@ public abstract class AbstractDomainObject implements Auditable, Serializable,Id
 	 */
 	public static String parseClassName(String qualifiedName)
 	{
-		String className;
-		try
-		{
-			className = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
-		}
-		catch (Exception e)
-		{
-			className = qualifiedName;
-		}
-		return className;
+		return Utility.parseClassName(qualifiedName);
 	}
 	/**
 	 * Copies all values from the AbstractForm object
