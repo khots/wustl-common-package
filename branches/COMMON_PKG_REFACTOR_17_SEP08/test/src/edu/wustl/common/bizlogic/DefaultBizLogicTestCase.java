@@ -3,7 +3,9 @@ package edu.wustl.common.bizlogic;
 import java.util.List;
 
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.MyDAOImpl;
@@ -740,6 +742,63 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			defaultBizLogic.getActivityStatus(myJdbcDao,"sourceObjectName",Long.valueOf(1));
 			fail("Negative test case: must throw only BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: BizLogicException thrown",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch(Exception exception)
+		{
+			fail("Negative test case: must throw only BizLogicException.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Positive test.
+	 */
+	public void testCheckStatus()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			MyDomainObject ado= new MyDomainObject();
+			ado.setActivityStatus("Active");
+			ado.setId(Long.valueOf(1));
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.checkStatus(myJdbcDao,ado,"1");
+			ado.setActivityStatus(null);
+			defaultBizLogic.checkStatus(myJdbcDao,ado,"1");
+			assertTrue(true);
+		}
+		catch (Exception exception)
+		{
+			fail("Not able to check status.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test.
+	 */
+	public void testFailCheckStatus()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			MyDomainObject ado= new MyDomainObject();
+			ado.setId(Long.valueOf(1));
+			ado.setActivityStatus(Status.ACTIVITY_STATUS_CLOSED.toString());
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.checkStatus(myJdbcDao,ado,"1");
+			fail("Negative test case: must throw BizLogicException only.");
 		}
 		catch (BizLogicException exception)
 		{
