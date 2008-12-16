@@ -33,13 +33,47 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 */
 	private static final  IDAOFactory DAO_FACTORY = DAOConfigFactory.getInstance().getDAOFactory(APP_NAME);
 
-	public void testGetList()
+	/**
+	 * Positive test for
+	 * List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+			boolean isToExcludeDisabled).
+	 */
+	public void testGetListWithFourParam()
 	{
 		try
 		{
 			String []displayNameFields={"displayNameFields"};
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			List list=defaultBizLogic.getList("sourceObjectName",displayNameFields,"valueField",true);
+			assertEquals(MyDAOImpl.list.size()+1,list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+
+	/**
+	 * Positive test for
+	 * List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled).
+	 */
+	public void testGetListWithNineParam()
+	{
+		try
+		{
+			String []displayNameFields={"displayNameFields"};
+			String []selectColumnName={"selectColumnName"};
+			String []whereColumnCondition={"="};
+			String []whereColumnValue={"whereColumnValue"};
+			String joinCondition="joinCondition";
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			List list=defaultBizLogic.getList("sourceObjectName",displayNameFields,"valueField",
+					selectColumnName,whereColumnCondition,whereColumnValue
+					,joinCondition,",",true);
 			assertEquals(MyDAOImpl.list.size()+1,list.size());
 		}
 		catch (BizLogicException exception)
@@ -138,7 +172,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition).
 	 */
-	public void testRetrive1()
+	public void testRetriveWithSixParam()
 	{
 		try
 		{
@@ -165,7 +199,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition).
 	 */
-	public void testFailRetrive1()
+	public void testFailRetriveWithSixParam()
 	{
 		try
 		{
@@ -192,7 +226,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * public List retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause).
 	 */
-	public void testRetrive2()
+	public void testRetriveWithQueryWhereClause()
 	{
 		try
 		{
@@ -215,7 +249,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * public List retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause).
 	 */
-	public void testFailRetrive2()
+	public void testFailRetriveWithQueryWhereClause()
 	{
 		try
 		{
@@ -239,7 +273,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * List retrieve(String sourceObjectName, String[] whereColumnName,
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition).
 	 */
-	public void testRetrive3()
+	public void testRetriveWithFiveParam()
 	{
 		try
 		{
@@ -263,7 +297,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * Test case for
 	 * List retrieve(String className, String colName, Object colValue).
 	 */
-	public void testRetrive4()
+	public void testRetriveThreeParam()
 	{
 		try
 		{
@@ -278,12 +312,12 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
-	
+
 	/**
 	 * Test case for
 	 * List retrieve(String sourceObjectName).
 	 */
-	public void testRetrive5()
+	public void testRetriveWithOneParam()
 	{
 		try
 		{
@@ -302,7 +336,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * Test case for
 	 * List retrieve(String sourceObjectName, String[] selectColumnName).
 	 */
-	public void testRetrive6()
+	public void testRetriveWithTwoParam()
 	{
 		try
 		{
@@ -323,7 +357,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * Test case for
 	 * Object retrieve(String sourceObjectName, Long identifier).
 	 */
-	public void testRetrive7()
+	public void testRetriveWithLongIdentifier()
 	{
 		try
 		{
@@ -431,7 +465,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	 * Positive test case for disableObjects(DAO dao, Class sourceClass, String classIdentifier,
 			String tablename, String colName, Long[] objIDArr).
 	 */
-	public void testDisableObjects()
+	public void testDisableObjectsWithColumnName()
 	{
 		try
 		{
@@ -454,4 +488,33 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
+
+	/**
+	 * Positive test case for
+	 * List disableObjects(DAO dao, String tablename, Class sourceClass,
+			String classIdentifier, Long[] objIDArr).
+	 */
+	/*public void testDisableObjects()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.identifierList=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Long []objIDArr={ Long.valueOf(1),Long.valueOf(2)};
+			defaultBizLogic.disableObjects(myJdbcDao,"tablename","".getClass(),"classIdentifier",objIDArr);
+			assertTrue("objects disabled successfully.",true);
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to disable objects.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch (DAOException exception)
+		{
+			fail("DAOException thrown");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}*/
 }
