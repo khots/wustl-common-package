@@ -13,6 +13,11 @@ public class ExperimentTreeNode extends TreeNodeImpl
 {
 
 	/**
+	 * Serial version id.
+	 */
+	private static final long serialVersionUID = -2865433413624982062L;
+
+	/**
 	 * Name of the experiment/experiment group.
 	 */
 	String name;

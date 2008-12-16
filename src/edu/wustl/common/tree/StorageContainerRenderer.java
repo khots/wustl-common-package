@@ -27,6 +27,11 @@ public class StorageContainerRenderer extends DefaultTreeCellRenderer
 {
 
 	/**
+	 * Serial version id.
+	 */
+	private static final long serialVersionUID = -8833844135285642393L;
+
+	/**
 	 * Configures the renderer based on the passed in components.
 	 * @see javax.swing.tree.TreeCellRenderer#getTreeCellRendererComponent(javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
 	 */

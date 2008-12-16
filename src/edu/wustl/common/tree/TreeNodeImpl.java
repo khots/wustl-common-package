@@ -22,6 +22,11 @@ public class TreeNodeImpl implements Serializable, TreeNode
 {
 
 	/**
+	 * Serial version id.
+	 */
+	private static final long serialVersionUID = -6991311769537160227L;
+
+	/**
 	 * identifier for the node.
 	 */
 	Long identifier;
