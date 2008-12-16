@@ -618,6 +618,54 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	}
 
 	/**
+	 * Positive test.
+	 */
+	public void testGetActivityStatus()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.getActivityStatus(myJdbcDao,"sourceObjectName",Long.valueOf(1));
+			assertTrue("get activity status successfuly.", true);
+		}
+		catch (Exception exception)
+		{
+			fail("Not able to get activity status.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 * Negative test.
+	 */
+	public void testFailGetActivityStatus()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.isTestActivityStatus=false;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.getActivityStatus(myJdbcDao,"sourceObjectName",Long.valueOf(1));
+			fail("Negative test case: must throw only BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: BizLogicException thrown",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch(Exception exception)
+		{
+			fail("Negative test case: must throw only BizLogicException.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
 	 * Positive test case for
 	 * List disableObjects(DAO dao, String tablename, Class sourceClass,
 			String classIdentifier, Long[] objIDArr).
