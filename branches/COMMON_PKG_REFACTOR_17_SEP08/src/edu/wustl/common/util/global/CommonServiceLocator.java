@@ -44,6 +44,42 @@ public final class CommonServiceLocator
 	private static String appURL;
 
 	/**
+	 * Date separator.
+	 */
+	private static String dateSeparator="-";
+
+	/**
+	 * Date separator.
+	 */
+	private static String dateSeparatorSlash="/";
+
+	/**
+	 * Minimum year.
+	 * e.g 1900
+	 */
+	private static String minYear;
+	/**
+	 * Maximum year.
+	 * e.g 9999
+	 */
+	private static String maxYear;
+
+	/**
+	 * Date pattern.
+	 * e.g.MM-dd-yyyy
+	 */
+	private static String datePattern;
+
+	/**
+	 * Time pattern. e.g. HH:mm:ss
+	 */
+	private static String timePattern;
+	/**
+	 * Date time pattern.
+	 * e.g. yyyy-MM-dd-HH24.mm.ss.SSS
+	 */
+	private static String timeStampPattern;
+	/**
 	 *No argument constructor.
 	 *Here all the properties are set
 	 */
@@ -73,9 +109,14 @@ public final class CommonServiceLocator
 			Properties props= new Properties();
 			props.load(stream);
 			setAppName(props);
-			//setAppVersion(props);
 			setAppHome(props);
 			setPropDirPath();
+			setDateSeparator(props);
+			setDatePattern(props);
+			setTimePattern(props);
+			setTimeStampPattern(props);
+			setMinYear(props);
+			setMaxYear(props);
 			stream.close();
 		}
 		catch (IOException exception)
@@ -170,5 +211,110 @@ public final class CommonServiceLocator
 				logger.error(urlExp.getMessage(), urlExp);
 			}
 		}
+	}
+
+
+	/**
+	 * @return the dateSeparator
+	 */
+	public static String getDateSeparator()
+	{
+		return dateSeparator;
+	}
+
+	/**
+	 * @param props Object of Properties
+	 */
+	public static void setDateSeparator(Properties props)
+	{
+		CommonServiceLocator.dateSeparator = props.getProperty("date.separator");
+	}
+
+	/**
+	 * @return the dateSeparatorSlash
+	 */
+	public static String getDateSeparatorSlash()
+	{
+		return dateSeparatorSlash;
+	}
+
+	/**
+	 * @return the minYear
+	 */
+	public static String getMinYear()
+	{
+		return minYear;
+	}
+
+	/**
+	 * @param props Object of Properties.
+	 */
+	public static void setMinYear(Properties props)
+	{
+		CommonServiceLocator.minYear = props.getProperty("min.year");
+	}
+
+	/**
+	 * @return the maxYear
+	 */
+	public static String getMaxYear()
+	{
+		return maxYear;
+	}
+
+	/**
+	 * @param props Object of Properties.
+	 */
+	public static void setMaxYear(Properties props)
+	{
+		CommonServiceLocator.maxYear = props.getProperty("max.year");
+	}
+
+	/**
+	 * @return the datePattern
+	 */
+	public static String getDatePattern()
+	{
+		return datePattern;
+	}
+
+	/**
+	 * @param props Object of Properties
+	 */
+	public static void setDatePattern(Properties props)
+	{
+		CommonServiceLocator.datePattern = props.getProperty("date.pattern");
+	}
+
+	/**
+	 * @return the timePattern
+	 */
+	public static String getTimePattern()
+	{
+		return timePattern;
+	}
+
+	/**
+	 * @param props Object of Properties
+	 */
+	public static void setTimePattern(Properties props)
+	{
+		CommonServiceLocator.timePattern = props.getProperty("time.pattern");
+	}
+
+	/**
+	 * @return the timeStampPattern
+	 */
+	public static String getTimeStampPattern()
+	{
+		return timeStampPattern;
+	}
+
+	/**
+	 * @param props Object of Properties
+	 */
+	public static void setTimeStampPattern(Properties props)
+	{
+		CommonServiceLocator.timeStampPattern = props.getProperty("timestamp.pattern");
 	}
 }
