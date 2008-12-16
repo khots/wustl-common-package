@@ -53,12 +53,6 @@ public final class Constants
 
 	public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd-HH24.mm.ss.SSS";
 
-	// Mandar: Used for Date Validations in Validator Class
-	public static final String DATE_SEPARATOR = "-";
-	public static final String DATE_SEPARATOR_SLASH = "/";
-	public static final String MIN_YEAR = "1900";
-	public static final String MAX_YEAR = "9999";
-
 	/**
 	 * Specify add operation.
 	 */
@@ -120,8 +114,6 @@ public final class Constants
 	 * Constant for EDIT.
 	 */
 	public static final String EDIT = "edit";
-	//catissue.
-	public static final String DATE_PATTERN_MM_DD_YYYY = "MM-dd-yyyy";
 
 	//Constants for audit of disabled objects.
 	/**
@@ -163,14 +155,22 @@ public final class Constants
 	 */
 	public static final String IDENTIFIER = "IDENTIFIER";
 	//SimplQuery and catissue.
+	/**
+	 * Date String.
+	 */
 	public static final String FIELD_TYPE_DATE = "date";
+
+	/**
+	 * Time stamp Date.
+	 */
 	public static final String FIELD_TYPE_TIMESTAMP_DATE = "timestampdate";
 
+	/**
+	 * Time stamp time.
+	 */
 	//SimplQuery and catissue.
 	public static final String FIELD_TYPE_TIMESTAMP_TIME = "timestamptime";
 
-	//datatypes
-	public static final String TIME_PATTERN_HH_MM_SS = "HH:mm:ss";
 
 	/**
 	 * menu selection related.
