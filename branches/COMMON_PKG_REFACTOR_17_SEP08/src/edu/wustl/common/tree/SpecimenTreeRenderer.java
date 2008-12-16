@@ -27,6 +27,11 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 {
 
 	/**
+	 * Serial version id.
+	 */
+	private static final long serialVersionUID = -7991649183588799478L;
+
+	/**
 	 * String containing the type of specimen 
 	 */
 	String specimenType;

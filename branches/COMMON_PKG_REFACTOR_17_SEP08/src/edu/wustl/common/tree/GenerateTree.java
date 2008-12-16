@@ -34,7 +34,7 @@ public class GenerateTree
 	String containerName;
 
 	/**
-	 * Default consructor
+	 * Default consructor.
 	 */
 	public GenerateTree()
 	{
@@ -42,7 +42,7 @@ public class GenerateTree
 	}
 
 	/**
-	 * parameterised consructor
+	 * parameterised consructor.
 	 */
 	public GenerateTree(String containerName)
 	{
@@ -86,6 +86,11 @@ public class GenerateTree
 		{
 			tree = new JTree(root)
 			{
+
+				/**
+				 * Serial version id.
+				 */
+				private static final long serialVersionUID = -5117917390858206892L;
 
 				public String getToolTipText(MouseEvent e)
 				{
@@ -134,6 +139,11 @@ public class GenerateTree
 
 		JTree tree = new JTree(root)
 		{
+
+			/**
+			 * Serial version id.
+			 */
+			private static final long serialVersionUID = 3698063223619663356L;
 
 			public String getToolTipText(MouseEvent e)
 			{
@@ -195,6 +205,11 @@ public class GenerateTree
 		{
 			tree = new JTree(root)
 			{
+
+				/**
+				 * Serial version id.
+				 */
+				private static final long serialVersionUID = 199829542340609946L;
 
 				public String getToolTipText(MouseEvent e)
 				{

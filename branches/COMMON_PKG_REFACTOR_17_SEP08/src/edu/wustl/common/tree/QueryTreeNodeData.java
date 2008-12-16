@@ -22,6 +22,11 @@ import edu.wustl.common.util.global.Constants;
 public class QueryTreeNodeData implements QueryTreeNode, Serializable
 {
 
+	/**
+	 * Serial version id.
+	 */
+	private static final long serialVersionUID = -5357987791504167664L;
+
 	private String identifier;
 
 	private String objectName;
