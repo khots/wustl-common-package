@@ -1,8 +1,11 @@
 package edu.wustl.common.bizlogic;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.global.Status;
@@ -619,6 +622,33 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		}
 	}
 	/**
+	 * Negative test case for disableObjects(DAO dao, Class sourceClass, String classIdentifier,
+			String tablename, String colName, Long[] objIDArr).
+	 */
+	public void testFailDisableObjectsWithColumnName()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.identifierList=true;
+			DAO myJdbcDao = DAO_FACTORY.getDAO();
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Long []objIDArr={ Long.valueOf(1),Long.valueOf(2)};
+			defaultBizLogic.disableObjects(myJdbcDao,"".getClass(),"classIdentifier","tablename","colName",objIDArr);
+			fail("Negative test case: must throw exception.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case:Thrown BizLogicException",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+		catch (DAOException exception)
+		{
+			fail("Negative test case:DAOException thrown");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	/**
 	 * Positive test case.
 	 */
 	public void testGetRelatedObjectWithWhereClause()
@@ -810,6 +840,36 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			fail("Negative test case: must throw only BizLogicException.");
 			logger.fatal(exception.getMessage(),exception);
 		}
+	}
+
+	public void testGetCorrespondingOldObject()
+	{
+		try
+		{
+			MyDomainObject ado= new MyDomainObject();
+			ado.setActivityStatus("Active");
+			ado.setId(Long.valueOf(1));
+			Collection<AbstractDomainObject> list= new ArrayList<AbstractDomainObject>();
+			list.add(ado);
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			AbstractDomainObject ado2 = (AbstractDomainObject)defaultBizLogic.getCorrespondingOldObject(list,Long.valueOf(1));
+			assertEquals(ado2,ado);
+		}
+		catch (Exception exception)
+		{
+			fail("Exception in GetCorrespondingOldObject method.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	public void testIsReadDeniedTobeChecked()
+	{
+		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		assertFalse(defaultBizLogic.isReadDeniedTobeChecked());
+	}
+	public void testGetReadDeniedPrivilegeName()
+	{
+		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		assertNull(defaultBizLogic.getReadDeniedPrivilegeName());
 	}
 	/**
 	 * Positive test case for
