@@ -10,7 +10,6 @@
 
 package edu.wustl.common.bizlogic;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -310,7 +309,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly)
 	throws BizLogicException
 	{
-		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
 		try
@@ -597,7 +595,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean, boolean isUpdateOnly)
 	throws BizLogicException
 	{
-		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
 		try
@@ -712,6 +709,25 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
+		commonSetPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
+				assignToUser, assignOperation);
+	}
+
+	/**
+	 * @param privilegeName privilege Name
+	 * @param objectType object Type
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param sessionDataBean session specific Data
+	 * @param roleId role Id
+	 * @param assignToUser assign To User
+	 * @param assignOperation Operation
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	private void commonSetPrivilege(String privilegeName, Class objectType, Long[] objectIds,
+			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
+			boolean assignOperation) throws BizLogicException
+	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
 		try
@@ -754,30 +770,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao=null;
-		try
-		{
-			dao = daofactory.getDAO();
-			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
-					+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
-					+ " userId:" + userId + " roleId:" + roleId
-					+ " assignToUser:" + assignToUser);
-			dao.openSession(sessionDataBean);
-			setPrivilege(dao, privilegeName, objectType, objectIds, userId, roleId, assignToUser,
-					assignOperation);
-			dao.commit();
-		}
-		catch (DAOException daoEx)
-		{
-			rollback(dao);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-			throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
+		commonSetPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
+				assignToUser, assignOperation);
 	}
 
 	/**
@@ -799,12 +793,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			String roottableName = null;
 			// Get ExceptionFormatter
-			ExceptionFormatter ef = ExceptionFormatterFactory.getFormatter(exception);
+			ExceptionFormatter exFormatter = ExceptionFormatterFactory.getFormatter(exception);
 			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 			DAO dao = daofactory.getDAO();
 			IConnectionManager connectionManager = dao.getConnectionManager();
 			// call for Formating Message
-			if (ef == null)
+			if (exFormatter == null)
 			{
 				errMsg = exception.getMessage();
 			}
@@ -814,12 +808,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 				tableName = HibernateMetaData.getTableName(obj.getClass());
 				Object[] arguments = {roottableName,
 						connectionManager.currentSession().connection(),tableName};
-				errMsg = ef.formatMessage(exception, arguments);
+				errMsg = exFormatter.formatMessage(exception, arguments);
 			}
 		}
-		catch (Exception e)
+		catch (Exception except)
 		{
-			logger.error(exception.getMessage(), exception);
+			logger.error(except.getMessage(), except);
 			// if Error occured while formating message then get message
 			// formatted through Default Formatter
 			String [] arg = {operation, tableName};
@@ -862,42 +856,41 @@ public abstract class AbstractBizLogic implements IBizLogic
 						new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
 
 				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
-
-				if (operation!=null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION))
+				if(operation!=null)
 				{
-					indexRefresher.insert(recordIdentifier);
-				}
-				else if (operation!=null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_UPDATE_OPERATION))
-				{
-					indexRefresher.update(recordIdentifier);
-				}
-				else if (operation!=null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_DELETE_OPERATION))
-				{
-					indexRefresher.delete(recordIdentifier);
+					performOperation(operation, recordIdentifier, indexRefresher);
 				}
 			}
 		}
-		catch (TitliException e)
+		catch (Exception exception)
 		{
-			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
-		}
-		catch(IOException e)
-		{
-			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
-		}
-		catch(ClassNotFoundException e)
-		{
-			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
-		}
-		catch(InstantiationException e)
-		{
-			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
-		}
-		catch(IllegalAccessException e)
-		{
-			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+			logger.error("Titli search index cound not be refreshed for opeartion "+operation, exception);
 		}
 
+	}
+
+	/**
+	 * This method perform insert,update or delete operation.
+	 * @param operation type of operation.
+	 * @param recordIdentifier object of IndexRefresherInterface.
+	 * @param indexRefresher object of IndexRefresherInterface.
+	 * @throws TitliException throws this exception if operation unsuccessful.
+	 */
+	private void performOperation(String operation, RecordIdentifier recordIdentifier,
+			IndexRefresherInterface indexRefresher) throws TitliException
+	{
+		if (operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION))
+		{
+			indexRefresher.insert(recordIdentifier);
+		}
+		else if(operation.equalsIgnoreCase(TitliSearchConstants.TITLI_UPDATE_OPERATION))
+		{
+			indexRefresher.update(recordIdentifier);
+		}
+		else if(operation.equalsIgnoreCase(TitliSearchConstants.TITLI_DELETE_OPERATION))
+		{
+			indexRefresher.delete(recordIdentifier);
+		}
 	}
 
 	/**
