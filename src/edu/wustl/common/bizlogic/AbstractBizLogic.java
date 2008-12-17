@@ -34,7 +34,6 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
-import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TitliSearchConstants;
@@ -865,7 +864,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
 	 * @throws BizLogicException BizLogic Exception
-	 * @throws UserNotAuthorizedException User Not Authorized Exception
 	 */
 	public final void update(Object currentObj) throws BizLogicException
 	{
