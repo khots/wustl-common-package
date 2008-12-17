@@ -980,24 +980,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * @param dao DAO object
-	 * @throws BizLogicException :Generic BizLogic Exception- session not closed.
-	 */
-	private void closeSession(DAO dao) throws BizLogicException
-	{
-		try
-		{
-			dao.closeSession();
-		}
-		catch (DAOException exception)
-		{
-			logger.error("Not able to close DAO session.", exception);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.closesession.error");
-			throw new BizLogicException(exception);
-		}
-	}
-
-	/**
 	 * To retrieve the attribute value for the given source object name & Id.
 	 * @param sourceObjectName Source object in the Database.
 	 * @param identifier Id of the object.
