@@ -27,28 +27,33 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 {
 
 	/**
-	 * Serial version id.
+	 * serial Version Unique ID.
 	 */
-	private static final long serialVersionUID = -7991649183588799478L;
+	private static final long serialVersionUID = 7215306683340446468L;
 
 	/**
-	 * String containing the type of specimen 
+	 * String containing the type of specimen.
 	 */
-	String specimenType;
+	private transient String specimenType;
 
 	/**
-	 * String containing the class of specimen 
+	 * String containing the class of specimen.
 	 */
-	String specimenClass;
+	private transient String specimenClass;
 
 	/**
-	 * public no-args constructor
+	 * public no-args constructor.
 	 */
 	public SpecimenTreeRenderer()
 	{
 		super();
 	}
 
+	/**
+	 * constructor.
+	 * @param specimenType specimen Type
+	 * @param specimenClass specimen Class.
+	 */
 	public SpecimenTreeRenderer(String specimenType, String specimenClass)
 	{
 		this();
@@ -58,7 +63,18 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 
 	/**
 	* Configures the renderer based on the passed in components.
-	* @see javax.swing.tree.TreeCellRenderer#getTreeCellRendererComponent(javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
+	* @see javax.swing.tree.TreeCellRenderer
+	* #getTreeCellRendererComponent
+	* (javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
+	* overrides javax.swing.tree.DefaultTreeCellRenderer.getTreeCellRendererComponent.
+	* @param tree JTree
+	* @param value value
+	* @param sel sel.
+	* @param expanded expanded boolean value.
+	* @param leaf leaf boolean value.
+	* @param row row.
+	* @param hasFocus hasFocus.
+	* @return Component.
 	*/
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
 			boolean expanded, boolean leaf, int row, boolean hasFocus)
@@ -70,13 +86,16 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 
 		SpecimenTreeNode treeNode = (SpecimenTreeNode) node.getUserObject();
 
-		//If the clicked node is root node (i.e, label for specimen tree),then dont display Specimen.gif icon. 
+		//If the clicked node is root node
+		//(i.e, label for specimen tree),then dont display Specimen.gif icon.
 		Icon icon = createImageIcon("Specimen.gif");
 
 		if (!treeNode.toString().equals(Constants.SPECIMEN_TREE_ROOT_NAME))
 		{
-			/*The node is clickable when the specimen  type and specimen class of the node is same as that selected by user.
-			 * In that case,display enabled.gif image to indicate to the use that it is clickable.Otherwise,
+			/*The node is clickable when the specimen
+			 * type and specimen class of the node is same as that selected by user.
+			 * In that case,display enabled.gif image to indicate to the use that
+			 * it is clickable.Otherwise,
 			 * display disabled.gif.
 			 */
 
@@ -97,13 +116,15 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 		return this;
 	}
 
-	/** 
-	 * Returns an Icon, or null if the path was invalid. 
-	 * 
+	/**
+	 * Returns an Icon, or null if the path was invalid.
+	 * @param name name.
+	 * @return new Leaf Icon.
 	 */
 	protected Icon createImageIcon(String name)
 	{
-		Icon newLeafIcon = new ImageIcon(getClass().getClassLoader().getResource("images/" + name));
+		Icon newLeafIcon = new ImageIcon(Thread.currentThread().getContextClassLoader()
+				.getResource("images/" + name));
 
 		return newLeafIcon;
 	}

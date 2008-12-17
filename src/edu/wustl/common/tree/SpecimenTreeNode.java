@@ -13,6 +13,9 @@ import java.io.Serializable;
 public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 {
 
+	/**
+	 * serial Version Unique ID.
+	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -20,13 +23,13 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	 */
 	public SpecimenTreeNode()
 	{
-
+		super();
 	}
 
 	/**
 	 * Parametrized Construstor.
-	 * @param identifier
-	 * @param value
+	 * @param identifier identifier
+	 * @param value value.
 	 */
 	public SpecimenTreeNode(Long identifier, String value)
 	{
@@ -44,12 +47,12 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	private String specimenClass;
 
 	/**
-	 * String containing Id of the parent node
+	 * String containing Id of the parent node.
 	 */
 	private String parentIdentifier;
 
 	/**
-	 * String containing value of the parent node
+	 * String containing value of the parent node.
 	 */
 	private String parentValue;
 
@@ -62,7 +65,7 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	}
 
 	/**
-	 * @param type
+	 * @param type the type of the specimen node.
 	 */
 	public void setType(String type)
 	{
@@ -80,7 +83,7 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 
 	/**
 	 * Sets the class of specimen.
-	 * @param specimenClass
+	 * @param specimenClass the class of the specimen node
 	 */
 	public void setSpecimenClass(String specimenClass)
 	{
@@ -89,6 +92,10 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.tree.TreeNodeImpl#toString()
+	 */
+	/**
+	 * overrides edu.wustl.common.tree.TreeNodeImpl.toString.
+	 * @return value.
 	 */
 	public String toString()
 	{
@@ -106,7 +113,7 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 
 	/**
 	 * Sets the parentIdentifier of the tree node.
-	 * @param parentIdentifier
+	 * @param parentIdentifier parent Identifier.
 	 */
 	public void setParentIdentifier(String parentIdentifier)
 	{
@@ -114,7 +121,7 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	}
 
 	/**
-	 * Returns the parentValue of the tree node. 
+	 * Returns the parentValue of the tree node.
 	 * @return parentValue
 	 */
 	public String getParentValue()
@@ -123,8 +130,8 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	}
 
 	/**
-	 *Sets the parentValue of the tree node. 
-	 * @param parentValue
+	 *Sets the parentValue of the tree node.
+	 * @param parentValue parent Value.
 	 */
 	public void setParentValue(String parentValue)
 	{

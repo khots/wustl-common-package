@@ -27,13 +27,24 @@ public class StorageContainerRenderer extends DefaultTreeCellRenderer
 {
 
 	/**
-	 * Serial version id.
+	 * serial Version Unique ID.
 	 */
 	private static final long serialVersionUID = -8833844135285642393L;
 
 	/**
 	 * Configures the renderer based on the passed in components.
-	 * @see javax.swing.tree.TreeCellRenderer#getTreeCellRendererComponent(javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
+	 * @see javax.swing.tree.TreeCellRenderer
+	 * #getTreeCellRendererComponent
+	 * (javax.swing.JTree, java.lang.Object, boolean, boolean, boolean, int, boolean)
+	 * overrides javax.swing.tree.DefaultTreeCellRenderer.getTreeCellRendererComponent.
+	 * @param tree JTree
+	 * @param value value
+	 * @param sel sel.
+	 * @param expanded expanded boolean value.
+	 * @param leaf leaf boolean value.
+	 * @param row row.
+	 * @param hasFocus hasFocus.
+	 * @return Component.
 	 */
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
 			boolean expanded, boolean leaf, int row, boolean hasFocus)
@@ -53,13 +64,15 @@ public class StorageContainerRenderer extends DefaultTreeCellRenderer
 		return this;
 	}
 
-	/** 
-	 * Returns an Icon, or null if the path was invalid. 
-	 * 
+	/**
+	 * Returns an Icon, or null if the path was invalid.
+	 * @param name name.
+	 * @return new Leaf Icon.
 	 */
 	protected Icon createImageIcon(String name)
 	{
-		Icon newLeafIcon = new ImageIcon(getClass().getClassLoader().getResource("images/" + name));
+		Icon newLeafIcon = new ImageIcon(Thread.currentThread().getContextClassLoader()
+				.getResource("images/" + name));
 		return newLeafIcon;
 	}
 }

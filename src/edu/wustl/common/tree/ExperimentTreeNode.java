@@ -6,13 +6,12 @@ import java.util.Date;
 /**
  * A tree node to represent an experiment and an experiment group
  * in a hierarchical view using tree data structure.
- * 
  * @author chetan_bh
  */
 public class ExperimentTreeNode extends TreeNodeImpl
 {
 
-	/**
+    /**
 	 * Serial version id.
 	 */
 	private static final long serialVersionUID = -2865433413624982062L;
@@ -20,47 +19,60 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	/**
 	 * Name of the experiment/experiment group.
 	 */
-	String name;
+	private String name;
 
 	/**
 	 * Description for the experiment/experiment group.
 	 */
-	String desc;
+	private String desc;
 
 	/**
 	 * Date of creation.
 	 */
-	Date createdOn;
+	private Date createdOn;
 
 	/**
 	 * Date last updated.
 	 */
-	Date lastUpdatedOn;
+	private Date lastUpdatedOn;
 
 	/**
 	 * boolean value to distinguish between experiment and experiment group.
 	 */
-	boolean isExperimentGroup = false;
+	private transient boolean isExperimentGroup = false;
 
+	/**
+	 * Constructor.
+	 */
 	public ExperimentTreeNode()
 	{
 		super();
 	}
 
-	public ExperimentTreeNode(Long id)
+	/**
+	 * Constructor.
+	 * @param identifier identifier.
+	 */
+	public ExperimentTreeNode(Long identifier)
 	{
-		this(id, null);
+		this(identifier, null);
 	}
 
-	public ExperimentTreeNode(Long id, String name)
+	/**
+	 * Constructor.
+	 * @param identifier identifier
+	 * @param name name
+	 */
+	public ExperimentTreeNode(Long identifier, String name)
 	{
-		setIdentifier(id);
+		super();
+		setIdentifier(identifier);
 		this.name = name;
 	}
 
 	/**
 	 * Gets creation date.
-	 * @return
+	 * @return Date of creation.
 	 */
 	public Date getCreatedOn()
 	{
@@ -69,7 +81,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Sets creation date.
-	 * @param createdOn
+	 * @param createdOn Date of creation
 	 */
 	public void setCreatedOn(Date createdOn)
 	{
@@ -78,7 +90,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Gets description.
-	 * @return
+	 * @return Description for the experiment/experiment group
 	 */
 	public String getDesc()
 	{
@@ -87,7 +99,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Sets Description.
-	 * @param desc
+	 * @param desc Description for the experiment/experiment group
 	 */
 	public void setDesc(String desc)
 	{
@@ -96,7 +108,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Sets experiment Name.
-	 * @return
+	 * @return Name of the experiment/experiment group.
 	 */
 	public String getName()
 	{
@@ -105,7 +117,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Sets experiment name.
-	 * @param name
+	 * @param name Name of the experiment/experiment group.
 	 */
 	public void setName(String name)
 	{
@@ -114,7 +126,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Returns true if the node is an experiment group node else false.
-	 * @return
+	 * @return boolean value to distinguish between experiment and experiment group.
 	 */
 	public boolean isExperimentGroup()
 	{
@@ -123,7 +135,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Sets node type to experiment group if parameter passed is true, else experiment node.
-	 * @param isExperimentGroup
+	 * @param isExperimentGroup boolean value to distinguish between experiment and experiment group.
 	 */
 	public void setExperimentGroup(boolean isExperimentGroup)
 	{
@@ -132,7 +144,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Gets last updated date.
-	 * @return
+	 * @return Date last updated.
 	 */
 	public Date getLastUpdatedOn()
 	{
@@ -141,13 +153,17 @@ public class ExperimentTreeNode extends TreeNodeImpl
 
 	/**
 	 * Sets last updated date.
-	 * @param lastUpdatedOn
+	 * @param lastUpdatedOn Date last updated.
 	 */
 	public void setLastUpdatedOn(Date lastUpdatedOn)
 	{
 		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
+	/**
+	 * overrides edu.wustl.common.tree.TreeNodeImpl.toString.
+	 * @return name.
+	 */
 	public String toString()
 	{
 		return name;

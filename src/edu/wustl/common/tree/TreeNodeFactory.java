@@ -15,9 +15,22 @@ import edu.wustl.common.util.global.Constants;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class TreeNodeFactory
+public final class TreeNodeFactory
 {
 
+	/**
+	 * private constructor.
+	 */
+	private TreeNodeFactory()
+	{
+
+	}
+	/**
+	 * gets Tree Node.
+	 * @param treeType tree Type
+	 * @param root root
+	 * @return Tree Node.
+	 */
 	public static TreeNode getTreeNode(int treeType, TreeNode root)
 	{
 		TreeNode treeNode = null;
@@ -34,7 +47,8 @@ public class TreeNodeFactory
 				treeNode = new CDETreeNode(null, cdeName);
 				break;
 			case Constants.STORAGE_CONTAINER_TREE_ID :
-				treeNode = new StorageContainerTreeNode(Long.valueOf(0), null, Constants.CATISSUE_CORE);
+				treeNode = new StorageContainerTreeNode(Long.valueOf(0), null,
+						Constants.CATISSUE_CORE);
 				break;
 			case Constants.SPECIMEN_TREE_ID :
 				treeNode = new SpecimenTreeNode(null, Constants.SPECIMEN_TREE_ROOT_NAME);
@@ -43,6 +57,8 @@ public class TreeNodeFactory
 				treeNode = new ExperimentTreeNode(Long.valueOf(0), "My Experiments");
 				((ExperimentTreeNode) treeNode).setExperimentGroup(true);
 				break;
+			default :
+			    break;
 
 		}
 

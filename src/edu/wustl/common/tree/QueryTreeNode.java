@@ -18,20 +18,54 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public interface QueryTreeNode
 {
 
-	public void initialiseRoot();
+	/**
+	 * initialise Root.
+	 */
+	void initialiseRoot();
 
-	public void initialiseRoot(String rootName);
+	/**
+	 * initialise Root.
+	 * @param rootName root Name.
+	 */
+	void initialiseRoot(String rootName);
 
-	public QueryTreeNode getParentTreeNode();
+	/**
+	 * gets Parent Tree Node.
+	 * @return QueryTreeNode
+	 */
+	QueryTreeNode getParentTreeNode();
 
-	public boolean isChildOf(QueryTreeNode treeNode);
+	/**
+	 * Checks is Child Of.
+	 * @param treeNode tree Node
+	 * @return child of or not.
+	 */
+	boolean isChildOf(QueryTreeNode treeNode);
 
-	public boolean hasEqualParents(QueryTreeNode treeNode);
+	/**
+	 * Checks has Equal Parents.
+	 * @param treeNode tree Node
+	 * @return has Equal Parents
+	 */
+	boolean hasEqualParents(QueryTreeNode treeNode);
 
-	public Object getParentIdentifier();
+	/**
+	 * gets Parent Identifier.
+	 * @return Parent Identifier.
+	 */
+	Object getParentIdentifier();
 
-	public Object getIdentifier();
+	/**
+	 * gets Identifier.
+	 * @return Identifier
+	 */
+	Object getIdentifier();
 
-	public boolean isPresentIn(DefaultMutableTreeNode parentNode);
+	/**
+	 * Checks is Present In.
+	 * @param parentNode parent Node.
+	 * @return is Present In.
+	 */
+	boolean isPresentIn(DefaultMutableTreeNode parentNode);
 
 }
