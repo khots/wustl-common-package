@@ -196,31 +196,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public void delete(Object obj, int daoType) throws
 			BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao=null;
-		try
-		{
-			dao = daofactory.getDAO();
-			dao.openSession(null);
-			delete(obj, dao);
-			dao.commit();
-			//refresh the index for titli search
-			if(TitliResultGroup.isTitliConfigured)
-	        {
-	        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
-	        }
-		}
-		catch (DAOException daoEx)
-		{
-			rollback(dao);
-			logger.debug("Exception in delete operation.",daoEx);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-			throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
+		delete(obj);
 	}
 
 	/**
@@ -238,6 +214,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 			dao.openSession(null);
 			delete(obj, dao);
 			dao.commit();
+			//refresh the index for titli search
+			if(TitliResultGroup.isTitliConfigured)
+	        {
+	        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
+	        }
 		}
 		catch (DAOException ex)
 		{
@@ -326,36 +307,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly)
 			throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao=null;
-		try
-		{
-			dao = daofactory.getDAO();
-			dao.openSession(sessionDataBean);
-
-			preInsert(objCollection, dao, sessionDataBean);
-			insertMultiple(objCollection, dao, sessionDataBean);
-			dao.commit();
-			if(TitliResultGroup.isTitliConfigured)
-			{
-				for(AbstractDomainObject obj : objCollection)
-				{
-				    refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
-				}
-			}
-			postInsert(objCollection, dao, sessionDataBean);
-		}
-		catch (DAOException exception)
-		{
-			rollback(dao);
-			logger.debug("Exception in insert operation.",exception);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
+		insert(objCollection,sessionDataBean,isInsertOnly);
 	}
 
 	/**
@@ -378,6 +330,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
+			if(TitliResultGroup.isTitliConfigured)
+			{
+				for(AbstractDomainObject obj : objCollection)
+				{
+				    refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
+				}
+			}
 			postInsert(objCollection, dao, sessionDataBean);
 		}
 		catch (DAOException exception)
@@ -455,7 +414,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public final void insert(Object obj, SessionDataBean sessionDataBean, int daoType)
 			throws BizLogicException
 	{
-		insert(obj, sessionDataBean, daoType, false);
+		insert(obj,sessionDataBean,false);
 	}
 
 	/**
@@ -482,7 +441,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	public final void insert(Object obj, int daoType) throws BizLogicException
 	{
-		insert(obj, null, daoType, true);
+		insert(obj,null,true);
 	}
 
 
@@ -552,8 +511,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
 		        }
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
-
-				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
 			else
 			{
@@ -587,7 +544,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public final void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean) throws BizLogicException
 	{
-		update(currentObj, oldObj, daoType, sessionDataBean, false);
+		update(currentObj,oldObj,sessionDataBean,false);
 	}
 
 	/**
@@ -613,7 +570,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	public final void update(Object currentObj, int daoType) throws BizLogicException
 	{
-		update(currentObj, null, daoType, null, true);
+		update(currentObj,null,null,true);
 	}
 
 	/**
