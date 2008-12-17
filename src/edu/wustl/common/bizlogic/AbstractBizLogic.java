@@ -210,12 +210,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
 	        }
 		}
-		catch (DAOException ex)
+		catch (DAOException daoEx)
 		{
 			rollback(dao);
-			logger.debug("Exception in delete operation.");
+			logger.debug("Exception in delete operation.",daoEx);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -259,7 +259,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param daoType Type of dao (Hibernate or JDBC)
 	 * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
 	 * @deprecated : This method uses daoType argument which is not required anymore,please use method
-	 * insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly
+	 * insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly)
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	private void insert(Object obj, SessionDataBean sessionDataBean, int daoType,
@@ -862,9 +862,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 				}
 			}
 		}
-		catch (Exception exception)
+		catch (Exception excep)
 		{
-			logger.error("Titli search index cound not be refreshed for opeartion "+operation, exception);
+			logger.error("Titli search index cound not be refreshed for opeartion."+operation,excep);
 		}
 
 	}
