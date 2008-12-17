@@ -92,6 +92,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param obj The inserted object.
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
+	 * @throws BizLogicException Generic BizLogic Exception
 	 * */
 	protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException;
@@ -180,7 +181,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param assignOperation Operation
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	abstract protected void setPrivilege(DAO dao, String privilegeName, Class objectType,
+	protected abstract void setPrivilege(DAO dao, String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
 			boolean assignOperation) throws BizLogicException;
 
@@ -205,13 +206,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 			delete(obj, dao);
 			dao.commit();
 			//refresh the index for titli search
-			if(TitliResultGroup.isTitliConfigured == true)
+			if(TitliResultGroup.isTitliConfigured)
 	        {
 	        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
 	        }
 		}
 		catch (DAOException ex)
-		{			
+		{
 			try
 			{
 				dao.rollback();
@@ -238,8 +239,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 		}
 	}
-	
-	
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -260,7 +259,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			
 			try
 			{
 				dao.rollback();
@@ -287,32 +285,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 		}
 	}
-	
-	
-
-	/**
-	 * This method gives the error message.
-	 * This method should be overrided for customizing error message
-	 * @param exception - Exception
-	 * @param obj - Object
-	 * @param operation operation
-	 * @return - error message string
-	 */
-	/*public String getErrorMessage(DAOException exception, Object obj, String operation)
-	{
-		String errMsg;
-
-		if (exception.getWrapException() == null)
-		{
-			errMsg = exception.getMessage();
-		}
-		else
-		{
-			errMsg = formatException(exception.getWrapException(), obj, operation);
-		}
-
-		return errMsg;
-	}*/
 
 	/**
 	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
@@ -320,8 +292,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param sessionDataBean  session specific data
 	 * @param daoType Type of dao (Hibernate or JDBC)
 	 * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
-	 * @deprecated : This method uses daoType argument which is not required anymore,please use method 
-	 * insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly) 
+	 * @deprecated : This method uses daoType argument which is not required anymore,please use method
+	 * insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	private void insert(Object obj, SessionDataBean sessionDataBean, int daoType,
@@ -342,7 +314,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				insert(obj, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
 				//refresh the index for titli search
-		        if(TitliResultGroup.isTitliConfigured == true)
+		        if(TitliResultGroup.isTitliConfigured)
 		        {
 		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
 		        }
@@ -350,7 +322,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 		}
 		catch (DAOException exception)
-		{			
+		{
 			try
 			{
 				dao.rollback();
@@ -381,9 +353,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 					+ (endTime - startTime));
 		}
 	}
-	
-	
-	
+
 	/**
 	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
 	 * @param obj The object to be inserted
@@ -469,7 +439,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
-			if(TitliResultGroup.isTitliConfigured == true)
+			if(TitliResultGroup.isTitliConfigured)
 			{
 				for(AbstractDomainObject obj : objCollection)
 				{
@@ -670,7 +640,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param sessionDataBean session specific Data
 	 * @param isUpdateOnly isUpdateOnly
 	 * @throws BizLogicException BizLogic Exception
-	 * @deprecated This method uses daoType argument which is not required anymore,please use method 
+	 * @deprecated This method uses daoType argument which is not required anymore,please use method
 	 * update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean, boolean isUpdateOnly)
 	 * throws BizLogicException,UserNotAuthorizedException
 	 */
@@ -705,7 +675,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				}
 				dao.commit();
 				//refresh the index for titli search
-		        if(TitliResultGroup.isTitliConfigured == true)
+		        if(TitliResultGroup.isTitliConfigured)
 		        {
 		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
 		        }
@@ -786,7 +756,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 		}
 		catch (DAOException ex)
-		{			
+		{
 			try
 			{
 				dao.rollback();
@@ -992,9 +962,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 	}
 
-	
-	
-	
 	/**
 	 * This method formats Exception.
 	 * @param exception exception
@@ -1015,18 +982,16 @@ public abstract class AbstractBizLogic implements IBizLogic
 			String roottableName = null;
 			// Get ExceptionFormatter
 			ExceptionFormatter ef = ExceptionFormatterFactory.getFormatter(exception);
-			
 			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 			DAO dao = daofactory.getDAO();
 			IConnectionManager connectionManager = dao.getConnectionManager();
-			
 			// call for Formating Message
 			if (ef != null)
 			{
 				roottableName = HibernateMetaData.getRootTableName(obj.getClass());
 				tableName = HibernateMetaData.getTableName(obj.getClass());
-				Object[] arguments = {roottableName, connectionManager.currentSession().connection(),
-						tableName};
+				Object[] arguments = {roottableName,
+						connectionManager.currentSession().connection(),tableName};
 				errMsg = ef.formatMessage(exception, arguments);
 			}
 			else
@@ -1051,53 +1016,50 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param obj the object correspondig to the record to be refreshed
 	 */
 	protected void refreshTitliSearchIndex(String operation, Object obj)
-	{            
+	{
 		try
-		{ 
+		{
 			TitliInterface titli = Titli.getInstance();
-			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0]; 
-			
+			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0];
+
 			Properties prop = new Properties();
 			prop.load(getClass().getClassLoader().getResourceAsStream("titli.properties"));
 			String className=prop.getProperty("titliObjectMetadataImplementor");
 
-			ObjectMetadataInterface objectMetadataInterface = (ObjectMetadataInterface)Class.forName(className).newInstance();
+			ObjectMetadataInterface objectMetadataInterface =
+				(ObjectMetadataInterface)Class.forName(className).newInstance();
 			String tableName = objectMetadataInterface.getTableName(obj);
-			System.out.println("tableName: "+tableName);
-			
 			if(!tableName.equalsIgnoreCase(""))
 			{
-				String id = objectMetadataInterface.getUniqueIdentifier(obj);;
-				System.out.println("id: "+id);
-							
+				String id = objectMetadataInterface.getUniqueIdentifier(obj);
 				Map<Name, String> uniqueKey = new HashMap<Name, String>();
 				uniqueKey.put(new Name(Constants.IDENTIFIER), id);
-				
 				String mainTableName = TitliTableMapper.getInstance().returnMainTable(tableName);
 				if(mainTableName != null)
 				{
 					tableName = mainTableName;
 				}
-					
-				RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
-			
+
+				RecordIdentifier recordIdentifier =
+						new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
+
 				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
-				
-				if (operation != null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION)) 
+
+				if (operation!=null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION))
 				{
 					indexRefresher.insert(recordIdentifier);
 				}
-				else if (operation != null	&& operation.equalsIgnoreCase(TitliSearchConstants.TITLI_UPDATE_OPERATION)) 
-				{  
+				else if (operation!=null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_UPDATE_OPERATION))
+				{
 					indexRefresher.update(recordIdentifier);
 				}
-				else if (operation != null	&& operation.equalsIgnoreCase(TitliSearchConstants.TITLI_DELETE_OPERATION)) 
+				else if (operation!=null && operation.equalsIgnoreCase(TitliSearchConstants.TITLI_DELETE_OPERATION))
 				{
 					indexRefresher.delete(recordIdentifier);
 				}
 			}
-		} 
-		catch (TitliException e) 
+		}
+		catch (TitliException e)
 		{
 			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
 		}
@@ -1117,7 +1079,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
 		}
-		
+
 	}
 
 	/**
