@@ -265,38 +265,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void insert(Object obj, SessionDataBean sessionDataBean, int daoType,
 			boolean isInsertOnly) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao = null;
-		try
-		{
-			dao = daofactory.getDAO();
-			dao.openSession(sessionDataBean);
-			// Authorization to ADD object checked here
-			if (isAuthorized(dao, obj, sessionDataBean))
-			{
-				validate(obj, dao, Constants.ADD);
-				preInsert(obj, dao, sessionDataBean);
-				insert(obj, sessionDataBean, isInsertOnly, dao);
-				dao.commit();
-				//refresh the index for titli search
-		        if(TitliResultGroup.isTitliConfigured)
-		        {
-		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
-		        }
-				postInsert(obj, dao, sessionDataBean);
-			}
-		}
-		catch (DAOException exception)
-		{
-			rollback(dao);
-			logger.debug("Exception in insert operation.");
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
+		insert(obj,sessionDataBean,isInsertOnly);
 	}
 
 	/**
@@ -322,6 +291,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 				preInsert(obj, dao, sessionDataBean);
 				insert(obj, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
+		        if(TitliResultGroup.isTitliConfigured)
+		        {
+		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
+		        }
 				postInsert(obj, dao, sessionDataBean);
 			}
 		}
@@ -538,50 +511,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-		DAO dao=null;
-		try
-		{
-			dao = daofactory.getDAO();
-			dao.openSession(sessionDataBean);
+		update(currentObj,oldObj,sessionDataBean,isUpdateOnly);
 
-			// Authorization to UPDATE object checked here
-			if (isAuthorized(dao, currentObj, sessionDataBean))
-			{
-				validate(currentObj, dao, Constants.EDIT);
-				preUpdate(dao, currentObj, oldObj, sessionDataBean);
-				if (isUpdateOnly)
-				{
-					update(dao, currentObj);
-				}
-				else
-				{
-					update(dao, currentObj, oldObj, sessionDataBean);
-				}
-				dao.commit();
-				//refresh the index for titli search
-		        if(TitliResultGroup.isTitliConfigured)
-		        {
-		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
-		        }
-				postUpdate(dao, currentObj, oldObj, sessionDataBean);
-			}
-			else
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User not authorized");
-			}
-		}
-		catch (DAOException ex)
-		{
-			rollback(dao);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
 	}
 
 	/**
@@ -616,6 +547,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 					update(dao, currentObj, oldObj, sessionDataBean);
 				}
 				dao.commit();
+				if(TitliResultGroup.isTitliConfigured)
+		        {
+		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
+		        }
+				postUpdate(dao, currentObj, oldObj, sessionDataBean);
+
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
 			else
