@@ -339,7 +339,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			throw getBizLogicException(dao, exception, "biz.insert.error"
-					,"Exception in insert operation.");
+					,"Exception in inserting multiple records operation.");
 		}
 		finally
 		{
@@ -448,25 +448,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public final void insert(Object obj) throws BizLogicException
 	{
 		insert(obj, null, true);
-	}
-
-	/**
-	 * Updates an object into the database.
-	 * @param currentObj The object to be updated.
-	 * @param oldObj old Object
-	 * @param daoType daoType
-	 * @param sessionDataBean session specific Data
-	 * @param isUpdateOnly isUpdateOnly
-	 * @throws BizLogicException BizLogic Exception
-	 * @deprecated This method uses daoType argument which is not required anymore,please use method
-	 * update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean, boolean isUpdateOnly)
-	 * throws BizLogicException,UserNotAuthorizedException
-	 */
-	private void update(Object currentObj, Object oldObj, int daoType,
-			SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException
-	{
-		update(currentObj,oldObj,sessionDataBean,isUpdateOnly);
-
 	}
 
 	/**
