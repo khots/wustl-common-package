@@ -190,8 +190,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param obj The object to be deleted.
 	 * @param daoType dao Type
 	 * @throws BizLogicException BizLogic Exception
-	 * @deprecated This method uses daoType argument which is not required anymore,please use method
-	 * delete(Object obj) throws UserNotAuthorizedException,BizLogicException
+	 * @deprecated This method uses daoType argument which is not required anymore,
+	 * please use method, delete(Object obj)
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	public void delete(Object obj, int daoType) throws
@@ -213,32 +213,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			logger.debug("Error in delete");
+			rollback(dao);
+			logger.debug("Exception in delete operation.");
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
 			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 	}
+
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -250,39 +235,21 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao=daofactory.getDAO();
 			dao.openSession(null);
 			delete(obj, dao);
 			dao.commit();
-			//refresh the index for titli search
-			//			refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
 		}
 		catch (DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			logger.debug("Error in delete");
+			rollback(dao);
+			logger.debug("Exception in delete operation.");
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
 			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 	}
 
@@ -299,7 +266,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void insert(Object obj, SessionDataBean sessionDataBean, int daoType,
 			boolean isInsertOnly) throws BizLogicException
 	{
-		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao = null;
 		try
@@ -323,34 +289,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException exception)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			logger.debug("Error in insert");
+			rollback(dao);
+			logger.debug("Exception in insert operation.");
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
 			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				//TODO ERROR Handling
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			long endTime = System.currentTimeMillis();
-			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
-					+ (endTime - startTime));
+			closeSession(dao);
 		}
 	}
 
@@ -383,33 +329,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException exception)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			logger.debug("Error in insert");
+			rollback(dao);
+			logger.debug("Exception in insert operation.");
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
 			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			long endTime = System.currentTimeMillis();
-			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
-					+ (endTime - startTime));
+			closeSession(dao);
 		}
 	}
 
@@ -422,8 +349,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
 	 * @throws BizLogicException Wrapping DAO exception into Bizlogic exception
 	 * @deprecated This method uses daoType argument which is not required anymore,please use method
-	 * insert(Collection<AbstractDomainObject> objCollection,SessionDataBean sessionDataBean,
-	 * boolean isInsertOnly)throws BizLogicException, UserNotAuthorizedException
+	 * insert(Collection objCollection,SessionDataBean sessionDataBean,boolean isInsertOnly)
 	 */
 	public final void insert(Collection<AbstractDomainObject> objCollection,
 			SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly)
@@ -448,32 +374,16 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			postInsert(objCollection, dao, sessionDataBean);
 		}
-		catch (DAOException ex)
+		catch (DAOException exception)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			logger.debug("Error in insert");
+			rollback(dao);
+			logger.debug("Exception in insert operation.",exception);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 	}
 
@@ -494,38 +404,21 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(sessionDataBean);
-
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
 			postInsert(objCollection, dao, sessionDataBean);
 		}
-		catch (DAOException ex)
+		catch (DAOException exception)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			logger.debug("Error in insert");
+			rollback(dao);
+			logger.debug("Exception in insert operation.",exception);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 	}
 
@@ -684,33 +577,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			rollback(dao);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
 			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			long endTime = System.currentTimeMillis();
-			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
-					+ (endTime - startTime));
+			closeSession(dao);
 		}
 	}
 
@@ -757,33 +630,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			rollback(dao);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
 			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-			long endTime = System.currentTimeMillis();
-			logger.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName() + " : "
-					+ (endTime - startTime));
+			closeSession(dao);
 		}
 	}
 
@@ -876,30 +729,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-
+			rollback(dao);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
 			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 	}
 
@@ -935,30 +771,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException ex)
 		{
-			try
-			{
-				dao.rollback();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
-
+			rollback(dao);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
 			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 	}
 
@@ -1128,15 +947,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.popbean.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		String simpleClassName = Utility.parseClassName(className);
@@ -1198,15 +1009,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		finally
 		{
-			try
-			{
-				dao.closeSession();
-			}
-			catch (DAOException daoEx)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
-				throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
-			}
+			closeSession(dao);
 		}
 
 		String simpleClassName = Utility.parseClassName(className);
@@ -1263,6 +1066,21 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 
 		return false;
+	}
+
+	/**
+	 * @param dao
+	 */
+	protected void rollback(DAO dao)
+	{
+		try
+		{
+			dao.rollback();
+		}
+		catch (DAOException daoEx)
+		{
+			logger.fatal("Rollback unsuccessful in method.",daoEx);
+		}
 	}
 	/**
 	 * @param dao DAO object
