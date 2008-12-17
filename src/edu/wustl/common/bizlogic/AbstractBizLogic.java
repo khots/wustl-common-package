@@ -223,16 +223,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException ex)
 		{
 			rollback(dao);
-			logger.debug("Exception in delete operation.");
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw getBizLogicException(dao, ex, "biz.delete.error","Exception in delete operation.");
 		}
 		finally
 		{
 			closeSession(dao);
 		}
 	}
-
 	/**
 	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
 	 * @param obj The object to be inserted
@@ -282,9 +279,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException exception)
 		{
 			rollback(dao);
-			logger.debug("Exception in insert operation.");
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
+			throw getBizLogicException(dao, exception, "biz.insert.error"
+					,"Exception in insert operation.");
 		}
 		finally
 		{
@@ -342,9 +338,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException exception)
 		{
 			rollback(dao);
-			logger.debug("Exception in insert operation.",exception);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
+			throw getBizLogicException(dao, exception, "biz.insert.error"
+					,"Exception in insert operation.");
 		}
 		finally
 		{
@@ -514,15 +509,15 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,null, "AbstractBizLogic:User Not Authorized");
+				throw getBizLogicException(dao, null, "biz.update.error"
+						,"AbstractBizLogic:User Not Authorized.");
 			}
 		}
 		catch (DAOException ex)
 		{
 			rollback(dao);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw getBizLogicException(dao, ex, "biz.update.error"
+					,"Exception in update method");
 		}
 		finally
 		{
@@ -640,8 +635,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException exception)
 		{
 			rollback(dao);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
+			throw getBizLogicException(dao, exception, "biz.setpriv.error"
+					,"Exception in setPrivilege method");
 		}
 		finally
 		{
@@ -808,9 +803,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popbean.error");
-			throw new BizLogicException(errorKey,daoExp, "AbstractBizLogic");
+			throw getBizLogicException(dao, daoExp, "biz.popbean.error"
+					,"Exception in bean population");
 		}
 		finally
 		{
@@ -850,9 +844,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (Exception daoExp)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
-			throw new BizLogicException(errorKey,daoExp, "AbstractBizLogic");
+			throw getBizLogicException(dao, daoExp, "biz.popdomain.error"
+					,"Exception in domain population");
 		}
 		finally
 		{
@@ -938,6 +931,22 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		return false;
 	}
+
+
+	/**
+	 * @param dao DAO object.
+	 * @param exception Exception object thrown in a catch block.
+	 * @param key error-key in applicationResource file.
+	 * @throws BizLogicException
+	 */
+	protected BizLogicException getBizLogicException(DAO dao,
+			Exception exception, String key,String logMessage)
+	{
+		logger.debug(logMessage);
+		ErrorKey errorKey=ErrorKey.getErrorKey(key);
+		return  new BizLogicException(errorKey,exception, "AbstractBizLogic");
+	}
+
 
 	/**
 	 * @param dao
