@@ -435,14 +435,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 		//  Authorization to ADD multiple objects (e.g. Aliquots) checked here
 		for (AbstractDomainObject obj : objCollection)
 		{
-			if (!isAuthorized(dao, obj, sessionDataBean))
+			if (isAuthorized(dao, obj, sessionDataBean))
 			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.multinsert.error");
-				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User Not Authorized");
+				validate(obj, dao, Constants.ADD);
 			}
 			else
 			{
-				validate(obj, dao, Constants.ADD);
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.multinsert.error");
+				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User Not Authorized");
 			}
 		}
 		for (AbstractDomainObject obj : objCollection)
@@ -540,7 +540,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean, boolean isUpdateOnly) throws BizLogicException
 	{
-		long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
 		try
@@ -549,12 +548,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			dao.openSession(sessionDataBean);
 
 			// Authorization to UPDATE object checked here
-			if (!isAuthorized(dao, currentObj, sessionDataBean))
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User not authorized");
-			}
-			else
+			if (isAuthorized(dao, currentObj, sessionDataBean))
 			{
 				validate(currentObj, dao, Constants.EDIT);
 				preUpdate(dao, currentObj, oldObj, sessionDataBean);
@@ -573,6 +567,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 		        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
 		        }
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
+			}
+			else
+			{
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,null, "AbstractBizLogic-User not authorized");
 			}
 		}
 		catch (DAOException ex)
@@ -607,12 +606,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			dao.openSession(sessionDataBean);
 
 			// Authorization to UPDATE object checked here
-			if (!isAuthorized(dao, currentObj, sessionDataBean))
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-				throw new BizLogicException(errorKey,null, "AbstractBizLogic:User Not Authorized");
-			}
-			else
+			if (isAuthorized(dao, currentObj, sessionDataBean))
 			{
 				validate(currentObj, dao, Constants.EDIT);
 				preUpdate(dao, currentObj, oldObj, sessionDataBean);
@@ -626,6 +620,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 				}
 				dao.commit();
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
+			}
+			else
+			{
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
+				throw new BizLogicException(errorKey,null, "AbstractBizLogic:User Not Authorized");
 			}
 		}
 		catch (DAOException ex)
@@ -727,11 +726,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 					assignOperation);
 			dao.commit();
 		}
-		catch (DAOException ex)
+		catch (DAOException exception)
 		{
 			rollback(dao);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw new BizLogicException(errorKey,exception, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -769,11 +768,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 					assignOperation);
 			dao.commit();
 		}
-		catch (DAOException ex)
+		catch (DAOException daoEx)
 		{
 			rollback(dao);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.setpriv.error");
-			throw new BizLogicException(errorKey,ex, "AbstractBizLogic");
+			throw new BizLogicException(errorKey,daoEx, "AbstractBizLogic");
 		}
 		finally
 		{
@@ -805,17 +804,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 			DAO dao = daofactory.getDAO();
 			IConnectionManager connectionManager = dao.getConnectionManager();
 			// call for Formating Message
-			if (ef != null)
+			if (ef == null)
+			{
+				errMsg = exception.getMessage();
+			}
+			else
 			{
 				roottableName = HibernateMetaData.getRootTableName(obj.getClass());
 				tableName = HibernateMetaData.getTableName(obj.getClass());
 				Object[] arguments = {roottableName,
 						connectionManager.currentSession().connection(),tableName};
 				errMsg = ef.formatMessage(exception, arguments);
-			}
-			else
-			{
-				errMsg = exception.getMessage();
 			}
 		}
 		catch (Exception e)
