@@ -1264,4 +1264,20 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		return false;
 	}
+	/**
+	 * @param dao DAO object
+	 * @throws BizLogicException :Generic BizLogic Exception- session not closed.
+	 */
+	protected void closeSession(DAO dao) throws BizLogicException
+	{
+		try
+		{
+			dao.closeSession();
+		}
+		catch (DAOException exception)
+		{
+			logger.error("Not able to close DAO session.", exception);
+			throw new BizLogicException(exception);
+		}
+	}
 }
