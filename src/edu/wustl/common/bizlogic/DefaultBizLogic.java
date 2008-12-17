@@ -29,7 +29,6 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
@@ -97,8 +96,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.insert.error","Exception in insert operation.");
 		}
 	}
 
@@ -130,8 +128,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.delete.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.delete.error","Exception in delete operation.");
 		}
 	}
 
@@ -168,8 +165,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.update.error","Exception in update operation.");
 		}
 	}
 
@@ -234,9 +230,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error("not able to retrieve.", daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
 		}
 		finally
 		{
@@ -246,7 +240,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return list;
 	}
 	/**
-	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
 	 * @param sourceObjectName :source object name
 	 * @param selectColumnName :An array of field names to be selected
 	 * @param queryWhereClause :object of QueryWhereClause.
@@ -267,9 +261,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error("not able to retrieve.", daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
 		}
 		finally
 		{
@@ -333,9 +325,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error("not able to retrieve.", daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
 		}
 		finally
 		{
@@ -365,9 +355,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error("not able to retrieve.", daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
 		}
 		finally
 		{
@@ -398,9 +386,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.ret.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
 		}
 		finally
 		{
@@ -436,8 +422,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			whereColumnValue = new String[]{Status.ACTIVITY_STATUS_DISABLED.getStatus()};
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
-				separatorBetweenFields);
+		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
+				whereColumnCondition, whereColumnValue, joinCondition,separatorBetweenFields);
 			}
 
 	/**
@@ -503,9 +489,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			logger.error("Not able to get list.", exception);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.getlist.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.getlist.error","Not able to get list.");
 		}
 		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 
@@ -619,8 +603,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.disableobj.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.disableobj.error",
+					"Exception in disableObject method.");
 		}
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		auditDisabledObjects(dao, tablename, listOfSubElement);
@@ -675,8 +659,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.disableaudit.error");
-			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogicLogic");
+			throw getBizLogicException(daoEx, "biz.disableaudit.error",
+			"Exception in disableAndAuditObjects method.");
 		}
 	}
 
@@ -750,8 +734,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.getrelatedobj.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.getrelatedobj.error",
+			"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
 		logger.debug(sourceClass.getName() + " Related objects to "
@@ -780,10 +764,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
 		}
-		catch (DAOException e)
+		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.getrelatedobj.error");
-			throw new BizLogicException(errorKey,null, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.getrelatedobj.error",
+			"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
 		return list;
@@ -807,10 +791,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
 		}
-		catch (DAOException e)
+		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.getrelatedobj.error");
-			throw new BizLogicException(errorKey,null, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.getrelatedobj.error",
+			"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
 		return list;
@@ -863,8 +847,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 				}
 				if (Status.ACTIVITY_STATUS_CLOSED.equals(activityStatus))
 				{
-					ErrorKey errorKey=ErrorKey.getErrorKey("biz.checkstatus.error");
-					throw new BizLogicException(errorKey,null, "DefaultBizLogic");
+					throw getBizLogicException(null, "biz.checkstatus.error",
+					"Exception in checkStatus method.");
 				}
 			}
 		}
@@ -883,7 +867,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		String[] selectColumnName = {Status.ACTIVITY_STATUS.getStatus()};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER,indetifier.toString(),sourceObjectName));
+		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER,
+				indetifier.toString(),sourceObjectName));
 
 		List<Object> list;
 		try
@@ -892,8 +877,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.activitystatus.error");
-			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogic");
+			throw getBizLogicException(daoEx, "biz.activitystatus.error",
+			"Exception in getActivityStatus method.");
 		}
 		String activityStatus = "";
 		if (!list.isEmpty())
@@ -920,9 +905,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
-			logger.debug("Exception during insert operation", daoEx);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.insert.error");
-			throw new BizLogicException(errorKey,daoEx, "DefaultBizLogic");
+			throw getBizLogicException(daoEx, "biz.insert.error",
+			"Exception during insert operation.");
 		}
 	}
 
@@ -940,8 +924,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.update.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic-User not authorized");
+			throw getBizLogicException(exception, "biz.update.error",
+			"Exception during update operation.");
 		}
 	}
 
@@ -968,9 +952,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			logger.error(daoExp.getMessage(), daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
-			throw new BizLogicException(errorKey,daoExp, "DefaultBizLogic");
+			throw getBizLogicException(daoExp, "biz.retattr.error",
+			"Exception during retrieveAttribute method.");
 		}
 		finally
 		{
@@ -1001,9 +984,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (ClassNotFoundException exception)
 		{
-			logger.error("Not able to find class:"+sourceObjectName, exception);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.retattr.error");
-			throw new BizLogicException(errorKey,exception,
+			throw getBizLogicException(exception, "biz.retattr.error",
 					"DefaultBizLogic-Not able to find class:"+sourceObjectName);
 		}
 		return attribute;
@@ -1056,8 +1037,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	protected String getPrivilegeName(Object domainObject)
 	{
-		String privilegeName = Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
-		return privilegeName;
+		return  Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
 	}
 
 	/**
@@ -1103,13 +1083,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (HibernateException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.exequery.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.exequery.error",
+					"HibernateException in executeQuery method:");
 		}
 		catch (DAOException exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.exequery.error");
-			throw new BizLogicException(errorKey,exception, "DefaultBizLogic");
+			throw getBizLogicException(exception, "biz.exequery.error",
+			"DAOException in executeQuery method:");
 		}
 		finally
 		{
@@ -1142,7 +1122,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void setPrivilege(DAO dao, String privilegeName,
 			Class objectType, Long[] objectIds, Long userId, String roleId,
 			boolean assignToUser, boolean assignOperation)
-			throws BizLogicException 
+			throws BizLogicException
 	{
 		// TODO Auto-generated method stub
 	}
