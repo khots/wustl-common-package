@@ -843,9 +843,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 			String tableName = objectMetadataInterface.getTableName(obj);
 			if(!tableName.equalsIgnoreCase(""))
 			{
-				String id = objectMetadataInterface.getUniqueIdentifier(obj);
+				String objId = objectMetadataInterface.getUniqueIdentifier(obj);
 				Map<Name, String> uniqueKey = new HashMap<Name, String>();
-				uniqueKey.put(new Name(Constants.IDENTIFIER), id);
+				uniqueKey.put(new Name(Constants.IDENTIFIER), objId);
 				String mainTableName = TitliTableMapper.getInstance().returnMainTable(tableName);
 				if(mainTableName != null)
 				{
@@ -966,34 +966,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao =null;
 		AbstractDomainObject abstractDomain = null;
-
 		try
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-
 			Object object = dao.retrieve(className, identifier);
-
-			if (object != null)
-			{
-				/*
-				  If the record searched is present in the database,
-				  populate the formbean with the information retrieved.
-				 */
-				abstractDomain = (AbstractDomainObject) object;
-				if (abstractDomain != null)
-				{
-					abstractDomain.setAllValues(uiForm);
-				}
-			}
+			abstractDomain = populateFormBean(uiForm,object);
 		}
-		catch (DAOException daoExp)
-		{
-			logger.error(daoExp.getMessage(), daoExp);
-			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
-			throw new BizLogicException(errorKey,daoExp, "AbstractBizLogic");
-		}
-		catch (AssignDataException daoExp)
+		catch (Exception daoExp)
 		{
 			logger.error(daoExp.getMessage(), daoExp);
 			ErrorKey errorKey=ErrorKey.getErrorKey("biz.popdomain.error");
@@ -1010,6 +990,30 @@ public abstract class AbstractBizLogic implements IBizLogic
 		logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
 				+ (endTime - startTime));
 
+		return abstractDomain;
+	}
+
+	/**
+	 * @param uiForm Form object.
+	 * @param object
+	 * @return AbstractDomainObject
+	 * @throws AssignDataException throws this exception if not able to set all values.
+	 */
+	private AbstractDomainObject populateFormBean(IValueObject uiForm,Object object) throws AssignDataException
+	{
+		AbstractDomainObject abstractDomain=null;
+		if (object != null)
+		{
+			/*
+			  If the record searched is present in the database,
+			  populate the formbean with the information retrieved.
+			 */
+			abstractDomain = (AbstractDomainObject) object;
+			if (abstractDomain != null)
+			{
+				abstractDomain.setAllValues(uiForm);
+			}
+		}
 		return abstractDomain;
 	}
 
