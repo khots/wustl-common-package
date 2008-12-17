@@ -603,11 +603,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
-		commonSetPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
+		setPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
 				assignToUser, assignOperation);
 	}
 
 	/**
+	 * This method set privilege to user.
 	 * @param privilegeName privilege Name
 	 * @param objectType object Type
 	 * @param objectIds object Ids
@@ -618,9 +619,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param assignOperation Operation
 	 * @throws BizLogicException BizLogic Exception
 	 */
-	private void commonSetPrivilege(String privilegeName, Class objectType, Long[] objectIds,
-			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException
+	public final void setPrivilege(String privilegeName, Class objectType,
+			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
+			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
@@ -646,26 +647,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			closeSession(dao);
 		}
-	}
-
-	/**
-	 * This method set privilege to user.
-	 * @param privilegeName privilege Name
-	 * @param objectType object Type
-	 * @param objectIds object Ids
-	 * @param userId user Id
-	 * @param sessionDataBean session specific Data
-	 * @param roleId role Id
-	 * @param assignToUser assign To User
-	 * @param assignOperation Operation
-	 * @throws BizLogicException BizLogic Exception
-	 */
-	public final void setPrivilege(String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
-			boolean assignToUser, boolean assignOperation) throws BizLogicException
-	{
-		commonSetPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
-				assignToUser, assignOperation);
 	}
 
 	/**
