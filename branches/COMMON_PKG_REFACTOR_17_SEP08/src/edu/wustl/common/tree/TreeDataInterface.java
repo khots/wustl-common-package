@@ -9,7 +9,6 @@ package edu.wustl.common.tree;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.dao.exception.DAOException;
@@ -23,8 +22,22 @@ import edu.wustl.dao.exception.DAOException;
 public interface TreeDataInterface
 {
 
-	public abstract List getTreeViewData() throws DAOException;
+	/**
+	 * gets Tree View Data.
+	 * @return List.
+	 * @throws DAOException generic DAO Exception.
+	 */
+	List getTreeViewData() throws DAOException;
 
-	public abstract List getTreeViewData(SessionDataBean sessionData, Map map, List list)
-			throws DAOException, ClassNotFoundException;
+	/**
+	 * gets Tree View Data.
+	 * @param sessionData session Data
+	 * @param map map
+	 * @param list list
+	 * @return list
+	 * @throws DAOException generic DAO Exception.
+	 * @throws ClassNotFoundException Class Not Found Exception.
+	 */
+	List getTreeViewData(SessionDataBean sessionData, Map map, List list) throws DAOException,
+			ClassNotFoundException;
 }

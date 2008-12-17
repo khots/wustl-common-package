@@ -30,51 +30,63 @@ import org.jdesktop.swingx.JXTree;
 public class GenerateTree
 {
 
-	ArrayList list;
-	String containerName;
+	/**
+	 * Specify list.
+	 */
+	private transient List list;
+
+	/**
+	 * Specify container Name.
+	 */
+	private transient String containerName;
 
 	/**
 	 * Default consructor.
 	 */
 	public GenerateTree()
 	{
-
+		super();
 	}
 
 	/**
 	 * parameterised consructor.
+	 * @param containerName container Name to set.
 	 */
 	public GenerateTree(String containerName)
 	{
 		this.containerName = containerName;
 	}
 
-	//	public JTree createTree(Vector dataVector, int treeType)
-	//    {
-	//		JTree tree = createTree(dataVector, treeType, false);
-	//		return tree;
-	//    }
-
 	/**
 	 * Creates and returns the JTree from the vector of data nodes passed.
 	 * @param dataVector the data vector.
 	 * @param treeType the type of tree.
+	 * @param isJXTree is JXTree.
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 	public JTree createTree(Vector dataVector, int treeType, boolean isJXTree)
 	{
 		TreeNode rootName = null;
-		if (dataVector != null && (dataVector.isEmpty() == false))
+		if (dataVector != null && !dataVector.isEmpty())
 		{
 			rootName = (TreeNode) dataVector.get(0);
 		}
-
-		//Get the root node.
 		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
 		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
 		rootNode.setChildNodes(dataVector);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
+		return getTree(dataVector, isJXTree, root);
+	}
 
+	/**
+	 * Creates and returns the JTree.
+	 * @param dataVector dataVector the data vector.
+	 * @param isJXTree is JXTree.
+	 * @param root root node
+	 * @return the JTree from the vector of data nodes passed.
+	 */
+	private JTree getTree(List dataVector, boolean isJXTree, DefaultMutableTreeNode root)
+	{
 		//Create the hierarchy under the root node.
 		createHierarchy(root, dataVector);
 		JTree tree;
@@ -84,33 +96,45 @@ public class GenerateTree
 		}
 		else
 		{
-			tree = new JTree(root)
-			{
-
-				/**
-				 * Serial version id.
-				 */
-				private static final long serialVersionUID = -5117917390858206892L;
-
-				public String getToolTipText(MouseEvent e)
-				{
-					String tip = "";
-					TreePath path = getPathForLocation(e.getX(), e.getY());
-					if (path != null)
-					{
-						Object treeNode = path.getLastPathComponent();
-						if (treeNode instanceof DefaultMutableTreeNode)
-						{
-							TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode)
-									.getUserObject();
-							tip = userObject.getToolTip();
-						}
-					}
-					return tip;
-				}
-			};
+			tree = getToolTipTextUsingAnonymousClass(root);
 			ToolTipManager.sharedInstance().registerComponent(tree);
 		}
+		return tree;
+	}
+
+	/**
+	 * This method gets Tool Tip Text Using Anonymous Class.
+	 * @param root root node.
+	 * @return Tool Tip Text.
+	 */
+	private JTree getToolTipTextUsingAnonymousClass(DefaultMutableTreeNode root)
+	{
+		JTree tree = new JTree(root)
+		{
+
+			/**
+			 * serial Version Unique ID.
+			 */
+			private static final long serialVersionUID = -5117917390858206892L;
+
+			public String getToolTipText(MouseEvent event)
+			{
+				String tip = "";
+				TreePath path = getPathForLocation(event.getX(), event.getY());
+				if (path != null)
+				{
+					Object treeNode = path.getLastPathComponent();
+					if (treeNode instanceof DefaultMutableTreeNode)
+					{
+						TreeNodeImpl userObject = (TreeNodeImpl)
+						((DefaultMutableTreeNode) treeNode)
+								.getUserObject();
+						tip = userObject.getToolTip();
+					}
+				}
+				return tip;
+			}
+		};
 		return tree;
 	}
 
@@ -122,62 +146,37 @@ public class GenerateTree
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 
-	public JTree createTree(Vector dataVector, int treeType, ArrayList tempList)
+	public JTree createTree(List dataVector, int treeType, List tempList)
 	{
 		TreeNode rootName = null;
-		if (dataVector != null && (dataVector.isEmpty() == false))
+		if (dataVector != null && !dataVector.isEmpty())
 		{
 			rootName = (TreeNode) dataVector.get(0);
 		}
-
 		//Get the root node.
 		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
 		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
 		rootNode.setChildNodes(dataVector);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
 		createHierarchy(root, dataVector);
-
-		JTree tree = new JTree(root)
-		{
-
-			/**
-			 * Serial version id.
-			 */
-			private static final long serialVersionUID = 3698063223619663356L;
-
-			public String getToolTipText(MouseEvent e)
-			{
-				String tip = "";
-				TreePath path = getPathForLocation(e.getX(), e.getY());
-				if (path != null)
-				{
-					Object treeNode = path.getLastPathComponent();
-					if (treeNode instanceof DefaultMutableTreeNode)
-					{
-						TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode)
-								.getUserObject();
-						tip = userObject.getToolTip();
-					}
-				}
-				return tip;
-			}
-		};
+		JTree tree = getToolTipTextUsingAnonymousClass(root);
 		if (list != null)
 		{
 			tree.setSelectionPath((TreePath) list.get(0));
 			if (tempList != null)
+			{
 				tempList.add(list.get(1));
+			}
 		}
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		return tree;
-
 	}
 
 	/**
-	 * Creates and returns the JTree from the vector of data nodes passed.
+	 * Creates and returns the JTree from the data nodes passed.
 	 * @param dataVector the data vector.
-	 * @param treeType the type of tree.
-	 * @return the JTree from the vector of data nodes passed.
+	 * @param treeType type of tree.
+	 * @return Return the JTree from the data nodes passed.
 	 */
 	public JTree createTree(Vector dataVector, int treeType)
 	{
@@ -185,10 +184,10 @@ public class GenerateTree
 	}
 
 	/**
-	 * Creates and returns the JTree from the vector of data nodes passed.
-	 * @param dataVector the data vector.
-	 * @param treeType the type of tree.
-	 * @return the JTree from the vector of data nodes passed.
+	 * Creates and returns the JTree from the list of data nodes passed.
+	 * @param rootNode the TreeNodeImpl object.
+	 * @param isJXTree is JXTree.
+	 * @return the JTree from the data nodes passed.
 	 */
 	public JTree createTree(TreeNodeImpl rootNode, boolean isJXTree)
 	{
@@ -196,41 +195,7 @@ public class GenerateTree
 
 		//Create the hierarchy under the root node.
 		createHierarchy(root, rootNode.getChildNodes());
-		JTree tree;
-		if (isJXTree)
-		{
-			tree = new JXTree(root);
-		}
-		else
-		{
-			tree = new JTree(root)
-			{
-
-				/**
-				 * Serial version id.
-				 */
-				private static final long serialVersionUID = 199829542340609946L;
-
-				public String getToolTipText(MouseEvent e)
-				{
-					String tip = "";
-					TreePath path = getPathForLocation(e.getX(), e.getY());
-					if (path != null)
-					{
-						Object treeNode = path.getLastPathComponent();
-						if (treeNode instanceof DefaultMutableTreeNode)
-						{
-							TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode)
-									.getUserObject();
-							tip = userObject.getToolTip();
-						}
-					}
-					return tip;
-				}
-			};
-			ToolTipManager.sharedInstance().registerComponent(tree);
-		}
-		return tree;
+		return getTree(rootNode.getChildNodes(), isJXTree, root);
 	}
 
 	/**

@@ -15,17 +15,31 @@ import java.io.Serializable;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparable
+public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparable<Object>
 {
 
+	/**
+	 * serial Version Unique ID.
+	 */
 	private static final long serialVersionUID = 1234567890L;
 
+	/**
+	 * Specify cde Name.
+	 */
 	private String cdeName;
 
+	/**
+	 * Constructor.
+	 */
 	public CDETreeNode()
 	{
 	}
 
+	/**
+	 * Constructor.
+	 * @param identifier identifier.
+	 * @param value value.
+	 */
 	public CDETreeNode(Long identifier, String value)
 	{
 		super(identifier, value);
@@ -50,12 +64,20 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparabl
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.tree.TreeNodeImpl#toString()
 	 */
+	/**
+	 * This method return value as String.
+	 * @return value as String.
+	 */
 	public String toString()
 	{
 		return this.value;
 	}
 
-	//Bug-2717: For sorting
+	/**
+	 * Compare objects.
+	 * @param tmpobj Object.
+	 * @return int.
+	 */
 	public int compareTo(Object tmpobj)
 	{
 		CDETreeNode treeNode = (CDETreeNode) tmpobj;

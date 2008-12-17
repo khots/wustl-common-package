@@ -10,7 +10,6 @@ package edu.wustl.common.tree;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * @author gautam_shetty
@@ -51,10 +50,13 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	 */
 	public TreeNodeImpl()
 	{
+		super();
 	}
 
 	/**
 	 * Default Constructor.
+	 * @param identifier identifier for the node.
+	 * @param value Name of the node..
 	 */
 	public TreeNodeImpl(Long identifier, String value)
 	{
@@ -126,6 +128,11 @@ public class TreeNodeImpl implements Serializable, TreeNode
 		this.childNodes = childNodes;
 	}
 
+	/**
+	 * overrides java.lang.Object.equals.
+	 * @param obj Object.
+	 * @return true if equal else false.
+	 */
 	public boolean equals(Object obj)
 	{
 		boolean flag = false;
@@ -144,17 +151,24 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	/**
+	 * overrides java.lang.Object.hashCode.
+	 * @return hashCode.
+	 */
 	public int hashCode()
 	{
-		int i = 0;
+		int hashCode = 0;
 		if (getIdentifier() != null)
-			i += getIdentifier().hashCode();
-		return i;
+		{
+			hashCode += getIdentifier().hashCode();
+		}
+		return hashCode;
 	}
 
 	/**
-	 * To display Tooltip for the Tree node. By default it will return value, override this method if need different tool tip.
-	 * @return The tooltip to display 
+	 * To display Tooltip for the Tree node.
+	 * By default it will return value, override this method if need different tool tip.
+	 * @return The tooltip to display.
 	 */
 	String getToolTip()
 	{
@@ -163,6 +177,10 @@ public class TreeNodeImpl implements Serializable, TreeNode
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 *  overrides java.lang.Object.toString.
+	 *  @return value
 	 */
 	public String toString()
 	{

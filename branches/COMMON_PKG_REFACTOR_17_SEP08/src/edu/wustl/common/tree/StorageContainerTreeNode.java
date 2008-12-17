@@ -20,6 +20,9 @@ import edu.wustl.common.util.global.Status;
 public class StorageContainerTreeNode extends TreeNodeImpl implements Serializable, Comparable
 {
 
+	/**
+	 * serial Version Unique ID.
+	 */
 	private static final long serialVersionUID = 1234567890L;
 
 	/**
@@ -27,19 +30,29 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	 */
 	private String type;
 
+	/**
+	 * Specify tool Tip.
+	 */
 	private String toolTip = "";
 
+	/**
+	 * Specify activity Status.
+	 */
 	private String activityStatus = Status.ACTIVITY_STATUS_ACTIVE.getStatus();
 
 	/**
-	 * Default constructor. 
+	 * Default constructor.
 	 */
 	public StorageContainerTreeNode()
 	{
+		super();
 	}
 
 	/**
-	 * Parameterized constructor. 
+	 * Parameterized constructor.
+	 * @param identifier identifier to set.
+	 * @param value value to set.
+	 * @param type type to set.
 	 */
 	public StorageContainerTreeNode(Long identifier, String value, String type)
 	{
@@ -47,7 +60,14 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 		this.type = type;
 	}
 
-	//constructor with tooltip 
+	/**
+	 * constructor with tooltip.
+	 * @param identifier identifier to set.
+	 * @param value value to set.
+	 * @param type type to set.
+	 * @param toolTip tool Tip to set.
+	 * @param activityStatus activity Status to set.
+	 */
 	public StorageContainerTreeNode(Long identifier, String value, String type, String toolTip,
 			String activityStatus)
 	{
@@ -100,12 +120,21 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	/**
+	 * overrides edu.wustl.common.tree.TreeNodeImpl.toString.
+	 * @return node Name.
+	 */
 	public String toString()
 	{
 		String nodeName = value;
 		return nodeName;
 	}
 
+	/**
+	 *  implements java.lang.Comparable.compareTo.
+	 *  @param tmpobj tmp object.
+	 *  @return int.
+	 */
 	public int compareTo(Object tmpobj)
 	{
 		StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
