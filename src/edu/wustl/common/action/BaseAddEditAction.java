@@ -69,44 +69,6 @@ public abstract class BaseAddEditAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException;
 
 	/**
-	 * return action error in case the user,in request is not authorized.
-	 * @param request HttpServletRequest
-	 * @param excp UserNotAuthorizedException
-	 * @return ActionError
-	 */
-	protected ApplicationException getErrorForUserNotAuthorized(HttpServletRequest request,
-			UserNotAuthorizedException excp)
-	{
-		AbstractDomainObject abstractDomain = null;
-		SessionDataBean sessionDataBean = getSessionData(request);
-
-		StringBuffer msgParams = new StringBuffer();
-
-		if (sessionDataBean != null)
-		{
-
-			msgParams.append(sessionDataBean.getUserName()).append(
-					ApplicationException.ERR_MSG_VALUES_SEPARATOR);
-		}
-
-		String className = getActualClassName(abstractDomain.getClass().getName());
-		msgParams.append(className).append(ApplicationException.ERR_MSG_VALUES_SEPARATOR);
-
-		String decoratedPrivName = Utility.getDisplayLabelForUnderscore(excp.getPrivilegeName());
-		msgParams.append(decoratedPrivName).append(ApplicationException.ERR_MSG_VALUES_SEPARATOR);
-
-		String baseObject = excp.getBaseObject();
-
-		if (TextConstants.EMPTY_STRING.equals(baseObject) || baseObject == null)
-		{
-			baseObject = className;
-		}
-		msgParams.append(baseObject);
-		ErrorKey errorKey = ErrorKey.getErrorKey("access.addedit.object.denied");
-		return new ApplicationException(errorKey, excp, msgParams.toString());
-	}
-
-	/**
 	 * return the  actual class name.
 	 * @param name String
 	 * @return String
