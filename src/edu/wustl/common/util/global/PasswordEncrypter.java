@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import edu.wustl.common.security.exceptions.PasswordEncryptionException;
+import edu.wustl.common.exception.PasswordEncryptionException;
 import edu.wustl.common.util.impexp.DatabaseUtility;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.util.StringUtilities;

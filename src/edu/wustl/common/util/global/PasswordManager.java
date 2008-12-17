@@ -24,7 +24,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.security.exceptions.PasswordEncryptionException;
+import edu.wustl.common.exception.PasswordEncryptionException;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.exception.DAOException;
