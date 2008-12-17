@@ -78,7 +78,9 @@ public class CommonQueryBizLogic
 			String sqlQuery1 = sqlQuery.replaceAll("'", "''");
 			jdbcDAO.openSession(null);
 			String comments = "QueryLog";
-			jdbcDAO.executeAuditSql(sqlQuery1,sessionData,comments);
+			// commenting temporary to avoid compilation errors
+			
+		//	jdbcDAO.executeAuditSql(sqlQuery1,sessionData,comments);
 		}
 		finally
 		{
