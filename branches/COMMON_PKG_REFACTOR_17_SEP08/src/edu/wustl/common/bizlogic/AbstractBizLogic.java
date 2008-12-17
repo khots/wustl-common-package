@@ -223,7 +223,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException ex)
 		{
 			rollback(dao);
-			throw getBizLogicException(dao, ex, "biz.delete.error","Exception in delete operation.");
+			throw getBizLogicException(ex, "biz.delete.error","Exception in delete operation.");
 		}
 		finally
 		{
@@ -279,7 +279,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException exception)
 		{
 			rollback(dao);
-			throw getBizLogicException(dao, exception, "biz.insert.error"
+			throw getBizLogicException(exception, "biz.insert.error"
 					,"Exception in insert operation.");
 		}
 		finally
@@ -338,7 +338,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException exception)
 		{
 			rollback(dao);
-			throw getBizLogicException(dao, exception, "biz.insert.error"
+			throw getBizLogicException(exception, "biz.insert.error"
 					,"Exception in inserting multiple records operation.");
 		}
 		finally
@@ -490,14 +490,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
-				throw getBizLogicException(dao, null, "biz.update.error"
+				throw getBizLogicException(null, "biz.update.error"
 						,"AbstractBizLogic:User Not Authorized.");
 			}
 		}
 		catch (DAOException ex)
 		{
 			rollback(dao);
-			throw getBizLogicException(dao, ex, "biz.update.error"
+			throw getBizLogicException(ex, "biz.update.error"
 					,"Exception in update method");
 		}
 		finally
@@ -616,7 +616,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (DAOException exception)
 		{
 			rollback(dao);
-			throw getBizLogicException(dao, exception, "biz.setpriv.error"
+			throw getBizLogicException(exception, "biz.setpriv.error"
 					,"Exception in setPrivilege method");
 		}
 		finally
@@ -784,7 +784,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(dao, daoExp, "biz.popbean.error"
+			throw getBizLogicException(daoExp, "biz.popbean.error"
 					,"Exception in bean population");
 		}
 		finally
@@ -825,7 +825,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (Exception daoExp)
 		{
-			throw getBizLogicException(dao, daoExp, "biz.popdomain.error"
+			throw getBizLogicException(daoExp, "biz.popdomain.error"
 					,"Exception in domain population");
 		}
 		finally
@@ -920,8 +920,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param key error-key in applicationResource file.
 	 * @throws BizLogicException
 	 */
-	protected BizLogicException getBizLogicException(DAO dao,
-			Exception exception, String key,String logMessage)
+	protected BizLogicException getBizLogicException(Exception exception, String key,String logMessage)
 	{
 		logger.debug(logMessage);
 		ErrorKey errorKey=ErrorKey.getErrorKey(key);
