@@ -30,7 +30,7 @@ public class CommonQueryBizLogic
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		JDBCDAO dao = daofactory.getJDBCDAO();
-		
+
 		try
 		{
 			dao.openSession(null);
@@ -38,7 +38,8 @@ public class CommonQueryBizLogic
 			queryParams.setQuery(querySessionData.getSql());
 			queryParams.setSessionDataBean(sessionDataBean);
 			queryParams.setSecureToExecute(querySessionData.isSecureExecute());
-			queryParams.setHasConditionOnIdentifiedField(querySessionData.isHasConditionOnIdentifiedField());
+			queryParams.setHasConditionOnIdentifiedField(
+					querySessionData.isHasConditionOnIdentifiedField());
 			queryParams.setQueryResultObjectDataMap(querySessionData.getQueryResultObjectDataMap());
 			queryParams.setStartIndex(startIndex);
 			queryParams.setNoOfRecords(querySessionData.getRecordsPerPage());
@@ -75,158 +76,16 @@ public class CommonQueryBizLogic
 		jdbcDAO = daofactory.getJDBCDAO();
 		try
 		{
-			String sqlQuery1 = sqlQuery.replaceAll("'", "''");
+			//String sqlQuery1 = sqlQuery.replaceAll("'", "''");
 			jdbcDAO.openSession(null);
-			String comments = "QueryLog";
+			//String comments = "QueryLog";
 			// commenting temporary to avoid compilation errors
-			
+
 		//	jdbcDAO.executeAuditSql(sqlQuery1,sessionData,comments);
 		}
 		finally
 		{
 			jdbcDAO.closeSession();
 		}
-		//	long no = 1;
-		/*SimpleDateFormat fSDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String timeStamp = fSDateFormat.format(new Date());
-
-			String ipAddr = sessionData.getIpAddress();
-
-			String userId = sessionData.getUserId().toString();
-		 */		
-
-		/*if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
-			{
-				String sqlForAudiEvent = "insert into catissue_audit_event(IP_ADDRESS,EVENT_TIMESTAMP,USER_ID ,COMMENTS) values ('"
-						+ ipAddr + "','" + timeStamp + "','" + userId + "','" + comments + "')";
-				jdbcDAO.executeUpdate(sqlForAudiEvent);
-
-				String sql = "select max(identifier) from catissue_audit_event where USER_ID='"
-						+ userId + "'";
-
-				List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						String str = (String) columnList.get(0);
-						if (!str.equals(""))
-						{
-							no = Long.parseLong(str);
-
-						}
-					}
-				}
-
-				String sqlForQueryLog = "insert into catissue_audit_event_query_log(QUERY_DETAILS,AUDIT_EVENT_ID) values ('"
-						+ sqlQuery1 + "','" + no + "')";
-				Logger.out.debug("sqlForQueryLog:" + sqlForQueryLog);
-				jdbcDAO.executeUpdate(sqlForQueryLog);
-			}
-			else
-			{
-				String sql = "select CATISSUE_AUDIT_EVENT_PARAM_SEQ.nextVal from dual";
-
-				List list = jdbcDAO.executeQuery(sql, null, false, null);
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						String str = (String) columnList.get(0);
-						if (!str.equals(""))
-						{
-							no = Long.parseLong(str);
-
-						}
-					}
-				}
-				String sqlForAudiEvent = "insert into catissue_audit_event(IDENTIFIER,IP_ADDRESS,EVENT_TIMESTAMP,USER_ID ,COMMENTS) values ('"
-						+ no
-						+ "','"
-						+ ipAddr
-						+ "',to_date('"
-						+ timeStamp
-						+ "','yyyy-mm-dd HH24:MI:SS'),'" + userId + "','" + comments + "')";
-				Logger.out.info("sqlForAuditLog:" + sqlForAudiEvent);
-				jdbcDAO.executeUpdate(sqlForAudiEvent);
-
-				long queryNo = 1;
-				sql = "select CATISSUE_AUDIT_EVENT_QUERY_SEQ.nextVal from dual";
-
-				list = jdbcDAO.executeQuery(sql, null, false, null);
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						String str = (String) columnList.get(0);
-						if (!str.equals(""))
-						{
-							queryNo = Long.parseLong(str);
-
-						}
-					}
-				}
-				String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS,AUDIT_EVENT_ID) "
-						+ "values (" + queryNo + ",EMPTY_CLOB(),'" + no + "')";
-				jdbcDAO.executeUpdate(sqlForQueryLog);
-				String sql1 = "select QUERY_DETAILS from catissue_audit_event_query_log where IDENTIFIER="+queryNo+" for update";
-				list = jdbcDAO.executeQuery(sql1, null, false, null);
-
-				CLOB clob=null;
-
-				if (!list.isEmpty())
-				{
-
-					List columnList = (List) list.get(0);
-					if (!columnList.isEmpty())
-					{
-						clob = (CLOB)columnList.get(0);
-					}
-				}
-//				get output stream from the CLOB object
-				OutputStream os = clob.getAsciiOutputStream();
-				OutputStreamWriter osw = new OutputStreamWriter(os);
-
-//			use that output stream to write character data to the Oracle data store
-				osw.write(sqlQuery1.toCharArray());
-				//write data and commit
-				osw.flush();
-				osw.close();
-				os.close();
-				jdbcDAO.commit();
-				Logger.out.info("sqlForQueryLog:" + sqlForQueryLog);
-
-
-			}
-		}
-		catch(IOException e)
-		{
-			throw new DAOException(e.getMessage());
-		}
-		catch(SQLException e)
-		{
-			throw new DAOException(e.getMessage());
-		}*/
-		/*}catch (DAOException e)
-		{
-			throw (e);
-		}
-		finally
-		{
-			jdbcDAO.closeSession();
-		}*/
-		/*String sqlForQueryLog = "insert into catissue_audit_event_query_log(IDENTIFIER,QUERY_DETAILS) values ('"
-		 + no + "','" + sqlQuery1 + "')";
-		 jdbcDAO.executeUpdate(sqlForQueryLog);*/
-
 	}
 }
