@@ -32,13 +32,13 @@ public class DoubleDataType implements IDBDataType
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
 		Validator validator = new Validator();
-		boolean conditionError = false;
+		boolean condiError = false;
 		if (!validator.isDouble(enteredValue, false))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.decvalue.required"));
-			conditionError = true;
+			condiError = true;
 		}
-		return conditionError;
+		return condiError;
 	}
 
 	/**
