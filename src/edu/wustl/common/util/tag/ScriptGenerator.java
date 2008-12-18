@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.util.global.TextConstants;
 
 /**
  * @author chetan_bh
@@ -68,8 +69,7 @@ public final class ScriptGenerator
 						.append("; \n");
 			}
 			returner.append((String) getVarInStringForm(dataMap, 0, "", rowNum));
-			returner.append('\n');
-			returner.append("outerMostDataTable.put(\"").append(rowNum).append("\",dataTable_")
+			returner.append("\n outerMostDataTable.put(\"").append(rowNum).append("\",dataTable_")
 					.append(rowNum).append("_1); \n</script>\n");
 		}
 		return returner.toString();
@@ -188,7 +188,7 @@ public final class ScriptGenerator
 			returner.append(getVarInStringForm(valObj, depth, kValForNext, rowNumber));
 
 		}
-		if (!"".equals(keyValue))
+		if (!TextConstants.EMPTY_STRING.equals(keyValue))
 		{
 			returner.append(varName).append((depth - 1)).append(".put(\"").append(keyValue).append(
 					"\",").append(varName).append(depth).append("); \n");

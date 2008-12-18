@@ -115,7 +115,7 @@ public class NLevelCustomCombo extends TagSupport
 	/**
 	 * A vriable to store the number of combos needed to construct n-combos.
 	 */
-	private int numberOfCombosNeeded = 0;
+	private int noOfCombosNeeded = 0;
 
 	/**
 	 * form Label Style.
@@ -166,7 +166,7 @@ public class NLevelCustomCombo extends TagSupport
 
 			// has to be reintialized for next usage of this tag.
 			comboCounter = 0;
-			numberOfCombosNeeded = 0;
+			noOfCombosNeeded = 0;
 			combosHTMLStr = "";
 			verticalCombosStart = "";
 			verticalCombosEnd = "";
@@ -188,10 +188,10 @@ public class NLevelCustomCombo extends TagSupport
 			errors = new ActionErrors();
 		}
 		boolean attributeNamesValue = attributeNames == null
-				|| attributeNames.length != numberOfCombosNeeded;
-		boolean labelNamesValue = labelNames == null || labelNames.length != numberOfCombosNeeded;
-		boolean initValues = initialValues == null || initialValues.length > numberOfCombosNeeded
-				|| initialValues.length < (numberOfCombosNeeded - 1);
+				|| attributeNames.length != noOfCombosNeeded;
+		boolean labelNamesValue = labelNames == null || labelNames.length != noOfCombosNeeded;
+		boolean initValues = initialValues == null || initialValues.length > noOfCombosNeeded
+				|| initialValues.length < (noOfCombosNeeded - 1);
 		if (attributeNamesValue)
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
@@ -358,8 +358,8 @@ public class NLevelCustomCombo extends TagSupport
 		boolean initValues = initialValues == null || initialValues.length == 0;
 		if (initValues)
 		{
-			initialValues = new String[numberOfCombosNeeded];
-			for (int i = 0; i <= numberOfCombosNeeded; i++)
+			initialValues = new String[noOfCombosNeeded];
+			for (int i = 0; i <= noOfCombosNeeded; i++)
 			{
 				initialValues[i] = "-1";
 			}
@@ -385,8 +385,8 @@ public class NLevelCustomCombo extends TagSupport
 	{
 		if (labelNames == null || labelNames.length == 0)
 		{
-			labelNames = new String[numberOfCombosNeeded];
-			for (int i = 0; i <= numberOfCombosNeeded; i++)
+			labelNames = new String[noOfCombosNeeded];
+			for (int i = 0; i <= noOfCombosNeeded; i++)
 			{
 				labelNames[i] = "";
 			}
@@ -400,14 +400,14 @@ public class NLevelCustomCombo extends TagSupport
 	{
 		if (dataMap.isEmpty())
 		{
-			numberOfCombosNeeded = Integer.parseInt(noOfEmptyCombos);
+			noOfCombosNeeded = Integer.parseInt(noOfEmptyCombos);
 		}
 		else
 		{
 			Map map = dataMap;
 			while (map instanceof Map)
 			{
-				numberOfCombosNeeded++;
+				noOfCombosNeeded++;
 				Set kSet = map.keySet();
 				Object[] kSetArray = kSet.toArray();
 				Object firstVal = map.get(kSetArray[0]);
@@ -417,7 +417,7 @@ public class NLevelCustomCombo extends TagSupport
 				}
 				else
 				{
-					numberOfCombosNeeded++;
+					noOfCombosNeeded++;
 					break;
 				}
 			}
@@ -587,7 +587,7 @@ public class NLevelCustomCombo extends TagSupport
 	private String getOptionSelection(NameValueBean nvb)
 	{
 		String optionSelection = "";
-		if (initialValues.length == numberOfCombosNeeded && initialValues[comboCounter] != null
+		if (initialValues.length == noOfCombosNeeded && initialValues[comboCounter] != null
 				&& !(initialValues[comboCounter].equals("")))
 		{
 			String initialValForThisCombo = (String) initialValues[comboCounter];

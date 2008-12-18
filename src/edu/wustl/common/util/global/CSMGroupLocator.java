@@ -88,7 +88,7 @@ public final class CSMGroupLocator
 	 * @return object of CSMGroupLocator.
 	 * @throws ParseException if not able to parse the file.
 	 */
-	public CSMGroupLocator getInstance() throws ParseException
+	public static CSMGroupLocator getInstance() throws ParseException
 	{
 		if(!success)
 		{

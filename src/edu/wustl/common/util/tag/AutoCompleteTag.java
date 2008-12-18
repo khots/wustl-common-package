@@ -64,14 +64,22 @@ public class AutoCompleteTag extends TagSupport
 	private String numberOfCharacters = "1";
 
 	/**
+	 * Constant for FALSE.
+	 */
+	private static final String FALSE = "false";
+	/**
+	 * Constant for FALSE.
+	 */
+	private static final String TRUE = "true";
+	/**
 	 * set to true if the textbox is readOnly.
 	 */
-	private Object readOnly = "false";
+	private Object readOnly = FALSE;
 
 	/**
 	 * set to true if the textbox is disabled.
 	 */
-	private Object disabled = "false";
+	private Object disabled = FALSE;
 
 	/**
 	 * Functions to be called when textbox loses focus.
@@ -99,7 +107,7 @@ public class AutoCompleteTag extends TagSupport
 	 *  true - in case of static lists eg. class, type
 	 *  false - in case of dynamic lists eg. site, user
 	 */
-	private String staticField = "true";
+	private String staticField = TRUE;
 
 	/**
 	 * Returns current thread's class loader.
@@ -123,7 +131,7 @@ public class AutoCompleteTag extends TagSupport
 		{
 			JspWriter out = pageContext.getOut();
 			String autocompleteHTMLStr = null;
-			if (staticField.equalsIgnoreCase("true"))
+			if (staticField.equalsIgnoreCase(TRUE))
 			{
 				autocompleteHTMLStr = getAutocompleteHTML();
 			}
@@ -151,10 +159,10 @@ public class AutoCompleteTag extends TagSupport
 	{
 		onChange = "";
 		initialValue = "";
-		readOnly = "false";
+		readOnly = FALSE;
 		dependsOn = "";
 		size = "300";
-		disabled = "false";
+		disabled = FALSE;
 	}
 
 	//	@SuppressWarnings("unchecked")
@@ -223,7 +231,7 @@ public class AutoCompleteTag extends TagSupport
 	private StringBuffer getReadOnlyValue()
 	{
 		StringBuffer readOnly = new StringBuffer();
-		if (readOnly.toString().equalsIgnoreCase("true"))
+		if (readOnly.toString().equalsIgnoreCase(TRUE))
 		{
 			readOnly.append("readonly");
 		}
@@ -261,7 +269,7 @@ public class AutoCompleteTag extends TagSupport
 		 *  as List from optionsList which was passed as a map
 		 */
 		if (property.equalsIgnoreCase(Constants.SPECIMEN_TYPE) && dependsOn != null
-				&& !dependsOn.equals(""))
+				&& !dependsOn.equals(TextConstants.EMPTY_STRING))
 		{
 			String className = dependsOn;
 			List specimenTypeList = (List) ((Map) optionsList).get(className);
@@ -281,7 +289,7 @@ public class AutoCompleteTag extends TagSupport
 	 */
 	private void setInitialValue()
 	{
-		if (initialValue == null || initialValue.equals(""))
+		if (initialValue == null || initialValue.equals(TextConstants.EMPTY_STRING))
 		{
 			initialValue = pageContext.getRequest().getParameter(property);
 
@@ -366,7 +374,7 @@ public class AutoCompleteTag extends TagSupport
 	//@SuppressWarnings("unchecked")
 	private String getAutocompleteHTMLForDynamicProperty() throws IOException
 	{
-		StringBuffer autoCompleteResult = new StringBuffer();
+
 		InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
 		Properties props = new Properties();
 		props.load(stream);
@@ -377,7 +385,7 @@ public class AutoCompleteTag extends TagSupport
 		 */
 		setOnChangeValueForDynamicProperty();
 		String name = setInitialValueForDynamicProperty(displayProperty);
-		String value = "";
+		String value = TextConstants.EMPTY_STRING;
 		if (optionsList instanceof List)
 		{
 			List nvbList = (List) optionsList;
@@ -395,8 +403,9 @@ public class AutoCompleteTag extends TagSupport
 			}
 		}
 
+		StringBuffer autoCompleteResult = new StringBuffer("<div id=\"");
 		String div = "divFor" + displayProperty;
-		autoCompleteResult.append("<div id=\"").append(div).append(
+		autoCompleteResult.append(div).append(
 				"\" style=\"display: none;\" class=\"autocomplete\"></div>");
 		setInputImageTag(autoCompleteResult, name, value, props);
 		Object[] scriptArgs = {displayProperty, displayProperty};
@@ -418,14 +427,14 @@ public class AutoCompleteTag extends TagSupport
 	private void setInputImageTag(StringBuffer autoCompleteResult, String name, String value,
 			Properties props)
 	{
-		String readOnlyValue = "";
-		if (readOnly.toString().equalsIgnoreCase("true"))
+		String readOnlyValue = TextConstants.EMPTY_STRING;
+		if (readOnly.toString().equalsIgnoreCase(TRUE))
 		{
 			readOnlyValue = "readonly";
 		}
 		String onBlur = " onblur=\"" + onChange + "\"";
 		String isDisabled = "";
-		if (disabled.toString().equalsIgnoreCase("true"))
+		if (disabled.toString().equalsIgnoreCase(TRUE))
 		{
 			isDisabled = "disabled=\"true\"";
 		}
@@ -452,10 +461,9 @@ public class AutoCompleteTag extends TagSupport
 				for (int i = 0; i < nvbList.size(); i++)
 				{
 					NameValueBean nvb = (NameValueBean) nvbList.get(i);
-					valueIds.append("valuesInListOf").append("display").append(property)
+					valueIds.append("valuesInListOfdisplay").append(property)
 							.append('[').append(i).append("] = \"")
-							.append(nvb.getName()).append("\";");
-					valueIds.append("idsInListOf").append("display")
+							.append(nvb.getName()).append("\";idsInListOfdisplay")
 					.append(property).append('[').append(i)
 					.append("] = \"").append(nvb.getValue()).append("\";");
 				}
@@ -478,7 +486,7 @@ public class AutoCompleteTag extends TagSupport
 	 */
 	private void setOnChangeValueForDynamicProperty()
 	{
-		if ("".equals(onChange))
+		if (TextConstants.EMPTY_STRING.equals(onChange))
 		{
 			onChange = "trimByAutoTagAndSetIdInForm(this)";
 		}
@@ -494,9 +502,9 @@ public class AutoCompleteTag extends TagSupport
 	 */
 	private String setInitialValueForDynamicProperty(String displayProperty)
 	{
-		String name = "";
+		String name = TextConstants.EMPTY_STRING;
 		if ("0".equals(initialValue) || initialValue.toString().equalsIgnoreCase("undefined")
-				|| "".equals(initialValue))
+				|| TextConstants.EMPTY_STRING.equals(initialValue))
 		{
 			name = assignInitialValueToName(displayProperty);
 		}
@@ -512,7 +520,7 @@ public class AutoCompleteTag extends TagSupport
 		String name;
 		name = pageContext.getRequest().getParameter(displayProperty);
 
-		if (name == null || name.equals(""))
+		if (name == null || name.equals(TextConstants.EMPTY_STRING))
 		{
 			String[] title = (String[]) pageContext.getRequest()
 					.getParameterValues(displayProperty);
@@ -523,7 +531,7 @@ public class AutoCompleteTag extends TagSupport
 			}
 			else
 			{
-				name = "";
+				name = TextConstants.EMPTY_STRING;
 			}
 		}
 		return name;
