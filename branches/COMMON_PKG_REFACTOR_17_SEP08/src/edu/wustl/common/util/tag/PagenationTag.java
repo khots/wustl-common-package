@@ -24,14 +24,27 @@ public class PagenationTag extends TagSupport
 {
 
 	/**
+	 * specify serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = 3660111496312380494L;
+
+	/**
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PagenationTag.class);
+
 	/**
-	/**
-	 * specify serialVersionUID.
+	 * Constant for TOTAL_RESULT.
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final int TOTAL_RESULT = 1000;
+	/**
+	 * Constant for TEN.
+	 */
+	private static final int TEN = 10;
+	/**
+	 * Constant for RESULTS_PER_PAGE.
+	 */
+	private static final int RESULTS_PER_PAGE = 15;
 
 	/**
 	 * specify name.
@@ -51,12 +64,12 @@ public class PagenationTag extends TagSupport
 	/**
 	 * specify total Results.
 	 */
-	protected int totalResults = 1000;
+	protected int totalResults = TOTAL_RESULT;
 
 	/**
 	 * specify number of Results Per Page.
 	 */
-	protected int numResultsPerPage = 15;
+	protected int numResultsPerPage = RESULTS_PER_PAGE;
 
 	/**
 	 * specify page Link Start.
@@ -66,7 +79,7 @@ public class PagenationTag extends TagSupport
 	/**
 	 * specify page Link End.
 	 */
-	protected int mpageLinkEnd = 10;
+	protected int mpageLinkEnd = TEN;
 
 	/**
 	 * specify show Next.
@@ -91,7 +104,7 @@ public class PagenationTag extends TagSupport
 	/**
 	 * specify numLinks.
 	 */
-	private int numLinks = 10;
+	private int numLinks = TEN;
 
 	/**
 	 * specify resultLowRange.
@@ -505,7 +518,7 @@ public class PagenationTag extends TagSupport
 		}
 		catch (NumberFormatException nfe)
 		{
-			this.totalResults = 1000;
+			this.totalResults = TOTAL_RESULT;
 		}
 	}
 
@@ -520,7 +533,7 @@ public class PagenationTag extends TagSupport
 		}
 		catch (NumberFormatException nfe)
 		{
-			this.numResultsPerPage = 10;
+			this.numResultsPerPage = TEN;
 		}
 	}
 

@@ -22,9 +22,16 @@ import edu.wustl.common.util.logger.Logger;
  * @author ravi_kumar
  *
  */
-public class XMLParserUtility
+public final class XMLParserUtility
 {
 
+	/**
+	 * private constructor.
+	 */
+	private XMLParserUtility()
+	{
+
+	}
 	/**
 	 * logger Logger - Generic logger.
 	 */

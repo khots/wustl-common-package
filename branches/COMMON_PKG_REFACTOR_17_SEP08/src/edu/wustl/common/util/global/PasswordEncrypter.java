@@ -21,8 +21,15 @@ import gov.nih.nci.security.util.StringUtilities;
  *
  */
 
-public class PasswordEncrypter
+public final class PasswordEncrypter
 {
+	/**
+	 * private constructor.
+	 */
+	private PasswordEncrypter()
+	{
+
+	}
 	/**
 	 * logger Logger - Generic logger.
 	 */
@@ -147,7 +154,7 @@ public class PasswordEncrypter
 	 */
 	private static void configureDBConnection(String[] args) throws Exception
 	{
-		if (args.length >= MIN_NO_ARGS) 
+		if (args.length >= MIN_NO_ARGS)
 		{
 			dbUtility.setDbParams(args);
 			setOtherParams(args);

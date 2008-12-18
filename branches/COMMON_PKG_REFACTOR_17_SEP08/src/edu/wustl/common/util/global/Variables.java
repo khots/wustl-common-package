@@ -24,9 +24,16 @@ import edu.wustl.common.beans.NameValueBean;
  * This class is specific to common files. It is used by common package.
  * */
 
-public class Variables
+public final class Variables
 {
 
+	/**
+	 * private constructor.
+	 */
+	private Variables()
+	{
+
+	}
 	/**
 	 *  Ravi : for Multi Site Rep. changes.
 	 *  specify privilege Details Map.

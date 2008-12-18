@@ -366,11 +366,11 @@ public class Validator
 			for (int spCharCount = 0; spCharCount < spIgnoreChars.length; spCharCount++)
 			{
 				char chkChar = spIgnoreChars[spCharCount];
-				int chInd = specialChars.indexOf("" + chkChar);
+				int chInd = specialChars.indexOf(TextConstants.EMPTY_STRING + chkChar);
 				while (chInd != -1)
 				{
 					specialChars = specialChars.deleteCharAt(chInd);
-					chInd = specialChars.indexOf("" + chkChar);
+					chInd = specialChars.indexOf(TextConstants.EMPTY_STRING + chkChar);
 				}
 			}
 			retStr = specialChars;
