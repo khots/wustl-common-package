@@ -15,8 +15,15 @@ import edu.wustl.common.util.logger.Logger;
  * This class is used to retrieve values of keys from the ApplicationResources.properties file.
  * @author kapil_kaveeshwar
  */
-public class ApplicationProperties
+public final class ApplicationProperties
 {
+	/**
+	 * private constructor.
+	 */
+	private ApplicationProperties()
+	{
+
+	}
 	/**
 	 * Generic resource bundle.
 	 */
