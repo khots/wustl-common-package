@@ -69,15 +69,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 		}
 		finally
 		{
-			try
-			{
-				conn.close();
-			}
-			catch (SQLException exception)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("");
-				throw new ApplicationException(errorKey,exception,"MsSqlAutomateImpExp");
-			}
+			closeConnection(conn);
 		}
 
 	}
