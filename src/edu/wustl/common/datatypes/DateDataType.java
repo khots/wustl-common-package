@@ -33,13 +33,13 @@ public class DateDataType implements IDBDataType
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
 		Validator validator = new Validator();
-		boolean conditionError = false;
+		boolean condError = false;
 		if (!(validator.checkDate(enteredValue)))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.date.format"));
-			conditionError = true;
+			condError = true;
 		}
-		return conditionError;
+		return condError;
 	}
 
 	/**

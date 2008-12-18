@@ -32,14 +32,14 @@ public class TinyIntDataType implements IDBDataType
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
 
-		boolean conditionError = false;
+		boolean condnError = false;
 		if (!Constants.BOOLEAN_YES.equals(enteredValue.trim())
 				&& !Constants.BOOLEAN_NO.equals(enteredValue.trim()))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.tinyint.format"));
-			conditionError = true;
+			condnError = true;
 		}
-		return conditionError;
+		return condnError;
 	}
 
 	/**

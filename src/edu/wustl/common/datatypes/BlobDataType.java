@@ -23,7 +23,8 @@ public class BlobDataType implements IDBDataType
 
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.datatypes.IDBDataType
-	 * #validate(java.lang.String, org.apache.struts.action.ActionErrors)
+	 * #validate(java.lang.String,
+	 * org.apache.struts.action.ActionErrors)
 	 */
 	/**
 	 * This method validate entered values.

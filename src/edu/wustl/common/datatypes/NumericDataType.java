@@ -38,22 +38,22 @@ public class NumericDataType implements IDBDataType
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
 		Validator validator = new Validator();
-		boolean conditionError = false;
+		boolean condonError = false;
 		logger.debug(" Check for integer");
 		if (validator.convertToLong(enteredValue) == null)
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.required"));
-			conditionError = true;
+			condonError = true;
 			logger.debug(enteredValue + " is not a valid integer");
 		}
 		else if (!validator.isPositiveNumeric(enteredValue, 0))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 					"simpleQuery.intvalue.poisitive.required"));
-			conditionError = true;
+			condonError = true;
 			logger.debug(enteredValue + " is not a positive integer");
 		}
-		return conditionError;
+		return condonError;
 	}
 
 	/**
