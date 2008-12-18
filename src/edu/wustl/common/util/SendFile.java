@@ -19,9 +19,16 @@ import edu.wustl.common.util.logger.Logger;
  * @author Poornima Govindrao
  *
  */
-public class SendFile
+public final class SendFile
 {
 
+	/**
+	 * private constructor.
+	 */
+	private SendFile()
+	{
+
+	}
 	/**
 	 * logger Logger Generic logger.
 	 */

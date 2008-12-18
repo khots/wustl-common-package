@@ -254,7 +254,6 @@ public class ExportReport
 		}
 
 		return new StringBuffer().append('"').append(tempStr).append('"').toString();
-		
 	}
 
 	/**
@@ -423,6 +422,5 @@ public class ExportReport
 
 		dao.openSession(null);
 		return null; //(List<Object>)dao.executeQuery(sql, null, false, null);
-		
 	}
 }
