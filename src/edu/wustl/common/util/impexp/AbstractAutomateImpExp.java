@@ -136,6 +136,24 @@ public abstract class AbstractAutomateImpExp implements IAutomateImpExp
 	}
 
 	/**
+	 * Thismethod closes databse connection.
+	 * @param conn Connection object.
+	 * @throws ApplicationException Throws this exception if not able to close databse connection.
+	 */
+	protected void closeConnection(Connection conn) throws ApplicationException
+	{
+		try
+		{
+			conn.close();
+		}
+		catch (SQLException exception)
+		{
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.dbclose.error");
+			throw new ApplicationException(errorKey,exception,"AbstractAutomateImpExp");
+		}
+	}
+
+	/**
 	 * @return the size
 	 */
 	public int getSize()
