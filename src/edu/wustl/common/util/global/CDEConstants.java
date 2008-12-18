@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.util.global;
@@ -8,8 +8,15 @@ package edu.wustl.common.util.global;
  * @author prashant_bandal
  *
  */
-public class CDEConstants
+public final class CDEConstants
 {
+	/**
+	 * private constructor.
+	 */
+	private CDEConstants()
+	{
+
+	}
 	/**
 	 * Constant for CDEConfig file.
 	 */
