@@ -27,6 +27,7 @@ import titli.model.util.TitliTableMapper;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
@@ -220,7 +221,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        	refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
 	        }
 		}
-		catch (DAOException ex)
+		catch (ApplicationException ex)
 		{
 			rollback(dao);
 			throw getBizLogicException(ex, "biz.delete.error","Exception in delete operation.");
