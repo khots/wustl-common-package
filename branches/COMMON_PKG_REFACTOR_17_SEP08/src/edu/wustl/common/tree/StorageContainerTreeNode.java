@@ -126,8 +126,7 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	 */
 	public String toString()
 	{
-		String nodeName = value;
-		return nodeName;
+		return this.value;
 	}
 
 	/**

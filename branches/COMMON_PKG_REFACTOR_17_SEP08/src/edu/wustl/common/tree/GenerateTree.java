@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -64,7 +63,7 @@ public class GenerateTree
 	 * @param isJXTree is JXTree.
 	 * @return the JTree from the vector of data nodes passed.
 	 */
-	public JTree createTree(Vector dataVector, int treeType, boolean isJXTree)
+	public JTree createTree(List dataVector, int treeType, boolean isJXTree)
 	{
 		TreeNode rootName = null;
 		if (dataVector != null && !dataVector.isEmpty())
@@ -178,7 +177,7 @@ public class GenerateTree
 	 * @param treeType type of tree.
 	 * @return Return the JTree from the data nodes passed.
 	 */
-	public JTree createTree(Vector dataVector, int treeType)
+	public JTree createTree(List dataVector, int treeType)
 	{
 		return createTree(dataVector, treeType, null);
 	}

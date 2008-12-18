@@ -111,7 +111,6 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 			}
 
 		}
-
 		setIcon(icon);
 		return this;
 	}
