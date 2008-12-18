@@ -815,9 +815,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * parameters to method and are not hardcoded.
 	 * @param dao The dao object.
 	 * @param sourceClass source Class
-	 * @param selectColumnName An array of field names.
 	 * @param whereColumnName Column name in where clause
-	 * @param objIDArr object ID Array.
+	 * @param whereColumnValue value of column name in where clause
+	 * @param whereColumnCondition Condition in where clause
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @deprecated
@@ -1191,7 +1191,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return null;
 	}
 
-	@Override
+	/**
+	 * This method set privilege to the user.
+	 * @param dao The DAO object
+	 * @param privilegeName privilege Name
+	 * @param objectType object Type
+	 * @param objectIds object Ids
+	 * @param userId user Id
+	 * @param roleId role Id
+	 * @param assignToUser assign To User
+	 * @param assignOperation Operation
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
 	protected void setPrivilege(DAO dao, String privilegeName,
 			Class objectType, Long[] objectIds, Long userId, String roleId,
 			boolean assignToUser, boolean assignOperation)
