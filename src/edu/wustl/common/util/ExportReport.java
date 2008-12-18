@@ -68,6 +68,10 @@ public class ExportReport
 	private static org.apache.log4j.Logger logger = Logger.getLogger(ExportReport.class);
 
 	/**
+	 * Constant for TWO.
+	 */
+	private static final int TWO = 2;
+	/**
 	 * @param fileName String file name.
 	 * @throws IOException I/O exception.
 	 */
@@ -225,7 +229,7 @@ public class ExportReport
 					if (tempStr.indexOf(Constants.EXPORT_FILE_NAME_START) != -1)
 					{
 						String[] split = tempStr.split("_");
-						String entityId = split[2];
+						String entityId = split[TWO];
 						String fName = idFileNameMap.get(entityId);
 						tempStr = fName;
 					}

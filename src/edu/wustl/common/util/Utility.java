@@ -54,6 +54,10 @@ public final class Utility
 
 	}
 	/**
+	 * Constant for TWO.
+	 */
+	private static final int TWO = 2;
+	/**
 	 * logger -Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(Utility.class);
@@ -516,7 +520,7 @@ public final class Utility
 	 */
 	public static String[] getTime(Date date)
 	{
-		String[] time = new String[2];
+		String[] time = new String[TWO];
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		time[0] = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));

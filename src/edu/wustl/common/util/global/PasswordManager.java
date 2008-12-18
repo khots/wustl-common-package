@@ -379,14 +379,7 @@ public final class PasswordManager
 		errorNo = chkChangePassInSameSession(httpSession, errorNo);
 		errorNo = chkPassForMinLength(newPassword, errorNo);
 		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
-		if (NOT_FAILED == errorNo)
-		{
-			errorNo = validateUpLowerNumSpaceCharInPass(newPassword);
-		}
-		if (NOT_FAILED != errorNo)
-		{
-			errorNo = SUCCESS;
-		}
+		errorNo = getErrorNumber(newPassword, errorNo);
 		return errorNo;
 	}
 
@@ -520,15 +513,27 @@ public final class PasswordManager
 		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
 		errorNo = checkPassWithEmail(newPassword, userName, errorNo);
 		errorNo = chkPassWithUserName(newPassword, userName, errorNo);
-		if (NOT_FAILED == errorNo)
-		{
-			errorNo = validateUpLowerNumSpaceCharInPass(newPassword);
-		}
-		if (NOT_FAILED != errorNo)
-		{
-			errorNo = SUCCESS;
-		}
+		errorNo = getErrorNumber(newPassword, errorNo);
 		return errorNo;
+	}
+
+	/**
+	 * @param newPassword new Password
+	 * @param errorNo error No.
+	 * @return error Number
+	 */
+	private static int getErrorNumber(String newPassword, int errorNo)
+	{
+		int errNumber = errorNo;
+		if (NOT_FAILED == errNumber)
+		{
+			errNumber = validateUpLowerNumSpaceCharInPass(newPassword);
+		}
+		if (NOT_FAILED != errNumber)
+		{
+			errNumber = SUCCESS;
+		}
+		return errNumber;
 	}
 
 	/**
