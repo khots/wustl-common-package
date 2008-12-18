@@ -18,7 +18,8 @@ public class NameValueBeanValueComparator implements java.util.Comparator<Object
 	public int compare(Object arg0, Object arg1)
 	{
 		int diff=0;
-		if (arg0 instanceof NameValueBean && arg1 instanceof NameValueBean)
+		boolean isNameValueBean = arg0 instanceof NameValueBean && arg1 instanceof NameValueBean;
+		if (isNameValueBean)
 		{
 			NameValueBean nvb1 = (NameValueBean) arg0;
 			NameValueBean nvb2 = (NameValueBean) arg1;
