@@ -220,13 +220,6 @@ public class DatabaseUtility
 	}
 
 	/**
-	 * no argument constructor.
-	 */
-	public DatabaseUtility()
-	{
-
-	}
-	/**
 	 * This method will create a database connection using configuration info.
 	 * @return Connection : Database connection object
 	 * @throws SQLException Generic SQL exception.
