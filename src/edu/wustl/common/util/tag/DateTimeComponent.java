@@ -38,6 +38,18 @@ public class DateTimeComponent extends TagSupport
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Constant for Size.
+	 */
+	private static final int SIZE = 10;
+	/**
+	 * Constant for Size.
+	 */
+	private static final int START_YEAR = 1900;
+	/**
+	 * Constant for Size.
+	 */
+	private static final int END_YEAR = 2020;
+	/**
 	 * Name of the text field for the date component.
 	 */
 	private String name;
@@ -60,7 +72,7 @@ public class DateTimeComponent extends TagSupport
 	/**
 	 * Size of the text field for the date component.
 	 */
-	private Integer size = Integer.valueOf(10);
+	private Integer size = Integer.valueOf(SIZE);
 
 	/**
 	 * disabled property for the text field of the date component.
@@ -95,12 +107,12 @@ public class DateTimeComponent extends TagSupport
 	/**
 	 * Start year for the year drop down combo box.
 	 */
-	private Integer startYear = Integer.valueOf(1900);;
+	private Integer startYear = Integer.valueOf(START_YEAR);;
 
 	/**
 	 * End year for the year drop down combo box.
 	 */
-	private Integer endYear = Integer.valueOf(2020);;
+	private Integer endYear = Integer.valueOf(END_YEAR);;
 
 	/**
 	 * Tooltip to be displayed on the calendar icon.

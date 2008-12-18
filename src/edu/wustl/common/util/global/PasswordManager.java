@@ -40,24 +40,44 @@ import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
  *@version 1.0
  */
 
-public class PasswordManager
+public final class PasswordManager
 {
+
+	/**
+	 * private constructor.
+	 */
+	private PasswordManager()
+	{
+
+	}
 
 	/**
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordManager.class);
 	/**
+	 * Constant for TEN.
+	 */
+	private static final int TEN = 10;
+	/**
+	 * Constant for TWO.
+	 */
+	private static final int TWO = 2;
+	/**
+	 * Constant for FOUR.
+	 */
+	private static final int FOUR = 2;
+	/**
 	 * Key used for password encryption.
 	 */
-	private static final String KEY=
-	"AWelcomeTocaTISSUECOREOfThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited";
+	private static final String KEY = "AWelcomeTocaTISSUECOREOfThisIsThe" +
+			"FirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited";
 
 	/**
 	 * array used for password encryption.
 	 */
-	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		'a', 'b', 'c', 'd', 'e','f'};
+	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+			'b', 'c', 'd', 'e', 'f'};
 	/**
 	 *  constant for MINIMUM_PASSWORD_LENGTH.
 	 */
@@ -113,25 +133,31 @@ public class PasswordManager
 	/**
 	 * This map contains error message for different error code.
 	 */
-	private static Map<Integer,String> errorMess;
+	private static Map<Integer, String> errorMess;
 	static
 	{
-		errorMess= new HashMap<Integer,String>();
+		errorMess = new HashMap<Integer, String>();
 		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
 				.getValue(MINIMUM_PASSWORD_LENGTH));
 		List<String> placeHolders = new ArrayList<String>();
 		placeHolders.add(Integer.valueOf(minimumPasswordLength).toString());
 		String errorMsg = ApplicationProperties.getValue("errors.newPassword.length", placeHolders);
 		errorMess.put(FAIL_LENGTH, errorMsg);
-		errorMess.put(FAIL_SAME_AS_OLD, ApplicationProperties.getValue("errors.newPassword.sameAsOld"));
-		errorMess.put(FAIL_SAME_AS_USERNAME,
-				ApplicationProperties.getValue("errors.newPassword.sameAsUserName"));
-		errorMess.put(FAIL_IN_PATTERN, ApplicationProperties.getValue("errors.newPassword.pattern"));
-		errorMess.put(FAIL_SAME_SESSION, ApplicationProperties.getValue("errors.newPassword.sameSession"));
-		errorMess.put(FAIL_WRONG_OLD_PASSWORD, ApplicationProperties.getValue("errors.oldPassword.wrong"));
-		errorMess.put(FAIL_INVALID_SESSION,
-				ApplicationProperties.getValue("errors.newPassword.genericmessage"));
+		errorMess.put(FAIL_SAME_AS_OLD, ApplicationProperties
+				.getValue("errors.newPassword.sameAsOld"));
+		errorMess.put(FAIL_SAME_AS_USERNAME, ApplicationProperties
+				.getValue("errors.newPassword.sameAsUserName"));
+		errorMess
+				.put(FAIL_IN_PATTERN, ApplicationProperties.
+						getValue("errors.newPassword.pattern"));
+		errorMess.put(FAIL_SAME_SESSION, ApplicationProperties
+				.getValue("errors.newPassword.sameSession"));
+		errorMess.put(FAIL_WRONG_OLD_PASSWORD, ApplicationProperties
+				.getValue("errors.oldPassword.wrong"));
+		errorMess.put(FAIL_INVALID_SESSION, ApplicationProperties
+				.getValue("errors.newPassword.genericmessage"));
 	}
+
 	/**
 	 * Generate random alpha numeric password.
 	 * @return Returns the generated password.
@@ -147,7 +173,7 @@ public class PasswordManager
 		StringBuffer passwordBuff = new StringBuffer();
 		//This password must satisfy the following criteria:New Password must include at least one
 		//Upper Case, Lower Case letter and a Number. It must not include Space.
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < TWO; i++)
 		{
 			//Generate a random number from 0(inclusive) to lenght of CHAR_STRING(exclusive).
 			//Get the character corrosponding to random number and append it to password buffer.
@@ -225,7 +251,7 @@ public class PasswordManager
 	public static String encode(String input)
 	{
 		String encodedString = null;
-		StringBuffer inString =getInString(input);
+		StringBuffer inString = getInString(input);
 
 		try
 		{
@@ -234,7 +260,7 @@ public class PasswordManager
 		}
 		catch (Exception exception)
 		{
-			logger.warn("Problems in Encryption/Decryption in CommonJdao ",exception);
+			logger.warn("Problems in Encryption/Decryption in CommonJdao ", exception);
 		}
 		return encodedString;
 	}
@@ -246,12 +272,12 @@ public class PasswordManager
 	private static StringBuffer getEncodedString(StringBuffer inString)
 	{
 		byte[] bytes = inString.toString().getBytes();
-		StringBuffer stringBuffer = new StringBuffer(bytes.length * 2);
+		StringBuffer stringBuffer = new StringBuffer(bytes.length * TWO);
 
 		for (int i = 0; i < bytes.length; i++)
 		{
 			byte singleByte = bytes[i];
-			stringBuffer.append(DIGITS[(singleByte & HEX_240) >> 4]);
+			stringBuffer.append(DIGITS[(singleByte & HEX_240) >> FOUR]);
 			stringBuffer.append(DIGITS[singleByte & HEX_15]);
 		}
 		return stringBuffer;
@@ -287,7 +313,7 @@ public class PasswordManager
 			byte[] bytes = getStringAsBytes(decodeString);
 			String sin = new String(bytes);
 			StringBuffer sout = new StringBuffer();
-			for (int i = 0; i < sin.length(); i += 2)
+			for (int i = 0; i < sin.length(); i += TWO)
 			{
 				sout.append(sin.substring(i, i + 1));
 			}
@@ -295,7 +321,7 @@ public class PasswordManager
 		}
 		catch (Exception exeption)
 		{
-			logger.warn("Problems in Decription/Encription",exeption);
+			logger.warn("Problems in Decription/Encription", exeption);
 		}
 		return decodedString;
 	}
@@ -307,14 +333,14 @@ public class PasswordManager
 	private static byte[] getStringAsBytes(String decodeString)
 	{
 		int len = decodeString.length();
-		byte[] bytes = new byte[len / 2];
+		byte[] bytes = new byte[len / TWO];
 		for (int i = 0; i < bytes.length; i++)
 		{
-			int digit1 = decodeString.charAt(i * 2);
-			int digit2 = decodeString.charAt(i * 2 + 1);
+			int digit1 = decodeString.charAt(i * TWO);
+			int digit2 = decodeString.charAt(i * TWO + 1);
 			digit1 = getEncodedDigit(digit1);
 			digit2 = getEncodedDigit(digit2);
-			bytes[i] = (byte) ((digit1 << 4) + digit2);
+			bytes[i] = (byte) ((digit1 << FOUR) + digit2);
 		}
 		return bytes;
 	}
@@ -325,14 +351,14 @@ public class PasswordManager
 	 */
 	private static int getEncodedDigit(int digit)
 	{
-		int encodedDigit=digit;
+		int encodedDigit = digit;
 		if ((encodedDigit >= '0') && (encodedDigit <= '9'))
 		{
 			encodedDigit -= '0';
 		}
 		else if ((encodedDigit >= 'a') && (encodedDigit <= 'f'))
 		{
-			encodedDigit -= 'a' - 10;
+			encodedDigit -= 'a' - TEN;
 		}
 		return encodedDigit;
 	}
@@ -349,17 +375,17 @@ public class PasswordManager
 	public static int validatePasswordOnFormBean(String newPassword, String oldPassword,
 			HttpSession httpSession)
 	{
-		int errorNo=NOT_FAILED;
-		errorNo=chkChangePassInSameSession(httpSession,errorNo);
-		errorNo=chkPassForMinLength(newPassword,errorNo);
-		errorNo=chkPassForOldPass(newPassword, oldPassword,errorNo);
-		if(NOT_FAILED==errorNo)
+		int errorNo = NOT_FAILED;
+		errorNo = chkChangePassInSameSession(httpSession, errorNo);
+		errorNo = chkPassForMinLength(newPassword, errorNo);
+		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
+		if (NOT_FAILED == errorNo)
 		{
-			errorNo=validateUpLowerNumSpaceCharInPass(newPassword);
+			errorNo = validateUpLowerNumSpaceCharInPass(newPassword);
 		}
-		if(NOT_FAILED!=errorNo)
+		if (NOT_FAILED != errorNo)
 		{
-			errorNo=SUCCESS;
+			errorNo = SUCCESS;
 		}
 		return errorNo;
 	}
@@ -371,13 +397,13 @@ public class PasswordManager
 	 * @param erNo error number-method body executes only when there is no error earlier.
 	 * @return int error number or -1
 	 */
-	private static int chkPassForOldPass(String newPassword, String oldPassword,int erNo)
+	private static int chkPassForOldPass(String newPassword, String oldPassword, int erNo)
 	{
-		int erroNo=erNo;
-		if(NOT_FAILED==erNo && newPassword.equals(oldPassword))
+		int erroNo = erNo;
+		if (NOT_FAILED == erNo && newPassword.equals(oldPassword))
 		{
-				logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
-				erroNo=FAIL_SAME_AS_OLD;
+			logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
+			erroNo = FAIL_SAME_AS_OLD;
 		}
 		return erroNo;
 	}
@@ -387,10 +413,10 @@ public class PasswordManager
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
 	 * @return int error number or -1
 	 */
-	private static int chkPassForMinLength(String newPassword,int erNo)
+	private static int chkPassForMinLength(String newPassword, int erNo)
 	{
-		int erroNo=erNo;
-		if(NOT_FAILED==erNo)
+		int erroNo = erNo;
+		if (NOT_FAILED == erNo)
 		{
 			int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
 					.getValue(MINIMUM_PASSWORD_LENGTH));
@@ -398,7 +424,7 @@ public class PasswordManager
 			if (newPassword.length() < minimumPasswordLength)
 			{
 				logger.debug("Password is not valid returning FAIL_LENGHT");
-				erroNo=FAIL_LENGTH;
+				erroNo = FAIL_LENGTH;
 			}
 		}
 		return erroNo;
@@ -411,19 +437,20 @@ public class PasswordManager
 	 * @param erNo error number-method body executes only when there is no error earlier.
 	 * @return int error number or -1
 	 */
-	private static int chkChangePassInSameSession(HttpSession httpSession,int erNo)
+	private static int chkChangePassInSameSession(HttpSession httpSession, int erNo)
 	{
-		int erroNo=erNo;
-		if(NOT_FAILED==erNo)
+		int erroNo = erNo;
+		if (NOT_FAILED == erNo)
 		{
 			Boolean passwordChangedInsameSession = (Boolean) httpSession
 					.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
-			if (passwordChangedInsameSession != null
-					&& passwordChangedInsameSession.booleanValue())
+			if (passwordChangedInsameSession != null && passwordChangedInsameSession.booleanValue())
 			{
 				// return error code if attribute (Boolean) is in session
-			logger.debug("Attempt to change Password in same session Returning FAIL_SAME_SESSION");
-				erroNo=FAIL_SAME_SESSION;
+				logger
+						.debug("Attempt to change Password" +
+								" in same session Returning FAIL_SAME_SESSION");
+				erroNo = FAIL_SAME_SESSION;
 			}
 		}
 		return erroNo;
@@ -437,26 +464,26 @@ public class PasswordManager
 	 */
 	private static int validateUpLowerNumSpaceCharInPass(String newPassword)
 	{
-		int erroNo=NOT_FAILED;
-		final String regExpUpperCase="^.*\\p{Upper}.*$";
-		final String regExpLowerCase="^.*\\p{Lower}.*$";
-		final String regExpDigit="^.*\\p{Digit}.*$";
-		final String regExpSpace="^.*\\p{Space}.*$";
+		int erroNo = NOT_FAILED;
+		final String regExpUpperCase = "^.*\\p{Upper}.*$";
+		final String regExpLowerCase = "^.*\\p{Lower}.*$";
+		final String regExpDigit = "^.*\\p{Digit}.*$";
+		final String regExpSpace = "^.*\\p{Space}.*$";
 
 		//boolean to check UCase character found in string
-		boolean foundUCase = Pattern.matches(regExpUpperCase,newPassword);
+		boolean foundUCase = Pattern.matches(regExpUpperCase, newPassword);
 		//boolean to check LCase character found in string
-		boolean foundLCase = Pattern.matches(regExpLowerCase,newPassword);
+		boolean foundLCase = Pattern.matches(regExpLowerCase, newPassword);
 		//boolean to check Digit/Number character found in string
-		boolean foundNumber = Pattern.matches(regExpDigit,newPassword);
+		boolean foundNumber = Pattern.matches(regExpDigit, newPassword);
 		//boolean to check space in String
-		boolean foundSpace = Pattern.matches(regExpSpace,newPassword);
+		boolean foundSpace = Pattern.matches(regExpSpace, newPassword);
 
 		// condition to check whether all above condotion is satisfied
 		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
 		{
 			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
-			erroNo= FAIL_IN_PATTERN;
+			erroNo = FAIL_IN_PATTERN;
 		}
 		return erroNo;
 	}
@@ -473,33 +500,33 @@ public class PasswordManager
 	 */
 	public static int validate(String newPassword, String oldPassword, HttpSession httpSession)
 	{
-		int errorNo=NOT_FAILED;
+		int errorNo = NOT_FAILED;
 		// get SessionDataBean objet from session
 		Object obj = httpSession.getAttribute(Constants.SESSION_DATA);
 		SessionDataBean sessionData = null;
 		String userName = "";
 		if (obj == null)
 		{
-			errorNo=FAIL_INVALID_SESSION;
+			errorNo = FAIL_INVALID_SESSION;
 		}
 		else
 		{
 			sessionData = (SessionDataBean) obj;
 			userName = sessionData.getUserName();
 		}
-		errorNo=validateOldPassword(oldPassword, errorNo, userName);
-		errorNo=chkChangePassInSameSession(httpSession,errorNo);
-		errorNo=chkPassForMinLength(newPassword,errorNo);
-		errorNo=chkPassForOldPass(newPassword, oldPassword,errorNo);
-		errorNo=checkPassWithEmail(newPassword, userName,errorNo);
-		errorNo=chkPassWithUserName(newPassword, userName,errorNo);
-		if(NOT_FAILED==errorNo)
+		errorNo = validateOldPassword(oldPassword, errorNo, userName);
+		errorNo = chkChangePassInSameSession(httpSession, errorNo);
+		errorNo = chkPassForMinLength(newPassword, errorNo);
+		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
+		errorNo = checkPassWithEmail(newPassword, userName, errorNo);
+		errorNo = chkPassWithUserName(newPassword, userName, errorNo);
+		if (NOT_FAILED == errorNo)
 		{
-			errorNo=validateUpLowerNumSpaceCharInPass(newPassword);
+			errorNo = validateUpLowerNumSpaceCharInPass(newPassword);
 		}
-		if(NOT_FAILED!=errorNo)
+		if (NOT_FAILED != errorNo)
 		{
-			errorNo=SUCCESS;
+			errorNo = SUCCESS;
 		}
 		return errorNo;
 	}
@@ -512,10 +539,10 @@ public class PasswordManager
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
 	 * @return int error number or -1
 	 */
-	private static int checkPassWithEmail(String newPassword, String userName,int erNo)
+	private static int checkPassWithEmail(String newPassword, String userName, int erNo)
 	{
-		int errorNo=erNo;
-		if(NOT_FAILED==erNo)
+		int errorNo = erNo;
+		if (NOT_FAILED == erNo)
 		{
 			int usernameBeforeMailaddress = userName.indexOf('@');
 			// get substring of username before '@' character
@@ -523,7 +550,7 @@ public class PasswordManager
 			if (name != null && newPassword.equals(name))
 			{
 				logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
-				errorNo=FAIL_SAME_AS_USERNAME; // return int value 3
+				errorNo = FAIL_SAME_AS_USERNAME; // return int value 3
 			}
 		}
 		return errorNo;
@@ -537,13 +564,13 @@ public class PasswordManager
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
 	 * @return int error number or -1
 	 */
-	private static int chkPassWithUserName(String newPassword, String userName,int erNo)
+	private static int chkPassWithUserName(String newPassword, String userName, int erNo)
 	{
-		int errorNo=erNo;
-		if(NOT_FAILED==erNo && newPassword.equals(userName))
+		int errorNo = erNo;
+		if (NOT_FAILED == erNo && newPassword.equals(userName))
 		{
-				logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
-				errorNo=FAIL_SAME_AS_USERNAME; // return int value 3
+			logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
+			errorNo = FAIL_SAME_AS_USERNAME; // return int value 3
 		}
 		return errorNo;
 	}
@@ -556,8 +583,8 @@ public class PasswordManager
 	 */
 	private static int validateOldPassword(String oldPassword, int erNo, String userName)
 	{
-		int errorNo=erNo;
-		if(NOT_FAILED==erNo)
+		int errorNo = erNo;
+		if (NOT_FAILED == erNo)
 		{
 			// to check whether user entered correct old password
 			try
@@ -567,14 +594,14 @@ public class PasswordManager
 				//currently entered by user for Change Password operation
 				if (!oldPassword.equals(PasswordManager.decode(password)))
 				{
-					errorNo=FAIL_WRONG_OLD_PASSWORD; //retun value is int 6
+					errorNo = FAIL_WRONG_OLD_PASSWORD; //retun value is int 6
 				}
 			}
 			catch (Exception e)
 			{
 				// if error occured during password comparision
 				logger.error(e.getMessage(), e);
-				errorNo= FAIL_WRONG_OLD_PASSWORD;
+				errorNo = FAIL_WRONG_OLD_PASSWORD;
 			}
 		}
 		return errorNo;
@@ -584,7 +611,7 @@ public class PasswordManager
 	 * @param userName user Name.
 	 * @return old password of a user.
 	 * @throws DAOException databse exception.
-	 * @throws BizLogicException 
+	 * @throws BizLogicException BizLogicException
 	 */
 	private static String getOldPassword(String userName) throws DAOException, BizLogicException
 	{
@@ -596,8 +623,8 @@ public class PasswordManager
 		String[] whereColumnValues = {userName};
 
 		//Gautam_COMMON_TEMP_FIX USER_CLASS_NAME
-		List userList = bizLogic.retrieve(USER_CLASS_NAME, selectColumnNames,
-				whereColumnNames, whereColumnCondition, whereColumnValues, null);
+		List userList = bizLogic.retrieve(USER_CLASS_NAME, selectColumnNames, whereColumnNames,
+				whereColumnCondition, whereColumnValues, null);
 		String password = null;
 		if (userList != null && !userList.isEmpty())
 		{
@@ -614,7 +641,7 @@ public class PasswordManager
 	public static String getErrorMessage(int errorCode)
 	{
 		String errMsg = errorMess.get(errorCode);
-		if(null==errMsg)
+		if (null == errMsg)
 		{
 			errMsg = ApplicationProperties.getValue("errors.newPassword.genericmessage");
 		}

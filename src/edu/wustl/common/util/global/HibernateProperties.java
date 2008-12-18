@@ -18,8 +18,15 @@ import edu.wustl.common.util.logger.Logger;
  * This class is used to retrieve values of keys from the ApplicationResources.properties file.
  * @author kapil_kaveeshwar
  */
-public class HibernateProperties
+public final class HibernateProperties
 {
+	/**
+	 * private constructor.
+	 */
+	private HibernateProperties()
+	{
+
+	}
 	/**
 	 * Properties object.
 	 */

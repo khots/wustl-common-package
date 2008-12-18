@@ -5,8 +5,15 @@ package edu.wustl.common.util.global;
  * @author ravi_kumar
  *
  */
-public class TextConstants
+public final class TextConstants
 {
+	/**
+	 * private constructor.
+	 */
+	private TextConstants()
+	{
+
+	}
 	/**
 	 * constants for line seperator.
 	 */
@@ -50,5 +57,9 @@ public class TextConstants
 	 */
 	public static final String ERROR_KEY_FOR_FIELD = "simpleQuery.attribute.required";
 
-	public static final String ERROR_MESSAGE = "Please contact the caTissue Core support at catissue_support@mga.wustl.edu"; 
+	/**
+	 * ERROR_MESSAGE.
+	 */
+	public static final String ERROR_MESSAGE = "Please contact the caTissue" +
+			" Core support at catissue_support@mga.wustl.edu";
 }

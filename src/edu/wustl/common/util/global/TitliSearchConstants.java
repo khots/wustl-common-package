@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package edu.wustl.common.util.global;
@@ -8,10 +8,16 @@ package edu.wustl.common.util.global;
  * @author prashant_bandal
  *
  */
-public class TitliSearchConstants
+public final class TitliSearchConstants
 {
 
-	//	constants for TiTLi Search
+	/**
+	 * private constructor.
+	 */
+	private TitliSearchConstants()
+	{
+
+	}
 	/**
 	 * Specify sorted Result Map.
 	 */

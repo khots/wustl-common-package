@@ -39,10 +39,9 @@ public final class ScriptGenerator
 	 */
 	public static String getJSForOutermostDataTable()
 	{
-		StringBuffer returner = new StringBuffer(117);
-		returner
-				.append("<script language=\"JavaScript\" type=\"text/javascript\">" +
-						" \n var outerMostDataTable = new Hashtable(); \n </script>\n");
+		StringBuffer returner = new StringBuffer(
+				"<script language=\"JavaScript\" type=\"text/javascript\">"+
+				" \n var outerMostDataTable = new Hashtable(); \n </script>\n");
 		return returner.toString();
 	}
 
