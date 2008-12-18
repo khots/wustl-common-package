@@ -57,12 +57,9 @@ public final class Logger
 	 */
 	public static org.apache.log4j.Logger getLogger(Class className)
 	{
-		if (!isConfigured)
+		if (!isConfigured && CommonServiceLocator.getInstance().getPropDirPath().length() != 0)
 		{
-			if (CommonServiceLocator.getInstance().getPropDirPath().length() != 0)
-			{
 				configureLogger();
-			}
 		}
 		return org.apache.log4j.Logger.getLogger(className);
 	}
