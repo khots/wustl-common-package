@@ -438,6 +438,10 @@ public class Validator
 	private static final int ONE_THOUSAND = 1000;
 
 	/**
+	 * specify 1000 number.
+	 */
+	private static final String YEAR = "yyyy";
+	/**
 	 * To check date value.
 	 * @param dtStr check date value
 	 * @return isDate valid or not.
@@ -445,7 +449,7 @@ public class Validator
 	private boolean isDate(String dtStr)
 	{
 		boolean isDate = true;
-		SimpleDateFormat dateFormat= new SimpleDateFormat("MM"+dtCh+"dd"+dtCh+"yyyy");
+		SimpleDateFormat dateFormat= new SimpleDateFormat("MM"+dtCh+"dd"+dtCh+YEAR);
 		int minYear = Integer.parseInt(CommonServiceLocator.getInstance().getMinYear());
 		int maxYear = Integer.parseInt(CommonServiceLocator.getInstance().getMaxYear());
 		try
@@ -518,7 +522,7 @@ public class Validator
 		try
 		{
 			Date currentDate = Calendar.getInstance().getTime();
-			String pattern = "MM" + dtCh + "dd" + dtCh + "yyyy";
+			String pattern = "MM" + dtCh + "dd" + dtCh + YEAR;
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 			Date toCheck = dateFormat.parse(dateToCheck);
 			int dateCheckResult = currentDate.compareTo(toCheck);
@@ -547,11 +551,11 @@ public class Validator
 		try
 		{
 			isValidDatePattern(startDate);
-			String pattern = "MM" + dtCh + "dd" + dtCh + "yyyy";
+			String pattern = "MM" + dtCh + "dd" + dtCh + YEAR;
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 			Date toCheck = dateFormat.parse(startDate);
 			isValidDatePattern(endDate);
-			String pattern1 = "MM" + dtCh + "dd" + dtCh + "yyyy";
+			String pattern1 = "MM" + dtCh + "dd" + dtCh + YEAR;
 			SimpleDateFormat dF1 = new SimpleDateFormat(pattern1);
 			Date maxDate = dF1.parse(endDate);
 			int dateCheckResult = maxDate.compareTo(toCheck);

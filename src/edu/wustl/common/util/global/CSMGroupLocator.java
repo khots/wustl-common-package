@@ -32,7 +32,7 @@ public final class CSMGroupLocator
 	/**
 	 * object of CSMGroupLocator.
 	 */
-	private static CSMGroupLocator csmGroupLocator= new CSMGroupLocator();
+	private static CSMGroupLocator csmGroupLocatr= new CSMGroupLocator();
 	/**
 	 * Map of bit-number and Privilege Object.
 	 */
@@ -96,7 +96,7 @@ public final class CSMGroupLocator
 			ErrorKey errorKey = null;
 			throw new ParseException(errorKey,null,"");
 		}
-		return csmGroupLocator;
+		return csmGroupLocatr;
 	}
 	/**
 	 * @param identifier identifier
