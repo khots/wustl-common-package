@@ -48,6 +48,17 @@ public class PasswordManager
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordManager.class);
 	/**
+	 * Key used for password encryption.
+	 */
+	private static final String KEY=
+	"AWelcomeTocaTISSUECOREOfThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited";
+
+	/**
+	 * array used for password encryption.
+	 */
+	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+		'a', 'b', 'c', 'd', 'e','f'};
+	/**
 	 *  constant for MINIMUM_PASSWORD_LENGTH.
 	 */
 	public static final String MINIMUM_PASSWORD_LENGTH = "minimumPasswordLength";
@@ -132,9 +143,6 @@ public class PasswordManager
 		final String lowerCharString = "abcdefghijklmnopqrstuvwxyz";
 		final String digitString = "0123456789";
 
-		// Generate password of length 6
-		//final int PASSWORD_LENGTH = 6;
-
 		Random random = new Random();
 		StringBuffer passwordBuff = new StringBuffer();
 		//This password must satisfy the following criteria:New Password must include at least one
@@ -217,29 +225,11 @@ public class PasswordManager
 	public static String encode(String input)
 	{
 		String encodedString = null;
-		char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
-				'f'};
-		StringBuffer key = new StringBuffer
-("AWelcomeTocaTISSUECOREOfThisIsTheFirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited");
-		StringBuffer inString = new StringBuffer();
-		for (int i = 0; i < input.length(); i++)
-		{
-			inString.append(input.substring(i, i + 1));
-			inString.append(key.substring(i, i + 1));
-		}
+		StringBuffer inString =getInString(input);
 
 		try
 		{
-			byte[] bytes = inString.toString().getBytes();
-			StringBuffer stringBuffer = new StringBuffer(bytes.length * 2);
-
-			for (int i = 0; i < bytes.length; i++)
-			{
-				byte singleByte = bytes[i];
-				stringBuffer.append(digits[(singleByte & HEX_240) >> 4]);
-				stringBuffer.append(digits[singleByte & HEX_15]);
-			}
-
+			StringBuffer stringBuffer = getEncodedString(inString);
 			encodedString = stringBuffer.toString();
 		}
 		catch (Exception exception)
@@ -247,6 +237,40 @@ public class PasswordManager
 			logger.warn("Problems in Encryption/Decryption in CommonJdao ",exception);
 		}
 		return encodedString;
+	}
+
+	/**
+	 * @param inString a string for encryption.
+	 * @return Encoded string.
+	 */
+	private static StringBuffer getEncodedString(StringBuffer inString)
+	{
+		byte[] bytes = inString.toString().getBytes();
+		StringBuffer stringBuffer = new StringBuffer(bytes.length * 2);
+
+		for (int i = 0; i < bytes.length; i++)
+		{
+			byte singleByte = bytes[i];
+			stringBuffer.append(DIGITS[(singleByte & HEX_240) >> 4]);
+			stringBuffer.append(DIGITS[singleByte & HEX_15]);
+		}
+		return stringBuffer;
+	}
+
+	/**
+	 * Create a string for encryption.
+	 * @param input input-string.
+	 * @return a string for encryption.
+	 */
+	private static StringBuffer getInString(String input)
+	{
+		StringBuffer inString = new StringBuffer();
+		for (int i = 0; i < input.length(); i++)
+		{
+			inString.append(input.charAt(i));
+			inString.append(KEY.charAt(i));
+		}
+		return inString;
 	}
 
 	/**
