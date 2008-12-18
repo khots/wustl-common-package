@@ -12,8 +12,15 @@ import edu.wustl.common.exception.ErrorKey;
  * @author abhishek_mehta
  *
  */
-public class AutomateImport
+public final class AutomateImport
 {
+	/**
+	 * Private constructor for utility class.
+	 */
+	private AutomateImport()
+	{
+
+	}
 	/**
 	 * Minimum number of arguments required.
 	 */
