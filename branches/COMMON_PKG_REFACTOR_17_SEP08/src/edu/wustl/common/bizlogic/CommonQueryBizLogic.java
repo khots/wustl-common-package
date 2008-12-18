@@ -65,7 +65,7 @@ public class CommonQueryBizLogic
 	}
 	 /**
 	 * This method fires a query to insert auditing details into audit tables.
-	 * @param sql sql to be fired
+	 * @param sqlQuery SQL query
 	 * @param sessionData sessiondata to get userId and ip address
 	 * @throws DAOException Daoexception
 	 */
