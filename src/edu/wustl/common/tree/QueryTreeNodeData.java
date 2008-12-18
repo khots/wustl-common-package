@@ -72,13 +72,7 @@ public class QueryTreeNodeData implements QueryTreeNode, Serializable
 	 */
 	public QueryTreeNodeData()
 	{
-		identifier = null;
-		objectName = null;
-		parentObjectIdentifier = null;
-		parentObjectName = null;
-		combinedParentIdentifier = null;
-		combinedParentObjectName = null;
-		toolTipText = null;
+
 	}
 
 	/**

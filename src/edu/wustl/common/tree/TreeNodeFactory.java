@@ -30,38 +30,53 @@ public final class TreeNodeFactory
 	 * @param treeType tree Type
 	 * @param root root
 	 * @return Tree Node.
+
 	 */
 	public static TreeNode getTreeNode(int treeType, TreeNode root)
 	{
 		TreeNode treeNode = null;
-		switch (treeType)
+		if(Constants.TISSUE_SITE_TREE_ID == treeType)
 		{
-			case Constants.TISSUE_SITE_TREE_ID :
-				CDETreeNode rootNode = (CDETreeNode) root;
-				String cdeName = null;
-				if (rootNode != null)
-				{
-					cdeName = rootNode.getCdeName();
-				}
+			CDETreeNode rootNode = (CDETreeNode) root;
+			String cdeName = null;
+			if (rootNode != null)
+			{
+				cdeName = rootNode.getCdeName();
+			}
 
-				treeNode = new CDETreeNode(null, cdeName);
-				break;
-			case Constants.STORAGE_CONTAINER_TREE_ID :
-				treeNode = new StorageContainerTreeNode(Long.valueOf(0), null,
-						Constants.CATISSUE_CORE);
-				break;
-			case Constants.SPECIMEN_TREE_ID :
+			treeNode = new CDETreeNode(null, cdeName);
+		}
+		else
+		{
+			treeNode = getNode(treeType);
+		}
+		return treeNode;
+	}
+	/**
+	 * @param treeType tree Type.
+	 * @return treeNode
+	 */
+	private static TreeNode getNode(int treeType)
+	{
+		int type = treeType;
+		TreeNode treeNode = null;
+		if(Constants.STORAGE_CONTAINER_TREE_ID == type)
+		{
+			treeNode = new StorageContainerTreeNode(Long.valueOf(0), null,
+					Constants.CATISSUE_CORE);
+		}
+		else
+		{
+			if(Constants.SPECIMEN_TREE_ID == type)
+			{
 				treeNode = new SpecimenTreeNode(null, Constants.SPECIMEN_TREE_ROOT_NAME);
-				break;
-			case Constants.EXPERIMETN_TREE_ID :
+			}
+			else if(Constants.EXPERIMETN_TREE_ID == type)
+			{
 				treeNode = new ExperimentTreeNode(Long.valueOf(0), "My Experiments");
 				((ExperimentTreeNode) treeNode).setExperimentGroup(true);
-				break;
-			default :
-			    break;
-
+			}
 		}
-
 		return treeNode;
 	}
 }

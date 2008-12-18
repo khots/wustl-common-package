@@ -33,6 +33,7 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparabl
 	 */
 	public CDETreeNode()
 	{
+		super();
 	}
 
 	/**
