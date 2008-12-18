@@ -5,10 +5,9 @@
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
-package edu.wustl.common.util.test;
+package edu.wustl.common.util;
 
 import edu.wustl.common.test.BaseTestCase;
-import edu.wustl.common.util.CVSTagReader;
 
 /**
  * @author kapil_kaveeshwar
