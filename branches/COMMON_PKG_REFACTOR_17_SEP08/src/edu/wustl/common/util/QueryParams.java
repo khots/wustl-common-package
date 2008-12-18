@@ -4,10 +4,13 @@ import java.sql.Connection;
 import java.util.Map;
 
 import edu.wustl.common.beans.SessionDataBean;
-
+/**
+ * Query Params.
+ *
+ */
 public class QueryParams
 {
-	
+
 	/**
 	 * query.
 	 */
@@ -40,7 +43,7 @@ public class QueryParams
 	 * noOfRecords.
 	 */
 	private int noOfRecords;
-	
+
 	/**
 	 * @param query :
 	 */
@@ -48,7 +51,7 @@ public class QueryParams
 	{
 		this.query = query;
 	}
-	
+
 	/**
 	 * @return the query
 	 */
@@ -156,7 +159,5 @@ public class QueryParams
 		this.noOfRecords = noOfRecords;
 	}
 
-
-	
 
 }

@@ -25,9 +25,16 @@ import edu.wustl.common.util.logger.Logger;
  *
  * @author tapan_sahoo
  */
-public class XMLPropertyHandler
+public final class XMLPropertyHandler
 {
 
+	/**
+	 * private constructor.
+	 */
+	private XMLPropertyHandler()
+	{
+
+	}
 	/**
 	 * logger Logger - Generic logger.
 	 */

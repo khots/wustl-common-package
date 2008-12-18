@@ -43,9 +43,16 @@ import edu.wustl.dao.util.HibernateMetaData;
  * @author kapil_kaveeshwar
  *
  */
-public class Utility
+public final class Utility
 {
 
+	/**
+	 * private constructor.
+	 */
+	private Utility()
+	{
+
+	}
 	/**
 	 * logger -Generic Logger.
 	 */
