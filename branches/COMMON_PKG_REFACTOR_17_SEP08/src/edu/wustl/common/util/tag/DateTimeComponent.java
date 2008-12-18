@@ -433,7 +433,7 @@ public class DateTimeComponent extends TagSupport
 	 */
 	private String generateOutput() throws IOException
 	{
-		StringBuffer output = new StringBuffer();
+
 		InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
 		Properties props = new Properties();
 		props.load(stream);
@@ -443,7 +443,8 @@ public class DateTimeComponent extends TagSupport
 			isDisabled = " disabled=\"disabled\">";
 		}
 		Object[] inputTagArgs = {name, id, value, styleClass, size, isDisabled};
-		output.append(MessageFormat.format(props.getProperty("DTCinputTag"), inputTagArgs));
+		StringBuffer output = new StringBuffer(MessageFormat.format(props
+				.getProperty("DTCinputTag"), inputTagArgs));
 		String onClickFunction = getOnClickFunction();
 
 		Object[] anchorTagArgs = {onClickFunction, iconComment};
