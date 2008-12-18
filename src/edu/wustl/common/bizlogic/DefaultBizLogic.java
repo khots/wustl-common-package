@@ -280,6 +280,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param joinCondition The join condition.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @return List
+	 *  @deprecated This method has been deprecated with new DAO implementation.
+	 *  instead of this method retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause)
+			method can be used.
 	 */
 	public List retrieve(String sourceObjectName, String[] whereColumnName,
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
@@ -439,6 +443,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param isToExcludeDisabled is To Exclude Disabled
 	 * @return Returns collection of name value pairs
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated This method has been deprecated with new DAO implementation.
+	 *  instead of this method List getList(String sourceObjectName, String[] selectColumnName,
+			String separatorBetweenFields,QueryWhereClause queryWhereClause)
+			method can be used.
 	 */
 	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
@@ -473,6 +481,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param separatorBetweenFields separator Between Fields
 	 * @return nameValuePairs.
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated This method has been deprecated with new DAO implementation.
+	 *  instead of this method List getList(String sourceObjectName, String[] selectColumnName,
+			String separatorBetweenFields,QueryWhereClause queryWhereClause)
+			method can be used.
 	 */
 	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
@@ -506,6 +518,25 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return nameValuePairs;
 	}
 
+	/**
+	 * Sorting of ID columns.
+	 * @param sourceObjectName source Object Name
+	 * @param selectColumnName Select Column Name
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @return nameValuePairs.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	public List getList(String sourceObjectName, String[] selectColumnName,
+			String separatorBetweenFields,QueryWhereClause queryWhereClause) throws BizLogicException
+	{
+		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
+		List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
+		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
+		getNameValueList(separatorBetweenFields, nameValuePairs, results);
+		Collections.sort(nameValuePairs);
+		return nameValuePairs;
+	}
 	/**
 	 * @param separatorBetweenFields separator Between Fields
 	 * @param nameValuePairs list to add attributes.
@@ -749,19 +780,61 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param dao The dao object.
 	 * @param sourceClass source Class
 	 * @param selectColumnName An array of field names.
-	 * @param queryWhereClause object of QueryWhereClause
+	 * @param whereColumnName Column name in where clause
+	 * @param objIDArr object ID Array.
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
-			QueryWhereClause queryWhereClause) throws BizLogicException
+			String[] whereColumnName, Long []objIDArr) throws BizLogicException
 	{
+
 		String sourceObjectName = sourceClass.getName();
 		String[] whereColumnCondition = {"in"};
+		Object[] whereColumnValue = {objIDArr};
 		String joinCondition = Constants.AND_JOIN_CONDITION;
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 		List<Object> list=null;
 		try
 		{
+			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
+					whereColumnValue, joinCondition);
+			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+		}
+		catch (DAOException exception)
+		{
+			throw getBizLogicException(exception, "biz.getrelatedobj.error",
+			"Exception in getRelatedObjects method.");
+		}
+		list = Utility.removeNull(list);
+		return list;
+	}
+
+	/**
+	 * Overloaded to let selectColumnName and whereColumnName also be
+	 * parameters to method and are not hardcoded.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param selectColumnName An array of field names.
+	 * @param whereColumnName Column name in where clause
+	 * @param objIDArr object ID Array.
+	 * @return list of related objects.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated
+	 */
+	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName,
+			String[] whereColumnValue, String[] whereColumnCondition) throws BizLogicException
+	{
+
+		String sourceObjectName = sourceClass.getName();
+		String joinCondition = Constants.AND_JOIN_CONDITION;
+		String []selectColumnName = {Constants.SYSTEM_IDENTIFIER};
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
+		List<Object> list=null;
+		try
+		{
+			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
+					whereColumnValue, joinCondition);
 			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
 		}
 		catch (DAOException exception)
