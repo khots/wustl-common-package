@@ -230,21 +230,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			closeSession(dao);
 		}
 	}
-	/**
-	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
-	 * @param obj The object to be inserted
-	 * @param sessionDataBean  session specific data
-	 * @param daoType Type of dao (Hibernate or JDBC)
-	 * @param isInsertOnly If insert only is true then insert of Defaultbiz logic is called
-	 * @deprecated : This method uses daoType argument which is not required anymore,please use method
-	 * insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly)
-	 * @throws BizLogicException Generic BizLogic Exception
-	 */
-	private void insert(Object obj, SessionDataBean sessionDataBean, int daoType,
-			boolean isInsertOnly) throws BizLogicException
-	{
-		insert(obj,sessionDataBean,isInsertOnly);
-	}
 
 	/**
 	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
@@ -749,7 +734,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param className Contains class Name.
 	 * @param identifier Contains the identifier.
 	 * @param uiForm object of the class which implements IValueObject
-	 * @throws DAOException generic DAOException
 	 * @throws BizLogicException BizLogic Exception
 	 * @return isSuccess
 	 */
@@ -844,7 +828,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 	/**
 	 * @param uiForm Form object.
-	 * @param object
+	 * @param object object to populate.
 	 * @return AbstractDomainObject
 	 * @throws AssignDataException throws this exception if not able to set all values.
 	 */
@@ -898,14 +882,25 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	public abstract String getReadDeniedPrivilegeName();
 	/**
-	 *
+	 * boolean value true if Privilege to view else false.
+	 * @param objName object.
+	 * @param identifier Long Id
+	 * @param sessionDataBean SessionDataBean object.
+	 * @return true if Privilege to view else false.
 	 */
 	public boolean hasPrivilegeToView(String objName, Long identifier,
 			SessionDataBean sessionDataBean)
 	{
 		return false;
 	}
-
+	/**
+	 * this method return true if authorized user.
+	 * @param dao DAO object.
+	 * @param domainObject Domain object.
+	 * @param sessionDataBean  SessionDataBean object.
+	 * @throws BizLogicException generic BizLogic Exception
+	 * @return true if authorized user.
+	 */
 	public boolean isAuthorized(DAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws BizLogicException
 	{
@@ -915,10 +910,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 
 	/**
-	 * @param dao DAO object.
 	 * @param exception Exception object thrown in a catch block.
 	 * @param key error-key in applicationResource file.
+	 * @param logMessage message to log inlogger.
 	 * @throws BizLogicException
+	 * @return BizLogicException
 	 */
 	protected BizLogicException getBizLogicException(Exception exception, String key,String logMessage)
 	{
@@ -929,7 +925,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 
 	/**
-	 * @param dao
+	 * @param dao DAO object.
 	 */
 	protected void rollback(DAO dao)
 	{
