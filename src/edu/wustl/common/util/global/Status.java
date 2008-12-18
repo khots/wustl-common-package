@@ -14,11 +14,11 @@ public final class Status
 	/**
 	 * Specify status Name.
 	 */
-	private final String statusName;
+	private String statusName;
 	/**
 	 * Specify status No.
 	 */
-	private final int statusNo;
+	private int statusNo;
 
 	/**
 	 * private constructor.
