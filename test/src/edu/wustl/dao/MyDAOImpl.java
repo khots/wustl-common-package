@@ -13,6 +13,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.querydatabean.QueryDataBean;
 import edu.wustl.common.util.PagenatedResultData;
@@ -29,6 +30,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public static boolean isTestForFail=false;
 	public static boolean identifierList=false;
 	public static boolean isTestActivityStatus=false;
+	public static boolean returnActivityStatusObj=false;
 
 	/**
 	 * List to return from retrieve methods.
@@ -171,7 +173,19 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
-		return "retObject";
+		Object obj;
+		if(returnActivityStatusObj)
+		{
+			MyDomainObject ado= new MyDomainObject();
+			ado.setActivityStatus("Active");
+			ado.setId(Long.valueOf(1));
+			obj=ado;
+		}
+		else
+		{
+			obj=getObject();
+		}
+		return obj;
 	}
 
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
