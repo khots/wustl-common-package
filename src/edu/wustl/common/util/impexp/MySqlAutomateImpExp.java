@@ -73,16 +73,7 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 		}
 		finally
 		{
-			try
-			{
-				conn.close();
-				stmt.close();
-			}
-			catch (SQLException exception)
-			{
-				ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mysqlimport.error");
-				throw new ApplicationException(errorKey,exception,"MySqlAutomateImpExp");
-			}
+			closeConnection(conn);
 		}
 
 	}
