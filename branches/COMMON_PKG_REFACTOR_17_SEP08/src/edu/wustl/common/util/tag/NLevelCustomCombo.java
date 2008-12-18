@@ -129,7 +129,7 @@ public class NLevelCustomCombo extends TagSupport
 	private String verticalCombosStart = "";
 
 	/**
-	 * A string vriable which stores closing table row tag </tr> for
+	 * A string vriable which stores closing table row tag for
 	 * vertical combos, otherwise empty for horizantal combos.
 	 */
 	private String verticalCombosEnd = "";
