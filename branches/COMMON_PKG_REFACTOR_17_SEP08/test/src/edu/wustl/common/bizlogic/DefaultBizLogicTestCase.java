@@ -215,6 +215,30 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
+
+	/**
+	 * Positive test for
+	 * List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled).
+	 */
+	public void testGetListWithWhereClause()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			String []selectColumnName={"selectColumnName"};
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			QueryWhereClause queryWhereClause = new QueryWhereClause("sourceObjectName");
+			List list=defaultBizLogic.getList("sourceObjectName",selectColumnName,",",queryWhereClause);
+			assertEquals(MyDAOImpl.list.size()+1,list.size());
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to retrieve data.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
 	/**
 	 * Positive test for
 	 * Object retrieveAttribute(Class objClass, Long identifier, String attributeName).
@@ -487,7 +511,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	}
 
 	/**
-	 * Test case for
+	 * Positive Test case for
 	 * Object retrieve(String sourceObjectName, Long identifier).
 	 */
 	public void testRetriveWithLongIdentifier()
@@ -506,6 +530,25 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		}
 	}
 
+	/**
+	 * Negative Test case for
+	 * Object retrieve(String sourceObjectName, Long identifier).
+	 */
+	public void testFailRetriveWithLongIdentifier()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			Object object=defaultBizLogic.retrieve("SourceObjName",Long.valueOf(1));
+			fail("Negative test case: must throws BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: thrown BizLogicException.",true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
 	/**
 	 * Positive test case for insert(Object,DAO,SessionDataBean).
 	 */
@@ -693,6 +736,8 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	}
 	/**
 	 * Positive test case.
+	 * List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
+			String[] whereColumnName, Long []objIDArr)
 	 */
 	public void testGetRelatedObjWithWhereClauseAndColName()
 	{
@@ -703,8 +748,11 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			MyDAOImpl.isTestActivityStatus=false;
 			DAO myJdbcDao = DAO_FACTORY.getDAO();
 			String []selectColumnName={"selectColumnName"};
+			String []whereColumnName={"whereColumnName"};
+			Long []objIDArr= {Long.valueOf(1)};
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass(),selectColumnName,null);
+			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass()
+					,selectColumnName,whereColumnName,objIDArr);
 			assertEquals(MyDAOImpl.list.size(), list.size());
 		}
 		catch (Exception exception)
@@ -716,6 +764,8 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 
 	/**
 	 * Negative test case.
+	 * List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
+			String[] whereColumnName, Long []objIDArr)
 	 */
 	public void testFailGetRelatedObjWithWhereClauseAndColName()
 	{
@@ -725,9 +775,12 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			MyDAOImpl.identifierList=false;
 			MyDAOImpl.isTestActivityStatus=false;
 			String []selectColumnName={"selectColumnName"};
+			String []whereColumnName={"whereColumnName"};
+			Long []objIDArr= {Long.valueOf(1)};
 			DAO myJdbcDao = DAO_FACTORY.getDAO();
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass(),selectColumnName, null);
+			List list=defaultBizLogic.getRelatedObjects(myJdbcDao, "sourceObjectName".getClass()
+					,selectColumnName,whereColumnName,objIDArr);
 			fail("Negative test case: must throw exception.");
 		}
 		catch (Exception exception)
@@ -873,19 +926,21 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 	}
 	/**
 	 * Positive test case for
-	 * List disableObjects(DAO dao, String tablename, Class sourceClass,
-			String classIdentifier, Long[] objIDArr).
+	 * protected void disableAndAuditObjects(DAO dao, String sourceClass, String tablename,
+			List listOfSubElement)
 	 */
-	/*public void testDisableObjects()
+	public void testDisableAndAuditObjects()
 	{
 		try
 		{
 			MyDAOImpl.isTestForFail=false;
-			MyDAOImpl.identifierList=true;
+			MyDAOImpl.identifierList=false;
+			MyDAOImpl.returnActivityStatusObj=true;
 			DAO myJdbcDao = DAO_FACTORY.getDAO();
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			Long []objIDArr={ Long.valueOf(1),Long.valueOf(2)};
-			defaultBizLogic.disableObjects(myJdbcDao,"tablename","".getClass(),"classIdentifier",objIDArr);
+			List<Long> list= new ArrayList<Long>();
+			list.add(Long.valueOf(1));
+			defaultBizLogic.disableAndAuditObjects(myJdbcDao,"tablename","tabelname",list);
 			assertTrue("objects disabled successfully.",true);
 		}
 		catch (BizLogicException exception)
@@ -898,5 +953,5 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			fail("DAOException thrown");
 			logger.fatal(exception.getMessage(),exception);
 		}
-	}*/
+	}
 }
