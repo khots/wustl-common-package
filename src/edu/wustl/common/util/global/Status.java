@@ -111,7 +111,6 @@ public final class Status
 
 	/**
 	 * This method converts object to string.
-	 * @param obj object to be convert.
 	 * @return string object.
 	 */
 	public String toString()

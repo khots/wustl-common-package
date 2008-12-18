@@ -27,7 +27,8 @@ public class CommonFileReader
 		{
 			BufferedReader bufferReader = new BufferedReader(new FileReader(fileName));
 			String line = TextConstants.EMPTY_STRING;
-			while ((line = bufferReader.readLine()) != null)
+			line = bufferReader.readLine();
+			while (line != null)
 			{
 				buffer.append(line).append("<br>");
 			}
