@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import edu.wustl.common.util.Utility;
+
 
 /**
  * This class is a common service locator. Different parameter like application url,
@@ -102,7 +104,7 @@ public final class CommonServiceLocator
 	 */
 	private void initProps()
 	{
-		InputStream stream = CommonServiceLocator.class.getClassLoader()
+		InputStream stream = Utility.getCurrClassLoader()
 		.getResourceAsStream("ApplicationResources.properties");
 	    try
 		{

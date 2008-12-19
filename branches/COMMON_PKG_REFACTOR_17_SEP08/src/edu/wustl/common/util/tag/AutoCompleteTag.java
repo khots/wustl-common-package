@@ -110,15 +110,6 @@ public class AutoCompleteTag extends TagSupport
 	private String staticField = TRUE;
 
 	/**
-	 * Returns current thread's class loader.
-	 * @return current thread's class loader.
-	 */
-	private static ClassLoader getCurrClassLoader()
-	{
-		return Thread.currentThread().getContextClassLoader();
-	}
-
-	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag
 	 * for this custom tag is encountered.
 	 * @exception JspException jsp exception.
@@ -173,7 +164,7 @@ public class AutoCompleteTag extends TagSupport
 	private String getAutocompleteHTML() throws IOException
 	{
 		StringBuffer autoCompleteResult = new StringBuffer();
-		InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
+		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
 		Properties props = new Properties();
 		props.load(stream);
 		prepareCommonData();
@@ -375,7 +366,7 @@ public class AutoCompleteTag extends TagSupport
 	private String getAutocompleteHTMLForDynamicProperty() throws IOException
 	{
 
-		InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
+		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
 		Properties props = new Properties();
 		props.load(stream);
 		String displayProperty = "display" + property;

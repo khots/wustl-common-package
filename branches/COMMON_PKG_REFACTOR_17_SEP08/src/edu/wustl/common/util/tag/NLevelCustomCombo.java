@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.util.Utility;
 
 /**
  * @author chetan_bh
@@ -148,7 +149,8 @@ public class NLevelCustomCombo extends TagSupport
 		{
 			try
 			{
-				InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
+				InputStream stream = Utility.getCurrClassLoader().getResourceAsStream(
+						"Tag.properties");
 				Properties props = new Properties();
 				props.load(stream);
 				JspWriter out = pageContext.getOut();
@@ -422,15 +424,6 @@ public class NLevelCustomCombo extends TagSupport
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns current thread's class loader.
-	 * @return current thread's class loader.
-	 */
-	private static ClassLoader getCurrClassLoader()
-	{
-		return Thread.currentThread().getContextClassLoader();
 	}
 
 	/**

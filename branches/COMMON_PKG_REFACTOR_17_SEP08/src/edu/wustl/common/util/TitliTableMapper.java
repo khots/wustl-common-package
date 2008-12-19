@@ -25,6 +25,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public final class TitliTableMapper
 {
+
 	/**
 	 * logger Logger - Generic logger.
 	 */
@@ -37,7 +38,7 @@ public final class TitliTableMapper
 	/**
 	 * the in-memory document constructed from the xml file.
 	 */
-	private  transient Document document;
+	private transient Document document;
 
 	/**
 	 * the private constructor for singleton behavior.
@@ -46,16 +47,16 @@ public final class TitliTableMapper
 	 */
 	private TitliTableMapper()
 	{
-		InputStream inputStream = this.getClass()
-		.getClassLoader().getResourceAsStream(TextConstants.TITLI_TABLE_MAPPING_FILE);
+		InputStream inputStream = Utility.getCurrClassLoader().getResourceAsStream(
+				TextConstants.TITLI_TABLE_MAPPING_FILE);
 		try
 		{
-			document=XMLParserUtility.getDocument(inputStream);
+			document = XMLParserUtility.getDocument(inputStream);
 		}
 		catch (Exception exception)
 		{
-			logger.fatal("Not able to initialize the xml document object for file:"+
-					TextConstants.TITLI_TABLE_MAPPING_FILE,exception);
+			logger.fatal("Not able to initialize the xml document object for file:"
+					+ TextConstants.TITLI_TABLE_MAPPING_FILE, exception);
 		}
 	}
 
@@ -64,9 +65,9 @@ public final class TitliTableMapper
 	 * @return TitliTableMapper the only instance of this class
 	 * @exception TitliException titli exception.
 	 */
-	public static TitliTableMapper getInstance()throws TitliException
+	public static TitliTableMapper getInstance() throws TitliException
 	{
-		if(null==mapper.document)
+		if (null == mapper.document)
 		{
 			throw new TitliException("Can not create instance, document object is null.");
 		}
@@ -82,7 +83,7 @@ public final class TitliTableMapper
 	public String getLabel(Name tableName) throws TitliException
 	{
 		String label = tableName.toString();
-		Element root =document.getDocumentElement();
+		Element root = document.getDocumentElement();
 		NodeList nodeList = root.getElementsByTagName("mapping");
 		int length = nodeList.getLength();
 		for (int i = 0; i < length; i++)
