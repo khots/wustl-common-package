@@ -46,17 +46,17 @@ public class NLevelCustomCombo extends TagSupport
 	 * the number of combos used to display this complex data structure.
 	 * Hence it can be called a recursive Map data structure.
 	 */
-	private Map dataMap;
+	private transient Map dataMap;
 
 	/**
 	 * List of string values used as labels for n combos.
 	 */
-	private String[] labelNames; // optional
+	private transient String[] labelNames; // optional
 
 	/**
 	 * List of string values used for naming each combos.
 	 */
-	private String[] attributeNames;
+	private transient String[] attributeNames;
 
 	/**
 	 * List of string values used for naming each combos.
@@ -66,74 +66,74 @@ public class NLevelCustomCombo extends TagSupport
 	/**
 	 * List of string values used to initailize first n-1 combos.
 	 */
-	private String[] initialValues;
+	private transient String[] initialValues;
 
 	/**
 	 * A string value used to give, a row of combos a unique value for id attribute of each combo.
 	 */
-	private String rowNumber;
+	private transient String rowNumber;
 
 	/**
 	 * Number of empty combos needed for inital condition.
 	 */
-	private String noOfEmptyCombos = "3";
+	private transient String noOfEmptyCombos = "3";
 
 	/**
 	 * A string value representing the style class to use with all combos.
 	 */
-	private String styleClass; // optional
+	private transient String styleClass; // optional
 
 	/**
 	 * A string value representing the td style class to use with all table divisions.
 	 */
-	private String tdStyleClass; // optional
+	private transient String tdStyleClass; // optional
 
 	/**
 	 * A boolean value for getting combos vertically aligned.
 	 */
-	private boolean isVerticalCombos; // optional
+	private transient boolean isVerticalCombos; // optional
 
 	/**
 	 * A boolean value to disable all the combos.
 	 */
-	private boolean disabled;
+	private transient boolean disabled;
 
 	/**
 	 * A string value for onChange event, common to all comboboxes.
 	 */
-	private String onChange = "onCustomListBoxChange(this) ";
+	private transient String onChange = "onCustomListBoxChange(this) ";
 
 	/**
 	 *  A string variable used to construct HTML for the n-level combo.
 	 */
-	private String combosHTMLStr = "";
+	private transient String combosHTMLStr = "";
 
 	/**
 	 * An integer counter variable for counting combos.
 	 */
-	private int comboCounter = 0;
+	private transient int comboCounter = 0;
 
 	/**
 	 * A vriable to store the number of combos needed to construct n-combos.
 	 */
-	private int noOfCombosNeeded = 0;
+	private transient int noOfCombosNeeded = 0;
 
 	/**
 	 * form Label Style.
 	 */
-	private String formLabelStyle = "";
+	private transient String formLabelStyle = "";
 
 	/**
 	 * A string vriable which stores opening table row tag <tr> for
 	 * vertical combos, otherwise empty for horizantal combos.
 	 */
-	private String verticalCombosStart = "";
+	private transient String verticalCombosStart = "";
 
 	/**
 	 * A string vriable which stores closing table row tag for
 	 * vertical combos, otherwise empty for horizantal combos.
 	 */
-	private String verticalCombosEnd = "";
+	private transient String verticalCombosEnd = "";
 
 	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag for this
