@@ -75,13 +75,33 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		{
 			MyDAOImpl.isTestForFail=false;
 			MyDomainObject ado = getAbstractDomainObject();
-			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
 			defaultBizLogic.insert(ado);
 			assertTrue("Object inserted successfuly.", true);
 		}
-		catch (Exception exception)
+		catch (BizLogicException exception)
 		{
 			fail("Not able to insert the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 *  Positive test case for public void delete(Object).
+	 */
+	public void testFailInsertWithSessionDataBean()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDomainObject ado = getAbstractDomainObject();
+			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
+			defaultBizLogic.insert(ado);
+			fail("Negative test case:must throw BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: Thrown BizLogicException during insert operation.", true);
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
