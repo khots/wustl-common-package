@@ -83,7 +83,7 @@ public final class DataTypeConfigFactory
 		}
 		else
 		{
-			throw new ParseException(null,null,"");
+			throw new ParseException(ErrorKey.getErrorKey("datatype.parse.error"),null,"");
 		}
 	}
 
