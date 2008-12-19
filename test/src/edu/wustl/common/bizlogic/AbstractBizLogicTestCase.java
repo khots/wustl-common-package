@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.BizLogicException;
@@ -137,7 +138,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
-	
+
 	/**
 	 *  Negative test case for
 	 *  public final void insert(Collection objCollection,
@@ -161,7 +162,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
-	
+
 	/**
 	 *  Negative test case for
 	 *  public final void insert(Collection objCollection,
@@ -211,7 +212,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
-	
+
 	/**
 	 *  Positive test case for
 	 *  public final void update(Object currentObj).
@@ -228,6 +229,58 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			assertTrue("Negative test case: Thrown BizLogicException during update.", true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 *  Positive test case for
+	 *  public final void setPrivilege(String privilegeName, Class objectType,
+			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
+			boolean assignToUser, boolean assignOperation)
+	 */
+	public void testSetPrivilege()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			Long []objeIds= {Long.valueOf(1),Long.valueOf(2)};
+			Long userId=Long.valueOf(1);
+			SessionDataBean sessionDataBean=null;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.setPrivilege(1, "privilegeName", "".getClass(), objeIds,
+					userId, sessionDataBean, "roleId", true, false);
+			assertTrue("Object updated successfuly.", true);
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: Thrown BizLogicException during update.", true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 *  Negative test case for
+	 *  public final void setPrivilege(String privilegeName, Class objectType,
+			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
+			boolean assignToUser, boolean assignOperation)
+	 */
+	public void testFailSetPrivilege()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			Long []objeIds= {Long.valueOf(1),Long.valueOf(2)};
+			Long userId=Long.valueOf(1);
+			SessionDataBean sessionDataBean=null;
+			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
+			defaultBizLogic.setPrivilege(1, "privilegeName", "".getClass(), objeIds,
+					userId, sessionDataBean, "roleId", true, false);
+			fail("Negative test case:must throw BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: Thrown BizLogicException during SetPrivilege.", true);
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
