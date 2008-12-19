@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Properties;
 
 import edu.wustl.common.util.Utility;
@@ -318,5 +319,14 @@ public final class CommonServiceLocator
 	public void setTimeStampPattern(Properties props)
 	{
 		CommonServiceLocator.timeStampPattern = props.getProperty("timestamp.pattern");
+	}
+
+	/**
+	 * This method gets Default Locale.
+	 * @return Default Locale.
+	 */
+	public Locale getDefaultLocale()
+	{
+		return Locale.getDefault();
 	}
 }
