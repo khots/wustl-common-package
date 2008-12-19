@@ -288,15 +288,6 @@ public class DateTimeComponent extends TagSupport
 	// ------------SETTER Methods end ----------------------------------
 
 	/**
-	 * Returns current thread's class loader.
-	 * @return current thread's class loader.
-	 */
-	private static ClassLoader getCurrClassLoader()
-	{
-		return Thread.currentThread().getContextClassLoader();
-	}
-
-	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag for this
 	 * custom tag is encountered.
 	 * @exception JspException jsp exception.
@@ -434,7 +425,7 @@ public class DateTimeComponent extends TagSupport
 	private String generateOutput() throws IOException
 	{
 
-		InputStream stream = getCurrClassLoader().getResourceAsStream("Tag.properties");
+		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
 		Properties props = new Properties();
 		props.load(stream);
 		String isDisabled = ">";
