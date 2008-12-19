@@ -672,7 +672,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0];
 
 			Properties prop = new Properties();
-			prop.load(getClass().getClassLoader().getResourceAsStream("titli.properties"));
+			prop.load(Utility.getCurrClassLoader().getResourceAsStream("titli.properties"));
 			String className=prop.getProperty("titliObjectMetadataImplementor");
 
 			ObjectMetadataInterface objectMetadataInterface =
@@ -777,7 +777,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			closeSession(dao);
 		}
 
-		String simpleClassName = Utility.parseClassName(className);
+		//String simpleClassName = Utility.parseClassName(className);
 
 		//long endTime = System.currentTimeMillis();
 		//logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - " + simpleClassName + " : "
@@ -818,8 +818,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			closeSession(dao);
 		}
 
-		String simpleClassName = Utility.parseClassName(className);
-
+		//String simpleClassName = Utility.parseClassName(className);
 		//long endTime = System.currentTimeMillis();
 		//logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
 				//+ (endTime - startTime));
