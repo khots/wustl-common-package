@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.actionForm.MyActionForm;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.MyDAOImpl;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.DAOConstants;
 
 /**
  * This class for juint test cases for methods in AbstractBizLogic.
@@ -281,6 +284,51 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			assertTrue("Negative test case: Thrown BizLogicException during SetPrivilege.", true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+
+	/**
+	 *  Positive test case for
+	 *  public String formatException(Exception exception, Object obj, String operation).
+	 */
+	public void testFormatException()
+	{
+		MyDAOImpl.isTestForFail=false;
+		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
+		DAOException exception= new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
+				DAOConstants.EXECUTE_QUERY_ERROR);
+		defaultBizLogic.formatException(exception,null,null);
+		assertTrue("Got formated message.", true);
+	}
+
+	/**
+	 *  Positive test case for
+	 *  public String formatException(Exception exception, Object obj, String operation).
+	 */
+	public void testFormatExceptionWithNullException()
+	{
+		MyDAOImpl.isTestForFail=false;
+		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		defaultBizLogic.formatException(null,null,null);
+		assertTrue("Got formated message.", true);
+	}
+
+	public void testPopulateUIBean()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.returnActivityStatusObj=true;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			MyActionForm uiForm= new MyActionForm();
+			defaultBizLogic.populateUIBean("className",Long.valueOf(1),uiForm);
+			assertTrue("Populated UI Bean successfully.", true);
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to Populate UI Bean.");
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
