@@ -14,7 +14,11 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
 
-
+/**
+ * This class for juint test cases for methods in AbstractBizLogic.
+ * @author ravi_kumar
+ *
+ */
 public class AbstractBizLogicTestCase extends CommonBaseTestCase
 {
 	/**
@@ -204,6 +208,26 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			fail("Not able to update the object.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	
+	/**
+	 *  Positive test case for
+	 *  public final void update(Object currentObj).
+	 */
+	public void testUpdateWithoAutorization()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			defaultBizLogic.update(getAbstractDomainObject(1));
+			fail("Negative test case:must throw BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case: Thrown BizLogicException during update.", true);
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
