@@ -3,6 +3,8 @@ package edu.wustl.common.bizlogic;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.MyDAOImpl;
+import edu.wustl.dao.exception.DAOException;
 
 
 /**
@@ -13,6 +15,20 @@ import edu.wustl.dao.DAO;
 public class MyDefaultBizLogic extends DefaultBizLogic
 {
 
+	protected void setPrivilege(DAO dao, String privilegeName, Class objectType,
+			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
+			boolean assignOperation) throws BizLogicException
+	{
+		try
+		{
+			MyDAOImpl.throwDaoException();
+		}
+		catch(DAOException exception)
+		{
+			throw getBizLogicException(exception, "biz.setpriv.error"
+					,"Exception in setPrivilege method");
+		}
+	}
 	/**
 	 * this method return true if authorized user.
 	 * @param dao DAO object.
