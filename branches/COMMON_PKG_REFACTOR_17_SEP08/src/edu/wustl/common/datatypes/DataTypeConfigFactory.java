@@ -32,6 +32,11 @@ public final class DataTypeConfigFactory
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DataTypeConfigFactory.class);
 
 	/**
+	 * Specifies success.
+	 */
+	private static boolean success = false;
+
+	/**
 	 * Specifies ControlConfigurationsFactory instance.
 	 */
 	private static DataTypeConfigFactory dataTypeConfig = new DataTypeConfigFactory();
@@ -45,11 +50,6 @@ public final class DataTypeConfigFactory
 	 * Specifies Document object.
 	 */
 	private transient Document dom;
-
-	/**
-	 * Specifies success.
-	 */
-	private static boolean success = false;
 
 	/**
 	 * ControlConfigurationsFactory constructor.
