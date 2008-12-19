@@ -121,6 +121,10 @@
 				<exclude name="**/ExpressionTestCases*" />
 				<exclude name="**/JoinGraphTestCase*" />
 			</fileset>
+			<fileset todir="${base.dir}">				
+					<include name="**/*.properties" />
+					<include name="**/*.xml" />
+			</fileset>	
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
 			<manifest>
 				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
