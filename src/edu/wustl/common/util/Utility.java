@@ -805,7 +805,7 @@ public final class Utility
 	{
 		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
 		Map<String, List<NameValueBean>> privGroupMap = Variables.privilegeGroupingMap;
-		InputStream inputXmlFile = Utility.class.getClassLoader().getResourceAsStream(
+		InputStream inputXmlFile = getCurrClassLoader().getResourceAsStream(
 				TextConstants.PERMSN_MAP_DET_FILE);
 		if (inputXmlFile != null)
 		{
@@ -927,5 +927,14 @@ public final class Utility
 		}
 
 		return sourceString;
+	}
+
+    /**
+	 * Returns current thread's class loader.
+	 * @return current thread's class loader.
+	 */
+	public static ClassLoader getCurrClassLoader()
+	{
+		return Thread.currentThread().getContextClassLoader();
 	}
 }
