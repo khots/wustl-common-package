@@ -105,7 +105,7 @@ public final class CommonServiceLocator
 	 */
 	private void initProps()
 	{
-		InputStream stream = Utility.getCurrClassLoader()
+		InputStream stream = CommonServiceLocator.class.getClassLoader()
 		.getResourceAsStream("ApplicationResources.properties");
 	    try
 		{
