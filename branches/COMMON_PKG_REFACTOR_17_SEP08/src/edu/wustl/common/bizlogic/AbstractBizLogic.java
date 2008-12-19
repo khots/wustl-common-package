@@ -88,7 +88,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 	/**
 	 * This method gets called after insert method.
-	 * Any logic after insertnig object in database can be included here.
+	 * Any logic after inserting object in database can be included here.
 	 * @param obj The inserted object.
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
@@ -99,7 +99,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 	/**
 	 * This method gets called after insert method.
-	 * Any logic after insertnig object in database can be included here.
+	 * Any logic after inserting object in database can be included here.
 	 * @param objCollection Collection of object to be inserted
 	 * @param dao the dao object
 	 * @param sessionDataBean session specific data
@@ -262,7 +262,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				postInsert(obj, dao, sessionDataBean);
 			}
 		}
-		catch (DAOException exception)
+		catch (ApplicationException exception)
 		{
 			rollback(dao);
 			throw getBizLogicException(exception, "biz.insert.error"
@@ -321,7 +321,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			postInsert(objCollection, dao, sessionDataBean);
 		}
-		catch (DAOException exception)
+		catch (ApplicationException exception)
 		{
 			rollback(dao);
 			throw getBizLogicException(exception, "biz.insert.error"
@@ -480,7 +480,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 						,"AbstractBizLogic:User Not Authorized.");
 			}
 		}
-		catch (DAOException ex)
+		catch (ApplicationException ex)
 		{
 			rollback(dao);
 			throw getBizLogicException(ex, "biz.update.error"
@@ -599,7 +599,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 					assignOperation);
 			dao.commit();
 		}
-		catch (DAOException exception)
+		catch (ApplicationException exception)
 		{
 			rollback(dao);
 			throw getBizLogicException(exception, "biz.setpriv.error"
@@ -648,7 +648,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				errMsg = exFormatter.formatMessage(exception, arguments);
 			}
 		}
-		catch (Exception except)
+		catch (ApplicationException except)
 		{
 			logger.error(except.getMessage(), except);
 			// if Error occured while formating message then get message
@@ -741,7 +741,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
 			throws BizLogicException
 	{
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 		boolean isSuccess = false;
 
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
@@ -767,7 +767,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				isSuccess = true;
 			}
 		}
-		catch (DAOException daoExp)
+		catch (ApplicationException daoExp)
 		{
 			throw getBizLogicException(daoExp, "biz.popbean.error"
 					,"Exception in bean population");
@@ -779,9 +779,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		String simpleClassName = Utility.parseClassName(className);
 
-		long endTime = System.currentTimeMillis();
-		logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - " + simpleClassName + " : "
-				+ (endTime - startTime));
+		//long endTime = System.currentTimeMillis();
+		//logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - " + simpleClassName + " : "
+			//	+ (endTime - startTime));
 
 		return isSuccess;
 	}
@@ -797,7 +797,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public AbstractDomainObject populateDomainObject(String className, Long identifier,
 			IValueObject uiForm) throws BizLogicException
 	{
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao =null;
 		AbstractDomainObject abstractDomain = null;
@@ -820,9 +820,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		String simpleClassName = Utility.parseClassName(className);
 
-		long endTime = System.currentTimeMillis();
-		logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
-				+ (endTime - startTime));
+		//long endTime = System.currentTimeMillis();
+		//logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
+				//+ (endTime - startTime));
 
 		return abstractDomain;
 	}
