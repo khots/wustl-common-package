@@ -326,7 +326,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * method to validate the given values for the attributes.
+	 * Method to validate the given values for the attributes.
 	 * @return true if all required attributes are in proper valid format. Otherwise returns false.
 	 */
 	private boolean validate()

@@ -31,6 +31,7 @@ import org.w3c.dom.NodeList;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.tree.TreeNodeImpl;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Validator;
@@ -53,6 +54,7 @@ public final class Utility
 	{
 
 	}
+
 	/**
 	 * Constant for TWO.
 	 */
@@ -76,7 +78,8 @@ public final class Utility
 		{
 			try
 			{
-				SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+				SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, CommonServiceLocator
+						.getInstance().getDefaultLocale());
 				dateObj = dateFormat.parse(date);
 			}
 			catch (ParseException exception)
@@ -84,7 +87,7 @@ public final class Utility
 				String message = new StringBuffer("Date '").append(date).append(
 						"' is not in format : ").append(pattern).toString();
 				logger.debug(message, exception);
-				throw new ParseException(message,exception.getErrorOffset());
+				throw new ParseException(message, exception.getErrorOffset());
 			}
 		}
 		return dateObj;
@@ -112,10 +115,14 @@ public final class Utility
 	{
 		String datePattern = "";
 		List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
-		datePatternList.add(new SimpleDateFormat("MM-dd-yyyy"));
-		datePatternList.add(new SimpleDateFormat("MM/dd/yyyy"));
-		datePatternList.add(new SimpleDateFormat("yyyy-MM-dd"));
-		datePatternList.add(new SimpleDateFormat("yyyy/MM/dd"));
+		datePatternList.add(new SimpleDateFormat("MM-dd-yyyy",CommonServiceLocator
+				.getInstance().getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("MM/dd/yyyy",CommonServiceLocator
+				.getInstance().getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("yyyy-MM-dd",CommonServiceLocator
+				.getInstance().getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("yyyy/MM/dd",CommonServiceLocator
+				.getInstance().getDefaultLocale()));
 		Date date = null;
 		String matchingPattern = null;
 		for (SimpleDateFormat dtPattern : datePatternList)
@@ -154,9 +161,9 @@ public final class Utility
 		{
 			str = "set";
 		}
-		StringBuffer mathodname=new StringBuffer(attr);
+		StringBuffer mathodname = new StringBuffer(attr);
 		mathodname.setCharAt(0, Character.toUpperCase(attr.charAt(0)));
-		mathodname.insert(0,str);
+		mathodname.insert(0, str);
 		return mathodname.toString();
 	}
 
@@ -333,7 +340,7 @@ public final class Utility
 		try
 		{
 			Class classObject = Utility.getClassObject(className);
-			if(classObject != null)
+			if (classObject != null)
 			{
 				object = classObject.newInstance();
 			}
@@ -358,7 +365,7 @@ public final class Utility
 	 */
 	public static Object[] addElement(Object[] array, Object obj)
 	{
-		int arraySize=array.length + 1;
+		int arraySize = array.length + 1;
 		Object[] newObjectArr = new Object[arraySize];
 
 		if (array instanceof String[])
@@ -379,7 +386,7 @@ public final class Utility
 	 */
 	public static String parseAttributeName(String methodName) throws Exception
 	{
-		StringBuffer attributeName=new StringBuffer();
+		StringBuffer attributeName = new StringBuffer();
 		int index = methodName.indexOf("get");
 		if (index != -1)
 		{
@@ -414,11 +421,11 @@ public final class Utility
 	 */
 	public static String parseClassName(String qualifiedName)
 	{
-		String className=qualifiedName;
+		String className = qualifiedName;
 		try
 		{
-			Class clazz=Class.forName(qualifiedName);
-			className=clazz.getSimpleName();
+			Class clazz = Class.forName(qualifiedName);
+			className = clazz.getSimpleName();
 		}
 		catch (Exception e)
 		{
@@ -444,13 +451,13 @@ public final class Utility
 	 */
 	public static String createAttributeNameForHQL(String className, String selectColumnName)
 	{
-		StringBuffer attribute=new StringBuffer();
+		StringBuffer attribute = new StringBuffer();
 		// Check whether the select Column start with "elements" & ends with ")" or not
 		if (isColumnNameContainsElements(selectColumnName))
 		{
 			int startIndex = selectColumnName.indexOf('(') + 1;
-			attribute.append(selectColumnName.substring(0, startIndex)).append(className).append('.').
-					append(selectColumnName.substring(startIndex));
+			attribute.append(selectColumnName.substring(0, startIndex)).append(className).append(
+					'.').append(selectColumnName.substring(startIndex));
 		}
 		else
 		{
@@ -466,7 +473,8 @@ public final class Utility
 	 */
 	public static boolean isColumnNameContainsElements(String columnName)
 	{
-		String colName = columnName.toLowerCase().trim();
+		String colName = columnName.toLowerCase(CommonServiceLocator
+				.getInstance().getDefaultLocale()).trim();
 		return colName.startsWith(ELEMENTS) && colName.endsWith(")");
 	}
 
@@ -491,7 +499,8 @@ public final class Utility
 		String dateStr = TextConstants.EMPTY_STRING;
 		if (date != null)
 		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern,CommonServiceLocator
+					.getInstance().getDefaultLocale());
 			dateStr = dateFormat.format(date);
 		}
 		return dateStr;
@@ -636,12 +645,13 @@ public final class Utility
 		StringBuffer retStr;
 		if (Validator.isEmpty(str))
 		{
-			retStr= new StringBuffer();
+			retStr = new StringBuffer();
 			logger.debug("Utility.initCap : - String provided is either empty or null" + str);
 		}
 		else
 		{
-			retStr= new StringBuffer(str.toLowerCase());
+			retStr = new StringBuffer(str.toLowerCase(CommonServiceLocator
+					.getInstance().getDefaultLocale()));
 			retStr.setCharAt(0, Character.toUpperCase(str.charAt(0)));
 		}
 		return retStr.toString();
@@ -695,23 +705,23 @@ public final class Utility
 	 */
 	public static String getDisplayLabel(String objectName)
 	{
-		StringBuffer formatedStr=new StringBuffer();
-		int prevIndex=0;
+		StringBuffer formatedStr = new StringBuffer();
+		int prevIndex = 0;
 		String tempStr;
-		for(int i=0;i<objectName.length();i++)
+		for (int i = 0; i < objectName.length(); i++)
 		{
-			if(Character.isUpperCase(objectName.charAt(i)))
+			if (Character.isUpperCase(objectName.charAt(i)))
 			{
-				tempStr=objectName.substring(prevIndex, i);
-				if(!TextConstants.EMPTY_STRING.equals(tempStr))
+				tempStr = objectName.substring(prevIndex, i);
+				if (!TextConstants.EMPTY_STRING.equals(tempStr))
 				{
 					formatedStr.append(initCap(tempStr));
 					formatedStr.append(Constants.CONST_SPACE_CAHR);
 				}
-				prevIndex=i;
+				prevIndex = i;
 			}
 		}
-		tempStr=objectName.substring(prevIndex,objectName.length());
+		tempStr = objectName.substring(prevIndex, objectName.length());
 		formatedStr.append(initCap(tempStr));
 		return formatedStr.toString();
 	}
@@ -762,7 +772,8 @@ public final class Utility
 		Calendar calendar;
 		try
 		{
-			SimpleDateFormat dateformat = new SimpleDateFormat(pattern);
+			SimpleDateFormat dateformat = new SimpleDateFormat(pattern,CommonServiceLocator
+					.getInstance().getDefaultLocale());
 			Date givenDate = dateformat.parse(date);
 			calendar = Calendar.getInstance();
 			calendar.setTime(givenDate);
@@ -782,11 +793,11 @@ public final class Utility
 	 */
 	public static String getDisplayLabelForUnderscore(String objectName)
 	{
-		StringBuffer formatedStr=new StringBuffer();
-		String []tokens=objectName.split("_");
-		for(int i=0;i<tokens.length;i++)
+		StringBuffer formatedStr = new StringBuffer();
+		String[] tokens = objectName.split("_");
+		for (int i = 0; i < tokens.length; i++)
 		{
-			if(!TextConstants.EMPTY_STRING.equals(tokens[i]))
+			if (!TextConstants.EMPTY_STRING.equals(tokens[i]))
 			{
 				formatedStr.append(initCap(tokens[i]));
 				formatedStr.append(Constants.CONST_SPACE_CAHR);
@@ -818,7 +829,7 @@ public final class Utility
 			{
 				logger.error(ioe.getMessage(), ioe);
 				ErrorKey errorKey = null;
-				throw new edu.wustl.common.exception.ParseException(errorKey,ioe,"");
+				throw new edu.wustl.common.exception.ParseException(errorKey, ioe, "");
 			}
 			Element root = doc.getDocumentElement();
 			NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
@@ -929,7 +940,7 @@ public final class Utility
 		return sourceString;
 	}
 
-    /**
+	/**
 	 * Returns current thread's class loader.
 	 * @return current thread's class loader.
 	 */

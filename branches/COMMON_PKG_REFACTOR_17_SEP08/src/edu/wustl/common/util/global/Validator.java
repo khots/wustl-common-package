@@ -449,7 +449,8 @@ public class Validator
 	private boolean isDate(String dtStr)
 	{
 		boolean isDate = true;
-		SimpleDateFormat dateFormat= new SimpleDateFormat("MM"+dtCh+"dd"+dtCh+YEAR);
+		SimpleDateFormat dateFormat= new SimpleDateFormat("MM"+dtCh+"dd"+dtCh+YEAR,CommonServiceLocator
+				.getInstance().getDefaultLocale());
 		int minYear = Integer.parseInt(CommonServiceLocator.getInstance().getMinYear());
 		int maxYear = Integer.parseInt(CommonServiceLocator.getInstance().getMaxYear());
 		try
@@ -523,7 +524,8 @@ public class Validator
 		{
 			Date currentDate = Calendar.getInstance().getTime();
 			String pattern = "MM" + dtCh + "dd" + dtCh + YEAR;
-			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern,CommonServiceLocator
+					.getInstance().getDefaultLocale());
 			Date toCheck = dateFormat.parse(dateToCheck);
 			int dateCheckResult = currentDate.compareTo(toCheck);
 			if (dateCheckResult < 0)
@@ -552,11 +554,13 @@ public class Validator
 		{
 			isValidDatePattern(startDate);
 			String pattern = "MM" + dtCh + "dd" + dtCh + YEAR;
-			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern,CommonServiceLocator
+					.getInstance().getDefaultLocale());
 			Date toCheck = dateFormat.parse(startDate);
 			isValidDatePattern(endDate);
 			String pattern1 = "MM" + dtCh + "dd" + dtCh + YEAR;
-			SimpleDateFormat dF1 = new SimpleDateFormat(pattern1);
+			SimpleDateFormat dF1 = new SimpleDateFormat(pattern1,CommonServiceLocator
+					.getInstance().getDefaultLocale());
 			Date maxDate = dF1.parse(endDate);
 			int dateCheckResult = maxDate.compareTo(toCheck);
 			if (dateCheckResult < 0)
