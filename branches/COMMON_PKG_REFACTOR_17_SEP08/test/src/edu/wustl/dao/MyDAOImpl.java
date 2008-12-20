@@ -175,7 +175,13 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 		Object obj;
-		if(returnActivityStatusObj)
+		if(isTestForFail)
+		{
+			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
+					DAOConstants.EXECUTE_QUERY_ERROR);
+		}
+		else if(returnActivityStatusObj)
 		{
 			MyDomainObject ado= new MyDomainObject();
 			ado.setActivityStatus("Active");
