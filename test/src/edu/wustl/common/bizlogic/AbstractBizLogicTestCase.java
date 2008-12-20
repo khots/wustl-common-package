@@ -384,6 +384,15 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
+	
+	/*public void testRefreshTitliSearchIndex()
+	{
+		MyDAOImpl.isTestForFail=false;
+		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		MyActionForm uiForm= new MyActionForm();
+		defaultBizLogic.refreshTitliSearchIndex("className",null);
+		assertTrue("Populated UI Bean successfully.", true);		
+	}*/
 	/**
 	 * @return AbstractDomainObject
 	 */
