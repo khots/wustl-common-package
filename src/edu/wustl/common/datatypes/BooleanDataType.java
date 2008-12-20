@@ -19,7 +19,7 @@ public class BooleanDataType implements IDBDataType
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.datatypes.IDBDataType
 	 * #validate(java.lang.String,
-	 *   org.apache.struts.action.ActionErrors)
+	 * org.apache.struts.action.ActionErrors)
 	 */
 	/**
 	 * This method validate entered values.
@@ -29,7 +29,6 @@ public class BooleanDataType implements IDBDataType
 	 */
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
