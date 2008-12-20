@@ -72,7 +72,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		}
 		return (List<Object>)list;
 	}
-	private void throwDaoException() throws DAOException
+	public static void throwDaoException() throws DAOException
 	{
 		if(isTestForFail)
 		{
@@ -146,6 +146,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public IConnectionManager getConnectionManager()
 	{
+		setConnectionManager(new MyDAOImpl());
 		return this.connectionManager;
 	}
 
@@ -215,7 +216,14 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public void setConnectionManager(IConnectionManager connectionManager)
 	{
-		this.connectionManager=connectionManager;
+		if(isTestForFail)
+		{
+			this.connectionManager=null;
+		}
+		else
+		{
+			this.connectionManager=connectionManager;
+		}
 	}
 
 	public void update(Object obj) throws DAOException
