@@ -1,6 +1,7 @@
 package edu.wustl.common.actionForm;
 
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.dao.MyDAOImpl;
 
 
 public class MyActionForm extends AbstractActionForm
@@ -29,8 +30,7 @@ public class MyActionForm extends AbstractActionForm
 
 	public void setAllValues(AbstractDomainObject abstractDomain)
 	{
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }
