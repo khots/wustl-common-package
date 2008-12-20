@@ -176,8 +176,7 @@ public final class DataTypeConfigFactory
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey,exception,"");
+			throw new ParseException(ErrorKey.getErrorKey("datatype.parse.error"),exception,"");
 		}
 	}
 }
