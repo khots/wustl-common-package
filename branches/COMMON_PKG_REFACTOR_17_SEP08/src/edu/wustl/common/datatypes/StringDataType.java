@@ -30,7 +30,6 @@ public class StringDataType implements IDBDataType
 	 */
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
