@@ -332,6 +332,58 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			logger.fatal(exception.getMessage(),exception);
 		}
 	}
+	public void testFailPopulateUIBean()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.returnActivityStatusObj=true;
+			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
+			MyActionForm uiForm= new MyActionForm();
+			defaultBizLogic.populateUIBean("className",Long.valueOf(1),uiForm);
+			fail("Negative test case:must throw BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case:thrown BizLogicException.", true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	
+	public void testPopulateDomainObject()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.returnActivityStatusObj=true;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			MyActionForm uiForm= new MyActionForm();
+			defaultBizLogic.populateDomainObject("className",Long.valueOf(1),uiForm);
+			assertTrue("Populated UI Bean successfully.", true);
+		}
+		catch (BizLogicException exception)
+		{
+			fail("Not able to Populate UI Bean.");
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
+	public void testFailPopulateDomainObject()
+	{
+		try
+		{
+			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.returnActivityStatusObj=true;
+			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
+			MyActionForm uiForm= new MyActionForm();
+			defaultBizLogic.populateDomainObject("className",Long.valueOf(1),uiForm);
+			fail("Negative test case:must throw BizLogicException.");
+		}
+		catch (BizLogicException exception)
+		{
+			assertTrue("Negative test case:thrown BizLogicException.", true);
+			logger.fatal(exception.getMessage(),exception);
+		}
+	}
 	/**
 	 * @return AbstractDomainObject
 	 */
