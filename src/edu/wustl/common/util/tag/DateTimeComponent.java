@@ -316,7 +316,7 @@ public class DateTimeComponent extends TagSupport
 	}
 
 	/**
-	 * A call back function.
+	 * A call back function DateTimeComponent class.
 	 * @exception JspException jsp exception.
 	 * @return integer value for evaluated page.
 	 */
