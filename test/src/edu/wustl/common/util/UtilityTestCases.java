@@ -81,4 +81,30 @@ public class UtilityTestCases extends CommonBaseTestCase
 			assertFalse("Not able to get class object.", true);
 		}
 	}
+	public void testIsNull()
+	{
+		try
+		{
+			Object obj =null;
+			assertEquals(true, Utility.isNull(obj));
+		}
+		catch(Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to check is null object.", true);
+		}
+	}
+	public void testIsNullObject()
+	{
+		try
+		{
+			Object obj =new Object();
+			assertEquals(false, Utility.isNull(obj));
+		}
+		catch(Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to check is null object.", true);
+		}
+	}
 }
