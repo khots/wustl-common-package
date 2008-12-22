@@ -1,6 +1,6 @@
 /**
  * <p>Title: CommonAddEditAction Class>
- * <p>Description:	This Class is used to Add/Edit the data in the database.</p>
+ * <p>Description:	This is common class used to Add/Edit the data in the database.</p>
  * Copyright:    Copyright (c) year
  * Company: Washington University, School of Medicine, St. Louis.
  * @author Gautam Shetty
