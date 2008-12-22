@@ -14,7 +14,7 @@ public class CommonBaseTestCase extends BaseTestCase
 	static
 	{
 		System.setProperty("app.propertiesFile",System.getProperty("user.dir")+"/ApplicationResource.properties");
-		PropertyConfigurator.configure(System.getProperty("user.dir") + "/log4j.properties");
+		Logger.configureLogger(System.getProperty("user.dir"));
 		try
 		{
 			ErrorKey.init("-");
