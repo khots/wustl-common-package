@@ -6,6 +6,8 @@ package edu.wustl.common.datatypes;
 
 import org.apache.struts.action.ActionErrors;
 
+import com.mysql.jdbc.Blob;
+
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.exception.ParseException;
 
@@ -119,7 +121,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 		{
 			dbDataType = DataTypeConfigFactory.getInstance().getDataType("double");
 			ActionErrors errors = new ActionErrors();
-			assertEquals(false,dbDataType.validate("100", errors));
+			assertEquals(true,dbDataType.validate("qw", errors));
 		}
 		catch (ParseException e)
 		{
@@ -207,7 +209,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void testValidateFloat()
 	{
 		IDBDataType dbDataType;
@@ -239,5 +241,158 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			e.printStackTrace();
 		}
 	}
-
+	public void testGetObjectValueBoolean()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("boolean");
+			assertNotNull(dbDataType.getObjectValue("true"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueBlob()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("blob");
+			assertNotNull(dbDataType.getObjectValue("D:/CommonPackage/images/enabled.gif"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueString()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("string");
+			assertNotNull(dbDataType.getObjectValue("String data type."));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueEmptyString()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("string");
+			assertNull(dbDataType.getObjectValue(""));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueDate()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("date");
+			assertNotNull(dbDataType.getObjectValue("12-12-2008"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueDouble()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("double");
+			assertNotNull(dbDataType.getObjectValue("10.1222"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueFloat()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("float");
+			assertNotNull(dbDataType.getObjectValue("10.12"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueLong()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("long");
+			assertNotNull(dbDataType.getObjectValue("10112"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueTinyInt()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("tinyint");
+			assertNull(dbDataType.getObjectValue("1"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueTimestamptime()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("timestamptime");
+			assertNull(dbDataType.getObjectValue("11:11:12"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
+	public void testGetObjectValueInteger()
+	{
+		IDBDataType dbDataType;
+		try
+		{
+			dbDataType = DataTypeConfigFactory.getInstance().getDataType("integer");
+			assertNotNull(dbDataType.getObjectValue("12"));
+		}
+		catch (Exception e)
+		{
+			fail("data type not valid.");
+			e.printStackTrace();
+		}
+	}
 }
