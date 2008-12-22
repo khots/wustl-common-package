@@ -57,6 +57,7 @@ public final class Logger
 	{
 		if (!isConfigured )
 		{
+			out=org.apache.log4j.Logger.getLogger(className);
 			out.warn
 			("Application specific logger configuration is not done. Please use Logger.configureLogger(path) before using getLogger()");
 		}
