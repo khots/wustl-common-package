@@ -40,8 +40,8 @@ public class StorageContainerRenderer extends DefaultTreeCellRenderer
 	 * @param tree JTree
 	 * @param value value
 	 * @param sel sel.
-	 * @param expanded expanded boolean value.
-	 * @param leaf leaf boolean value.
+	 * @param expanded tree expanded or not.
+	 * @param leaf is it leaf or not.
 	 * @param row row.
 	 * @param hasFocus hasFocus.
 	 * @return Component.
