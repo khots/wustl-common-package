@@ -43,7 +43,7 @@ public class TimeStampTimeDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get timestamptime Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception

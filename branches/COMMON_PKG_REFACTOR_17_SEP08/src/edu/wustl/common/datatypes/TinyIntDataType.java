@@ -43,7 +43,7 @@ public class TinyIntDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get tinyint Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception
@@ -51,7 +51,6 @@ public class TinyIntDataType implements IDBDataType
 	 */
 	public Object getObjectValue(String str)throws ParseException, IOException
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

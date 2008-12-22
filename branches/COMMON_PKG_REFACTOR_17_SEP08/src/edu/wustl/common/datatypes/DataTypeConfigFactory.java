@@ -103,8 +103,7 @@ public final class DataTypeConfigFactory
 		catch (Exception ioe)
 		{
 			logger.error(ioe.getMessage(), ioe);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey,ioe,"");
+			throw new ParseException(ErrorKey.getErrorKey("datatype.parse.error"),ioe,"");
 		}
 	}
 

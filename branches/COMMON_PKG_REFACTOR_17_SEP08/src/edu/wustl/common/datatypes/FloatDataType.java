@@ -22,8 +22,8 @@ public class FloatDataType implements IDBDataType
 	 * org.apache.struts.action.ActionErrors)
 	 */
 	/**
-	 * This method validate entered values.
-	 * @param enteredValue entered Value.
+	 * This method validate float data type values.
+	 * @param enteredValue float data type Value .
 	 * @param errors errors.
 	 * @return conditionError boolean value.
 	 */
@@ -33,7 +33,7 @@ public class FloatDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get float data type Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception

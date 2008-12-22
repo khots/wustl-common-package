@@ -22,8 +22,8 @@ public class BooleanDataType implements IDBDataType
 	 * org.apache.struts.action.ActionErrors)
 	 */
 	/**
-	 * This method validate entered values.
-	 * @param enteredValue entered Value.
+	 * This method validate boolean data type values.
+	 * @param enteredValue boolean data type Value.
 	 * @param errors errors.
 	 * @return conditionError boolean value.
 	 */
@@ -33,7 +33,7 @@ public class BooleanDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get boolean data type Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception

@@ -23,18 +23,19 @@ public class StringDataType implements IDBDataType
 	 * #validate(java.lang.String, org.apache.struts.action.ActionErrors)
 	 */
 	/**
-	 * This method validate entered values.
-	 * @param enteredValue entered Value.
+	 * This method validate String values.
+	 * @param enteredValue entered Value as string.
 	 * @param errors errors.
 	 * @return conditionError boolean value.
 	 */
 	public boolean validate(String enteredValue, ActionErrors errors)
 	{
+		//write validation code for string.
 		return false;
 	}
 
 	/**
-	 * get Object Value.
+	 * get string Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception
