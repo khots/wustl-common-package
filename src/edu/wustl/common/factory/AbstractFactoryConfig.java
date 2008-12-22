@@ -31,6 +31,11 @@ public final class AbstractFactoryConfig
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractFactoryConfig.class);
 
 	/**
+	 * Specifies success.
+	 */
+	private static boolean success = true;
+
+	/**
 	 * Specifies ControlConfigurationsFactory instance.
 	 */
 	private static AbstractFactoryConfig configFactory = new AbstractFactoryConfig();
@@ -44,11 +49,6 @@ public final class AbstractFactoryConfig
 	 * Specifies Document object.
 	 */
 	private Document dom;
-
-	/**
-	 * Specifies success.
-	 */
-	private static boolean success = true;
 
 	/**
 	 * ControlConfigurationsFactory constructor.
