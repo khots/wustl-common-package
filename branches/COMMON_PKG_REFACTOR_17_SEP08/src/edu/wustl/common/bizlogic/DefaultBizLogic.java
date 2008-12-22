@@ -236,7 +236,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			closeSession(dao);
 		}
-
 		return list;
 	}
 	/**
@@ -261,13 +260,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
+			throw getBizLogicException(daoExp, "biz.ret.error",
+					"Not able to retrieve data using QueryWhereClause.");
 		}
 		finally
 		{
 			closeSession(dao);
 		}
-
 		return list;
 	}
 
@@ -335,7 +334,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			closeSession(dao);
 		}
-
 		return list;
 	}
 
@@ -804,7 +802,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
-			"Exception in getRelatedObjects method.");
+			"Not able to fetch related objects.");
 		}
 		list = Utility.removeNull(list);
 		return list;
@@ -847,7 +845,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/**
-	 * This method gets related objects.
+	 * This method returns related objects.
 	 * @param dao The dao object.
 	 * @param sourceClass source Class
 	 * @param queryWhereClause object of QueryWhereClause
