@@ -11,11 +11,10 @@ import java.util.HashSet;
  **/
 public class AuditEvent implements java.io.Serializable
 {
-
 	/**
 	 * Serial Version Unique Identifier.
 	 */
-	private static final long serialVersionUID = 1234567890L;
+	private static final long serialVersionUID = -45184543604271371L;
 
 	/**
 	 * System generated unique id.
