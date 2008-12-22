@@ -57,9 +57,10 @@ public final class Logger
 	 */
 	public static org.apache.log4j.Logger getLogger(Class className)
 	{
-		if (!isConfigured && CommonServiceLocator.getInstance().getPropDirPath().length() != 0)
+		if (!isConfigured )
 		{
-				configureLogger();
+			out.warn
+			("Application specific logger configuration is not done. Please use Logger.configureLogger(path) before using getLogger()");
 		}
 		return org.apache.log4j.Logger.getLogger(className);
 	}
@@ -67,22 +68,24 @@ public final class Logger
 	/**
 	 * This method configure Logger.
 	 */
-	private static void configureLogger()
+	public static void configureLogger(String propDirPath)
 	{
-
-		StringBuffer log4jFilePath = new StringBuffer(CommonServiceLocator.getInstance().getPropDirPath());
-		try
+		if(!isConfigured)
 		{
-
-			log4jFilePath.append(File.separator).append("log4j.properties");
-			PropertyConfigurator.configure(log4jFilePath.toString());
-			out = org.apache.log4j.Logger.getLogger(Logger.class);
 			isConfigured = true;
-		}
-		catch (Exception malformedURLEx)
-		{
-			configure(Logger.class.getName());
-			out.fatal("Logger not configured. Invalid config file " + log4jFilePath.toString());
+			StringBuffer log4jFilePath = new StringBuffer(propDirPath);
+			try
+			{
+				log4jFilePath.append(File.separator).append("log4j.properties");
+				PropertyConfigurator.configure(log4jFilePath.toString());
+				out = org.apache.log4j.Logger.getLogger(Logger.class);
+			}
+			catch (Exception malformedURLEx)
+			{
+				configure(Logger.class.getName());
+				out.fatal
+				("Logger not configured. Invalid config file " + log4jFilePath.toString());
+			}
 		}
 	}
 
