@@ -8,8 +8,6 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 
-import edu.wustl.common.util.Utility;
-
 
 /**
  * This class is a common service locator. Different parameter like application url,
