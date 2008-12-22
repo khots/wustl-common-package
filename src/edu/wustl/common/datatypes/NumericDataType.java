@@ -31,7 +31,7 @@ public class NumericDataType implements IDBDataType
 	 */
 	/**
 	 * This method validate numeric values.
-	 * @param enteredValue entered Value.
+	 * @param enteredValue numeric Value.
 	 * @param errors errors.
 	 * @return conditionError boolean value.
 	 */
@@ -57,11 +57,11 @@ public class NumericDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get numeric Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception
-	 * @throws IOException IOException
+	 * @throws IOException IO Exception
 	 */
 	public Object getObjectValue(String str)throws ParseException, IOException
 	{

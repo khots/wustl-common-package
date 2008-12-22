@@ -28,9 +28,9 @@ public class BlobDataType implements IDBDataType
 	 * .ActionErrors)
 	 */
 	/**
-	 * This method validate entered values.
-	 * @param enteredValue entered Value.
-	 * @param errors errors.
+	 * This method validate blob data type values.
+	 * @param enteredValue blob data type Value.
+	 * @param errors ActionErrors object.
 	 * @return conditionError boolean value.
 	 */
 	public boolean validate(String enteredValue, ActionErrors errors)
@@ -39,7 +39,7 @@ public class BlobDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get blob data type Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception

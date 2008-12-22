@@ -22,8 +22,8 @@ public class LongDataType implements IDBDataType
 	 * org.apache.struts.action.ActionErrors)
 	 */
 	/**
-	 * This method validate entered values.
-	 * @param enteredValue entered Value.
+	 * This method validate long data type values.
+	 * @param enteredValue entered Value as long.
 	 * @param errors errors.
 	 * @return conditionError boolean value.
 	 */
@@ -33,7 +33,7 @@ public class LongDataType implements IDBDataType
 	}
 
 	/**
-	 * get Object Value.
+	 * get long data type Object Value.
 	 * @param str string value
 	 * @return Object.
 	 * @throws ParseException Parse Exception
