@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 
+import edu.wustl.common.util.logger.Logger;
+
 
 /**
  * This class is a common service locator. Different parameter like application url,
@@ -87,6 +89,8 @@ public final class CommonServiceLocator
 	private CommonServiceLocator()
 	{
 		initProps();
+		Logger.configureLogger(this.propDirPath);
+		//logger=Logger.getLogger(CommonServiceLocator.class);
 	}
 
 	/**
