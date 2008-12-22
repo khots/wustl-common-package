@@ -115,6 +115,10 @@ public final class Utility
 	{
 		String datePattern = "";
 		List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
+		datePatternList.add(new SimpleDateFormat("dd-MM-yyyy",CommonServiceLocator
+				.getInstance().getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("dd/MM/yyyy",CommonServiceLocator
+				.getInstance().getDefaultLocale()));
 		datePatternList.add(new SimpleDateFormat("MM-dd-yyyy",CommonServiceLocator
 				.getInstance().getDefaultLocale()));
 		datePatternList.add(new SimpleDateFormat("MM/dd/yyyy",CommonServiceLocator
