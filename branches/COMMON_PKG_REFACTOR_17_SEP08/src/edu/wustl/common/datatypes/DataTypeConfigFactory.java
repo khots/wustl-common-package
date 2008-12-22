@@ -88,13 +88,12 @@ public final class DataTypeConfigFactory
 	}
 
 	/**
-	 * This method parse xml File.
-	 * @param xmlFile xml File
-	 * @throws ParseException Parse Exception.
+	 * This method parse xml File for data type.
+	 * @param xmlFile DataTypeConfigurations.xml File
+	 * @throws ParseException ParseException.
 	 */
 	private void parseXML(String xmlFile) throws ParseException
 	{
-
 		try
 		{
 			dom = XMLParserUtility.getDocument(xmlFile);

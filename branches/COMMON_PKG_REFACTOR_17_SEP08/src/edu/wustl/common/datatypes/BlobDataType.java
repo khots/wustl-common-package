@@ -50,7 +50,6 @@ public class BlobDataType implements IDBDataType
 		File file = new File(str);
 		DataInputStream dis = new DataInputStream(new BufferedInputStream(
 				new FileInputStream(file)));
-
 		byte[] buff = new byte[(int) file.length()];
 		dis.readFully(buff);
 		dis.close();
