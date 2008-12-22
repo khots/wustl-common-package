@@ -213,7 +213,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	protected void checkValidNumber(String componentName, String labelName, ActionErrors errors,
 			Validator validator)
 	{
-		if (validator.isEmpty(componentName))
+		if (Validator.isEmpty(componentName))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("errors.item.required",
 					ApplicationProperties.getValue(labelName)));
@@ -272,7 +272,7 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	public void setRedirectValue(Validator validator)
 	{
 		String redirectValue = getRedirectTo();
-		if (validator.isEmpty(redirectValue))
+		if (Validator.isEmpty(redirectValue))
 		{
 			redirectValue = "";
 		}
