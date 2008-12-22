@@ -11,7 +11,6 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -23,16 +22,24 @@ import edu.wustl.common.util.logger.Logger;
 public class BaseTestCase extends TestCase
 {
 
+	/**
+	 * No argument constructor.
+	 */
 	public BaseTestCase()
 	{
 		super();
 	}
-
+	/**
+	 * Constructs a test case with the given name.
+	 * @param name Name of Test Case.
+	 */
 	public BaseTestCase(String name)
 	{
 		super(name);
 	}
-
+	/**
+	 * Set up method.
+	 */
 	protected void setUp()
 	{
 		Logger.out = org.apache.log4j.Logger.getLogger("");
