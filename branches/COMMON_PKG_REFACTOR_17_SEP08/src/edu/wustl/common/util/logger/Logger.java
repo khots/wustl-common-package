@@ -17,8 +17,6 @@ import javax.servlet.ServletContext;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import edu.wustl.common.util.global.CommonServiceLocator;
-
 
 /**
  * This is an utility class which provides functions to get logger objects.
@@ -67,6 +65,7 @@ public final class Logger
 
 	/**
 	 * This method configure Logger.
+	 * @param propDirPath Path of directory containing properties file.
 	 */
 	public static void configureLogger(String propDirPath)
 	{
