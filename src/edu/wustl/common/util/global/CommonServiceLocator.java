@@ -31,57 +31,57 @@ public final class CommonServiceLocator
 	/**
 	 * Application Name.
 	 */
-	private static String appName;
+	private String appName;
 
 	/**
 	 * Application Home directory.
 	 */
-	private static String appHome;
+	private String appHome;
 	/**
 	 * Directory path of properties file.
 	 */
-	private static String propDirPath;
+	private String propDirPath;
 	/**
 	 * Application URL.
 	 */
-	private static String appURL;
+	private String appURL;
 
 	/**
 	 * Date separator.
 	 */
-	private static String dateSeparator="-";
+	private String dateSeparator="-";
 
 	/**
 	 * Date separator.
 	 */
-	private static String dateSeparatorSlash="/";
+	private String dateSeparatorSlash="/";
 
 	/**
 	 * Minimum year.
 	 * e.g 1900
 	 */
-	private static String minYear;
+	private String minYear;
 	/**
 	 * Maximum year.
 	 * e.g 9999
 	 */
-	private static String maxYear;
+	private String maxYear;
 
 	/**
 	 * Date pattern.
 	 * e.g.MM-dd-yyyy
 	 */
-	private static String datePattern;
+	private String datePattern;
 
 	/**
 	 * Time pattern. e.g. HH:mm:ss
 	 */
-	private static String timePattern;
+	private String timePattern;
 	/**
 	 * Date time pattern.
 	 * e.g. yyyy-MM-dd-HH24.mm.ss.SSS
 	 */
-	private static String timeStampPattern;
+	private String timeStampPattern;
 	/**
 	 *No argument constructor.
 	 *Here all the properties are set
@@ -90,7 +90,6 @@ public final class CommonServiceLocator
 	{
 		initProps();
 		Logger.configureLogger(this.propDirPath);
-		//logger=Logger.getLogger(CommonServiceLocator.class);
 	}
 
 	/**
@@ -232,7 +231,7 @@ public final class CommonServiceLocator
 	 */
 	public void setDateSeparator(Properties props)
 	{
-		CommonServiceLocator.dateSeparator = props.getProperty("date.separator");
+		this.dateSeparator = props.getProperty("date.separator");
 	}
 
 	/**
@@ -256,7 +255,7 @@ public final class CommonServiceLocator
 	 */
 	public void setMinYear(Properties props)
 	{
-		CommonServiceLocator.minYear = props.getProperty("min.year");
+		this.minYear = props.getProperty("min.year");
 	}
 
 	/**
@@ -272,7 +271,7 @@ public final class CommonServiceLocator
 	 */
 	public void setMaxYear(Properties props)
 	{
-		CommonServiceLocator.maxYear = props.getProperty("max.year");
+		this.maxYear = props.getProperty("max.year");
 	}
 
 	/**
@@ -288,7 +287,7 @@ public final class CommonServiceLocator
 	 */
 	public void setDatePattern(Properties props)
 	{
-		CommonServiceLocator.datePattern = props.getProperty("date.pattern");
+		this.datePattern = props.getProperty("date.pattern");
 	}
 
 	/**
@@ -304,7 +303,7 @@ public final class CommonServiceLocator
 	 */
 	public void setTimePattern(Properties props)
 	{
-		CommonServiceLocator.timePattern = props.getProperty("time.pattern");
+		this.timePattern = props.getProperty("time.pattern");
 	}
 
 	/**
@@ -320,7 +319,7 @@ public final class CommonServiceLocator
 	 */
 	public void setTimeStampPattern(Properties props)
 	{
-		CommonServiceLocator.timeStampPattern = props.getProperty("timestamp.pattern");
+		this.timeStampPattern = props.getProperty("timestamp.pattern");
 	}
 
 	/**
