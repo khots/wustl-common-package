@@ -6,7 +6,6 @@ package edu.wustl.common.exception;
 
 /**
  * @author kapil_kaveeshwar
- *
  */
 public class AuditException extends Exception
 {
