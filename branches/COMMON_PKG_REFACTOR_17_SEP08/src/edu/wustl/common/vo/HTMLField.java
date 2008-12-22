@@ -2,25 +2,38 @@
 package edu.wustl.common.vo;
 
 /**
- * Class used to set the value of each field's value 
+ * Class used to set the value of each field's value.
  * @author namita_srivastava
  *
  */
 public class HTMLField
 {
 
-	//Name referred as property in field's attribute
+	/**
+	 * Name referred as property in field's attribute.
+	 */
 	private String name = "";
 
-	//Id of each field including label
+	/**
+	 * Id of each field including label.
+	 */
 	private String id = "";
 
-	//Used for enabling & disabling field
+	/**
+	 * Used for enabling & disabling field.
+	 */
 	private boolean isDisabled = false;
 
-	//Used for populating value in case of comboBox
+	/**
+	 * Used for populating value in case of comboBox.
+	 */
 	private String dataListName = "";
-
+	/**
+	 * Constructor with argument.
+	 * @param name Field Name
+	 * @param id Field id
+	 * @param dataListName Data list name.
+	 */
 	public HTMLField(String name, String id, String dataListName)
 	{
 		this(name, id, dataListName, false);
@@ -41,7 +54,7 @@ public class HTMLField
 	}
 
 	/**
-	 * For populating value in case of comboBox
+	 * For populating value in case of comboBox.
 	 * @return String
 	 */
 	public String getDataListName()
@@ -58,7 +71,7 @@ public class HTMLField
 	}
 
 	/**
-	 * Id associated with field
+	 * Id associated with field.
 	 * @return String
 	 */
 	public String getId()
@@ -75,7 +88,7 @@ public class HTMLField
 	}
 
 	/**
-	 * Used for enabling & disabling field
+	 * Used for enabling & disabling field.
 	 * @return boolean
 	 */
 	public boolean isDisabled()
@@ -92,7 +105,7 @@ public class HTMLField
 	}
 
 	/**
-	 * Name of field of page
+	 * Name of field of page.
 	 * @return String
 	 */
 	public String getName()

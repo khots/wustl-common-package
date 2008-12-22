@@ -2,34 +2,46 @@
 package edu.wustl.common.vo;
 
 /**
- * class used for setting each row of page
+ * class used for setting each row of page.
  * @author namita_srivastava
  *
  */
 public class SearchFieldData
 {
 
-	//Used for checking next field(text or comboBox) in the same row
+	/**
+	 * Used for checking next field(text or comboBox) in the same row.
+	 */
 	private String dataType;
 
-	//Dispalying text for the row used in 1st column
+	/**
+	 * Dispalying text for the row used in 1st column.
+	 */
 	private String labelKey;
 
-	//Instance of class used for setting field's attribute of 2nd column of the same row (operation field)
+	/**
+	 * Instance of class used for setting field's attribute of 2nd column of the same row (operation field).
+	 */
 	private HTMLField oprationField;
 
-	//Instance of class used for setting field's attribute of 3rd column of the same row(value field) 
+	/**
+	 * Instance of class used for setting field's attribute of 3rd column of the same row(value field).
+	 */
 	private HTMLField valueField;
 
-	//Used for calling appropriate function according to dataType
+	/**
+	 * Used for calling appropriate function according to dataType.
+	 */
 	private String functionName;
 
-	//Used for specimen page only ****CHANGE REQUIRED****
+	/**
+	 * Used for specimen page only ****CHANGE REQUIRED****.
+	 */
 	private String unitFieldKey = "";
 
 	/**
-	 * @param dataType Datatype of field of page
-	 * @param labelKey Dispalying text for the row in page
+	 * @param dataType Data type of field of page
+	 * @param labelKey Displaying text for the row in page
 	 * @param oprationField setting field's attribute of table
 	 * @param valueField setting field's attribute of table
 	 * @param functionName function according to dataType
@@ -48,7 +60,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * Datatype of field of page
+	 * Datatype of field of page.
 	 * @return String
 	 */
 	public String getDataType()
@@ -57,7 +69,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * @param dataType to set
+	 * @param dataType to set.
 	 */
 	public void setDataType(String dataType)
 	{
@@ -65,7 +77,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * function according to dataType
+	 * function according to dataType.
 	 * @return String
 	 */
 	public String getFunctionName()
@@ -74,7 +86,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * @param functionName to set
+	 * @param functionName to set.
 	 */
 	public void setFunctionName(String functionName)
 	{
@@ -82,7 +94,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * Dispalying text for the row in page
+	 * Dispalying text for the row in page.
 	 * @return String
 	 */
 	public String getLabelKey()
@@ -99,7 +111,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * setting field's attribute of table
+	 * setting field's attribute of table.
 	 * @return String
 	 */
 	public HTMLField getOprationField()
@@ -108,7 +120,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * @param oprationField to set
+	 * @param oprationField to set.
 	 */
 	public void setOprationField(HTMLField oprationField)
 	{
@@ -116,7 +128,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * for displaying text at the end of field (for specimen page only)
+	 * for displaying text at the end of field (for specimen page only).
 	 * @return String
 	 */
 	public String getUnitFieldKey()
@@ -133,7 +145,7 @@ public class SearchFieldData
 	}
 
 	/**
-	 * setting field's attribute of table
+	 * setting field's attribute of table.
 	 * @return String
 	 */
 	public HTMLField getValueField()
