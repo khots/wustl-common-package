@@ -8,6 +8,8 @@ package edu.wustl.common;
 import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
 import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.datatypes.DataTypeTestCase;
+import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
 import edu.wustl.common.util.UtilityTestCases;
 import edu.wustl.common.util.global.StatusTestCase;
 import junit.framework.Test;
@@ -40,6 +42,7 @@ public class TestAll
 		suite.addTestSuite(AbstractBizLogicTestCase.class);
 		suite.addTestSuite(StatusTestCase.class);
 		suite.addTestSuite(DataTypeTestCase.class);
+		suite.addTestSuite(AbstractFactoryConfigTestCase.class);
 		return suite;
 	}
 }
