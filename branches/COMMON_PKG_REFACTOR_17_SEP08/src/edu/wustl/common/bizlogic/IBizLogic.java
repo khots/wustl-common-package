@@ -273,10 +273,11 @@ public interface IBizLogic
 	 * setPrivilege(String privilegeName, Class objectType, Long[] objectIds,Long userId,
 	 * SessionDataBean sessionDataBean, String roleId, boolean assignToUser,boolean assignOperation)
 	 *  throws SMException, BizLogicException;
+	 *   commented this method because this is not in use and its implementation was catissue specific.
 	 */
-	void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
+	/*void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException;
+			boolean assignOperation) throws BizLogicException;*/
 
 	/**
 	 * sets Privilege.
@@ -289,10 +290,11 @@ public interface IBizLogic
 	 * @param assignToUser assign To User.
 	 * @param assignOperation Operation
 	 * @throws BizLogicException BizLogic Exception
+	 *  commented this method because this is not in use and its implementation was catissue specific.
 	 */
-	void setPrivilege(String privilegeName, Class objectType, Long[] objectIds,
+	/*void setPrivilege(String privilegeName, Class objectType, Long[] objectIds,
 			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException;
+			boolean assignOperation) throws BizLogicException;*/
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.

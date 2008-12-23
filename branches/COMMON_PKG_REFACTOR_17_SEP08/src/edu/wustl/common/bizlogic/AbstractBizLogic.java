@@ -180,10 +180,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param assignToUser assign To User
 	 * @param assignOperation Operation
 	 * @throws BizLogicException Generic BizLogic Exception
+	 *  commented this method because this is not in use and its implementation was catissue specific.
 	 */
-	protected abstract void setPrivilege(DAO dao, String privilegeName, Class objectType,
+	/*protected abstract void setPrivilege(DAO dao, String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException;
+			boolean assignOperation) throws BizLogicException;*/
 
 	/**
 	 * Deletes an object from the database.
@@ -560,14 +561,15 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @deprecated This method uses daoType argument which is not required anymore,please use method
 	 * setPrivilege(String privilegeName, Class objectType,	Long[] objectIds, Long userId,
 	 * SessionDataBean sessionDataBean, String roleId,boolean assignToUser, boolean assignOperation)
+	 *  commented this method because this is not in use and its implementation was catissue specific.
 	 */
-	public final void setPrivilege(int daoType, String privilegeName, Class objectType,
+/*	public final void setPrivilege(int daoType, String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
 		setPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
 				assignToUser, assignOperation);
-	}
+	}*/
 
 	/**
 	 * This method set privilege to user.
@@ -580,8 +582,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param assignToUser assign To User
 	 * @param assignOperation Operation
 	 * @throws BizLogicException BizLogic Exception
+	 *  commented this method because this is not in use and its implementation was catissue specific.
 	 */
-	public final void setPrivilege(String privilegeName, Class objectType,
+	/*public final void setPrivilege(String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
@@ -609,7 +612,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			closeSession(dao);
 		}
-	}
+	}*/
 
 	/**
 	 * This method formats Exception.
