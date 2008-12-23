@@ -8,7 +8,7 @@ package edu.wustl.common.exception;
  * @author prashant_bandal
  *
  */
-public class ParseException extends ApplicationException
+public class ParseException extends Exception
 {
 
 	/**
@@ -18,13 +18,11 @@ public class ParseException extends ApplicationException
 
 	/**
 	 * Constructor.
-	 * @param errorKey error Key
-	 * @param throwable Throwable
-	 * @param msgValues mssage Values.
+	 * @param exception Exception.
 	 */
-	public ParseException(ErrorKey errorKey, Throwable throwable, String msgValues)
+	public ParseException(Exception exception)
 	{
-		super(errorKey, throwable, msgValues);
+		super(exception);
 	}
 
 }

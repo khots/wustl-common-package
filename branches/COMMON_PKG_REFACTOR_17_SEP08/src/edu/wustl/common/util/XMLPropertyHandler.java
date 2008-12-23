@@ -15,7 +15,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
@@ -59,8 +58,7 @@ public final class XMLPropertyHandler
 		catch (Exception ioe)
 		{
 			logger.error(ioe.getMessage(), ioe);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey,ioe,"");
+			throw new ParseException(ioe);
 		}
 	}
 	/**

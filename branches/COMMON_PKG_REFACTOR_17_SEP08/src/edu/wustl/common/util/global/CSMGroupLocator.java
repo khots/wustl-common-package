@@ -1,3 +1,4 @@
+
 package edu.wustl.common.util.global;
 
 import java.util.HashMap;
@@ -8,8 +9,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -19,6 +20,7 @@ import edu.wustl.common.util.logger.Logger;
  */
 public final class CSMGroupLocator
 {
+
 	/**
 	 * logger Logger - Generic logger.
 	 */
@@ -27,46 +29,50 @@ public final class CSMGroupLocator
 	/**
 	 * File name for CSM group configuration.
 	 */
-	private static final String CSM_GROUP_CONF_FILE="CSMGroup.xml";
+	private static final String CSM_GROUP_CONF_FILE = "CSMGroup.xml";
 
+	/**
+	 * Specifies parse Exception Message.
+	 */
+	private static String parseExcepMessage;
+	/**
+	 * This indicates whether instants has been created successfully or not.
+	 */
+	private static boolean success = true;
 	/**
 	 * object of CSMGroupLocator.
 	 */
-	private static CSMGroupLocator csmGroupLocatr= new CSMGroupLocator();
+	private static CSMGroupLocator csmGroupLocatr = new CSMGroupLocator();
 	/**
 	 * Map of bit-number and Privilege Object.
 	 */
-	private Map<Class,CSMGroup> classVsCsmGroupMap;
+	private Map<Class, CSMGroup> classVsCsmGroupMap;
 
 	/**
 	 * Element name for 'csm-group'.
 	 */
-	private static final String ELE_CSM_GROUP="csm-group";
+	private static final String ELE_CSM_GROUP = "csm-group";
 
 	/**
 	 * Element name for 'pg-name'.
 	 */
-	private static final String ELE_PG_NAME="pg-name";
+	private static final String ELE_PG_NAME = "pg-name";
 
 	/**
 	 * Element name for 'pi-group-name'.
 	 */
-	private static final String ELE_PI_GROUP_NAME="pi-group-name";
+	private static final String ELE_PI_GROUP_NAME = "pi-group-name";
 
 	/**
 	 * Element name for 'coordinator-group-name'.
 	 */
-	private static final String ELE_COORDINATOR_GROUP_NAME="coordinator-group-name";
+	private static final String ELE_COORDINATOR_GROUP_NAME = "coordinator-group-name";
 
 	/**
 	 * Attribute name for 'class-name'.
 	 */
-	private static final String ATTR_CLASS_NAME="class-name";
+	private static final String ATTR_CLASS_NAME = "class-name";
 
-	/**
-	 * This indicates whether instants has been created successfully or not.
-	 */
-	private static boolean success=true;
 	/**
 	 * No argument constructor.
 	 */
@@ -76,36 +82,38 @@ public final class CSMGroupLocator
 		{
 			init();
 		}
-		catch(Exception exception)
+		catch (Exception exception)
 		{
-			success=false;
-			logger.error("can not load configuration file "+exception.getMessage(), exception);
+			success = false;
+			parseExcepMessage = exception.getMessage();
+			logger.error("can not load configuration file " + exception.getMessage(), exception);
 		}
 	}
 
 	/**
 	 *
 	 * @return object of CSMGroupLocator.
-	 * @throws ParseException if not able to parse the file.
+	 * @throws ApplicationException if not able to parse the file.
 	 */
-	public static CSMGroupLocator getInstance() throws ParseException
+	public static CSMGroupLocator getInstance() throws ApplicationException
 	{
-		if(!success)
+		if (!success)
 		{
 			logger.error("Can not create instance, Please see the log file for details.");
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey,null,"");
+			throw new ApplicationException(ErrorKey.getErrorKey("csm.getinstance.error"), null,
+					parseExcepMessage);
 		}
 		return csmGroupLocatr;
 	}
+
 	/**
 	 * @param identifier identifier
 	 * @param className Class Name
 	 * @return PG name
 	 */
-	public String getPGName(Long identifier,Class className)
+	public String getPGName(Long identifier, Class className)
 	{
-		return classVsCsmGroupMap.get(className).getPgName()+identifier;
+		return classVsCsmGroupMap.get(className).getPgName() + identifier;
 	}
 
 	/**
@@ -113,9 +121,9 @@ public final class CSMGroupLocator
 	 * @param className Class Name
 	 * @return PI group Name
 	 */
-	public String getPIGroupName(Long identifier,Class className)
+	public String getPIGroupName(Long identifier, Class className)
 	{
-		return classVsCsmGroupMap.get(className).getPiGroupName()+identifier;
+		return classVsCsmGroupMap.get(className).getPiGroupName() + identifier;
 	}
 
 	/**
@@ -123,29 +131,29 @@ public final class CSMGroupLocator
 	 * @param className Class Name
 	 * @return Coordinator Group Name
 	 */
-	public String getCoordinatorGroupName(Long identifier,Class className)
+	public String getCoordinatorGroupName(Long identifier, Class className)
 	{
-		return classVsCsmGroupMap.get(className).getCoGroupName()+identifier;
+		return classVsCsmGroupMap.get(className).getCoGroupName() + identifier;
 	}
 
 	/**
 	 * This method load the Privileges into map.
-	 * @throws ParseException throws this exception if
+	 * @throws ApplicationException throws this exception if
 	 * specified xml file not found or not able to parse the file.
 	 */
-	public void init() throws ParseException
+	public void init() throws ApplicationException
 	{
 		try
 		{
-			Document doc =XMLParserUtility.getDocument(CSM_GROUP_CONF_FILE);
+			Document doc = XMLParserUtility.getDocument(CSM_GROUP_CONF_FILE);
 			NodeList csmGrNodeLst = doc.getElementsByTagName(ELE_CSM_GROUP);
 			populateMaps(csmGrNodeLst);
 		}
-		catch(Exception exception)
+		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey,exception,"");
+			throw new ApplicationException(ErrorKey.getErrorKey("csm.getinstance.error"), exception,
+					parseExcepMessage);
 		}
 	}
 
@@ -156,14 +164,14 @@ public final class CSMGroupLocator
 	private void populateMaps(NodeList csmGrNodeLst) throws ClassNotFoundException
 	{
 		Node csmGrNode;
-		classVsCsmGroupMap= new HashMap<Class, CSMGroup>();
+		classVsCsmGroupMap = new HashMap<Class, CSMGroup>();
 		for (int s = 0; s < csmGrNodeLst.getLength(); s++)
 		{
 			csmGrNode = csmGrNodeLst.item(s);
-		    if (csmGrNode.getNodeType() == Node.ELEMENT_NODE)
-		    {
-		    	addNewCsmGroupToMap(csmGrNode);
-		    }
+			if (csmGrNode.getNodeType() == Node.ELEMENT_NODE)
+			{
+				addNewCsmGroupToMap(csmGrNode);
+			}
 		}
 	}
 
@@ -173,18 +181,18 @@ public final class CSMGroupLocator
 	 */
 	private void addNewCsmGroupToMap(Node csmGrNode) throws ClassNotFoundException
 	{
-	    String csmGrClassName;
+		String csmGrClassName;
 		String pgName;
 		String piGroupName;
 		String coGroupName;
 		CSMGroup csmGroup;
 		Element csmGrElmnt = (Element) csmGrNode;
-		csmGrClassName=csmGrElmnt.getAttribute(ATTR_CLASS_NAME);
-		Class clazz=Class.forName(csmGrClassName);
-		pgName = XMLParserUtility.getElementValue(csmGrElmnt,ELE_PG_NAME);
-		piGroupName = XMLParserUtility.getElementValue(csmGrElmnt,ELE_PI_GROUP_NAME);
-		coGroupName = XMLParserUtility.getElementValue(csmGrElmnt,ELE_COORDINATOR_GROUP_NAME);
-		csmGroup= new CSMGroup(pgName,piGroupName,coGroupName);
-	    classVsCsmGroupMap.put(clazz, csmGroup);
+		csmGrClassName = csmGrElmnt.getAttribute(ATTR_CLASS_NAME);
+		Class clazz = Class.forName(csmGrClassName);
+		pgName = XMLParserUtility.getElementValue(csmGrElmnt, ELE_PG_NAME);
+		piGroupName = XMLParserUtility.getElementValue(csmGrElmnt, ELE_PI_GROUP_NAME);
+		coGroupName = XMLParserUtility.getElementValue(csmGrElmnt, ELE_COORDINATOR_GROUP_NAME);
+		csmGroup = new CSMGroup(pgName, piGroupName, coGroupName);
+		classVsCsmGroupMap.put(clazz, csmGroup);
 	}
 }

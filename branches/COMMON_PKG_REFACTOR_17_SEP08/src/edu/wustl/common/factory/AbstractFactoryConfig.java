@@ -14,6 +14,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.util.global.XMLParserUtility;
@@ -51,6 +52,11 @@ public final class AbstractFactoryConfig
 	private Document dom;
 
 	/**
+	 * Specifies parse Exception Message.
+	 */
+	private static String parseExcepMessage;
+
+	/**
 	 * ControlConfigurationsFactory constructor.
 	 */
 	private AbstractFactoryConfig()
@@ -64,6 +70,8 @@ public final class AbstractFactoryConfig
 		catch (ParseException exception)
 		{
 			success = false;
+			parseExcepMessage = exception.getMessage();
+			logger.error(parseExcepMessage, exception);
 		}
 
 	}
@@ -71,9 +79,9 @@ public final class AbstractFactoryConfig
 	/**
 	 * This method gets ControlConfigurationsFactory Instance.
 	 * @return ControlConfigurationsFactory instance.
-	 * @throws ParseException Parse Exception.
+	 * @throws BizLogicException BizLogic Exception.
 	 */
-	public static AbstractFactoryConfig getInstance() throws ParseException
+	public static AbstractFactoryConfig getInstance() throws BizLogicException
 	{
 		if (success)
 		{
@@ -81,7 +89,8 @@ public final class AbstractFactoryConfig
 		}
 		else
 		{
-			throw new ParseException(null, null, "");
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), null,
+					parseExcepMessage);
 		}
 	}
 
@@ -101,8 +110,7 @@ public final class AbstractFactoryConfig
 		catch (Exception ioe)
 		{
 			logger.error(ioe.getMessage(), ioe);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey, ioe, "");
+			throw new ParseException(ioe);
 		}
 	}
 
@@ -163,9 +171,9 @@ public final class AbstractFactoryConfig
 	 * This method gets BizLogic Factory Instance.
 	 * @param factoryName factory Name.
 	 * @return dataTypeInterface
-	 * @throws ParseException Parse Exception
+	 * @throws BizLogicException BizLogic Exception.
 	 */
-	public IFactory getBizLogicFactory(String factoryName) throws ParseException
+	public IFactory getBizLogicFactory(String factoryName) throws BizLogicException
 	{
 		try
 		{
@@ -177,8 +185,7 @@ public final class AbstractFactoryConfig
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey, exception, "");
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception, "");
 		}
 	}
 
@@ -186,9 +193,9 @@ public final class AbstractFactoryConfig
 	 * get Forward To Factory.
 	 * @param factoryName factory Name.
 	 * @return IForwordToFactory
-	 * @throws ParseException Parse Exception.
+	 * @throws BizLogicException BizLogicException.
 	 */
-	public IForwordToFactory getForwToFactory(String factoryName) throws ParseException
+	public IForwordToFactory getForwToFactory(String factoryName) throws BizLogicException
 	{
 		try
 		{
@@ -201,8 +208,7 @@ public final class AbstractFactoryConfig
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			ErrorKey errorKey = null;
-			throw new ParseException(errorKey, exception, "");
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception, "");
 		}
 
 	}

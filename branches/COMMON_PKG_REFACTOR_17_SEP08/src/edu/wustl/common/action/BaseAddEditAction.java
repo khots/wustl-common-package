@@ -26,8 +26,8 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.bizlogic.IQueryBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IFactory;
@@ -121,10 +121,10 @@ public abstract class BaseAddEditAction extends Action
 					"bizLogicFactory");
 			return (IQueryBizLogic) factory.getBizLogic(Constants.QUERY_INTERFACE_ID);
 		}
-		catch (ParseException parseException)
+		catch (BizLogicException exception)
 		{
 			logger.error("Failed to get QueryBizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get QueryBizLogic in base Add/Edit.");
 		}
 	}
@@ -142,10 +142,10 @@ public abstract class BaseAddEditAction extends Action
 					"bizLogicFactory");
 			return factory.getBizLogic(abstractForm.getFormId());
 		}
-		catch (ParseException parseException)
+		catch (BizLogicException exception)
 		{
 			logger.error("Failed to get BizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get BizLogic in base Add/Edit.");
 		}
 	}
@@ -193,10 +193,10 @@ public abstract class BaseAddEditAction extends Action
 					abstractDomain);
 			return forwardToHashMap;
 		}
-		catch (ParseException parseException)
+		catch (BizLogicException exception)
 		{
-			logger.error("Failed to generateforward hash map", parseException);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+			logger.error("Failed to generateforward hash map", exception);
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed at generateForwardToHashMap in base Add/Edit.");
 
 		}
@@ -221,10 +221,10 @@ public abstract class BaseAddEditAction extends Action
 					abstractForm, abstractDomain);
 			return forwardToPrintMap;
 		}
-		catch (ParseException parseException)
+		catch (BizLogicException exception)
 		{
-			logger.error("Failed to generateforward print map", parseException);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+			logger.error("Failed to generateforward print map", exception);
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed at generateForwardToPrintMap in base Add/Edit.");
 
 		}
