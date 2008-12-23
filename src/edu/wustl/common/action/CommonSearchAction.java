@@ -32,7 +32,6 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IFactory;
@@ -187,7 +186,7 @@ public class CommonSearchAction extends Action
 					"bizLogicFactory");
 			return factory.getBizLogic(abstractForm.getFormId());
 		}
-		catch (ParseException excp)
+		catch (BizLogicException excp)
 		{
 			logger.error(excp.getMessage(), excp);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), excp,

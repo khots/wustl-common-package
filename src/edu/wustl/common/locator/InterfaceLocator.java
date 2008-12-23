@@ -12,6 +12,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
@@ -52,15 +54,21 @@ public final class InterfaceLocator
 	 * Specifies interface Map.
 	 */
 	private Map<String,String> interfaceMap ;
+
 	/**
-	 * private instance will be created when the class is loaded.
+	 * Specifies parse Exception Message.
 	 */
-	private static InterfaceLocator locator = new InterfaceLocator();
+	private static String parseExcepMessage;
 
 	/**
 	 * Specifies success.
 	 */
 	private static boolean success = false;
+	/**
+	 * private instance will be created when the class is loaded.
+	 */
+	private static InterfaceLocator locator = new InterfaceLocator();
+
 	/**
 	 * Making this class singleton.
 	 */
@@ -73,15 +81,16 @@ public final class InterfaceLocator
 		}
 		catch (ParseException exception)
 		{
+			parseExcepMessage = exception.getMessage();
 			logger.error(exception.getMessage(), exception);
 		}
 	}
 	/**
 	 * returning the same instance every time.
 	 * @return InterfaceLocator
-	 * @throws ParseException ParseException.
+	 * @throws ApplicationException Application Exception.
 	 */
-	public static InterfaceLocator getInstance() throws ParseException
+	public static InterfaceLocator getInstance() throws ApplicationException
 	{
 		if (success)
 		{
@@ -89,7 +98,8 @@ public final class InterfaceLocator
 		}
 		else
 		{
-			throw new ParseException(null,null,"");
+			throw new ApplicationException(ErrorKey.getErrorKey("csm.getinstance.error"), null,
+					parseExcepMessage);
 		}
 	}
 	/**
@@ -114,15 +124,15 @@ public final class InterfaceLocator
 		}
 		catch (ParserConfigurationException exception)
 		{
-			throw new ParseException(null,exception,"");
+			throw new ParseException(exception);
 		}
 		catch (SAXException sException)
 		{
-			throw new ParseException(null,sException,"");
+			throw new ParseException(sException);
 		}
 		catch (IOException iOException)
 		{
-			throw new ParseException(null,iOException,"");
+			throw new ParseException(iOException);
 		}
 		NodeList interfacesList = doc.getElementsByTagName(ELE_INTERFACE);
 		populateMaps(interfacesList);

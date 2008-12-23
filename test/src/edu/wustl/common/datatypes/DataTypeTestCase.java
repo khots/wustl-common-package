@@ -7,7 +7,7 @@ package edu.wustl.common.datatypes;
 import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.CommonBaseTestCase;
-import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.exception.ApplicationException;
 
 /**
  * @author prashant_bandal
@@ -26,7 +26,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("12-12-2008", errors);
 			assertEquals(true, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -43,7 +43,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			assertEquals(false, value);
 			fail("Data type not valid.");
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			assertTrue("Data type not valid.", true);
 			e.printStackTrace();
@@ -59,7 +59,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("", errors);
 			assertEquals(true, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -75,7 +75,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("-1", errors);
 			assertEquals(true, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -91,7 +91,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("1000", errors);
 			assertEquals(false, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -106,7 +106,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			ActionErrors errors = new ActionErrors();
 			assertEquals(false,dbDataType.validate("100.111", errors));
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -121,7 +121,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			ActionErrors errors = new ActionErrors();
 			assertEquals(true,dbDataType.validate("qw", errors));
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("10", errors);
 			assertEquals(true, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -153,7 +153,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("qwer", errors);
 			assertEquals(false, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -169,7 +169,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("true", errors);
 			assertEquals(false, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -185,7 +185,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("qwe", errors);
 			assertEquals(false, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -201,7 +201,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			boolean value = dbDataType.validate("12-12-2009", errors);
 			assertEquals(true, value);
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -217,7 +217,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			ActionErrors errors = new ActionErrors();
 			assertEquals(false,dbDataType.validate("10.10", errors));
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();
@@ -233,7 +233,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			ActionErrors errors = new ActionErrors();
 			assertEquals(false,dbDataType.validate("10120", errors));
 		}
-		catch (ParseException e)
+		catch (ApplicationException e)
 		{
 			fail("data type not valid.");
 			e.printStackTrace();

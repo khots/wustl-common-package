@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import edu.wustl.common.datatypes.DataTypeConfigFactory;
 import edu.wustl.common.datatypes.IDBDataType;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.util.logger.Logger;
 
 public class MapDataParser
@@ -74,11 +75,11 @@ public class MapDataParser
 	 * @param type Class type of class.
 	 * @return object that refers to the value passed as parameters.
 	 * @throws ParseException parsing exception.
+	 * @throws ApplicationException ApplicationException
 	 * @throws IOException I/O exception.
-	 * @throws edu.wustl.common.exception.ParseException ParseException.
 	 */
-	private Object toObject(String str, Class type) throws ParseException, IOException,
-			edu.wustl.common.exception.ParseException
+	private Object toObject(String str, Class type) throws ApplicationException, ParseException,
+			IOException
 	{
 		String dataType = type.getSimpleName().toLowerCase();
 		IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getDataType(dataType);

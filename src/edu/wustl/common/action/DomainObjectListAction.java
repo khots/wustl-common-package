@@ -24,8 +24,8 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IFactory;
@@ -132,10 +132,10 @@ public class DomainObjectListAction extends SecureAction
 						.getFormId()), "activityStatus", "Pending");
 			}
 		}
-		catch (ParseException parseException)
+		catch (BizLogicException exception)
 		{
 			logger.error("Failed to get BizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), parseException,
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get BizLogic in base Add/Edit.");
 		}
 		return list;

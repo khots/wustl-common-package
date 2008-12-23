@@ -29,7 +29,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import edu.wustl.common.beans.NameValueBean;
-import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -832,8 +831,7 @@ public final class Utility
 			catch (Exception ioe)
 			{
 				logger.error(ioe.getMessage(), ioe);
-				ErrorKey errorKey = null;
-				throw new edu.wustl.common.exception.ParseException(errorKey, ioe, "");
+				throw new edu.wustl.common.exception.ParseException(ioe);
 			}
 			Element root = doc.getDocumentElement();
 			NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
