@@ -1,6 +1,5 @@
 package edu.wustl.dao;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -485,6 +484,43 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		// TODO Auto-generated method stub
 
+	}
+	public void closeCleanConnection() throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void closeCleanSession() throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public Connection getCleanConnection() throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void executeAuditSql(String sql, SessionDataBean sessionData, String comments)
+			throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public int getColumnCount(int columnCount, boolean getSublistOfResult)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	public Object getPrimitiveOperationProcessor()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public String getSQLForLikeOperator(String attributeName, String value)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	//////////////////////////////////
 	/**
