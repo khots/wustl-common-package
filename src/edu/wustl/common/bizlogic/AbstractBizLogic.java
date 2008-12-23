@@ -635,7 +635,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			if (exception == null)
 			{
-				errMsg = null;
+				ErrorKey errorKey=ErrorKey.getErrorKey("biz.formatex.error");
+				throw new ApplicationException(errorKey,null,"exception is null.");
 			}
 			String roottableName = null;
 			// Get ExceptionFormatter
