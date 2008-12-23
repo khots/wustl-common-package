@@ -30,6 +30,7 @@ import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
@@ -39,7 +40,6 @@ import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.condition.EqualClause;
 import edu.wustl.dao.condition.INClause;
-import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
@@ -216,7 +216,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		List<Object> list = null;
 		DAO dao = null;
 		try
@@ -249,7 +250,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		List<Object> list = null;
 		try
@@ -317,7 +319,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		List<Object> list = null;
 		try
@@ -346,7 +349,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName, String[] selectColumnName) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		List<Object> list = null;
 		try
@@ -377,7 +381,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieve(String sourceObjectName, Long identifier) throws BizLogicException
 	{
 
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		Object object = null;
 		try
@@ -1011,8 +1016,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws BizLogicException
 	{
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		String columnName=Constants.SYSTEM_IDENTIFIER;
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		DAO dao=null;
 		Object attribute = null;
 		try
@@ -1140,15 +1146,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List executeQuery(String query) throws BizLogicException
 	{
 		List returner = null;
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
-		IConnectionManager connectionManager =null;
 		Session session = null;
 		try
 		{
 			dao = daofactory.getDAO();
-			connectionManager = dao.getConnectionManager();
-			session = connectionManager.getCleanSession();
+			session = dao.getCleanSession();
 			Query hibernateQuery = session.createQuery(query);
 			returner = hibernateQuery.list();
 		}
