@@ -150,7 +150,7 @@ public class ApplicationException extends Exception
 	protected final void setErrorMsg(String errorValParam)
 	{
 		this.errorMsg = errorValParam;
-		if (ApplicationException.ERR_MSG_VALUES_SEPARATOR.contains(errorValParam))
+		if (errorValParam.contains(ApplicationException.ERR_MSG_VALUES_SEPARATOR))
 		{
 			this.errorMsg = TextConstants.EMPTY_STRING;
 			setMsgValues(errorValParam);
