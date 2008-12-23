@@ -112,7 +112,7 @@ public class AuditManager
 		catch (Exception ex)
 		{
 			logger.error(ex.getMessage(), ex);
-			throw new AuditException();
+			throw new AuditException(ex,"while comparing audit objects");
 		}
 	}
 
