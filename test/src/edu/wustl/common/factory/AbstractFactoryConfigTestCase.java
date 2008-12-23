@@ -1,7 +1,7 @@
 package edu.wustl.common.factory;
 
 import edu.wustl.common.CommonBaseTestCase;
-import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -20,7 +20,7 @@ public class AbstractFactoryConfigTestCase extends CommonBaseTestCase
 			"bizLogicFactory");
 			assertEquals(true, factory instanceof MyBizLogicFactory);
 		}
-		catch (ParseException exception)
+		catch (ApplicationException exception)
 		{
 			fail("Didn't get Factory classes.");
 			logger.debug("Didn't get Factory classes.",exception);
