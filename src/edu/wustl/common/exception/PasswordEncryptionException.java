@@ -31,7 +31,6 @@ public class PasswordEncryptionException extends Exception
 	public PasswordEncryptionException(String message)
 	{
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -40,7 +39,6 @@ public class PasswordEncryptionException extends Exception
 	public PasswordEncryptionException(Throwable cause)
 	{
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -50,7 +48,6 @@ public class PasswordEncryptionException extends Exception
 	public PasswordEncryptionException(String message, Throwable cause)
 	{
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

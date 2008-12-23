@@ -25,7 +25,6 @@ public class ParseException extends ApplicationException
 	public ParseException(ErrorKey errorKey, Throwable throwable, String msgValues)
 	{
 		super(errorKey, throwable, msgValues);
-		// TODO Auto-generated constructor stub
 	}
 
 }
