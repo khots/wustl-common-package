@@ -1,7 +1,9 @@
 package edu.wustl.common.util;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import edu.wustl.common.CommonBaseTestCase;
 
@@ -105,6 +107,52 @@ public class UtilityTestCases extends CommonBaseTestCase
 		{
 			exception.printStackTrace();
 			assertFalse("Not able to check is null object.", true);
+		}
+	}
+	public void testParseAttributeName()
+	{
+		try
+		{
+			String methodName = "getName";
+			assertEquals("name", Utility.parseAttributeName(methodName));
+		}
+		catch(Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get attribute name.", true);
+		}
+	}
+	public void testAddElement()
+	{
+		try
+		{
+			Object[] array = new Object[1];
+			array[0]= "asd";
+			String obj ="object";
+			assertNotNull(Utility.addElement(array, obj));
+		}
+		catch(Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get attribute name.", true);
+		}
+	}
+
+	public void testRemoveNull()
+	{
+		try
+		{
+			List<String> list = new ArrayList<String>();
+			list.add("1");
+			list.add(null);
+			list.add("2");
+			List newList = Utility.removeNull(list);
+			assertEquals("Removed null object.",list.size()-1, newList.size());
+		}
+		catch(Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get attribute name.", true);
 		}
 	}
 }
