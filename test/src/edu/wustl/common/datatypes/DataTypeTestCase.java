@@ -6,8 +6,6 @@ package edu.wustl.common.datatypes;
 
 import org.apache.struts.action.ActionErrors;
 
-import com.mysql.jdbc.Blob;
-
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.exception.ParseException;
 
