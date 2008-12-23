@@ -397,14 +397,12 @@ public class Validator
 					Pattern.CASE_INSENSITIVE);
 			Matcher mat = pattern.matcher(checkDate);
 			result = mat.matches();
-			dtCh = CommonServiceLocator.getInstance().getDatePattern();
 			// check for  / separator
 			if (!result)
 			{
 				pattern = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}", Pattern.CASE_INSENSITIVE);
 				mat = pattern.matcher(checkDate);
 				result = mat.matches();
-				dtCh = CommonServiceLocator.getInstance().getDateSeparatorSlash();
 			}
 		}
 		catch (Exception exp)
@@ -414,11 +412,6 @@ public class Validator
 		}
 		return result;
 	}
-
-	/**
-	 * specify date separator.
-	 */
-	private static String dtCh = CommonServiceLocator.getInstance().getDateSeparator();
 
 	/**
 	 * specify second in a min.
@@ -437,10 +430,6 @@ public class Validator
 	 */
 	private static final int ONE_THOUSAND = 1000;
 
-	/**
-	 * specify 1000 number.
-	 */
-	private static final String YEAR = "yyyy";
 	/**
 	 * To check date value.
 	 * @param dtStr check date value
