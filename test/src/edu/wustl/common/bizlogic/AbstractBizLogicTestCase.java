@@ -241,8 +241,9 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	 *  public final void setPrivilege(String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation)
+			This test case is commented because corresponding method is commented.
 	 */
-	public void testSetPrivilege()
+	/*public void testSetPrivilege()
 	{
 		try
 		{
@@ -260,15 +261,16 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			assertTrue("Negative test case: Thrown BizLogicException during update.", true);
 			logger.fatal(exception.getMessage(),exception);
 		}
-	}
+	}*/
 
 	/**
 	 *  Negative test case for
 	 *  public final void setPrivilege(String privilegeName, Class objectType,
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation)
+			This test case is commented because corresponding method is commented.
 	 */
-	public void testFailSetPrivilege()
+	/*public void testFailSetPrivilege()
 	{
 		try
 		{
@@ -286,7 +288,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			assertTrue("Negative test case: Thrown BizLogicException during SetPrivilege.", true);
 			logger.fatal(exception.getMessage(),exception);
 		}
-	}
+	}*/
 
 	/**
 	 *  Positive test case for
