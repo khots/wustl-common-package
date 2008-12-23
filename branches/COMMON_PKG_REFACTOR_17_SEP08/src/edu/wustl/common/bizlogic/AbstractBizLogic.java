@@ -920,7 +920,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		logger.debug(logMessage);
 		ErrorKey errorKey=ErrorKey.getErrorKey(key);
-		return  new BizLogicException(errorKey,exception, "AbstractBizLogic");
+		return  new BizLogicException(errorKey,exception, logMessage);
 	}
 
 
