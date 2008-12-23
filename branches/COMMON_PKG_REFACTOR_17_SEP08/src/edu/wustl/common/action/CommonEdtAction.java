@@ -25,7 +25,6 @@ import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
-import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
@@ -183,8 +182,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		{
 			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 			DAO dao = daofactory.getDAO();
-			IConnectionManager connectionManager = dao.getConnectionManager();
-			return connectionManager.getCleanSession();
+			return dao.getCleanSession();
 		}
 		catch (DAOException exception)
 		{
