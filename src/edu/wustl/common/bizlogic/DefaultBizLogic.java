@@ -1200,13 +1200,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param assignToUser assign To User
 	 * @param assignOperation Operation
 	 * @throws BizLogicException Generic BizLogic Exception
+	 *  commented this method because this is not in use and its implementation was catissue specific.
 	 */
-	protected void setPrivilege(DAO dao, String privilegeName,
+/*	protected void setPrivilege(DAO dao, String privilegeName,
 			Class objectType, Long[] objectIds, Long userId, String roleId,
 			boolean assignToUser, boolean assignOperation)
 			throws BizLogicException
 	{
 		// TODO Auto-generated method stub
-	}
+	}*/
 
 }
