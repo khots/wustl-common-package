@@ -7,7 +7,7 @@ package edu.wustl.common.exception;
 /**
  * @author kapil_kaveeshwar
  */
-public class AssignDataException extends Exception
+public class AssignDataException extends ApplicationException
 {
 
 	/**
@@ -16,11 +16,15 @@ public class AssignDataException extends Exception
 	private static final long serialVersionUID = -3191673172998892548L;
 
 	/**
-	 * Constructor.
+	 * The Only public constructor to restrict creating object without
+	 * initializing mandatory members.
+	 * @param errorKey The object which will represent the root cause of the error.
+	 * @param throwable root exception, if any, which caused this error.
+	 * @param msgValues custom message, additional information.
 	 */
-	public AssignDataException()
+	public AssignDataException(ErrorKey errorKey, Throwable throwable, String msgValues)
 	{
-
+		super(errorKey, throwable, msgValues);
 	}
 
 	/**
@@ -51,15 +55,6 @@ public class AssignDataException extends Exception
 		/**Added by amit_doshi to fix the bug related to exception chaining
 		 * code reviewer :- abhijit_naik
 		 */
-		super(message, wrapException);
-	}
-
-	/**
-	 *
-	 * @param args arguments
-	 */
-	public static void main(String[] args)
-	{
-
+		super(ErrorKey.getErrorKey("errors.item"), wrapException, message);
 	}
 }
