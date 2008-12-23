@@ -10,6 +10,7 @@
 
 package edu.wustl.common.bizlogic;
 
+import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,11 +36,11 @@ import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TitliSearchConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
-import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
@@ -208,7 +209,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 **/
 	public void delete(Object obj) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
@@ -243,7 +245,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void insert(Object obj, SessionDataBean sessionDataBean,boolean isInsertOnly)
 	throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		try
 		{
@@ -304,7 +307,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			SessionDataBean sessionDataBean, boolean isInsertOnly)
 			throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
@@ -448,7 +452,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean, boolean isUpdateOnly)
 	throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		try
 		{
@@ -588,7 +593,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
 			boolean assignToUser, boolean assignOperation) throws BizLogicException
 	{
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		try
 		{
@@ -634,9 +640,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 			String roottableName = null;
 			// Get ExceptionFormatter
 			ExceptionFormatter exFormatter = ExceptionFormatterFactory.getFormatter(exception);
-			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+			String appName=CommonServiceLocator.getInstance().getAppName();
+			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 			DAO dao = daofactory.getDAO();
-			IConnectionManager connectionManager = dao.getConnectionManager();
+			Connection connection = dao.getCleanConnection();
 			// call for Formating Message
 			if (exFormatter == null)
 			{
@@ -646,8 +653,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				roottableName = HibernateMetaData.getRootTableName(obj.getClass());
 				tableName = HibernateMetaData.getTableName(obj.getClass());
-				Object[] arguments = {roottableName,
-						connectionManager.currentSession().connection(),tableName};
+				Object[] arguments = {roottableName,connection,tableName};
 				errMsg = exFormatter.formatMessage(exception, arguments);
 			}
 		}
@@ -671,34 +677,23 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		try
 		{
-			TitliInterface titli = Titli.getInstance();
-			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0];
-
 			Properties prop = new Properties();
 			prop.load(Utility.getCurrClassLoader().getResourceAsStream("titli.properties"));
 			String className=prop.getProperty("titliObjectMetadataImplementor");
-
 			ObjectMetadataInterface objectMetadataInterface =
 				(ObjectMetadataInterface)Class.forName(className).newInstance();
 			String tableName = objectMetadataInterface.getTableName(obj);
 			if(!tableName.equalsIgnoreCase(""))
 			{
 				String objId = objectMetadataInterface.getUniqueIdentifier(obj);
-				Map<Name, String> uniqueKey = new HashMap<Name, String>();
-				uniqueKey.put(new Name(Constants.IDENTIFIER), objId);
 				String mainTableName = TitliTableMapper.getInstance().returnMainTable(tableName);
 				if(mainTableName != null)
 				{
 					tableName = mainTableName;
 				}
-
-				RecordIdentifier recordIdentifier =
-						new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
-
-				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
 				if(operation!=null)
 				{
-					performOperation(operation, recordIdentifier, indexRefresher);
+					performOperation(operation,tableName,objId);
 				}
 			}
 		}
@@ -712,13 +707,21 @@ public abstract class AbstractBizLogic implements IBizLogic
 	/**
 	 * This method perform insert,update or delete operation.
 	 * @param operation type of operation.
-	 * @param recordIdentifier object of IndexRefresherInterface.
-	 * @param indexRefresher object of IndexRefresherInterface.
+	 * @param tableName Table Name
+	 * @param objId Object Id
 	 * @throws TitliException throws this exception if operation unsuccessful.
 	 */
-	private void performOperation(String operation, RecordIdentifier recordIdentifier,
-			IndexRefresherInterface indexRefresher) throws TitliException
+	private void performOperation(String operation,String tableName,String objId) throws TitliException
 	{
+		Map<Name, String> uniqueKey = new HashMap<Name, String>();
+		uniqueKey.put(new Name(Constants.IDENTIFIER), objId);
+		TitliInterface titli = Titli.getInstance();
+		Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0];
+		RecordIdentifier recordIdentifier =
+				new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
+
+		IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
+
 		if (operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION))
 		{
 			indexRefresher.insert(recordIdentifier);
@@ -747,7 +750,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		//long startTime = System.currentTimeMillis();
 		boolean isSuccess = false;
 
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao=null;
 		try
 		{
@@ -801,7 +805,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			IValueObject uiForm) throws BizLogicException
 	{
 		//long startTime = System.currentTimeMillis();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
+		String appName=CommonServiceLocator.getInstance().getAppName();
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao =null;
 		AbstractDomainObject abstractDomain = null;
 		try
