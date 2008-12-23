@@ -15,6 +15,12 @@ public class AuditException extends ApplicationException
 	 */
 	private static final long serialVersionUID = 5720766957546246226L;
 
+	/**
+	 * The Only public constructor to restrict creating object without
+	 * initializing mandatory members.
+	 * @param throwable root exception, if any, which caused this error.
+	 * @param msgValues custom message, additional information.
+	 */
 	public AuditException(Throwable throwable, String msgValues)
 	{
 		super(ErrorKey.getErrorKey("error.audit.fail"),throwable,msgValues);
