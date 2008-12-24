@@ -14,8 +14,8 @@ public class UtilityTestCases extends CommonBaseTestCase
 	{
 		try
 		{
-		String dateStr="01/30/2008";
-		String expectedPattern="MM/dd/yyyy";
+		String dateStr="01-02-2008";
+		String expectedPattern="dd-MM-yyyy";
 		String datPattern=Utility.datePattern(dateStr);
 		assertEquals("Date is not in formate:"+expectedPattern, expectedPattern, datPattern);
 		}
