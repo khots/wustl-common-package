@@ -71,7 +71,8 @@ public final class DataTypeConfigFactory
 		}
 		catch (ParseException exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			parseExcepMessage = exception.getMessage();
+			logger.error(parseExcepMessage, exception);
 		}
 
 	}
@@ -182,7 +183,7 @@ public final class DataTypeConfigFactory
 		{
 			logger.error(exception.getMessage(), exception);
 			throw new ApplicationException(ErrorKey.getErrorKey("datatype.parse.error"), exception,
-					exception.getMessage());
+					"");
 		}
 	}
 }
