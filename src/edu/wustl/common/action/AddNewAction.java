@@ -49,7 +49,7 @@ public class AddNewAction extends Action
 	 * @exception Exception Generic exception
 	 * */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception
+			HttpServletRequest request, HttpServletResponse response)
 	{
 		ActionForward actionForward;
 		try

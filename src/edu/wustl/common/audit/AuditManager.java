@@ -4,6 +4,7 @@
 
 package edu.wustl.common.audit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
@@ -226,26 +227,43 @@ public class AuditManager
 		if (obj != null)
 		{
 			Object val;
-			try
-			{
-				val = Utility.getValueFor(obj, method);
-				if (val instanceof Auditable)
+				try
 				{
-					Auditable auditable = (Auditable) val;
-					value = auditable.getId();
+					val = Utility.getValueFor(obj, method);
+					value = getObjectValue(value, val);
 				}
-				else if (isVariable(val))
+				catch (IllegalAccessException ex)
 				{
-					value = val;
+					logger.error(ex.getMessage(), ex);
+					throw new AuditException(ex, "while comparing audit objects");
 				}
-			}
-			catch (Exception ex)
-			{
-				logger.error(ex.getMessage(), ex);
-				throw new AuditException(ex, "while comparing audit objects");
-			}
+				catch (InvocationTargetException iTException)
+				{
+					logger.error(iTException.getMessage(), iTException);
+					throw new AuditException(iTException, "while comparing audit objects");
+				}
 		}
 		return value;
+	}
+
+	/**
+	 * @param value object.
+	 * @param val method object
+	 * @return value
+	 */
+	private Object getObjectValue(Object value, Object val)
+	{
+		Object reqValue = value;
+		if (val instanceof Auditable)
+		{
+			Auditable auditable = (Auditable) val;
+			reqValue = auditable.getId();
+		}
+		else if (isVariable(val))
+		{
+			reqValue = val;
+		}
+		return reqValue;
 	}
 
 	/**
