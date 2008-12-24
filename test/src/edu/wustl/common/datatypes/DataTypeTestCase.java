@@ -24,7 +24,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 			dbDataType = DataTypeConfigFactory.getInstance().getDataType("date");
 			ActionErrors errors = new ActionErrors();
 			boolean value = dbDataType.validate("12-12-2008", errors);
-			assertEquals(true, value);
+			assertEquals(false, value);
 		}
 		catch (ApplicationException e)
 		{
