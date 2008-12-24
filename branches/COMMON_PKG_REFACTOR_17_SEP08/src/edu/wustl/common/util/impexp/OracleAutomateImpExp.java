@@ -134,9 +134,10 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	/**
 	 * This method will insert the data to database.
 	 * @param fileName File Name
-	 * @throws Exception generic exception
+	 * @throws IOException IO Exception.
+	 * @throws InterruptedException InterruptedException.
 	 */
-	private void importDataOracle(String fileName) throws Exception
+	private void importDataOracle(String fileName) throws IOException, InterruptedException
 	{
 		StringBuffer cmd = new StringBuffer("sqlldr ").append(getDbUtility().getDbUserName())
 								.append('/').append(getDbUtility().getDbPassword())
