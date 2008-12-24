@@ -723,15 +723,15 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
 
-		if (operation.equalsIgnoreCase(TitliSearchConstants.TITLI_INSERT_OPERATION))
+		if (TitliSearchConstants.TITLI_INSERT_OPERATION.equalsIgnoreCase(operation))
 		{
 			indexRefresher.insert(recordIdentifier);
 		}
-		else if(operation.equalsIgnoreCase(TitliSearchConstants.TITLI_UPDATE_OPERATION))
+		else if(TitliSearchConstants.TITLI_UPDATE_OPERATION.equalsIgnoreCase(operation))
 		{
 			indexRefresher.update(recordIdentifier);
 		}
-		else if(operation.equalsIgnoreCase(TitliSearchConstants.TITLI_DELETE_OPERATION))
+		else if(TitliSearchConstants.TITLI_DELETE_OPERATION.equalsIgnoreCase(operation))
 		{
 			indexRefresher.delete(recordIdentifier);
 		}
