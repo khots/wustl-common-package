@@ -385,9 +385,8 @@ public final class Utility
 	 * This method parse Attribute Name.
 	 * @param methodName method Name to be parse.
 	 * @return attribute Name.
-	 * @throws Exception Exception
 	 */
-	public static String parseAttributeName(String methodName) throws Exception
+	public static String parseAttributeName(String methodName)
 	{
 		StringBuffer attributeName = new StringBuffer();
 		int index = methodName.indexOf("get");
