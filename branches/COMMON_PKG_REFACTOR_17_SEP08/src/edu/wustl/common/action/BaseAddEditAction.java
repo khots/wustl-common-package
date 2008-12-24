@@ -10,7 +10,7 @@
 
 package edu.wustl.common.action;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -180,16 +180,16 @@ public abstract class BaseAddEditAction extends Action
 	 * @return	HashMap of data required to be forwarded
 	 * @throws ApplicationException Application Exception.
 	 */
-	protected HashMap generateForwardToHashMap(AbstractActionForm abstractForm,
+	protected Map generateForwardToHashMap(AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain) throws ApplicationException
 	{
 		try
 		{
-			HashMap forwardToHashMap;
+			Map forwardToHashMap;
 			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory(
 					"forwardToFactory");
 			AbstractForwardToProcessor forwardToProcessor = factory.getForwardToProcessor();
-			forwardToHashMap = (HashMap) forwardToProcessor.populateForwardToData(abstractForm,
+			forwardToHashMap = (Map) forwardToProcessor.populateForwardToData(abstractForm,
 					abstractDomain);
 			return forwardToHashMap;
 		}
@@ -209,7 +209,7 @@ public abstract class BaseAddEditAction extends Action
 	 * @return	HashMap of data required to be forwarded
 	 * @throws ApplicationException Application Exception
 	 */
-	protected HashMap generateForwardToPrintMap(AbstractActionForm abstractForm,
+	protected Map generateForwardToPrintMap(AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain) throws ApplicationException
 	{
 		try
@@ -217,7 +217,7 @@ public abstract class BaseAddEditAction extends Action
 			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory(
 					"forwardToFactory");
 			AbstractForwardToProcessor forwardToProcessor = factory.getForwardToPrintProcessor();
-			HashMap forwardToPrintMap = (HashMap) forwardToProcessor.populateForwardToData(
+			Map forwardToPrintMap = (Map) forwardToProcessor.populateForwardToData(
 					abstractForm, abstractDomain);
 			return forwardToPrintMap;
 		}
