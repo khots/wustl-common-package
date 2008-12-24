@@ -12,27 +12,27 @@ public class QuerySessionData
 	/**
 	 *  The SQL for the query for which user is navigating results.
 	 */
-	String sql;
+	private String sql;
 	/**
 	 * Query Result Object Data Map.
 	 */
-	Map queryResultObjectDataMap;
+	private Map queryResultObjectDataMap;
 	/**
 	 * specify Secure Execute.
 	 */
-	boolean isSecureExecute;
+	private boolean isSecureExecute;
 	/**
 	 * specify Condition On Identified Field.
 	 */
-	boolean hasConditionOnIdentifiedField;
+	private boolean hasConditionOnIdentifiedField;
 	/**
 	 * specify records Per Page.
 	 */
-	int recordsPerPage;
+	private int recordsPerPage;
 	/**
 	 * specify total Number Of Records.
 	 */
-	int totalNumberOfRecords;
+	private int totalNumberOfRecords;
 
 	/**
 	 * @return the hasConditionOnIdentifiedField

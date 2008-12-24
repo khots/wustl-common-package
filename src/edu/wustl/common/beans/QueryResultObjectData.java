@@ -41,7 +41,7 @@ public class QueryResultObjectData
 	/**
 	 * Specify IdentifiedDataColumnIds.
 	 */
-	private Vector IdentifiedDataColumnIds = new Vector();
+	private Vector identifiedDataColumnIds = new Vector();
 
 	/**
 	 * Constructor.
@@ -191,7 +191,7 @@ public class QueryResultObjectData
 	 */
 	public Vector getIdentifiedDataColumnIds()
 	{
-		return IdentifiedDataColumnIds;
+		return this.identifiedDataColumnIds;
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class QueryResultObjectData
 	 */
 	public void setIdentifiedDataColumnIds(Vector identifiedDataColumnIds)
 	{
-		IdentifiedDataColumnIds = identifiedDataColumnIds;
+		this.identifiedDataColumnIds = identifiedDataColumnIds;
 	}
 
 	/**
@@ -208,6 +208,6 @@ public class QueryResultObjectData
 	 */
 	public void addIdentifiedDataColumnId(Integer columnId)
 	{
-		this.IdentifiedDataColumnIds.add(columnId);
+		this.identifiedDataColumnIds.add(columnId);
 	}
 }
