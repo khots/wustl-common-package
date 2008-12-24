@@ -11,6 +11,7 @@ import edu.wustl.common.datatypes.DataTypeTestCase;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
 import edu.wustl.common.util.UtilityTestCases;
+import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
 import junit.framework.Test;
@@ -45,6 +46,7 @@ public class TestAll
 		suite.addTestSuite(DataTypeTestCase.class);
 		suite.addTestSuite(AbstractFactoryConfigTestCase.class);
 		suite.addTestSuite(CommonServiceLocatorTestCase.class);
+		suite.addTestSuite(CSMGroupLocatorTestCase.class);
 		return suite;
 	}
 }
