@@ -169,16 +169,14 @@ public final class AbstractFactoryConfig
 
 	/**
 	 * This method gets BizLogic Factory Instance.
-	 * @param factoryName factory Name.
 	 * @return dataTypeInterface
 	 * @throws BizLogicException BizLogic Exception.
 	 */
-	public IFactory getBizLogicFactory(String factoryName) throws BizLogicException
+	public IFactory getBizLogicFactory() throws BizLogicException
 	{
 		try
 		{
-			FactoryConfigObject config = factoryConfigurationMap.get(factoryName);
-			String className = config.getFactoryClassName();
+			String className = getFactClassName("bizLogicFactory");
 			Class<IFactory> factoryClass = (Class<IFactory>) Class.forName(className);
 			return factoryClass.newInstance();
 		}
@@ -190,17 +188,26 @@ public final class AbstractFactoryConfig
 	}
 
 	/**
-	 * get Forward To Factory.
+	 * This method gets factory class name.
 	 * @param factoryName factory Name.
+	 * @return class Name.
+	 */
+	private String getFactClassName(String factoryName)
+	{
+		FactoryConfigObject config = factoryConfigurationMap.get(factoryName);
+		return config.getFactoryClassName();
+	}
+
+	/**
+	 * get Forward To Factory.
 	 * @return IForwordToFactory
 	 * @throws BizLogicException BizLogicException.
 	 */
-	public IForwordToFactory getForwToFactory(String factoryName) throws BizLogicException
+	public IForwordToFactory getForwToFactory() throws BizLogicException
 	{
 		try
 		{
-			FactoryConfigObject config = factoryConfigurationMap.get(factoryName);
-			String className = config.getFactoryClassName();
+			String className = getFactClassName("forwardToFactory");
 			Class<IForwordToFactory> factoryClass = (Class<IForwordToFactory>) Class
 					.forName(className);
 			return factoryClass.newInstance();

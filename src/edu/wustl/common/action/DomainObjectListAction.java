@@ -110,8 +110,7 @@ public class DomainObjectListAction extends SecureAction
 		List list;
 		try
 		{
-			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
-					"bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
 			IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
 			AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
 					.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
