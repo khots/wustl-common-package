@@ -5,6 +5,7 @@ package edu.wustl.common;
  * Main class to run junit test cases.
  */
 
+import edu.wustl.common.audit.AuditManagerTestCase;
 import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
 import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.datatypes.DataTypeTestCase;
@@ -47,6 +48,7 @@ public class TestAll
 		suite.addTestSuite(AbstractFactoryConfigTestCase.class);
 		suite.addTestSuite(CommonServiceLocatorTestCase.class);
 		suite.addTestSuite(CSMGroupLocatorTestCase.class);
+		suite.addTestSuite(AuditManagerTestCase.class);
 		return suite;
 	}
 }
