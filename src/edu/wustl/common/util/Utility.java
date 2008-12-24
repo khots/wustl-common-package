@@ -114,18 +114,18 @@ public final class Utility
 	{
 		String datePattern = "";
 		List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
-		datePatternList.add(new SimpleDateFormat("dd-MM-yyyy",CommonServiceLocator
-				.getInstance().getDefaultLocale()));
-		datePatternList.add(new SimpleDateFormat("dd/MM/yyyy",CommonServiceLocator
-				.getInstance().getDefaultLocale()));
-		datePatternList.add(new SimpleDateFormat("MM-dd-yyyy",CommonServiceLocator
-				.getInstance().getDefaultLocale()));
-		datePatternList.add(new SimpleDateFormat("MM/dd/yyyy",CommonServiceLocator
-				.getInstance().getDefaultLocale()));
-		datePatternList.add(new SimpleDateFormat("yyyy-MM-dd",CommonServiceLocator
-				.getInstance().getDefaultLocale()));
-		datePatternList.add(new SimpleDateFormat("yyyy/MM/dd",CommonServiceLocator
-				.getInstance().getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("MM-dd-yyyy", CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("MM/dd/yyyy", CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("yyyy-MM-dd", CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
+		datePatternList.add(new SimpleDateFormat("yyyy/MM/dd", CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
 		Date date = null;
 		String matchingPattern = null;
 		for (SimpleDateFormat dtPattern : datePatternList)
@@ -175,9 +175,12 @@ public final class Utility
 	 * @param obj Object
 	 * @param attrName attribute Name.
 	 * @return Object.
-	 * @throws Exception Exception
+	 * @throws InvocationTargetException InvocationTargetException
+	 * @throws IllegalAccessException IllegalAccessException
+	 * @throws NoSuchMethodException NoSuchMethodException
 	 */
-	public static Object getValueFor(Object obj, String attrName) throws Exception
+	public static Object getValueFor(Object obj, String attrName) throws IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException
 	{
 		//Create the getter method of attribute
 		String methodName = Utility.createAccessorMethodName(attrName, false);
@@ -199,10 +202,13 @@ public final class Utility
 	 * @param attrName attribute Name.
 	 * @param attrValue attribute Value.
 	 * @return Object.
-	 * @throws Exception Exception.
+	 * @throws IllegalAccessException Illegal Access Exception
+	 * @throws InstantiationException Instantiation Exception
+	 * @throws InvocationTargetException Invocation Target Exception
 	 */
 	public static Object setValueFor(Object obj, String attrName, Object attrValue)
-			throws Exception
+			throws InstantiationException, IllegalAccessException, InvocationTargetException
+
 	{
 
 		//create the setter method for the attribute.
@@ -225,9 +231,8 @@ public final class Utility
 	 * @param objClass Class.
 	 * @param methodName the method Name
 	 * @return Method
-	 * @throws Exception Exception
 	 */
-	private static Method findMethod(Class objClass, String methodName) throws Exception
+	private static Method findMethod(Class objClass, String methodName)
 	{
 		Method[] methods = objClass.getMethods();
 		Method method = null;
@@ -475,8 +480,8 @@ public final class Utility
 	 */
 	public static boolean isColumnNameContainsElements(String columnName)
 	{
-		String colName = columnName.toLowerCase(CommonServiceLocator
-				.getInstance().getDefaultLocale()).trim();
+		String colName = columnName.toLowerCase(
+				CommonServiceLocator.getInstance().getDefaultLocale()).trim();
 		return colName.startsWith(ELEMENTS) && colName.endsWith(")");
 	}
 
@@ -501,7 +506,7 @@ public final class Utility
 		String dateStr = TextConstants.EMPTY_STRING;
 		if (date != null)
 		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern,CommonServiceLocator
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, CommonServiceLocator
 					.getInstance().getDefaultLocale());
 			dateStr = dateFormat.format(date);
 		}
@@ -652,8 +657,8 @@ public final class Utility
 		}
 		else
 		{
-			retStr = new StringBuffer(str.toLowerCase(CommonServiceLocator
-					.getInstance().getDefaultLocale()));
+			retStr = new StringBuffer(str.toLowerCase(CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
 			retStr.setCharAt(0, Character.toUpperCase(str.charAt(0)));
 		}
 		return retStr.toString();
@@ -774,7 +779,7 @@ public final class Utility
 		Calendar calendar;
 		try
 		{
-			SimpleDateFormat dateformat = new SimpleDateFormat(pattern,CommonServiceLocator
+			SimpleDateFormat dateformat = new SimpleDateFormat(pattern, CommonServiceLocator
 					.getInstance().getDefaultLocale());
 			Date givenDate = dateformat.parse(date);
 			calendar = Calendar.getInstance();
