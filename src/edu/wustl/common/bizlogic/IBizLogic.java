@@ -220,7 +220,7 @@ public interface IBizLogic
 	 * @param displayNameFields display Name Fields
 	 * @param valueField value Field
 	 * @param whereColumnName An array of field names.
-	 * @param whereColumnCondition The comparision condition for the field values.
+	 * @param whereColumnCondition The comparison condition for the field values.
 	 * @param whereColumnValue An array of field values.
 	 * @param joinCondition The join condition.
 	 * @param separatorBetweenFields separator Between Fields
@@ -256,45 +256,6 @@ public interface IBizLogic
 	 */
 	List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
 			Long [] objIDArr) throws BizLogicException;
-
-	/**
-	 * sets Privilege.
-	 * @param daoType dao Type
-	 * @param privilegeName privilege Name
-	 * @param objectType objec tType
-	 * @param objectIds object Ids
-	 * @param userId user Id
-	 * @param sessionDataBean session specific Data
-	 * @param roleId role Id.
-	 * @param assignToUser assign To User.
-	 * @param assignOperation Operation
-	 * @throws BizLogicException BizLogic Exception
-	 * @deprecated This method uses daoType argument which is not required anymore,please use method
-	 * setPrivilege(String privilegeName, Class objectType, Long[] objectIds,Long userId,
-	 * SessionDataBean sessionDataBean, String roleId, boolean assignToUser,boolean assignOperation)
-	 *  throws SMException, BizLogicException;
-	 *   commented this method because this is not in use and its implementation was catissue specific.
-	 */
-	/*void setPrivilege(int daoType, String privilegeName, Class objectType, Long[] objectIds,
-			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException;*/
-
-	/**
-	 * sets Privilege.
-	 * @param privilegeName privilege Name
-	 * @param objectType objec tType
-	 * @param objectIds object Ids
-	 * @param userId user Id
-	 * @param sessionDataBean session specific Data
-	 * @param roleId role Id.
-	 * @param assignToUser assign To User.
-	 * @param assignOperation Operation
-	 * @throws BizLogicException BizLogic Exception
-	 *  commented this method because this is not in use and its implementation was catissue specific.
-	 */
-	/*void setPrivilege(String privilegeName, Class objectType, Long[] objectIds,
-			Long userId, SessionDataBean sessionDataBean, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException;*/
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
