@@ -46,7 +46,6 @@ public class AddNewAction extends Action
 	 * @param request	HttpServletRequest
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
-	 * @exception Exception Generic exception
 	 * */
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
