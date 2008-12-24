@@ -171,23 +171,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	protected abstract boolean validate(Object obj, DAO dao, String operation) throws BizLogicException;
 
 	/**
-	 * This method set privilege to the user.
-	 * @param dao The DAO object
-	 * @param privilegeName privilege Name
-	 * @param objectType object Type
-	 * @param objectIds object Ids
-	 * @param userId user Id
-	 * @param roleId role Id
-	 * @param assignToUser assign To User
-	 * @param assignOperation Operation
-	 * @throws BizLogicException Generic BizLogic Exception
-	 *  commented this method because this is not in use and its implementation was catissue specific.
-	 */
-	/*protected abstract void setPrivilege(DAO dao, String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
-			boolean assignOperation) throws BizLogicException;*/
-
-	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
 	 * @param daoType dao Type
@@ -551,74 +534,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		update(currentObj, null,null, true);
 	}
 
-	/**
-	 * This method set privilege to user.
-	 * @param daoType dao Type
-	 * @param privilegeName privilege Name
-	 * @param objectType object Type
-	 * @param objectIds object Ids
-	 * @param userId user Id
-	 * @param sessionDataBean session specific Data
-	 * @param roleId role Id
-	 * @param assignToUser assign To User
-	 * @param assignOperation Operation
-	 * @throws BizLogicException BizLogic Exception
-	 * @deprecated This method uses daoType argument which is not required anymore,please use method
-	 * setPrivilege(String privilegeName, Class objectType,	Long[] objectIds, Long userId,
-	 * SessionDataBean sessionDataBean, String roleId,boolean assignToUser, boolean assignOperation)
-	 *  commented this method because this is not in use and its implementation was catissue specific.
-	 */
-/*	public final void setPrivilege(int daoType, String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
-			boolean assignToUser, boolean assignOperation) throws BizLogicException
-	{
-		setPrivilege(privilegeName, objectType, objectIds, userId, sessionDataBean, roleId,
-				assignToUser, assignOperation);
-	}*/
-
-	/**
-	 * This method set privilege to user.
-	 * @param privilegeName privilege Name
-	 * @param objectType object Type
-	 * @param objectIds object Ids
-	 * @param userId user Id
-	 * @param sessionDataBean session specific Data
-	 * @param roleId role Id
-	 * @param assignToUser assign To User
-	 * @param assignOperation Operation
-	 * @throws BizLogicException BizLogic Exception
-	 *  commented this method because this is not in use and its implementation was catissue specific.
-	 */
-	/*public final void setPrivilege(String privilegeName, Class objectType,
-			Long[] objectIds, Long userId, SessionDataBean sessionDataBean, String roleId,
-			boolean assignToUser, boolean assignOperation) throws BizLogicException
-	{
-		String appName=CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao=null;
-		try
-		{
-			dao = daofactory.getDAO();
-			logger.debug(" privilegeName:" + privilegeName + " objectType:" + objectType
-					+ " objectIds:" + edu.wustl.common.util.Utility.getArrayString(objectIds)
-					+ " userId:" + userId + " roleId:" + roleId
-					+ " assignToUser:" + assignToUser);
-			dao.openSession(sessionDataBean);
-			setPrivilege(dao, privilegeName, objectType, objectIds, userId, roleId, assignToUser,
-					assignOperation);
-			dao.commit();
-		}
-		catch (ApplicationException exception)
-		{
-			rollback(dao);
-			throw getBizLogicException(exception, "biz.setpriv.error"
-					,"Exception in setPrivilege method");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
-	}*/
 
 	/**
 	 * This method formats Exception.
