@@ -117,8 +117,7 @@ public abstract class BaseAddEditAction extends Action
 
 		try
 		{
-			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
-					"bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
 			return (IQueryBizLogic) factory.getBizLogic(Constants.QUERY_INTERFACE_ID);
 		}
 		catch (BizLogicException exception)
@@ -138,8 +137,7 @@ public abstract class BaseAddEditAction extends Action
 	{
 		try
 		{
-			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
-					"bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
 			return factory.getBizLogic(abstractForm.getFormId());
 		}
 		catch (BizLogicException exception)
@@ -186,8 +184,7 @@ public abstract class BaseAddEditAction extends Action
 		try
 		{
 			Map forwardToHashMap;
-			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory(
-					"forwardToFactory");
+			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory();
 			AbstractForwardToProcessor forwardToProcessor = factory.getForwardToProcessor();
 			forwardToHashMap = (Map) forwardToProcessor.populateForwardToData(abstractForm,
 					abstractDomain);
@@ -214,8 +211,7 @@ public abstract class BaseAddEditAction extends Action
 	{
 		try
 		{
-			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory(
-					"forwardToFactory");
+			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory();
 			AbstractForwardToProcessor forwardToProcessor = factory.getForwardToPrintProcessor();
 			Map forwardToPrintMap = (Map) forwardToProcessor.populateForwardToData(
 					abstractForm, abstractDomain);

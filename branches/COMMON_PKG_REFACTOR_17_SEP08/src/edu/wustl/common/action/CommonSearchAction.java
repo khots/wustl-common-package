@@ -182,8 +182,7 @@ public class CommonSearchAction extends Action
 	{
 		try
 		{
-			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
-					"bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
 			return factory.getBizLogic(abstractForm.getFormId());
 		}
 		catch (BizLogicException excp)
