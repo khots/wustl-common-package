@@ -533,9 +533,9 @@ public class DateTimeComponent extends TagSupport
 
 	/**
 	 * @param args arguments.
-	 * @throws Exception generic exception.
+	 * @throws IOException Generic IO exception
 	 */
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args) throws IOException
 	{
 		DateTimeComponent obj = new DateTimeComponent();
 		obj.name = "mddate";
