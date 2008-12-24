@@ -16,6 +16,7 @@ import java.io.Serializable;
 import org.apache.struts.action.ActionForm;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.factory.AbstractActionFormFactory;
 import edu.wustl.common.factory.MasterFactory;
 
@@ -53,9 +54,9 @@ public class HTTPWrapperObject implements Serializable
 	 * constructor.
 	 * @param domainObject Object
 	 * @param operation operation
-	 * @throws Exception Exception
+	 * @throws ApplicationException Application Exception
 	 */
-	public HTTPWrapperObject(Object domainObject, String operation) throws Exception
+	public HTTPWrapperObject(Object domainObject, String operation) throws ApplicationException
 	{
 		//Gautam: Changes done for common package.
 		AbstractActionFormFactory actionFormFactory = (AbstractActionFormFactory) MasterFactory

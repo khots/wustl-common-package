@@ -11,6 +11,7 @@
 package edu.wustl.common.factory;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
+import edu.wustl.common.exception.ApplicationException;
 
 /**
  * This is an abstract class for the ActionFormFactory class.
@@ -26,8 +27,8 @@ public abstract class AbstractActionFormFactory
 	 * @param operation The operation to be performed.
 	 * @return the form bean corresponding to the domain object passed
 	 * and the operation to be performed.
-	 * @throws Exception Exception
+	 * @throws ApplicationException Application Exception.
 	 */
 	public abstract AbstractActionForm getFormBean(Object domainObject, String operation)
-			throws Exception;
+			throws ApplicationException;
 }
