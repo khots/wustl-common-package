@@ -16,8 +16,8 @@ import edu.wustl.common.util.global.TextConstants;
 /**
  * @author chetan_bh
  *
- * A Utility class to generate javascript code for constructing
- * javascript hashtable datastructure from Java Map datastructures.
+ * A Utility class to generate java-script code for constructing
+ * java-script hash-table data structure from Java Map data-structures.
  *
  * Assumes that the input is a Map and all keys for outer and inner
  * Maps are strings, and values are either Map or List.
