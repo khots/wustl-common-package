@@ -94,26 +94,20 @@ public class AuditManager
 		{
 			return;
 		}
-		try
-		{
-			//An auidt event will contain many logs.
-			AuditEventLog auditEventLog = new AuditEventLog();
 
-			//Set System identifier if the current object.
-			auditEventLog.setObjectIdentifier(currentObj.getId());
+		//An auidt event will contain many logs.
+		AuditEventLog auditEventLog = new AuditEventLog();
 
-			//Set the table name of the current class.
-			auditEventLog.setObjectName(HibernateMetaData.getTableName(currentObj.getClass()));
-			auditEventLog.setEventType(eventType);
+		//Set System identifier if the current object.
+		auditEventLog.setObjectIdentifier(currentObj.getId());
 
-			//Class of the object being compared.
-			compareClassOfObject(currentObj, previousObj, auditEventLog);
-		}
-		catch (Exception ex)
-		{
-			logger.error(ex.getMessage(), ex);
-			throw new AuditException(ex,"while comparing audit objects");
-		}
+		//Set the table name of the current class.
+		auditEventLog.setObjectName(HibernateMetaData.getTableName(currentObj.getClass()));
+		auditEventLog.setEventType(eventType);
+
+		//Class of the object being compared.
+		compareClassOfObject(currentObj, previousObj, auditEventLog);
+
 	}
 
 	/**
@@ -121,10 +115,10 @@ public class AuditManager
 	 * @param currentObj current Object
 	 * @param previousObj previous Object
 	 * @param auditEventLog audit Event Log
-	 * @throws Exception Exception
+	 * @throws AuditException Audit Exception.
 	 */
 	private void compareClassOfObject(Auditable currentObj, Auditable previousObj,
-			AuditEventLog auditEventLog) throws Exception
+			AuditEventLog auditEventLog) throws AuditException
 	{
 		//Class of the object being compared
 		Class currentObjClass = currentObj.getClass();
@@ -155,10 +149,10 @@ public class AuditManager
 	 * @param previousObj previous Object
 	 * @param currentObjClass current Object Class
 	 * @return audit Event Details Collection.
-	 * @throws Exception Exception
+	 * @throws AuditException Audit Exception.
 	 */
 	private Set<AuditEventDetails> processMethods(Auditable currentObj, Auditable previousObj,
-			Class currentObjClass) throws Exception
+			Class currentObjClass) throws AuditException
 	{
 		//Retrieve all the methods defined in the class.
 		Method[] methods = currentObjClass.getMethods();
@@ -187,10 +181,11 @@ public class AuditManager
 	 * @param currentObj instance of current object
 	 * @param previousObj instance of previous object.
 	 * @return AuditEventDetails.
-	 * @throws Exception Exception
+	 * @throws AuditException Audit Exception.
 	 * */
 	private AuditEventDetails processField(Method method, Object currentObj, Object previousObj)
-			throws Exception
+			throws AuditException
+
 	{
 		//Get the old value of the attribute from previousObject
 		Object prevVal = getValue(previousObj, method);
@@ -223,23 +218,31 @@ public class AuditManager
 	 * @param obj Object for which method should be invoked
 	 * @param method This is the method for which we have to find out the return value
 	 * @return Object return value
-	 * @throws Exception Exception
+	 * @throws AuditException Audit Exception.
 	 */
-	private Object getValue(Object obj, Method method) throws Exception
+	private Object getValue(Object obj, Method method) throws AuditException
 	{
 		Object value = null;
 		if (obj != null)
 		{
-			Object val = Utility.getValueFor(obj, method);
-
-			if (val instanceof Auditable)
+			Object val;
+			try
 			{
-				Auditable auditable = (Auditable) val;
-				value = auditable.getId();
+				val = Utility.getValueFor(obj, method);
+				if (val instanceof Auditable)
+				{
+					Auditable auditable = (Auditable) val;
+					value = auditable.getId();
+				}
+				else if (isVariable(val))
+				{
+					value = val;
+				}
 			}
-			else if (isVariable(val))
+			catch (Exception ex)
 			{
-				value = val;
+				logger.error(ex.getMessage(), ex);
+				throw new AuditException(ex, "while comparing audit objects");
 			}
 		}
 		return value;
@@ -331,15 +334,13 @@ public class AuditManager
 					.getAuditEventDetailsCollcetion().iterator();
 			while (auditEventDetailsIterator.hasNext())
 			{
-				AuditEventDetails auditEventDetails =
-					(AuditEventDetails) auditEventDetailsIterator
+				AuditEventDetails auditEventDetails = (AuditEventDetails) auditEventDetailsIterator
 						.next();
 				auditEventDetails.setAuditEventLog(auditEventLog);
 				dao.insert(auditEventDetails, null, false, false);
 			}
 		}
 		auditEvent = new AuditEvent();
-
 
 	}
 
