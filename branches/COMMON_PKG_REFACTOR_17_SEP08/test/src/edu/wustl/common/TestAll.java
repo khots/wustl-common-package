@@ -5,18 +5,18 @@ package edu.wustl.common;
  * Main class to run junit test cases.
  */
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import edu.wustl.common.audit.AuditManagerTestCase;
 import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
 import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.datatypes.DataTypeTestCase;
-import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
 import edu.wustl.common.util.UtilityTestCases;
+import edu.wustl.common.util.XMLPropertyHandlerTestCase;
 import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 
 /**
@@ -49,6 +49,7 @@ public class TestAll
 		suite.addTestSuite(CommonServiceLocatorTestCase.class);
 		suite.addTestSuite(CSMGroupLocatorTestCase.class);
 		suite.addTestSuite(AuditManagerTestCase.class);
+		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
 		return suite;
 	}
 }
