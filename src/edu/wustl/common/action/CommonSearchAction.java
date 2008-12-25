@@ -32,12 +32,10 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
-import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -120,9 +118,9 @@ public class CommonSearchAction extends Action
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		String target = Constants.FAILURE;
 
-		AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
-				.getFactory(ApplicationProperties.getValue("app.domainObjectFactory"));
-		String objName = absDomainObjFact.getDomainObjectName(abstractForm.getFormId());
+		IDomainObjectFactory iDomainObjFact = AbstractFactoryConfig.getInstance()
+		.getDomainObjectFactory();
+		String objName = iDomainObjFact.getDomainObjectName(abstractForm.getFormId());
 		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 				Constants.SESSION_DATA);
 		IBizLogic bizLogic = getBizLogicForEdit(abstractForm);

@@ -22,7 +22,7 @@ import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.factory.AbstractDomainObjectFactory;
+import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 
@@ -156,7 +156,7 @@ public class CommonAddAction extends BaseAddEditAction
 		try
 		{
 			AbstractDomainObject abstractDomain;
-			AbstractDomainObjectFactory abstractDomainObjectFactory = getAbstractDomainObjectFactory();
+			IDomainObjectFactory abstractDomainObjectFactory = getIDomainObjectFactory();
 			abstractDomain = abstractDomainObjectFactory.getDomainObject(abstractForm.getFormId(),
 					abstractForm);
 			IBizLogic bizLogic = getIBizLogic(abstractForm);

@@ -17,8 +17,8 @@ import org.apache.struts.action.ActionForm;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.factory.AbstractActionFormFactory;
-import edu.wustl.common.factory.MasterFactory;
+import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IDomainObjectFactory;
 
 /**
  * This class provides a wrapper object which constitutes
@@ -59,8 +59,8 @@ public class HTTPWrapperObject implements Serializable
 	public HTTPWrapperObject(Object domainObject, String operation) throws ApplicationException
 	{
 		//Gautam: Changes done for common package.
-		AbstractActionFormFactory actionFormFactory = (AbstractActionFormFactory) MasterFactory
-				.getFactory("edu.wustl.catissuecore.actionForm.ActionFormFactory");
+		IDomainObjectFactory actionFormFactory = AbstractFactoryConfig.getInstance()
+		.getDomainObjectFactory();
 		AbstractActionForm abstractForm = actionFormFactory.getFormBean(domainObject, operation);
 		formBean = abstractForm;
 

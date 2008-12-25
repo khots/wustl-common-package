@@ -28,13 +28,11 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.IForwordToFactory;
-import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.AbstractForwardToProcessor;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.global.Validator;
@@ -90,21 +88,33 @@ public abstract class BaseAddEditAction extends Action
 	 * get Object Name.
 	 * @param abstractForm AbstractActionForm
 	 * @return object name.
+	 * @throws ApplicationException ApplicationException
 	 */
-	public String getObjectName(AbstractActionForm abstractForm)
+	public String getObjectName(AbstractActionForm abstractForm) throws ApplicationException
 	{
 
-		AbstractDomainObjectFactory abstractDomainObjectFactory = getAbstractDomainObjectFactory();
-		return abstractDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
+		IDomainObjectFactory iDomainObjectFactory = getIDomainObjectFactory();
+		return iDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
 	}
 
 	/**
-	 * @return  the object of AbstractDomainObjectFactory
+	 * @return  the object of IDomainObjectFactory
+	 * @throws ApplicationException Application Exception.
 	 */
-	public AbstractDomainObjectFactory getAbstractDomainObjectFactory()
+	public IDomainObjectFactory getIDomainObjectFactory() throws ApplicationException
 	{
-		return (AbstractDomainObjectFactory) MasterFactory.getFactory(ApplicationProperties
-				.getValue("app.domainObjectFactory"));
+		try
+		{
+			IDomainObjectFactory factory = AbstractFactoryConfig.getInstance()
+					.getDomainObjectFactory();
+			return factory;
+		}
+		catch (BizLogicException exception)
+		{
+			logger.error("Failed to get QueryBizLogic object from BizLogic Factory");
+			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
+					"Failed to get DomainObjectFactory in base Add/Edit.");
+		}
 	}
 
 	/**
@@ -213,8 +223,8 @@ public abstract class BaseAddEditAction extends Action
 		{
 			IForwordToFactory factory = AbstractFactoryConfig.getInstance().getForwToFactory();
 			AbstractForwardToProcessor forwardToProcessor = factory.getForwardToPrintProcessor();
-			Map forwardToPrintMap = (Map) forwardToProcessor.populateForwardToData(
-					abstractForm, abstractDomain);
+			Map forwardToPrintMap = (Map) forwardToProcessor.populateForwardToData(abstractForm,
+					abstractDomain);
 			return forwardToPrintMap;
 		}
 		catch (BizLogicException exception)
