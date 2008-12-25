@@ -16,8 +16,7 @@ public class AbstractFactoryConfigTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory(
-			"bizLogicFactory");
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
 			assertEquals(true, factory instanceof MyBizLogicFactory);
 		}
 		catch (BizLogicException exception)
@@ -46,7 +45,7 @@ public class AbstractFactoryConfigTestCase extends CommonBaseTestCase
 		try
 		{
 			IForwordToFactory factory = AbstractFactoryConfig.getInstance()
-			.getForwToFactory("forwardToFactory");
+			.getForwToFactory();
 			assertEquals(true, factory instanceof MyBizLogicFactory);
 		}
 		catch (BizLogicException exception)
