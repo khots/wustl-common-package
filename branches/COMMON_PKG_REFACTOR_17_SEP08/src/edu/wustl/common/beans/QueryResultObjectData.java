@@ -7,7 +7,8 @@
 
 package edu.wustl.common.beans;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author aarti_sharma
@@ -29,19 +30,19 @@ public class QueryResultObjectData
 	/**
 	 * Specify dependentColumnIds.
 	 */
-	private Vector dependentColumnIds = new Vector();
+	private List dependentColumnIds;
 	/**
 	 * Specify dependentObjectAliases.
 	 */
-	private Vector dependentObjectAliases = new Vector();
+	private List dependentObjectAliases;
 	/**
 	 * Specify relatedQueryResultObjects.
 	 */
-	private Vector relatedQueryResultObjects = new Vector();
+	private List relatedQueryResultObjects;
 	/**
 	 * Specify IdentifiedDataColumnIds.
 	 */
-	private Vector identifiedDataColumnIds = new Vector();
+	private List<Integer> identifiedDataColumnIds;
 
 	/**
 	 * Constructor.
@@ -79,7 +80,7 @@ public class QueryResultObjectData
 	/**
 	 * @return Returns the dependentObjectAliases.
 	 */
-	public Vector getDependentObjectAliases()
+	public List getDependentObjectAliases()
 	{
 		return dependentObjectAliases;
 	}
@@ -87,7 +88,7 @@ public class QueryResultObjectData
 	/**
 	 * @param dependentObjectAliases The dependentObjectAliases to set.
 	 */
-	public void setDependentObjectAliases(Vector dependentObjectAliases)
+	public void setDependentObjectAliases(List dependentObjectAliases)
 	{
 		this.dependentObjectAliases = dependentObjectAliases;
 	}
@@ -111,7 +112,7 @@ public class QueryResultObjectData
 	/**
 	 * @return Returns the relatedColumnIds.
 	 */
-	public Vector getDependentColumnIds()
+	public List getDependentColumnIds()
 	{
 		return dependentColumnIds;
 	}
@@ -119,7 +120,7 @@ public class QueryResultObjectData
 	/**
 	 * @param dependentColumnIds The dependentColumnIds to set.
 	 */
-	public void setDependentColumnIds(Vector dependentColumnIds)
+	public void setDependentColumnIds(List dependentColumnIds)
 	{
 		this.dependentColumnIds = dependentColumnIds;
 	}
@@ -146,9 +147,9 @@ public class QueryResultObjectData
 	 * get Independent Object Aliases.
 	 * @return independent Object Aliases.
 	 */
-	public Vector getIndependentObjectAliases()
+	public List getIndependentObjectAliases()
 	{
-		Vector independentObjectAliases = new Vector();
+		List<String> independentObjectAliases = new ArrayList<String>();
 		independentObjectAliases.add(this.aliasName);
 		for (int i = 0; i < relatedQueryResultObjects.size(); i++)
 		{
@@ -162,9 +163,9 @@ public class QueryResultObjectData
 	 * This method gets Independent Query Objects.
 	 * @return independent Query Objects.
 	 */
-	public Vector getIndependentQueryObjects()
+	public List getIndependentQueryObjects()
 	{
-		Vector independentQueryObjects = new Vector();
+		List independentQueryObjects = new ArrayList();
 		independentQueryObjects.add(this);
 		independentQueryObjects.addAll(this.relatedQueryResultObjects);
 		return independentQueryObjects;
@@ -173,7 +174,7 @@ public class QueryResultObjectData
 	/**
 	 * @return Returns the relatedQueryResultObjects.
 	 */
-	public Vector getRelatedQueryResultObjects()
+	public List getRelatedQueryResultObjects()
 	{
 		return relatedQueryResultObjects;
 	}
@@ -181,7 +182,7 @@ public class QueryResultObjectData
 	/**
 	 * @param relatedQueryResultObjects The relatedQueryResultObjects to set.
 	 */
-	public void setRelatedQueryResultObjects(Vector relatedQueryResultObjects)
+	public void setRelatedQueryResultObjects(List relatedQueryResultObjects)
 	{
 		this.relatedQueryResultObjects = relatedQueryResultObjects;
 	}
@@ -189,7 +190,7 @@ public class QueryResultObjectData
 	/**
 	 * @return Returns the identifiedDataColumnIds.
 	 */
-	public Vector getIdentifiedDataColumnIds()
+	public List getIdentifiedDataColumnIds()
 	{
 		return this.identifiedDataColumnIds;
 	}
@@ -197,7 +198,7 @@ public class QueryResultObjectData
 	/**
 	 * @param identifiedDataColumnIds The identifiedDataColumnIds to set.
 	 */
-	public void setIdentifiedDataColumnIds(Vector identifiedDataColumnIds)
+	public void setIdentifiedDataColumnIds(List identifiedDataColumnIds)
 	{
 		this.identifiedDataColumnIds = identifiedDataColumnIds;
 	}
