@@ -4,7 +4,12 @@ import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.bizlogic.IActivityStatus;
 import edu.wustl.common.exception.AssignDataException;
 
-
+/**
+ * Mock class for test cases for AbstractFactoryConfig,
+ * used in AbstractFactoryConfigTestCase.
+ * @author ravi_kumar
+ *
+ */
 public class MyDomainObject extends AbstractDomainObject implements IActivityStatus
 {
 

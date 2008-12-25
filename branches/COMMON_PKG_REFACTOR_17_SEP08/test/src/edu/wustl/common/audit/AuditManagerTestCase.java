@@ -18,7 +18,11 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.util.HibernateMetaData;
 
-
+/**
+ * This test class is for test cases of methods in AuditManager class.
+ * @author ravi_kumar
+ *
+ */
 public class AuditManagerTestCase extends CommonBaseTestCase
 {
 	/**

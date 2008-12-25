@@ -10,6 +10,7 @@ import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.exception.ApplicationException;
 
 /**
+ * This is for test cases of all classes in datatypes package.
  * @author prashant_bandal
  *
  */
