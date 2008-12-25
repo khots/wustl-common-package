@@ -1,9 +1,12 @@
 package edu.wustl.common.actionForm;
 
 import edu.wustl.common.domain.AbstractDomainObject;
-import edu.wustl.dao.MyDAOImpl;
 
-
+/**
+ * This is mock test class used in AbstractBizLogic test cases.
+ * @author ravi_kumar
+ *
+ */
 public class MyActionForm extends AbstractActionForm
 {
 

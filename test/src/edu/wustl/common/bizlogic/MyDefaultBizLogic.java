@@ -10,7 +10,7 @@ import edu.wustl.dao.exception.DAOException;
 
 
 /**
- * Extending this class to 
+ * Mock test class for test cases of methods in Bizlogic. 
  * @author ravi_kumar
  *
  */

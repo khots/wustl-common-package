@@ -21,7 +21,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author ravi kumar
- * Test Suite for testing all Query Interface related classes.
+ * Test Suite for testing all Common package test classes.
  */
 public class TestAll
 {

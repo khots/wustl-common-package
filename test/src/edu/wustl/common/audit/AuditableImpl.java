@@ -1,7 +1,7 @@
 package edu.wustl.common.audit;
 
 /**
- * Mock class for AuditManagerTestCase.
+ * Mock class for test cases of methods in AuditManager (AuditManagerTestCase).
  * @author ravi_kumar
  *
  */
