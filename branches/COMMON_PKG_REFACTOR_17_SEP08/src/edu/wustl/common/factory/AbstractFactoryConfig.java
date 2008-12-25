@@ -220,4 +220,25 @@ public final class AbstractFactoryConfig
 
 	}
 
+	/**
+	 * get Domain Object Factory.
+	 * @return IDomainObjectFactory
+	 * @throws BizLogicException BizLogicException.
+	 */
+	public IDomainObjectFactory getDomainObjectFactory() throws BizLogicException
+	{
+		try
+		{
+			String className = getFactClassName("domainObjectFactory");
+			Class<IDomainObjectFactory> factoryClass = (Class<IDomainObjectFactory>) Class
+					.forName(className);
+			return factoryClass.newInstance();
+		}
+		catch (Exception exception)
+		{
+			logger.error(exception.getMessage(), exception);
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception, "");
+		}
+
+	}
 }

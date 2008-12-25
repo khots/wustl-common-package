@@ -26,10 +26,9 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.factory.AbstractDomainObjectFactory;
 import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
-import edu.wustl.common.factory.MasterFactory;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -112,8 +111,9 @@ public class DomainObjectListAction extends SecureAction
 		{
 			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
 			IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
-			AbstractDomainObjectFactory absDomainObjFact = (AbstractDomainObjectFactory) MasterFactory
-					.getFactory("edu.wustl.catissuecore.domain.DomainObjectFactory");
+
+			IDomainObjectFactory iDomainObjFact = AbstractFactoryConfig.getInstance()
+			.getDomainObjectFactory();
 			//If start page is to be shown retrieve the list from the database.
 
 			if (abstractForm.getFormId() == Constants.APPROVE_USER_FORM_ID)
@@ -121,13 +121,13 @@ public class DomainObjectListAction extends SecureAction
 				String[] whereColumnNames = {"activityStatus", "activityStatus"};
 				String[] whereColCond = {"=", "="};
 				String[] whereColumnValues = {"New", "Pending"};
-				list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
+				list = bizLogic.retrieve(iDomainObjFact.getDomainObjectName(abstractForm
 						.getFormId()), whereColumnNames, whereColCond, whereColumnValues,
 						Constants.OR_JOIN_CONDITION);
 			}
 			else
 			{
-				list = bizLogic.retrieve(absDomainObjFact.getDomainObjectName(abstractForm
+				list = bizLogic.retrieve(iDomainObjFact.getDomainObjectName(abstractForm
 						.getFormId()), "activityStatus", "Pending");
 			}
 		}
