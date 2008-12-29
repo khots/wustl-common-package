@@ -20,7 +20,16 @@ public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 	private Connection connection=null;
 
 	private Statement statement;
-	protected void loadScript() throws IOException, SQLException 
+	
+	public void runSQLFile(String fileName) throws SQLException, IOException
+	{
+		setScript(new File(fileName));		
+		setStatement(getConnection().createStatement());
+		loadScript();
+		execute();
+	}
+
+	private void loadScript() throws IOException, SQLException 
 	{
 		BufferedReader reader = new BufferedReader(new FileReader(script));
 		String line;
@@ -35,7 +44,7 @@ public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 			query.append(line);
 			if (queryEnds) 
 			{
-				System.out.println("query->"+query);
+				//System.out.println("query->"+query);
 				statement.addBatch(query.toString());
 				query.setLength(0);
 			}
@@ -49,7 +58,7 @@ public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 		return false;
 	}
 
-	public void execute() throws IOException, SQLException
+	private void execute() throws IOException, SQLException
 	{
 		statement.executeBatch();
 	}
