@@ -48,7 +48,7 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		{
 			ARGS[7]="export";
 			ARGS[8]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt";
-			ARGS[9]=System.getProperty("user.dir")+"/SQL/Common/test/";
+			ARGS[9]=System.getProperty("user.dir")+"/SQL/MySQL/";
 			AutomateImport.main(ARGS);
 			assertTrue("Metadata imported successfully.", true);
 		}
@@ -66,7 +66,7 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		setConnection(dbUtility.getConnection());
 		try
 		{
-			runSQLFile(System.getProperty("user.dir")+"/SQL/MySQL/testAutomateImpExpMysql.sql");
+			runSQLFile(System.getProperty("user.dir")+"/SQL/MySQL/testAutomateImpExp.sql");
 			runSQLFile(System.getProperty("user.dir")+"/SQL/Common/test/CDE_DummyData_Common.sql");
 		}
 		finally
