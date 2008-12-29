@@ -23,9 +23,9 @@ public class DatabaseUtility
 
 	static {
 		dbNameVsClassName= new HashMap<String,String>();
-		dbNameVsClassName.put("oracle", "edu.wustl.common.util.global.OracleAutomateImpExp");
-		dbNameVsClassName.put("mysql", "edu.wustl.common.util.global.MySqlAutomateImpExp");
-		dbNameVsClassName.put("mssql", "edu.wustl.common.util.global.MsSqlAutomateImpExp");
+		dbNameVsClassName.put("oracle", "edu.wustl.common.util.impexp.OracleAutomateImpExp");
+		dbNameVsClassName.put("mysql", "edu.wustl.common.util.impexp.MySqlAutomateImpExp");
+		dbNameVsClassName.put("mssql", "edu.wustl.common.util.impexp.MsSqlAutomateImpExp");
 		}
 	/**
 	 * The Name of the server for the database. For example : localhost
@@ -228,7 +228,9 @@ public class DatabaseUtility
 	 */
 	public Connection getConnection() throws SQLException, ClassNotFoundException,ApplicationException
 	{
-		return ((IAutomateImpExp)getAutomatImpExpObj()).getConnection();
+		IAutomateImpExp automateImpExp=(IAutomateImpExp)getAutomatImpExpObj();
+		automateImpExp.init(this);
+		return automateImpExp.getConnection();
 	}
 
 	/**
