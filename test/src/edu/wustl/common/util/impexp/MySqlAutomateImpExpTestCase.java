@@ -1,6 +1,5 @@
 package edu.wustl.common.util.impexp;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -67,22 +66,12 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		setConnection(dbUtility.getConnection());
 		try
 		{
-			runSQL(System.getProperty("user.dir")+"/SQL/MySQL/testAutomateImpExpMysql.sql");
-			runSQL(System.getProperty("user.dir")+"/SQL/Common/test/CDE_DummyData_Common.sql");
+			runSQLFile(System.getProperty("user.dir")+"/SQL/MySQL/testAutomateImpExpMysql.sql");
+			runSQLFile(System.getProperty("user.dir")+"/SQL/Common/test/CDE_DummyData_Common.sql");
 		}
 		finally
 		{
 			getConnection().close();
 		}
 	}
-	
-	public void runSQL(String fileName) throws SQLException, IOException
-	{
-		setScript(new File(fileName));		
-		setStatement(getConnection().createStatement());
-		loadScript();
-		execute();
-	}
-
-	
 }
