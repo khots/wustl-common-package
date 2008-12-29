@@ -100,45 +100,9 @@ public abstract class AbstractAutomateImpExp implements IAutomateImpExp
 	}
 
 	/**
-	 *  This is common export method for mysql and mssql server database.
-	 *  This method will export the data from database.
-	 * @param fileName File Name
-	 * @param tableName Table Name
-	 * @throws SQLException Generic SQL exception.
-	 * @throws ClassNotFoundException throws this exception if Driver class not found in class path.
-	 */
-	protected void exportForMySQLAndMsSql(String fileName, String tableName)
-								throws SQLException,ClassNotFoundException
-	{
-		Connection conn=null;
-		Statement stmt=null;
-		try
-		{
-			conn= getConnection();
-			File file = new File(fileName);
-			if (file.exists())
-			{
-				file.delete();
-			}
-			stmt = conn.createStatement
-			(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			StringBuffer query=new StringBuffer("SELECT * INTO OUTFILE '")
-			.append(fileName)
-			.append("' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' FROM ")
-			.append(tableName).append(";");
-			stmt.execute(query.toString());
-		}
-		finally
-		{
-			conn.close();
-			stmt.close();
-		}
-	}
-
-	/**
-	 * Thismethod closes databse connection.
+	 * This method closes database connection.
 	 * @param conn Connection object.
-	 * @throws ApplicationException Throws this exception if not able to close databse connection.
+	 * @throws ApplicationException Throws this exception if not able to close database connection.
 	 */
 	protected void closeConnection(Connection conn) throws ApplicationException
 	{
