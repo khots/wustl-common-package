@@ -1,5 +1,6 @@
 package edu.wustl.common.util.impexp;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -29,7 +30,7 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 			String dumpFilePath = getFilePath() + getTableNamesList().get(i) + ".csv";
 			try
 			{
-				exportForMySQLAndMsSql(dumpFilePath, getTableNamesList().get(i));
+				exportForMySQL(dumpFilePath, getTableNamesList().get(i));
 			}
 			catch (SQLException exception)
 			{
@@ -76,6 +77,42 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 			closeConnection(conn);
 		}
 
+	}
+	
+	/**
+	 *  This is common export method for mysql and mssql server database.
+	 *  This method will export the data from database.
+	 * @param fileName File Name
+	 * @param tableName Table Name
+	 * @throws SQLException Generic SQL exception.
+	 * @throws ClassNotFoundException throws this exception if Driver class not found in class path.
+	 */
+	protected void exportForMySQL(String fileName, String tableName)
+								throws SQLException,ClassNotFoundException
+	{
+		Connection conn=null;
+		Statement stmt=null;
+		try
+		{
+			conn= getConnection();
+			File file = new File(fileName);
+			if (file.exists())
+			{
+				file.delete();
+			}
+			stmt = conn.createStatement
+			(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			StringBuffer query=new StringBuffer("SELECT * INTO OUTFILE '")
+			.append(fileName)
+			.append("' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' FROM ")
+			.append(tableName).append(";");
+			stmt.execute(query.toString());
+		}
+		finally
+		{
+			conn.close();
+			stmt.close();
+		}
 	}
 	/**
 	 * Method to get database connection.
