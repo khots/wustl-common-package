@@ -120,8 +120,11 @@ public class HibernateMetaData
 
 	public static String getTableName(Class classObj)
 	{
-		
-		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
+		Table tbl=null;
+		if((cfg.getClassMapping(classObj.getName())) != null)
+		{
+			tbl = cfg.getClassMapping(classObj.getName()).getTable();
+		}
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
@@ -129,7 +132,11 @@ public class HibernateMetaData
 	}
 	public static String getRootTableName(Class classObj)
 	{
-		Table tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
+		Table tbl;
+		if(cfg.getClassMapping(classObj.getName())!=null)
+			tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
+		else
+			tbl = null;
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
