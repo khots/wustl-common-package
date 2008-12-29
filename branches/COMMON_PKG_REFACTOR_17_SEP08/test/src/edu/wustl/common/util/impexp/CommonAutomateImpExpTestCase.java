@@ -1,0 +1,116 @@
+package edu.wustl.common.util.impexp;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import edu.wustl.common.CommonBaseTestCase;
+
+
+public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
+{
+	public final static char QUERY_ENDS = ';';
+
+	private File script;
+
+	private Connection connection=null;
+
+	private Statement statement;
+	protected void loadScript() throws IOException, SQLException 
+	{
+		BufferedReader reader = new BufferedReader(new FileReader(script));
+		String line;
+		StringBuffer query = new StringBuffer();
+		boolean queryEnds = false;
+	
+		while ((line = reader.readLine()) != null)
+		{
+			if (isComment(line))
+				continue;
+			queryEnds = checkStatementEnds(line);
+			query.append(line);
+			if (queryEnds) 
+			{
+				System.out.println("query->"+query);
+				statement.addBatch(query.toString());
+				query.setLength(0);
+			}
+		}
+	}
+	
+	private boolean isComment(String line)
+	{
+		if ((line != null) && (line.length() > 0))
+			return (line.charAt(0) == '#');
+		return false;
+	}
+
+	public void execute() throws IOException, SQLException
+	{
+		statement.executeBatch();
+	}
+
+	private boolean checkStatementEnds(String s)
+	{
+		return (s.indexOf(QUERY_ENDS) != -1);
+	}
+
+	
+	/**
+	 * @return the script
+	 */
+	public File getScript()
+	{
+		return script;
+	}
+
+	
+	/**
+	 * @param script the script to set
+	 */
+	public void setScript(File script)
+	{
+		this.script = script;
+	}
+
+	
+	/**
+	 * @return the connection
+	 */
+	public Connection getConnection()
+	{
+		return connection;
+	}
+
+	
+	/**
+	 * @param con the connection to set
+	 */
+	public void setConnection(Connection connection)
+	{
+		this.connection = connection;
+	}
+
+	
+	/**
+	 * @return the statement
+	 */
+	public Statement getStatement()
+	{
+		return statement;
+	}
+
+	
+	/**
+	 * @param stat the statement to set
+	 */
+	public void setStatement(Statement statement)
+	{
+		this.statement = statement;
+	}
+	
+}
