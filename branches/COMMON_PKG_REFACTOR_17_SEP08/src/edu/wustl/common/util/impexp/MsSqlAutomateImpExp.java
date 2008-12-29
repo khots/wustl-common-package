@@ -27,20 +27,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 	 */
 	public void executeExport(String[] args) throws ApplicationException
 	{
-		try
-		{
-			for(int i = 0 ; i < getSize(); i++)
-			{
-				String dumpFilePath = getFilePath()+getTableNamesList().get(i)+".csv";
-				exportForMySQLAndMsSql(dumpFilePath,getTableNamesList().get(i));
-			}
-		}
-		catch(Exception exception)
-		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.mssqlexport.error");
-			throw new ApplicationException(errorKey,exception,"MsSqlAutomateImpExp");
-		}
-
+		//Export method for MSSQL is not implemented.
 	}
 
 	/**
