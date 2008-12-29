@@ -17,6 +17,7 @@ import edu.wustl.common.util.XMLPropertyHandlerTestCase;
 import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
+import edu.wustl.common.util.impexp.MySqlAutomateImpExpTestCase;
 
 
 /**
@@ -50,6 +51,7 @@ public class TestAll
 		suite.addTestSuite(CSMGroupLocatorTestCase.class);
 		suite.addTestSuite(AuditManagerTestCase.class);
 		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
+		suite.addTestSuite(MySqlAutomateImpExpTestCase.class);
 		return suite;
 	}
 }
