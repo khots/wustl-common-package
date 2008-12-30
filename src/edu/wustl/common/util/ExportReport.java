@@ -425,6 +425,6 @@ public class ExportReport
 		DAO dao = daofactory.getJDBCDAO();
 
 		dao.openSession(null);
-		return (List<Object>)dao.executeQuery(sql, null, false, null);
+		return (List<Object>)dao.executeQuery(sql);
 	}
 }
