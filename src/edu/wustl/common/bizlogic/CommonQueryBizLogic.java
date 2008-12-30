@@ -67,21 +67,20 @@ public class CommonQueryBizLogic
 	 * This method fires a query to insert auditing details into audit tables.
 	 * @param sqlQuery SQL query
 	 * @param sessionData sessiondata to get userId and ip address
+	 * @param comment Comment to be inserted in table
 	 * @throws DAOException Daoexception
 	 */
-	public void insertQuery(String sqlQuery, SessionDataBean sessionData) throws DAOException
+	public void auditQuery(String sqlQuery, SessionDataBean sessionData, String comment) throws DAOException
 	{
 		JDBCDAO jdbcDAO = null;
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
 		jdbcDAO = daofactory.getJDBCDAO();
 		try
 		{
-			//String sqlQuery1 = sqlQuery.replaceAll("'", "''");
+			String sqlQuery1 = sqlQuery.replaceAll("'", "''");
 			jdbcDAO.openSession(null);
-			//String comments = "QueryLog";
-			// commenting temporary to avoid compilation errors
-
-		//	jdbcDAO.executeAuditSql(sqlQuery1,sessionData,comments);
+			String comments = "QueryLog";
+			jdbcDAO.executeAuditSql(sqlQuery1,sessionData,comment);
 		}
 		finally
 		{
