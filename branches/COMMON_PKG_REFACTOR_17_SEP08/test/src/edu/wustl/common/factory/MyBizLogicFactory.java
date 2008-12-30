@@ -46,4 +46,10 @@ public class MyBizLogicFactory implements IFactory,IForwordToFactory,IDomainObje
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public IBizLogic getBizLogic(String className)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
