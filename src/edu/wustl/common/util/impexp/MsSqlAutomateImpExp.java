@@ -37,6 +37,7 @@ public class MsSqlAutomateImpExp extends AbstractAutomateImpExp
 	 */
 	public void executeImport(String[] args) throws ApplicationException
 	{
+		preImpExp(args);
 		Connection conn=null;
 		try
 		{
