@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.querydatabean.QueryDataBean;
@@ -20,6 +21,7 @@ import edu.wustl.common.util.QueryParams;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.sqlformatter.SQLFormatter;
 import edu.wustl.dao.util.DAOConstants;
 
 
@@ -236,12 +238,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		throwDaoException();
 	}
 
-	public void addAuditEventLogs(Collection<Object> auditEventDetailsCollection)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 	public Object loadCleanObj(String sourceObjectName, Long identifier) throws DAOException
 	{
 		// TODO Auto-generated method stub
@@ -287,8 +283,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		catch (Exception excp )
 		{
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,excp,"DAOFactory.java :"+
-					DAOConstants.DEFAULT_DAO_INSTANTIATION_ERROR);
+			throw new DAOException(errorKey,excp,"DAOFactory.java :");
 		}
 		return dao;
 	}
@@ -557,6 +552,61 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * This will store the default setting for DAO factory(true / false).
 	 */
 	private Boolean isDefaultDAOFactory;
+	public List executeQuery(String arg0) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void addAuditEventLogs(Collection<AuditEventLog> arg0)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public String getDataSource()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getDefaultConnMangrName()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getJdbcConnMangrName()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void setDataSource(String arg0)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void setDefaultConnMangrName(String arg0)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void setJdbcConnMangrName(String arg0)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public SQLFormatter getSQLFormatter(String arg0) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void insert(SQLFormatter arg0, String arg1, String arg2, int arg3) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void updateClob(String arg0, String arg1) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 	///////////////////////////////////
 }
