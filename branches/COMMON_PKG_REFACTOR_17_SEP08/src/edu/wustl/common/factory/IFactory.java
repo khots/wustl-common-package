@@ -18,4 +18,11 @@ public interface IFactory
 	 * @return IBizLogic.
 	 */
 	IBizLogic getBizLogic(int formId);
+
+	/**
+     * Returns DAO instance according to the fully qualified class name.
+     * @param className The name of the class.
+     * @return An DAO object.
+     */
+	IBizLogic getBizLogic(String className);
 }
