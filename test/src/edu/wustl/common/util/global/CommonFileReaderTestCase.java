@@ -13,4 +13,10 @@ public class CommonFileReaderTestCase extends CommonBaseTestCase
 		String data=new CommonFileReader().readData(fileName);
 		assertTrue(data.length()>0);
 	}
+
+	public void testFailReadData()
+	{
+		String data=new CommonFileReader().readData("fileName");
+		assertFalse(data.length()>0);
+	}
 }
