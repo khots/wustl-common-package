@@ -90,7 +90,7 @@ public class TitliSearchAction extends Action
 	 * @throws TitliException Titli Exception
 	 */
 	private ActionForward getActionForward(TitliSearchForm titliSearchForm,
-			SortedResultMapInterface sortedResultMap) throws TitliException
+			SortedResultMapInterface sortedResultMap) throws Exception
 	{
 		Name tableName = sortedResultMap.keySet().toArray(new Name[0])[0];
 		String label = TitliTableMapper.getInstance().getLabel(tableName);
