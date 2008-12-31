@@ -954,4 +954,24 @@ public final class Utility
 	{
 		return Thread.currentThread().getContextClassLoader();
 	}
+
+	/**
+	 * return the  actual class name.
+	 * @param name String
+	 * @return String
+	 */
+	public static String getActualClassName(String name)
+	{
+		String className = name;
+		if (className != null && !className.trim().equals(TextConstants.EMPTY_STRING))
+		{
+			String splitter = "\\.";
+			String[] arr = className.split(splitter);
+			if (arr != null && arr.length != 0)
+			{
+				className = arr[arr.length - Constants.ONE];
+			}
+		}
+		return className;
+	}
 }
