@@ -16,7 +16,7 @@ public class ApplicationException extends Exception
 	/**
 	 * Wrapped Exception.
 	 */
-	private Exception wrapException;
+	private transient Exception wrapException;
 	/**
 	 * The unique serial version UID.
 	 */
@@ -202,8 +202,7 @@ public class ApplicationException extends Exception
 		String [] valueArr;
 		if (msgValues == null)
 		{
-			valueArr =new String[1];
-			valueArr[0]=errorMsg;
+			valueArr =new String [] {errorMsg};
 		}
 		else
 		{
@@ -238,11 +237,4 @@ public class ApplicationException extends Exception
 		return wrapException;
 	}
 
-	/**
-	 * @param wrapException The wrapException to set.
-	 */
-	private void setWrapException(Exception wrapException)
-	{
-		this.wrapException = wrapException;
-	}
 }
