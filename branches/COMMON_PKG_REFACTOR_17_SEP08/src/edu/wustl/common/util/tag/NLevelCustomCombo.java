@@ -86,7 +86,7 @@ public class NLevelCustomCombo extends TagSupport
 	/**
 	 * A string value representing the td style class to use with all table divisions.
 	 */
-	private transient String tdStyleClass; // optional
+	protected String tdStyleClass; // optional
 
 	/**
 	 * A boolean value for getting combos vertically aligned.
