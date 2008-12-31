@@ -14,6 +14,8 @@ import edu.wustl.common.datatypes.DataTypeTestCase;
 import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
 import edu.wustl.common.util.UtilityTestCases;
 import edu.wustl.common.util.XMLPropertyHandlerTestCase;
+import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.global.ApplicationPropertiesTestCase;
 import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
@@ -54,6 +56,7 @@ public class TestAll
 		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
 		suite.addTestSuite(MySqlAutomateImpExpTestCase.class);
 		suite.addTestSuite(MsSqlAutomateImpExpTestCase.class);
+		suite.addTestSuite(ApplicationPropertiesTestCase.class);
 		return suite;
 	}
 }
