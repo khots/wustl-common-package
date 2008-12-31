@@ -65,26 +65,6 @@ public abstract class BaseAddEditAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException;
 
 	/**
-	 * return the  actual class name.
-	 * @param name String
-	 * @return String
-	 */
-	public String getActualClassName(String name)
-	{
-		String className = name;
-		if (className != null && !className.trim().equals(TextConstants.EMPTY_STRING))
-		{
-			String splitter = "\\.";
-			String[] arr = className.split(splitter);
-			if (arr != null && arr.length != 0)
-			{
-				className = arr[arr.length - Constants.ONE];
-			}
-		}
-		return className;
-	}
-
-	/**
 	 * get Object Name.
 	 * @param abstractForm AbstractActionForm
 	 * @return object name.
