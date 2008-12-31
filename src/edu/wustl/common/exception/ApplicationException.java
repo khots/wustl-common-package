@@ -103,13 +103,17 @@ public class ApplicationException extends Exception
 	public String getLogMessage()
 	{
 		StringBuffer logMsg = new StringBuffer(getFormattedMessage());
-		if (getErrorMsg().equals(TextConstants.EMPTY_STRING))
+		if (!TextConstants.EMPTY_STRING.equals(getErrorMsg()))
 		{
 			logMsg.append(" Error caused at- ").append(getErrorMsg());
 		}
 		if(getMessage()!=null)
 		{
-			logMsg.append("\n Root cause ").append(getMessage());
+			logMsg.append("\n Root cause: ").append(getMessage());
+		}
+		if(wrapException!=null)
+		{
+			logMsg.append("; ").append(wrapException.getMessage());
 		}
 		return logMsg.toString();
 	}
