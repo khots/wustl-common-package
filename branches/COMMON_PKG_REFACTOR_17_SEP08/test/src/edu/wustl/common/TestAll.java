@@ -12,6 +12,7 @@ import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
 import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.datatypes.DataTypeTestCase;
 import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
+import edu.wustl.common.util.ExportReportTestCase;
 import edu.wustl.common.util.UtilityTestCases;
 import edu.wustl.common.util.XMLPropertyHandlerTestCase;
 import edu.wustl.common.util.global.ApplicationProperties;
@@ -57,6 +58,7 @@ public class TestAll
 		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
 		suite.addTestSuite(MySqlAutomateImpExpTestCase.class);
 		suite.addTestSuite(MsSqlAutomateImpExpTestCase.class);
+		suite.addTestSuite(ExportReportTestCase.class);
 		suite.addTestSuite(ApplicationPropertiesTestCase.class);
 		suite.addTestSuite(CommonFileReaderTestCase.class);
 		return suite;
