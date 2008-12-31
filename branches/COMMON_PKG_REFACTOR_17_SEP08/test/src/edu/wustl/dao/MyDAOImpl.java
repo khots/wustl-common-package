@@ -295,8 +295,19 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	public JDBCDAO getJDBCDAO() throws DAOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		JDBCDAO dao = null;
+		try
+		{
+		   dao = (JDBCDAO)Class.forName(defaultDAOClassName).newInstance();
+		   dao.setConnectionManager(getConnectionManager());
+
+		}
+		catch (Exception excp )
+		{
+			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
+			throw new DAOException(errorKey,excp,"DAOFactory.java :");
+		}
+		return dao;
 	}
 
 	public String getJdbcDAOClassName()
@@ -553,9 +564,13 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	private Boolean isDefaultDAOFactory;
 	public List executeQuery(String arg0) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
+	{		
+		List<String> innerList= new ArrayList<String>();
+		innerList.add("Name");
+		innerList.add("Id");
+		List<List<String>> list= new ArrayList<List<String>>();
+		list.add(innerList);
+		return list;
 	}
 	public void addAuditEventLogs(Collection<AuditEventLog> arg0)
 	{
