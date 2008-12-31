@@ -14,7 +14,7 @@ import org.apache.struts.action.ActionMapping;
 
 import titli.model.Titli;
 import titli.model.TitliException;
-import edu.wustl.common.util.TitliTableMapper;
+import titli.model.util.TitliTableMapper;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
