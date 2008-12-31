@@ -13,8 +13,8 @@ import org.apache.struts.action.ActionMapping;
 import titli.controller.Name;
 import titli.controller.interfaces.ResultGroupInterface;
 import titli.controller.interfaces.SortedResultMapInterface;
-import edu.wustl.common.util.TitliResultGroup;
-import edu.wustl.common.util.TitliTableMapper;
+import titli.model.util.TitliResultGroup;
+import titli.model.util.TitliTableMapper;
 import edu.wustl.common.util.logger.Logger;
 
 /**
