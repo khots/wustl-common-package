@@ -11,12 +11,14 @@
 
 package edu.wustl.common.bizlogic;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -29,6 +31,8 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.querydatabean.QueryDataBean;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -37,12 +41,15 @@ import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;
+import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.condition.EqualClause;
 import edu.wustl.dao.condition.INClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.DAOConstants;
+import edu.wustl.dao.util.DatabaseConnectionParams;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -633,7 +640,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.disableRelatedObjects(tablename, colName, objIDArr);
+			disableRelatedObjects(dao,tablename, colName, objIDArr);
 		}
 		catch (DAOException exception)
 		{
@@ -714,7 +721,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
-		auditEventDetails.setElementName(Constants.ACTIVITY_STATUS_COLUMN);
+		auditEventDetails.setElementName(Status.ACTIVITY_STATUS.toString());
 		auditEventDetails.setCurrentValue(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 
 		auditEventDetailsCollection.add(auditEventDetails);
@@ -1173,6 +1180,55 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return returner;
 	}
+	
+	/**
+	 * @param tableName :
+	 * @param whereColumnName :
+	 * @param whereColumnValues :
+	 * @throws DAOException :
+	 */
+	public void disableRelatedObjects(DAO dao,String tableName, String whereColumnName,
+			Long[] whereColumnValues) throws DAOException
+	{
+		
+		try
+		{
+			
+			StringBuffer buff = new StringBuffer();
+			for (int i = 0; i < whereColumnValues.length; i++)
+			{
+				buff.append(whereColumnValues[i].longValue());
+				if ((i + 1) < whereColumnValues.length)
+				{
+					buff.append("  ,");
+				}
+			}
+			String sql = "UPDATE " + tableName + " SET ACTIVITY_STATUS = '"
+			+ Status.ACTIVITY_STATUS_DISABLED.toString() + "' WHERE "
+			+ whereColumnName + " IN ( "
+			+ buff.toString() + ")";
+			String appName=CommonServiceLocator.getInstance().getAppName();
+			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
+			JDBCDAO jdbcDAO = daoFactory.getJDBCDAO();
+			jdbcDAO.openSession(null);
+			jdbcDAO.executeQuery(sql, null,true,null);
+			jdbcDAO.commit();
+			jdbcDAO.closeSession();
+			
+		
+		}
+		catch (Exception dbex)
+		{
+			logger.error(dbex.getMessage(), dbex);
+			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
+			throw new DAOException(errorKey,dbex,"DefaultBizLogic.java :"+
+					DAOConstants.DISABLE_RELATED_OBJ);
+		}
+		
+	}
+
+	
+	
 
 	/**
 	 * Read Denied To be Checked.
