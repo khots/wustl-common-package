@@ -520,8 +520,12 @@ public final class Utility
 	 */
 	public static String toString(Object obj)
 	{
-		String retValue = TextConstants.EMPTY_STRING;
-		if (obj != null)
+		String retValue;
+		if (obj == null)
+		{
+			retValue = TextConstants.EMPTY_STRING;
+		}
+		else
 		{
 			retValue = obj.toString();
 		}
