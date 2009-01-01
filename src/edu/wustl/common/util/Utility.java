@@ -442,50 +442,6 @@ public final class Utility
 	}
 
 	/**
-	 * Constants that will appear in HQL for retreiving Attributes of the Collection data type.
-	 */
-	private static final String ELEMENTS = "elements";
-
-	/**
-	 * To Create the attribute name for HQL select part.
-	 * If the  selectColumnName is in format "elements(attributeName)" then it will return String
-	 * as *  "elments(className.AttributeName)"
-	 * else it will return String in format "className.AttributeName"
-	 * @param className The className
-	 * @param selectColumnName The select column name passed to form HQL. either in format
-	 *  "elements(attributeName)" or "AttributeName"
-	 * @return The Select column name for the HQL.
-	 */
-	public static String createAttributeNameForHQL(String className, String selectColumnName)
-	{
-		StringBuffer attribute = new StringBuffer();
-		// Check whether the select Column start with "elements" & ends with ")" or not
-		if (isColumnNameContainsElements(selectColumnName))
-		{
-			int startIndex = selectColumnName.indexOf('(') + 1;
-			attribute.append(selectColumnName.substring(0, startIndex)).append(className).append(
-					'.').append(selectColumnName.substring(startIndex));
-		}
-		else
-		{
-			attribute.append(className).append('.').append(selectColumnName);
-		}
-		return attribute.toString();
-	}
-
-	/**
-	 * Check whether the select Column start with "elements" & ends with ")" or not.
-	 * @param columnName The columnName
-	 * @return true if the select Column start with "elements" & ends with ")" or not
-	 */
-	public static boolean isColumnNameContainsElements(String columnName)
-	{
-		String colName = columnName.toLowerCase(
-				CommonServiceLocator.getInstance().getDefaultLocale()).trim();
-		return colName.startsWith(ELEMENTS) && colName.endsWith(")");
-	}
-
-	/**
 	 * Returns name of FormBean specified in struts-config.xml for passed Object of FormBean.
 	 * @param obj - FormBean object
 	 * @return String - name of FormBean object
