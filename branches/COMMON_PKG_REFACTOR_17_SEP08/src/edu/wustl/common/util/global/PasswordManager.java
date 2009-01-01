@@ -66,7 +66,7 @@ public final class PasswordManager
 	/**
 	 * Constant for FOUR.
 	 */
-	private static final int FOUR = 2;
+	private static final int FOUR = 4;
 	/**
 	 * Key used for password encryption.
 	 */
