@@ -1,10 +1,9 @@
 package edu.wustl.common;
 
-import java.io.IOException;
-
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.test.BaseTestCase;
 import edu.wustl.common.util.XMLPropertyHandler;
+import edu.wustl.common.util.global.HibernateProperties;
 import edu.wustl.common.util.logger.Logger;
 /**
  * This is common test class.
@@ -20,6 +19,7 @@ public class CommonBaseTestCase extends BaseTestCase
 		Logger.configureLogger(System.getProperty("user.dir"));
 		try
 		{
+			HibernateProperties.initBundle(System.getProperty("user.dir")+"/test/junitConf.properties");
 			XMLPropertyHandler.init(System.getProperty("app.propertiesFile"));
 			ErrorKey.init("-");
 		}
