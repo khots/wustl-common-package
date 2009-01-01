@@ -463,4 +463,71 @@ public class UtilityTestCases extends CommonBaseTestCase
 			exception.printStackTrace();
 		}
 	}
+	public void testGetMonth()
+	{
+		try
+		{
+			int month = Utility.getMonth("01-01-2009");
+			assertEquals(01, month);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get month.", true);
+			exception.printStackTrace();
+		}
+	}
+	public void testGetDay()
+	{
+		try
+		{
+			int day = Utility.getDay("01-01-2009");
+			assertEquals(01, day);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get month.", true);
+			exception.printStackTrace();
+		}
+	}
+	public void testGetYear()
+	{
+		try
+		{
+			int year = Utility.getYear("01-01-2009");
+			assertEquals(2009, year);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get year.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testGetDisplayLabelForUnderscore()
+	{
+		try
+		{
+			String objectName = Utility.getDisplayLabelForUnderscore("first_name");
+			assertEquals("First Name ", objectName);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get Display Label For Underscore.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testReplaceAll()
+	{
+		try
+		{
+			String objectName = Utility.replaceAll("first*name", "*", "_");
+			assertEquals("first_name", objectName);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to replace.", true);
+			exception.printStackTrace();
+		}
+	}
 }
