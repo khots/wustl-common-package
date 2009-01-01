@@ -15,12 +15,12 @@ import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
 import edu.wustl.common.util.ExportReportTestCase;
 import edu.wustl.common.util.UtilityTestCases;
 import edu.wustl.common.util.XMLPropertyHandlerTestCase;
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.ApplicationPropertiesTestCase;
 import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonFileReaderTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.HibernatePropertiesTestCase;
+import edu.wustl.common.util.global.PasswordManagerTestCase;
 import edu.wustl.common.util.global.SendEmailTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
 import edu.wustl.common.util.global.XMLParserUtilityTestCase;
@@ -67,6 +67,7 @@ public class TestAll
 		suite.addTestSuite(SendEmailTestCase.class);
 		suite.addTestSuite(HibernatePropertiesTestCase.class);
 		suite.addTestSuite(XMLParserUtilityTestCase.class);
+		suite.addTestSuite(PasswordManagerTestCase.class);
 		return suite;
 	}
 }
