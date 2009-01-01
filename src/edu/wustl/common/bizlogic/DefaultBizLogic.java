@@ -11,14 +11,12 @@
 
 package edu.wustl.common.bizlogic;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -32,7 +30,6 @@ import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.querydatabean.QueryDataBean;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -49,7 +46,6 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
-import edu.wustl.dao.util.DatabaseConnectionParams;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -1180,20 +1176,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return returner;
 	}
-	
+
 	/**
-	 * @param tableName :
-	 * @param whereColumnName :
-	 * @param whereColumnValues :
-	 * @throws DAOException :
+	 * @param dao DAO object
+	 * @param tableName : table Name
+	 * @param whereColumnName : column name in where clause.
+	 * @param whereColumnValues : value of column name in where clause.
+	 * @throws DAOException :Generic DAO exception.
 	 */
 	public void disableRelatedObjects(DAO dao,String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException
 	{
-		
 		try
 		{
-			
 			StringBuffer buff = new StringBuffer();
 			for (int i = 0; i < whereColumnValues.length; i++)
 			{
@@ -1214,8 +1209,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			jdbcDAO.executeQuery(sql, null,true,null);
 			jdbcDAO.commit();
 			jdbcDAO.closeSession();
-			
-		
 		}
 		catch (Exception dbex)
 		{
@@ -1224,11 +1217,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throw new DAOException(errorKey,dbex,"DefaultBizLogic.java :"+
 					DAOConstants.DISABLE_RELATED_OBJ);
 		}
-		
 	}
-
-	
-	
 
 	/**
 	 * Read Denied To be Checked.
