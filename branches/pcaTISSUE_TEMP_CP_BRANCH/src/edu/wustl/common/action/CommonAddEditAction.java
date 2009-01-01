@@ -135,6 +135,10 @@ public class CommonAddEditAction extends Action
             target = Constants.FAILURE;
             Logger.out.error(excp.getMessage(), excp);
         }
+        finally
+        {
+        	abstractDomain = null;
+        }
         
         Logger.out.debug("target....................."+target); 
 
@@ -199,8 +203,9 @@ public class CommonAddEditAction extends Action
         //Setting the system identifier after inserting the object in the DB.
         if (abstractDomain.getId() != null)
         {
-            abstractForm.setId(abstractDomain.getId().longValue());
-            request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
+        	long abstractDomainId = abstractDomain.getId().longValue();
+        	abstractForm.setId(abstractDomainId);
+            request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomainId);
             Logger.out.debug("New id in CommonAddEditAction===>"+abstractDomain.getId());
             abstractForm.setMutable(false);
         }
@@ -234,7 +239,7 @@ public class CommonAddEditAction extends Action
     	            Logger.out.debug("forwardTo in CommonAddEditAction--------->"+forwardTo);
     	            
     	            //Setting Identifier of new object into the FormBean to populate it on the JSP page 
-    	            sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getId());
+    	            sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getId().longValue());
     	            
     	            sessionFormBean.setMutable(false);
     	            
