@@ -23,6 +23,7 @@ import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.HibernatePropertiesTestCase;
 import edu.wustl.common.util.global.SendEmailTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
+import edu.wustl.common.util.global.XMLParserUtilityTestCase;
 import edu.wustl.common.util.impexp.MsSqlAutomateImpExpTestCase;
 import edu.wustl.common.util.impexp.MySqlAutomateImpExpTestCase;
 
@@ -65,6 +66,7 @@ public class TestAll
 		suite.addTestSuite(CommonFileReaderTestCase.class);
 		suite.addTestSuite(SendEmailTestCase.class);
 		suite.addTestSuite(HibernatePropertiesTestCase.class);
+		suite.addTestSuite(XMLParserUtilityTestCase.class);
 		return suite;
 	}
 }
