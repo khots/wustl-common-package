@@ -5,20 +5,42 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.util.HibernateMetaData;
 
 public class UtilityTestCases extends CommonBaseTestCase
 {
+
 	/**
 	 * logger -Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(UtilityTestCases.class);
 
+	static
+	{
+	    Configuration config = new Configuration().
+	        setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
+	        setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
+	        setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:baseball").
+	        setProperty("hibernate.connection.username", "sa").
+	        setProperty("hibernate.connection.password", "").
+	        setProperty("hibernate.connection.pool_size", "1").
+	        setProperty("hibernate.connection.autocommit", "true").
+	        setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
+	        setProperty("hibernate.hbm2ddl.auto", "create-drop").
+	        setProperty("hibernate.show_sql", "true").
+	        addClass(edu.wustl.common.audit.AuditableImpl.class);
+	    	HibernateMetaData.initHibernateMetaData(config);
+	}
 	public void testDatePattern()
 	{
 		try
@@ -224,9 +246,9 @@ public class UtilityTestCases extends CommonBaseTestCase
 	{
 		try
 		{
-			String date = Utility.parseDateToString(new Date("02/01/2009"),
-					CommonServiceLocator.getInstance().getDatePattern());
-			logger.info("date : "+date);
+			String date = Utility.parseDateToString(new Date("02/01/2009"), CommonServiceLocator
+					.getInstance().getDatePattern());
+			logger.info("date : " + date);
 			assertEquals("02-01-2009", date);
 		}
 		catch (Exception exception)
@@ -249,6 +271,7 @@ public class UtilityTestCases extends CommonBaseTestCase
 			exception.printStackTrace();
 		}
 	}
+
 	public void testNullToString()
 	{
 		try
@@ -269,7 +292,7 @@ public class UtilityTestCases extends CommonBaseTestCase
 		{
 			String[] time = new String[2];
 			time = Utility.getTime(Calendar.getInstance().getTime());
-			logger.info("Time :"+time[0]+":"+time[1]);
+			logger.info("Time :" + time[0] + ":" + time[1]);
 			assertNotNull(time);
 		}
 		catch (Exception exception)
@@ -288,12 +311,155 @@ public class UtilityTestCases extends CommonBaseTestCase
 			collection.add(Long.valueOf(122));
 			collection.add(Long.valueOf(123));
 			Long[] obj = Utility.toLongArray(collection);
-			logger.info("Long Array Elements :"+obj[0]+","+obj[1]+","+obj[2]);
+			logger.info("Long Array Elements :" + obj[0] + "," + obj[1] + "," + obj[2]);
 			assertNotNull(obj);
 		}
 		catch (Exception exception)
 		{
 			assertFalse("Not able to get LongArray", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testToInt()
+	{
+		try
+		{
+			int value = Utility.toInt("12");
+			assertNotNull(value);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get int value.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testToLong()
+	{
+		try
+		{
+			Long value = Utility.toLong("12");
+			assertNotNull(value);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get Long value.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testToDouble()
+	{
+		try
+		{
+			Double value = Utility.toDouble(Double.valueOf(12));
+			logger.info("double value = " + value);
+			assertNotNull(value);
+		}
+		catch (Exception exception)
+		{
+			logger.info("Error = " + exception.getMessage());
+			exception.printStackTrace();
+			assertFalse("Not able to get Double value.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testIsPersistedValue()
+	{
+		try
+		{
+			Map map = new HashMap();
+			map.put("1", "one");
+			map.put("2", "two");
+			boolean isPersistedValue = Utility.isPersistedValue(map, "1");
+			assertEquals(true, isPersistedValue);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get LongArray", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testInitCap()
+	{
+		try
+		{
+			String properCaseStr = Utility.initCap("praShaNT");
+			logger.info("ProperCase : " + properCaseStr);
+			assertEquals("Prashant", properCaseStr);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get Proper Case String.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testInitCapEmptyString()
+	{
+		try
+		{
+			String properCaseStr = Utility.initCap("");
+			logger.info("ProperCase : " + properCaseStr);
+			assertEquals("", properCaseStr);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get Proper Case String.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testGetColumnWidth()
+	{
+		try
+		{
+			String className = "edu.wustl.common.audit.AuditableImpl";
+			String attributeName = "id";
+			String colLength = Utility.getColumnWidth(Class.forName(className), attributeName);
+			logger.info("colLength : " + colLength);
+			assertEquals("50", colLength);
+		}
+		catch (Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get column Length.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testRemoveSpecialCharactersFromString()
+	{
+		try
+		{
+			String properCaseStr = Utility
+					.removeSpecialCharactersFromString("Remove\\SpecialCharactersFromString[]");
+			logger.info("String : " + properCaseStr);
+			assertEquals("RemoveSpecialCharactersFromString", properCaseStr);
+		}
+		catch (Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get Proper String.", true);
+			exception.printStackTrace();
+		}
+	}
+	public void testGetDisplayLabel()
+	{
+		try
+		{
+			String properCaseStr = Utility
+					.getDisplayLabel("firstName");
+			logger.info("String : " + properCaseStr);
+			assertEquals("First Name", properCaseStr);
+		}
+		catch (Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get Display Label.", true);
 			exception.printStackTrace();
 		}
 	}
