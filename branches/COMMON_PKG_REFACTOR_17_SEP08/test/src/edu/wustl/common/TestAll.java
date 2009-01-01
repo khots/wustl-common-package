@@ -20,6 +20,7 @@ import edu.wustl.common.util.global.ApplicationPropertiesTestCase;
 import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonFileReaderTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
+import edu.wustl.common.util.global.SendEmailTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
 import edu.wustl.common.util.impexp.MsSqlAutomateImpExpTestCase;
 import edu.wustl.common.util.impexp.MySqlAutomateImpExpTestCase;
@@ -61,6 +62,7 @@ public class TestAll
 		suite.addTestSuite(ExportReportTestCase.class);
 		suite.addTestSuite(ApplicationPropertiesTestCase.class);
 		suite.addTestSuite(CommonFileReaderTestCase.class);
+		suite.addTestSuite(SendEmailTestCase.class);
 		return suite;
 	}
 }
