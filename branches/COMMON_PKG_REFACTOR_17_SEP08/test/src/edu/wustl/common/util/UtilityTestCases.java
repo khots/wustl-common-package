@@ -3,15 +3,21 @@ package edu.wustl.common.util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.global.CommonServiceLocator;
+import edu.wustl.common.util.logger.Logger;
 
 public class UtilityTestCases extends CommonBaseTestCase
 {
+	/**
+	 * logger -Generic Logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(UtilityTestCases.class);
 
 	public void testDatePattern()
 	{
@@ -194,7 +200,7 @@ public class UtilityTestCases extends CommonBaseTestCase
 		}
 		catch (Exception exception)
 		{
-			assertTrue("Not able to parse class name:" + simpleClassName, true);
+			assertFalse("Not able to parse class name:" + simpleClassName, true);
 			exception.printStackTrace();
 		}
 	}
@@ -209,7 +215,7 @@ public class UtilityTestCases extends CommonBaseTestCase
 		}
 		catch (Exception exception)
 		{
-			assertTrue("Not able to get FormBeanName", true);
+			assertFalse("Not able to get FormBeanName", true);
 			exception.printStackTrace();
 		}
 	}
@@ -220,11 +226,74 @@ public class UtilityTestCases extends CommonBaseTestCase
 		{
 			String date = Utility.parseDateToString(new Date("02/01/2009"),
 					CommonServiceLocator.getInstance().getDatePattern());
+			logger.info("date : "+date);
 			assertEquals("02-01-2009", date);
 		}
 		catch (Exception exception)
 		{
-			assertTrue("Not able to get FormBeanName", true);
+			assertFalse("Not able to get FormBeanName", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testToString()
+	{
+		try
+		{
+			String str = Utility.toString(Long.valueOf(122));
+			assertEquals("122", str);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get String", true);
+			exception.printStackTrace();
+		}
+	}
+	public void testNullToString()
+	{
+		try
+		{
+			String str = Utility.toString(null);
+			assertEquals("", str);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get String", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testGetTime()
+	{
+		try
+		{
+			String[] time = new String[2];
+			time = Utility.getTime(Calendar.getInstance().getTime());
+			logger.info("Time :"+time[0]+":"+time[1]);
+			assertNotNull(time);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get time", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testToLongArray()
+	{
+		try
+		{
+			Collection<Long> collection = new ArrayList<Long>();
+			collection.add(Long.valueOf(121));
+			collection.add(Long.valueOf(122));
+			collection.add(Long.valueOf(123));
+			Long[] obj = Utility.toLongArray(collection);
+			logger.info("Long Array Elements :"+obj[0]+","+obj[1]+","+obj[2]);
+			assertNotNull(obj);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get LongArray", true);
 			exception.printStackTrace();
 		}
 	}
