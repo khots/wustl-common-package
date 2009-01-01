@@ -87,7 +87,7 @@ public class TitliSearchAction extends Action
 	 * @param titliSearchForm TitliSearchForm
 	 * @param sortedResultMap SortedResultMapInterface
 	 * @return the set action and path.
-	 * @throws TitliException Titli Exception
+	 * @throws Exception Generic Exception
 	 */
 	private ActionForward getActionForward(TitliSearchForm titliSearchForm,
 			SortedResultMapInterface sortedResultMap) throws Exception
