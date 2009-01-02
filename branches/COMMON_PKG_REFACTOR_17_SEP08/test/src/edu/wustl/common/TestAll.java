@@ -20,6 +20,7 @@ import edu.wustl.common.util.global.CSMGroupLocatorTestCase;
 import edu.wustl.common.util.global.CommonFileReaderTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.HibernatePropertiesTestCase;
+import edu.wustl.common.util.global.PasswordEncrypterTestCase;
 import edu.wustl.common.util.global.PasswordManagerTestCase;
 import edu.wustl.common.util.global.SendEmailTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
@@ -69,6 +70,7 @@ public class TestAll
 		suite.addTestSuite(HibernatePropertiesTestCase.class);
 		suite.addTestSuite(XMLParserUtilityTestCase.class);
 		suite.addTestSuite(PasswordManagerTestCase.class);
+		suite.addTestSuite(PasswordEncrypterTestCase.class);
 		suite.addTestSuite(ValidatorTestCase.class);
 		return suite;
 	}
