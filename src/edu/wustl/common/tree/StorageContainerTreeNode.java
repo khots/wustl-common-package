@@ -126,7 +126,7 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	 */
 	public String toString()
 	{
-		return this.value;
+		return this.getValue();
 	}
 
 	/**
@@ -137,6 +137,6 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	public int compareTo(Object tmpobj)
 	{
 		StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
-		return this.identifier.compareTo(treeNode.identifier);
+		return this.getIdentifier().compareTo(treeNode.getIdentifier());
 	}
 }

@@ -71,7 +71,7 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparabl
 	 */
 	public String toString()
 	{
-		return this.value;
+		return this.getValue();
 	}
 
 	/**
@@ -82,6 +82,6 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparabl
 	public int compareTo(Object tmpobj)
 	{
 		CDETreeNode treeNode = (CDETreeNode) tmpobj;
-		return value.compareTo(treeNode.getValue());
+		return getValue().compareTo(treeNode.getValue());
 	}
 }

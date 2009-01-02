@@ -28,22 +28,22 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/**
 	 * identifier for the node.
 	 */
-	Long identifier;
+	private Long identifier;
 
 	/**
 	 * Name of the node.
 	 */
-	String value;
+	private String value;
 
 	/**
 	 * Parent node of this node.
 	 */
-	TreeNode parentNode;
+	private TreeNode parentNode;
 
 	/**
 	 * List of child nodes.
 	 */
-	List childNodes = new ArrayList();
+	private List childNodes = new ArrayList();
 
 	/**
 	 * Default Constructor.
