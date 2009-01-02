@@ -9,11 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.global.CommonServiceLocator;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.util.HibernateMetaData;
 
@@ -104,7 +108,7 @@ public class UtilityTestCases extends CommonBaseTestCase
 		}
 	}
 
-	public void testGetClassObject()
+	public void testGetObject()
 	{
 		try
 		{
@@ -119,6 +123,20 @@ public class UtilityTestCases extends CommonBaseTestCase
 		}
 	}
 
+	public void testGetClassObject()
+	{
+		try
+		{
+			String fullClassName = "edu.wustl.common.datatypes.NumericDataType";
+			Class obj = Utility.getClassObject(fullClassName);
+			assertNotNull("Can get class object:", obj);
+		}
+		catch (Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to get class object.", true);
+		}
+	}
 	public void testIsNull()
 	{
 		try
@@ -527,6 +545,68 @@ public class UtilityTestCases extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			assertFalse("Not able to replace.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testInitializePrivilegesMap()
+	{
+		try
+		{
+			Utility.initializePrivilegesMap();
+			logger.info("Size : "+Variables.privilegeDetailsMap.size());
+			assertNotSame(0, Variables.privilegeDetailsMap.size());
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to initialize Privileges Map.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testToGridFormat()
+	{
+		try
+		{
+			String strObj = "Grid\n\r\fFormat test";
+			Object obj=Utility.toGridFormat(strObj);
+			logger.info("GridFormat: "+obj.toString());
+			assertNotNull(obj);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to GridFormat.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testGetAllPrivileges()
+	{
+		try
+		{
+			List<NameValueBean> allPrivileges=Utility.getAllPrivileges();
+			logger.info("all Privileges Size : "+allPrivileges.size());
+			assertNotNull(allPrivileges);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get All Privileges.", true);
+			exception.printStackTrace();
+		}
+	}
+
+	public void testGetActualClassName()
+	{
+		try
+		{
+			String name = "edu.wustl.common.datatypes.NumericDataType";
+			String actualClassName = Utility.getActualClassName(name);
+			logger.info("actualClassName : "+actualClassName);
+			assertEquals("NumericDataType", actualClassName);
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get Actual Class Name.", true);
 			exception.printStackTrace();
 		}
 	}
