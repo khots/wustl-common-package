@@ -1,5 +1,7 @@
 package edu.wustl.common.util.global;
 
+import java.io.File;
+
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.PasswordEncryptionException;
@@ -246,6 +248,23 @@ public class PasswordManagerTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			fail("Not validating password for minimum length.");
+			logger.debug("Encode-Decode not successful.",exception);
+		}
+	}
+
+	public void testMain()
+	{
+		try
+		{
+			String fileName=System.getProperty("user.dir")+"/pass.txt";
+			String []args= {fileName,"Login123"};
+			PasswordManager.main(args);
+			File file= new File(fileName);
+			assertTrue(file.exists());
+		}
+		catch (Exception exception)
+		{
+			fail("password not written in file..");
 			logger.debug("Encode-Decode not successful.",exception);
 		}
 	}
