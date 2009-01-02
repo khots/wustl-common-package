@@ -99,7 +99,7 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	 */
 	public String toString()
 	{
-		return this.value;
+		return this.getValue();
 	}
 
 	/**
