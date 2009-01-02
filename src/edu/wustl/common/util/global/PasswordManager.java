@@ -526,7 +526,7 @@ public final class PasswordManager
 		{
 			errNumber = validateUpLowerNumSpaceCharInPass(newPassword);
 		}
-		if (NOT_FAILED != errNumber)
+		if (NOT_FAILED == errNumber)
 		{
 			errNumber = SUCCESS;
 		}
