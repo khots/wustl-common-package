@@ -368,15 +368,16 @@ public final class PasswordManager
 	 * from validate method of form bean.
 	 * @param newPassword New Password value
 	 * @param oldPassword Old Password value
-	 * @param httpSession HttpSession object
+	 * @param passwordChangedInsameSession : its value will come from session and passed to this method like,
+	 * (Boolean) httpSession .getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
 	 * @return SUCCESS if all condition passed
 	 *   else return respective error code (constant int) value
 	 */
 	public static int validatePasswordOnFormBean(String newPassword, String oldPassword,
-			HttpSession httpSession)
+			Boolean pwdChangedInsameSession)
 	{
 		int errorNo = NOT_FAILED;
-		errorNo = chkChangePassInSameSession(httpSession, errorNo);
+		errorNo = chkChangePassInSameSession(pwdChangedInsameSession, errorNo);
 		errorNo = chkPassForMinLength(newPassword, errorNo);
 		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
 		errorNo = getErrorNumber(newPassword, errorNo);
@@ -430,13 +431,11 @@ public final class PasswordManager
 	 * @param erNo error number-method body executes only when there is no error earlier.
 	 * @return int error number or -1
 	 */
-	private static int chkChangePassInSameSession(HttpSession httpSession, int erNo)
+	private static int chkChangePassInSameSession(Boolean passwordChangedInsameSession, int erNo)
 	{
 		int erroNo = erNo;
 		if (NOT_FAILED == erNo)
 		{
-			Boolean passwordChangedInsameSession = (Boolean) httpSession
-					.getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
 			if (passwordChangedInsameSession != null && passwordChangedInsameSession.booleanValue())
 			{
 				// return error code if attribute (Boolean) is in session
@@ -487,28 +486,28 @@ public final class PasswordManager
 	 * Write your own methods for business validations.
 	 * @param newPassword New Password value
 	 * @param oldPassword Old Password value
-	 * @param httpSession HttpSession object
+	 * @param pwdChangedInsameSession : this will come from session like
+	 * (Boolean) httpSession .getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
+	 * @param sessionData : SessionDataBean this will come from session.
+	 * httpSession.getAttribute(Constants.SESSION_DATA)
 	 * @return SUCCESS (constant int 0) if all condition passed
 	 *   else return respective error code (constant int) value
 	 */
-	public static int validate(String newPassword, String oldPassword, HttpSession httpSession)
+	public static int validate(String newPassword, String oldPassword,
+			Boolean pwdChangedInsameSession,SessionDataBean sessionData)
 	{
 		int errorNo = NOT_FAILED;
-		// get SessionDataBean objet from session
-		Object obj = httpSession.getAttribute(Constants.SESSION_DATA);
-		SessionDataBean sessionData = null;
 		String userName = "";
-		if (obj == null)
+		if (sessionData == null)
 		{
 			errorNo = FAIL_INVALID_SESSION;
 		}
 		else
 		{
-			sessionData = (SessionDataBean) obj;
 			userName = sessionData.getUserName();
 		}
 		errorNo = validateOldPassword(oldPassword, errorNo, userName);
-		errorNo = chkChangePassInSameSession(httpSession, errorNo);
+		errorNo = chkChangePassInSameSession(pwdChangedInsameSession, errorNo);
 		errorNo = chkPassForMinLength(newPassword, errorNo);
 		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
 		errorNo = checkPassWithEmail(newPassword, userName, errorNo);
