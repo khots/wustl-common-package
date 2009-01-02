@@ -1,6 +1,7 @@
 
 package edu.wustl.common.util;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -655,5 +656,38 @@ public class UtilityTestCases extends CommonBaseTestCase
 			assertFalse("Not able to Sort Tree Vector.", true);
 		}
 	}*/
+	public void testGetValueForWtihAttribute()
+	{
+		try
+		{
+			NameValueBean nameValueBean=new NameValueBean();
+			nameValueBean.setName("protocol");
+			Object value= Utility.getValueFor(nameValueBean,"name");
+			assertEquals("protocol", value.toString());
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get the value.", true);
+			exception.printStackTrace();
+		}
+	}
 
+	public void testGetValueForWtihMethod()
+	{
+		try
+		{
+			NameValueBean nameValueBean=new NameValueBean();
+			nameValueBean.setName("protocol");
+			String methodName = Utility.createAccessorMethodName("name", false);
+			Class objClass = nameValueBean.getClass();
+			Method method = objClass.getMethod(methodName, new Class[0]);
+			Object value= Utility.getValueFor(nameValueBean,method);
+			assertEquals("protocol", value.toString());
+		}
+		catch (Exception exception)
+		{
+			assertFalse("Not able to get the value.", true);
+			exception.printStackTrace();
+		}
+	}
 }
