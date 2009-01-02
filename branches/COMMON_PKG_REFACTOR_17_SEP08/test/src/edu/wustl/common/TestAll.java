@@ -23,6 +23,7 @@ import edu.wustl.common.util.global.HibernatePropertiesTestCase;
 import edu.wustl.common.util.global.PasswordManagerTestCase;
 import edu.wustl.common.util.global.SendEmailTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
+import edu.wustl.common.util.global.ValidatorTestCase;
 import edu.wustl.common.util.global.XMLParserUtilityTestCase;
 import edu.wustl.common.util.impexp.MsSqlAutomateImpExpTestCase;
 import edu.wustl.common.util.impexp.MySqlAutomateImpExpTestCase;
@@ -68,6 +69,7 @@ public class TestAll
 		suite.addTestSuite(HibernatePropertiesTestCase.class);
 		suite.addTestSuite(XMLParserUtilityTestCase.class);
 		suite.addTestSuite(PasswordManagerTestCase.class);
+		suite.addTestSuite(ValidatorTestCase.class);
 		return suite;
 	}
 }
