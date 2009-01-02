@@ -83,28 +83,17 @@ public final class PasswordEncrypter
 	{
 
 		configureDBConnection(args);
-		try
-		{
-			// Create an updatable result set
-			Connection connection = dbUtility.getConnection();
+		// Create an updatable result set
+		Connection connection = dbUtility.getConnection();
 
-			//Encrypting password for csm_user table
-			String sql = "SELECT " + csmDbTableName + ".* FROM " + csmDbTableName;
-			updatePasswords(connection, sql);
+		//Encrypting password for csm_user table
+		String sql = "SELECT " + csmDbTableName + ".* FROM " + csmDbTableName;
+		updatePasswords(connection, sql);
 
-			//Encrypting password for catissue_password table
-			sql = "SELECT " + dbTableName + ".* FROM "
-					+ dbTableName;
-			updatePasswords(connection, sql);
-		}
-		catch (ClassNotFoundException exception)
-		{
-			logger.fatal("Not abel to load database driver class", exception);
-		}
-		catch (SQLException exception)
-		{
-			logger.fatal("Not able to update the passwords.", exception);
-		}
+		//Encrypting password for catissue_password table
+		sql = "SELECT " + dbTableName + ".* FROM "
+				+ dbTableName;
+		updatePasswords(connection, sql);
 	}
 
 	/**
