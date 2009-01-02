@@ -196,4 +196,131 @@ public class ValidatorTestCase extends CommonBaseTestCase
 			assertFalse("The input String not contains only alphabetic characters.", true);
 		}
 	}
+	public void testIsDouble()
+	{
+		try
+		{
+		String numString = "12.12";
+		Validator validator =new Validator();
+		boolean isValid = validator.isDouble(numString);
+		assertEquals(true, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("The given String for double value is not double value.", true);
+		}
+	}
+	public void testNegativeIsDouble()
+	{
+		try
+		{
+		String numString = "-1";
+		Validator validator =new Validator();
+		boolean isValid = validator.isDouble(numString);
+		assertEquals(false, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("The given String for double value is not double value.", true);
+		}
+	}
+	public void testNaNCheckIsDouble()
+	{
+		try
+		{
+		String numString = "NaN";
+		Validator validator =new Validator();
+		boolean isValid = validator.isDouble(numString,true);
+		assertEquals(false, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("The given String for double value is not double value.", true);
+		}
+	}
+	public void testPositiveCheckIsDouble()
+	{
+		try
+		{
+		String numString = "-1";
+		Validator validator =new Validator();
+		boolean isValid = validator.isDouble(numString,true);
+		assertEquals(false, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("The given String for double value is not double value.", true);
+		}
+	}
+	public void testIsValidOption()
+	{
+		try
+		{
+		String option = "1";
+		Validator validator =new Validator();
+		boolean isValid = validator.isValidOption(option);
+		assertEquals(true, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("Not valid option.", true);
+		}
+	}
+	public void testNegativeIsValidOption()
+	{
+		try
+		{
+		String option = "-1";
+		Validator validator =new Validator();
+		boolean isValid = validator.isValidOption(option);
+		assertEquals(false, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("Not valid option.", true);
+		}
+	}
+	public void testDelimiterExcludingGiven()
+	{
+		try
+		{
+		String ignoreList = ";:/?.>";
+		String spChars = "!@#$%^&*()=+\\|{[ ]}\'\",<`~ -_";
+		Validator validator =new Validator();
+		String reqList = validator.delimiterExcludingGiven(ignoreList);
+		assertEquals(spChars, reqList);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("Not able to Exclud delimiter from Given list..", true);
+		}
+	}
+	public void testCheckDate()
+	{
+		try
+		{
+		String checkDate = "12/122/2009";
+		Validator validator =new Validator();
+		boolean isValid = validator.checkDate(checkDate);
+		assertEquals(false, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("Not able to Check Date.", true);
+		}
+	}
+	public void testEmptyCheckDate()
+	{
+		try
+		{
+		String checkDate = "";
+		Validator validator =new Validator();
+		boolean isValid = validator.checkDate(checkDate);
+		assertEquals(false, isValid);
+		}
+		catch(Exception excep)
+		{
+			assertFalse("Not able to Check Date.", true);
+		}
+	}
 }
