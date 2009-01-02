@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.util.global.HibernateProperties;
 import edu.wustl.common.util.logger.Logger;
 
 
@@ -14,21 +15,22 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 	 * Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(MySqlAutomateImpExpTestCase.class);
-	private static final String ARGS[]={
-			"localhost",
-			"3306",
-			"mysql",
-			"test",
-			"root",
-			"root",
-			"com.mysql.jdbc.Driver",
-			"import",
-			System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt",
-			System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/"
-	};
+	private static final String []ARGS= new String[10];
+	static
+	{
+			ARGS[0]=HibernateProperties.getValue("mysql.db.host");
+			ARGS[1]=HibernateProperties.getValue("mysql.db.port");
+			ARGS[2]="mysql";
+			ARGS[3]=HibernateProperties.getValue("mysql.db.name");
+			ARGS[4]=HibernateProperties.getValue("mysql.db.username");
+			ARGS[5]=HibernateProperties.getValue("mysql.db.password");
+			ARGS[6]=HibernateProperties.getValue("mysql.db.driver");
+	}
 	public void testMySqlAutomateImport()
 	{
-		
+		ARGS[7]="import";
+		ARGS[8]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt";
+		ARGS[9]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/";
 		try
 		{	preImport();
 			AutomateImport.main(ARGS);
@@ -38,12 +40,12 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		{
 			fail("Fail to import metadata.");
 			logger.debug("Fail to import metadata.", exception);
-		}			
+		}
 	}
-	
+
 	public void testMySqlAutomateExport()
 	{
-		
+
 		try
 		{
 			ARGS[7]="export";
@@ -56,9 +58,9 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		{
 			fail("Fail to import metadata.");
 			logger.debug("Fail to import metadata.", exception);
-		}			
+		}
 	}
-	
+
 	public void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
 	{
 		DatabaseUtility dbUtility= new DatabaseUtility();
