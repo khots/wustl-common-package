@@ -18,6 +18,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.querydatabean.QueryDataBean;
 import edu.wustl.common.util.PagenatedResultData;
 import edu.wustl.common.util.QueryParams;
+import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
@@ -32,6 +33,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public static boolean identifierList=false;
 	public static boolean isTestActivityStatus=false;
 	public static boolean returnActivityStatusObj=false;
+	public static boolean returnUserPassword=false;
 
 	/**
 	 * List to return from retrieve methods.
@@ -199,7 +201,16 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws DAOException
 	{
-		return (List<Object>)getList();
+		if(returnUserPassword)
+		{
+			List<Object> pass= new ArrayList<Object>();
+			pass.add(PasswordManager.encode("Login123"));
+			return pass;
+		}
+		else
+		{
+			return (List<Object>)getList();
+		}
 	}
 
 	public List<Object> retrieve(String sourceObjectName, String whereColumnName,
