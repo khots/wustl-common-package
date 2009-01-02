@@ -8,15 +8,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpSession;
+import java.util.Vector;
 
 import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.tree.SpecimenTreeNode;
 import edu.wustl.common.util.global.CommonServiceLocator;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.util.HibernateMetaData;
@@ -120,6 +119,20 @@ public class UtilityTestCases extends CommonBaseTestCase
 		{
 			exception.printStackTrace();
 			assertFalse("Not able to get class object.", true);
+		}
+	}
+	public void testFailGetObject()
+	{
+		try
+		{
+			String className = "edu.wustl.common.tree.TreeNode";
+			Object obj = Utility.getObject(className);
+			assertNull("Can not create instance of class:", obj);
+		}
+		catch (Exception exception)
+		{
+			exception.printStackTrace();
+			assertTrue("Can not create instance of class.", true);
 		}
 	}
 
@@ -610,4 +623,37 @@ public class UtilityTestCases extends CommonBaseTestCase
 			exception.printStackTrace();
 		}
 	}
+
+	/*public void testSortTreeVector()
+	{
+		try
+		{
+			SpecimenTreeNode treeNodeParent = new SpecimenTreeNode(Long.valueOf(1), "parent");
+			SpecimenTreeNode treeNodeChild1 = new SpecimenTreeNode(Long.valueOf(2), "child1");
+			SpecimenTreeNode treeNodeChild2 = new SpecimenTreeNode(Long.valueOf(3), "child2");
+			List childNodes = new Vector();
+			childNodes.add(treeNodeChild1);
+			childNodes.add(treeNodeChild2);
+			treeNodeParent.setChildNodes(childNodes);
+			treeNodeChild1.setParentNode(treeNodeParent);
+			treeNodeChild2.setParentNode(treeNodeParent);
+			treeNodeChild1.setParentIdentifier("1");
+			treeNodeChild1.setParentValue("parent");
+			treeNodeChild2.setParentIdentifier("1");
+			treeNodeChild2.setParentValue("parent");
+			List nodeList = new Vector();
+			nodeList.add(treeNodeChild1);
+			nodeList.add(treeNodeChild2);
+			nodeList.add(treeNodeParent);
+			List nodeList1 = nodeList;
+			Utility.sortTreeVector(nodeList);
+			assertNotSame(nodeList1, nodeList);
+		}
+		catch (Exception exception)
+		{
+			exception.printStackTrace();
+			assertFalse("Not able to Sort Tree Vector.", true);
+		}
+	}*/
+
 }
