@@ -622,6 +622,16 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		
 	}
+	public String getMaxBarcodeCol()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getMaxLabelCol()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	///////////////////////////////////
 }
