@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpSession;
-
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
@@ -368,7 +366,7 @@ public final class PasswordManager
 	 * from validate method of form bean.
 	 * @param newPassword New Password value
 	 * @param oldPassword Old Password value
-	 * @param passwordChangedInsameSession : its value will come from session and passed to this method like,
+	 * @param pwdChangedInsameSession : its value will come from session and passed to this method like,
 	 * (Boolean) httpSession .getAttribute(Constants.PASSWORD_CHANGE_IN_SESSION);
 	 * @return SUCCESS if all condition passed
 	 *   else return respective error code (constant int) value
@@ -427,7 +425,7 @@ public final class PasswordManager
 	/**
 	 * to check whether password change in same session
 	 * get attribute (Boolean) from session object stored when password is changed successfully.
-	 * @param httpSession HttpSession.
+	 * @param passwordChangedInsameSession tru if password change in same session otherwise false.
 	 * @param erNo error number-method body executes only when there is no error earlier.
 	 * @return int error number or -1
 	 */
