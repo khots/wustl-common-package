@@ -260,7 +260,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 		try
 		{
 			dbDataType = DataTypeConfigFactory.getInstance().getDataType("blob");
-			assertNotNull(dbDataType.getObjectValue("D:/CommonPackage/images/enabled.gif"));
+			assertNotNull(dbDataType.getObjectValue(System.getProperty("user.dir")+"/test/TestBlobDataType.gif"));
 		}
 		catch (Exception e)
 		{
