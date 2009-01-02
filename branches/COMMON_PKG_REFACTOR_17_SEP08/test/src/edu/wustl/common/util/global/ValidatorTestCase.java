@@ -4,7 +4,13 @@
 
 package edu.wustl.common.util.global;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.beans.NameValueBean;
 
 /**
  * @author prashant_bandal
@@ -422,6 +428,7 @@ public class ValidatorTestCase extends CommonBaseTestCase
 			assertFalse("Not able to Validate Date.", true);
 		}
 	}
+
 	public void testFutureValidateDate()
 	{
 		try
@@ -438,6 +445,7 @@ public class ValidatorTestCase extends CommonBaseTestCase
 			assertFalse("Not able to Validate Date.", true);
 		}
 	}
+
 	public void testFormatValidateDate()
 	{
 		try
@@ -452,6 +460,230 @@ public class ValidatorTestCase extends CommonBaseTestCase
 		catch (Exception excep)
 		{
 			assertFalse("Not able to Validate Date.", true);
+		}
+	}
+
+	public void testIsOperator()
+	{
+		try
+		{
+			String value = "-1";
+			Validator validator = new Validator();
+			boolean isValid = validator.isOperator(value);
+			assertEquals(false, isValid);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Check Operator.", true);
+		}
+	}
+
+	public void testIsValue()
+	{
+		try
+		{
+			String value = "-1";
+			Validator validator = new Validator();
+			boolean isValid = validator.isValue(value);
+			assertEquals(false, isValid);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Check value.", true);
+		}
+	}
+
+	public void testIsValidZipCode()
+	{
+		try
+		{
+			String zipCode = "99999-9999";
+			Validator validator = new Validator();
+			boolean isValid = validator.isValidZipCode(zipCode);
+			assertEquals(true, isValid);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Check Valid ZipCode.", true);
+		}
+	}
+
+	public void testNegativeIsValidZipCode()
+	{
+		try
+		{
+			String zipCode = "99999-9999-222";
+			Validator validator = new Validator();
+			boolean isValid = validator.isValidZipCode(zipCode);
+			assertEquals(false, isValid);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Check Valid ZipCode.", true);
+		}
+	}
+
+	public void testIsValidPhoneNumber()
+	{
+		try
+		{
+			String phoneNumber = "(999)999-9999";
+			Validator validator = new Validator();
+			boolean isValid = validator.isValidPhoneNumber(phoneNumber);
+			assertEquals(true, isValid);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Check Valid Phone Number.", true);
+		}
+	}
+
+	public void testNegativeIsValidPhoneNumber()
+	{
+		try
+		{
+			String phoneNumber = "(999)999-9999-7777-8888";
+			Validator validator = new Validator();
+			boolean isValid = validator.isValidPhoneNumber(phoneNumber);
+			assertEquals(false, isValid);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Check Valid Phone Number.", true);
+		}
+	}
+
+	public void testIsEnumeratedValue()
+	{
+		try
+		{
+			List<NameValueBean> beanList = new ArrayList<NameValueBean>();
+			NameValueBean bean1 = new NameValueBean("bean1","user");
+			NameValueBean bean2 = new NameValueBean("bean2","product");
+			beanList.add(bean1);
+			beanList.add(bean2);
+			boolean isPresent = Validator.isEnumeratedValue(beanList, "product");
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Enumerated Value.", true);
+		}
+	}
+	public void testStringArrayIsEnumeratedValue()
+	{
+		try
+		{
+			String[] list = {"user","product"};
+			boolean isPresent = Validator.isEnumeratedValue(list, "product");
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Enumerated Value.", true);
+		}
+	}
+	public void testIsEnumeratedOrNullValue()
+	{
+		try
+		{
+			List<NameValueBean> beanList = new ArrayList<NameValueBean>();
+			NameValueBean bean1 = new NameValueBean("bean1","user");
+			NameValueBean bean2 = new NameValueBean("bean2","product");
+			beanList.add(bean1);
+			beanList.add(bean2);
+			boolean isPresent = Validator.isEnumeratedOrNullValue(beanList, "product");
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Enumerated Or Null Value.", true);
+		}
+	}
+	public void testStringArrayIsEnumeratedOrNullValue()
+	{
+		try
+		{
+			String[] list = {"user","product"};
+			boolean isPresent = Validator.isEnumeratedOrNullValue(list, "product");
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Enumerated Or Null Value.", true);
+		}
+	}
+	public void testNullIsEnumeratedOrNullValue()
+	{
+		try
+		{
+			List<NameValueBean> beanList = new ArrayList<NameValueBean>();
+			NameValueBean bean1 = new NameValueBean("bean1","user");
+			NameValueBean bean2 = new NameValueBean("bean2","product");
+			beanList.add(bean1);
+			beanList.add(bean2);
+			boolean isPresent = Validator.isEnumeratedOrNullValue(beanList, null);
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Enumerated Or Null Value.", true);
+		}
+	}
+	public void testNullStringArrayIsEnumeratedOrNullValue()
+	{
+		try
+		{
+			String[] list = {"user","product"};
+			boolean isPresent = Validator.isEnumeratedOrNullValue(list, null);
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Enumerated Or Null Value.", true);
+		}
+	}
+	public void testContainsSpecialCharacters()
+	{
+		try
+		{
+			String mainString = "Contains~Special~Characters";
+			String delimiter ="~";
+			Validator validator = new Validator();
+			boolean isPresent = validator.containsSpecialCharacters(mainString, delimiter);
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out Contains Special Characters.", true);
+		}
+	}
+	public void testGetDateDiff()
+	{
+		try
+		{
+			Date startDate = Calendar.getInstance().getTime();
+			Date endDate = Calendar.getInstance().getTime();
+			Validator validator = new Validator();
+			Long diff = validator.getDateDiff(startDate, endDate);
+			assertEquals(Long.valueOf(0), diff);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to Get Date Difference.", true);
+		}
+	}
+	public void testIsXssVulnerable()
+	{
+		try
+		{
+			String value = "Contains<Vulnerable<Characters";
+			boolean isPresent = Validator.isXssVulnerable(value);
+			assertEquals(true, isPresent);
+		}
+		catch (Exception excep)
+		{
+			assertFalse("Not able to find out XssVulnerable.", true);
 		}
 	}
 }
