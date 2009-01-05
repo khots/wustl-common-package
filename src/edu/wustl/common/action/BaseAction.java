@@ -20,7 +20,7 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * This is the base class for all other Actions. The class provides generic
- * methods that are resuable by all subclasses. In addition, this class ensures
+ * methods that are reusable by all subclasses. In addition, this class ensures
  * that the user is authenticated before calling the executeWorkflow of the
  * subclass. If the User is not authenticated then an
  * UserNotAuthenticatedException is thrown.
@@ -119,7 +119,7 @@ public abstract class BaseAction extends Action
 	}
 
 	/**
-	 * get data from the curent session.
+	 * get data from the current session.
 	 * @param request HttpServletRequest
 	 * @return SessionDataBean from session
 	 */
