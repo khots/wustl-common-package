@@ -2261,9 +2261,9 @@ public class EntityManagerMock extends EntityManager {
 
     private AttributeInterface createAttribute(String attrName, String colName) {
         AttributeInterface att1 = factory.createStringAttribute();
-        att1.setName("attrName");
+        att1.setName(attrName);
         ColumnPropertiesInterface c1 = factory.createColumnProperties();
-        c1.setName("colName");
+        c1.setName(colName);
         ((Attribute) att1).setColumnProperties(c1);
         return att1;
     }
