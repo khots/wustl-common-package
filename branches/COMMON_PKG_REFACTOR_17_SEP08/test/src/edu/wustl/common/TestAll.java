@@ -28,6 +28,7 @@ import edu.wustl.common.util.global.ValidatorTestCase;
 import edu.wustl.common.util.global.XMLParserUtilityTestCase;
 import edu.wustl.common.util.impexp.MsSqlAutomateImpExpTestCase;
 import edu.wustl.common.util.impexp.MySqlAutomateImpExpTestCase;
+import edu.wustl.common.util.impexp.OracleAutomateImpExpTestCase;
 
 
 /**
@@ -63,6 +64,7 @@ public class TestAll
 		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
 		suite.addTestSuite(MySqlAutomateImpExpTestCase.class);
 		suite.addTestSuite(MsSqlAutomateImpExpTestCase.class);
+		suite.addTestSuite(OracleAutomateImpExpTestCase.class);
 		suite.addTestSuite(ExportReportTestCase.class);
 		suite.addTestSuite(ApplicationPropertiesTestCase.class);
 		suite.addTestSuite(CommonFileReaderTestCase.class);
