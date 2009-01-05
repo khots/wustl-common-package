@@ -125,6 +125,7 @@
 				<exclude name="**/JoinGraphTestCase*" />
 			</fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<fileset dir="${base.dir}" includes="**/DataTypeConfigurations.xml" />
 			<manifest>
 				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
 			</manifest>
