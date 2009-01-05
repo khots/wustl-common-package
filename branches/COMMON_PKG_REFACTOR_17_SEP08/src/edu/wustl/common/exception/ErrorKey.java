@@ -97,7 +97,7 @@ public final class ErrorKey
 	 */
 	public static void init(String separator) throws IOException
 	{
-		InputStream stream =getCurrClassLoader().getResourceAsStream("ApplicationResource.properties");
+		InputStream stream =getCurrClassLoader().getResourceAsStream("ApplicationResources.properties");
 		addErrorKeysToMap(stream, separator);
 		stream.close();
 	}
