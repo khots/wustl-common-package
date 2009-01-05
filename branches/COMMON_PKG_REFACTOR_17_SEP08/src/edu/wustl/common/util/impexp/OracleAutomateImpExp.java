@@ -18,6 +18,7 @@ import edu.wustl.common.exception.ErrorKey;
 
 /**
  * This class is for import/export meta data for Oracle.
+ * Please make sure the database configuration in junitConf.properties file are correct.
  * @author ravi_kumar
  *
  */
