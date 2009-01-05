@@ -26,5 +26,4 @@ public class AssignDataException extends ApplicationException
 	{
 		super(errorKey, throwable, msgValues);
 	}
-	
 }
