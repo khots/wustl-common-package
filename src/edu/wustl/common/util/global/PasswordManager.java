@@ -101,7 +101,7 @@ public final class PasswordManager
 	 */
 	public static final int FAIL_SAME_AS_OLD = 2;
 	/**
-	 * specify fail password same as username.
+	 * specify fail password same as user-name.
 	 */
 	public static final int FAIL_SAME_AS_USERNAME = 3;
 	/**
@@ -425,7 +425,7 @@ public final class PasswordManager
 	/**
 	 * to check whether password change in same session
 	 * get attribute (Boolean) from session object stored when password is changed successfully.
-	 * @param passwordChangedInsameSession tru if password change in same session otherwise false.
+	 * @param passwordChangedInsameSession true if password change in same session otherwise false.
 	 * @param erNo error number-method body executes only when there is no error earlier.
 	 * @return int error number or -1
 	 */
@@ -534,7 +534,7 @@ public final class PasswordManager
 	}
 
 	/**
-	 * to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
+	 * to check password is different than user name if same return FAIL_SAME_AS_USERNAME =4
 	 * eg. username=abc@abc.com newpassword=abc is not valid.
 	 * @param newPassword new Password.
 	 * @param userName user name.
@@ -559,10 +559,10 @@ public final class PasswordManager
 	}
 
 	/**
-	 * to check password is differnt than user name if same return FAIL_SAME_AS_USERNAME =4
+	 * to check password is different than user name if same return FAIL_SAME_AS_USERNAME =4
 	 * eg. username=abc@abc.com newpassword=abc@abc.com is not valid
 	 * @param newPassword New Password.
-	 * @param userName User nmae
+	 * @param userName User name
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
 	 * @return int error number or -1
 	 */
@@ -612,7 +612,7 @@ public final class PasswordManager
 	/**
 	 * @param userName user Name.
 	 * @return old password of a user.
-	 * @throws DAOException databse exception.
+	 * @throws DAOException database exception.
 	 * @throws BizLogicException BizLogicException
 	 */
 	private static String getOldPassword(String userName) throws DAOException, BizLogicException
