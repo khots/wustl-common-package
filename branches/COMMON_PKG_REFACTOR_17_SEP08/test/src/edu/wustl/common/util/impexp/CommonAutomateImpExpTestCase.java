@@ -29,7 +29,7 @@ public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 		execute();
 	}
 
-	private void loadScript() throws IOException, SQLException 
+	protected void loadScript() throws IOException, SQLException 
 	{
 		BufferedReader reader = new BufferedReader(new FileReader(script));
 		String line;
@@ -44,26 +44,26 @@ public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 			query.append(line);
 			if (queryEnds) 
 			{
-				//System.out.println("query->"+query);
+				System.out.println("query->"+query);
 				statement.addBatch(query.toString());
 				query.setLength(0);
 			}
 		}
 	}
 	
-	private boolean isComment(String line)
+	protected boolean isComment(String line)
 	{
 		if ((line != null) && (line.length() > 0))
 			return (line.charAt(0) == '#');
 		return false;
 	}
 
-	private void execute() throws IOException, SQLException
+	protected void execute() throws IOException, SQLException
 	{
 		statement.executeBatch();
 	}
 
-	private boolean checkStatementEnds(String s)
+	protected boolean checkStatementEnds(String s)
 	{
 		return (s.indexOf(QUERY_ENDS) != -1);
 	}
