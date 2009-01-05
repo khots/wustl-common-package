@@ -11,7 +11,7 @@ public class PasswordEncrypterTestCase extends CommonBaseTestCase
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordEncrypterTestCase.class);
 
-	public void testMain()
+	public void testMainForPasswordEncryption()
 	{
 		String []args={
 				HibernateProperties.getValue("mysql.db.host"),
