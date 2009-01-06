@@ -4,6 +4,7 @@
 
 package edu.wustl.common.datatypes;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +18,9 @@ import org.w3c.dom.NodeList;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.dao.daofactory.ApplicationDAOPropertiesParser;
 
 /**
  * This class configure factory for data types.
@@ -33,6 +34,11 @@ public final class DataTypeConfigFactory
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(DataTypeConfigFactory.class);
+
+	/**
+	 * File name for Data Type configuration.
+	 */
+	private static final String DATA_TYPE_CONF_FILE = "DataTypeConfigurations.xml";
 
 	/**
 	 * Specifies parse Exception Message.
@@ -68,7 +74,7 @@ public final class DataTypeConfigFactory
 
 		try
 		{
-			parseXML("DataTypeConfigurations.xml");
+			parseXML();
 			success = true;
 		}
 		catch (ParseException exception)
@@ -99,15 +105,13 @@ public final class DataTypeConfigFactory
 
 	/**
 	 * This method parse xml File for data type.
-	 * @param xmlFile DataTypeConfigurations.xml File
 	 * @throws ParseException ParseException.
 	 */
-	private void parseXML(String xmlFile) throws ParseException
+	private void parseXML() throws ParseException
 	{
+		InputStream inputStream = Utility.getCurrClassLoader().getResourceAsStream(DATA_TYPE_CONF_FILE);
 		try
 		{
-			InputStream inputStream = DataTypeConfigFactory.class.getClassLoader()
-			.getResourceAsStream(xmlFile);
 			dom = XMLParserUtility.getDocument(inputStream);
 			parseDocument();
 		}
@@ -115,6 +119,17 @@ public final class DataTypeConfigFactory
 		{
 			logger.error(ioe.getMessage(), ioe);
 			throw new ParseException(ioe);
+		}
+		finally
+		{
+			try
+			{
+				inputStream.close();
+			}
+			catch (IOException exception)
+			{
+				logger.error("Not able to close input stream", exception);
+			}
 		}
 	}
 
