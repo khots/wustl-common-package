@@ -21,7 +21,7 @@ public class CommonBaseTestCase extends BaseTestCase
 		{
 			HibernateProperties.initBundle(System.getProperty("user.dir")+"/test/junitConf.properties");
 			XMLPropertyHandler.init(System.getProperty("app.propertiesFile"));
-			ErrorKey.init("-");
+			ErrorKey.init("~");
 		}
 		catch (Exception e)
 		{
