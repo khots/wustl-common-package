@@ -4,6 +4,7 @@
 
 package edu.wustl.common.factory;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.wustl.common.datatypes.DataTypeConfigFactory;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
@@ -104,6 +106,8 @@ public final class AbstractFactoryConfig
 
 		try
 		{
+			InputStream inputStream = AbstractFactoryConfig.class.getClassLoader()
+			.getResourceAsStream(xmlFile);
 			dom = XMLParserUtility.getDocument(xmlFile);
 			parseDocument();
 		}
