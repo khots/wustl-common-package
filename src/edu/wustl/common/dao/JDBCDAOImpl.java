@@ -406,7 +406,8 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Logger.out.debug("Column value: " + value);
 		try
 		{
-			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+			// Date format changed by by geeta
+			DateFormat formatter = new SimpleDateFormat(Variables.dateFormat);
 			formatter.setLenient(false);
 			java.util.Date date = formatter.parse((String) value);
 			Timestamp t = new Timestamp(date.getTime());
