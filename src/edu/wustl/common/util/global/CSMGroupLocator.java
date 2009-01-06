@@ -1,6 +1,7 @@
 
 package edu.wustl.common.util.global;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ import org.w3c.dom.NodeList;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -145,10 +146,10 @@ public final class CSMGroupLocator
 	 */
 	public void init() throws ApplicationException
 	{
+		InputStream inputStream = Utility.getCurrClassLoader().getResourceAsStream(
+				CSM_GROUP_CONF_FILE);
 		try
 		{
-			InputStream inputStream = CSMGroupLocator.class.getClassLoader()
-			.getResourceAsStream(CSM_GROUP_CONF_FILE);
 			Document doc = XMLParserUtility.getDocument(inputStream);
 			NodeList csmGrNodeLst = doc.getElementsByTagName(ELE_CSM_GROUP);
 			populateMaps(csmGrNodeLst);
@@ -156,8 +157,19 @@ public final class CSMGroupLocator
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			throw new ApplicationException(ErrorKey.getErrorKey("csm.getinstance.error"), exception,
-					parseExcepMessage);
+			throw new ApplicationException(ErrorKey.getErrorKey("csm.getinstance.error"),
+					exception, parseExcepMessage);
+		}
+		finally
+		{
+			try
+			{
+				inputStream.close();
+			}
+			catch (IOException exception)
+			{
+				logger.error("Not able to close input stream", exception);
+			}
 		}
 	}
 
