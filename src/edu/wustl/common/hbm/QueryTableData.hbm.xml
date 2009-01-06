@@ -5,7 +5,7 @@
 
 <hibernate-mapping default-lazy="false">
     <class
-        name="edu.wustl.common.domain.QueryTableData"
+        name="edu.wustl.simplequery.query.QueryTableData"
         table="CATISSUE_QUERY_TABLE_DATA"
         dynamic-update="false"
         dynamic-insert="false"
