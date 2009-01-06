@@ -15,7 +15,7 @@ public class XMLParserUtilityTestCase extends CommonBaseTestCase
 		try
 		{
 			InputStream inputXmlFile= new FileInputStream
-			(System.getProperty("user.dir")+"/DataTypeConfigurations.xml");
+			(System.getProperty("user.dir")+"/src/DataTypeConfigurations.xml");
 			Document document=XMLParserUtility.getDocument(inputXmlFile);
 			assertNotNull(document);
 			assertTrue(document instanceof Document);
