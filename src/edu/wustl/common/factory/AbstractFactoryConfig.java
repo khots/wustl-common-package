@@ -4,6 +4,7 @@
 
 package edu.wustl.common.factory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +16,10 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import edu.wustl.common.datatypes.DataTypeConfigFactory;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.XMLParserUtility;
 
 /**
@@ -33,6 +34,10 @@ public final class AbstractFactoryConfig
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractFactoryConfig.class);
 
+	/**
+	 * File name for CSM group configuration.
+	 */
+	private static final String FACTORY_CONF_FILE = "Factory.xml";
 	/**
 	 * Specifies success.
 	 */
@@ -67,7 +72,7 @@ public final class AbstractFactoryConfig
 
 		try
 		{
-			parseXML("Factory.xml");
+			parseXML(FACTORY_CONF_FILE);
 		}
 		catch (ParseException exception)
 		{
@@ -104,17 +109,24 @@ public final class AbstractFactoryConfig
 	private void parseXML(String xmlFile) throws ParseException
 	{
 
+		InputStream inputStream = Utility.getCurrClassLoader().getResourceAsStream(xmlFile);
 		try
 		{
-			InputStream inputStream = AbstractFactoryConfig.class.getClassLoader()
-			.getResourceAsStream(xmlFile);
-			dom = XMLParserUtility.getDocument(xmlFile);
+			dom = XMLParserUtility.getDocument(inputStream);
 			parseDocument();
 		}
 		catch (Exception ioe)
 		{
 			logger.error(ioe.getMessage(), ioe);
 			throw new ParseException(ioe);
+		}
+		try
+		{
+			inputStream.close();
+		}
+		catch (IOException exception)
+		{
+			logger.error("Not able to close input stream", exception);
 		}
 	}
 
