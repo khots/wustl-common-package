@@ -35,7 +35,7 @@ public final class AbstractFactoryConfig
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractFactoryConfig.class);
 
 	/**
-	 * File name for CSM group configuration.
+	 * File name for Factory configuration.
 	 */
 	private static final String FACTORY_CONF_FILE = "Factory.xml";
 	/**

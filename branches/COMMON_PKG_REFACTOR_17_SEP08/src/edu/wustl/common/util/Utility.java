@@ -7,6 +7,7 @@
 
 package edu.wustl.common.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -797,6 +798,17 @@ public final class Utility
 				logger.error(ioe.getMessage(), ioe);
 				throw new edu.wustl.common.exception.ParseException(ioe);
 			}
+			finally
+			{
+				try
+				{
+					inputXmlFile.close();
+				}
+				catch (IOException exception)
+				{
+					logger.error("Not able to close input stream", exception);
+				}
+			}
 			Element root = doc.getDocumentElement();
 			NodeList nodeList = root.getElementsByTagName("PrivilegeMapping");
 			int length = nodeList.getLength();
@@ -812,7 +824,6 @@ public final class Utility
 			privGroupMap.put("CP", getPriviligesList(root, "collectionProtocolMapping"));
 			privGroupMap.put("SCIENTIST", getPriviligesList(root, "scientistMapping"));
 			privGroupMap.put("GLOBAL", getPriviligesList(root, "globalMapping"));
-
 		}
 	}
 
