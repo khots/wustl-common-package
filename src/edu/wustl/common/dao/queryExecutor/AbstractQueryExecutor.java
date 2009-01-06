@@ -247,7 +247,7 @@ public abstract class AbstractQueryExecutor
                         if (retObj == null) {
                             break;
                         }
-                        SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_PATTERN_MM_DD_YYYY + " "
+                        SimpleDateFormat formatter = new SimpleDateFormat(Variables.dateFormat  + " "
                                 + Constants.TIME_PATTERN_HH_MM_SS);
                         retObj = formatter.format((java.util.Date) retObj);
                         break;
