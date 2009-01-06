@@ -15,8 +15,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import edu.wustl.common.util.logger.Logger;
-
 /**
  * This class has utility methods to parse xml file.
  * @author ravi_kumar
@@ -32,10 +30,6 @@ public final class XMLParserUtility
 	{
 
 	}
-	/**
-	 * logger Logger - Generic logger.
-	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(XMLParserUtility.class);
 
 	/**
 	 * This method return role name from xml file.
@@ -69,8 +63,7 @@ public final class XMLParserUtility
 			SAXException, IOException
 	{
 		File file = new File(fileName);
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+		DocumentBuilder documentBuilder = getDocumentBuilder();
 		return documentBuilder.parse(file);
 	}
 
@@ -85,25 +78,19 @@ public final class XMLParserUtility
 	public static Document getDocument(InputStream inputStream)
 			throws ParserConfigurationException, SAXException, IOException
 	{
-		Document document;
-		try
-		{
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-			document = documentBuilder.parse(inputStream);
-		}
-		finally
-		{
-			try
-			{
-				inputStream.close();
-			}
-			catch (IOException exception)
-			{
-				logger.error("Not able to close input stream", exception);
-			}
-		}
-		return document;
+
+		DocumentBuilder documentBuilder = getDocumentBuilder();
+		return documentBuilder.parse(inputStream);
 	}
 
+	/**
+	 * @return DocumentBuilder object
+	 * @throws ParserConfigurationException if a DocumentBuilder
+     * cannot be created which satisfies the configuration requested.
+	 */
+	private static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException
+	{
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		return dbf.newDocumentBuilder();
+	}
 }
