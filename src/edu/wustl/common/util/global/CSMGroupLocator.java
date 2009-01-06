@@ -1,6 +1,7 @@
 
 package edu.wustl.common.util.global;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.w3c.dom.NodeList;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -145,7 +147,9 @@ public final class CSMGroupLocator
 	{
 		try
 		{
-			Document doc = XMLParserUtility.getDocument(CSM_GROUP_CONF_FILE);
+			InputStream inputStream = CSMGroupLocator.class.getClassLoader()
+			.getResourceAsStream(CSM_GROUP_CONF_FILE);
+			Document doc = XMLParserUtility.getDocument(inputStream);
 			NodeList csmGrNodeLst = doc.getElementsByTagName(ELE_CSM_GROUP);
 			populateMaps(csmGrNodeLst);
 		}

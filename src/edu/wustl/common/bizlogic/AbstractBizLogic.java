@@ -870,6 +870,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		try
 		{
+			
 			dao.closeSession();
 		}
 		catch (DAOException exception)

@@ -4,6 +4,7 @@
 
 package edu.wustl.common.datatypes;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.daofactory.ApplicationDAOPropertiesParser;
 
 /**
  * This class configure factory for data types.
@@ -104,7 +106,9 @@ public final class DataTypeConfigFactory
 	{
 		try
 		{
-			dom = XMLParserUtility.getDocument(xmlFile);
+			InputStream inputStream = DataTypeConfigFactory.class.getClassLoader()
+			.getResourceAsStream(xmlFile);
+			dom = XMLParserUtility.getDocument(inputStream);
 			parseDocument();
 		}
 		catch (Exception ioe)
