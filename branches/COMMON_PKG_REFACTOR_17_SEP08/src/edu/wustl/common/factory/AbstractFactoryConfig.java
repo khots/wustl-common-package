@@ -120,13 +120,16 @@ public final class AbstractFactoryConfig
 			logger.error(ioe.getMessage(), ioe);
 			throw new ParseException(ioe);
 		}
-		try
+		finally
 		{
-			inputStream.close();
-		}
-		catch (IOException exception)
-		{
-			logger.error("Not able to close input stream", exception);
+			try
+			{
+				inputStream.close();
+			}
+			catch (IOException exception)
+			{
+				logger.error("Not able to close input stream", exception);
+			}
 		}
 	}
 
@@ -199,7 +202,8 @@ public final class AbstractFactoryConfig
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception, "");
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
+					"");
 		}
 	}
 
@@ -231,7 +235,8 @@ public final class AbstractFactoryConfig
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception, "");
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
+					"");
 		}
 
 	}
@@ -253,7 +258,8 @@ public final class AbstractFactoryConfig
 		catch (Exception exception)
 		{
 			logger.error(exception.getMessage(), exception);
-			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception, "");
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
+					"");
 		}
 
 	}
