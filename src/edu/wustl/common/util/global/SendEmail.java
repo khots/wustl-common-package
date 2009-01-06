@@ -94,7 +94,7 @@ public class SendEmail
 	 * @return message with updated
 	 * @throws MessagingException This exception thrown if email parameters are wrongly formatted.
 	 */
-	public MimeMessage setEmailInfo(EmailDetails emailDetails,Session session)
+	private MimeMessage setEmailInfo(EmailDetails emailDetails,Session session)
 			throws MessagingException
 	{
 		MimeMessage msg = new MimeMessage(session);
