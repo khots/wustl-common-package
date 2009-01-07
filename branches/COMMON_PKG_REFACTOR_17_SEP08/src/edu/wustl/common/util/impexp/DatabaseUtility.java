@@ -263,9 +263,9 @@ public class DatabaseUtility
 		}
 		catch (Exception exception)
 		{
-			ErrorKey errorKey=ErrorKey.getErrorKey("");
+			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.dbtype.error");
 			throw new ApplicationException(errorKey,exception,
-				"Not able to get import/export class. Please make sure databse type is correct.");
+				"Not able to get import/export class. Please make sure database type is correct.");
 		}
 	}
 }
