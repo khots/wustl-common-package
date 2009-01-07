@@ -132,29 +132,6 @@ public final class PasswordManager
 	 * This map contains error message for different error code.
 	 */
 	private static Map<Integer, String> errorMess;
-	static
-	{
-		errorMess = new HashMap<Integer, String>();
-		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
-				.getValue(MINIMUM_PASSWORD_LENGTH));
-		List<String> placeHolders = new ArrayList<String>();
-		placeHolders.add(Integer.valueOf(minimumPasswordLength).toString());
-		String errorMsg = ApplicationProperties.getValue("errors.newPassword.length", placeHolders);
-		errorMess.put(FAIL_LENGTH, errorMsg);
-		errorMess.put(FAIL_SAME_AS_OLD, ApplicationProperties
-				.getValue("errors.newPassword.sameAsOld"));
-		errorMess.put(FAIL_SAME_AS_USERNAME, ApplicationProperties
-				.getValue("errors.newPassword.sameAsUserName"));
-		errorMess
-				.put(FAIL_IN_PATTERN, ApplicationProperties.
-						getValue("errors.newPassword.pattern"));
-		errorMess.put(FAIL_SAME_SESSION, ApplicationProperties
-				.getValue("errors.newPassword.sameSession"));
-		errorMess.put(FAIL_WRONG_OLD_PASSWORD, ApplicationProperties
-				.getValue("errors.oldPassword.wrong"));
-		errorMess.put(FAIL_INVALID_SESSION, ApplicationProperties
-				.getValue("errors.newPassword.genericmessage"));
-	}
 
 	/**
 	 * Generate random alpha numeric password.
@@ -642,14 +619,58 @@ public final class PasswordManager
 	 */
 	public static String getErrorMessage(int errorCode)
 	{
-		String errMsg = errorMess.get(errorCode);
-		if (null == errMsg)
+		String errMsg;
+		if(getErrorMessMap()!=null)
+		{
+			errMsg = errorMess.get(errorCode);
+		}
+		else
 		{
 			errMsg = ApplicationProperties.getValue("errors.newPassword.genericmessage");
 		}
 		return errMsg;
 	}
 
+	/**
+	 * This methods take a decision whether map can be initialized or not and accordingly
+	 * call a method initErrorMessMap.
+	 * @return Map Error message map.
+	 */
+	private static Map<Integer, String> getErrorMessMap()
+	{
+		Map<Integer, String> map=errorMess;
+		if(errorMess==null && !XMLPropertyHandler.isDocumentNull())
+		{
+			initErrorMessMap();
+		}
+		return map;
+	}
+	/**
+	 * This method initialize the error message map.
+	 */
+	private static void initErrorMessMap()
+	{
+		errorMess = new HashMap<Integer, String>();
+		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
+				.getValue(MINIMUM_PASSWORD_LENGTH));
+		List<String> placeHolders = new ArrayList<String>();
+		placeHolders.add(Integer.valueOf(minimumPasswordLength).toString());
+		String errorMsg = ApplicationProperties.getValue("errors.newPassword.length", placeHolders);
+		errorMess.put(FAIL_LENGTH, errorMsg);
+		errorMess.put(FAIL_SAME_AS_OLD, ApplicationProperties
+				.getValue("errors.newPassword.sameAsOld"));
+		errorMess.put(FAIL_SAME_AS_USERNAME, ApplicationProperties
+				.getValue("errors.newPassword.sameAsUserName"));
+		errorMess
+				.put(FAIL_IN_PATTERN, ApplicationProperties.
+						getValue("errors.newPassword.pattern"));
+		errorMess.put(FAIL_SAME_SESSION, ApplicationProperties
+				.getValue("errors.newPassword.sameSession"));
+		errorMess.put(FAIL_WRONG_OLD_PASSWORD, ApplicationProperties
+				.getValue("errors.oldPassword.wrong"));
+		errorMess.put(FAIL_INVALID_SESSION, ApplicationProperties
+				.getValue("errors.newPassword.genericmessage"));
+	}
 	/**
 	 *
 	 * @param args filename,password.
