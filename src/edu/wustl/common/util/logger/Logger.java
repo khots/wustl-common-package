@@ -55,13 +55,19 @@ public final class Logger
 	 */
 	public static org.apache.log4j.Logger getLogger(Class className)
 	{
+		org.apache.log4j.Logger logger;
 		if (!isConfigured )
 		{
-			out=org.apache.log4j.Logger.getLogger(className);
+			out=org.apache.log4j.Logger.getLogger("");
 			out.warn
 			("Application specific logger configuration is not done. Please use Logger.configureLogger(path) before using getLogger()");
+			logger = out;
 		}
-		return org.apache.log4j.Logger.getLogger(className);
+		else
+		{
+			logger = org.apache.log4j.Logger.getLogger(className);
+		}
+		return logger;
 	}
 
 	/**
