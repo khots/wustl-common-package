@@ -113,7 +113,6 @@ public final class CommonServiceLocator
 			Properties props= new Properties();
 			props.load(stream);
 			setAppName(props);
-		//	setAppHome(props);
 			setPropDirPath();
 			setDateSeparator(props);
 			setDatePattern(props);
@@ -154,26 +153,14 @@ public final class CommonServiceLocator
 		return appHome;
 	}
 
-
 	/**
 	 * Set application home directory where application is running.
-	 * @param props Object of Properties
-	 */
-	private void setAppHome(Properties props)
-	{
-		appHome=props.getProperty("app.home.dir");
-	}
-
-	
-	/**
-	 * Set application home directory where application is running.
-	 * @param props Object of Properties
+	 * @param appHome Object of Properties
 	 */
 	public void setAppHome(String appHome)
 	{
 		this.appHome=appHome;
 	}
-	
 
 	/**
 	 * @return the path of directory of property files.
