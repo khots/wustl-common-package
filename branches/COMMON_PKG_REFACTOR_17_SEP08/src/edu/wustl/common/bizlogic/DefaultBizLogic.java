@@ -459,22 +459,46 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
 			throws BizLogicException
 	{
-		String[] whereColName = {""};
-		String[] whereColCondition = {""};
-		Object[] whereColValue = {""};
-
+		String[] whereColName = null;
+		String[] whereColCondition = null;
+		Object[] whereColValue = null;
+	
 		if (isToExcludeDisabled)
 		{
 			whereColName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
 			whereColCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
 			whereColValue = Utility
 					.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED.getStatus());
+				
 		}
 
 		return getList(sourceObjectName, displayNameFields, valueField, whereColName,
 				whereColCondition, whereColValue, joinCondition, separatorBetweenFields);
 	}
 
+	
+/*	private List getList(String sourceObjectName,String[] displayNameFields,
+			String valueField,QueryWhereClause queryWhereClause, String separatorBetweenFields) throws BizLogicException
+	{
+			List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
+			String[] selectColumnName = new String[displayNameFields.length + 1];
+			System.arraycopy(displayNameFields,0,selectColumnName,0,displayNameFields.length);
+			selectColumnName[displayNameFields.length] = valueField;
+
+			List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
+			/**
+			 * For each row in the result a vector will be created.Vector will contain all the columns
+			 * other than the value column(last column).
+			 * If there is only one column in the result it will be set as the Name for the NameValueBean.
+			 * When more than one columns are present, a string representation will be set.
+			 */
+			
+/*			nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
+			getNameValueList(separatorBetweenFields, nameValuePairs, results);
+			Collections.sort(nameValuePairs);
+		
+		return nameValuePairs;
+	}*/
 	/**
 	 * Sorting of ID columns.
 	 * @param sourceObjectName source Object Name
@@ -499,18 +523,26 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String[] selectColumnName = new String[displayNameFields.length + 1];
 		System.arraycopy(displayNameFields,0,selectColumnName,0,displayNameFields.length);
 		selectColumnName[displayNameFields.length] = valueField;
-		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
+		List results = null;
+		
 		try
 		{
-			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
+			QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
+			if(whereColumnCondition == null)
+			{
+				results = retrieve(sourceObjectName, selectColumnName, null);
+			}
+			else
+			{
+				queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
 					whereColumnValue,joinCondition);
+				results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
+			}	
 		}
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.getlist.error","Not able to get list.");
 		}
-		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
-
 		/**
 		 * For each row in the result a vector will be created.Vector will contain all the columns
 		 * other than the value column(last column).

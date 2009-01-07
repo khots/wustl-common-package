@@ -91,7 +91,7 @@ public class CommonAddAction extends BaseAddEditAction
 			String objectName, AbstractDomainObject abstractDomain) throws ApplicationException
 	{
 		String[] displayNameParams = addMessage(abstractDomain, objectName);
-		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object. add" + ".successOnly",
+		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.add" + ".successOnly",
 				displayNameParams));
 		saveMessages(request, messages);
 	}
