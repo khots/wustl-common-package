@@ -44,6 +44,15 @@ public final class XMLPropertyHandler
 	private static Document document = null;
 
 	/**
+	 * This method returns true is not initialized.
+	 * @return true if document is not initialized else false.
+	 */
+	public static boolean isDocumentNull()
+	{
+		return null==document;
+	}
+
+	/**
 	 * @param path String path for logger information.
 	 * @throws ParseException throws this exception if
 	 * specified xml file not found or not able to parse the file.
