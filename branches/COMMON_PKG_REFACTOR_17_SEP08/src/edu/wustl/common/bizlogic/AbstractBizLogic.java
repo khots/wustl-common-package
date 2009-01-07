@@ -829,7 +829,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			SessionDataBean sessionDataBean) throws BizLogicException
 	{
 
-		return false;
+		return true;
 	}
 
 
