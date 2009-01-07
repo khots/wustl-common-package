@@ -9,25 +9,25 @@
 
 package edu.wustl.common.util.global;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.regex.Pattern;
-
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.PasswordEncryptionException;
 import edu.wustl.common.util.XMLPropertyHandler;
-import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.exception.DAOException;
 import gov.nih.nci.security.util.StringEncrypter;
 import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  *<p>Title: </p>
@@ -49,10 +49,6 @@ public final class PasswordManager
 
 	}
 
-	/**
-	 * logger Logger - Generic logger.
-	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordManager.class);
 	/**
 	 * Constant for TEN.
 	 */
@@ -225,19 +221,10 @@ public final class PasswordManager
 	@Deprecated
 	public static String encode(String input)
 	{
-		String encodedString = null;
 		StringBuffer inString = getInString(input);
+		StringBuffer stringBuffer = getEncodedString(inString);
+		return stringBuffer.toString();
 
-		try
-		{
-			StringBuffer stringBuffer = getEncodedString(inString);
-			encodedString = stringBuffer.toString();
-		}
-		catch (Exception exception)
-		{
-			logger.warn("Problems in Encryption/Decryption in CommonJdao ", exception);
-		}
-		return encodedString;
 	}
 
 	/**
@@ -282,23 +269,14 @@ public final class PasswordManager
 	@Deprecated
 	public static String decode(String decodeString)
 	{
-		String decodedString = null;
-		try
+		byte[] bytes = getStringAsBytes(decodeString);
+		String sin = new String(bytes);
+		StringBuffer sout = new StringBuffer();
+		for (int i = 0; i < sin.length(); i += TWO)
 		{
-			byte[] bytes = getStringAsBytes(decodeString);
-			String sin = new String(bytes);
-			StringBuffer sout = new StringBuffer();
-			for (int i = 0; i < sin.length(); i += TWO)
-			{
-				sout.append(sin.substring(i, i + 1));
-			}
-			decodedString = sout.toString();
+			sout.append(sin.substring(i, i + 1));
 		}
-		catch (Exception exeption)
-		{
-			logger.warn("Problems in Decription/Encription", exeption);
-		}
-		return decodedString;
+		return sout.toString();
 	}
 
 	/**
@@ -371,7 +349,6 @@ public final class PasswordManager
 		int erroNo = erNo;
 		if (NOT_FAILED == erNo && newPassword.equals(oldPassword))
 		{
-			logger.debug("Password is not valid returning FAIL_SAME_AS_OLD");
 			erroNo = FAIL_SAME_AS_OLD;
 		}
 		return erroNo;
@@ -392,7 +369,6 @@ public final class PasswordManager
 			// to Check length of password,if not valid return FAIL_LENGTH
 			if (newPassword.length() < minimumPasswordLength)
 			{
-				logger.debug("Password is not valid returning FAIL_LENGHT");
 				erroNo = FAIL_LENGTH;
 			}
 		}
@@ -413,10 +389,6 @@ public final class PasswordManager
 		{
 			if (passwordChangedInsameSession != null && passwordChangedInsameSession.booleanValue())
 			{
-				// return error code if attribute (Boolean) is in session
-				logger
-						.debug("Attempt to change Password" +
-								" in same session Returning FAIL_SAME_SESSION");
 				erroNo = FAIL_SAME_SESSION;
 			}
 		}
@@ -449,7 +421,6 @@ public final class PasswordManager
 		// condition to check whether all above condotion is satisfied
 		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
 		{
-			logger.debug("Password is not valid returning FAIL_IN_PATTERN");
 			erroNo = FAIL_IN_PATTERN;
 		}
 		return erroNo;
@@ -528,7 +499,6 @@ public final class PasswordManager
 			String name = userName.substring(0, usernameBeforeMailaddress);
 			if (name != null && newPassword.equals(name))
 			{
-				logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
 				errorNo = FAIL_SAME_AS_USERNAME; // return int value 3
 			}
 		}
@@ -548,7 +518,6 @@ public final class PasswordManager
 		int errorNo = erNo;
 		if (NOT_FAILED == erNo && newPassword.equals(userName))
 		{
-			logger.debug("Password is not valid returning FAIL_SAME_AS_USERNAME");
 			errorNo = FAIL_SAME_AS_USERNAME; // return int value 3
 		}
 		return errorNo;
@@ -579,7 +548,6 @@ public final class PasswordManager
 			catch (Exception e)
 			{
 				// if error occured during password comparision
-				logger.error(e.getMessage(), e);
 				errorNo = FAIL_WRONG_OLD_PASSWORD;
 			}
 		}
@@ -620,13 +588,13 @@ public final class PasswordManager
 	public static String getErrorMessage(int errorCode)
 	{
 		String errMsg;
-		if(getErrorMessMap()!=null)
+		if(getErrorMessMap()==null)
 		{
-			errMsg = errorMess.get(errorCode);
+			errMsg = ApplicationProperties.getValue("errors.newPassword.genericmessage");
 		}
 		else
 		{
-			errMsg = ApplicationProperties.getValue("errors.newPassword.genericmessage");
+			errMsg = errorMess.get(errorCode);
 		}
 		return errMsg;
 	}
@@ -675,16 +643,15 @@ public final class PasswordManager
 	 *
 	 * @param args filename,password.
 	 * @throws PasswordEncryptionException generic PasswordEncryptionException
+	 * @throws IOException Generic IO Exception.
 	 */
-	public static void main(String[] args) throws PasswordEncryptionException
+	public static void main(String[] args) throws PasswordEncryptionException, IOException
 	{
-		String pwd = "admin";
-		String encodedPWD = encrypt(pwd);
 		if (args.length > 1)
 		{
 			String filename = args[0];
 			String password = args[1];
-			encodedPWD = encrypt(password);
+			String encodedPWD = encrypt(password);
 			writeToFile(filename, encodedPWD);
 		}
 	}
@@ -693,20 +660,13 @@ public final class PasswordManager
 	 * This method writes the encoded password to the file.
 	 * @param filename File to be written.
 	 * @param encodedPassword Encoded password.
+	 * @throws IOException Generic IO Exception.
 	 */
-	private static void writeToFile(String filename, String encodedPassword)
+	private static void writeToFile(String filename, String encodedPassword) throws IOException
 	{
-		try
-		{
 			File fileObject = new File(filename);
 			FileWriter writeObject = new FileWriter(fileObject);
 			writeObject.write("first.admin.encodedPassword=" + encodedPassword + "\n");
 			writeObject.close();
-
-		}
-		catch (Exception ioe)
-		{
-			logger.warn("Problems in writing the encoded password to the file.");
-		}
 	}
 }
