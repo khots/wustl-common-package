@@ -534,21 +534,6 @@ public class UtilityTestCases extends CommonBaseTestCase
 			exception.printStackTrace();
 		}
 	}
-
-	public void testGetDisplayLabelForUnderscore()
-	{
-		try
-		{
-			String objectName = Utility.getDisplayLabelForUnderscore("first_name");
-			assertEquals("First Name ", objectName);
-		}
-		catch (Exception exception)
-		{
-			assertFalse("Not able to get Display Label For Underscore.", true);
-			exception.printStackTrace();
-		}
-	}
-
 	public void testReplaceAll()
 	{
 		try
