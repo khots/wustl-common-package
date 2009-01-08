@@ -1,12 +1,3 @@
-/**
- *<p>Title: </p>
- *<p>Description:  </p>
- *<p>Copyright: (c) Washington University, School of Medicine 2004</p>
- *<p>Company: Washington University, School of Medicine, St. Louis.</p>
- *@author Aarti Sharma
- *@version 1.0
- */
-
 package edu.wustl.common.util.global;
 
 import edu.wustl.common.beans.SessionDataBean;
@@ -30,6 +21,8 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
+ * Removed all logger statement in this file because
+ * its main can be called from outside.
  *<p>Title: </p>
  *<p>Description:  </p>
  *<p>Copyright: (c) Washington University, School of Medicine 2005</p>
