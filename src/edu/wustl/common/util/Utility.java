@@ -758,26 +758,7 @@ public final class Utility
 		return calendar;
 	}
 
-	/**
-	 * This method gets Display Label For Underscore.
-	 * @param objectName object Name.
-	 * @return Label.
-	 */
-	public static String getDisplayLabelForUnderscore(String objectName)
-	{
-		StringBuffer formatedStr = new StringBuffer();
-		String[] tokens = objectName.split("_");
-		for (int i = 0; i < tokens.length; i++)
-		{
-			if (!TextConstants.EMPTY_STRING.equals(tokens[i]))
-			{
-				formatedStr.append(initCap(tokens[i]));
-				formatedStr.append(Constants.CONST_SPACE_CAHR);
-			}
-		}
-		return formatedStr.toString();
-	}
-
+	
 	/**
 	 * For MSR changes.
 	 * @throws edu.wustl.common.exception.ParseException throws this exception if
