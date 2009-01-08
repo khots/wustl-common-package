@@ -817,21 +817,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		return false;
 	}
-	/**
-	 * this method return true if authorized user.
-	 * @param dao DAO object.
-	 * @param domainObject Domain object.
-	 * @param sessionDataBean  SessionDataBean object.
-	 * @throws BizLogicException generic BizLogic Exception
-	 * @return true if authorized user.
-	 */
-	public boolean isAuthorized(DAO dao, Object domainObject,
-			SessionDataBean sessionDataBean) throws BizLogicException
-	{
-
-		return true;
-	}
-
+	
 
 	/**
 	 * @param exception Exception object thrown in a catch block.
