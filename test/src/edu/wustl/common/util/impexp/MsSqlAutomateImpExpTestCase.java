@@ -11,7 +11,7 @@ import edu.wustl.common.util.logger.Logger;
 
 /**
  * This is for testing of Automate import/export function for MSSQL server database.
- * Please make sure that all the parameters passed into this are correct i.e Check the static array 'ARGS'.
+ * Please make sure that all the parameters configured in junitConf.properties are correct.
  * Also database server must contains csv file because database searches file on server.
  * @author ravi_kumar
  *
