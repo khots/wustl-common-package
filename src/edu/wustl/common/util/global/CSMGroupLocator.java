@@ -32,7 +32,7 @@ public final class CSMGroupLocator
 	/**
 	 * File name for CSM group configuration.
 	 */
-	private static final String CSM_GROUP_CONF_FILE = "CSMGroupConf.xml";
+	private static final String CSM_GROUP_CONF_FILE = "CSMGroup.xml";
 
 	/**
 	 * Specifies parse Exception Message.
