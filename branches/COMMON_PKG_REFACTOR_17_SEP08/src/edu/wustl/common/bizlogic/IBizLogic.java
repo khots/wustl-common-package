@@ -14,6 +14,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.QueryWhereClause;
 
 /**
  * @author kapil_kaveeshwar
@@ -323,4 +324,14 @@ public interface IBizLogic
 	 * @return Read Denied Privilege Name.
 	 */
 	String getReadDeniedPrivilegeName();
+	
+	/**
+	 * Retrieves the records for class name in sourceObjectName as per the where clause.
+	 * @param sourceObjectName :   source Class object
+	 * @param selectColumnName : list of columns to select 
+	 * @param queryWhereClause : where clause.
+	 * @return the list of objects as per the where clause.
+	 */
+	List retrieve(String sourceObjectName,
+			String[] selectColumnName,QueryWhereClause queryWhereClause) throws BizLogicException;
 }
