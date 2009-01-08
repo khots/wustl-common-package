@@ -7,7 +7,12 @@ import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.util.global.HibernateProperties;
 import edu.wustl.common.util.logger.Logger;
 
-
+/**
+ * This is for testing of Automate import/export function for MySQL database.
+ * Please make sure that all the parameters configured in junitConf.properties are correct.
+ * @author ravi_kumar
+ *
+ */
 public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 {
 
