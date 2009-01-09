@@ -178,18 +178,16 @@ public class AutoCompleteTag extends TagSupport
 		autoCompleteResult.append(MessageFormat.format(props.getProperty("ACTinputImageTag"),
 				arguments));
 		StringBuffer valueList = getValueInList();
-		String autocomplet = "";
-
+		String autoC = "";
 		if (property.equals(Constants.SPECIMEN_TYPE))
 		{
-			Object[] args = {property, numberOfResults, numberOfCharacters};
-			String autoCompleteStr = MessageFormat.format(props.getProperty("ACTautocompleter"),
-					args);
-			Utility.replaceAll(autoCompleteStr, "*", "{");
-			Utility.replaceAll(autoCompleteStr, "#", "}");
-			autocomplet = autoCompleteStr;
+			autoC = "var AutoC = ";
 		}
-		Object[] arg = {valueList, autocomplet};
+		Object[] args = {property, numberOfResults, numberOfCharacters};
+		String autoCompleteStr = MessageFormat.format(props.getProperty("ACTautocompleter"), args);
+		String autStr = Utility.replaceAll(autoCompleteStr, "*", "{");
+		String autoCompStr = Utility.replaceAll(autStr, "#", "}");
+		Object[] arg = {autoC,valueList, autoCompStr};
 		autoCompleteResult.append(MessageFormat.format(props.getProperty("ACTscript"), arg));
 		return autoCompleteResult.toString();
 	}
@@ -209,7 +207,8 @@ public class AutoCompleteTag extends TagSupport
 				{
 					NameValueBean nvb = (NameValueBean) nvbList.get(i);
 					valueList.append("valuesInList[" + i + "] = \"")
-					.append(nvb.getName()).append("\";");
+					.append(nvb.getName()).append(
+							"\";");
 				}
 			}
 		}
@@ -402,9 +401,8 @@ public class AutoCompleteTag extends TagSupport
 		Object[] scriptArgs = {displayProperty, displayProperty};
 		autoCompleteResult.append(MessageFormat.format(props
 				.getProperty("ACTscriptForDynamicProperty"), scriptArgs));
-		setAutocompleter(autoCompleteResult, div, props);
+		autoCompleteResult = setAutocompleter(autoCompleteResult, div, props);
 		autoCompleteResult.append("</script>");
-
 		return autoCompleteResult.toString();
 	}
 
@@ -439,8 +437,10 @@ public class AutoCompleteTag extends TagSupport
 	 * @param autoCompleteResult autoComplete Result
 	 * @param div div
 	 * @param props Properties object.
+	 * @return autoCompleteResult.
 	 */
-	private void setAutocompleter(StringBuffer autoCompleteResult, String div, Properties props)
+	private StringBuffer setAutocompleter(StringBuffer autoCompleteResult, String div,
+			Properties props)
 	{
 		StringBuffer valueIds = new StringBuffer();
 		if (optionsList instanceof List)
@@ -452,11 +452,13 @@ public class AutoCompleteTag extends TagSupport
 				for (int i = 0; i < nvbList.size(); i++)
 				{
 					NameValueBean nvb = (NameValueBean) nvbList.get(i);
-					valueIds.append("valuesInListOfdisplay").append(property)
-							.append('[').append(i).append("] = \"")
-							.append(nvb.getName()).append("\";idsInListOfdisplay")
+					valueIds.append("valuesInListOfdisplay")
 					.append(property).append('[').append(i)
-					.append("] = \"").append(nvb.getValue()).append("\";");
+							.append("] = \"").append(nvb.getName())
+							.append("\";idsInListOfdisplay")
+							.append(property).append('[')
+							.append(i).append("] = \"").append(
+									nvb.getValue()).append("\";");
 				}
 				/**
 				 *  Giving call to autocompleter constructor
@@ -465,11 +467,12 @@ public class AutoCompleteTag extends TagSupport
 						numberOfCharacters};
 				String autoCompleteStr = MessageFormat.format(props
 						.getProperty("ACTautocompleterDP"), autocompleterArgs);
-				Utility.replaceAll(autoCompleteStr, "*", "{");
-				Utility.replaceAll(autoCompleteStr, "#", "}");
-				autoCompleteResult.append(autoCompleteStr);
+				String autStr = Utility.replaceAll(autoCompleteStr, "*", "{");
+				String autoCompStr = Utility.replaceAll(autStr, "#", "}");
+				autoCompleteResult.append(autoCompStr);
 			}
 		}
+		return autoCompleteResult;
 	}
 
 	/**
