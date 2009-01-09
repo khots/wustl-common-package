@@ -97,7 +97,7 @@ public class EmailDetails
 	 */
 	public void addCcAddress(String ccAddress)
 	{
-		if(null==ccAddress)
+		if(null==this.ccAddress)
 		{
 			this.ccAddress = new ArrayList<String>();
 		}
@@ -145,7 +145,7 @@ public class EmailDetails
 	 */
 	public void addBccAddress(String bccAddress)
 	{
-		if(null==bccAddress)
+		if(null==this.bccAddress)
 		{
 			this.bccAddress = new ArrayList<String>();
 		}
