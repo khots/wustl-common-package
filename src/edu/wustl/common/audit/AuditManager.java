@@ -103,11 +103,12 @@ public class AuditManager
 		auditEventLog.setObjectIdentifier(currentObj.getId());
 
 		//Set the table name of the current class.
-		auditEventLog.setObjectName(HibernateMetaData.getTableName(currentObj.getClass()));
+		Object obj = HibernateMetaData.getProxyObjectImpl(currentObj);
+		auditEventLog.setObjectName(HibernateMetaData.getTableName(obj.getClass()));
 		auditEventLog.setEventType(eventType);
 
 		//Class of the object being compared.
-		compareClassOfObject(currentObj, previousObj, auditEventLog);
+		compareClassOfObject((Auditable)obj, previousObj, auditEventLog);
 
 	}
 
