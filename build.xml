@@ -282,5 +282,15 @@
 			</manifest>
 		</jar>
 	</target>
-	
+	<target name="build_exception_jar" depends="compile">		
+			<tstamp />
+			<jar taskname="build_jar" jarfile="${build.dir}/commonpkgexcepion.jar">
+				<fileset dir="${target.dir}">
+					<include name="**/edu/wustl/common/exception/*" />
+				</fileset>
+				<manifest>
+					<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+				</manifest>
+			</jar>
+	</target>
 </project>
