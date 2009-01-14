@@ -218,6 +218,10 @@ public class HibernateMetaData
 		{
 			dbName = Constants.DB2_DATABASE;
 		}
+		else if (dialect.toLowerCase().indexOf("sqlserver") != -1)
+		{
+			dbName = Constants.MSSQLSERVER_DATABASE;
+		}
 		return dbName;
 	}
 	public static void getDATA(Class classObj)
