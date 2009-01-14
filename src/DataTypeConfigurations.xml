@@ -15,4 +15,5 @@
 <DataType name = "table" className = "edu.wustl.common.query.Table"/>
 <DataType name = "boolean" className = "edu.wustl.common.datatypes.BooleanDataType"/>
 <DataType name = "blob" className = "edu.wustl.common.datatypes.BlobDataType"/>
+<DataType name = "varchar" className = "edu.wustl.common.datatypes.VarCharDataType"/>
 </DataTypes>
