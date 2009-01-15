@@ -24,13 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import edu.wustl.common.audit.AuditManager;
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
-import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -291,23 +289,18 @@ public class DatabaseConnectionParams
 	 *
 	 * @throws DAOException
 	 */
-	public void openSession(SessionDataBean sessionDataBean) throws DAOException
+	public void openSession(String jndiName) throws DAOException
 	{
-		auditManager = new AuditManager();
-		if (sessionDataBean != null)
-		{
-			auditManager.setUserId(sessionDataBean.getUserId());
-			auditManager.setIpAddress(sessionDataBean.getIpAddress());
-		}
-		else
-		{
-			auditManager.setUserId(null);
-		}
-
 		try
 		{
+			InitialContext ctx = new InitialContext();
+		       DataSource ds = (DataSource)ctx.lookup(jndiName);
+		       connection = ds.getConnection();
+			
 			//Creates a connection.
-			connection = DBUtil.getConnection();// getConnection(database, loginName, password);
+//			connection = DriverManager.getConnection(
+//					"jdbc:db2://10.88.25.116:50000/cider4:currentSchema=ADMINISTRATOR;",
+//					"administrator", "v-cider4!@#");//DBUtil.getConnection();// getConnection(database, loginName, password);
 			connection.setAutoCommit(false);
 		}
 		catch (Exception sqlExp)
@@ -327,10 +320,9 @@ public class DatabaseConnectionParams
 	{
 		try
 		{
-			auditManager = null;
-			DBUtil.closeConnection();
-			//        	if (connection != null && !connection.isClosed())
-			//        	    connection.close();
+			// DBUtil.closeConnection();
+			if (connection != null && !connection.isClosed())
+        	    connection.close();
 		}
 		catch (Exception sqlExp)
 		{
