@@ -686,6 +686,12 @@ public class JDBCDAOImpl implements JDBCDAO
 			query = new StringBuffer("DROP TABLE IF EXISTS " + tableName);
 			executeUpdate(query.toString());
 		}
+		else if (Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+		{
+			Logger.out.debug("MSSQLSERVER*****************************");
+			query = new StringBuffer("IF EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+tableName+"') DROP TABLE "+tableName);
+			executeUpdate(query.toString());
+		}
 		else if (Variables.databaseName.equals(Constants.DB2_DATABASE))
         {
               Logger.out.debug("DB2*****************************");
