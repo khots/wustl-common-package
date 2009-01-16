@@ -538,16 +538,45 @@ public class UtilityTestCases extends CommonBaseTestCase
 	{
 		try
 		{
+			String objectName = Utility.replaceAll("first*#name*#", "*#", "_");
+			assertEquals("first_name_", objectName);
+		}
+		catch (Exception exception)
+		{
+			logger.info("exception : "+exception.getMessage());
+			exception.printStackTrace();
+			assertFalse("Not able to replace.", true);
+		}
+	}
+
+	public void testReplaceAllSingleChar()
+	{
+		try
+		{
 			String objectName = Utility.replaceAll("first*name", "*", "_");
 			assertEquals("first_name", objectName);
 		}
 		catch (Exception exception)
 		{
-			assertFalse("Not able to replace.", true);
+			logger.info("exception : "+exception.getMessage());
 			exception.printStackTrace();
+			assertFalse("Not able to replace.", true);
 		}
 	}
-
+	public void testReplaceAllNegative()
+	{
+		try
+		{
+			String objectName = Utility.replaceAll("firstname", "*#", "_");
+			assertEquals("firstname", objectName);
+		}
+		catch (Exception exception)
+		{
+			logger.info("exception : "+exception.getMessage());
+			exception.printStackTrace();
+			assertFalse("Not able to replace.", true);
+		}
+	}
 	public void testInitializePrivilegesMap()
 	{
 		try
