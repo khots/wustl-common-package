@@ -114,7 +114,6 @@ public final class Utility
 	public static String datePattern(String strDate)
 	{
 		String datePattern = null;
-		
 		if(strDate != null)
 		{
 			List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
@@ -823,7 +822,7 @@ public final class Utility
 		NodeList nodeList1 = root.getElementsByTagName(tagName);
 		int length1 = nodeList1.getLength();
 		List<NameValueBean> sitePrivList = new ArrayList<NameValueBean>();
-		NameValueBean nmv = new NameValueBean();
+		NameValueBean nmv;
 		for (int counter = 0; counter < length1; counter++)
 		{
 			Element element = (Element) (nodeList1.item(counter));
@@ -886,19 +885,10 @@ public final class Utility
 	public static String replaceAll(String source, String toReplace, String replacement)
 	{
 		String sourceString = source;
-		int idx = sourceString.lastIndexOf(toReplace);
-		if (idx != -1)
+		if (sourceString.contains(toReplace))
 		{
-			StringBuffer ret = new StringBuffer(sourceString);
-			ret.replace(idx, idx + toReplace.length(), replacement);
-			idx = sourceString.lastIndexOf(toReplace, idx - 1);
-			while (idx != -1)
-			{
-				ret.replace(idx, idx + toReplace.length(), replacement);
-			}
-			sourceString = ret.toString();
+			sourceString = sourceString.replace(toReplace, replacement);
 		}
-
 		return sourceString;
 	}
 
