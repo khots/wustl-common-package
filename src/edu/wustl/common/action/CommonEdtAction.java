@@ -60,7 +60,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		String objectName = getObjectName(abstractForm);
 		AbstractDomainObject abstractDomain = getDomainObject(abstractForm, objectName);
 		updateDomainObject(request, abstractForm, abstractDomain, objectName);
-		if (Status.ACTIVITY_STATUS_DISABLED.equals(abstractForm.getActivityStatus()))
+		if(abstractForm.getActivityStatus().equals(Status.ACTIVITY_STATUS_DISABLED.toString()))
 		{
 			target = abstractForm.getOnSubmit();
 		}
