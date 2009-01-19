@@ -88,6 +88,7 @@ public abstract class AbstractAutomateImpExp implements IAutomateImpExp
 				tableNamesList.add(linereader);
 				linereader = reader.readLine();
 			}
+			reader.close();
 		}
 		catch(IOException exception)
 		{

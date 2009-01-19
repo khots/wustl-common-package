@@ -201,6 +201,7 @@ public class ExportReport
 				strOut.append(TextConstants.LINE_SEPARATOR);
 				aux=bufferReader.readLine();
 			}
+			bufferReader.close();
 			out.write(strOut.toString());
 			out.close();
 		}
@@ -346,7 +347,11 @@ public class ExportReport
 				{
 					putCSVFileToZip(out, fileName);
 				}
-				file.delete();
+				boolean isDeleted = file.delete();
+				if(!isDeleted)
+				{
+					logger.info("Not able to delete file "+fileName);
+				}
 			}
 			out.close();
 		}

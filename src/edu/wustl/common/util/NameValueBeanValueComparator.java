@@ -2,12 +2,19 @@
 package edu.wustl.common.util;
 
 
+import java.io.Serializable;
+
 import edu.wustl.common.beans.NameValueBean;
 /**
  * This comparator is used where sorting is to be done on value of NameValueBean.
  */
-public class NameValueBeanValueComparator implements java.util.Comparator<Object>
+public class NameValueBeanValueComparator implements java.util.Comparator<Object>,Serializable
 {
+
+	/**
+	 * serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = 630481702617730538L;
 
 	/**
 	 * @param arg0 Object object to be compared.

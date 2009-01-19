@@ -140,7 +140,7 @@ public class NameValueBean implements Comparable<NameValueBean>, Serializable
 	 */
 	public String toString()
 	{
-		return new String("name:" + name.toString() + " value:" + value.toString());
+		return ("name:" + name.toString() + " value:" + value.toString());
 	}
 
 	/**
@@ -150,7 +150,6 @@ public class NameValueBean implements Comparable<NameValueBean>, Serializable
 	 */
 	public int compareTo(NameValueBean nameValueBean)
 	{
-
 		Comparable comparable;
 		comparable = (Comparable) name;
 		return compareObject(comparable, nameValueBean);
@@ -187,14 +186,16 @@ public class NameValueBean implements Comparable<NameValueBean>, Serializable
 
 	{
 		boolean equal = false;
-		if (this.getClass().getName().equals(object.getClass().getName()))
-
+		if (object != null)
 		{
-			NameValueBean nvb = (NameValueBean) object;
-
-			if (this.getName().equals(nvb.getName()) && this.getValue().equals(nvb.getValue()))
+			if (this.getClass().equals(object.getClass()))
 			{
-				equal = true;
+				NameValueBean nvb = (NameValueBean) object;
+
+				if (this.getName().equals(nvb.getName()) && this.getValue().equals(nvb.getValue()))
+				{
+					equal = true;
+				}
 			}
 		}
 		return equal;

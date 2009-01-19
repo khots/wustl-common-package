@@ -125,4 +125,12 @@ public final class Status
 	{
 		return this.statusName;
 	}
+
+	/**
+	 * @return the statusNo
+	 */
+	public int getStatusNo()
+	{
+		return statusNo;
+	}
 }

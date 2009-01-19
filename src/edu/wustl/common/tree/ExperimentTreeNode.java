@@ -76,7 +76,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	 */
 	public Date getCreatedOn()
 	{
-		return createdOn;
+		return (Date)createdOn.clone();
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	 */
 	public void setCreatedOn(Date createdOn)
 	{
-		this.createdOn = createdOn;
+		this.createdOn = (Date)createdOn.clone();
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	 */
 	public Date getLastUpdatedOn()
 	{
-		return lastUpdatedOn;
+		return (Date)lastUpdatedOn.clone();
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	 */
 	public void setLastUpdatedOn(Date lastUpdatedOn)
 	{
-		this.lastUpdatedOn = lastUpdatedOn;
+		this.lastUpdatedOn = (Date)lastUpdatedOn.clone();
 	}
 
 	/**
@@ -169,4 +169,21 @@ public class ExperimentTreeNode extends TreeNodeImpl
 		return name;
 	}
 
+	/**
+	 * overrides TreeNodeImpl.equals method .
+	 * @param obj Object.
+	 * @return true if equal else false.
+	 */
+	public boolean equals(Object obj)
+	{
+		return super.equals(obj);
+	}
+	/**
+	 * overrides TreeNodeImpl.hashCode method.
+	 * @return hashCode.
+	 */
+	public int hashCode()
+	{
+		return super.hashCode();
+	}
 }

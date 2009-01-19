@@ -2,6 +2,7 @@ package edu.wustl.common.exception;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -17,9 +18,13 @@ import java.util.Properties;
  * @author abhijit_naik
  *
  */
-public final class ErrorKey
+public final class ErrorKey implements Serializable
 {
 
+	/**
+	 * serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = 5958370735621520931L;
 	/**
 	 * The error number used to uniquely identify exception.
 	 */

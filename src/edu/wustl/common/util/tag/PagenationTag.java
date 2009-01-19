@@ -608,6 +608,6 @@ public class PagenationTag extends TagSupport
 	 */
 	public void setRecordPerPageList(int[] recordPerPageList)
 	{
-		this.recordPerPageList = recordPerPageList;
+		this.recordPerPageList = recordPerPageList.clone();
 	}
 }

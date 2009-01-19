@@ -1,6 +1,8 @@
 
 package edu.wustl.common.exception;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -167,7 +169,7 @@ public class ApplicationException extends Exception
 	 * Inner runtime exception class used to throw exception if
 	 * ApplicationException object not get created properly.
 	 */
-	private class AppRunTimeException extends RuntimeException
+	private static class AppRunTimeException extends RuntimeException
 	{
 
 		/**

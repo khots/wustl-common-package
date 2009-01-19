@@ -4,6 +4,7 @@
 
 package edu.wustl.common.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -13,8 +14,13 @@ import edu.wustl.common.domain.AbstractDomainObject;
  * @author chetan_patil
  *
  */
-public class DomainBeanIdentifierComparator implements Comparator<Object>
+public class DomainBeanIdentifierComparator implements Comparator<Object>,Serializable
 {
+
+	/**
+	 * serial Version UID.
+	 */
+	private static final long serialVersionUID = -3912067793850542651L;
 
 	/**
 	 * compare two objects.

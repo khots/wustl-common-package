@@ -66,15 +66,17 @@ public class GenerateTree
 	public JTree createTree(List dataVector, int treeType, boolean isJXTree)
 	{
 		TreeNode rootName = null;
+		JTree jtree = null;
 		if (dataVector != null && !dataVector.isEmpty())
 		{
 			rootName = (TreeNode) dataVector.get(0);
+			TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
+			TreeNodeImpl rootNode = (TreeNodeImpl) root1;
+			rootNode.setChildNodes(dataVector);
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
+			jtree= getTree(dataVector, isJXTree, root);
 		}
-		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
-		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
-		rootNode.setChildNodes(dataVector);
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
-		return getTree(dataVector, isJXTree, root);
+		return jtree;
 	}
 
 	/**
@@ -148,26 +150,27 @@ public class GenerateTree
 	public JTree createTree(List dataVector, int treeType, List tempList)
 	{
 		TreeNode rootName = null;
+		JTree tree = null;
 		if (dataVector != null && !dataVector.isEmpty())
 		{
 			rootName = (TreeNode) dataVector.get(0);
-		}
-		//Get the root node.
-		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
-		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
-		rootNode.setChildNodes(dataVector);
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
-		createHierarchy(root, dataVector);
-		JTree tree = getToolTipTextUsingAnonymousClass(root);
-		if (list != null)
-		{
-			tree.setSelectionPath((TreePath) list.get(0));
-			if (tempList != null)
+			//Get the root node.
+			TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
+			TreeNodeImpl rootNode = (TreeNodeImpl) root1;
+			rootNode.setChildNodes(dataVector);
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
+			createHierarchy(root, dataVector);
+			tree = getToolTipTextUsingAnonymousClass(root);
+			if (list != null)
 			{
-				tempList.add(list.get(1));
+				tree.setSelectionPath((TreePath) list.get(0));
+				if (tempList != null)
+				{
+					tempList.add(list.get(1));
+				}
 			}
+			ToolTipManager.sharedInstance().registerComponent(tree);
 		}
-		ToolTipManager.sharedInstance().registerComponent(tree);
 		return tree;
 	}
 

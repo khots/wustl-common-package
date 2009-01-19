@@ -1,6 +1,7 @@
 
 package edu.wustl.common.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -12,8 +13,13 @@ import java.util.Comparator;
  * @version 1.00
  * Created on July 26, 2007
  */
-public class KeyComparator implements Comparator<Object>
+public class KeyComparator implements Comparator<Object> , Serializable
 {
+
+	/**
+	 * serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = -5979206033335764493L;
 
 	/**
 	 * This method compare between two objects passed as parameters.

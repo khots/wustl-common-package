@@ -2,6 +2,7 @@
 package edu.wustl.common.exceptionformatter;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ResourceBundle;
@@ -67,8 +68,7 @@ public class ExceptionFormatterFactory
 				//	Instantiate a Exception Formatter
 				logger.debug("exceptionClass: " + excpClassName);
 				logger.debug("formatterClass: " + formatterClassName);
-				expFormatter =
-					(ExceptionFormatter) Class.forName(formatterClassName).newInstance();
+				expFormatter = (ExceptionFormatter) Class.forName(formatterClassName).newInstance();
 			}
 		}
 		catch (Exception e)
@@ -87,19 +87,20 @@ public class ExceptionFormatterFactory
 	public static String getDisplayName(String tableName, Connection conn)
 	{
 		String displayName = "";
-		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"
-				+ tableName + "'";
 		try
 		{
-			Statement statement = conn.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);
+			PreparedStatement pstmt = conn
+					.prepareStatement("select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA "
+							+ "where TABLE_NAME= ? ");
+			pstmt.setString(1, tableName);
+			ResultSet resultSet = pstmt.executeQuery();
 			while (resultSet.next())
 			{
 				displayName = resultSet.getString("DISPLAY_NAME");
 				break;
 			}
 			resultSet.close();
-			statement.close();
+			pstmt.close();
 		}
 		catch (Exception exception)
 		{

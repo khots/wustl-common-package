@@ -15,6 +15,7 @@ import java.sql.Types;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is for import/export meta data for Oracle.
@@ -25,6 +26,10 @@ import edu.wustl.common.exception.ErrorKey;
 public class OracleAutomateImpExp extends AbstractAutomateImpExp
 {
 
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(OracleAutomateImpExp.class);
 	/**
 	 * Index for CTL file name.
 	 */
@@ -172,7 +177,11 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		File file = new File(ctlFileName);
 		if (file.exists())
 		{
-			file.delete();
+			boolean isDeleted = file.delete();
+			if(!isDeleted)
+			{
+				logger.info("Not able to delete file "+ctlFileName);
+			}
 		}
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(ctlFileName)));
 		String value= new StringBuffer("LOAD DATA INFILE '")
@@ -303,7 +312,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	 *This class is for output of any  message(or error message) during import.
 	 *
 	 */
-	class StreamGobbler extends Thread
+	static class StreamGobbler extends Thread
 	{
 		/**
 		 * InputStream object.

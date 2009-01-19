@@ -31,8 +31,11 @@ public class CVSTagReader
 	 * Reads the file and returns the CVS tag from comment section.
 	 * File pattern is
 	 *
-		 /* $Name: 1.1.4.1.2.6 $
+		 /* $Name: 1.1.4.1.2.7 $
 		 * $Log: CVSTagReader.java,v $
+		 * Revision 1.1.4.1.2.7  2009/01/19 11:48:24  prashant_bandal
+		 * code refactoring.
+		 *
 		 * Revision 1.1.4.1.2.6  2008/11/25 13:45:34  ravi_kumar
 		 * code refactoring.
 		 *
@@ -79,6 +82,7 @@ public class CVSTagReader
 				}
 				line = reader.readLine();
 			}
+			reader.close();
 		}
 		catch (IOException exp)
 		{
@@ -90,9 +94,9 @@ public class CVSTagReader
 	/**
 	 * @param str one line string that contains CVS tag
 	 * @return Returns the CVS tag parse from the following pattern.
-	 * Line pattern: * $Name: 1.1.4.1.2.6 $
-	 * Example1: * $Name: 1.1.4.1.2.6 $
-	 * Example2: * $Name: 1.1.4.1.2.6 $
+	 * Line pattern: * $Name: 1.1.4.1.2.7 $
+	 * Example1: * $Name: 1.1.4.1.2.7 $
+	 * Example2: * $Name: 1.1.4.1.2.7 $
 	 * */
 	private String parseTag(String str)
 	{
