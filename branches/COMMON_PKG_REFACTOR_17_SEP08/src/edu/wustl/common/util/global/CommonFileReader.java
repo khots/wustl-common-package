@@ -31,6 +31,7 @@ public class CommonFileReader
 			{
 				buffer.append(line).append("<br>");
 			}
+			bufferReader.close();
 		}
 		catch (Exception exception)
 		{

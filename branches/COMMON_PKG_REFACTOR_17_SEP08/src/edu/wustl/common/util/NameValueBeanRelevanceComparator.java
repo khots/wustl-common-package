@@ -2,12 +2,19 @@
 package edu.wustl.common.util;
 
 
+import java.io.Serializable;
+
 import edu.wustl.common.beans.NameValueBean;
 /**
  * This comparator is used where sorting should be done on relevance counter of NameValueBean.
  */
-public class NameValueBeanRelevanceComparator implements java.util.Comparator<Object>
+public class NameValueBeanRelevanceComparator implements java.util.Comparator<Object>,Serializable
 {
+	/**
+	 * serial Version Unique ID.
+	 */
+	private static final long serialVersionUID = -2391618615413887973L;
+
 	/**
 	 * @param arg0 Object object to be compared.
 	 * @param arg1 Object object to be compared.
@@ -43,8 +50,8 @@ public class NameValueBeanRelevanceComparator implements java.util.Comparator<Ob
 		int retValue = nvb1.getRelevanceCounter().compareTo(nvb2.getRelevanceCounter());
 		if (retValue == 0 && nvb1.getName() != null && nvb2.getName() != null)
 		{
-				retValue= nvb1.getName().toString().toLowerCase().compareTo(
-						nvb2.getName().toString().toLowerCase());
+				retValue= nvb1.getName().toLowerCase().compareTo(
+						nvb2.getName().toLowerCase());
 		}
 		return retValue;
 	}

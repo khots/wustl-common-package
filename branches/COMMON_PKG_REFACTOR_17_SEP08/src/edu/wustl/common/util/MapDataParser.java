@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -267,11 +268,13 @@ public class MapDataParser
 	 */
 	public Collection generateData(Map map) throws Exception
 	{
-		Iterator it = map.keySet().iterator();
+		Set entries = map.entrySet();
+		Iterator it = entries.iterator();
 		while (it.hasNext())
 		{
-			String key = (String) it.next();
-			String value = (String) map.get(key);
+			Map.Entry entry = (Map.Entry)it.next();
+	         String key = (String)entry.getKey();
+	         String value = (String)entry.getValue();
 			parstData(null, key, value, "KEY");
 		}
 		return dataList;

@@ -956,7 +956,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					activityStatus = getActivityStatus(dao, className, identifier);
 				}
-				if (Status.ACTIVITY_STATUS_CLOSED.equals(activityStatus))
+				if (activityStatus.equals(Status.ACTIVITY_STATUS_CLOSED.toString()))
 				{
 					throw getBizLogicException(null, "biz.checkstatus.error",
 					"Exception in checkStatus method.");

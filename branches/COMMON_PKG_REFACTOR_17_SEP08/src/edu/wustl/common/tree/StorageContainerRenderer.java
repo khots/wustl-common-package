@@ -55,7 +55,7 @@ public class StorageContainerRenderer extends DefaultTreeCellRenderer
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 		StorageContainerTreeNode treeNode = (StorageContainerTreeNode) node.getUserObject();
 		Icon icon = createImageIcon("disabled.gif");
-		if (Status.ACTIVITY_STATUS_ACTIVE.equals(treeNode.getActivityStatus()))
+		if (treeNode.getActivityStatus().equals(Status.ACTIVITY_STATUS_ACTIVE.toString()))
 		{
 			icon = createImageIcon("enabled.gif");
 			setIcon(icon);

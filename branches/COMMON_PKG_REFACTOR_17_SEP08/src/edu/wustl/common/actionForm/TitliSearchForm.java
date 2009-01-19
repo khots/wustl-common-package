@@ -174,8 +174,7 @@ public class TitliSearchForm extends ActionForm
 		{
 			errors.add("empty search string", new ActionError("  "));
 		}
-
-		if (requestSearchString.charAt(0)=='*' || requestSearchString.charAt(0)=='?')
+		else if(requestSearchString.charAt(0)=='*' || requestSearchString.charAt(0)=='?')
 		{
 			errors.add("search string starts with * or ? ", new ActionError("  "));
 		}

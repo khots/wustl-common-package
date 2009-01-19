@@ -38,11 +38,11 @@ public final class Variables
 	 *  Ravi : for Multi Site Rep. changes.
 	 *  specify privilege Details Map.
 	 */
-	public static Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
+	public static final Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
 
 	/**
 	 * specify privilegeGroupingMap.
 	 */
-	public static Map<String, List<NameValueBean>> privilegeGroupingMap
+	public static final Map<String, List<NameValueBean>> privilegeGroupingMap
 	= new HashMap<String, List<NameValueBean>>();
 }

@@ -200,6 +200,6 @@ public class AuditEventDetails implements java.io.Serializable
 	 */
 	public boolean equals(Object object)
 	{
-		return false;
+		 return this == object;
 	}
 }

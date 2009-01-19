@@ -84,7 +84,11 @@ public final class SendFile
 			}
 			opstream.flush();
 			bis.close();
-			file.delete();
+			boolean isDeleted = file.delete();
+			if(!isDeleted)
+			{
+				logger.info("Not able to delete file "+file.getName());
+			}
 		}
 		catch (FileNotFoundException ex)
 		{

@@ -84,4 +84,21 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparabl
 		CDETreeNode treeNode = (CDETreeNode) tmpobj;
 		return getValue().compareTo(treeNode.getValue());
 	}
+	/**
+	 * overrides TreeNodeImpl.equals method .
+	 * @param obj Object.
+	 * @return true if equal else false.
+	 */
+	public boolean equals(Object obj)
+	{
+		return super.equals(obj);
+	}
+	/**
+	 * overrides TreeNodeImpl.hashCode method.
+	 * @return hashCode.
+	 */
+	public int hashCode()
+	{
+		return super.hashCode();
+	}
 }

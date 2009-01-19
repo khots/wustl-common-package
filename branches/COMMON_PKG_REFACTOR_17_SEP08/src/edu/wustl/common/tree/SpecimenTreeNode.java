@@ -137,4 +137,21 @@ public class SpecimenTreeNode extends TreeNodeImpl implements Serializable
 	{
 		this.parentValue = parentValue;
 	}
+	/**
+	 * overrides TreeNodeImpl.equals method .
+	 * @param obj Object.
+	 * @return true if equal else false.
+	 */
+	public boolean equals(Object obj)
+	{
+		return super.equals(obj);
+	}
+	/**
+	 * overrides TreeNodeImpl.hashCode method.
+	 * @return hashCode.
+	 */
+	public int hashCode()
+	{
+		return super.hashCode();
+	}
 }
