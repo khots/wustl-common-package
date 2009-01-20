@@ -115,10 +115,10 @@ public final class AbstractFactoryConfig
 			dom = XMLParserUtility.getDocument(inputStream);
 			parseDocument();
 		}
-		catch (Exception ioe)
+		catch (Exception exception)
 		{
-			logger.error(ioe.getMessage(), ioe);
-			throw new ParseException(ioe);
+			logger.error(exception.getMessage(), exception);
+			throw new ParseException(exception);
 		}
 		finally
 		{

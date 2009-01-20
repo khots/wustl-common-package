@@ -324,13 +324,14 @@ public interface IBizLogic
 	 * @return Read Denied Privilege Name.
 	 */
 	String getReadDeniedPrivilegeName();
-	
+
 	/**
 	 * Retrieves the records for class name in sourceObjectName as per the where clause.
 	 * @param sourceObjectName :   source Class object
-	 * @param selectColumnName : list of columns to select 
+	 * @param selectColumnName : list of columns to select
 	 * @param queryWhereClause : where clause.
 	 * @return the list of objects as per the where clause.
+	 * @throws BizLogicException BizLogic Exception.
 	 */
 	List retrieve(String sourceObjectName,
 			String[] selectColumnName,QueryWhereClause queryWhereClause) throws BizLogicException;

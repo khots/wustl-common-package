@@ -87,7 +87,7 @@ public class CDETreeNode extends TreeNodeImpl implements Serializable, Comparabl
 	/**
 	 * overrides TreeNodeImpl.equals method .
 	 * @param obj Object.
-	 * @return true if equal else false.
+	 * @return if equal true else false.
 	 */
 	public boolean equals(Object obj)
 	{
