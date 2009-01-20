@@ -139,11 +139,10 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 		StorageContainerTreeNode treeNode = (StorageContainerTreeNode) tmpobj;
 		return this.getIdentifier().compareTo(treeNode.getIdentifier());
 	}
-
 	/**
-	 * overrides TreeNodeImpl.equals method .
+	 * overrides TreeNodeImpl.equals method.
 	 * @param obj Object.
-	 * @return true if equal else false.
+	 * @return true if equal.
 	 */
 	public boolean equals(Object obj)
 	{

@@ -172,7 +172,7 @@ public class ExperimentTreeNode extends TreeNodeImpl
 	/**
 	 * overrides TreeNodeImpl.equals method .
 	 * @param obj Object.
-	 * @return true if equal else false.
+	 * @return true if equal.
 	 */
 	public boolean equals(Object obj)
 	{

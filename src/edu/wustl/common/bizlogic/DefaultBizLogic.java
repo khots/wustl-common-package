@@ -484,7 +484,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	}
 
 	/*	private List getList(String sourceObjectName,String[] displayNameFields,
-				String valueField,QueryWhereClause queryWhereClause, String separatorBetweenFields) throws BizLogicException
+				String valueField,QueryWhereClause queryWhereClause, String separatorBetweenFields)
+				 throws BizLogicException
 		{
 				List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
 				String[] selectColumnName = new String[displayNameFields.length + 1];

@@ -817,7 +817,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		return false;
 	}
-	
 
 	/**
 	 * @param exception Exception object thrown in a catch block.
@@ -856,7 +855,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		try
 		{
-			
 			dao.closeSession();
 		}
 		catch (DAOException exception)

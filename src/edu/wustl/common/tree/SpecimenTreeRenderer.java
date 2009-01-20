@@ -122,9 +122,9 @@ public class SpecimenTreeRenderer extends DefaultTreeCellRenderer
 	 */
 	protected Icon createImageIcon(String name)
 	{
-		Icon newLeafIcon = new ImageIcon(Thread.currentThread().getContextClassLoader()
+		Icon newLefIcon = new ImageIcon(Thread.currentThread().getContextClassLoader()
 				.getResource("images/" + name));
 
-		return newLeafIcon;
+		return newLefIcon;
 	}
 }
