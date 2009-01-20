@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is for import/export meta data for MySql.
@@ -17,6 +18,10 @@ import edu.wustl.common.exception.ErrorKey;
  */
 public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 {
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(MySqlAutomateImpExp.class);
 	/**
 	 * Method to export meta data.
 	 * @param args String array of parameters.
@@ -66,6 +71,7 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 				importDataMySQL(conn,dumpFilePath, getTableNamesList().get(i));
 			}
 			stmt.execute("SET FOREIGN_KEY_CHECKS=1;");
+			stmt.close();
 		}
 		catch(Exception exception)
 		{
@@ -98,7 +104,11 @@ public class MySqlAutomateImpExp extends AbstractAutomateImpExp
 			File file = new File(fileName);
 			if (file.exists())
 			{
-				file.delete();
+				boolean isDeleted = file.delete();
+				if(!isDeleted)
+				{
+					logger.info("Not able to delete file "+fileName);
+				}
 			}
 			stmt = conn.createStatement
 			(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
