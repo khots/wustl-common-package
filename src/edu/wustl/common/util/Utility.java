@@ -113,55 +113,43 @@ public final class Utility
 	 */
 	public static String datePattern(String strDate)
 	{
-		StringBuffer datePattern = null;
-		if (strDate != null)
+		String datePattern = null;
+		if(strDate != null)
 		{
 			List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
-			datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator
-					.getInstance().getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator
-					.getInstance().getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("MM-dd-yyyy", CommonServiceLocator
-					.getInstance().getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("MM/dd/yyyy", CommonServiceLocator
-					.getInstance().getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("yyyy-MM-dd", CommonServiceLocator
-					.getInstance().getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("yyyy/MM/dd", CommonServiceLocator
-					.getInstance().getDefaultLocale()));
-			datePattern = new StringBuffer(getDatePattern(strDate, datePatternList));
-		}
-		return datePattern.toString();
-	}
-
-	/**
-	 * @param strDate str Date.
-	 * @param datePatternList date Pattern List.
-	 * @return date Pattern.
-	 */
-	private static String getDatePattern(String strDate, List<SimpleDateFormat> datePatternList)
-	{
-		Date date = null;
-		String datePattern = null;
-		String matchingPattern = null;
-		for (SimpleDateFormat dtPattern : datePatternList)
-		{
-			try
+			datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("MM-dd-yyyy", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("MM/dd/yyyy", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("yyyy-MM-dd", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("yyyy/MM/dd", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			Date date = null;
+			String matchingPattern = null;
+			for (SimpleDateFormat dtPattern : datePatternList)
 			{
-				date = dtPattern.parse(strDate);
-				if (date != null)
+				try
 				{
-					matchingPattern = dtPattern.toPattern();
-					if (strDate.equals(dtPattern.format(date)))
+					date = dtPattern.parse(strDate);
+					if (date != null)
 					{
-						datePattern = matchingPattern;
+						matchingPattern = dtPattern.toPattern();
+						if (strDate.equals(dtPattern.format(date)))
+						{
+							datePattern = matchingPattern;
+						}
+						break;
 					}
-					break;
 				}
-			}
-			catch (ParseException exception)
-			{
-				logger.info("not in formate:" + dtPattern.toString());
+				catch (ParseException exception)
+				{
+					logger.info("not in formate:" + dtPattern.toString());
+				}
 			}
 		}
 		return datePattern;
