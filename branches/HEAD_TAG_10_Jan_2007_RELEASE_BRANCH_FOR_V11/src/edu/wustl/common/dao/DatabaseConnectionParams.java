@@ -320,6 +320,8 @@ public class DatabaseConnectionParams
 	{
 		try
 		{
+			closeConnectionParams();
+			
 			// DBUtil.closeConnection();
 			if (connection != null && !connection.isClosed())
         	    connection.close();
