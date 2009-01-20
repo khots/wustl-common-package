@@ -43,10 +43,6 @@ public final class ErrorKey implements Serializable
 	 * Error message values if any.
 	 */
 	private Object []messageValues;
-	/**
-	 * the Default ErrorKeyObject.
-	 */
-	private static ErrorKey defaultErrorkey;
 
 	/**
 	 * The static map used as cache for the ErrorKey objects.
@@ -161,14 +157,6 @@ public final class ErrorKey implements Serializable
 
 		return new ErrorKey(errorInfo[0],key,errorInfo[1]);
 
-	}
-	/**
-	 * Default error key.
-	 * @return errorKey object.
-	 */
-	public static ErrorKey getDefaultErrorKey()
-	{
-		return defaultErrorkey;
 	}
 
 	/**

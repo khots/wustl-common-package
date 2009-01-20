@@ -187,7 +187,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		catch (DAOException exception)
 		{
 			logger.error("Failed to get clean session during update ");
-			throw new ApplicationException(ErrorKey.getDefaultErrorKey(), exception,
+			throw new ApplicationException(ErrorKey.getErrorKey("db.open.session.error"), exception,
 					"Failed in CommonEdit to get clean session");
 		}
 	}

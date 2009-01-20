@@ -1,8 +1,6 @@
 
 package edu.wustl.common.exception;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
@@ -55,13 +53,13 @@ public class ApplicationException extends Exception
 	 * The Only public constructor to restrict creating object without
 	 * initializing mandatory members.
 	 * @param errorKey The object which will represent the root cause of the error.
-	 * @param throwable root exception, if any, which caused this error.
+	 * @param exception root exception, if any, which caused this error.
 	 * @param msgValues custom message, additional information.
 	 */
-	public ApplicationException(ErrorKey errorKey, Throwable throwable, String msgValues)
+	public ApplicationException(ErrorKey errorKey, Exception exception, String msgValues)
 	{
-		super(throwable);
-		this.wrapException = (Exception)throwable;
+		super(exception);
+		this.wrapException = exception;
 		if (errorKey == null)
 		{
 			logger.fatal("While constructing application exception errorKey object must not be null");
