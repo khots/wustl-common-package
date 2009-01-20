@@ -43,8 +43,8 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 		catch (Exception exception)
 		{
-			fail("Fail to import metadata.");
 			logger.debug("Fail to import metadata.", exception);
+			fail("Fail to import metadata.");
 		}
 	}
 
@@ -61,8 +61,8 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 		catch (Exception exception)
 		{
-			fail("Fail to import metadata.");
 			logger.debug("Fail to import metadata.", exception);
+			fail("Fail to import metadata.");
 		}
 	}
 
