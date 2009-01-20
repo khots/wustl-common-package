@@ -91,7 +91,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param sessionDataBean session specific Data
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)	throws BizLogicException
+	protected void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
+			throws BizLogicException
 	{
 		try
 		{
@@ -99,7 +100,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			throw getBizLogicException(exception, "biz.insert.error","Exception in insert operation.");
+			throw getBizLogicException(exception, "biz.insert.error",
+					"Exception in insert operation.");
 		}
 	}
 
@@ -131,7 +133,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			throw getBizLogicException(exception, "biz.delete.error","Exception in delete operation.");
+			throw getBizLogicException(exception, "biz.delete.error",
+					"Exception in delete operation.");
 		}
 	}
 
@@ -168,7 +171,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
-			throw getBizLogicException(exception, "biz.update.error","Exception in update operation.");
+			throw getBizLogicException(exception, "biz.update.error",
+					"Exception in update operation.");
 		}
 	}
 
@@ -219,7 +223,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws BizLogicException
 	{
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		List<Object> list = null;
 		DAO dao = null;
@@ -229,12 +233,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 			dao.openSession(null);
 			QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
 			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
-					whereColumnValue,joinCondition);
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+					whereColumnValue, joinCondition);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
+			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
 		{
@@ -242,6 +246,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
+
 	/**
 	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
 	 * @param sourceObjectName :source object name
@@ -253,15 +258,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws BizLogicException
 	{
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao=null;
+		DAO dao = null;
 		List<Object> list = null;
 		try
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoExp)
 		{
@@ -305,7 +310,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return records
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public List retrieve(String className, String colName, Object colValue) throws BizLogicException
+	public List retrieve(String className, String colName, Object colValue)
+			throws BizLogicException
 	{
 		String[] colNames = {colName};
 		String[] colConditions = {"="};
@@ -322,9 +328,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName) throws BizLogicException
 	{
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao=null;
+		DAO dao = null;
 		List<Object> list = null;
 		try
 		{
@@ -334,7 +340,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
+			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
 		{
@@ -350,11 +356,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return records
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public List retrieve(String sourceObjectName, String[] selectColumnName) throws BizLogicException
+	public List retrieve(String sourceObjectName, String[] selectColumnName)
+			throws BizLogicException
 	{
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao=null;
+		DAO dao = null;
 		List<Object> list = null;
 		try
 		{
@@ -364,7 +371,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
+			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
 		{
@@ -384,9 +391,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieve(String sourceObjectName, Long identifier) throws BizLogicException
 	{
 
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao=null;
+		DAO dao = null;
 		Object object = null;
 		try
 		{
@@ -396,7 +403,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoExp, "biz.ret.error","Not able to retrieve data.");
+			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
 		{
@@ -433,8 +440,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 
 		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
-				whereColumnCondition, whereColumnValue, joinCondition,separatorBetweenFields);
-			}
+				whereColumnCondition, whereColumnValue, joinCondition, separatorBetweenFields);
+	}
 
 	/**
 	 * Returns collection of name value pairs.
@@ -462,43 +469,43 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String[] whereColName = null;
 		String[] whereColCondition = null;
 		Object[] whereColValue = null;
-	
+
 		if (isToExcludeDisabled)
 		{
 			whereColName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
 			whereColCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
-			whereColValue = Utility
-					.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED.getStatus());
-				
+			whereColValue = Utility.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED
+					.getStatus());
+
 		}
 
 		return getList(sourceObjectName, displayNameFields, valueField, whereColName,
 				whereColCondition, whereColValue, joinCondition, separatorBetweenFields);
 	}
 
-	
-/*	private List getList(String sourceObjectName,String[] displayNameFields,
-			String valueField,QueryWhereClause queryWhereClause, String separatorBetweenFields) throws BizLogicException
-	{
-			List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
-			String[] selectColumnName = new String[displayNameFields.length + 1];
-			System.arraycopy(displayNameFields,0,selectColumnName,0,displayNameFields.length);
-			selectColumnName[displayNameFields.length] = valueField;
+	/*	private List getList(String sourceObjectName,String[] displayNameFields,
+				String valueField,QueryWhereClause queryWhereClause, String separatorBetweenFields) throws BizLogicException
+		{
+				List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
+				String[] selectColumnName = new String[displayNameFields.length + 1];
+				System.arraycopy(displayNameFields,0,selectColumnName,0,displayNameFields.length);
+				selectColumnName[displayNameFields.length] = valueField;
 
-			List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
-			/**
-			 * For each row in the result a vector will be created.Vector will contain all the columns
-			 * other than the value column(last column).
-			 * If there is only one column in the result it will be set as the Name for the NameValueBean.
-			 * When more than one columns are present, a string representation will be set.
-			 */
-			
-/*			nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
-			getNameValueList(separatorBetweenFields, nameValuePairs, results);
-			Collections.sort(nameValuePairs);
-		
-		return nameValuePairs;
-	}*/
+				List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
+				/**
+				 * For each row in the result a vector will be created.
+				 * Vector will contain all the columns
+				 * other than the value column(last column).
+				 * If there is only one column in the result
+				 * it will be set as the Name for the NameValueBean.
+				 * When more than one columns are present, a string representation will be set.
+				 */
+
+	/*			nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
+				getNameValueList(separatorBetweenFields, nameValuePairs, results);
+				Collections.sort(nameValuePairs);
+			return nameValuePairs;
+		}*/
 	/**
 	 * Sorting of ID columns.
 	 * @param sourceObjectName source Object Name
@@ -521,27 +528,27 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String joinCondition, String separatorBetweenFields) throws BizLogicException
 	{
 		String[] selectColumnName = new String[displayNameFields.length + 1];
-		System.arraycopy(displayNameFields,0,selectColumnName,0,displayNameFields.length);
+		System.arraycopy(displayNameFields, 0, selectColumnName, 0, displayNameFields.length);
 		selectColumnName[displayNameFields.length] = valueField;
 		List results = null;
-		
+
 		try
 		{
 			QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-			if(whereColumnCondition == null)
+			if (whereColumnCondition == null)
 			{
 				results = retrieve(sourceObjectName, selectColumnName, null);
 			}
 			else
 			{
 				queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
-					whereColumnValue,joinCondition);
+						whereColumnValue, joinCondition);
 				results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
-			}	
+			}
 		}
 		catch (DAOException exception)
 		{
-			throw getBizLogicException(exception, "biz.getlist.error","Not able to get list.");
+			throw getBizLogicException(exception, "biz.getlist.error", "Not able to get list.");
 		}
 		/**
 		 * For each row in the result a vector will be created.Vector will contain all the columns
@@ -566,7 +573,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	public List getList(String sourceObjectName, String[] selectColumnName,
-			String separatorBetweenFields,QueryWhereClause queryWhereClause) throws BizLogicException
+			String separatorBetweenFields, QueryWhereClause queryWhereClause)
+			throws BizLogicException
 	{
 		List results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
@@ -575,13 +583,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collections.sort(nameValuePairs);
 		return nameValuePairs;
 	}
+
 	/**
 	 * @param separatorBetweenFields separator Between Fields
 	 * @param nameValuePairs list to add attributes.
 	 * @param results results from database.
 	 */
-	private void getNameValueList(String separatorBetweenFields, List<NameValueBean> nameValuePairs,
-				List<Object> results)
+	private void getNameValueList(String separatorBetweenFields,
+			List<NameValueBean> nameValuePairs, List<Object> results)
 	{
 		NameValueBean nameValueBean;
 		Object[] columnArray;
@@ -632,7 +641,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				}
 			}
 
-			tmpObj=nameBuff.toString();
+			tmpObj = nameBuff.toString();
 		}
 		return tmpObj;
 	}
@@ -668,7 +677,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			disableRelatedObjects(dao,tablename, colName, objIDArr);
+			disableRelatedObjects(dao, tablename, colName, objIDArr);
 		}
 		catch (DAOException exception)
 		{
@@ -729,7 +738,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoEx)
 		{
 			throw getBizLogicException(daoEx, "biz.disableaudit.error",
-			"Exception in disableAndAuditObjects method.");
+					"Exception in disableAndAuditObjects method.");
 		}
 	}
 
@@ -794,17 +803,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		String whereColumnName = classIdentifier + "." + Constants.SYSTEM_IDENTIFIER;
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new INClause(whereColumnName,objIDArr,sourceObjectName));
+		queryWhereClause.addCondition(new INClause(whereColumnName, objIDArr, sourceObjectName));
 
-		List list=null;
+		List list = null;
 		try
 		{
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
-			"Exception in getRelatedObjects method.");
+					"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
 		logger.debug(sourceClass.getName() + " Related objects to "
@@ -824,7 +833,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
-			String[] whereColumnName, Long []objIDArr) throws BizLogicException
+			String[] whereColumnName, Long[] objIDArr) throws BizLogicException
 	{
 
 		String sourceObjectName = sourceClass.getName();
@@ -832,17 +841,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Object[] whereColumnValue = {objIDArr};
 		String joinCondition = Constants.AND_JOIN_CONDITION;
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		List<Object> list=null;
+		List<Object> list = null;
 		try
 		{
 			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
 					whereColumnValue, joinCondition);
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
-			"Not able to fetch related objects.");
+					"Not able to fetch related objects.");
 		}
 		list = Utility.removeNull(list);
 		return list;
@@ -866,19 +875,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		String sourceObjectName = sourceClass.getName();
 		String joinCondition = Constants.AND_JOIN_CONDITION;
-		String []selectColumnName = {Constants.SYSTEM_IDENTIFIER};
+		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		List<Object> list=null;
+		List<Object> list = null;
 		try
 		{
 			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
 					whereColumnValue, joinCondition);
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
-			"Exception in getRelatedObjects method.");
+					"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
 		return list;
@@ -892,26 +901,24 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public List getRelatedObjects(DAO dao, Class sourceClass,QueryWhereClause queryWhereClause)
-							throws BizLogicException
+	public List getRelatedObjects(DAO dao, Class sourceClass, QueryWhereClause queryWhereClause)
+			throws BizLogicException
 	{
 		String sourceObjectName = sourceClass.getName();
 		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
-		List<Object> list=null;
+		List<Object> list = null;
 		try
 		{
-			list = dao.retrieve(sourceObjectName, selectColumnName,queryWhereClause);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
-			"Exception in getRelatedObjects method.");
+					"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
 		return list;
 	}
-
-
 
 	/**
 	 * This method gets Corresponding Old Object.
@@ -943,7 +950,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param errorName Display Name of the Element
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName) throws BizLogicException
+	protected void checkStatus(DAO dao, IActivityStatus ado, String errorName)
+			throws BizLogicException
 	{
 		if (ado != null)
 		{
@@ -959,7 +967,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				if (activityStatus.equals(Status.ACTIVITY_STATUS_CLOSED.toString()))
 				{
 					throw getBizLogicException(null, "biz.checkstatus.error",
-					"Exception in checkStatus method.");
+							"Exception in checkStatus method.");
 				}
 			}
 		}
@@ -978,8 +986,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		String[] selectColumnName = {Status.ACTIVITY_STATUS.getStatus()};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER,
-				indetifier.toString(),sourceObjectName));
+		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER, indetifier
+				.toString(), sourceObjectName));
 
 		List<Object> list;
 		try
@@ -989,7 +997,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoEx)
 		{
 			throw getBizLogicException(daoEx, "biz.activitystatus.error",
-			"Exception in getActivityStatus method.");
+					"Exception in getActivityStatus method.");
 		}
 		String activityStatus = "";
 		if (!list.isEmpty())
@@ -1017,7 +1025,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException daoEx)
 		{
 			throw getBizLogicException(daoEx, "biz.insert.error",
-			"Exception during insert operation.");
+					"Exception during insert operation.");
 		}
 	}
 
@@ -1036,7 +1044,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.update.error",
-			"Exception during update operation.");
+					"Exception during update operation.");
 		}
 	}
 
@@ -1051,21 +1059,21 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws BizLogicException
 	{
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		String columnName=Constants.SYSTEM_IDENTIFIER;
-		DAO dao=null;
+		String columnName = Constants.SYSTEM_IDENTIFIER;
+		DAO dao = null;
 		Object attribute = null;
 		try
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-			attribute = dao.retrieveAttribute(objClass, identifier, attributeName,columnName);
+			attribute = dao.retrieveAttribute(objClass, identifier, attributeName, columnName);
 		}
 		catch (DAOException daoExp)
 		{
 			throw getBizLogicException(daoExp, "biz.retattr.error",
-			"Exception during retrieveAttribute method.");
+					"Exception during retrieveAttribute method.");
 		}
 		finally
 		{
@@ -1091,13 +1099,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 
-			Class clazz=Class.forName(sourceObjectName);
-			attribute=retrieveAttribute(clazz,identifier,attributeName);
+			Class clazz = Class.forName(sourceObjectName);
+			attribute = retrieveAttribute(clazz, identifier, attributeName);
 		}
 		catch (ClassNotFoundException exception)
 		{
 			throw getBizLogicException(exception, "biz.retattr.error",
-					"DefaultBizLogic-Not able to find class:"+sourceObjectName);
+					"DefaultBizLogic-Not able to find class:" + sourceObjectName);
 		}
 		return attribute;
 	}
@@ -1149,7 +1157,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	protected String getPrivilegeName(Object domainObject)
 	{
-		return  Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
+		return Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
 	}
 
 	/**
@@ -1181,9 +1189,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List executeQuery(String query) throws BizLogicException
 	{
 		List returner = null;
-		String appName=CommonServiceLocator.getInstance().getAppName();
+		String appName = CommonServiceLocator.getInstance().getAppName();
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao=null;
+		DAO dao = null;
 		Session session = null;
 		try
 		{
@@ -1200,7 +1208,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			throw getBizLogicException(exception, "biz.exequery.error",
-			"DAOException in executeQuery method:");
+					"DAOException in executeQuery method:");
 		}
 		finally
 		{
@@ -1216,7 +1224,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param whereColumnValues : value of column name in where clause.
 	 * @throws DAOException :Generic DAO exception.
 	 */
-	public void disableRelatedObjects(DAO dao,String tableName, String whereColumnName,
+	public void disableRelatedObjects(DAO dao, String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws DAOException
 	{
 		try
@@ -1231,14 +1239,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 				}
 			}
 			String sql = "UPDATE " + tableName + " SET ACTIVITY_STATUS = '"
-			+ Status.ACTIVITY_STATUS_DISABLED.toString() + "' WHERE "
-			+ whereColumnName + " IN ( "
-			+ buff.toString() + ")";
-			String appName=CommonServiceLocator.getInstance().getAppName();
+					+ Status.ACTIVITY_STATUS_DISABLED.toString() + "' WHERE " + whereColumnName
+					+ " IN ( " + buff.toString() + ")";
+			String appName = CommonServiceLocator.getInstance().getAppName();
 			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 			JDBCDAO jdbcDAO = daoFactory.getJDBCDAO();
 			jdbcDAO.openSession(null);
-			jdbcDAO.executeQuery(sql, null,true,null);
+			jdbcDAO.executeQuery(sql, null, true, null);
 			jdbcDAO.commit();
 			jdbcDAO.closeSession();
 		}
@@ -1246,8 +1253,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			logger.error(dbex.getMessage(), dbex);
 			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
-			throw new DAOException(errorKey,dbex,"DefaultBizLogic.java :"+
-					DAOConstants.DISABLE_RELATED_OBJ);
+			throw new DAOException(errorKey, dbex, "DefaultBizLogic.java :"
+					+ DAOConstants.DISABLE_RELATED_OBJ);
 		}
 	}
 
@@ -1270,6 +1277,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return null;
 	}
+
 	/**
 	 * this method return true if authorized user.
 	 * @param dao DAO object.
@@ -1278,8 +1286,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws BizLogicException generic BizLogic Exception
 	 * @return true if authorized user.
 	 */
-	public boolean isAuthorized(DAO dao, Object domainObject,
-			SessionDataBean sessionDataBean) throws BizLogicException {
+	public boolean isAuthorized(DAO dao, Object domainObject, SessionDataBean sessionDataBean)
+			throws BizLogicException
+	{
 		return false;
 	}
 }
