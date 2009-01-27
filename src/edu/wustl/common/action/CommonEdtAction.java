@@ -60,7 +60,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		String objectName = getObjectName(abstractForm);
 		AbstractDomainObject abstractDomain = getDomainObject(abstractForm, objectName);
 		updateDomainObject(request, abstractForm, abstractDomain, objectName);
-		if(abstractForm.getActivityStatus().equals(Status.ACTIVITY_STATUS_DISABLED.toString()))
+		if (abstractForm.getActivityStatus().equals(Status.ACTIVITY_STATUS_DISABLED.toString()))
 		{
 			target = abstractForm.getOnSubmit();
 		}
@@ -114,7 +114,8 @@ public class CommonEdtAction extends BaseAddEditAction
 		}
 		catch (BizLogicException bizLogicException)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
+			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"),
+					bizLogicException,
 					"Failed while populating domain object in common edit.");
 		}
 	}
@@ -166,8 +167,8 @@ public class CommonEdtAction extends BaseAddEditAction
 		}
 		catch (BizLogicException bizLogicException)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
-					"Failed while updating in common edit.");
+			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"),
+					bizLogicException, "Failed while updating in common edit.");
 		}
 	}
 
@@ -187,8 +188,8 @@ public class CommonEdtAction extends BaseAddEditAction
 		catch (DAOException exception)
 		{
 			logger.error("Failed to get clean session during update ");
-			throw new ApplicationException(ErrorKey.getErrorKey("db.open.session.error"), exception,
-					"Failed in CommonEdit to get clean session");
+			throw new ApplicationException(ErrorKey.getErrorKey("db.open.session.error"),
+					exception, "Failed in CommonEdit to get clean session");
 		}
 	}
 
