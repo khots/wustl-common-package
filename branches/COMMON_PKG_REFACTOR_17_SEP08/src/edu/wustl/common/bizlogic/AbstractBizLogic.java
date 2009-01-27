@@ -11,8 +11,10 @@
 package edu.wustl.common.bizlogic;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -863,4 +865,49 @@ public abstract class AbstractBizLogic implements IBizLogic
 			throw new BizLogicException(exception);
 		}
 	}
+	
+	/**
+	 * This method will be called to insert hashed data values.
+	 * @param tableName :Name of the table
+	 * @param columnValues :List of column values
+	 * @param columnNames  :List of column names.
+	 * @throws DAOException  :DAOException
+	 * @throws SQLException : SQLException
+	 */
+	public void insertHashedValues(String tableName, List<Object> columnValues, List<String> columnNames)
+	throws BizLogicException
+	{
+		DAO dao = null;
+		try 
+		{
+			logger.debug("Insert hashed data to database");
+			String appName = CommonServiceLocator.getInstance().getAppName();
+			dao = DAOConfigFactory.getInstance().getDAOFactory(appName).getJDBCDAO();
+			HashedDataHandler hashedDataHandler = new HashedDataHandler();
+			hashedDataHandler.insertHashedValues(tableName, columnValues, columnNames,dao.getCleanConnection() );
+					
+		}
+		catch (DAOException exception)
+		{
+			throw new BizLogicException(exception);
+		}
+		catch (Exception exception)
+		{
+			throw getBizLogicException(exception, "biz.insert.error"
+					,"Exception in insert hashed values operation.");
+		}
+		finally
+		{
+			try 
+			{
+				dao.closeCleanConnection();
+			}
+			catch (DAOException exception)
+			{
+				throw new BizLogicException(exception);
+			}
+		}
+		
+	}
+
 }
