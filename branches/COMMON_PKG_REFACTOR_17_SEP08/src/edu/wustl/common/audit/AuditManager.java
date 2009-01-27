@@ -44,7 +44,7 @@ public class AuditManager
 	private transient AuditEvent auditEvent;
 
 	/**
-	 * Instanciate a new instance of AuditManager.
+	 * Instantiate a new instance of AuditManager.
 	 * */
 	public AuditManager()
 	{
@@ -88,28 +88,34 @@ public class AuditManager
 	 * @param eventType Event for which the comparator will be called. e.g. Insert, update, delete etc.
 	 * @throws AuditException Audit Exception.
 	 */
-	public void compare(Auditable currentObj, Auditable previousObj, String eventType)
+	public void compare(Object currentObj, Auditable previousObj, String eventType,boolean isAuditable)
 			throws AuditException
 	{
-		if (currentObj == null)
+		logger.debug("Inside isObjectAuditable method.");
+
+		if (currentObj instanceof Auditable && isAuditable)
 		{
-			return;
+			Auditable auditableObject = (Auditable)currentObj;
+			if (auditableObject == null)
+			{
+				return;
+			}
+
+			//An auidt event will contain many logs.
+			AuditEventLog auditEventLog = new AuditEventLog();
+
+			//Set System identifier if the current object.
+			auditEventLog.setObjectIdentifier(auditableObject.getId());
+
+			//Set the table name of the current class.
+			Object obj = HibernateMetaData.getProxyObjectImpl(auditableObject);
+			auditEventLog.setObjectName(HibernateMetaData.getTableName(obj.getClass()));
+			auditEventLog.setEventType(eventType);
+
+			//Class of the object being compared.
+			compareClassOfObject((Auditable)obj, previousObj, auditEventLog);
+
 		}
-
-		//An auidt event will contain many logs.
-		AuditEventLog auditEventLog = new AuditEventLog();
-
-		//Set System identifier if the current object.
-		auditEventLog.setObjectIdentifier(currentObj.getId());
-
-		//Set the table name of the current class.
-		Object obj = HibernateMetaData.getProxyObjectImpl(currentObj);
-		auditEventLog.setObjectName(HibernateMetaData.getTableName(obj.getClass()));
-		auditEventLog.setEventType(eventType);
-
-		//Class of the object being compared.
-		compareClassOfObject((Auditable)obj, previousObj, auditEventLog);
-
 	}
 
 	/**
@@ -153,10 +159,11 @@ public class AuditManager
 	 * @return audit Event Details Collection.
 	 * @throws AuditException Audit Exception.
 	 */
-	private Set<AuditEventDetails> processMethods(Auditable currentObj, Auditable previousObj,
+	private Set<AuditEventDetails> processMethods(Auditable obj, Auditable previousObj,
 			Class currentObjClass) throws AuditException
 	{
 		//Retrieve all the methods defined in the class.
+		Object currentObj = HibernateMetaData.getProxyObjectImpl(obj);
 		Method[] methods = currentObjClass.getMethods();
 		Set<AuditEventDetails> auditEventDetailsCollection = new HashSet<AuditEventDetails>();
 		for (int i = 0; i < methods.length; i++)
