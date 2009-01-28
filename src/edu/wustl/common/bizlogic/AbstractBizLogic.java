@@ -882,7 +882,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			logger.debug("Insert hashed data to database");
 			String appName = CommonServiceLocator.getInstance().getAppName();
-			dao = DAOConfigFactory.getInstance().getDAOFactory(appName).getJDBCDAO();
+			dao = DAOConfigFactory.getInstance().getDAOFactory(appName).getDAO();
 			HashedDataHandler hashedDataHandler = new HashedDataHandler();
 			hashedDataHandler.insertHashedValues(tableName, columnValues, columnNames,dao.getCleanConnection() );
 					
