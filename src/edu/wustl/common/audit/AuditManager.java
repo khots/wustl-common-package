@@ -88,13 +88,25 @@ public class AuditManager
 	 * @param eventType Event for which the comparator will be called. e.g. Insert, update, delete etc.
 	 * @throws AuditException Audit Exception.
 	 */
-	public void compare(Object currentObj, Auditable previousObj, String eventType,boolean isAuditable)
+	public void audit(Auditable currentObj, Auditable previousObj, String eventType)
+	throws AuditException
+	{
+		compare(currentObj,previousObj,eventType);
+	}
+	
+	/**
+	 * Compares the contents of two objects.
+	 * @param currentObj Current state of object.
+	 * @param previousObj Previous state of object.
+	 * @param eventType Event for which the comparator will be called. e.g. Insert, update, delete etc.
+	 * @throws AuditException Audit Exception.
+	 */
+	private void compare(Auditable currentObj, Auditable previousObj, String eventType)
 			throws AuditException
 	{
 		logger.debug("Inside isObjectAuditable method.");
 
-		if (currentObj instanceof Auditable && isAuditable)
-		{
+		
 			Auditable auditableObject = (Auditable)currentObj;
 			if (auditableObject == null)
 			{
@@ -114,8 +126,7 @@ public class AuditManager
 
 			//Class of the object being compared.
 			compareClassOfObject((Auditable)obj, previousObj, auditEventLog);
-
-		}
+		
 	}
 
 	/**
