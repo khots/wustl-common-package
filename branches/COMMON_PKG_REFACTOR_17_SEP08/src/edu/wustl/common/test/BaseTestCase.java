@@ -11,8 +11,6 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import edu.wustl.common.util.logger.Logger;
-
 /**
  * @author kapil_kaveeshwar
  *
@@ -42,7 +40,6 @@ public class BaseTestCase extends TestCase
 	 */
 	protected void setUp()
 	{
-		Logger.out = org.apache.log4j.Logger.getLogger("");
 		PropertyConfigurator.configure(System.getProperty("user.dir") + "/Logger.properties");
 	}
 }
