@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 
-import edu.wustl.common.util.logger.Logger;
+import edu.wustl.common.util.logger.LoggerConfig;
 
 
 /**
@@ -89,7 +89,7 @@ public final class CommonServiceLocator
 	private CommonServiceLocator()
 	{
 		initProps();
-		Logger.configureLogger(this.propDirPath);
+		LoggerConfig.configureLogger(this.propDirPath);
 	}
 
 	/**
