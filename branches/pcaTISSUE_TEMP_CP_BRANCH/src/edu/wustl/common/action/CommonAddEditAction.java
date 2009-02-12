@@ -60,30 +60,27 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CommonAddEditAction extends Action
 {
-
     /**
      * Overrides the execute method of Action class.
      * Adds / Updates the data in the database.
      * */
 	long startTime = System.currentTimeMillis();
-	
-    String target = null;
-    AbstractDomainObject abstractDomain = null;
-    ActionMessages messages = null;  
-    public ActionForward execute(ActionMapping mapping, ActionForm form,HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
+	public ActionForward execute(ActionMapping mapping, ActionForm form,HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
-        try
+		String target = null;
+		AbstractDomainObject abstractDomain = null;
+		ActionMessages messages = null;  
+		try
         {
-        
-            AbstractActionForm abstractForm = (AbstractActionForm) form;
+           AbstractActionForm abstractForm = (AbstractActionForm) form;
            if (abstractForm.isAddOperation())
             {
             	 
-            	return executeAdd(mapping,request,abstractForm);
+            	return executeAdd(mapping,request,abstractForm,abstractDomain, messages,target);
             }
             else
             {
-            	return executeEdit(mapping,request,abstractForm);
+            	return executeEdit(mapping,request,abstractForm,abstractDomain, messages, target);
             }
             
            
@@ -186,7 +183,9 @@ public class CommonAddEditAction extends Action
 
 	}
 	
-	public ActionForward executeAdd(ActionMapping mapping,HttpServletRequest request,AbstractActionForm abstractForm) throws AssignDataException, BizLogicException, UserNotAuthorizedException
+	public ActionForward executeAdd(ActionMapping mapping,HttpServletRequest request,
+			AbstractActionForm abstractForm,AbstractDomainObject abstractDomain, ActionMessages messages, String target) 
+			throws AssignDataException, BizLogicException, UserNotAuthorizedException
     {
         //If operation is add, add the data in the database.
 		AbstractDomainObjectFactory abstractDomainObjectFactory=getAbstractDomainObjectFactory();
@@ -347,7 +346,9 @@ public class CommonAddEditAction extends Action
        return mapping.findForward(target);
     
     }
-    public ActionForward executeEdit(ActionMapping mapping,HttpServletRequest request,AbstractActionForm abstractForm)throws AssignDataException, BizLogicException, UserNotAuthorizedException, DAOException
+    public ActionForward executeEdit(ActionMapping mapping,HttpServletRequest request,
+    		AbstractActionForm abstractForm,AbstractDomainObject abstractDomain, ActionMessages messages, String target)
+    throws AssignDataException, BizLogicException, UserNotAuthorizedException, DAOException
     {
         target = new String(Constants.SUCCESS);
         
