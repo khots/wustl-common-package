@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
 
 /**
  * PasswordEncrypter: This class encrypts all data of given field from a given table. The database connection parameters have to be provided.
@@ -42,6 +43,11 @@ public class PasswordEncrypter
 	static String CATISSUE_DATABASE_TABLE_NAME = "catissue_password";
 	// The name of the field whose row values have to be encrypted.
 	static String DATABASE_TABLE_FIELD_NAME = "password";
+	
+	static Object [] connectionArgs = null;
+	static final String mysqlUrl="jdbc:mysql://{0}:{1}/{2}";
+	static final String oracleUrl="jdbc:oracle:thin:@{0}:{1}:{2}";
+	static final String mssqlserverUrl="jdbc:sqlserver://{0}:{1};databaseName={2};";
 
 	public static void main(String[] args)
 	{
@@ -137,6 +143,9 @@ public class PasswordEncrypter
 			DATABASE_USERNAME = args[4];
 			DATABASE_PASSWORD = args[5];
 			DATABASE_DRIVER = args[6];
+			
+			connectionArgs=new Object[] {DATABASE_SERVER_NAME,DATABASE_SERVER_PORT_NUMBER,DATABASE_NAME};
+			
 			printDBInfo();
 		}
 		else
@@ -174,16 +183,19 @@ public class PasswordEncrypter
 		Class.forName(DATABASE_DRIVER);
 		// Create a connection to the database
 		String url = "";
-		if ("MySQL".equalsIgnoreCase(DATABASE_TYPE))
+		if (Constants.MYSQL_DATABASE.equalsIgnoreCase(DATABASE_TYPE))
 		{
-			url = "jdbc:mysql://" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER + "/"
-					+ DATABASE_NAME; // a JDBC url
+			url=mysqlUrl; 
 		}
-		if ("Oracle".equalsIgnoreCase(DATABASE_TYPE))
+		if (Constants.ORACLE_DATABASE.equalsIgnoreCase(DATABASE_TYPE))
 		{
-			url = "jdbc:oracle:thin:@" + DATABASE_SERVER_NAME + ":" + DATABASE_SERVER_PORT_NUMBER
-					+ ":" + DATABASE_NAME;
+			url=oracleUrl;
 		}
+		if (Constants.MSSQLSERVER_DATABASE.equalsIgnoreCase(DATABASE_TYPE))
+		{
+			url=mssqlserverUrl;
+		}
+		url = MessageFormat.format(url, connectionArgs);
 		System.out.println("URL : " + url);
 		connection = DriverManager.getConnection(url, DATABASE_USERNAME, DATABASE_PASSWORD);
 		return connection;
