@@ -21,6 +21,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.wustl.common.audit.LoginAuditManager;
+import edu.wustl.common.beans.LoginDetails;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.QueryResultObjectData;
 import edu.wustl.common.beans.SessionDataBean;
@@ -325,6 +327,43 @@ public class SecurityManager implements Permissions {
 					+ "|login|Success| Authentication is not successful for user "
 					+ loginName + "|" + ex.getMessage());
 			throw new SMException(ex.getMessage(), ex);
+		}
+		return loginSuccess;
+	}
+	
+	/**
+	 * Returns true or false depending on the person gets authenticated or not.
+	 * Also audits the login attempt
+	 * @param requestingClass
+	 * @param loginName login name
+	 * @param loginEvent
+	 * @param password password
+	 * @return @throws CSException
+	 */
+	public boolean login(String loginName, String password,LoginDetails loginDetails) throws SMException 
+	{
+		boolean loginSuccess = false;
+		LoginAuditManager loginAuditManager=new LoginAuditManager(loginDetails);
+		try 
+		{
+			Logger.out.debug("login name: " + loginName + " passowrd: " + password);
+			AuthenticationManager authMngr = getAuthenticationManager();
+			loginSuccess = authMngr.login(loginName, password);
+		} 
+		catch (CSException ex) 
+		{
+			Logger.out.debug("Authentication|"
+					+ requestingClass
+					+ "|"
+					+ loginName
+					+ "|login|Success| Authentication is not successful for user "
+					+ loginName + "|" + ex.getMessage());
+			throw new SMException(ex.getMessage(), ex);
+		}
+		finally
+		{
+			System.out.println("-------------------------loginSuccess="+loginSuccess);
+			loginAuditManager.audit(loginSuccess);
 		}
 		return loginSuccess;
 	}
