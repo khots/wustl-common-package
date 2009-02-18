@@ -1,13 +1,12 @@
 
 package edu.wustl.common.exceptionformatter;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ResourceBundle;
 
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
 
 /**
  * @author sachin_lale
@@ -81,16 +80,16 @@ public class ExceptionFormatterFactory
 	/**
 	 * This method gets Display Name.
 	 * @param tableName table Name
-	 * @param conn Connection
+	 * @param jdbcDao JDBCDAO object.
 	 * @return Display Name.
 	 */
-	public static String getDisplayName(String tableName, Connection conn)
+	public static String getDisplayName(String tableName, JDBCDAO jdbcDao)
 	{
 		String displayName = "";
 		try
 		{
-			PreparedStatement pstmt = conn
-					.prepareStatement("select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA "
+			PreparedStatement pstmt = jdbcDao
+					.getPreparedStatement("select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA "
 							+ "where TABLE_NAME= ? ");
 			pstmt.setString(1, tableName);
 			ResultSet resultSet = pstmt.executeQuery();
