@@ -16,8 +16,8 @@ import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 
 /**
- * This is an abstract class for the DomainObjectFactory class.
- * @author gautam_shetty
+ * This is an interface for the DomainObjectFactory class.
+ * @author prashant_bandal
  */
 public interface IDomainObjectFactory
 {
