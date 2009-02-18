@@ -177,8 +177,15 @@ public final class CommonServiceLocator
 	private void setPropDirPath()
 	{
 		String path = System.getProperty("app.propertiesFile");
-    	File propetiesDirPath = new File(path);
-    	propDirPath = propetiesDirPath.getParent();
+		if(path==null)
+		{
+			propDirPath = "";
+		}
+		else
+		{
+			File propetiesDirPath = new File(path);
+			propDirPath = propetiesDirPath.getParent();
+		}
 	}
 
 
