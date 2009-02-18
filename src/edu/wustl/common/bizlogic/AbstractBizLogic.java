@@ -44,6 +44,7 @@ import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
   
 /**
@@ -590,6 +591,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 			ObjectMetadataInterface objectMetadataInterface = (ObjectMetadataInterface)Class.forName(className).newInstance();
 			String tableName = objectMetadataInterface.getTableName(obj);
+			
 			//String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
 			System.out.println("tableName: "+tableName);
 			
@@ -607,7 +609,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 				{
 					tableName = mainTableName;
 				}
-					
+			
+				if(Variables.databaseName.equalsIgnoreCase("oracle"))
+				{
+					tableName = tableName.toUpperCase();
+				}
 				RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
 			
 				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
