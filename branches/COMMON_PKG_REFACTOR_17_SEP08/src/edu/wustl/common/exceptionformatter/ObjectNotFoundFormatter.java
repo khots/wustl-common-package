@@ -1,11 +1,11 @@
 
 package edu.wustl.common.exceptionformatter;
 
-import java.sql.Connection;
 import java.text.MessageFormat;
 
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.util.HibernateMetaData;
 
 /**
@@ -36,7 +36,8 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		int startIndex = -1;
 		int endIndex = -1;
 		int tempIndex = -1;
-		Connection connection = getConnection(args);
+		//Connection connection = getConnection(args);
+		JDBCDAO jdbcDao = getJDBCDAO(args);
 		try
 		{
 			// get Message from exception object
@@ -60,7 +61,8 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			logger.debug(className + "--" + className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class
-			String displayName = ExceptionFormatterFactory.getDisplayName(HibernateMetaData.getTableName(classObj), connection);
+			String displayName = ExceptionFormatterFactory.
+				getDisplayName(HibernateMetaData.getTableName(classObj), jdbcDao);
 
 			Object[] arguments = new Object[]{displayName, columnName, value};
 
@@ -79,18 +81,18 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 	 * @param args arguments
 	 * @return Connection
 	 */
-	private Connection getConnection(Object[] args)
+	private JDBCDAO getJDBCDAO(Object[] args)
 	{
-		Connection connection = null;
+		JDBCDAO jdbcDao = null;
 		if (args[1] == null)
 		{
-			logger.debug("Error Message: Connection object not given");
+			logger.debug("Error Message: DAO object not given");
 		}
 		else
 		{
-			connection = (Connection) args[1];
+			jdbcDao = (JDBCDAO) args[1];
 		}
-		return connection;
+		return jdbcDao;
 	}
 
 	/**
