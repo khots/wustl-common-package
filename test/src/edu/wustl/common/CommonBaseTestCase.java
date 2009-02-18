@@ -5,6 +5,7 @@ import edu.wustl.common.test.BaseTestCase;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.HibernateProperties;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.common.util.logger.LoggerConfig;
 /**
  * This is common test class.
  * All test classes in common package should extends this class.  
@@ -16,7 +17,7 @@ public class CommonBaseTestCase extends BaseTestCase
 	static
 	{
 		System.setProperty("app.propertiesFile",System.getProperty("user.dir")+"/caTissueCore_Properties.xml");
-		Logger.configureLogger(System.getProperty("user.dir"));
+		LoggerConfig.configureLogger(System.getProperty("user.dir"));
 		try
 		{
 			HibernateProperties.initBundle(System.getProperty("user.dir")+"/test/junitConf.properties");
