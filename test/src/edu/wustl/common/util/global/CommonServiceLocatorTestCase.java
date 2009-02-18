@@ -18,7 +18,9 @@ public class CommonServiceLocatorTestCase extends CommonBaseTestCase
 	public void testGetterMethods()
 	{
 		CommonServiceLocator locator=CommonServiceLocator.getInstance();
+		locator.setAppHome(System.getProperty("user.dir"));
 		assertNotNull(locator.getAppHome());
+		assertNotNull(locator.getAppName());
 		assertNotNull(locator.getPropDirPath());
 		assertNotNull(locator.getDateSeparatorSlash());
 		assertNotNull(locator.getTimeStampPattern());
