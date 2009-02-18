@@ -93,7 +93,7 @@ public class AuditManager
 	{
 		compare(currentObj,previousObj,eventType);
 	}
-	
+
 	/**
 	 * Compares the contents of two objects.
 	 * @param currentObj Current state of object.
@@ -106,7 +106,6 @@ public class AuditManager
 	{
 		logger.debug("Inside isObjectAuditable method.");
 
-		
 			Auditable auditableObject = (Auditable)currentObj;
 			if (auditableObject == null)
 			{
@@ -126,7 +125,6 @@ public class AuditManager
 
 			//Class of the object being compared.
 			compareClassOfObject((Auditable)obj, previousObj, auditEventLog);
-		
 	}
 
 	/**
@@ -164,7 +162,7 @@ public class AuditManager
 
 	/**
 	 * Process each getter Methods to find the change from previous value to current value.
-	 * @param currentObj current Object
+	 * @param obj current Object
 	 * @param previousObj previous Object
 	 * @param currentObjClass current Object Class
 	 * @return audit Event Details Collection.
@@ -358,14 +356,14 @@ public class AuditManager
 			return;
 		}
 
-		dao.insert(auditEvent, null, false, false);
+		dao.insert(auditEvent, false);
 		Iterator<AuditEventLog> auditLogIterator = auditEvent.getAuditEventLogCollection()
 				.iterator();
 		while (auditLogIterator.hasNext())
 		{
 			AuditEventLog auditEventLog = (AuditEventLog) auditLogIterator.next();
 			auditEventLog.setAuditEvent(auditEvent);
-			dao.insert(auditEventLog, null, false, false);
+			dao.insert(auditEventLog, false);
 
 			Iterator<AuditEventDetails> auditEventDetailsIterator = auditEventLog
 					.getAuditEventDetailsCollcetion().iterator();
@@ -374,7 +372,7 @@ public class AuditManager
 				AuditEventDetails auditEventDetails = (AuditEventDetails) auditEventDetailsIterator
 						.next();
 				auditEventDetails.setAuditEventLog(auditEventLog);
-				dao.insert(auditEventDetails, null, false, false);
+				dao.insert(auditEventDetails, false);
 			}
 		}
 		auditEvent = new AuditEvent();
