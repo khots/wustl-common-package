@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.NameValueBean;
@@ -96,7 +94,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.insert(obj, sessionDataBean, true, true);
+			dao.insert(obj, true);
 		}
 		catch (DAOException exception)
 		{
@@ -167,7 +165,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.update(obj);
-			dao.audit(obj, oldObj, sessionDataBean, true);
+			dao.update(obj, oldObj);
 		}
 		catch (DAOException exception)
 		{
@@ -399,7 +397,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-			object = dao.retrieve(sourceObjectName, identifier);
+			object = dao.retrieveById(sourceObjectName, identifier);
 		}
 		catch (DAOException daoExp)
 		{
@@ -727,7 +725,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			while (iterator.hasNext())
 			{
 				Long objectId = (Long) iterator.next();
-				IActivityStatus object = (IActivityStatus) dao.retrieve(sourceClass, objectId);
+				IActivityStatus object = (IActivityStatus) dao.retrieveById(sourceClass, objectId);
 				object.setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 				dao.update(object);
 				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
@@ -882,7 +880,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
-					whereColumnValue, joinCondition);
+				whereColumnValue, joinCondition);
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
@@ -1021,7 +1019,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.insert(obj, null, false, false);
+			dao.insert(obj, false);
 		}
 		catch (DAOException daoEx)
 		{
@@ -1189,17 +1187,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List executeQuery(String query) throws BizLogicException
 	{
+		HibernateDAO hibernateDao = null;
 		List returner = null;
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-		DAO dao = null;
-		Session session = null;
 		try
 		{
-			dao = daofactory.getDAO();
-			session = dao.getCleanSession();
-			Query hibernateQuery = session.createQuery(query);
-			returner = hibernateQuery.list();
+			String appName = CommonServiceLocator.getInstance().getAppName();
+			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
+					.getDAO();
+			hibernateDao.openSession(null);
+			returner = hibernateDao.executeQuery(query);
 		}
 		catch (HibernateException exception)
 		{
@@ -1213,7 +1209,16 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		finally
 		{
-			session.close();
+			try
+			{
+				hibernateDao.closeSession();
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+				throw getBizLogicException(exception, "biz.exequery.error",
+						"DAOException in executeQuery method:");
+			}
 		}
 		return returner;
 	}
@@ -1246,7 +1251,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 			JDBCDAO jdbcDAO = daoFactory.getJDBCDAO();
 			jdbcDAO.openSession(null);
-			jdbcDAO.executeQuery(sql, null, true, null);
+			jdbcDAO.executeQuery(sql);
 			jdbcDAO.commit();
 			jdbcDAO.closeSession();
 		}
