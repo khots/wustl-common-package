@@ -58,7 +58,7 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 		auditManager.setUserId(Long.valueOf(100));
 		try
 		{
-			auditManager.compare(auditable1, auditable2,"eventType");
+			auditManager.audit(auditable1, auditable2,"eventType");
 			assertTrue("Auditable compared successfully.", true);
 		}
 		catch(AuditException exception)
@@ -78,7 +78,7 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 		auditManager.setUserId(Long.valueOf(100));
 		try
 		{
-			auditManager.compare(currentObj, previousObj,"eventType");
+			auditManager.audit(currentObj, previousObj,"eventType");
 			assertTrue("Auditable compared successfully.", true);
 		}
 		catch(AuditException exception)
@@ -98,7 +98,7 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 		auditManager.setUserId(Long.valueOf(100));
 		try
 		{
-			auditManager.compare(currentObj, previousObj,"eventType");
+			auditManager.audit(currentObj, previousObj,"eventType");
 			assertTrue("Auditable compared successfully.", true);
 		}
 		catch(AuditException exception)
@@ -115,7 +115,7 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 		auditManager.setUserId(Long.valueOf(100));
 		try
 		{
-			auditManager.compare(null, previousObj,"eventType");
+			auditManager.audit(null, previousObj,"eventType");
 			assertTrue("Auditable compared successfully.", true);
 		}
 		catch(Exception exception)
