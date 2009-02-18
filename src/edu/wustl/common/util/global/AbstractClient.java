@@ -16,16 +16,9 @@ import java.util.Map;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public final class AbstractClient
+public class AbstractClient
 {
 
-	/**
-	 * Private constructor.
-	 */
-	private AbstractClient()
-	{
-
-	}
 	/**
 	 * Map that stores the relation condition between two objects.
 	 */
