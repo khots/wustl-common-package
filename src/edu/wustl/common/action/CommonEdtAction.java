@@ -11,7 +11,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.hibernate.Session;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
@@ -20,14 +19,13 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.dao.DAO;
+import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
-import edu.wustl.dao.daofactory.IDAOFactory;
-import edu.wustl.dao.exception.DAOException;
 
 /**
  * This Class is used to Edit data in the database.
@@ -56,10 +54,11 @@ public class CommonEdtAction extends BaseAddEditAction
 		String target;
 		logger.debug("in method executeEdit()");
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
-
+		ActionMessages messages = new ActionMessages();
 		String objectName = getObjectName(abstractForm);
 		AbstractDomainObject abstractDomain = getDomainObject(abstractForm, objectName);
 		updateDomainObject(request, abstractForm, abstractDomain, objectName);
+		setSuccessMsg(request, messages, objectName, abstractDomain);
 		if (abstractForm.getActivityStatus().equals(Status.ACTIVITY_STATUS_DISABLED.toString()))
 		{
 			target = abstractForm.getOnSubmit();
@@ -95,6 +94,23 @@ public class CommonEdtAction extends BaseAddEditAction
 	}
 
 	/**
+	 * Set Success Message.
+	 * @param request HttpServletRequest
+	 * @param messages ActionMessages
+	 * @param objectName object Name
+	 * @param abstractDomain AbstractDomainObject
+	 * @throws ApplicationException Application Exception.
+	 */
+	private void setSuccessMsg(HttpServletRequest request, ActionMessages messages,
+			String objectName, AbstractDomainObject abstractDomain) throws ApplicationException
+	{
+		String[] displayNameParams = addMessage(abstractDomain, objectName);
+		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.edit.successOnly",
+				displayNameParams));
+		saveMessages(request, messages);
+	}
+
+	/**
 	 * This method gets Domain Object.
 	 * @param abstractForm AbstractActionForm
 	 * @param objectName object Name
@@ -115,8 +131,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		catch (BizLogicException bizLogicException)
 		{
 			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"),
-					bizLogicException,
-					"Failed while populating domain object in common edit.");
+					bizLogicException, "Failed while populating domain object in common edit.");
 		}
 	}
 
@@ -155,41 +170,38 @@ public class CommonEdtAction extends BaseAddEditAction
 	private void persistUsingBizLogic(HttpServletRequest request, AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
+		HibernateDAO hibernateDao = null;
 		try
 		{
-			Session sessionClean = getCleanSession();
+			String appName = CommonServiceLocator.getInstance().getAppName();
+			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
+					.getDAO();
+			hibernateDao.openSession(null);
+
 			AbstractDomainObject abstractDomainOld;
-			abstractDomainOld = (AbstractDomainObject) sessionClean.load(objectName, Long
-					.valueOf(abstractForm.getId()));
+			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
+					abstractForm.getId());
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
-			sessionClean.close();
 		}
 		catch (BizLogicException bizLogicException)
 		{
 			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"),
 					bizLogicException, "Failed while updating in common edit.");
 		}
-	}
+		finally
 
-	/**
-	 * This method gets Clean Session.
-	 * @return Clean Session.
-	 * @throws ApplicationException ApplicationException
-	 */
-	private Session getCleanSession() throws ApplicationException
-	{
-		try
 		{
-			IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory();
-			DAO dao = daofactory.getDAO();
-			return dao.getCleanSession();
-		}
-		catch (DAOException exception)
-		{
-			logger.error("Failed to get clean session during update ");
-			throw new ApplicationException(ErrorKey.getErrorKey("db.open.session.error"),
-					exception, "Failed in CommonEdit to get clean session");
+			try
+			{
+				hibernateDao.closeSession();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"), e,
+						"Failed while updating in common edit.");
+			}
 		}
 	}
 
