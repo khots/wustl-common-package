@@ -67,12 +67,12 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 			//Delete the previous CDE data from the database.
 			delete(cde, dao);
 			//Insert the new CDE data in teh database.
-			dao.insert(cde, sessionDataBean, false, false);
+			dao.insert(cde, false);
 			Iterator iterator = cde.getPermissibleValues().iterator();
 			while (iterator.hasNext())
 			{
 				PermissibleValueImpl permissibleValue = (PermissibleValueImpl) iterator.next();
-				dao.insert(permissibleValue, sessionDataBean, false, false);
+				dao.insert(permissibleValue, false);
 			}
 		}
 		catch(DAOException exception)
