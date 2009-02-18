@@ -1,3 +1,4 @@
+
 package edu.wustl.common.bizlogic;
 
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.actionForm.MyActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.MyDomainObject;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.logger.Logger;
@@ -24,19 +26,22 @@ import edu.wustl.dao.util.DAOConstants;
  */
 public class AbstractBizLogicTestCase extends CommonBaseTestCase
 {
+
 	/**
 	 * Generic Logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractBizLogicTestCase.class);
+	private static org.apache.log4j.Logger logger = Logger
+			.getLogger(AbstractBizLogicTestCase.class);
 
 	/**
 	 * Application name for DAO configuration.This must be same as in file ApplicationDAOProperties.xml.
 	 */
-	private static final String APP_NAME="commonpackagetest";
+	private static final String APP_NAME = "commonpackagetest";
 	/**
 	 * DAO factory.
 	 */
-	private static final  IDAOFactory DAO_FACTORY = DAOConfigFactory.getInstance().getDAOFactory(APP_NAME);
+	private static final IDAOFactory DAO_FACTORY = DAOConfigFactory.getInstance().getDAOFactory(
+			APP_NAME);
 
 	/**
 	 *  Positive test case for public void delete(Object).
@@ -45,7 +50,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.isTestForFail = false;
 			MyDomainObject ado = getAbstractDomainObject(1);
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			defaultBizLogic.delete(ado);
@@ -54,9 +59,10 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (Exception exception)
 		{
 			fail("Not able to delete the object.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
+
 	/**
 	 *  Negative test case for public void delete(Object).
 	 */
@@ -64,7 +70,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.isTestForFail = true;
 			MyDomainObject ado = getAbstractDomainObject(1);
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			defaultBizLogic.delete(ado);
@@ -72,8 +78,9 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		}
 		catch (BizLogicException exception)
 		{
-			assertTrue("Negative test case: Thrown BizLogicException during delete operation.", true);
-			logger.fatal(exception.getMessage(),exception);
+			assertTrue("Negative test case: Thrown BizLogicException during delete operation.",
+					true);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -84,7 +91,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.isTestForFail = false;
 			MyDomainObject ado = getAbstractDomainObject(1);
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
 			defaultBizLogic.insert(ado);
@@ -93,7 +100,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			fail("Not able to insert the object.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -104,7 +111,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=true;
+			MyDAOImpl.isTestForFail = true;
 			MyDomainObject ado = getAbstractDomainObject(1);
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
 			defaultBizLogic.insert(ado);
@@ -112,8 +119,9 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		}
 		catch (BizLogicException exception)
 		{
-			assertTrue("Negative test case: Thrown BizLogicException during insert operation.", true);
-			logger.fatal(exception.getMessage(),exception);
+			assertTrue("Negative test case: Thrown BizLogicException during insert operation.",
+					true);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -126,18 +134,18 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
-			Collection<AbstractDomainObject> adoList= new ArrayList<AbstractDomainObject>();
+			MyDAOImpl.isTestForFail = false;
+			Collection<AbstractDomainObject> adoList = new ArrayList<AbstractDomainObject>();
 			adoList.add(getAbstractDomainObject(1));
 			adoList.add(getAbstractDomainObject(2));
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
-			defaultBizLogic.insert(adoList,null,true);
+			defaultBizLogic.insert(adoList, null, true);
 			assertTrue("Object inserted successfuly.", true);
 		}
 		catch (BizLogicException exception)
 		{
 			fail("Not able to insert the object.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -150,18 +158,19 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=true;
-			Collection<AbstractDomainObject> adoList= new ArrayList<AbstractDomainObject>();
+			MyDAOImpl.isTestForFail = true;
+			Collection<AbstractDomainObject> adoList = new ArrayList<AbstractDomainObject>();
 			adoList.add(getAbstractDomainObject(1));
 			adoList.add(getAbstractDomainObject(2));
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
-			defaultBizLogic.insert(adoList,null,true);
+			defaultBizLogic.insert(adoList, null, true);
 			fail("Negative test case:must throw BizLogicException.");
 		}
 		catch (BizLogicException exception)
 		{
-			assertTrue("Negative test case: Thrown BizLogicException during collection insert.", true);
-			logger.fatal(exception.getMessage(),exception);
+			assertTrue("Negative test case: Thrown BizLogicException during collection insert.",
+					true);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -174,24 +183,25 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.isTestForFail = false;
 			DAO myJdbcDao = DAO_FACTORY.getDAO();
-			Collection<AbstractDomainObject> adoList= new ArrayList<AbstractDomainObject>();
+			Collection<AbstractDomainObject> adoList = new ArrayList<AbstractDomainObject>();
 			adoList.add(getAbstractDomainObject(1));
 			adoList.add(getAbstractDomainObject(2));
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			defaultBizLogic.insertMultiple(adoList,myJdbcDao,null);
+			defaultBizLogic.insertMultiple(adoList, myJdbcDao, null);
 			fail("Negative test case:must throw BizLogicException.");
 		}
 		catch (BizLogicException exception)
 		{
-			assertTrue("Negative test case: Thrown BizLogicException during collection insert.", true);
-			logger.fatal(exception.getMessage(),exception);
+			assertTrue("Negative test case: Thrown BizLogicException during collection insert.",
+					true);
+			logger.fatal(exception.getMessage(), exception);
 		}
 		catch (DAOException exception)
 		{
 			fail("Negative test case:must throw BizLogicException.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -203,7 +213,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.isTestForFail = false;
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
 			defaultBizLogic.update(getAbstractDomainObject(1));
 			assertTrue("Object updated successfuly.", true);
@@ -211,7 +221,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			fail("Not able to update the object.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
 
@@ -223,7 +233,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
+			MyDAOImpl.isTestForFail = false;
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			defaultBizLogic.update(getAbstractDomainObject(1));
 			fail("Negative test case:must throw BizLogicException.");
@@ -231,22 +241,33 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 		catch (BizLogicException exception)
 		{
 			assertTrue("Negative test case: Thrown BizLogicException during update.", true);
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
+
 	/**
 	 *  Positive test case for
 	 *  public String formatException(Exception exception, Object obj, String operation).
 	 */
 	public void testFormatException()
 	{
-		MyDAOImpl.isTestForFail=false;
-		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-		ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-		DAOException exception= new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
-				DAOConstants.EXECUTE_QUERY_ERROR);
-		String mess=defaultBizLogic.formatException(exception,null,null);
-		assertNotNull(mess);
+		try
+		{
+			MyDAOImpl.isTestForFail = false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
+			DAOException exception = new DAOException(errorKey, new Exception(""),
+					"MyJDAOImpl.java :" + DAOConstants.EXECUTE_QUERY_ERROR);
+
+			String mess = defaultBizLogic.formatException(exception, null, null);
+			assertNotNull(mess);
+		}
+		catch (ApplicationException exception)
+		{
+			fail("Not able to Format Exception.");
+			logger.fatal(exception.getMessage(), exception);
+		}
+
 	}
 
 	/**
@@ -255,82 +276,93 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	 */
 	public void testFormatExceptionWithNullException()
 	{
-		MyDAOImpl.isTestForFail=false;
-		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-		String mess=defaultBizLogic.formatException(null,null,null);
-		assertNotNull(mess);
+		try
+		{
+			MyDAOImpl.isTestForFail = false;
+			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+			String mess = defaultBizLogic.formatException(null, null, null);
+			assertNotNull(mess);
+		}
+		catch (ApplicationException exception)
+		{
+			logger.fatal(exception.getMessage(), exception);
+			fail("Not able to Format Exception With Null Exception.");
+		}
+
 	}
 
 	public void testPopulateUIBean()
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
-			MyDAOImpl.returnActivityStatusObj=true;
+			MyDAOImpl.isTestForFail = false;
+			MyDAOImpl.returnActivityStatusObj = true;
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			MyActionForm uiForm= new MyActionForm();
-			defaultBizLogic.populateUIBean("className",Long.valueOf(1),uiForm);
+			MyActionForm uiForm = new MyActionForm();
+			defaultBizLogic.populateUIBean("className", Long.valueOf(1), uiForm);
 			assertTrue("Populated UI Bean successfully.", true);
 		}
 		catch (BizLogicException exception)
 		{
 			fail("Not able to Populate UI Bean.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
+
 	public void testFailPopulateUIBean()
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=true;
-			MyDAOImpl.returnActivityStatusObj=true;
+			MyDAOImpl.isTestForFail = true;
+			MyDAOImpl.returnActivityStatusObj = true;
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
-			MyActionForm uiForm= new MyActionForm();
-			defaultBizLogic.populateUIBean("className",Long.valueOf(1),uiForm);
+			MyActionForm uiForm = new MyActionForm();
+			defaultBizLogic.populateUIBean("className", Long.valueOf(1), uiForm);
 			fail("Negative test case:must throw BizLogicException.");
 		}
 		catch (BizLogicException exception)
 		{
 			assertTrue("Negative test case:thrown BizLogicException.", true);
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
-	
+
 	public void testPopulateDomainObject()
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=false;
-			MyDAOImpl.returnActivityStatusObj=true;
+			MyDAOImpl.isTestForFail = false;
+			MyDAOImpl.returnActivityStatusObj = true;
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			MyActionForm uiForm= new MyActionForm();
-			defaultBizLogic.populateDomainObject("className",Long.valueOf(1),uiForm);
+			MyActionForm uiForm = new MyActionForm();
+			defaultBizLogic.populateDomainObject("className", Long.valueOf(1), uiForm);
 			assertTrue("Populated UI Bean successfully.", true);
 		}
 		catch (BizLogicException exception)
 		{
 			fail("Not able to Populate UI Bean.");
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
+
 	public void testFailPopulateDomainObject()
 	{
 		try
 		{
-			MyDAOImpl.isTestForFail=true;
-			MyDAOImpl.returnActivityStatusObj=true;
+			MyDAOImpl.isTestForFail = true;
+			MyDAOImpl.returnActivityStatusObj = true;
 			MyDefaultBizLogic defaultBizLogic = new MyDefaultBizLogic();
-			MyActionForm uiForm= new MyActionForm();
-			defaultBizLogic.populateDomainObject("className",Long.valueOf(1),uiForm);
+			MyActionForm uiForm = new MyActionForm();
+			defaultBizLogic.populateDomainObject("className", Long.valueOf(1), uiForm);
 			fail("Negative test case:must throw BizLogicException.");
 		}
 		catch (BizLogicException exception)
 		{
 			assertTrue("Negative test case:thrown BizLogicException.", true);
-			logger.fatal(exception.getMessage(),exception);
+			logger.fatal(exception.getMessage(), exception);
 		}
 	}
-	
+
 	/*public void testRefreshTitliSearchIndex()
 	{
 		MyDAOImpl.isTestForFail=false;
@@ -344,7 +376,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 	 */
 	private MyDomainObject getAbstractDomainObject(int id)
 	{
-		MyDomainObject ado= new MyDomainObject();
+		MyDomainObject ado = new MyDomainObject();
 		ado.setActivityStatus("Active");
 		ado.setId(Long.valueOf(id));
 		return ado;
