@@ -251,7 +251,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			Object object=defaultBizLogic.retrieveAttribute("".getClass(),
 					Long.valueOf(0),"attributeName");
-			assertEquals("retObject",object.toString());
+			assertEquals("[retObject]",object.toString());
 		}
 		catch (BizLogicException exception)
 		{
@@ -293,7 +293,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			Object object=defaultBizLogic.retrieveAttribute("edu.wustl.common.beans.NameValueBean",
 					Long.valueOf(0),"attributeName");
-			assertEquals("retObject",object.toString());
+			assertEquals("[retObject]",object.toString());
 		}
 		catch (BizLogicException exception)
 		{
@@ -521,7 +521,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			MyDAOImpl.isTestForFail=false;
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			Object object=defaultBizLogic.retrieve("SourceObjName",Long.valueOf(1));
-			assertEquals("retObject",object.toString());
+			assertNotNull(object);
 		}
 		catch (BizLogicException exception)
 		{
