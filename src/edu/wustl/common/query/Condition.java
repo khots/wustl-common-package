@@ -179,7 +179,7 @@ public class Condition {
 				    
 				    if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
 			    	{
-				    	newValue = "CONVERT(smalldatetime, "+value+", 110)";
+				    	newValue = "CONVERT(datetime, "+value+", 110)";
 			    	}
 				    else
 				    {
