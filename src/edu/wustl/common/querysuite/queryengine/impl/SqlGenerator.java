@@ -747,7 +747,7 @@ public class SqlGenerator implements ISqlGenerator {
                 }
                 if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
          	   	{
-                	value="CONVERT(smalldatetime, '"+value+"', 110)";
+                	value="CONVERT(datetime, '"+value+"', 110)";
          	   	}
                 else
                 {
