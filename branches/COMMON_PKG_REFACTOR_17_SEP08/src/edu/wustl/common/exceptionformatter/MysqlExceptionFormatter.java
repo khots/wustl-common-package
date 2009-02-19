@@ -18,7 +18,6 @@ import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
-import edu.wustl.dao.util.DAOUtility;
 import edu.wustl.dao.util.HibernateMetaData;
 
 /**
@@ -191,7 +190,7 @@ IDBExceptionFormatter
 	private int getErrorKey(Exception objExcp)
 	{
 		// Generate Error Message by appending all messages of previous cause Exceptions
-			String sqlMessage = DAOUtility.getInstance().generateErrorMessage(objExcp);
+			String sqlMessage = Utility.generateErrorMessage(objExcp);
 
 			// From the MySQL error message and extract the key ID
 			// The unique key Error message is "Duplicate entry %s for key %d"

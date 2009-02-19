@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.HibernateException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -954,6 +955,40 @@ public final class Utility
 		}
 		attributeName.setCharAt(0, Character.toLowerCase(attributeName.charAt(0)));
 		return attributeName.toString();
+	}
+
+	/**
+	 * Generates error messages.
+	 * @param exep :
+	 * @return error message.
+	 */
+	public static String generateErrorMessage(Exception exep)
+	{
+		String messageToReturn = "";
+		if (exep instanceof HibernateException)
+        {
+            HibernateException hibernateException = (HibernateException) exep;
+            StringBuffer message = new StringBuffer(messageToReturn);
+            String[] str = hibernateException.getMessages();
+            if (str == null)
+            {
+            	messageToReturn = "Unknown Error";
+            }
+            else
+            {
+            	  for (int i = 0; i < str.length; i++)
+                  {
+                  	message.append(str[i]).append(TextConstants.EMPTY_STRING);
+                  }
+                  messageToReturn =  message.toString();
+            }
+
+        }
+        else
+        {
+        	messageToReturn = exep.getMessage();
+        }
+		  return messageToReturn;
 	}
 
 	
