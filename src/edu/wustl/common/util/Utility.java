@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
 
 /**
@@ -251,20 +254,7 @@ public final class Utility
 		return method;
 	}
 
-	/**
-	 * This method returns method object.
-	 * @param obj Object
-	 * @param method method
-	 * @return the method object.
-	 * @throws IllegalAccessException Illegal Access Exception
-	 * @throws InvocationTargetException Invocation Target Exception.
-	 */
-	public static Object getValueFor(Object obj, Method method) throws IllegalAccessException,
-			InvocationTargetException
-	{
-		return method.invoke(obj, new Object[0]);
-
-	}
+	
 
 	/**
 	 * This method gets Array String of Object Array.
@@ -390,22 +380,7 @@ public final class Utility
 		return newObjectArr;
 	}
 
-	/**
-	 * This method parse Attribute Name.
-	 * @param methodName method Name to be parse.
-	 * @return attribute Name.
-	 */
-	public static String parseAttributeName(String methodName)
-	{
-		StringBuffer attributeName = new StringBuffer();
-		int index = methodName.indexOf("get");
-		if (index != -1)
-		{
-			attributeName.append(methodName.substring(index + "get".length()));
-		}
-		attributeName.setCharAt(0, Character.toLowerCase(attributeName.charAt(0)));
-		return attributeName.toString();
-	}
+	
 
 	/**
 	 * This method removes null values from given list.
@@ -919,4 +894,67 @@ public final class Utility
 		}
 		return className;
 	}
+	
+	 /**
+	 * @param tableName :
+	 * @param jdbcDAO :
+	 * @return :
+     * @throws DAOException :
+	 */
+	public static String getDisplayName(String tableName,JDBCDAO jdbcDAO) throws DAOException
+	{
+		String displayName="";
+		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"+tableName+"'";
+		try
+		{
+			ResultSet resultSet = jdbcDAO.getQueryResultSet(sql);
+			while(resultSet.next())
+			{
+				displayName=resultSet.getString("DISPLAY_NAME");
+				break;
+			}
+			resultSet.close();
+		}
+		catch(Exception ex)
+		{
+			logger.error(ex.getMessage(),ex);
+		}
+		return displayName;
+	}
+	
+
+
+	/**
+	 * This method returns method object.
+	 * @param obj Object
+	 * @param method method
+	 * @return the method object.
+	 * @throws IllegalAccessException Illegal Access Exception
+	 * @throws InvocationTargetException Invocation Target Exception.
+	 */
+	public static Object getValueFor(Object obj, Method method) throws IllegalAccessException,
+			InvocationTargetException
+	{
+		return method.invoke(obj, new Object[0]);
+
+	}
+	
+	/**
+	 * This method parse Attribute Name.
+	 * @param methodName method Name to be parse.
+	 * @return attribute Name.
+	 */
+	public static String parseAttributeName(String methodName)
+	{
+		StringBuffer attributeName = new StringBuffer();
+		int index = methodName.indexOf("get");
+		if (index != -1)
+		{
+			attributeName.append(methodName.substring(index + "get".length()));
+		}
+		attributeName.setCharAt(0, Character.toLowerCase(attributeName.charAt(0)));
+		return attributeName.toString();
+	}
+
+	
 }
