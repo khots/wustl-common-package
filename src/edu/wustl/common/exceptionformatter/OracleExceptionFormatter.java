@@ -7,11 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
-import edu.wustl.dao.util.DAOUtility;
+
 /**
  * @author kalpana_thakur
  *
@@ -43,7 +44,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
         try
         {
         	// Get Constraint Name from messages
-        	String sqlMessage = DAOUtility.getInstance().generateErrorMessage(objExcp);
+        	String sqlMessage = Utility.generateErrorMessage(objExcp);
         	int tempstartIndexofMsg = sqlMessage.indexOf('(');
 
             String temp = sqlMessage.substring(tempstartIndexofMsg);
@@ -96,7 +97,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 			{
 				String columnName = columnNameBuff.toString().
 				substring(0,columnNameBuff.toString().length()-1);
-				String displayName = DAOUtility.getInstance().getDisplayName(tableName,jdbcdao);
+				String displayName = Utility.getDisplayName(tableName,jdbcdao);
 				Object[] arguments = new Object[]{displayName,columnName};
 				formattedErrMsg = MessageFormat.format(DAOConstants.
 						CONSTRAINT_VOILATION_ERROR,arguments);
