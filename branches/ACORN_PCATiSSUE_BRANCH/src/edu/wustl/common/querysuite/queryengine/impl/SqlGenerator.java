@@ -971,7 +971,7 @@ public class SqlGenerator implements ISqlGenerator {
         termString = termString + "/" + timeInterval.numSeconds();
         if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
         {
-        	termString = "cast(ROUND(" + termString + ",0)as int)";	
+        	termString = "cast(ROUND(" + termString + ",0)as bigint)";	
         }
         else
         {
