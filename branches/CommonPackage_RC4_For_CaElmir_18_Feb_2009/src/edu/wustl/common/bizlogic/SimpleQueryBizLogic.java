@@ -220,7 +220,9 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 			return null;
 		}
 		//Returns the Class object if it is a valid class else returns null.
+		
 		Class classObject = edu.wustl.common.util.Utility.getClassObject(className);
+				
 		if (classObject != null)
 		{
 			Field[] objectFields = classObject.getDeclaredFields();
@@ -240,15 +242,19 @@ public class SimpleQueryBizLogic extends DefaultBizLogic
 							Constants.FIELD_TYPE_VARCHAR);
 					return activityStatusCondition;
 				}
+				
 			}
 
 			Class superClass = classObject.getSuperclass();
-			if ((activityStatusCondition == null)
-					&& (superClass.getName().equals(
-							"edu.wustl.common.domain.AbstractDomainObject") == false))
+			
+			if(!Object.class.getName().equals(superClass.getName()))
 			{
-				String superClassAliasName = getAliasName(superClass);
-				activityStatusCondition = getActivityStatusCondition(superClassAliasName,superClass.getName());
+				if ((superClass.getName().equals(
+								"edu.wustl.common.domain.AbstractDomainObject") == false))
+				{
+					String superClassAliasName = getAliasName(superClass);
+					activityStatusCondition = getActivityStatusCondition(superClassAliasName,superClass.getName());
+				}
 			}
 		}
 
