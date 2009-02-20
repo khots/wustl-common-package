@@ -432,6 +432,22 @@ public class PrivilegeCache
 		{
 			return 30;
 		}
+		if (Permissions.STUDY_ADMINISTRATOR.equals(privilegeName))
+		{
+			return 101;
+		}
+		if (Permissions.EXPERIMENT_ADMINISTRATOR.equals(privilegeName))
+		{
+			return 102;
+		}
+		if (Permissions.COHORT_MANAGEMENT.equals(privilegeName))
+		{
+			return 103;
+		}
+		if (Permissions.EXPERIMENT_DATA_ENTRY.equals(privilegeName))
+		{
+			return 104;
+		}
 		return 0;
 	}
 
@@ -697,6 +713,18 @@ public class PrivilegeCache
 						
 					case 1:
 						nmv.setName(Permissions.READ_DENIED);
+						break;
+					case 101:
+						nmv.setName(Permissions.STUDY_ADMINISTRATOR);
+						break;
+					case 102:
+						nmv.setName(Permissions.EXPERIMENT_ADMINISTRATOR);
+						break;
+					case 103:
+						nmv.setName(Permissions.COHORT_MANAGEMENT);
+						break;
+					case 104:
+						nmv.setName(Permissions.EXPERIMENT_DATA_ENTRY);
 						break;
 				}
 				
