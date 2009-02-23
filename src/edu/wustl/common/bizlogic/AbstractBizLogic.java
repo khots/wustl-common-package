@@ -610,10 +610,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 					tableName = mainTableName;
 				}
 			
-				if(Variables.databaseName.equalsIgnoreCase("oracle"))
-				{
-					tableName = tableName.toUpperCase();
-				}
 				RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
 			
 				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
