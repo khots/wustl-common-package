@@ -20,6 +20,11 @@ import edu.wustl.common.util.logger.Logger;
 
 public class ConstraintViolationFormatter implements ExceptionFormatter 
 {
+	/**
+	 * Logger. 
+	 */
+	private org.apache.log4j.Logger logger = Logger.getLogger(ConstraintViolationFormatter.class);
+	
 	/*  
 	 * @param objExcp - Exception object 
 	 * @param args[] where args[0] must be String 'Table_Name' 
@@ -31,7 +36,6 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		String errMessage =null;
 		
 		// Check which database is in used and called appropriate Format_Method
-		
 		if(Variables.databaseName.equals(Constants.MYSQL_DATABASE))  {
 			errMessage = MySQLformatMessage(objExcp,args); // method for MYSQL Database
 		} else if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE)) {
@@ -51,12 +55,12 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
         String tableName="";
         String columnName="";
         String formattedErrMsg=null; // Formatted Error Message return by this method
-		Logger.out.debug(objExcp.getClass().getName());
+		logger.debug(objExcp.getClass().getName());
         if(objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
         {
             
             objExcp = (Exception)objExcp.getCause();
-            Logger.out.debug(objExcp);
+            logger.debug(objExcp);
         }
         try
         {
@@ -68,7 +72,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
             }
             else
             {
-                Logger.out.debug("Error Message: Connection object not given");
+                logger.debug("Error Message: Connection object not given");
             }
         	// Get Contraint Name from messages         		
         	String sqlMessage = generateErrorMessage(objExcp);
@@ -78,23 +82,23 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
             int startIndexofMsg = temp.indexOf(".");
             int endIndexofMsg = temp.indexOf(")");
             String strKey =temp.substring((startIndexofMsg+1),endIndexofMsg);
-            Logger.out.debug("Contraint Name: "+strKey);
+            logger.debug("Contraint Name: "+strKey);
            
             String Query = "select COLUMN_NAME,TABLE_NAME from user_cons_columns where constraint_name = '"+strKey+"'";
-            Logger.out.debug("ExceptionFormatter Query: "+Query);
+            logger.debug("ExceptionFormatter Query: "+Query);
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(Query);
             while(rs.next())
             {
                 	columnName+=rs.getString("COLUMN_NAME")+",";
-                	Logger.out.debug("columnName: "+columnName);
+                	logger.debug("columnName: "+columnName);
                 	tableName=rs.getString("TABLE_NAME");
-                	Logger.out.debug("tableName: "+tableName);
+                	logger.debug("tableName: "+tableName);
             }
             if(columnName.length()>0&&tableName.length()>0)
             {
             	columnName=columnName.substring(0,columnName.length()-1);
-            	Logger.out.debug("columnName befor formatting: "+columnName);
+            	logger.debug("columnName befor formatting: "+columnName);
             	String displayName = ExceptionFormatterFactory.getDisplayName(tableName,connection);
             	
             	Object[] arguments = new Object[]{displayName,columnName};
@@ -105,94 +109,19 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
          }
         catch(Exception e)
         {
-            Logger.out.error(e.getMessage(),e);
+            logger.error(e.getMessage(),e);
             formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;  
         }
         return formattedErrMsg;
     }
-	private String MySQLformatMessage(Exception objExcp, Object[] args)
-	{
-		Logger.out.debug(objExcp.getClass().getName());
-		if(objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
-		{
-			
-			objExcp = (Exception)objExcp.getCause();
-			Logger.out.debug(objExcp);
-		}
-		String dispTableName=null;
-		String tableName=null; // stores Table_Name for which column name to be found 
-		String columnName=null; //stores Column_Name of table  
+	private String MySQLformatMessage(Exception objExcp, Object[] args) {
 		String formattedErrMsg=null; // Formatted Error Message return by this method
-
 		Connection connection=null;
-		if(args[0]!=null)
-		{
-			tableName = (String)args[0];
-		}
-		else
-		{
-			Logger.out.debug("Table Name not specified");
-			tableName=new String("Unknown Table");
-		}
-		Logger.out.debug("Table Name:" + tableName);
-		dispTableName=tableName;
-		if(args.length>2)
-		{
-			if(args[2]!=null)
-			{
-				dispTableName = (String)args[2];
-			}
-			else
-			{
-				Logger.out.debug("Table Name not specified");
-				dispTableName=tableName;
-			}
-		}	
-		try
-	     {
-	            //get Class name from message "could not insert [classname]"
-	            ConstraintViolationException  cEX = (ConstraintViolationException)objExcp;
-	            String message = cEX.getMessage();
-	            Logger.out.debug("message :"+message);
-	            int startIndex = message.indexOf("[");
-	            
-	        	/**
-	    		 * Name : kalpana thakur
-	    		 * Reviewer Name : Vaishali
-	    		 * Bug ID: 4926
-	    		 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
-	            */
-	            
-	            int endIndex = message.indexOf("#");
-	            if(endIndex == -1)
-	            {
-	            	endIndex = message.indexOf("]");
-	            }
-	            String className = message.substring((startIndex+1),endIndex);
-	            Logger.out.debug("ClassName: "+className);
-	            Class classObj = Class.forName(className);
-	            // get table name from class 
-	            tableName = HibernateMetaData.getRootTableName(classObj);
-	            
-	            /**
-	    		 * Name : kalpana thakur
-	    		 * Reviewer Name : Vaishali
-	    		 * Bug ID: 6034
-	    		 * Description:To retrive the appropriate tablename checking the SQL"
-	            */
-	            
-	            if(!(cEX.getSQL().contains(tableName)))
-	            {
-	            	 tableName = HibernateMetaData.getTableName(classObj);
-	            }
-	    
-	     }
-		 catch(Exception e)
-		 {
-			 Logger.out.error(e.getMessage(),e);
-		 }
-		try
-		{
+		
+		try {
+			// Get table name from DB exception message.
+			String tableName = parseException(objExcp, args);
+			
 			// Generate Error Message by appending all messages of previous cause Exceptions
 			String sqlMessage = generateErrorMessage(objExcp);
 			
@@ -207,21 +136,17 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			// Get the %d part of the string
 			String strKey =sqlMessage.substring(indexofMsg,sqlMessage.length()-1);
 			key = Integer.parseInt(strKey);
-			Logger.out.debug(String.valueOf(key));
+			logger.debug(String.valueOf(key));
 			
 		 	// For the key extracted frm the string, get the column name on which the 
 			// costraint has failed
 			boolean found=false;
 			// get connection from arguments
-			if(args[1]!=null)
-			{
+			if(args[1]!=null) {
 				connection =(Connection)args[1];
+			} else {
+				logger.debug("Error Message: Connection object not given");
 			}
-			else
-			{
-				Logger.out.debug("Error Message: Connection object not given");
-			}
-			
 			
 			// Get database metadata object for the connection
 			DatabaseMetaData dbmd = connection.getMetaData();
@@ -231,69 +156,47 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 					tableName, true, false);
 			
         	HashMap indexDetails = new HashMap(); 
-        	StringBuffer columnNames=new StringBuffer("");
 			int indexCount = 1;
 			String constraintVoilated = "";
-        	while(rs.next())
-        	{
+        	while(rs.next()) {
 				// In this loop, all the indexes are stored as key of the HashMap
 				// and the column names are stored as value.
-        		Logger.out.debug("Key: " + indexCount);
-        		if(key==indexCount)
-        		{
+        		logger.debug("Key: " + indexCount);
+        		if(key==indexCount) {
         			constraintVoilated=rs.getString("INDEX_NAME");
-        			Logger.out.debug("Constraint: "+constraintVoilated);
+        			logger.debug("Constraint: "+constraintVoilated);
         			found=true; // column name for given key index found
         			//break;
         		}
         		StringBuffer temp = (StringBuffer)indexDetails.get(rs.getString("INDEX_NAME"));
-        		if(temp!=null)
-        		{
+        		if(temp!=null) {
         			temp.append(rs.getString("COLUMN_NAME"));
         			temp.append(",");
         			indexDetails.remove(rs.getString("INDEX_NAME"));
         			indexDetails.put(rs.getString("INDEX_NAME"),temp);
-        			Logger.out.debug("Column :"+temp.toString());
-        		}
-        		else
-        		{
+        			logger.debug("Column :"+temp.toString());
+        		} else {
         			temp = new StringBuffer(rs.getString("COLUMN_NAME"));
         			//temp.append(rs.getString("COLUMN_NAME"));
         			temp.append(",");
         			indexDetails.put(rs.getString("INDEX_NAME"),temp);
         		}
-        		
         		indexCount++; // increment record count*/
         	}
-        	Logger.out.debug("out of loop" );
-        	if(found)
-    		{
-        		columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
-        		columnName=columnNames.toString();
-        		Logger.out.debug("Column Name: " + columnNames.toString());
-				Logger.out.debug("Constraint: "+constraintVoilated);
-    		}
+        	logger.debug("out of loop" );
         	rs.close();
- 	
-        	// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
-        	Object[] arguments = new Object[2];
-        	dispTableName = ExceptionFormatterFactory.getDisplayName(tableName,connection);
-			arguments[0]=dispTableName;
-			columnName=columnNames.toString(); 
-			columnName=columnName.substring(0,columnName.length());
-			arguments[1]=columnName; 	
-			Logger.out.debug("Column Name: " + columnNames.toString());
-			
-			// Insert Table_Name and Column_Name in  CONSTRAINT_VOILATION_ERROR message   
-			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,arguments);
-		}
-		catch(Exception e)
-		{
-			Logger.out.error(e.getMessage(),e);
+        	StringBuffer columnNames = new StringBuffer("");
+    		if(found) {
+        		columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
+        		logger.debug("Column Name: " + columnNames.toString());
+    			logger.debug("Constraint: "+constraintVoilated);
+    		}
+    		formattedErrMsg = prepareMessage(columnNames, tableName, connection);
+		} catch(Exception e) {
+			logger.error(e.getMessage(),e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;  
 		}
 		return formattedErrMsg;
-		
 	}
 	
 	/**
@@ -304,62 +207,13 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 	 * @return
 	 */
 	private String MsSQLServerformatMessage(Exception objExcp, Object[] args) {
-		Logger.out.debug(objExcp.getClass().getName());
-		if(objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException) {
-			objExcp = (Exception)objExcp.getCause();
-			Logger.out.debug(objExcp);
-		}
-		String dispTableName=null;
-		String tableName=null; // stores Table_Name for which column name to be found 
-		String columnName=null; //stores Column_Name of table  
 		String formattedErrMsg=null; // Formatted Error Message return by this method
-
 		Connection connection=null;
-		if(args[0]!=null) {
-			tableName = (String)args[0];
-		} else {
-			Logger.out.debug("Table Name not specified");
-			tableName=new String("Unknown Table");
-		}
-		Logger.out.debug("Table Name:" + tableName);
-		dispTableName=tableName;
-		if(args.length>2) {
-			if(args[2]!=null) {
-				dispTableName = (String)args[2];
-			} else {
-				Logger.out.debug("Table Name not specified");
-				dispTableName=tableName;
-			}
-		}	
+		
 		try {
-		    //get Class name from message "could not insert [classname]"
-			ConstraintViolationException  cEX = (ConstraintViolationException)objExcp;
-		    String message = cEX.getMessage();
-		    Logger.out.debug("message :"+message);
-		    int startIndex = message.indexOf("[");
-		    
-			/**
-			 * Bug ID: 4926
-			 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
-		    */
-		    int endIndex = message.indexOf("#");
-		    if(endIndex == -1) {
-		    	endIndex = message.indexOf("]");
-		    }
-		    String className = message.substring((startIndex+1),endIndex);
-		    Logger.out.debug("ClassName: "+className);
-		    Class classObj = Class.forName(className);
-		    // get table name from class 
-		    tableName = HibernateMetaData.getRootTableName(classObj);
-		    
-		    /**
-			 * Bug ID: 6034
-			 * Description:To retrive the appropriate tablename checking the SQL"
-		    */
-		    if(!(cEX.getSQL().contains(tableName))) {
-		    	 tableName = HibernateMetaData.getTableName(classObj);
-		    }
-		 
+			// Get table name from DB exception message.
+			String tableName = parseException(objExcp, args);
+			
 			// Generate Error Message by appending all messages of previous cause Exceptions
 			String sqlMessage = generateErrorMessage(objExcp);
 			
@@ -368,7 +222,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			  could not insert: [edu.wustl.catissuecore.domain.Participant] Violation of UNIQUE KEY constraint 'UQ__CATISSUE_PARTICI__2D27B809'. 
 			  		Cannot insert duplicate key in object 'dbo.CATISSUE_PARTICIPANT'.
 			*/
-			startIndex = 0;
+			int startIndex = 0;
 			startIndex = sqlMessage.indexOf(Constants.MSSQLSERVER_DUPL_KEY_MSG_START);
 			startIndex+=Constants.MSSQLSERVER_DUPL_KEY_MSG_START.length();
 			String constraintVoilated = "";
@@ -380,7 +234,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			if(args[1]!=null) {
 				connection =(Connection)args[1];
 			} else {
-				Logger.out.debug("Error Message: Connection object not given");
+				logger.debug("Error Message: Connection object not given");
 			}
 			
 			// Get database metadata object for the connection
@@ -391,14 +245,13 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 					tableName, true, false);
 			
         	HashMap indexDetails = new HashMap(); 
-        	StringBuffer columnNames=new StringBuffer("");
 			
         	while(rs.next()) {
         		// In this loop, all the indexes are stored as key of the HashMap
 				// and the column names are stored as value.
         		if(rs.getString("INDEX_NAME")!= null) {
         			if(constraintVoilated.equals(rs.getString("INDEX_NAME"))) {
-	        			Logger.out.debug("Constraint: "+constraintVoilated);
+	        			logger.debug("Constraint: "+constraintVoilated);
 	        			found=true; // column name for given key index found
 	        		}
         			
@@ -408,7 +261,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 	        			temp.append(",");
 	        			indexDetails.remove(rs.getString("INDEX_NAME"));
 	        			indexDetails.put(rs.getString("INDEX_NAME"),temp);
-	        			Logger.out.debug("Column :"+temp.toString());
+	        			logger.debug("Column :"+temp.toString());
 	        		} else {
 	        			temp = new StringBuffer(rs.getString("COLUMN_NAME"));
 	        			//temp.append(",");
@@ -416,28 +269,17 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 	        		}
         		}
         	}
-        	Logger.out.debug("out of loop" );
-        	if(found) {
-        		columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
-        		columnName=columnNames.toString();
-        		Logger.out.debug("Column Name: " + columnNames.toString());
-				Logger.out.debug("Constraint: "+constraintVoilated);
-    		}
+        	logger.debug("out of loop" );
         	rs.close();
-        	
-        	// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
-        	Object[] arguments = new Object[2];
-        	dispTableName = ExceptionFormatterFactory.getDisplayName(tableName,connection);
-			arguments[0]=dispTableName;
-			columnName=columnNames.toString(); 
-			columnName=columnName.substring(0,columnName.length());
-			arguments[1]=columnName; 	
-			Logger.out.debug("Column Name: " + columnNames.toString());
-			
-			// Insert Table_Name and Column_Name in CONSTRAINT_VOILATION_ERROR message   
-			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,arguments);
+        	StringBuffer columnNames=new StringBuffer("");
+    		if(found) {
+        		columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
+        		logger.debug("Column Name: " + columnNames.toString());
+    			logger.debug("Constraint: "+constraintVoilated);
+    		}
+    		formattedErrMsg = prepareMessage(columnNames, tableName, connection);
 		} catch(Exception e) {
-			Logger.out.error(e.getMessage(),e);
+			logger.error(e.getMessage(),e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;  
 		}
 		return formattedErrMsg;
@@ -455,7 +297,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
             {
                 for (int i = 0; i < str.length; i++)
                 {
-                	Logger.out.debug("str:" + str[i]);
+                	logger.debug("str:" + str[i]);
                 	message.append(str[i] + " ");
                 }
             }
@@ -469,5 +311,88 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
         {
             return ex.getMessage();
         }
+	}
+	
+	/**
+	 * Parse the exception object and find DB table name.
+	 * 
+	 * @param objExcp exception object.
+	 * @param args arguments.
+	 * @throws Exception
+	 */
+	private String parseException(Exception objExcp, Object[] args) throws Exception {
+		logger.debug(objExcp.getClass().getName());
+		String tableName = "";
+		if(objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException) {
+			objExcp = (Exception)objExcp.getCause();
+			logger.debug(objExcp);
+		}
+		
+		if(args[0]!=null) {
+			tableName = (String)args[0];
+		} else {
+			logger.debug("Table Name not specified");
+			tableName=new String("Unknown Table");
+		}
+		logger.debug("Table Name:" + tableName);
+		
+	    //get Class name from message "could not insert [classname]"
+		ConstraintViolationException  cEX = (ConstraintViolationException)objExcp;
+	    String message = cEX.getMessage();
+	    logger.debug("message :"+message);
+	    int startIndex = message.indexOf("[");
+	    
+		/**
+		 * Bug ID: 4926
+		 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
+	    */
+	    int endIndex = message.indexOf("#");
+	    if(endIndex == -1) {
+	    	endIndex = message.indexOf("]");
+	    }
+	    String className = message.substring((startIndex+1),endIndex);
+	    logger.debug("ClassName: "+className);
+	    Class classObj = Class.forName(className);
+	    // get table name from class 
+	    tableName = HibernateMetaData.getRootTableName(classObj);
+	    
+	    /**
+		 * Bug ID: 6034
+		 * Description:To retrive the appropriate tablename checking the SQL"
+	    */
+	    if(!(cEX.getSQL().contains(tableName))) {
+	    	 tableName = HibernateMetaData.getTableName(classObj);
+	    }
+		 
+		 return tableName;
+	}
+	
+	/**
+	 * Format and return message to display.
+	 * 
+	 * @param found Whether the constraint found or not.
+	 * @param constraintVoilated DB constraint.
+	 * @param indexDetails All constraints on a table, as a key/value pair.
+	 * @param connection DB connection object. 
+	 * @return error message to display.
+	 * @throws Exception
+	 */
+	private String prepareMessage(StringBuffer columnNames, String tableName, Connection connection) throws Exception {
+		String formattedErrMsg = "";
+		String columnName=""; //stores Column_Name of table 
+		
+		// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
+    	Object[] arguments = new Object[2];
+    	String dispTableName = ExceptionFormatterFactory.getDisplayName(tableName,connection);
+		arguments[0]=dispTableName;
+		columnName=columnNames.toString(); 
+		columnName=columnName.substring(0,columnName.length());
+		arguments[1]=columnName; 	
+		logger.debug("Column Name: " + columnNames.toString());
+		
+		// Insert Table_Name and Column_Name in CONSTRAINT_VOILATION_ERROR message   
+		formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,arguments);
+		
+		return formattedErrMsg;
 	}
 }
