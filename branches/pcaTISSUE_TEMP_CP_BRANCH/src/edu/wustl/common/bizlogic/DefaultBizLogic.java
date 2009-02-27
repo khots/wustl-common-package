@@ -830,6 +830,8 @@ public class DefaultBizLogic extends AbstractBizLogic
         {
             UserNotAuthorizedException ex = new UserNotAuthorizedException();
             ex.setPrivilegeName(privilegeName);
+            //bug 11568
+            ex.setBaseObject(domainObject.getClass().getName());
             if (protectionElementName != null && (protectionElementName.contains("Site") || protectionElementName.contains("CollectionProtocol")))
             {
                 String [] arr = protectionElementName.split("_");
