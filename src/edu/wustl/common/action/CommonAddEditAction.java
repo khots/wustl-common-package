@@ -110,7 +110,8 @@ public class CommonAddEditAction extends Action
         	{
         	    userName = sessionDataBean.getUserName();
         	}
-            String className = getActualClassName(abstractDomain.getClass().getName());
+            //bug 11568
+            String className = getActualClassName(excp.getBaseObject());
             String decoratedPrivilegeName = Utility.getDisplayLabelForUnderscore(excp.getPrivilegeName());
             String baseObject = "";
             if (excp.getBaseObject() != null && excp.getBaseObject().trim().length() != 0)
@@ -120,8 +121,8 @@ public class CommonAddEditAction extends Action
             {
                 baseObject = className;
             }
-                
-            ActionError error = new ActionError("access.addedit.object.denied", userName, className,decoratedPrivilegeName,baseObject);
+            //bug 11568    
+            ActionError error = new ActionError("access.addedit.object.denied", userName, className,decoratedPrivilegeName,className);
         	errors.add(ActionErrors.GLOBAL_ERROR, error);
         	saveErrors(request, errors);
         	target = Constants.FAILURE;
