@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Properties;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -186,12 +185,6 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 	            if(!(cEX.getSQL().contains(tableName)))
 	            {
 	            	 tableName = HibernateMetaData.getTableName(classObj);
-	            	 Properties prop = new Properties();
-	            	 prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("tablemapping.properties"));
-	            	 if(prop.getProperty(tableName)!=null)
-	            	 {
-	            		 tableName= prop.getProperty(tableName);	 
-	            	 }
 	            }
 	    
 	     }
@@ -258,6 +251,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
         		if(temp!=null)
         		{
         			temp.append(rs.getString("COLUMN_NAME"));
+        			temp.append(",");
         			indexDetails.remove(rs.getString("INDEX_NAME"));
         			indexDetails.put(rs.getString("INDEX_NAME"),temp);
         			Logger.out.debug("Column :"+temp.toString());
@@ -266,6 +260,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
         		{
         			temp = new StringBuffer(rs.getString("COLUMN_NAME"));
         			//temp.append(rs.getString("COLUMN_NAME"));
+        			temp.append(",");
         			indexDetails.put(rs.getString("INDEX_NAME"),temp);
         		}
         		
