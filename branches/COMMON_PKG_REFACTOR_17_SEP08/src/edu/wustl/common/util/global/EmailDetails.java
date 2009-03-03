@@ -231,10 +231,13 @@ public class EmailDetails
 		throws AddressException
 	{
 		List<InternetAddress> internetAddrList= new ArrayList<InternetAddress>();
-		for (String emailAddr:emailAddrList)
+		if(emailAddrList!=null)
 		{
-			internetAddrList.add( new InternetAddress(emailAddr));
+			for (String emailAddr:emailAddrList)
+			{
+				internetAddrList.add( new InternetAddress(emailAddr));
+			}
 		}
-		return (InternetAddress[])internetAddrList.toArray(new InternetAddress[emailAddrList.size()]);
+		return (InternetAddress[])internetAddrList.toArray(new InternetAddress[internetAddrList.size()]);
 	}
 }
