@@ -73,8 +73,8 @@ public class CommonAddAction extends BaseAddEditAction
 		request.setAttribute("forwardToPrintMap", generateForwardToPrintMap(abstractForm,
 				abstractDomain));
 		//Status message key.
-		StringBuffer statusMessageKey = new StringBuffer(abstractForm.getFormId());
-		statusMessageKey.append('.').append(abstractForm.isAddOperation());
+		StringBuffer statusMessageKey = new StringBuffer();
+		statusMessageKey.append(abstractForm.getFormId()).append('.').append(abstractForm.isAddOperation());
 		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey.toString());
 		return forward;
 	}
