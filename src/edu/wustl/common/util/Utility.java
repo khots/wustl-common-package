@@ -121,10 +121,6 @@ public final class Utility
 		if(strDate != null)
 		{
 			List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
-			datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
 			datePatternList.add(new SimpleDateFormat("MM-dd-yyyy", CommonServiceLocator.getInstance()
 					.getDefaultLocale()));
 			datePatternList.add(new SimpleDateFormat("MM/dd/yyyy", CommonServiceLocator.getInstance()
@@ -132,6 +128,10 @@ public final class Utility
 			datePatternList.add(new SimpleDateFormat("yyyy-MM-dd", CommonServiceLocator.getInstance()
 					.getDefaultLocale()));
 			datePatternList.add(new SimpleDateFormat("yyyy/MM/dd", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator.getInstance()
+					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator.getInstance()
 					.getDefaultLocale()));
 			Date date = null;
 			String matchingPattern = null;
