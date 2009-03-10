@@ -56,6 +56,48 @@ public abstract class AbstractBizLogic implements IBizLogic
 {
 
 	/**
+	 * Application name to get DAO.
+	 */
+	private String appName;
+	
+	/**
+	 * Constructor with argument as application name.
+	 * This application is used to get DAO.
+	 * @param appName Application name.
+	 */
+	public AbstractBizLogic(String appName)
+	{
+		super();
+		this.appName=appName;
+	}
+	/**
+	 * constructor initialized with default application name.
+	 */
+	public AbstractBizLogic()
+	{
+		super();
+		String appName = CommonServiceLocator.getInstance().getAppName();
+		this.appName=appName;
+	}
+
+	/**
+	 * This method returns application name. 
+	 * @return
+	 */
+	public String getAppName()
+	{
+		return this.appName;
+	}
+	
+	/**
+	 * This method returns application name. 
+	 * @return
+	 */
+	public void setAppName(String appName)
+	{
+		this.appName=appName;
+	}
+	/**
 	 * logger Logger - Generic logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractBizLogic.class);
@@ -934,5 +976,17 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 
 	}
-
+	/**
+	 * This method returns hibernate DAO according to the application name.
+	 * @param appName Application name.
+	 * @return DAO
+	 * @throws DAOException Generic DAO exception.
+	 */
+	protected static DAO getHibernateDao(String appName) throws DAOException
+	{
+		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
+		DAO dao = daofactory.getDAO();
+		dao.openSession(null);
+		return dao;
+	}
 }
