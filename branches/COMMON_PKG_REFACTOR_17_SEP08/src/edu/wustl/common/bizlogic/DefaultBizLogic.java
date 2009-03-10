@@ -51,8 +51,23 @@ import edu.wustl.dao.util.DAOConstants;
  * @author kapil_kaveeshwar
  */
 public class DefaultBizLogic extends AbstractBizLogic
-{
-
+{	
+	/**
+	 * Constructor with argument as application name.
+	 * This application is used to get DAO.
+	 * @param appName Application name.
+	 */
+	public DefaultBizLogic(String appName)
+	{
+		super(appName);
+	}
+	/**
+	 * constructor initialized with default application name.
+	 */
+	public DefaultBizLogic()
+	{
+		super();
+	}
 	/**
 	 * logger Logger - Generic logger.
 	 */
@@ -229,9 +244,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao = daofactory.getDAO();
 			dao.openSession(null);
-			QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-			queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
-					whereColumnValue, joinCondition);
+			QueryWhereClause queryWhereClause = createWhereClause(sourceObjectName,
+					whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoExp)
@@ -245,6 +259,16 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return list;
 	}
 
+	private QueryWhereClause createWhereClause(String sourceObjectName, String[] whereColumnName,
+			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
+			throws DAOException
+	{
+		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
+		queryWhereClause.getWhereCondition(whereColumnName, whereColumnCondition,
+				whereColumnValue, joinCondition);
+		return queryWhereClause;
+	}
+
 	/**
 	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
 	 * @param sourceObjectName :source object name
@@ -256,14 +280,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		List<Object> list = null;
 		try
 		{
-			dao = daofactory.getDAO();
-			dao.openSession(null);
+			dao=getHibernateDao(getAppName());
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoExp)
@@ -308,15 +329,34 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return records
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public List retrieve(String className, String colName, Object colValue)
+	public List retrieve(String sourceObjectName, String colName, Object colValue)
 			throws BizLogicException
 	{
-		String[] colNames = {colName};
-		String[] colConditions = {"="};
-		Object[] colValues = {colValue};
-
-		return retrieve(className, colNames, colConditions, colValues, Constants.AND_JOIN_CONDITION);
+		
+		String[] whereColumnName = {colName};
+		String[] whereColumnCondition = {"="};
+		Object[] whereColumnValue = {colValue};
+		String[] selectColumnName=null;
+		List<Object> list = null;
+		DAO dao = null;
+		try
+		{
+			dao = getHibernateDao(getAppName());
+			QueryWhereClause queryWhereClause = createWhereClause(sourceObjectName,
+					whereColumnName, whereColumnCondition, whereColumnValue, Constants.AND_JOIN_CONDITION);
+			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
+		}
+		catch (DAOException daoExp)
+		{
+			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+		return list;
 	}
+
 
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
