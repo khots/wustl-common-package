@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import edu.wustl.common.datatypes.DataTypeConfigFactory;
 import edu.wustl.common.datatypes.IDBDataType;
 import edu.wustl.common.exception.ApplicationException;
+import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
 public class MapDataParser
@@ -82,9 +83,18 @@ public class MapDataParser
 	private Object toObject(String str, Class type) throws ApplicationException, ParseException,
 			IOException
 	{
-		String dataType = type.getSimpleName().toLowerCase();
-		IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getDataType(dataType);
-		return dbDataType.getObjectValue(str);
+		Object object;
+		if(TextConstants.EMPTY_STRING.equals(str))
+		{
+			object=null;
+		}
+		else
+		{
+			String dataType = type.getSimpleName().toLowerCase();
+			IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getDataType(dataType);
+			object=dbDataType.getObjectValue(str);
+		}
+		return object;
 	}
 
 	/**
