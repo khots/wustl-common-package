@@ -177,8 +177,16 @@ public class Condition {
 				    			   + calendar.get(Calendar.DAY_OF_MONTH) + "-" 
 				    			   + calendar.get(Calendar.YEAR);
 				    
-				    newValue = Variables.strTodateFunction 
-				    			+ "('" + value + "','" + Variables.datePattern + "')";
+				    if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+			    	{
+				    	newValue = "CONVERT(datetime, "+value+", 110)";
+			    	}
+				    else
+				    {
+				    	 newValue = Variables.strTodateFunction 
+			    			+ "('" + value + "','" + Variables.datePattern + "')";
+				    }	   
+				   
 			    }
 			    catch (ParseException parseExp)
 			    {

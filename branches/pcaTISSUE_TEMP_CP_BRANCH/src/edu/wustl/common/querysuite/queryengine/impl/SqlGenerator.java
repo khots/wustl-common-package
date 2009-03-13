@@ -603,11 +603,13 @@ public class SqlGenerator implements ISqlGenerator {
         }
         String str = "";
         switch (getDatabaseSQLSettings().getDatabaseType()) {
-            case MySQL :
-                str = attributeName + " like " + value;
-                break;
             case Oracle :
                 str = "lower(" + attributeName + ") like lower(" + value + ")";
+                break;
+            case MsSqlServer :
+            case MySQL :
+                str = attributeName + " like " + value;
+                break;     	
         }
         return str;
     }
@@ -743,7 +745,15 @@ public class SqlGenerator implements ISqlGenerator {
                     datePattern = "%m-%d-%Y"; // using MySQL function if the
                     // Value is not defined.
                 }
-                value = strToDateFunction + "('" + value + "','" + datePattern + "')";
+                if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+         	   	{
+                	value="CONVERT(datetime, '"+value+"', 110)";
+         	   	}
+                else
+                {
+                	value = strToDateFunction + "('" + value + "','" + datePattern + "')";
+                }
+                                
             } catch (ParseException parseExp) {
                 Logger.out.error(parseExp.getMessage(), parseExp);
                 throw new SqlException(parseExp.getMessage(), parseExp);
@@ -905,7 +915,10 @@ public class SqlGenerator implements ISqlGenerator {
             databaseType = DatabaseType.MySQL;
         } else if (Variables.databaseName.equals(Constants.ORACLE_DATABASE)) {
             databaseType = DatabaseType.Oracle;
-        } else {
+        }else if (Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE)) {
+            databaseType = DatabaseType.MsSqlServer;
+        } 
+        else {
             throw new UnsupportedOperationException("Custom formulas on " + Variables.databaseName
                     + " are not supported.");
         }
@@ -956,7 +969,14 @@ public class SqlGenerator implements ISqlGenerator {
             return termString;
         }
         termString = termString + "/" + timeInterval.numSeconds();
-        termString = "ROUND(" + termString + ")";
+        if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+        {
+        	termString = "cast(ROUND(" + termString + ",0)as bigint)";	
+        }
+        else
+        {
+        	termString = "ROUND(" + termString + ")";
+        }
         return termString;
     }
 
