@@ -77,6 +77,12 @@ public abstract class AbstractQueryExecutor
 	protected int startIndex, noOfRecords;
 
 	/**
+	 * True if extra column (rownumber) added for pagination purpose. 
+	 * Set 'True' in putPageNumInSQL(...) method if DB=MsSqlServer. Default value is false. 
+	 */
+	protected boolean isExtraColAddedForPagination;
+	
+	/**
 	 * Constants required for forming/changing SQL.
 	 */
 	private static final String SELECT_CLAUSE = "SELECT";
@@ -89,19 +95,15 @@ public abstract class AbstractQueryExecutor
 	 */
 	public static AbstractQueryExecutor getInstance()
 	{
-		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
-		{
+		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE)) {
 			return new MysqlQueryExecutor();
-		}
-		else if(Variables.databaseName.equals(Constants.ORACLE_DATABASE))
-		{
+		} else if(Variables.databaseName.equals(Constants.ORACLE_DATABASE)) {
 			return new OracleQueryExecutor();
-		}
-		else
-		{
+		} else if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE)) {
+			return new MsSqlServerQueryExecutor();
+		} else {
 			return new Db2QueryExecuter();
 		}
-	
 	}
 
 	/**
@@ -220,6 +222,13 @@ public abstract class AbstractQueryExecutor
 		if (Variables.databaseName.equals(Constants.ORACLE_DATABASE) && getSublistOfResult)
 		{
 			columnCount--;
+		} else if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE) && getSublistOfResult && isExtraColAddedForPagination) {
+			/**
+			 * If Extra rownum column added for Pagination purpose, No need to process that extra rownum column.
+			 * @see edu.wustl.common.dao.queryExecutor.AbstractQueryExecutor#putPageNumInSQL(java.lang.String,int,int) 
+			 */
+			
+			columnCount--;
 		}
 		
 		int recordCount = 0;
@@ -318,6 +327,8 @@ public abstract class AbstractQueryExecutor
 	 * For query like "Select id, first_name from catissue_participant where id > 0 order by id" will be modifed as follows:
 	 * For Oracle: "Select * from (Select qry.*, rownum rn From (Select rownum rn, id, first_name from catissue_participant where id > 0 order by id) qry where rownum <= lastindex) where rn > startIndex"
 	 * For MySQL : "Select id, first_name from catissue_participant where id > 0 order by id limit startIndex, noOfRecords"
+	 * For MsSqlServer : With cte as (select qry.*, row_number() over(order by id) as rn from (select id, first_name from catissue_participant where id > 0 order by id) qry)
+	 * 					 select * from cte where rn between startIndex, (startIndex + noOfRecords)
 	 * @param sql The SQL to be executed on database
 	 * @param startIndex The offset, or the starting index. 
 	 * @param noOfRecords The totalnumber of records to fetch from the query.
@@ -326,14 +337,20 @@ public abstract class AbstractQueryExecutor
 	protected String putPageNumInSQL(String sql, int startIndex, int noOfRecords)
 	{
 		StringBuffer newSql = new StringBuffer();
-		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE))
-		{
+		if (Variables.databaseName.equals(Constants.MYSQL_DATABASE)) {
 			// Add limit clause for the MYSQL case
 			newSql.append(sql).append(" Limit ").append(startIndex).append(" , ").append(
 					noOfRecords);
-		}
-		else
-		{
+		} else if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE)) {
+			// Forming new query, by using original query as inner query and adding row_number() function in outer query,
+			//  	for paginated results.
+			newSql.append("with cte as (" + SELECT_CLAUSE + " qry.*, row_number() over(order by identifier) as rn ")
+				.append(FROM_CLAUSE).append(" (").append(sql).append(") qry ) ").append(SELECT_CLAUSE + " * from cte ")
+				.append(" where rn between ").append(startIndex).append(" and ").append(startIndex + noOfRecords);
+			
+			// Qurey added extra rownum column (rn). 
+			isExtraColAddedForPagination = Boolean.TRUE;
+		} else {
 			/**
 			 * Name: Prafull
 			 * Reviewer: Aarti

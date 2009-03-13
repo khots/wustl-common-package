@@ -104,14 +104,30 @@ public class DataElement implements Serializable
        String fieldName = table.toSQLString() + tableSufix + "." + field+" ";
        if ((fieldType != null) && (Constants.FIELD_TYPE_TIMESTAMP_TIME.equalsIgnoreCase(fieldType)))
        {
-       		fieldName = Variables.timeFormatFunction + "(" + fieldName + ",'" + Variables.timePattern + "') ";
+    	   if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+    	   {
+    		   fieldName="CONVERT(VARCHAR(12), "+fieldName+", 108)";
+    	   }
+    	   else
+    	   {
+    		   fieldName = Variables.timeFormatFunction + "(" + fieldName + ",'" + Variables.timePattern + "') ";
+    	   }
+       		
        }
        else if ((fieldType != null) && (Constants.FIELD_TYPE_TIMESTAMP_DATE.equalsIgnoreCase(fieldType)))
        {
-           fieldName = Variables.strTodateFunction + "(" 
+
+    	   if(Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+    	   {
+    		   fieldName="CONVERT(DATETIME, CONVERT(VARCHAR(12), "+fieldName+", 110), 110)";
+    	   }
+    	   else
+    	   {
+    		   fieldName = Variables.strTodateFunction + "(" 
            				+ Variables.dateFormatFunction + "(" 
            				+ fieldName + ",'" + Variables.datePattern + "')"
            				+ ",'" + Variables.datePattern + "')";
+    	   }
        }
        
        return fieldName;
