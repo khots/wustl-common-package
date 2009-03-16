@@ -3,9 +3,12 @@ package edu.wustl.common.exceptionformatter;
 
 import java.text.MessageFormat;
 
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.util.HibernateMetaData;
 
 /**
@@ -26,7 +29,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 	 * @param args arguments
 	 * @return formatted Error Message.
 	 */
-	public String formatMessage(Exception objExcp, Object[] args)
+	public String formatMessage(Exception objExcp)
 	{
 		// TODO Auto-generated method stub
 		String formattedErrMsg = null;
@@ -36,10 +39,13 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		int startIndex = -1;
 		int endIndex = -1;
 		int tempIndex = -1;
-		//Connection connection = getConnection(args);
-		JDBCDAO jdbcDao = getJDBCDAO(args);
+		JDBCDAO jdbcDAO=null;
 		try
 		{
+			String appName = CommonServiceLocator.getInstance().getAppName();
+			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
+			jdbcDAO = daoFactory.getJDBCDAO();
+			jdbcDAO.openSession(null);
 			// get Message from exception object
 			String message = objExcp.getMessage();
 
@@ -62,7 +68,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			Class classObj = Class.forName(className);
 			// get table name from class
 			String displayName = ExceptionFormatterFactory.
-				getDisplayName(HibernateMetaData.getTableName(classObj), jdbcDao);
+				getDisplayName(HibernateMetaData.getTableName(classObj), jdbcDAO);
 
 			Object[] arguments = new Object[]{displayName, columnName, value};
 
@@ -75,26 +81,6 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		}
 		return formattedErrMsg;
 	}
-
-	/**
-	 * get Connection.
-	 * @param args arguments
-	 * @return Connection
-	 */
-	private JDBCDAO getJDBCDAO(Object[] args)
-	{
-		JDBCDAO jdbcDao = null;
-		if (args[1] == null)
-		{
-			logger.debug("Error Message: DAO object not given");
-		}
-		else
-		{
-			jdbcDao = (JDBCDAO) args[1];
-		}
-		return jdbcDao;
-	}
-
 	/**
 	 * @param args arguments.
 	 */
@@ -138,7 +124,5 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			logger.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
-
 	}
-
 }

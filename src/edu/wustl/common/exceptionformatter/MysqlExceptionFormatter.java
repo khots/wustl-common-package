@@ -14,7 +14,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
@@ -31,10 +30,6 @@ IDBExceptionFormatter
 	 * Index name.
 	 */
 	private static final  String INDEX_NAME = "INDEX_NAME";
-	/**
-	 * Class Logger.
-	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(MysqlExceptionFormatter.class);
 
 	/**
 	 * This will generate the formatted error messages.

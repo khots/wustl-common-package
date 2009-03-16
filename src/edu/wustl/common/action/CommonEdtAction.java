@@ -17,7 +17,6 @@ import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -120,19 +119,11 @@ public class CommonEdtAction extends BaseAddEditAction
 	private AbstractDomainObject getDomainObject(AbstractActionForm abstractForm, String objectName)
 			throws ApplicationException
 	{
-		try
-		{
-			AbstractDomainObject abstractDomain;
-			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-			abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
-					.valueOf(abstractForm.getId()), abstractForm);
-			return abstractDomain;
-		}
-		catch (BizLogicException bizLogicException)
-		{
-			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"),
-					bizLogicException, "Failed while populating domain object in common edit.");
-		}
+		AbstractDomainObject abstractDomain;
+		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
+				.valueOf(abstractForm.getId()), abstractForm);
+		return abstractDomain;	
 	}
 
 	/**
@@ -183,12 +174,7 @@ public class CommonEdtAction extends BaseAddEditAction
 					abstractForm.getId());
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
-		}
-		catch (BizLogicException bizLogicException)
-		{
-			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"),
-					bizLogicException, "Failed while updating in common edit.");
-		}
+		}		
 		finally
 
 		{
@@ -198,7 +184,6 @@ public class CommonEdtAction extends BaseAddEditAction
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
 				throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"), e,
 						"Failed while updating in common edit.");
 			}

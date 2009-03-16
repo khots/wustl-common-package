@@ -20,7 +20,6 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.util.Utility;
@@ -163,12 +162,7 @@ public class CommonAddAction extends BaseAddEditAction
 			bizLogic.insert(abstractDomain, getSessionData(request));
 
 			return abstractDomain;
-		}
-		catch (BizLogicException bizLogicException)
-		{
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), bizLogicException,
-					"Failed while updating in common add.");
-		}
+		}		
 		catch (AssignDataException e)
 		{
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,

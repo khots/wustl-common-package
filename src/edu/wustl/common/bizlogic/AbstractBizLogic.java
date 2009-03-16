@@ -254,7 +254,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException ex)
 		{
 			rollback(dao);
-			throw getBizLogicException(ex, "biz.delete.error", "Exception in delete operation.");
+			String errMsg = getErrorMessage(ex,obj,"Deleting");
+			throw getBizLogicException(ex, "biz.delete.error", errMsg);
 		}
 		finally
 		{
@@ -296,8 +297,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			throw getBizLogicException(exception, "biz.insert.error",
-					"Exception in insert operation.");
+			String errMsg = getErrorMessage(exception,obj,"Inserting");
+			throw getBizLogicException(exception, "biz.insert.error",errMsg);
 		}
 		finally
 		{
@@ -354,8 +355,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			throw getBizLogicException(exception, "biz.insert.error",
-					"Exception in inserting multiple records operation.");
+			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
+			throw getBizLogicException(exception, "biz.insert.error",errMsg);
 		}
 		finally
 		{
@@ -513,7 +514,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException ex)
 		{
 			rollback(dao);
-			throw getBizLogicException(ex, "biz.update.error", "Exception in update method");
+			String errMsg = getErrorMessage(ex,currentObj,"Updating");
+			throw getBizLogicException(ex, "biz.update.error", errMsg);
 		}
 		finally
 		{
@@ -583,11 +585,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws ApplicationException Application Exception.
 	 */
 	public String formatException(Exception exception, Object obj, String operation)
-			throws ApplicationException
 	{
 		String errMsg;
 		String tableName = null;
-		JDBCDAO jdbcDao = null;
 		try
 		{
 			if (exception == null)
@@ -595,12 +595,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 				ErrorKey errorKey = ErrorKey.getErrorKey("biz.formatex.error");
 				throw new ApplicationException(errorKey, null, "exception is null.");
 			}
-			String roottableName = null;
 			// Get ExceptionFormatter
 			ExceptionFormatter exFormatter = ExceptionFormatterFactory.getFormatter(exception);
-			String appName = CommonServiceLocator.getInstance().getAppName();
-			jdbcDao = DAOConfigFactory.getInstance().getDAOFactory(appName).getJDBCDAO();
-			jdbcDao.openSession(null);
 			// call for Formating Message
 			if (exFormatter == null)
 			{
@@ -608,10 +604,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
-				roottableName = HibernateMetaData.getRootTableName(obj.getClass());
 				tableName = HibernateMetaData.getTableName(obj.getClass());
-				Object[] arguments = {roottableName, jdbcDao, tableName};
-				errMsg = exFormatter.formatMessage(exception, arguments);
+				errMsg = exFormatter.formatMessage(exception);
 			}
 		}
 		catch (ApplicationException except)
@@ -622,38 +616,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 			String[] arg = {operation, tableName};
 			errMsg = new DefaultExceptionFormatter().getErrorMessage("Err.SMException.01", arg);
 		}
-		finally
-		{
-			if(jdbcDao!=null)
-			{
-				closeJDBCDAOSession(jdbcDao);
-			}
-		}
 		return errMsg;
-	}
-
-	/**
-	 * @param jdbcDao JDBCDAO.
-	 * @throws ApplicationException ApplicationException
-	 */
-	private void closeJDBCDAOSession(JDBCDAO jdbcDao) throws ApplicationException
-	{
-		try
-		{
-			jdbcDao.closeSession();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"), e,
-					"Failed while formating Exception.");
-		}
 	}
 
 	/**
 	 * refresh the titli search index to reflect the changes in the database.
 	 * @param operation the operation to be performed : "insert", "update" or "delete"
-	 * @param obj the object correspondig to the record to be refreshed
+	 * @param obj the object corresponding to the record to be refreshed
 	 */
 	protected void refreshTitliSearchIndex(String operation, Object obj)
 	{
@@ -989,4 +958,36 @@ public abstract class AbstractBizLogic implements IBizLogic
 		dao.openSession(null);
 		return dao;
 	}
+	
+	/**
+     * This method gives the error message.
+     * This method should be overrided for customizing error message
+     * @param exception - Exception
+     * @param obj - Object
+     * @return - error message string
+     */
+    public String getErrorMessage(ApplicationException exception, Object obj, String operation)
+    {
+    	String errMsg;
+    	
+    	if (exception.getWrapException() == null)
+    	{
+    		if(exception.toMsgValuesArray().length>0)
+    		{
+    			errMsg = exception.toMsgValuesArray()[0];
+    		}
+    		else
+    		{
+    			errMsg = exception.getMessage();
+    		}
+    	}
+    	else
+    	{
+    		errMsg = formatException(exception.getWrapException(),obj,operation);
+    	}
+
+        return errMsg;
+    }
+    
+    
 }
