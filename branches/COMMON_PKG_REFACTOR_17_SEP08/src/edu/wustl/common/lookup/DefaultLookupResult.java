@@ -19,7 +19,7 @@ public class DefaultLookupResult implements Serializable
 	/**
 	 * serial Version Unique ID.
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2925568915907972879L;
 
 	/**
 	 * object.
@@ -35,7 +35,12 @@ public class DefaultLookupResult implements Serializable
 	 * isSSNPMI.
 	 */
 	private MatchingStatusForSSNPMI isSSNPMI;
-
+	
+	/**
+	 * 
+	 */
+	private boolean exactMatching;
+	
 	/**
 	 * get IsSSNPMI.
 	 * @return MatchingStatusForSSNPMI.
@@ -89,4 +94,23 @@ public class DefaultLookupResult implements Serializable
 	{
 		this.weight = weight;
 	}
+
+	
+	/**
+	 * @return the exactMatching
+	 */
+	public boolean isExactMatching()
+	{
+		return exactMatching;
+	}
+
+	
+	/**
+	 * @param exactMatching the exactMatching to set
+	 */
+	public void setExactMatching(boolean exactMatching)
+	{
+		this.exactMatching = exactMatching;
+	}
+	
 }
