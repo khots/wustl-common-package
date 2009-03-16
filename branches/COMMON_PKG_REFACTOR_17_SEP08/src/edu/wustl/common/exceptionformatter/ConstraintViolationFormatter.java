@@ -7,6 +7,11 @@
  */
 package edu.wustl.common.exceptionformatter;
 
+import edu.wustl.common.util.global.CommonServiceLocator;
+import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
 
 /**
@@ -17,39 +22,44 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 {
 
 	/**
+	 * logger Logger - Generic logger.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(ConstraintViolationFormatter.class);
+	/**
 	 * This will be called to format constraint violation exception messages.
 	 * @param objExcp : Exception thrown.
 	 * @throws DAOException : Database exception
 	 * @return string : It return the formatted error messages.
 	 */
-	public String formatMessage(Exception objExcp) throws DAOException
+	public String formatMessage(Exception objExcp)
 	{
 		String formatedMessage = null ;
-		/*try
+		JDBCDAO jdbcDAO=null;
+		try
 		{
 			String appName = CommonServiceLocator.getInstance().getAppName();
 			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-			DAO dao = daoFactory.getDAO();
-			formatedMessage = dao.formatMessage(objExcp);
+			String dbType= daoFactory.getDataBaseType();
+			jdbcDAO = daoFactory.getJDBCDAO();
+			jdbcDAO.openSession(null);
+			IDBExceptionFormatter idbExFormatter= ExceptionFormatterFactory.getIDBExceptionFormatter(dbType);
+			formatedMessage =idbExFormatter.getFormatedMessage(objExcp, jdbcDAO);
 		}
 		catch(Exception exp)
 		{
-			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,exp,"ConstraintViolationFormatter.java :");
-		}*/
+			logger.debug("Not able to format exception.", exp);
+		}
+		finally
+		{
+			try
+			{
+				jdbcDAO.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				logger.debug("Exception during closing the JDBC session. ",exception);
+			}
+		}
 		return formatedMessage;
 	}
-
-	/**
-	 * @param objExcp :
-	 * @param args :
-	 * This will be called to format exception messages.
-	 * @return string :formated message.
-	 */
-	public String formatMessage(Exception objExcp, Object[] args)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

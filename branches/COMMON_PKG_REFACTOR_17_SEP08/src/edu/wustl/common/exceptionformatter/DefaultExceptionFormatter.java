@@ -34,8 +34,14 @@ public class DefaultExceptionFormatter implements ExceptionFormatter
 		message.append(ApplicationProperties.getValue(key));
 		if (message != null && args != null)
 		{
-			message.append(MessageFormat.format(message.toString(), args));
+			message.replace(0, message.length(), MessageFormat.format(message.toString(), args));
 		}
 		return message.toString();
+	}
+
+	public String formatMessage(Exception objExcp)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

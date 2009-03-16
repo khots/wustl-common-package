@@ -3,6 +3,8 @@ package edu.wustl.common.exceptionformatter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import edu.wustl.common.util.logger.Logger;
@@ -25,6 +27,8 @@ public class ExceptionFormatterFactory
 	 * Specify ResourceBundle property.
 	 */
 	private static ResourceBundle prop;
+	
+	private static final Map<String,IDBExceptionFormatter> DB_FORMATTER_MAP = new HashMap<String,IDBExceptionFormatter>();
 	static
 	{
 		try
@@ -34,8 +38,8 @@ public class ExceptionFormatterFactory
 			 * Exception_Class_Name = Exception_Formatter_Class_Name
 			 */
 			prop = ResourceBundle.getBundle("ExceptionFormatter");
-
 			logger.debug("File Loaded");
+			initDBFormatterMap();
 		}
 		catch (Exception e)
 		{
@@ -106,5 +110,16 @@ public class ExceptionFormatterFactory
 			logger.error(exception.getMessage(), exception);
 		}
 		return displayName;
+	}
+	
+	public static IDBExceptionFormatter getIDBExceptionFormatter(String dbType)
+	{		
+		return  DB_FORMATTER_MAP.get(dbType);
+	}
+	
+	public static void initDBFormatterMap()
+	{
+		DB_FORMATTER_MAP.put("mysql", (IDBExceptionFormatter)new MysqlExceptionFormatter());
+		DB_FORMATTER_MAP.put("oracle", (IDBExceptionFormatter)new OracleExceptionFormatter());
 	}
 }

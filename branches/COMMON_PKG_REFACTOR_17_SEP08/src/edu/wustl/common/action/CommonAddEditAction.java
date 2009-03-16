@@ -78,8 +78,7 @@ public class CommonAddEditAction extends Action
 			logger.error("Common Add/Edit failed.." + applicationException.getLogMessage(),
 					applicationException);
 			ActionErrors actionErrors = new ActionErrors();
-			ActionError actionError = new ActionError(applicationException.getErrorKeyAsString(),
-					applicationException.toMsgValuesArray());
+			ActionError actionError = new ActionError("errors.item",applicationException.toMsgValuesArray());
 			actionErrors.add(ActionErrors.GLOBAL_ERROR, actionError);
 			saveErrors(request, actionErrors);
 
