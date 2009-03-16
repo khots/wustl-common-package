@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 
@@ -114,7 +115,7 @@ public class ExceptionFormatterFactory
 	
 	public static IDBExceptionFormatter getIDBExceptionFormatter(String dbType)
 	{		
-		return  DB_FORMATTER_MAP.get(dbType);
+		return  DB_FORMATTER_MAP.get(dbType.toLowerCase(CommonServiceLocator.getInstance().getDefaultLocale()));
 	}
 	
 	public static void initDBFormatterMap()
