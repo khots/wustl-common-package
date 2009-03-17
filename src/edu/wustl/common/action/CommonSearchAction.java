@@ -124,10 +124,10 @@ public class CommonSearchAction extends Action
 		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 				Constants.SESSION_DATA);
 		IBizLogic bizLogic = getBizLogicForEdit(abstractForm);
-		hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
 
 		try
 		{
+			hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
 			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
 			if (isSuccess)
 			{
@@ -139,9 +139,11 @@ public class CommonSearchAction extends Action
 						.parseClassName(objName));
 			}
 		}
-		catch (BizLogicException excp)
+		catch (ApplicationException excp)
 		{
 			logger.error(excp.getMessage(), excp);
+			saveErrors(request, "access.view.action.denied", "");
+			target = Constants.ACCESS_DENIED;
 		}
 		return target;
 	}
@@ -164,7 +166,7 @@ public class CommonSearchAction extends Action
 		}
 		if (!hasPrivilege)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("access.denied"), null,
+			throw new ApplicationException(ErrorKey.getErrorKey("error.common.bizlogic"), null,
 					 "User does not have privilege to view this information.");
 		}
 	}
