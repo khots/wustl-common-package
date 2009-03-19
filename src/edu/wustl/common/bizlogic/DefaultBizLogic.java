@@ -236,13 +236,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		List<Object> list = null;
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			QueryWhereClause queryWhereClause = createWhereClause(sourceObjectName,
 					whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
@@ -366,13 +364,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List retrieve(String sourceObjectName) throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		List<Object> list = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			list = dao.retrieve(sourceObjectName);
 		}
@@ -397,13 +393,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List retrieve(String sourceObjectName, String[] selectColumnName)
 			throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		List<Object> list = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			list = dao.retrieve(sourceObjectName, selectColumnName);
 		}
@@ -428,14 +422,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public Object retrieve(String sourceObjectName, Long identifier) throws BizLogicException
 	{
-
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		Object object = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			object = dao.retrieveById(sourceObjectName, identifier);
 		}
@@ -1098,14 +1089,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		String columnName = Constants.SYSTEM_IDENTIFIER;
 		DAO dao = null;
 		Object attribute = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			attribute = dao.retrieveAttribute(objClass, identifier, attributeName, columnName);
 		}
@@ -1227,13 +1216,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public List executeQuery(String query) throws BizLogicException
 	{
-		HibernateDAO hibernateDao = null;
+		DAO hibernateDao = null;
 		List returner = null;
 		try
 		{
-			String appName = CommonServiceLocator.getInstance().getAppName();
-			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
-					.getDAO();
+			hibernateDao = getHibernateDao(getAppName());
 			hibernateDao.openSession(null);
 			returner = hibernateDao.executeQuery(query);
 		}
