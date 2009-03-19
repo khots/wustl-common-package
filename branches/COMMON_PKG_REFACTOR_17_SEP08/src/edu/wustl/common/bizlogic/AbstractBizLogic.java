@@ -239,8 +239,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			delete(obj, dao);
 			dao.commit();
 			//refresh the index for titli search
@@ -274,8 +273,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(sessionDataBean);
+			dao = getHibernateDao(getAppName(),sessionDataBean);
 			// Authorization to ADD object checked here
 			if (isAuthorized(dao, obj, sessionDataBean))
 			{
@@ -332,8 +330,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(sessionDataBean);
+			dao = getHibernateDao(getAppName(),sessionDataBean);
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
@@ -473,9 +470,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(sessionDataBean);
-
+			dao = getHibernateDao(getAppName(),sessionDataBean);
 			// Authorization to UPDATE object checked here
 			if (isAuthorized(dao, currentObj, sessionDataBean))
 			{
@@ -697,9 +692,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
-
+			dao = getHibernateDao(getAppName(),null);
 			Object object = dao.retrieveById(className, identifier);
 
 			if (object != null)
@@ -750,8 +743,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		AbstractDomainObject abstractDomain = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			Object object = dao.retrieveById(className, identifier);
 			abstractDomain = populateFormBean(uiForm, object);
 		}
@@ -938,11 +930,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @return DAO
 	 * @throws DAOException Generic DAO exception.
 	 */
-	protected static DAO getHibernateDao(String appName) throws DAOException
+	protected static DAO getHibernateDao(String appName,SessionDataBean sessionDataBean) throws DAOException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = daofactory.getDAO();
-		dao.openSession(null);
+		dao.openSession(sessionDataBean);
 		return dao;
 	}
 	

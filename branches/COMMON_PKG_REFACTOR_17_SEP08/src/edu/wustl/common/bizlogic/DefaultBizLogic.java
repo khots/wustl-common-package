@@ -240,8 +240,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			QueryWhereClause queryWhereClause = createWhereClause(sourceObjectName,
 					whereColumnName, whereColumnCondition, whereColumnValue, joinCondition);
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
@@ -282,7 +281,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List<Object> list = null;
 		try
 		{
-			dao=getHibernateDao(getAppName());
+			dao=getHibernateDao(getAppName(),null);
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoExp)
@@ -339,7 +338,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
+			dao = getHibernateDao(getAppName(),null);
 			QueryWhereClause queryWhereClause = createWhereClause(sourceObjectName,
 					whereColumnName, whereColumnCondition, whereColumnValue, Constants.AND_JOIN_CONDITION);
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
@@ -368,8 +367,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List<Object> list = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			list = dao.retrieve(sourceObjectName);
 		}
 		catch (DAOException daoExp)
@@ -397,8 +395,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List<Object> list = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			list = dao.retrieve(sourceObjectName, selectColumnName);
 		}
 		catch (DAOException daoExp)
@@ -426,8 +423,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Object object = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			object = dao.retrieveById(sourceObjectName, identifier);
 		}
 		catch (DAOException daoExp)
@@ -1094,8 +1090,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Object attribute = null;
 		try
 		{
-			dao = getHibernateDao(getAppName());
-			dao.openSession(null);
+			dao = getHibernateDao(getAppName(),null);
 			attribute = dao.retrieveAttribute(objClass, identifier, attributeName, columnName);
 		}
 		catch (DAOException daoExp)
@@ -1220,8 +1215,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		List returner = null;
 		try
 		{
-			hibernateDao = getHibernateDao(getAppName());
-			hibernateDao.openSession(null);
+			hibernateDao = getHibernateDao(getAppName(),null);
 			returner = hibernateDao.executeQuery(query);
 		}
 		catch (HibernateException exception)
