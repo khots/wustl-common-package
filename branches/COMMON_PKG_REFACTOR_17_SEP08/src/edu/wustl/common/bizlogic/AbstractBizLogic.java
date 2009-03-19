@@ -236,12 +236,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 **/
 	public void delete(Object obj) throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			delete(obj, dao);
 			dao.commit();
@@ -273,12 +271,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void insert(Object obj, SessionDataBean sessionDataBean, boolean isInsertOnly)
 			throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(sessionDataBean);
 			// Authorization to ADD object checked here
 			if (isAuthorized(dao, obj, sessionDataBean))
@@ -333,12 +329,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public final void insert(Collection<AbstractDomainObject> objCollection,
 			SessionDataBean sessionDataBean, boolean isInsertOnly) throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(sessionDataBean);
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
@@ -476,12 +470,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	private void update(Object currentObj, Object oldObj, SessionDataBean sessionDataBean,
 			boolean isUpdateOnly) throws BizLogicException
 	{
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(sessionDataBean);
 
 			// Authorization to UPDATE object checked here
@@ -702,13 +694,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		//long startTime = System.currentTimeMillis();
 		boolean isSuccess = false;
-
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 
 			Object object = dao.retrieveById(className, identifier);
@@ -757,13 +746,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 			IValueObject uiForm) throws BizLogicException
 	{
 		//long startTime = System.currentTimeMillis();
-		String appName = CommonServiceLocator.getInstance().getAppName();
-		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = null;
 		AbstractDomainObject abstractDomain = null;
 		try
 		{
-			dao = daofactory.getDAO();
+			dao = getHibernateDao(getAppName());
 			dao.openSession(null);
 			Object object = dao.retrieveById(className, identifier);
 			abstractDomain = populateFormBean(uiForm, object);
