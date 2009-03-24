@@ -164,6 +164,15 @@ public class Constants
 	public static final String MSSQLSERVER_DUPL_KEY_MSG_START = "UNIQUE KEY constraint '";
 	public static final String MSSQLSERVER_DUPL_KEY_MSG_END = "'.";
 	
+	/*The unique key violation message is "Cannot insert duplicate key row in object '%s' 
+  	with unique index '%s'"*/
+	public static final String MSSQLSERVER_UNIQUE_INDEX_MSG_START = "unique index '";
+	public static final String MSSQLSERVER_UNIQUE_INDEX_MSG_END = "'.";
+	
+	public static final String MSSQLSERVER_VIEW_INDEX_MSG_START = "duplicate key row in object '";
+	public static final String MSSQLSERVER_VIEW_INDEX_MSG_END = "' with unique";
+	
+	
 	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation. Please report this problem to the administrator";
 	public static final String CONSTRAINT_VOILATION_ERROR = "Submission failed since a {0} with the same {1} already exists";
 	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}: \"{2}\" does not exists";
