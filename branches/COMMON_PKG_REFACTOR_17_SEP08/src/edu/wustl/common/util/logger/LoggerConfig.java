@@ -5,6 +5,8 @@ import java.io.File;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import edu.wustl.common.util.global.TextConstants;
+
 
 /**
  * @author prashant_bandal
@@ -63,11 +65,17 @@ public final class LoggerConfig
 		if (!isConfigured)
 		{
 			isConfigured = true;
-			StringBuffer log4jFilePath = new StringBuffer(propDirPath);
+			StringBuffer log4jFilePath = new StringBuffer();
+
 			try
 			{
-				log4jFilePath.append(File.separator).append("log4j.properties");
+				if(propDirPath==null || TextConstants.EMPTY_STRING.equals(propDirPath))
+				{
+					log4jFilePath.append(propDirPath).append(File.separator);
+				}
+				log4jFilePath.append("log4j.properties");
 				PropertyConfigurator.configure(log4jFilePath.toString());
+
 			}
 			catch (Exception malformedURLEx)
 			{
