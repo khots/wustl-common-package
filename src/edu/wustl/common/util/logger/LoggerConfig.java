@@ -69,11 +69,12 @@ public final class LoggerConfig
 
 			try
 			{
-				if(propDirPath==null || TextConstants.EMPTY_STRING.equals(propDirPath))
+				if(null!=propDirPath && !TextConstants.EMPTY_STRING.equals(propDirPath))
 				{
 					log4jFilePath.append(propDirPath).append(File.separator);
 				}
 				log4jFilePath.append("log4j.properties");
+				out.info("Path of log4j properties file:"+log4jFilePath);
 				PropertyConfigurator.configure(log4jFilePath.toString());
 
 			}
