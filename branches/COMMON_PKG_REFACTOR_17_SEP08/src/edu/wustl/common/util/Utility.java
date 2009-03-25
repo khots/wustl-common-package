@@ -428,7 +428,13 @@ public final class Utility
 	 */
 	public static String getFormBeanName(Object obj)
 	{
-		return obj.getClass().getSimpleName().toLowerCase();
+		String className=obj.getClass().getSimpleName();
+		 String classNameFirstCharacter=className.substring(0,1);
+
+		className=classNameFirstCharacter.toLowerCase(CommonServiceLocator.getInstance().getDefaultLocale())
+		+className.substring(1,
+				(className.length()));
+		return className;
 	}
 
 	/**
