@@ -440,7 +440,7 @@ public class PrivilegeCache
 		{
 			return 102;
 		}
-		if (Permissions.COHORT_MANAGEMENT.equals(privilegeName))
+		if (Permissions.COHORT_ADMINISTRATOR.equals(privilegeName))
 		{
 			return 103;
 		}
@@ -721,7 +721,7 @@ public class PrivilegeCache
 						nmv.setName(Permissions.EXPERIMENT_ADMINISTRATOR);
 						break;
 					case 103:
-						nmv.setName(Permissions.COHORT_MANAGEMENT);
+						nmv.setName(Permissions.COHORT_ADMINISTRATOR);
 						break;
 					case 104:
 						nmv.setName(Permissions.EXPERIMENT_DATA_ENTRY);
