@@ -966,6 +966,21 @@ public class Utility
 				}
 				
 				privilegeGroupingMap.put(globalListKey, globalPrivilegesList);
+				
+				NodeList nodeList5 = root.getElementsByTagName("studyMapping");
+				int length5 = nodeList5.getLength();
+				String studyListKey = "STUDY";
+				List<NameValueBean> studyPrivilegesList = new ArrayList<NameValueBean>();
+				
+				for(int counter = 0; counter < length5 ; counter++)
+				{
+					Element element = (Element) (nodeList5.item(counter));
+					NameValueBean nmv = new NameValueBean(new String(element.getAttribute("name")), new String(element.getAttribute("id")));
+					studyPrivilegesList.add(nmv);
+				}
+				
+				privilegeGroupingMap.put(studyListKey, studyPrivilegesList);
+
 				System.out.println(privilegeGroupingMap.size());
 			}
 		} catch (ParserConfigurationException excp) {
