@@ -10,9 +10,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
@@ -360,8 +362,15 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		 * Bug ID: 6034
 		 * Description:To retrive the appropriate tablename checking the SQL"
 	    */
-	    if(!(cEX.getSQL().contains(tableName))) {
+	    if(!(cEX.getSQL().contains(tableName))) 
+	    {
 	    	 tableName = HibernateMetaData.getTableName(classObj);
+        	 Properties prop = new Properties();
+        	 prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("tablemapping.properties"));
+        	 if(prop.getProperty(tableName)!=null)
+        	 {
+        		 tableName= prop.getProperty(tableName);	 
+        	 }
 	    }
 		 
 		 return tableName;
