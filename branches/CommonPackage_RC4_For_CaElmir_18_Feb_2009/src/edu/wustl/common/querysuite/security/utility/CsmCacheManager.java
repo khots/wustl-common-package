@@ -85,11 +85,11 @@ public class CsmCacheManager
 				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
 						.get(key);
 				String entityName = queryResultObjectDataBean.getCsmEntityName();
-				int mainEntityId = -1;
+				long mainEntityId = -1;
 				if(queryResultObjectDataBean
 						.getMainEntityIdentifierColumnId()!=-1)
 				{
-					mainEntityId = Integer.parseInt((String)aList.get(queryResultObjectDataBean
+					mainEntityId = Long.parseLong((String)aList.get(queryResultObjectDataBean
 						.getMainEntityIdentifierColumnId()));
 				}
 				
@@ -150,11 +150,11 @@ public class CsmCacheManager
 				QueryResultObjectDataBean queryResultObjectDataBean = queryResultObjectDataMap
 						.get(key);
 				String entityName = queryResultObjectDataBean.getCsmEntityName();
-				int mainEntityId = -1;
+				long mainEntityId = -1;
 				if(queryResultObjectDataBean
 						.getMainEntityIdentifierColumnId()!=-1)
 				{
-					mainEntityId = Integer.parseInt((String)aList.get(queryResultObjectDataBean
+					mainEntityId = Long.parseLong((String)aList.get(queryResultObjectDataBean
 						.getMainEntityIdentifierColumnId()));
 				}
 				
@@ -207,7 +207,7 @@ public class CsmCacheManager
 			queryResultObjectData = (QueryResultObjectData) queryResultObjectDataMap
 			.get(keyIterator.next());
 
-			int entityId = Integer.parseInt(aList.get(queryResultObjectData.getIdentifierColumnId()).toString());
+			long entityId = Long.parseLong(aList.get(queryResultObjectData.getIdentifierColumnId()).toString());
 			String entityName = getEntityName(queryResultObjectData);
 			
 			List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
@@ -263,7 +263,7 @@ public class CsmCacheManager
 			queryResultObjectData = (QueryResultObjectData) queryResultObjectDataMap
 			.get(keyIterator.next());
 
-			int entityId = Integer.parseInt(aList.get(queryResultObjectData.getIdentifierColumnId()).toString());
+			long entityId = Long.parseLong(aList.get(queryResultObjectData.getIdentifierColumnId()).toString());
 			
 			String entityName = getEntityName(queryResultObjectData);
 			
@@ -485,7 +485,7 @@ public class CsmCacheManager
 	 * @return
 	 */
 	private List<List<String>> getCpIdsListForGivenEntityId(SessionDataBean sessionDataBean,
-			String entityName, int entityId)
+			String entityName, long entityId)
 	{
 		String sql = Variables.entityCPSqlMap.get(entityName);
 		List<List<String>> cpIdsList = new ArrayList<List<String>>();
