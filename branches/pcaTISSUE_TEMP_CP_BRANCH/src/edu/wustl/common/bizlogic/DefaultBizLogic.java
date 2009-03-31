@@ -829,9 +829,10 @@ public class DefaultBizLogic extends AbstractBizLogic
         if (!isAuthorized)
         {
             UserNotAuthorizedException ex = new UserNotAuthorizedException();
-            ex.setPrivilegeName(privilegeName);
+            ex.setPrivilegeName(privilegeName);            
+            ex.setDomainObjectName(domainObject.getClass().getSimpleName());//bug 11611 and 11659
             //bug 11568
-            ex.setBaseObject(domainObject.getClass().getName());
+            ex.setBaseObject(domainObject.getClass().getSimpleName());
             if (protectionElementName != null && (protectionElementName.contains("Site") || protectionElementName.contains("CollectionProtocol")))
             {
                 String [] arr = protectionElementName.split("_");
@@ -843,7 +844,7 @@ public class DefaultBizLogic extends AbstractBizLogic
             throw ex;
             //ex.setBaseObject()
         }
-		return isAuthorized;		
+        return isAuthorized;		
 	}
 	
 	/**This method gets the instance of privilege cache which is used for authorization.
