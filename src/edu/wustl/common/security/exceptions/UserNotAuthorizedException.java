@@ -21,10 +21,23 @@ public class UserNotAuthorizedException extends SMException
     private String baseObject;
     
     private String baseObjectIdentifier;
-	
-	
     
-    /**
+    private String domainObjectName;   
+  
+
+	public String getDomainObjectName() 
+	{
+		return domainObjectName;
+	}
+
+
+	public void setDomainObjectName(String domainObjectName) 
+	{
+		this.domainObjectName = domainObjectName;
+	}
+
+
+	/**
      * @return Returns the baseObject.
      */
     public String getBaseObject()

@@ -122,7 +122,12 @@ public class CommonAddEditAction extends Action
                 baseObject = className;
             }
             //bug 11568    
-            ActionError error = new ActionError("access.addedit.object.denied", userName, className,decoratedPrivilegeName,className);
+            String domainObjName = excp.getDomainObjectName();
+            if(domainObjName==null)
+            {
+            	domainObjName = baseObject;
+            }
+            ActionError error = new ActionError("access.addedit.object.denied", userName,domainObjName ,decoratedPrivilegeName,baseObject);
         	errors.add(ActionErrors.GLOBAL_ERROR, error);
         	saveErrors(request, errors);
         	target = Constants.FAILURE;
