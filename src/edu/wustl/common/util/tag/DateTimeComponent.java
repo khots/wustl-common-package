@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
  * @author mandar_deshmukh
@@ -44,11 +45,11 @@ public class DateTimeComponent extends TagSupport
 	/**
 	 * Constant for Size.
 	 */
-	private static final int START_YEAR = 1900;
+	private static final int START_YEAR = Integer.parseInt(ApplicationProperties.getValue("min.year"));
 	/**
 	 * Constant for Size.
 	 */
-	private static final int END_YEAR = 2020;
+	private static final int END_YEAR = Integer.parseInt(ApplicationProperties.getValue("max.year"));;
 	/**
 	 * Name of the text field for the date component.
 	 */
