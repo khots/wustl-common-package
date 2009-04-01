@@ -701,15 +701,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier,
 			String tablename, String colName, Long[] objIDArr) throws BizLogicException
 	{
-		try
-		{
-			disableRelatedObjects(dao, tablename, colName, objIDArr);
-		}
-		catch (DAOException exception)
-		{
-			throw getBizLogicException(exception, "biz.disableobj.error",
-					"Exception in disableObject method.");
-		}
+		disableRelatedObjects(dao, tablename, colName, objIDArr);
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
@@ -1252,8 +1244,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException :Generic DAO exception.
 	 */
 	public void disableRelatedObjects(DAO dao, String tableName, String whereColumnName,
-			Long[] whereColumnValues) throws DAOException
+			Long[] whereColumnValues) throws BizLogicException
 	{
+		JDBCDAO jdbcDAO=null;
 		try
 		{
 			StringBuffer buff = new StringBuffer();
@@ -1268,20 +1261,22 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String sql = "UPDATE " + tableName + " SET ACTIVITY_STATUS = '"
 					+ Status.ACTIVITY_STATUS_DISABLED.toString() + "' WHERE " + whereColumnName
 					+ " IN ( " + buff.toString() + ")";
-			String appName = CommonServiceLocator.getInstance().getAppName();
-			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-			JDBCDAO jdbcDAO = daoFactory.getJDBCDAO();
+			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(getAppName());
+			jdbcDAO = daoFactory.getJDBCDAO();
 			jdbcDAO.openSession(null);
-			jdbcDAO.executeQuery(sql);
+			jdbcDAO.executeUpdate(sql);
 			jdbcDAO.commit();
-			jdbcDAO.closeSession();
 		}
 		catch (Exception dbex)
 		{
 			logger.error(dbex.getMessage(), dbex);
 			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
-			throw new DAOException(errorKey, dbex, "DefaultBizLogic.java :"
+			throw new BizLogicException(errorKey, dbex, "DefaultBizLogic.java :"
 					+ DAOConstants.DISABLE_RELATED_OBJ);
+		}
+		finally
+		{
+			closeSession((DAO)jdbcDAO);
 		}
 	}
 
