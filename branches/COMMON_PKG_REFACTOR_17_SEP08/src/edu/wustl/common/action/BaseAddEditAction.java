@@ -267,4 +267,22 @@ public abstract class BaseAddEditAction extends Action
 		}
 		return displayName;
 	}
+	
+	/**
+	 * This method returns ActionForward object. In some cases we get forward url,
+	 * in that case we don't need to find ActionForward in mapping. 
+	 * @param mapping ActionMapping object.
+	 * @param target target configured in struts-config file or url to forward.
+	 * @return ActionForward object
+	 */
+	protected ActionForward getActionForward(ActionMapping mapping,String target)
+	{
+		ActionForward actionForward =mapping.findForward(target);
+		if(null==actionForward)
+		{
+			actionForward = new ActionForward();
+			actionForward.setPath(target );
+		}
+		return actionForward;
+	}
 }
