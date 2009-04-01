@@ -76,7 +76,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		//Status message key.
 		setStatusMsgKey(request, abstractForm);
 
-		return mapping.findForward(target);
+		return getActionForward(mapping,target);
 	}
 
 	/**
