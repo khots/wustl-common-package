@@ -1083,7 +1083,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao = getHibernateDao(getAppName(),null);
-			attribute = dao.retrieveAttribute(objClass, identifier, attributeName, columnName);
+			attribute = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
 		}
 		catch (DAOException daoExp)
 		{
