@@ -29,7 +29,7 @@ public class OracleAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 			ARGS[11]=HibernateProperties.getValue("oracle.db.tnsname");
 	}
 
-	public void testMySqlAutomateImport()
+	public void testOracleAutomateImport()
 	{
 		ARGS[7]="import";
 		ARGS[8]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt";
@@ -47,7 +47,7 @@ public class OracleAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void testMySqlAutomateExport()
+	public void testOracleAutomateExport()
 	{
 		try
 		{
