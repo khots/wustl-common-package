@@ -146,13 +146,13 @@ public final class Utility
 						if (strDate.equals(dtPattern.format(date)))
 						{
 							datePattern = matchingPattern;
+							break;
 						}
-						break;
 					}
 				}
 				catch (ParseException exception)
 				{
-					logger.info("not in formate:" + dtPattern.toString());
+					logger.info(strDate+" date not in formate:" + dtPattern.toPattern());
 				}
 			}
 		}
