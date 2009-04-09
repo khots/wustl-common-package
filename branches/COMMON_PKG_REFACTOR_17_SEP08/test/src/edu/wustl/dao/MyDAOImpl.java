@@ -25,7 +25,7 @@ import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
-//import edu.wustl.dao.sqlformatter.SQLFormatter;
+import edu.wustl.dao.query.generator.QueryData;
 import edu.wustl.dao.util.DAOConstants;
 import edu.wustl.dao.util.NamedQueryParam;
 
@@ -225,8 +225,8 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		return null;
 	}
 
-	public List retrieveAttribute(Class objClass, Long identifier, String attributeName,
-			String columnName) throws DAOException
+	public List retrieveAttribute(Class objClass,String columnName, Long identifier, String attributeName
+			) throws DAOException
 	{
 		List attributte = new ArrayList();
 		attributte.add(getObjectAttribute());
@@ -739,6 +739,26 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	public void audit(Object obj, Object oldObj) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void closeStatement(ResultSet resultSet) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void insert(QueryData queryData) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void update(QueryData queryData) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
