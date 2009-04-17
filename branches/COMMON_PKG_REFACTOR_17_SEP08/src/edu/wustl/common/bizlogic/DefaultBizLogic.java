@@ -821,11 +821,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		String whereColumnName = classIdentifier + "." + Constants.SYSTEM_IDENTIFIER;
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new INClause(whereColumnName, objIDArr, sourceObjectName));
-
 		List list = null;
 		try
 		{
+			queryWhereClause.addCondition(new INClause(whereColumnName, objIDArr, sourceObjectName));
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
@@ -1004,12 +1003,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		String[] selectColumnName = {Status.ACTIVITY_STATUS.getStatus()};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER, indetifier
-				.toString(), sourceObjectName));
+		
 
 		List<Object> list;
 		try
 		{
+			queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER, indetifier
+					.toString(), sourceObjectName));
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoEx)
@@ -1272,7 +1272,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			logger.error(dbex.getMessage(), dbex);
 			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
 			throw new BizLogicException(errorKey, dbex, "DefaultBizLogic.java :"
-					+ DAOConstants.DISABLE_RELATED_OBJ);
+					+ Constants.DISABLE_RELATED_OBJ);
 		}
 		finally
 		{

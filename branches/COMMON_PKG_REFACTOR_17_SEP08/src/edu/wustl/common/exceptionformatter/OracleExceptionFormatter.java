@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
@@ -99,7 +100,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 				substring(0,columnNameBuff.toString().length()-1);
 				String displayName = Utility.getDisplayName(tableName,jdbcdao);
 				Object[] arguments = new Object[]{displayName,columnName};
-				formattedErrMsg = MessageFormat.format(DAOConstants.
+				formattedErrMsg = MessageFormat.format(Constants.
 						CONSTRAINT_VOILATION_ERROR,arguments);
 			}
 		}

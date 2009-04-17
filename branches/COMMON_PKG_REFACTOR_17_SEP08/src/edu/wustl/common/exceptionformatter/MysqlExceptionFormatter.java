@@ -65,7 +65,7 @@ IDBExceptionFormatter
 			arguments[1] = columnNames;
 
 			// Insert Table_Name and Column_Name in  CONSTRAINT_VOILATION_ERROR message
-			formattedErrMsg = MessageFormat.format(DAOConstants.CONSTRAINT_VOILATION_ERROR,arguments);
+			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,arguments);
 		}
 		catch(Exception e)
 		{
