@@ -32,9 +32,9 @@ public class Validator
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(Validator.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(Validator.class);
 
 	/**
 	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc.
@@ -71,6 +71,7 @@ public class Validator
 		}
 		catch (Exception ex)
 		{
+			LOGGER.debug(ex.getMessage(), ex);
 			result = false;
 		}
 		return result;
@@ -93,6 +94,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
+			LOGGER.debug(exp.getMessage(), exp);
 			result = false;
 		}
 		return result;
@@ -152,6 +154,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
+			LOGGER.debug(exp.getMessage(), exp);
 			isNumeric = false;
 		}
 		return isNumeric;
@@ -233,7 +236,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.debug("NumberFormatException:" + exp.getMessage(), exp);
+			LOGGER.debug("NumberFormatException:" + exp.getMessage(), exp);
 		}
 		return longValue;
 	}
@@ -252,7 +255,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.error("NumberFormatException:" + exp.getMessage(), exp);
+			LOGGER.error("NumberFormatException:" + exp.getMessage(), exp);
 		}
 		return value;
 	}
@@ -277,6 +280,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
+			LOGGER.debug(exp.getMessage(), exp);
 			isDouble = false;
 		}
 		return isDouble;
@@ -305,7 +309,7 @@ public class Validator
 		}
 		catch (NumberFormatException exp)
 		{
-			logger.debug("NumberFormatException:" + exp.getMessage(), exp);
+			LOGGER.debug("NumberFormatException:" + exp.getMessage(), exp);
 			isDouble = false;
 		}
 		return isDouble;
@@ -344,6 +348,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
+			LOGGER.debug(exp.getMessage(), exp);
 			result = false;
 		}
 		return result;
@@ -377,7 +382,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			logger.debug(exp.getMessage(), exp);
+			LOGGER.debug(exp.getMessage(), exp);
 		}
 		return retStr.toString();
 	}
@@ -407,7 +412,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			logger.error("IsValidDatePattern : exp : " + exp);
+			LOGGER.error("IsValidDatePattern : exp : " + exp);
 			result = false;
 		}
 		return result;
@@ -458,12 +463,12 @@ public class Validator
 		}
 		catch (ParseException exp)
 		{
-			logger.error("Date is not valid:" + dtStr, exp);
+			LOGGER.error("Date is not valid:" + dtStr, exp);
 			isDate = false;
 		}
 		if (!isDate)
 		{
-			logger.error("Date is not valid:" + dtStr);
+			LOGGER.error("Date is not valid:" + dtStr);
 		}
 		return isDate;
 	}
@@ -496,7 +501,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			logger.error("Check Date : exp : " + exp);
+			LOGGER.error("Check Date : exp : " + exp);
 			result = false;
 		}
 		return result;
@@ -525,6 +530,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
+			LOGGER.debug(exp.getMessage(), exp);
 			result = false;
 		}
 
@@ -559,6 +565,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
+			LOGGER.debug(exp.getMessage(), exp);
 			result = false;
 		}
 		return result;
@@ -657,7 +664,8 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//logger.error("Check Zip Code : exp : "+ exp);
+			LOGGER.debug(exp.getMessage(), exp);
+			//LOGGER.error("Check Zip Code : exp : "+ exp);
 			result = false;
 		}
 		return result;
@@ -680,7 +688,8 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			//logger.error("Check Phone/Fax Number : exp : "+ exp);
+			LOGGER.debug(exp.getMessage(), exp);
+			//LOGGER.error("Check Phone/Fax Number : exp : "+ exp);
 			result = false;
 		}
 		return result;
@@ -702,6 +711,7 @@ public class Validator
 		}
 		catch (ParseException parseExp)
 		{
+			LOGGER.debug(parseExp.getMessage(), parseExp);
 			isValid = false;
 		}
 
@@ -839,7 +849,7 @@ public class Validator
 		}
 		catch (Exception exp)
 		{
-			logger.error(exp.getMessage(), exp);
+			LOGGER.debug(exp.getMessage(), exp);
 			hasSpChars = true;
 		}
 

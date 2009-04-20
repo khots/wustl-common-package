@@ -27,9 +27,9 @@ public final class InterfaceLocator
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(InterfaceLocator.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(InterfaceLocator.class);
 	/**
 	 * File name for interface configuration.
 	 */
@@ -82,7 +82,7 @@ public final class InterfaceLocator
 		catch (ParseException exception)
 		{
 			parseExcepMessage = exception.getMessage();
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(parseExcepMessage, exception);
 		}
 	}
 	/**
@@ -124,14 +124,17 @@ public final class InterfaceLocator
 		}
 		catch (ParserConfigurationException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw new ParseException(exception);
 		}
 		catch (SAXException sException)
 		{
+			LOGGER.debug(sException.getMessage(), sException);
 			throw new ParseException(sException);
 		}
 		catch (IOException iOException)
 		{
+			LOGGER.debug(iOException.getMessage(), iOException);
 			throw new ParseException(iOException);
 		}
 		NodeList interfacesList = doc.getElementsByTagName(ELE_INTERFACE);

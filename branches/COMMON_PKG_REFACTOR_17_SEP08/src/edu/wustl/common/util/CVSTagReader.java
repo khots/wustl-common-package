@@ -24,9 +24,9 @@ public class CVSTagReader
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CVSTagReader.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CVSTagReader.class);
 	/**
 	 * Reads the file and returns the CVS tag from comment section.
 	 * File pattern is
@@ -86,7 +86,7 @@ public class CVSTagReader
 		}
 		catch (IOException exp)
 		{
-			logger.error(exp.getMessage(), exp);
+			LOGGER.error(exp.getMessage(), exp);
 		}
 		return tag;
 	}
@@ -126,7 +126,7 @@ public class CVSTagReader
 		}
 		catch (Exception exp)
 		{
-			logger.error(exp.getMessage(), exp);
+			LOGGER.error(exp.getMessage(), exp);
 		}
 		return tag;
 	}

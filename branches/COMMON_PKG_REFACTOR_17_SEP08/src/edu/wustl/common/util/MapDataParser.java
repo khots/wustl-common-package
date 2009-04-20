@@ -1,9 +1,7 @@
 
 package edu.wustl.common.util;
 
-/**
- * @author Kapil Kaveeshwar
- */
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -24,13 +22,18 @@ import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 
+/**
+ *
+ * @author Kapil Kaveeshwar
+ *
+ */
 public class MapDataParser
 {
 
 	/**
-	 * logger Logger - generic logger.
+	 * LOGGER Logger - generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(MapDataParser.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(MapDataParser.class);
 	/**
 	 * packageName String name of package.
 	 */
@@ -313,7 +316,7 @@ public class MapDataParser
 		Map map = aMapDataParser.createMap();
 		//map = aMapDataParser.fixMap(map);
 		Collection dataCollection = aMapDataParser.generateData(map);
-		logger.info(dataCollection);
+		LOGGER.info(dataCollection);
 	}
 
 	/**

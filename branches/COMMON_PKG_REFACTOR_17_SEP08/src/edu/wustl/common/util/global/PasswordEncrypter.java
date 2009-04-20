@@ -31,9 +31,9 @@ public final class PasswordEncrypter
 
 	}
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordEncrypter.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(PasswordEncrypter.class);
 
 	/**
 	 * dbUtility object is used to store the argument values and getting database connection.
@@ -127,7 +127,7 @@ public final class PasswordEncrypter
 		}
 		catch (PasswordEncryptionException exception)
 		{
-			logger.fatal("Not able to encrypt the passwords.", exception);
+			LOGGER.fatal("Not able to encrypt the passwords.", exception);
 		}
 		finally
 		{
@@ -150,6 +150,7 @@ public final class PasswordEncrypter
 		}
 		else
 		{
+			LOGGER.debug("Incorrect number of parameters!!!!");
 			throw new Exception("Incorrect number of parameters!!!!");
 		}
 	}
