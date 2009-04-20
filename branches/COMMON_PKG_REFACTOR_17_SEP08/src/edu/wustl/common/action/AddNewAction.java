@@ -34,9 +34,9 @@ public class AddNewAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AddNewAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(AddNewAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -53,7 +53,7 @@ public class AddNewAction extends Action
 		ActionForward actionForward;
 		try
 		{
-			logger.info("Started Add action");
+			LOGGER.info("Started Add action");
 			AddNewSessionDataBean sessionDataBean = createNewSessionDataBean(form, request);
 			Stack<AddNewSessionDataBean> formBeanStack = getStackBeanFromSession(request);
 			formBeanStack.push(sessionDataBean);
@@ -62,7 +62,7 @@ public class AddNewAction extends Action
 		}
 		catch (Exception e)
 		{
-			logger.info("Exception: " + e.getMessage(), e);
+			LOGGER.info("Exception: " + e.getMessage(), e);
 			actionForward = mapping.findForward(Constants.SUCCESS);
 		}
 		return actionForward;
@@ -81,7 +81,7 @@ public class AddNewAction extends Action
 
 		if (formBeanStack == null)
 		{
-			logger.debug("Creating FormBeanStack in AddNewAction.");
+			LOGGER.debug("Creating FormBeanStack in AddNewAction.");
 			formBeanStack = new Stack<AddNewSessionDataBean>();
 		}
 		session.setAttribute(Constants.FORM_BEAN_STACK, formBeanStack);

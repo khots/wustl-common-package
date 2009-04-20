@@ -41,9 +41,9 @@ public class DomainObjectListAction extends SecureAction
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(DomainObjectListAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(DomainObjectListAction.class);
 
 	/**
 	 * set the domain object list,along with other details in session.
@@ -57,7 +57,7 @@ public class DomainObjectListAction extends SecureAction
 	public ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		List list = null;
 		List showList = null;
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
@@ -133,7 +133,7 @@ public class DomainObjectListAction extends SecureAction
 		}
 		catch (BizLogicException exception)
 		{
-			logger.error("Failed to get BizLogic object from BizLogic Factory");
+			LOGGER.error("Failed to get BizLogic object from BizLogic Factory");
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get BizLogic in base Add/Edit.");
 		}

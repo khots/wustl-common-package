@@ -33,9 +33,9 @@ public class CommonEdtAction extends BaseAddEditAction
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonEdtAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonEdtAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -51,7 +51,7 @@ public class CommonEdtAction extends BaseAddEditAction
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException
 	{
 		String target;
-		logger.debug("in method executeEdit()");
+		LOGGER.debug("in method executeEdit()");
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		ActionMessages messages = new ActionMessages();
 		String objectName = getObjectName(abstractForm);

@@ -28,9 +28,9 @@ public class TitliInitialiseSearchAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliInitialiseSearchAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(TitliInitialiseSearchAction.class);
 
 	/**
 	 * @param mapping the mapping
@@ -42,7 +42,7 @@ public class TitliInitialiseSearchAction extends Action
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 	{
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		try
 		{
 			Titli.getInstance();
@@ -50,7 +50,7 @@ public class TitliInitialiseSearchAction extends Action
 		}
 		catch (TitliException e)
 		{
-			logger.error("TitliException in InitialiseTitliSearchAction : " + e.getMessage(), e);
+			LOGGER.error("TitliException in InitialiseTitliSearchAction : " + e.getMessage(), e);
 		}
 		return mapping.findForward(Constants.SUCCESS);
 	}

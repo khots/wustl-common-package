@@ -34,9 +34,9 @@ public class ApplicationFooterAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationFooterAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ApplicationFooterAction.class);
 
 	/**
 	 * @param mapping ActionMapping
@@ -48,7 +48,7 @@ public class ApplicationFooterAction extends Action
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 	{
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		ActionForward forward = mapping.findForward(Constants.FAILURE);
 		String pageTitle = (String) request.getParameter("PAGE_TITLE_KEY");
 		String fileNameKey = (String) request.getParameter("FILE_NAME_KEY");
