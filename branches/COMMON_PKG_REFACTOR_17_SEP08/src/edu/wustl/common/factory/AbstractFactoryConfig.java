@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -21,6 +20,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exception.ParseException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.XMLParserUtility;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author prashant_bandal
@@ -30,9 +30,9 @@ public final class AbstractFactoryConfig
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractFactoryConfig.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(AbstractFactoryConfig.class);
 
 	/**
 	 * File name for Factory configuration.
@@ -78,7 +78,7 @@ public final class AbstractFactoryConfig
 		{
 			success = false;
 			parseExcepMessage = exception.getMessage();
-			logger.error(parseExcepMessage, exception);
+			LOGGER.error(parseExcepMessage, exception);
 		}
 
 	}
@@ -117,7 +117,7 @@ public final class AbstractFactoryConfig
 		}
 		catch (Exception exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(exception.getMessage(), exception);
 			throw new ParseException(exception);
 		}
 		finally
@@ -128,7 +128,7 @@ public final class AbstractFactoryConfig
 			}
 			catch (IOException exception)
 			{
-				logger.error("Not able to close input stream", exception);
+				LOGGER.error("Not able to close input stream", exception);
 			}
 		}
 	}
@@ -201,7 +201,7 @@ public final class AbstractFactoryConfig
 		}
 		catch (Exception exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(exception.getMessage(), exception);
 			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
 					"");
 		}
@@ -234,7 +234,7 @@ public final class AbstractFactoryConfig
 		}
 		catch (Exception exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(exception.getMessage(), exception);
 			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
 					"");
 		}
@@ -257,7 +257,7 @@ public final class AbstractFactoryConfig
 		}
 		catch (Exception exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(exception.getMessage(), exception);
 			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
 					"");
 		}
