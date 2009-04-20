@@ -24,6 +24,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  *  This Class is used to Add data in the database.
@@ -31,6 +32,10 @@ import edu.wustl.common.util.global.Constants;
 public class CommonAddAction extends BaseAddEditAction
 {
 
+	/**
+	 * LOGGER Logger - Generic LOGGER.
+	 */
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonAddAction.class);
 	/**
 	 * This method get data from form of current session and add it for further operation.
 	 * @param mapping ActionMapping
@@ -162,9 +167,10 @@ public class CommonAddAction extends BaseAddEditAction
 			bizLogic.insert(abstractDomain, getSessionData(request));
 
 			return abstractDomain;
-		}		
+		}
 		catch (AssignDataException e)
 		{
+			LOGGER.debug(e.getMessage(), e);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
 					"Failed while populating domain object in common add.");
 		}

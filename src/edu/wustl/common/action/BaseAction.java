@@ -32,9 +32,9 @@ public abstract class BaseAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(BaseAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(BaseAction.class);
 
 	/**
 	 * Method ensures that the user is authenticated before calling the
@@ -51,7 +51,7 @@ public abstract class BaseAction extends Action
 	public final ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		//long startTime = System.currentTimeMillis();
 		preExecute(mapping, form, request, response);
 		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
@@ -260,11 +260,11 @@ public abstract class BaseAction extends Action
 		}
 		catch (NoSuchMethodException excp1)
 		{
-			logger.error(excp1.getMessage(), excp1);
+			LOGGER.error(excp1.getMessage(), excp1);
 		}
 		catch (SecurityException excp3)
 		{
-			logger.error(excp3.getMessage(), excp3);
+			LOGGER.error(excp3.getMessage(), excp3);
 		}
 		return method;
 	}

@@ -33,9 +33,9 @@ public class TitliSearchAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(TitliSearchAction.class);
 
 	/**
 	 * perform the search action for the search string obtained from search form.
@@ -49,7 +49,7 @@ public class TitliSearchAction extends Action
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 	{
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		ActionForward actionForward = mapping.findForward(Constants.SUCCESS);
 		TitliSearchForm titliSearchForm = (TitliSearchForm) form;
 		try
@@ -73,11 +73,11 @@ public class TitliSearchAction extends Action
 		}
 		catch (TitliException e)
 		{
-			logger.error("TitliException in TitliSearchAction : " + e.getMessage(), e);
+			LOGGER.error("TitliException in TitliSearchAction : " + e.getMessage(), e);
 		}
 		catch (Exception e)
 		{
-			logger.error("Exception in TitliFetchAction : " + e.getMessage(), e);
+			LOGGER.error("Exception in TitliFetchAction : " + e.getMessage(), e);
 		}
 		return actionForward;
 	}
