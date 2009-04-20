@@ -24,7 +24,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 	/**
 	 * Class Logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(OracleExceptionFormatter.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(OracleExceptionFormatter.class);
 
 	/**
 	 * This will generate the formatted error messages.
@@ -62,7 +62,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
          }
         catch(Exception e)
         {
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
         }
         return formattedErrMsg;
     }
@@ -106,7 +106,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 		}
 		catch (Exception exp)
 		{
-			logger.fatal(exp.getMessage(), exp);
+			LOGGER.fatal(exp.getMessage(), exp);
 		}
 		return formattedErrMsg;
 	}

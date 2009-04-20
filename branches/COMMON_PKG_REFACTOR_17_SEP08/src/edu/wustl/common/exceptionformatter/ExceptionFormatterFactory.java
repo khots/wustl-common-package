@@ -19,17 +19,20 @@ public class ExceptionFormatterFactory
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger
-			.getLogger(ExceptionFormatterFactory.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ExceptionFormatterFactory.class);
 
 	/**
 	 * Specify ResourceBundle property.
 	 */
 	private static ResourceBundle prop;
-	
-	private static final Map<String,IDBExceptionFormatter> DB_FORMATTER_MAP = new HashMap<String,IDBExceptionFormatter>();
+
+	/**
+	 * DB_FORMATTER_MAP map.
+	 */
+	private static final Map<String, IDBExceptionFormatter> DB_FORMATTER_MAP =
+		new HashMap<String, IDBExceptionFormatter>();
 	static
 	{
 		try
@@ -39,12 +42,12 @@ public class ExceptionFormatterFactory
 			 * Exception_Class_Name = Exception_Formatter_Class_Name
 			 */
 			prop = ResourceBundle.getBundle("ExceptionFormatter");
-			logger.debug("File Loaded");
+			LOGGER.debug("File Loaded");
 			initDBFormatterMap();
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage() + " " + e);
+			LOGGER.error(e.getMessage() + " " + e);
 		}
 	}
 
@@ -65,19 +68,19 @@ public class ExceptionFormatterFactory
 			String formatterClassName = prop.getString(excpClassName);
 			if (formatterClassName == null)
 			{
-				logger.error("ExceptionFormatter Class not found for " + excpClassName);
+				LOGGER.error("ExceptionFormatter Class not found for " + excpClassName);
 			}
 			else
 			{
 				//	Instantiate a Exception Formatter
-				logger.debug("exceptionClass: " + excpClassName);
-				logger.debug("formatterClass: " + formatterClassName);
+				LOGGER.debug("exceptionClass: " + excpClassName);
+				LOGGER.debug("formatterClass: " + formatterClassName);
 				expFormatter = (ExceptionFormatter) Class.forName(formatterClassName).newInstance();
 			}
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage() + " " + e);
+			LOGGER.error(e.getMessage() + " " + e);
 		}
 		return expFormatter;
 	}
@@ -108,19 +111,28 @@ public class ExceptionFormatterFactory
 		}
 		catch (Exception exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(exception.getMessage(), exception);
 		}
 		return displayName;
 	}
-	
+
+	/**
+	 * Gets IDB Exception Formatter.
+	 * @param dbType db Type
+	 * @return IDBExceptionFormatter
+	 */
 	public static IDBExceptionFormatter getIDBExceptionFormatter(String dbType)
-	{		
-		return  DB_FORMATTER_MAP.get(dbType.toLowerCase(CommonServiceLocator.getInstance().getDefaultLocale()));
+	{
+		return DB_FORMATTER_MAP.get(dbType.toLowerCase(CommonServiceLocator.getInstance()
+				.getDefaultLocale()));
 	}
-	
+
+	/**
+	 * init DBFormatter Map.
+	 */
 	public static void initDBFormatterMap()
 	{
-		DB_FORMATTER_MAP.put("mysql", (IDBExceptionFormatter)new MysqlExceptionFormatter());
-		DB_FORMATTER_MAP.put("oracle", (IDBExceptionFormatter)new OracleExceptionFormatter());
+		DB_FORMATTER_MAP.put("mysql", (IDBExceptionFormatter) new MysqlExceptionFormatter());
+		DB_FORMATTER_MAP.put("oracle", (IDBExceptionFormatter) new OracleExceptionFormatter());
 	}
 }

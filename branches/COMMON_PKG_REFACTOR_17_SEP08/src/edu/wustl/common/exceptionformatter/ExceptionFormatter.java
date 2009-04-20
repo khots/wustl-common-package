@@ -11,7 +11,6 @@ public interface ExceptionFormatter
 	/**
 	 * This method format Message.
 	 * @param objExcp Exception.
-	 * @param args arguments.
 	 * @return formated Message.
 	 */
 	String formatMessage(Exception objExcp);
