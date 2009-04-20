@@ -33,9 +33,9 @@ public final class HibernateProperties
 	private static Properties prop;
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(HibernateProperties.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(HibernateProperties.class);
 	/**
 	 * This method load the properties file.
 	 * @param baseName File Name
@@ -53,12 +53,12 @@ public final class HibernateProperties
 		}
 		catch (FileNotFoundException exe)
 		{
-			logger.error("Not able to read the file:"+baseName,exe);
+			LOGGER.error("Not able to read the file:"+baseName,exe);
 			throw exe;
 		}
 		catch (IOException exe)
 		{
-			logger.error("Not able to load the properties file:"+baseName,exe);
+			LOGGER.error("Not able to load the properties file:"+baseName,exe);
 			throw exe;
 		}
 	}

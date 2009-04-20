@@ -35,9 +35,9 @@ public final class XMLPropertyHandler
 
 	}
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(XMLPropertyHandler.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(XMLPropertyHandler.class);
 	/**
 	 * document Document document containing information about xml.
 	 */
@@ -53,20 +53,20 @@ public final class XMLPropertyHandler
 	}
 
 	/**
-	 * @param path String path for logger information.
+	 * @param path String path for LOGGER information.
 	 * @throws ParseException throws this exception if
 	 * specified xml file not found or not able to parse the file.
 	 */
 	public static void init(String path) throws ParseException
 	{
-		logger.info("path" + path);
+		LOGGER.info("path" + path);
 		try
 		{
 			document=XMLParserUtility.getDocument(path);
 		}
 		catch (Exception ioe)
 		{
-			logger.error(ioe.getMessage(), ioe);
+			LOGGER.error(ioe.getMessage(), ioe);
 			throw new ParseException(ioe);
 		}
 	}

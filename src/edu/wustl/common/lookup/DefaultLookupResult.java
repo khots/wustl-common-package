@@ -35,12 +35,12 @@ public class DefaultLookupResult implements Serializable
 	 * isSSNPMI.
 	 */
 	private MatchingStatusForSSNPMI isSSNPMI;
-	
+
 	/**
-	 * 
+	 * exactMatching.
 	 */
 	private boolean exactMatching;
-	
+
 	/**
 	 * get IsSSNPMI.
 	 * @return MatchingStatusForSSNPMI.
@@ -95,7 +95,7 @@ public class DefaultLookupResult implements Serializable
 		this.weight = weight;
 	}
 
-	
+
 	/**
 	 * @return the exactMatching
 	 */
@@ -104,7 +104,6 @@ public class DefaultLookupResult implements Serializable
 		return exactMatching;
 	}
 
-	
 	/**
 	 * @param exactMatching the exactMatching to set
 	 */
@@ -112,5 +111,5 @@ public class DefaultLookupResult implements Serializable
 	{
 		this.exactMatching = exactMatching;
 	}
-	
+
 }

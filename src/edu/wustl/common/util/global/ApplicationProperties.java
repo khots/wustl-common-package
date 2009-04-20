@@ -30,9 +30,9 @@ public final class ApplicationProperties
 	private static ResourceBundle bundle;
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ApplicationProperties.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ApplicationProperties.class);
 
 	/**
 	 * Load the resource bundle file.
@@ -52,7 +52,7 @@ public final class ApplicationProperties
 		String val = TextConstants.EMPTY_STRING;
 		if (bundle == null)
 		{
-			logger.fatal("resource bundle is null cannot return value for key " + theKey);
+			LOGGER.fatal("resource bundle is null cannot return value for key " + theKey);
 		}
 		else
 		{
@@ -74,7 +74,7 @@ public final class ApplicationProperties
 		String msg = TextConstants.EMPTY_STRING;
 		if (bundle == null)
 		{
-			logger.fatal("resource bundle is null cannot return value for key " + theKey);
+			LOGGER.fatal("resource bundle is null cannot return value for key " + theKey);
 		}
 		else
 		{

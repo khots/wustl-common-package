@@ -12,9 +12,9 @@ public class CommonFileReader
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonFileReader.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonFileReader.class);
 
 	/**
 	 * @param fileName file name.
@@ -35,7 +35,7 @@ public class CommonFileReader
 		}
 		catch (Exception exception)
 		{
-			logger.debug("Not able to read the file:"+fileName,exception);
+			LOGGER.debug("Not able to read the file:"+fileName,exception);
 		}
 
 		return buffer.toString();

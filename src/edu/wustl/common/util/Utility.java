@@ -64,9 +64,9 @@ public final class Utility
 	 */
 	private static final int TWO = 2;
 	/**
-	 * logger -Generic Logger.
+	 * LOGGER -Generic Logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(Utility.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(Utility.class);
 
 	/**
 	 * Parses the string format of date in the given format and returns the Data object.
@@ -90,7 +90,7 @@ public final class Utility
 			{
 				String message = new StringBuffer("Date '").append(date).append(
 						"' is not in format : ").append(pattern).toString();
-				logger.debug(message, exception);
+				LOGGER.debug(message, exception);
 				throw new ParseException(message, exception.getErrorOffset());
 			}
 		}
@@ -152,7 +152,7 @@ public final class Utility
 				}
 				catch (ParseException exception)
 				{
-					logger.info(strDate+" date not in formate:" + dtPattern.toPattern());
+					LOGGER.info(strDate+" date not in formate:" + dtPattern.toPattern());
 				}
 			}
 		}
@@ -286,7 +286,7 @@ public final class Utility
 		}
 		catch (ClassNotFoundException classNotExcp)
 		{
-			logger.warn("Didn't find any class as " + fullClassName, classNotExcp);
+			LOGGER.warn("Didn't find any class as " + fullClassName, classNotExcp);
 		}
 
 		return className;
@@ -350,11 +350,11 @@ public final class Utility
 		}
 		catch (InstantiationException instExp)
 		{
-			logger.debug("Can not create instance of class:" + className, instExp);
+			LOGGER.debug("Can not create instance of class:" + className, instExp);
 		}
 		catch (IllegalAccessException illAccExp)
 		{
-			logger.debug("Can not create instance of class:" + className, illAccExp);
+			LOGGER.debug("Can not create instance of class:" + className, illAccExp);
 		}
 
 		return object;
@@ -416,7 +416,7 @@ public final class Utility
 		}
 		catch (Exception e)
 		{
-			logger.warn("Not able to parse class name:" + qualifiedName);
+			LOGGER.warn("Not able to parse class name:" + qualifiedName);
 		}
 		return className;
 	}
@@ -599,7 +599,7 @@ public final class Utility
 		if (Validator.isEmpty(str))
 		{
 			retStr = new StringBuffer();
-			logger.debug("Utility.initCap : - String provided is either empty or null" + str);
+			LOGGER.debug("Utility.initCap : - String provided is either empty or null" + str);
 		}
 		else
 		{
@@ -733,7 +733,7 @@ public final class Utility
 		}
 		catch (ParseException exception)
 		{
-			logger.error("exception in getCalendar: date=" + date, exception);
+			LOGGER.error("exception in getCalendar: date=" + date, exception);
 			calendar = Calendar.getInstance();
 		}
 		return calendar;
@@ -760,7 +760,7 @@ public final class Utility
 			}
 			catch (Exception ioe)
 			{
-				logger.error(ioe.getMessage(), ioe);
+				LOGGER.error(ioe.getMessage(), ioe);
 				throw new edu.wustl.common.exception.ParseException(ioe);
 			}
 			finally
@@ -771,7 +771,7 @@ public final class Utility
 				}
 				catch (IOException exception)
 				{
-					logger.error("Not able to close input stream", exception);
+					LOGGER.error("Not able to close input stream", exception);
 				}
 			}
 			Element root = doc.getDocumentElement();
@@ -924,11 +924,10 @@ public final class Utility
 		}
 		catch(Exception ex)
 		{
-			logger.error(ex.getMessage(),ex);
+			LOGGER.error(ex.getMessage(),ex);
 		}
 		return displayName;
 	}
-	
 
 
 	/**

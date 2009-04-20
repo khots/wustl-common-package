@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mandar_deshmukh
@@ -33,6 +34,10 @@ import edu.wustl.common.util.global.ApplicationProperties;
 public class DateTimeComponent extends TagSupport
 {
 
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(DateTimeComponent.class);
 	/**
 	 * specify serialVersionUID.
 	 */
@@ -310,6 +315,7 @@ public class DateTimeComponent extends TagSupport
 		}
 		catch (IOException ioe)
 		{
+			LOGGER.debug(ioe.getMessage(), ioe);
 			throw new JspTagException("Error:IOException while writing to the user");
 		}
 

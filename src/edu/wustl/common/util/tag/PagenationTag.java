@@ -29,9 +29,9 @@ public class PagenationTag extends TagSupport
 	private static final long serialVersionUID = 3660111496312380494L;
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(PagenationTag.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(PagenationTag.class);
 
 	/**
 	 * Constant for TOTAL_RESULT.
@@ -165,11 +165,11 @@ public class PagenationTag extends TagSupport
 		}
 		catch (IOException ioe)
 		{
-			logger.debug("Error generating prime: " + ioe, ioe);
+			LOGGER.debug("Error generating prime: " + ioe, ioe);
 		}
 		catch (Exception e)
 		{
-			logger.debug(e.getMessage(), e);
+			LOGGER.debug(e.getMessage(), e);
 		}
 		return SKIP_BODY;
 	}
@@ -502,7 +502,7 @@ public class PagenationTag extends TagSupport
 		catch (NumberFormatException nfe)
 		{
 			this.pageNum = 1;
-			logger.error(nfe.getMessage(), nfe);
+			LOGGER.error(nfe.getMessage(), nfe);
 		}
 
 	}
@@ -518,6 +518,7 @@ public class PagenationTag extends TagSupport
 		}
 		catch (NumberFormatException nfe)
 		{
+			LOGGER.debug(nfe.getMessage(), nfe);
 			this.totalResults = TOTAL_RESULT;
 		}
 	}
@@ -533,6 +534,7 @@ public class PagenationTag extends TagSupport
 		}
 		catch (NumberFormatException nfe)
 		{
+			LOGGER.debug(nfe.getMessage(), nfe);
 			this.numResultsPerPage = TEN;
 		}
 	}

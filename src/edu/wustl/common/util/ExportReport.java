@@ -63,9 +63,9 @@ public class ExportReport
 	 */
 	private transient String fileName;
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ExportReport.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ExportReport.class);
 
 	/**
 	 * Constant for TWO.
@@ -163,7 +163,7 @@ public class ExportReport
 		}
 		catch (Exception excp)
 		{
-			logger.error(excp.getMessage(), excp);
+			LOGGER.error(excp.getMessage(), excp);
 		}
 	}
 
@@ -350,14 +350,14 @@ public class ExportReport
 				boolean isDeleted = file.delete();
 				if(!isDeleted)
 				{
-					logger.info("Not able to delete file "+fileName);
+					LOGGER.info("Not able to delete file "+fileName);
 				}
 			}
 			out.close();
 		}
 		catch (IOException excp)
 		{
-			logger.error(excp.getMessage(), excp);
+			LOGGER.error(excp.getMessage(), excp);
 		}
 	}
 

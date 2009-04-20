@@ -31,9 +31,9 @@ public class CommonExceptionHandler extends ExceptionHandler
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonExceptionHandler.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonExceptionHandler.class);
 	/**
 	 * Retrieve the error details from request and set it in session.
 	 * @param exception Exception generic exception.
@@ -49,7 +49,7 @@ public class CommonExceptionHandler extends ExceptionHandler
 			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException
 	{
-		logger.error(getErrorMsg(exception), exception);
+		LOGGER.error(getErrorMsg(exception), exception);
 		StringBuffer mess= new StringBuffer("Unhandled Exception occured in ").
 				append(CommonServiceLocator.getInstance().getAppURL()).
 				append(" : ").append(exception.getMessage());
