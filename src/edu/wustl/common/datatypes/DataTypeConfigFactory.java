@@ -31,9 +31,9 @@ public final class DataTypeConfigFactory
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(DataTypeConfigFactory.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(DataTypeConfigFactory.class);
 
 	/**
 	 * File name for Data Type configuration.
@@ -80,7 +80,7 @@ public final class DataTypeConfigFactory
 		catch (ParseException exception)
 		{
 			parseExcepMessage = exception.getMessage();
-			logger.error(parseExcepMessage, exception);
+			LOGGER.error(parseExcepMessage, exception);
 		}
 
 	}
@@ -117,7 +117,7 @@ public final class DataTypeConfigFactory
 		}
 		catch (Exception ioe)
 		{
-			logger.error(ioe.getMessage(), ioe);
+			LOGGER.error(ioe.getMessage(), ioe);
 			throw new ParseException(ioe);
 		}
 		finally
@@ -128,7 +128,7 @@ public final class DataTypeConfigFactory
 			}
 			catch (IOException exception)
 			{
-				logger.error("Not able to close input stream", exception);
+				LOGGER.error("Not able to close input stream", exception);
 			}
 		}
 	}
@@ -200,7 +200,7 @@ public final class DataTypeConfigFactory
 		}
 		catch (Exception exception)
 		{
-			logger.error(exception.getMessage(), exception);
+			LOGGER.error(exception.getMessage(), exception);
 			throw new ApplicationException(ErrorKey.getErrorKey("datatype.parse.error"), exception,
 					"");
 		}

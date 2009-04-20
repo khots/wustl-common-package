@@ -25,7 +25,7 @@ public class ApplicationException extends Exception
 	/**
 	 * Logger object used to log messages.
 	 */
-	private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(ApplicationException.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ApplicationException.class);
 
 	/**
 	 *The errorKey object for the exception occurred.

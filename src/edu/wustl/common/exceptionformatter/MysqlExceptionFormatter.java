@@ -14,6 +14,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
@@ -26,6 +27,10 @@ import edu.wustl.dao.util.HibernateMetaData;
 public class MysqlExceptionFormatter implements
 IDBExceptionFormatter
 {
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(MysqlExceptionFormatter.class);
 	/**
 	 * Index name.
 	 */
@@ -69,7 +74,7 @@ IDBExceptionFormatter
 		}
 		catch(Exception e)
 		{
-
+			LOGGER.debug(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;
@@ -102,6 +107,7 @@ IDBExceptionFormatter
 		}
 		catch(SQLException sqlExp)
 		{
+			LOGGER.debug(sqlExp.getMessage(), sqlExp);
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			throw new DAOException(errorKey,sqlExp,"MysqlFormattedErrorMessages.java :");
 		}

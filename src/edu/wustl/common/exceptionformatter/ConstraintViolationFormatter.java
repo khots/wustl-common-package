@@ -22,13 +22,12 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ConstraintViolationFormatter.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ConstraintViolationFormatter.class);
 	/**
 	 * This will be called to format constraint violation exception messages.
 	 * @param objExcp : Exception thrown.
-	 * @throws DAOException : Database exception
 	 * @return string : It return the formatted error messages.
 	 */
 	public String formatMessage(Exception objExcp)
@@ -47,7 +46,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 		}
 		catch(Exception exp)
 		{
-			logger.debug("Not able to format exception.", exp);
+			LOGGER.debug("Not able to format exception.", exp);
 		}
 		finally
 		{
@@ -57,7 +56,7 @@ public class ConstraintViolationFormatter implements ExceptionFormatter
 			}
 			catch (DAOException exception)
 			{
-				logger.debug("Exception during closing the JDBC session. ",exception);
+				LOGGER.debug("Exception during closing the JDBC session. ",exception);
 			}
 		}
 		return formatedMessage;

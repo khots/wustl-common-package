@@ -19,19 +19,17 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ObjectNotFoundFormatter.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ObjectNotFoundFormatter.class);
 
 	/**
 	 * This method format Message.
 	 * @param objExcp Exception
-	 * @param args arguments
 	 * @return formatted Error Message.
 	 */
 	public String formatMessage(Exception objExcp)
 	{
-		// TODO Auto-generated method stub
 		String formattedErrMsg = null;
 		String temp1 = "exists: ";
 		String temp2 = "class: ";
@@ -53,30 +51,29 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			startIndex = message.indexOf(temp1) - 1;
 			tempIndex = message.indexOf(temp3) + temp3.length();
 			String columnName = message.substring(tempIndex, startIndex);
-			logger.debug(columnName + "--" + columnName.length());
+			LOGGER.debug(columnName + "--" + columnName.length());
 
 			// get column value on from message for which object was not found.
 			startIndex = message.indexOf(temp1) + temp1.length();
 			endIndex = message.indexOf(',', startIndex);
 			String value = message.substring(startIndex, endIndex);
-			logger.debug(value + "  " + value.length());
+			LOGGER.debug(value + "  " + value.length());
 
 			// get class name from message
 			startIndex = message.indexOf(temp2) + temp2.length();
 			String className = message.substring(startIndex);
-			logger.debug(className + "--" + className.length());
+			LOGGER.debug(className + "--" + className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class
 			String displayName = ExceptionFormatterFactory.
 				getDisplayName(HibernateMetaData.getTableName(classObj), jdbcDAO);
 
 			Object[] arguments = new Object[]{displayName, columnName, value};
-
 			formattedErrMsg = MessageFormat.format(Constants.OBJECT_NOT_FOUND_ERROR, arguments);
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;
@@ -117,11 +114,11 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			Object[] arguments = new Object[]{displayName, columnName, value};
 
 			formattedErrMsg = MessageFormat.format(Constants.OBJECT_NOT_FOUND_ERROR, arguments);
-			logger.debug(formattedErrMsg);
+			LOGGER.debug(formattedErrMsg);
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 	}
