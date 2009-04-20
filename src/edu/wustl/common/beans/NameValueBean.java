@@ -27,9 +27,9 @@ public class NameValueBean implements Comparable<NameValueBean>, Serializable
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(NameValueBean.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(NameValueBean.class);
 	/**
 	 * Specifies serial Version UID.
 	 */
@@ -170,7 +170,7 @@ public class NameValueBean implements Comparable<NameValueBean>, Serializable
 		}
 		catch (ClassCastException exception)
 		{
-			logger.error("Objects to compared must be of same class.", exception);
+			LOGGER.error("Objects to compared must be of same class.", exception);
 			cmpResult = 0;
 		}
 
