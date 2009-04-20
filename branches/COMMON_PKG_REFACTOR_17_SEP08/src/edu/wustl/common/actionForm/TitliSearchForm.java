@@ -33,9 +33,9 @@ public class TitliSearchForm extends ActionForm
 	private static final long serialVersionUID = 3133201882979460560L;
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(TitliSearchForm.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(TitliSearchForm.class);
 
 	/**
 	 * Specifies search String.
@@ -141,7 +141,7 @@ public class TitliSearchForm extends ActionForm
 		}
 		catch (Exception exception)
 		{
-			logger.error("Exception in TitliSearchForm : " + exception.getMessage(), exception);
+			LOGGER.error("Exception in TitliSearchForm : " + exception.getMessage(), exception);
 
 		}
 

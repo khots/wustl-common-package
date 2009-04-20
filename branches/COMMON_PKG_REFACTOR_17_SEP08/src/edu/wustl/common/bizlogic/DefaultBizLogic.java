@@ -51,7 +51,7 @@ import edu.wustl.dao.util.DAOConstants;
  * @author kapil_kaveeshwar
  */
 public class DefaultBizLogic extends AbstractBizLogic
-{	
+{
 	/**
 	 * Constructor with argument as application name.
 	 * This application is used to get DAO.
@@ -69,9 +69,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 		super();
 	}
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogic.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(DefaultBizLogic.class);
 
 	/**
 	 * This method gets called before insert method.
@@ -113,6 +113,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.insert.error",
 					"Exception in insert operation.");
 		}
@@ -146,6 +147,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.delete.error",
 					"Exception in delete operation.");
 		}
@@ -184,6 +186,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.update.error",
 					"Exception in update operation.");
 		}
@@ -247,6 +250,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -286,6 +290,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error",
 					"Not able to retrieve data using QueryWhereClause.");
 		}
@@ -345,6 +350,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -372,6 +378,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -400,6 +407,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -428,6 +436,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -572,9 +581,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 				results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 			}
 		}
-		catch (DAOException exception)
+		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(exception, "biz.getlist.error", "Not able to get list.");
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, "biz.getlist.error", "Not able to get list.");
 		}
 		/**
 		 * For each row in the result a vector will be created.Vector will contain all the columns
@@ -753,9 +763,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 			HibernateDAO hibDAO = (HibernateDAO) dao;
 			hibDAO.addAuditEventLogs(auditEventLogsCollection);
 		}
-		catch (DAOException daoEx)
+		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoEx, "biz.disableaudit.error",
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, "biz.disableaudit.error",
 					"Exception in disableAndAuditObjects method.");
 		}
 	}
@@ -829,11 +840,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
-		logger.debug(sourceClass.getName() + " Related objects to "
+		LOGGER.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		return list;
 	}
@@ -867,6 +879,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Not able to fetch related objects.");
 		}
@@ -903,6 +916,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Exception in getRelatedObjects method.");
 		}
@@ -930,6 +944,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Exception in getRelatedObjects method.");
 		}
@@ -1014,6 +1029,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
+			LOGGER.debug(daoEx.getMessage(), daoEx);
 			throw getBizLogicException(daoEx, "biz.activitystatus.error",
 					"Exception in getActivityStatus method.");
 		}
@@ -1021,7 +1037,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		if (!list.isEmpty())
 		{
 			Object obj = list.get(0);
-			logger.debug("obj Class " + obj.getClass());
+			LOGGER.debug("obj Class " + obj.getClass());
 			//Object[] objArr = (String)obj
 			activityStatus = (String) obj;
 		}
@@ -1042,6 +1058,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
+			LOGGER.debug(daoEx.getMessage(), daoEx);
 			throw getBizLogicException(daoEx, "biz.insert.error",
 					"Exception during insert operation.");
 		}
@@ -1061,6 +1078,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.update.error",
 					"Exception during update operation.");
 		}
@@ -1087,6 +1105,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.retattr.error",
 					"Exception during retrieveAttribute method.");
 		}
@@ -1119,6 +1138,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (ClassNotFoundException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.retattr.error",
 					"DefaultBizLogic-Not able to find class:" + sourceObjectName);
 		}
@@ -1212,11 +1232,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (HibernateException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.exequery.error",
 					"HibernateException in executeQuery method:");
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.exequery.error",
 					"DAOException in executeQuery method:");
 		}
@@ -1228,6 +1250,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			catch (Exception exception)
 			{
+				LOGGER.debug(exception.getMessage(), exception);
 				exception.printStackTrace();
 				throw getBizLogicException(exception, "biz.exequery.error",
 						"DAOException in executeQuery method:");
@@ -1269,7 +1292,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (Exception dbex)
 		{
-			logger.error(dbex.getMessage(), dbex);
+			LOGGER.error(dbex.getMessage(), dbex);
 			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
 			throw new BizLogicException(errorKey, dbex, "DefaultBizLogic.java :"
 					+ Constants.DISABLE_RELATED_OBJ);

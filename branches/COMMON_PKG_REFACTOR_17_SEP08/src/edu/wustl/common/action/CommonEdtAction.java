@@ -123,7 +123,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
 				.valueOf(abstractForm.getId()), abstractForm);
-		return abstractDomain;	
+		return abstractDomain;
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class CommonEdtAction extends BaseAddEditAction
 					abstractForm.getId());
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
-		}		
+		}
 		finally
 
 		{
