@@ -198,8 +198,8 @@ IDBExceptionFormatter
 
 			int key = -1;
 			int indexofMsg = 0;
-			indexofMsg = sqlMessage.indexOf(DAOConstants.MYSQL_DUPL_KEY_MSG);
-			indexofMsg += DAOConstants.MYSQL_DUPL_KEY_MSG.length();
+			indexofMsg = sqlMessage.indexOf(Constants.MYSQL_DUPL_KEY_MSG);
+			indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
 
 			// Get the %d part of the string
 			String strKey =sqlMessage.substring(indexofMsg,sqlMessage.length()-1);
