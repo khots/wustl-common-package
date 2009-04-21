@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,9 +27,10 @@ import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.query.generator.ColumnValueBean;
 import edu.wustl.dao.query.generator.QueryData;
-import edu.wustl.dao.util.DAOConstants;
 import edu.wustl.dao.util.NamedQueryParam;
+import edu.wustl.dao.util.StatementData;
 
 
 public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConnectionManager
@@ -55,8 +58,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		if(isTestForFail)
 		{
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
-					DAOConstants.EXECUTE_QUERY_ERROR);
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :");
 		}
 		else if(identifierList)
 		{
@@ -84,8 +86,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		if(isTestForFail)
 		{
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
-					DAOConstants.EXECUTE_QUERY_ERROR);
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :");
 		}
 	}
 	public Object getObject() throws DAOException
@@ -186,8 +187,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		if(isTestForFail)
 		{
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :"+
-					DAOConstants.EXECUTE_QUERY_ERROR);
+			throw new DAOException(errorKey,new Exception(""),"MyJDAOImpl.java :");
 		}
 		else if(returnActivityStatusObj)
 		{
@@ -688,11 +688,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		
 	}
-	public int executeUpdate(String query, LinkedList columnValues) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 	public ResultSet getDBMetaDataResultSet(String tableName) throws DAOException
 	{
 		// TODO Auto-generated method stub
@@ -735,10 +731,11 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		return null;
 	}*/
-	public int executeUpdate(String sql) throws DAOException
+	public  StatementData executeUpdate(String sql) throws DAOException
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
+		
 	}
 	public void audit(Object obj, Object oldObj) throws DAOException
 	{
@@ -760,5 +757,44 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		
 	}
+	public List executeQuery(String arg0, Integer arg1, Integer arg2, List arg3)
+			throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void batchClose() throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void batchCommit() throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void batchInitialize(int batchSize, String tableName, SortedSet<String> columnSet)
+			throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public void batchInsert(SortedMap<String, ColumnValueBean> dataMap) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void openTransaction()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public StatementData executeUpdate(String tableName,
+			LinkedList<ColumnValueBean> columnValueBeanSet) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}	
 
 }
