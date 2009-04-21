@@ -995,6 +995,21 @@ public final class Utility
         }
 		  return messageToReturn;
 	}
+	
+	 /**
+     * Constants that will appear in HQL for retreiving Attributes of the Collection data type.
+     */
+    private static final String ELEMENTS = "elements";
+	/**
+	 * Check whether the select Column start with "elements" & ends with ")" or not
+	 * @param columnName The columnName
+	 * @return true if the select Column start with "elements" & ends with ")" or not
+	 */
+	public static boolean isColumnNameContainsElements(String columnName) 
+	{
+		columnName = columnName.toLowerCase().trim();
+		return columnName.startsWith(ELEMENTS) && columnName.endsWith(")");
+	}
 
 	
 }

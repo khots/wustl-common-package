@@ -29,7 +29,6 @@ import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
@@ -43,7 +42,7 @@ import edu.wustl.dao.condition.INClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.util.DAOConstants;
+import edu.wustl.dao.util.HibernateMetaData;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -1101,7 +1100,36 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao = getHibernateDao(getAppName(),null);
-			attribute = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
+			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
+			
+			/*
+			 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+			 */
+			if (Utility.isColumnNameContainsElements(attributeName))
+			{
+				Collection collection = new HashSet();
+				attribute = collection;
+				for(int i=0;i<list.size();i++)
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
+				}
+			}
+			else
+			{
+				if (!list.isEmpty())
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
+				}
+			}
+	
 		}
 		catch (DAOException daoExp)
 		{
