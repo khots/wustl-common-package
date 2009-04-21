@@ -971,11 +971,35 @@ public abstract class AbstractBizLogic implements IBizLogic
     	}
     	else
     	{
-    		errMsg = formatException(exception.getWrapException(),obj,operation);
+    		errMsg = formatException(getWrapException(exception),obj,operation);
     	}
 
         return errMsg;
     }
     
+    /**
+     * This method returns root exception used in message formatter.
+     * @param exception ApplicationException
+     * @return exception used in message formatter.
+     */
+    private Exception getWrapException(ApplicationException exception)
+    {
+    	Exception rootException=null;
+    	ApplicationException wrapException=exception;
+		while(true)
+		{
+    		if((wrapException.getWrapException() instanceof ApplicationException))
+    		{
+    			wrapException=(ApplicationException)exception.getWrapException();
+    			continue;
+    		}
+    		else
+    		{
+    			rootException=wrapException.getWrapException();
+    			break;
+    		}
+		}
+    	return rootException;
+    }
     
 }
