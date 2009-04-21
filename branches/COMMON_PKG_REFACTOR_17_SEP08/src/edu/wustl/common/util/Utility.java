@@ -722,19 +722,23 @@ public final class Utility
 	 */
 	private static Calendar getCalendar(String date, String pattern)
 	{
-		Calendar calendar;
+		Calendar calendar = Calendar.getInstance();
 		try
 		{
-			SimpleDateFormat dateformat = new SimpleDateFormat(pattern, CommonServiceLocator
-					.getInstance().getDefaultLocale());
-			Date givenDate = dateformat.parse(date);
-			calendar = Calendar.getInstance();
-			calendar.setTime(givenDate);
+
+			if(date != null && !date.trim().equals(""))
+			{
+				SimpleDateFormat dateformat = new SimpleDateFormat(pattern, CommonServiceLocator
+						.getInstance().getDefaultLocale());
+				Date givenDate = dateformat.parse(date);
+				calendar = Calendar.getInstance();
+				calendar.setTime(givenDate);
+			}
 		}
 		catch (ParseException exception)
 		{
 			LOGGER.error("exception in getCalendar: date=" + date, exception);
-			calendar = Calendar.getInstance();
+			//calendar = Calendar.getInstance();
 		}
 		return calendar;
 	}
