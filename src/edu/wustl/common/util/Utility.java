@@ -987,7 +987,7 @@ public final class Utility
             {
             	  for (int i = 0; i < str.length; i++)
                   {
-                  	message.append(str[i]).append(TextConstants.EMPTY_STRING);
+                  	message.append(str[i]).append(' ');
                   }
                   messageToReturn =  message.toString();
             }
