@@ -18,7 +18,6 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
@@ -120,7 +119,7 @@ public class CommonEdtAction extends BaseAddEditAction
 			throws ApplicationException
 	{
 		AbstractDomainObject abstractDomain;
-		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
+		IBizLogic defaultBizLogic =getIBizLogic(abstractForm);
 		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
 				.valueOf(abstractForm.getId()), abstractForm);
 		return abstractDomain;
@@ -164,7 +163,8 @@ public class CommonEdtAction extends BaseAddEditAction
 		HibernateDAO hibernateDao = null;
 		try
 		{
-			String appName = CommonServiceLocator.getInstance().getAppName();
+			//String appName = CommonServiceLocator.getInstance().getAppName();
+			String appName =((DefaultBizLogic)getIBizLogic(abstractForm)).getAppName();
 			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
 					.getDAO();
 			hibernateDao.openSession(null);
