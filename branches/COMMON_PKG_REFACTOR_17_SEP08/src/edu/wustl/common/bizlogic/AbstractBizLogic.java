@@ -984,22 +984,22 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     private Exception getWrapException(ApplicationException exception)
     {
-    	Exception rootException=null;
-    	ApplicationException wrapException=exception;
+    	Throwable rootException=null;
+    	Throwable wrapException=exception;
 		while(true)
 		{
-    		if((wrapException.getWrapException() instanceof ApplicationException))
+    		if((wrapException instanceof ApplicationException))
     		{
-    			wrapException=(ApplicationException)exception.getWrapException();
+    			wrapException= wrapException.getCause();
     			continue;
     		}
     		else
     		{
-    			rootException=wrapException.getWrapException();
+    			rootException= wrapException;
     			break;
     		}
 		}
-    	return rootException;
+    	return (Exception)rootException;
     }
     
 }
