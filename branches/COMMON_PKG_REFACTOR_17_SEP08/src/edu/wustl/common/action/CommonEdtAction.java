@@ -119,6 +119,7 @@ public class CommonEdtAction extends BaseAddEditAction
 			throws ApplicationException
 	{
 		AbstractDomainObject abstractDomain;
+		//changes as per cider.
 		IBizLogic defaultBizLogic =getIBizLogic(abstractForm);
 		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
 				.valueOf(abstractForm.getId()), abstractForm);
