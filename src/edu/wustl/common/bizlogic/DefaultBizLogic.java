@@ -29,7 +29,7 @@ import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.CommonServiceLocator;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
@@ -985,7 +985,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				if (activityStatus.equals(Status.ACTIVITY_STATUS_CLOSED.toString()))
 				{
 					throw getBizLogicException(null, "biz.checkstatus.error",
-							"Exception in checkStatus method.");
+							errorName + " " + ApplicationProperties.getValue("error.object.closed"));
 				}
 			}
 		}
