@@ -1144,6 +1144,66 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return attribute;
 	}
+	
+	
+	
+	/**
+	 * This method retrieve Attribute.
+	 * @param objClass objClass
+	 * @param identifier identifier
+	 * @param attributeName attribute Name
+	 * @return attribute.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	public Object retrieveAttribute(DAO dao,Class objClass, Long identifier, String attributeName)
+			throws BizLogicException
+	{
+		String columnName = Constants.SYSTEM_IDENTIFIER;
+		Object attribute = null;
+
+		try
+		{
+			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
+
+			/*
+			 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+			 */
+			if (Utility.isColumnNameContainsElements(attributeName))
+			{
+				Collection collection = new HashSet();
+				attribute = collection;
+				for(int i=0;i<list.size();i++)
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
+				}
+			}
+			else
+			{
+				if (!list.isEmpty())
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
+				}
+			}
+
+		}
+		catch (DAOException daoExp)
+		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, "biz.retattr.error",
+			"Exception during retrieveAttribute method.");
+		}
+
+		return attribute;
+	}
+
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
