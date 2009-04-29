@@ -1,10 +1,12 @@
 package edu.wustl.common.util.impexp;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -207,9 +209,10 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	{
 		Statement stmt = null;
 		ResultSet resultSet = null;
+		Connection connection=null;
 		try
 		{
-			Connection connection=getConnection();
+			connection=getConnection();
 			String query = "select * from " + tableName + " where 1=2";
 			stmt = connection.createStatement();
 			resultSet = stmt.executeQuery(query);
@@ -226,7 +229,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			{
 				resultSet.close();
 			}
-
+			connection.close();
 		}
 	}
 
@@ -317,7 +320,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		/**
 		 * InputStream object.
 		 */
-		private InputStream inputStream;
+		private final InputStream inputStream;
 
 		/**
 		 * One argument constructor.
@@ -328,6 +331,27 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			super();
 			this.inputStream = inputStream;
 		}
+		/**
+		 * Implementing run method.
+		 */
+		public void run()
+	    {
+	        try
+	        {
+	            InputStreamReader isr = new InputStreamReader(inputStream);
+	            BufferedReader bufferReader = new BufferedReader(isr);
+	            String line=null;
+
+	            while ( (line = bufferReader.readLine()) != null)
+	            {
+	            	OracleAutomateImpExp.logger.info(line);
+	            }
+	        }
+	        catch (IOException ioe)
+	        {
+	        	ioe.printStackTrace();  
+	        }
+	    }
 	}
 
 }
