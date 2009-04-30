@@ -118,12 +118,9 @@ public class CommonEdtAction extends BaseAddEditAction
 	private AbstractDomainObject getDomainObject(AbstractActionForm abstractForm, String objectName)
 			throws ApplicationException
 	{
-		AbstractDomainObject abstractDomain;
-		//changes as per cider.
 		IBizLogic defaultBizLogic =getIBizLogic(abstractForm);
-		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
+		return defaultBizLogic.populateDomainObject(objectName, Long
 				.valueOf(abstractForm.getId()), abstractForm);
-		return abstractDomain;
 	}
 
 	/**
@@ -165,19 +162,18 @@ public class CommonEdtAction extends BaseAddEditAction
 		try
 		{
 			//String appName = CommonServiceLocator.getInstance().getAppName();
-			String appName =((DefaultBizLogic)getIBizLogic(abstractForm)).getAppName();
+			IBizLogic bizLogic = getIBizLogic(abstractForm);
+			String appName =((DefaultBizLogic)bizLogic).getAppName();
 			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
 					.getDAO();
 			hibernateDao.openSession(null);
 
 			AbstractDomainObject abstractDomainOld;
 			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
-					abstractForm.getId());
-			IBizLogic bizLogic = getIBizLogic(abstractForm);
+					abstractForm.getId());			
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
 		}
 		finally
-
 		{
 			try
 			{
