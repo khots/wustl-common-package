@@ -836,7 +836,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @return true if Privilege to view else false.
 	 */
 	public boolean hasPrivilegeToView(String objName, Long identifier,
-			SessionDataBean sessionDataBean)
+			SessionDataBean sessionDataBean)throws BizLogicException
 	{
 		return false;
 	}
