@@ -317,7 +317,7 @@ public interface IBizLogic
 	 * @return hasPrivilegeToView.
 	 */
 	boolean hasPrivilegeToView(String objName, Long identifier,
-			SessionDataBean sessionDataBean);
+			SessionDataBean sessionDataBean)throws BizLogicException;
 
 	/**
 	 * gets ReadDenied Privilege Name.
