@@ -43,12 +43,12 @@ public class StringDataType implements IDBDataType
 	 */
 	public Object getObjectValue(String str) throws ParseException, IOException
 	{
-		Object obj = null;
+		/*Object obj = null;
 		if (!TextConstants.EMPTY_STRING.equals(str))
 		{
 			obj = str;
-		}
-		return obj;
+		}*/
+		return str;
 	}
 
 }
