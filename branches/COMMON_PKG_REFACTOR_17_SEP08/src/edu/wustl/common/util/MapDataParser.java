@@ -87,12 +87,13 @@ public class MapDataParser
 			IOException
 	{
 		Object object;
-		if(TextConstants.EMPTY_STRING.equals(str))
+		if(TextConstants.EMPTY_STRING.equals(str) && !type.equals(String.class))
 		{
 			object=null;
 		}
 		else
 		{
+			
 			String dataType = type.getSimpleName().toLowerCase();
 			IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getDataType(dataType);
 			object=dbDataType.getObjectValue(str);
