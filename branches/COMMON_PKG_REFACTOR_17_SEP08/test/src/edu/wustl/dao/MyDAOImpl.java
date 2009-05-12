@@ -795,6 +795,11 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public List executeQuery(String query, Integer startIndex,
+			Integer maxRecords, LinkedList paramValues) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 
 }
