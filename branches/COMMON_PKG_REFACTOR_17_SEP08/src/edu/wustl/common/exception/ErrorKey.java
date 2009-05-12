@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import edu.wustl.common.util.logger.Logger;
+
 
 /**
  * This class provides the functionality to cache error keys and their messages.
@@ -48,6 +50,8 @@ public final class ErrorKey implements Serializable
 	 * The static map used as cache for the ErrorKey objects.
 	 */
 	private static Map<String, ErrorKey> errorKeyMap = new HashMap<String, ErrorKey>();
+	
+	private static Logger logger = Logger.getCommonLogger(ErrorKey.class);
 
 	/**
 	 * Private constructor to restrict rest of the world from instantiating object.
@@ -79,6 +83,9 @@ public final class ErrorKey implements Serializable
 	 */
 	public static ErrorKey getErrorKey(String errorName)
 	{
+		//TODO:will remove this sysout : temporary
+		System.out.println("Error key name ::"+errorName);
+		logger.info("Error key name ::"+errorName);
 		return errorKeyMap.get(errorName);
 	}
 
