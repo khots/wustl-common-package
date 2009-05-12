@@ -956,25 +956,29 @@ public abstract class AbstractBizLogic implements IBizLogic
      */
     public String getErrorMessage(ApplicationException exception, Object obj, String operation)
     {
-    	String errMsg;
+    
+    	StringBuffer buff = new StringBuffer();
     	
     	if (exception.getWrapException() == null)
     	{
     		if(exception.toMsgValuesArray().length>0)
     		{
-    			errMsg = exception.toMsgValuesArray()[0];
+    			for(String msg :exception.toMsgValuesArray())
+    			{
+    				buff.append(msg).append("  ");
+    			}
     		}
     		else
     		{
-    			errMsg = exception.getMessage();
+    			buff.append(exception.getMessage());
     		}
     	}
     	else
     	{
-    		errMsg = formatException(getWrapException(exception),obj,operation);
+    		buff.append(formatException(getWrapException(exception),obj,operation));
     	}
 
-        return errMsg;
+        return buff.toString();
     }
     
     /**
