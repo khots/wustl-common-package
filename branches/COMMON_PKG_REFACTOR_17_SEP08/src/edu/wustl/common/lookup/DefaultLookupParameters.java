@@ -9,7 +9,7 @@
 
 package edu.wustl.common.lookup;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * DefaultLookupParameters Class.
@@ -26,12 +26,12 @@ public class DefaultLookupParameters implements LookupParameters
 	/**
 	 * List of participants.
 	 */
-	private List listOfParticipants;
+	private Map listOfParticipants;
 
 	/**
 	 * @return Returns the listOfParticipants.
 	 */
-	public List getListOfParticipants()
+	public Map getListOfParticipants()
 	{
 		return listOfParticipants;
 	}
@@ -39,7 +39,7 @@ public class DefaultLookupParameters implements LookupParameters
 	/**
 	 * @param listOfParticipants The listOfParticipants to set.
 	 */
-	public void setListOfParticipants(List listOfParticipants)
+	public void setListOfParticipants(Map listOfParticipants)
 	{
 		this.listOfParticipants = listOfParticipants;
 	}
