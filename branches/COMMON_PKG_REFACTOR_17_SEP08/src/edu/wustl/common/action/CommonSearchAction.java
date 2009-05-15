@@ -166,7 +166,7 @@ public class CommonSearchAction extends Action
 		}
 		if (!hasPrivilege)
 		{
-			throw new ApplicationException(ErrorKey.getErrorKey("error.common.bizlogic"), null,
+			throw new ApplicationException(ErrorKey.getErrorKey("access.view.denied"), null,
 					 "User does not have privilege to view this information.");
 		}
 	}
