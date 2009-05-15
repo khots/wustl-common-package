@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,16 +23,19 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -1015,5 +1019,93 @@ public final class Utility
 		return columnName.startsWith(ELEMENTS) && columnName.endsWith(")");
 	}
 
-	
+	/**
+	 * Parse the exception object and find DB table name.
+	 * @param objExcp exception object.
+	 * @throws Exception Exception
+	 * @return table Name.
+	 */
+	public static String parseException(Exception objExcp) throws Exception
+	{
+		LOGGER.debug(objExcp.getClass().getName());
+		String tableName = "";
+		if (objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
+		{
+			objExcp = (Exception) objExcp.getCause();
+			LOGGER.debug(objExcp);
+		}
+		/*	if(args[0]!=null) {
+				tableName = (String)args[0];
+			} else {
+				logger.debug("Table Name not specified");
+				tableName=new String("Unknown Table");
+			}
+			logger.debug("Table Name:" + tableName);*/
+		//get Class name from message "could not insert [classname]"
+		ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
+		String message = cEX.getMessage();
+		LOGGER.debug("message :" + message);
+		int startIndex = message.indexOf("[");
+
+		/**
+		 * Bug ID: 4926
+		 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
+		*/
+		int endIndex = message.indexOf("#");
+		if (endIndex == -1)
+		{
+			endIndex = message.indexOf("]");
+		}
+		String className = message.substring((startIndex + 1), endIndex);
+		LOGGER.debug("ClassName: " + className);
+		Class classObj = Class.forName(className);
+		// get table name from class
+		tableName = HibernateMetaData.getRootTableName(classObj);
+		/**
+		 * Bug ID: 6034
+		 * Description:To retrive the appropriate tablename checking the SQL"
+		*/
+		if (!(cEX.getSQL().contains(tableName)))
+		{
+			tableName = HibernateMetaData.getTableName(classObj);
+			Properties prop = new Properties();
+			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(
+					"tablemapping.properties"));
+			if (prop.getProperty(tableName) != null)
+			{
+				tableName = prop.getProperty(tableName);
+			}
+		}
+
+		return tableName;
+	}
+
+	/**
+	 * Format and return message to display.
+	 * @param columnNames column Names
+	 * @param tableName table Name
+	 * @param jdbcdao jdbc dao
+	 * @return error message to display.
+	 * @throws Exception
+	 */
+	public static String prepareMessage(StringBuffer columnNames, String tableName, JDBCDAO jdbcdao)
+	{
+		String formattedErrMsg = "";
+		String columnName = ""; //stores Column_Name of table
+
+		// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
+		Object[] arguments = new Object[2];
+		String dispTableName = ExceptionFormatterFactory.getDisplayName(tableName, jdbcdao);
+		arguments[0] = dispTableName;
+		columnName = columnNames.toString();
+		columnName = columnName.substring(0, columnName.length());
+		arguments[1] = columnName;
+		LOGGER.debug("Column Name: " + columnNames.toString());
+
+		// Insert Table_Name and Column_Name in CONSTRAINT_VOILATION_ERROR message
+		formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR, arguments);
+
+		return formattedErrMsg;
+	}
+
 }
