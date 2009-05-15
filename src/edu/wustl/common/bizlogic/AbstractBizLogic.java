@@ -573,7 +573,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param obj object
 	 * @param operation operation
 	 * @return error message.
-	 * @throws ApplicationException Application Exception.
 	 */
 	public String formatException(Exception exception, Object obj, String operation)
 	{
@@ -632,6 +631,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 				if (mainTableName != null)
 				{
 					tableName = mainTableName;
+				}
+				if (DAOConfigFactory.getInstance().getDAOFactory().getDataBaseType()
+						.equalsIgnoreCase("oracle"))
+				{
+					tableName = tableName.toUpperCase();
 				}
 				if (operation != null)
 				{
