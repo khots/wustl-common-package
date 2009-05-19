@@ -177,7 +177,7 @@ public final class ErrorKey implements Serializable
 	/**
 	 * @param errorMessage the errorMessage to set
 	 */
-	private void setErrorMessage(String errorMessage)
+	public void setErrorMessage(String errorMessage)
 	{
 		this.errorMessage = errorMessage;
 	}

@@ -248,12 +248,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 				refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
 			}
 		}
-		catch (ApplicationException ex)
+		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			String errMsg = getErrorMessage(ex,obj,"Deleting");
-			LOGGER.debug(errMsg, ex);
-			throw getBizLogicException(ex, "biz.delete.error", errMsg);
+			String errMsg = getErrorMessage(exception,obj,"Deleting");
+			exception.getErrorKey().setErrorMessage(errMsg);
+			LOGGER.debug(errMsg, exception);
+			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
 		}
 		finally
 		{
@@ -293,8 +294,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMssg = getErrorMessage(exception,obj,"Inserting");
+			exception.getErrorKey().setErrorMessage(errMssg);
 			LOGGER.debug(errMssg, exception);
-			throw getBizLogicException(exception, "biz.insert.error",errMssg);
+			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
 		}
 		finally
 		{
@@ -349,8 +351,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
+			exception.getErrorKey().setErrorMessage(errMsg);
 			LOGGER.debug(errMsg, exception);
-			throw getBizLogicException(exception, "biz.insert.error",errMsg);
+			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
 		}
 		finally
 		{
@@ -501,12 +504,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 						"AbstractBizLogic:User Not Authorized.");
 			}
 		}
-		catch (ApplicationException ex)
+		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			String errMsg = getErrorMessage(ex,currentObj,"Updating");
-			LOGGER.debug(errMsg, ex);
-			throw getBizLogicException(ex, "biz.update.error", errMsg);
+			String errMsg = getErrorMessage(exception,currentObj,"Updating");
+			exception.getErrorKey().setErrorMessage(errMsg);
+			LOGGER.debug(errMsg, exception);
+			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
 		}
 		finally
 		{
@@ -573,6 +577,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param obj object
 	 * @param operation operation
 	 * @return error message.
+	 * @throws ApplicationException Application Exception.
 	 */
 	public String formatException(Exception exception, Object obj, String operation)
 	{
@@ -631,11 +636,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 				if (mainTableName != null)
 				{
 					tableName = mainTableName;
-				}
-				if (DAOConfigFactory.getInstance().getDAOFactory().getDataBaseType()
-						.equalsIgnoreCase("oracle"))
-				{
-					tableName = tableName.toUpperCase();
 				}
 				if (operation != null)
 				{
@@ -965,7 +965,8 @@ public abstract class AbstractBizLogic implements IBizLogic
     	
     	if (exception.getWrapException() == null)
     	{
-    		if(exception.toMsgValuesArray().length>0)
+    		buff.append(exception.getMessage());
+    		/*if(exception.toMsgValuesArray() != null && exception.toMsgValuesArray().length>0)
     		{
     			for(String msg :exception.toMsgValuesArray())
     			{
@@ -975,7 +976,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     		else
     		{
     			buff.append(exception.getMessage());
-    		}
+    		}*/
     	}
     	else
     	{
