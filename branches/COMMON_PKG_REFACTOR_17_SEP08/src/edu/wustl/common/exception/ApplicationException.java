@@ -123,7 +123,7 @@ public class ApplicationException extends Exception
 	 * Returns errorKey object. This function accessible only by child classes
 	 * @return errorKey object reference.
 	 */
-	protected ErrorKey getErrorKey()
+	public ErrorKey getErrorKey()
 	{
 		return errorKey;
 	}
@@ -256,4 +256,11 @@ public class ApplicationException extends Exception
 		return wrapException;
 	}
 
+	/**
+	* This will return the complete error message.
+	*/
+	 public String getMessage()
+	 {
+	        return errorKey.getMessageWithValues();
+	 }
 }
