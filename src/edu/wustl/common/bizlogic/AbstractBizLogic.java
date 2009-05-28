@@ -254,7 +254,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			String errMsg = getErrorMessage(exception,obj,"Deleting");
 			//exception.getErrorKey().setErrorMessage(errMsg);
 			LOGGER.debug(errMsg, exception);
-			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
+			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
@@ -295,7 +295,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			rollback(dao);
 			String errMssg = getErrorMessage(exception,obj,"Inserting");
 			LOGGER.debug(errMssg, exception);
-			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMssg);
+			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMssg);
 		}
 		finally
 		{
@@ -351,7 +351,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
 			LOGGER.debug(errMsg, exception);
-			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
+			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
@@ -507,7 +507,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,currentObj,"Updating");
 			LOGGER.debug(errMsg, exception);
-			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
+			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
