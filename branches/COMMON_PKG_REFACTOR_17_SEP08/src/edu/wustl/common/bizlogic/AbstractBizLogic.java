@@ -977,7 +977,15 @@ public abstract class AbstractBizLogic implements IBizLogic
     	}
     	else
     	{
-    		buff.append(formatException(getWrapException(exception),obj,operation));
+    		Exception exp = getWrapException(exception);
+    		if(exp != null)
+    		{
+    			buff.append(formatException(exp,obj,operation));
+    		}
+    		else
+    		{
+    			buff.append(exception.getMessage());
+    		}
     	}
 
         return buff.toString();
