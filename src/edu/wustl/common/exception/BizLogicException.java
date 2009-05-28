@@ -35,4 +35,9 @@ public class BizLogicException extends ApplicationException
 	{
 		super(daoException);
 	}
+	
+	public BizLogicException(ErrorKey errorKey, Exception exception, String msgValues,String customizedMsg)
+	{
+		super(errorKey, exception, msgValues,customizedMsg);
+	}
 }

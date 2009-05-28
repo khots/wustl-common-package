@@ -171,7 +171,7 @@ public interface IBizLogic
 	 * @param domainObject domain Object.
 	 * @return Object Id.
 	 */
-	String getObjectId(DAO dao, Object domainObject);
+	String getObjectId(DAO dao, Object domainObject)throws BizLogicException;
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.

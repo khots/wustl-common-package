@@ -21,11 +21,13 @@ import java.util.List;
 import org.hibernate.HibernateException;
 
 import edu.wustl.common.actionForm.IValueObject;
+import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
@@ -109,13 +111,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.insert(obj, true);
+			dao.insert(obj);
+			AuditManager auditManager = getAuditManager(sessionDataBean);
+			auditManager.insertAudit(dao, obj);
+			
 		}
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.insert.error",
 					"Exception in insert operation.");
+		} catch (AuditException exception) {
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception, "audit.error",
+					"Exception while auditing.");
 		}
 	}
 
@@ -182,13 +191,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.update(obj);
-			dao.update(obj, oldObj);
+			AuditManager auditManager = getAuditManager(sessionDataBean);
+			auditManager.updateAudit(dao, obj, oldObj);
+			
 		}
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.update.error",
 					"Exception in update operation.");
+		}
+		 catch (AuditException exception) {
+				LOGGER.debug(exception.getMessage(), exception);
+				throw getBizLogicException(exception, "audit.error",
+						"Exception while auditing.");
 		}
 	}
 
@@ -761,13 +777,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 
 			HibernateDAO hibDAO = (HibernateDAO) dao;
-			hibDAO.addAuditEventLogs(auditEventLogsCollection);
+			AuditManager auditManager = getAuditManager(null);
+			auditManager.addAuditEventLogs(hibDAO, auditEventLogsCollection);
+		
 		}
 		catch (DAOException daoExp)
 		{
 			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.disableaudit.error",
 					"Exception in disableAndAuditObjects method.");
+		}
+		catch (AuditException exception) {
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception, "audit.error",
+					"Exception while auditing.");
 		}
 	}
 
@@ -800,19 +823,33 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param dao The dao object.
 	 * @param tablename Contains the field table name
 	 * @param listOfSubElement list Of SubElement
+	 * @throws BizLogicException 
 	 */
-	protected void auditDisabledObjects(DAO dao, String tablename, List listOfSubElement)
+	protected void auditDisabledObjects(DAO dao, String tablename, List listOfSubElement) throws BizLogicException
 	{
-		Iterator iterator = listOfSubElement.iterator();
-		Collection auditEventLogsCollection = new HashSet();
-
-		while (iterator.hasNext())
+		try
 		{
-			Long objectIdentifier = (Long) iterator.next();
-			addAuditEventstoColl(tablename, auditEventLogsCollection, objectIdentifier);
+			Iterator iterator = listOfSubElement.iterator();
+			Collection auditEventLogsCollection = new HashSet();
+
+			while (iterator.hasNext())
+			{
+				Long objectIdentifier = (Long) iterator.next();
+				addAuditEventstoColl(tablename, auditEventLogsCollection, objectIdentifier);
+			}
+			HibernateDAO hibDAO = (HibernateDAO) dao;
+			AuditManager auditManager = getAuditManager(null);
+			auditManager.addAuditEventLogs(hibDAO, auditEventLogsCollection);
 		}
-		HibernateDAO hibDAO = (HibernateDAO) dao;
-		hibDAO.addAuditEventLogs(auditEventLogsCollection);
+		catch (AuditException exception) {
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception, "audit.error",
+			"Exception while auditing.");
+		} catch (DAOException exception) {
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception, "dao.error",
+			"Exception while auditing.");
+		}
 	}
 
 	/**
@@ -1054,7 +1091,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.insert(obj, false);
+			dao.insert(obj);
 		}
 		catch (DAOException daoEx)
 		{
@@ -1299,7 +1336,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param domainObject Object on which authorization is required.
 	 * @return allow Operation.
 	 */
-	public String getObjectId(DAO dao, Object domainObject)
+	public String getObjectId(DAO dao, Object domainObject)throws BizLogicException
 	{
 		return Constants.ALLOW_OPERATION;
 	}
@@ -1424,5 +1461,27 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throws BizLogicException
 	{
 		return false;
+	}
+	
+	/**
+	 * This method will be called to return the Audit manager.
+	 * @param sessionDataBean
+	 * @return
+	 */
+	public AuditManager getAuditManager(SessionDataBean sessionDataBean)
+	{
+
+		AuditManager auditManager = new AuditManager();
+		if (sessionDataBean == null)
+		{
+			auditManager.setUserId(null);
+		}
+		else
+		{
+			auditManager.setUserId(sessionDataBean.getUserId());
+			auditManager.setIpAddress(sessionDataBean.getIpAddress());
+		}
+		return auditManager;
+	
 	}
 }
