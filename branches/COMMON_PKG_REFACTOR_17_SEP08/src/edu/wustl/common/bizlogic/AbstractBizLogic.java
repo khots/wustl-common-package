@@ -252,9 +252,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,obj,"Deleting");
-			exception.getErrorKey().setErrorMessage(errMsg);
+			//exception.getErrorKey().setErrorMessage(errMsg);
 			LOGGER.debug(errMsg, exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
+			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
@@ -294,9 +294,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMssg = getErrorMessage(exception,obj,"Inserting");
-			exception.getErrorKey().setErrorMessage(errMssg);
 			LOGGER.debug(errMssg, exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
+			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMssg);
 		}
 		finally
 		{
@@ -351,9 +350,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
-			exception.getErrorKey().setErrorMessage(errMsg);
 			LOGGER.debug(errMsg, exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
+			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
@@ -508,9 +506,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,currentObj,"Updating");
-			exception.getErrorKey().setErrorMessage(errMsg);
 			LOGGER.debug(errMsg, exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),"");
+			new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
@@ -965,8 +962,8 @@ public abstract class AbstractBizLogic implements IBizLogic
     	
     	if (exception.getWrapException() == null)
     	{
-    		buff.append(exception.getMessage());
-    		/*if(exception.toMsgValuesArray() != null && exception.toMsgValuesArray().length>0)
+    		
+    		if(exception.getErrorKey()== null && exception.toMsgValuesArray() != null && exception.toMsgValuesArray().length>0)
     		{
     			for(String msg :exception.toMsgValuesArray())
     			{
@@ -976,7 +973,7 @@ public abstract class AbstractBizLogic implements IBizLogic
     		else
     		{
     			buff.append(exception.getMessage());
-    		}*/
+    		}
     	}
     	else
     	{

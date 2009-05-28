@@ -49,7 +49,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
         	int tempstartIndexofMsg = sqlMessage.indexOf('(');
 
             String temp = sqlMessage.substring(tempstartIndexofMsg);
-            int startIndexofMsg = temp.indexOf(DAOConstants.SPLIT_OPERATOR);
+            int startIndexofMsg = temp.indexOf(Constants.DELIMETER);
             int endIndexofMsg = temp.indexOf(')');
             String strKey =temp.substring((startIndexofMsg+1),endIndexofMsg);
             startIndexofMsg = strKey.indexOf('.');
@@ -91,7 +91,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 			while(resultSet.next())
 			{
 				columnNameBuff.append(resultSet.getString("COLUMN_NAME")).
-				append(DAOConstants.SPLIT_OPERATOR);
+				append(Constants.DELIMETER);
 				tableName = resultSet.getString("TABLE_NAME");
 			}
 			if(columnNameBuff.length()>0 && tableName.length()>0)

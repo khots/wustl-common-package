@@ -39,6 +39,11 @@ public class LoginAuditManager
 	 */
 	public LoginAuditManager(LoginDetails loginDetails)
 	{
+		setLoginDetails(loginDetails);
+	}
+
+	private void setLoginDetails(LoginDetails loginDetails)
+	{
 		loginEvent = new LoginEvent();
 		loginEvent.setIpAddress(loginDetails.getIpAddress());
 		loginEvent.setSourceId(loginDetails.getSourceId());
@@ -56,7 +61,7 @@ public class LoginAuditManager
 		try
 		{
 			//dao.insert(loginEvent, null, false, false);
-			dao.insert(loginEvent, false);
+			dao.insert(loginEvent);
 		}
 		catch (DAOException ex)
 		{
@@ -70,8 +75,9 @@ public class LoginAuditManager
 	 * Sets the status of LoginAttempt to loginStatus provided as an argument.
 	 * @param loginStatus
 	 */
-	public void audit(boolean loginStatus)
+	public void audit(boolean loginStatus,LoginDetails loginDetails)
 	{
+		setLoginDetails(loginDetails);
 		HibernateDAO hibernateDao = null;
 		String appName = CommonServiceLocator.getInstance().getAppName();
 		try

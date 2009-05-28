@@ -88,10 +88,13 @@ public class AuditManager
 	 * @param eventType Event for which the comparator will be called. e.g. Insert, update, delete etc.
 	 * @throws AuditException Audit Exception.
 	 */
-	public void audit(Auditable currentObj, Auditable previousObj, String eventType)
+	public void audit(Object currentObj, Object previousObj, String eventType)
 	throws AuditException
 	{
-		compare(currentObj,previousObj,eventType);
+		if (currentObj instanceof Auditable)
+		{
+			compare((Auditable)currentObj,(Auditable)previousObj,eventType);
+		}
 	}
 
 	/**
@@ -356,14 +359,14 @@ public class AuditManager
 			return;
 		}
 
-		dao.insert(auditEvent, false);
+		dao.insert(auditEvent);
 		Iterator<AuditEventLog> auditLogIterator = auditEvent.getAuditEventLogCollection()
 				.iterator();
 		while (auditLogIterator.hasNext())
 		{
 			AuditEventLog auditEventLog = (AuditEventLog) auditLogIterator.next();
 			auditEventLog.setAuditEvent(auditEvent);
-			dao.insert(auditEventLog, false);
+			dao.insert(auditEventLog);
 
 			Iterator<AuditEventDetails> auditEventDetailsIterator = auditEventLog
 					.getAuditEventDetailsCollcetion().iterator();
@@ -372,7 +375,7 @@ public class AuditManager
 				AuditEventDetails auditEventDetails = (AuditEventDetails) auditEventDetailsIterator
 						.next();
 				auditEventDetails.setAuditEventLog(auditEventLog);
-				dao.insert(auditEventDetails, false);
+				dao.insert(auditEventDetails);
 			}
 		}
 		auditEvent = new AuditEvent();
@@ -382,10 +385,36 @@ public class AuditManager
 	/**
 	 * This method adds Audit Event Logs.
 	 * @param auditEventLogsCollection audit Event Logs Collection.
-	 */
+	 *//*
 	public void addAuditEventLogs(Collection<AuditEventLog> auditEventLogsCollection)
 	{
 		auditEvent.getAuditEventLogCollection().addAll(auditEventLogsCollection);
+	}*/
+	
+	
+	public void insertAudit(DAO dao,Object currentObj)throws AuditException, DAOException
+	{
+		if (currentObj instanceof Auditable)
+		{
+			audit(currentObj, null, "INSERT");
+			insert(dao);
+		}
 	}
+	
+	public void updateAudit(DAO dao,Object currentObj, Object previousObj)throws AuditException, DAOException
+	{
+		if (currentObj instanceof Auditable)
+		{
+			audit(currentObj, null, "UPDATE");
+			insert(dao);
+		}
+	}
+	
+	public void addAuditEventLogs(DAO dao,Collection<AuditEventLog> auditEventLogsCollection)throws AuditException, DAOException
+	{
+		auditEvent.getAuditEventLogCollection().addAll(auditEventLogsCollection);
+		insert(dao);
+	}
+
 
 }
