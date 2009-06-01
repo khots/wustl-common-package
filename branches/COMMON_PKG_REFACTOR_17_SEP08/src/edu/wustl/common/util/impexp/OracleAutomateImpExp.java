@@ -114,6 +114,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		}
 		catch(Exception exception)
 		{
+			exception.printStackTrace();
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.oraimport.error");
 			throw new ApplicationException(errorKey,exception,"OracleAutomateImpExp");
 		}
