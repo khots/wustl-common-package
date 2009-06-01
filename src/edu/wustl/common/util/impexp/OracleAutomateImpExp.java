@@ -106,6 +106,9 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			{
 				String csvFilePath = getFilePath()
 					+ getTableNamesList().get(i) + ".csv";
+				
+				System.out.println("csvFilePath path ::"+csvFilePath);
+				System.out.println("ctlFilePath path ::"+ctlFilePath);
 				createCTLFiles(csvFilePath,ctlFilePath,
 						getTableNamesList().get(i));
 			}
