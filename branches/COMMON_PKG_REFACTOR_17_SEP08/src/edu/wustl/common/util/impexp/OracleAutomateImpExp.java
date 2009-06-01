@@ -78,12 +78,15 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			{
 				String ctlFilePath = filePathCTL + getTableNamesList().get(i) + ".ctl";
 				String csvFilePath = getFilePath() + getTableNamesList().get(i) + ".csv";
+				System.out.println("csvFilePath path ::"+csvFilePath);
+				System.out.println("ctlFilePath path ::"+ctlFilePath);
 				createCTLFiles(csvFilePath, ctlFilePath,
 						getTableNamesList().get(i));
 			}
 		}
 		catch(Exception exception)
 		{
+			exception.printStackTrace();
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.oraexport.error");
 			throw new ApplicationException(errorKey,exception,"OracleAutomateImpExp");
 		}
