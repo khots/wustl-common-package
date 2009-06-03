@@ -1044,8 +1044,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				}
 				if (activityStatus.equals(Status.ACTIVITY_STATUS_CLOSED.toString()))
 				{
-					throw getBizLogicException(null, "biz.checkstatus.error",
-							errorName + " " + ApplicationProperties.getValue("error.object.closed"));
+					throw getBizLogicException(null, "error.object.closed",errorName );
 				}
 			}
 		}
