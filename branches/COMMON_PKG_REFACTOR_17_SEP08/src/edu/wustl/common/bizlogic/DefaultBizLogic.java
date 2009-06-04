@@ -519,15 +519,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		String[] whereColName = null;
 		String[] whereColCondition = null;
 		Object[] whereColValue = null;
-		
+		/*
 		//bug 12652 start
 		if(whereColumnName != null && whereColumnCondition != null && whereColumnValue != null && whereColumnName.length > 0)
 		{
 			whereColName = whereColumnName;
 			whereColCondition = whereColumnCondition;
 			whereColValue = whereColumnValue;		  
-		}
-		
+		} Many issues occurs if we uncomment this.
+		*/
 
 		if (isToExcludeDisabled)
 		{
