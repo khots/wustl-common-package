@@ -29,7 +29,7 @@ public class VarCharDataType implements IDBDataType
 	public Object getObjectValue(String str) throws ParseException, IOException
 	{
 		// TODO Auto-generated method stub
-		return null;
+		return str;
 	}
 
 	/* (non-Javadoc)
