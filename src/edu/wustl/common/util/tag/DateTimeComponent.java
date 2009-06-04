@@ -3,14 +3,11 @@
  *
  * This class is the tag handler class for the Date Time component.
  */
-
 package edu.wustl.common.util.tag;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.Calendar;
-import java.util.Properties;
+import java.util.Date;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
@@ -21,10 +18,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mandar_deshmukh
@@ -35,270 +29,216 @@ public class DateTimeComponent extends TagSupport
 {
 
 	/**
-	* LOGGER Logger - Generic LOGGER.
-	*/
-	private static final Logger LOGGER = Logger.getCommonLogger(DateTimeComponent.class);
-	/**
-	 * specify serialVersionUID.
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Constant for Size.
-	 */
-	private static final int SIZE = 10;
-	/**
-	 * Constant for Size.
-	 */
-	private static final int START_YEAR = Integer.parseInt(ApplicationProperties.getValue("min.year"));
-	/**
-	 * Constant for Size.
-	 */
-	private static final int END_YEAR = Integer.parseInt(ApplicationProperties.getValue("max.year"));;
-	/**
 	 * Name of the text field for the date component.
 	 */
-	private transient String name;
-
+	String name;
+	
 	/**
 	 * Value of the text field for the date component.
 	 */
-	private transient String value;
-
+	String value;
+	
 	/**
 	 * Id of the text field for the date component.
 	 */
-	private transient String identifier;
-
+	String id;
+	
 	/**
 	 * Style class for the text field for the date component.
 	 */
-	private transient String styleClass = "";
+	String styleClass;
 
 	/**
 	 * Size of the text field for the date component.
 	 */
-	private transient Integer size = Integer.valueOf(SIZE);
-
+	Integer size;
+	
 	/**
 	 * disabled property for the text field of the date component.
 	 */
-	private transient Boolean disabled = Boolean.FALSE;;
-
+	Boolean disabled;
+	
 	/**
 	 * Month of year of which the calendar is to be displayed.
 	 */
-	private transient Integer month;
+	Integer month;
 
 	/**
 	 * Day of month to be selected in the calendar.
 	 */
-	private transient Integer day;
+	Integer day;
 
 	/**
 	 * Year of date of which the calendar is to be displayed.
 	 */
-	private transient Integer year;
-
+	Integer year;
+	
 	/**
 	 * Date pattern to be used in displaying date.
 	 */
-	private transient String pattern = "MM-dd-yyyy";;
-
+	String pattern;
+	
 	/**
 	 * Name of the html form which will contain the date component.
 	 */
-	private transient String formName;
-
+	String formName;
+	
 	/**
 	 * Start year for the year drop down combo box.
 	 */
-	private transient Integer startYear = Integer.valueOf(START_YEAR);;
+	Integer startYear;
 
 	/**
 	 * End year for the year drop down combo box.
 	 */
-	private transient Integer endYear = Integer.valueOf(END_YEAR);;
+	Integer endYear;
 
 	/**
-	 * Tooltip to be displayed on the calendar icon.
+	 * Tooltip to be displayed on the calendar icon. 
 	 */
-	private transient String iconComment = "This is a Calendar";;
-
+	String iconComment;
+	
 	/**
 	 * Boolean to decide whether to display time controls.
 	 */
-	private transient Boolean displayTime = Boolean.FALSE;;
-
+	Boolean displayTime;
+	
 	/**
 	 * Hours to be displayed as selected in the drop down combo for hours.
 	 */
-	private transient Integer hour = Integer.valueOf(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));;
+	Integer hour;
 
 	/**
 	 * Minutes to be displayed as selected in the drop down combo for minutes.
 	 */
-	private transient Integer minutes = Integer.valueOf(Calendar.getInstance().get(Calendar.MINUTE));;
+	Integer minutes;
 
 	/**
-	 * Javascript function to be called on click of calendar image.
+	 * Javascript function to be called on click of calendar image. 
 	 */
-	private transient String onClickImage;
-
-	// ------------ SETTER Methods ----------------------------------
+	String onClickImage;
+// ------------ SETTER Methods ----------------------------------
 
 	/**
-	 * @param datePattern String - The pattern to set.
+	 * @param pattern The pattern to set.
 	 */
-	public void setPattern(String datePattern)
-	{
+	public void setPattern(String datePattern) {
 		this.pattern = datePattern;
 	}
-
 	/**
-	 * @param dayOfMonth Integer - The day to set.
+	 * @param day The day to set.
 	 */
-	public void setDay(Integer dayOfMonth)
-	{
+	public void setDay(Integer dayOfMonth) {
 		this.day = dayOfMonth;
 	}
-
 	/**
 	 * @param displayTime The displayTime to set.
 	 */
-	public void setDisplayTime(Boolean displayTime)
-	{
+	public void setDisplayTime(Boolean displayTime) {
 		this.displayTime = displayTime;
 	}
-
 	/**
 	 * @param endYear The endYear to set.
 	 */
-	public void setEndYear(Integer endYear)
-	{
+	public void setEndYear(Integer endYear) {
 		this.endYear = endYear;
 	}
-
 	/**
 	 * @param formName The formName to set.
 	 */
-	public void setFormName(String formName)
-	{
+	public void setFormName(String formName) {
 		this.formName = formName;
 	}
-
 	/**
 	 * @param iconComment The iconComment to set.
 	 */
-	public void setIconComment(String iconComment)
-	{
+	public void setIconComment(String iconComment) {
 		this.iconComment = iconComment;
 	}
-
 	/**
-	 * @param monthOfYear Integer - The month to set.
+	 * @param month The month to set.
 	 */
-	public void setMonth(Integer monthOfYear)
-	{
+	public void setMonth(Integer monthOfYear) {
 		this.month = monthOfYear;
 	}
-
 	/**
 	 * @param startYear The startYear to set.
 	 */
-	public void setStartYear(Integer startYear)
-	{
+	public void setStartYear(Integer startYear) {
 		this.startYear = startYear;
 	}
-
 	/**
-	 * @param timeInHours Integer - The hour to set.
+	 * @param hour The hour to set.
 	 */
-	public void setHour(Integer timeInHours)
-	{
+	public void setHour(Integer timeInHours) {
 		this.hour = timeInHours;
 	}
-
 	/**
-	 * @param timeInMinutes Integer - The minutes to set.
+	 * @param minutes The minutes to set.
 	 */
-	public void setMinutes(Integer timeInMinutes)
-	{
+	public void setMinutes(Integer timeInMinutes) {
 		this.minutes = timeInMinutes;
 	}
-
 	/**
-	 * @param txtdate String - The name to set.
+	 * @param name The name to set.
 	 */
-	public void setName(String txtdate)
-	{
+	public void setName(String txtdate) {
 		this.name = txtdate;
 	}
-
 	/**
-	 * @param txtdateid String - The identifier to set.
+	 * @param id The id to set.
 	 */
-	public void setId(String txtdateid)
-	{
-		this.identifier = txtdateid;
+	public void setId(String txtdateid) {
+		this.id = txtdateid;
 	}
-
 	/**
-	 * @param yearOfDate Integer - The year to set.
+	 * @param year The year to set.
 	 */
-	public void setYear(Integer yearOfDate)
-	{
+	public void setYear(Integer yearOfDate) {
 		this.year = yearOfDate;
 	}
 
 	/**
 	 * @param value The value to set.
 	 */
-	public void setValue(String value)
-	{
+	public void setValue(String value) {
 		this.value = value;
 	}
 
 	/**
 	 * @param styleClass The styleClass to set.
 	 */
-	public void setStyleClass(String styleClass)
-	{
+	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
-
+		
 	/**
 	 * @param size The size to set.
 	 */
-	public void setSize(Integer size)
-	{
+	public void setSize(Integer size) {
 		this.size = size;
 	}
-
+	
 	/**
 	 * @param disabled The disabled to set.
 	 */
-	public void setDisabled(Boolean disabled)
-	{
+	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
 	}
-
+	
 	/**
 	 * @param onClickImage The onClickImage to set.
 	 */
-	public void setOnClickImage(String onClickImage)
-	{
+	public void setOnClickImage(String onClickImage) {
 		this.onClickImage = onClickImage;
 	}
-
-	// ------------SETTER Methods end ----------------------------------
-
+	
+// ------------SETTER Methods end ----------------------------------
+	
 	/**
-	 * A call back function, which gets executed by JSP runtime when opening tag for this
-	 * custom tag is encountered.
-	 * @exception JspException jsp exception.
-	 * @return integer value as per validation.
-	 */
+     * A call back function, which gets executed by JSP runtime when opening tag for this
+     * custom tag is encountered. 
+     */
 	public int doStartTag() throws JspException
 	{
 		try
@@ -306,250 +246,239 @@ public class DateTimeComponent extends TagSupport
 			JspWriter out = pageContext.getOut();
 
 			out.print("");
-			if (validate())
+			if(validate() )
 			{
 				initializeParameters();
 				out.print(generateOutput());
-			}
-
+			}	
+				
 		}
-		catch (IOException ioe)
+		catch(IOException ioe) 
 		{
-			LOGGER.debug(ioe.getMessage(), ioe);
-			throw new JspTagException("Error:IOException while writing to the user");
+				throw new JspTagException("Error:IOException while writing to the user");
 		}
 
 		return SKIP_BODY;
 	}
 
 	/**
-	 * A call back function DateTimeComponent class.
-	 * @exception JspException jsp exception.
-	 * @return integer value for evaluated page.
-	 */
+     * A call back function
+     */
 	public int doEndTag() throws JspException
 	{
 		return EVAL_PAGE;
 	}
-
-	/**
-	 * Method to validate the given values for the attributes.
-	 * @return true if all required attributes are in proper valid format. Otherwise returns false.
+	
+	/* method to validate the given values for the attributes.
+	 * Returns true if all required attributes are in proper valid format. Otherwise returns false. 
 	 */
 	private boolean validate()
 	{
 		boolean result = true;
-
-		ServletRequest request = pageContext.getRequest();
-		ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
-
-		if (errors == null)
+		
+		ServletRequest request = pageContext.getRequest(); 
+		ActionErrors errors = (ActionErrors)request.getAttribute(Globals.ERROR_KEY);
+		
+		if(errors == null)
 		{
 			errors = new ActionErrors();
 		}
-		// validations for name
-		result = validateName(result, errors);
-		//validations for identifier
-		result = validateId(result, errors);
+
+		// validations for name 
+		if(Utility.isNull(name))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("Name attribute is null"));
+			System.out.println("Name attribute is null");
+			result =  false;
+		}
+		else if( name.trim().length() == 0 )
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("Name attribute is empty"));
+			System.out.println("Name attribute is empty");
+			result =  false;
+		}
+
+		//validations for id
+		if(Utility.isNull(id))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("ID attribute is null"));
+			System.out.println("ID attribute is null");
+			result =  false;
+		}
+		else if(id.trim().length() == 0 )
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("ID attribute is empty"));
+			System.out.println("ID attribute is empty");
+			result =  false;
+		}
 
 		//validations for formName
-		result = validateFormName(result, errors);
+		if(Utility.isNull(formName))
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("FormName attribute is null"));
+			System.out.println("formName attribute is null");
+			result =  false;
+		}
+		else if(formName.trim().length() == 0 )
+		{
+			errors.add(ActionErrors.GLOBAL_ERROR,new ActionError("FormName attribute is empty"));
+			System.out.println("formName attribute is empty");
+			result =  false;
+		}
 
-		//setting errors in request
-		request.setAttribute(Globals.ERROR_KEY, errors);
+		
+		Date currentDate = Calendar.getInstance().getTime();
 
+		//setting errors in request 
+		request.setAttribute(Globals.ERROR_KEY,errors);
+		
 		return result;
 	}
-
-	/**
-	 * @param result result
-	 * @param errors ActionErrors
-	 * @return result
-	 */
-	private boolean validateFormName(boolean result, ActionErrors errors)
-	{
-		boolean reslt = result;
-		if (Utility.isNull(formName))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is null"));
-			reslt = false;
-		}
-		else if ("".equals(formName.trim()))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("FormName attribute is empty"));
-			reslt = false;
-		}
-		return reslt;
-	}
-
-	/**
-	 * @param result result
-	 * @param errors ActionErrors
-	 * @return result
-	 */
-	private boolean validateId(boolean result, ActionErrors errors)
-	{
-		boolean reslt = result;
-		if (Utility.isNull(identifier))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is null"));
-			reslt = false;
-		}
-		else if ("".equals(identifier.trim()))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("ID attribute is empty"));
-			reslt = false;
-		}
-		return reslt;
-	}
-
-	/**
-	 * @param result result
-	 * @param errors ActionErrors
-	 * @return result
-	 */
-	private boolean validateName(boolean result, ActionErrors errors)
-	{
-		boolean reslt = result;
-		if (Utility.isNull(name))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is null"));
-			reslt = false;
-		}
-		else if ("".equals(name.trim()))
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("Name attribute is empty"));
-			reslt = false;
-		}
-		return reslt;
-	}
-
+	
 	//method to generate the required output.
-	/**
-	 * @return String generated output.
-	 * @throws IOException I/O exception.
-	 */
 	private String generateOutput() throws IOException
 	{
-
-		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
-		Properties props = new Properties();
-		props.load(stream);
-		String isDisabled = ">";
-		if (disabled.booleanValue())
-		{
-			isDisabled = " disabled=\"disabled\">";
-		}
-		Object[] inputTagArgs = {name, identifier, value, styleClass, size, isDisabled};
-		StringBuffer output = new StringBuffer(MessageFormat.format(props
-				.getProperty("DTCinputTag"), inputTagArgs));
-		String onClickFunction = getOnClickFunction();
-
-		Object[] anchorTagArgs = {onClickFunction, iconComment};
-		output.append(MessageFormat.format(props.getProperty("DTCanchorTag"), anchorTagArgs));
-
-		Object[] divTagArgs = {identifier};
-		output.append(MessageFormat.format(props.getProperty("DTCdivTag"), divTagArgs));
-		output.append("<SCRIPT>");
-		if (displayTime.booleanValue())
-		{
-			Object[] timeCalenderArgs = {identifier, day, month, year, hour, minutes};
-			output.append(MessageFormat.format(props.getProperty("DTCtimeCalender"),
-					timeCalenderArgs));
-		}
+	
+		String output ="<INPUT name='" + name + "' id = '"+ id +"' value='"+value+ "' class=\""+styleClass +"\" size=\"10\"";
+		if(disabled.booleanValue())
+			output =output + " disabled=\"disabled\">";
 		else
-		{
-			Object[] calenderArgs = {identifier, day, month, year};
-			output.append(MessageFormat.format(props.getProperty("DTCcalender"), calenderArgs));
-		}
-		output.append("</SCRIPT></DIV>");
-		return output.toString();
-	}
-
-	/**
-	 * @return onClickFunction.
-	 */
-	private String getOnClickFunction()
-	{
-		String onClickFunction = "";
+			output =output + ">";
+		
+		String onClickFunction ="";
+		
 		/**
 		 * Changes done by Jitendra to fix the bug if two DateTimeComponent included in the same jsp.
-		 * So to fix this bug, now we are passing identifier attribute to showCalendar, printCalendar and
+		 * So to fix this bug, now we are passing id attribute to showCalendar, printCalendar and 
 		 * printTimeCalendar js function.
 		 */
-		if (onClickImage == null)
+		if(onClickImage == null )
+			onClickFunction = "showCalendar('"+id+"',"+year+","+month+","+day+",'"+pattern+"','"+formName+"','"+name+"',event,"+startYear+","+endYear+");";
+		else
+			onClickFunction = onClickImage;
+		
+		output = output + "<A onclick=\"" + onClickFunction + "\" href=\"javascript://\">";
+		output = output + "<span valign=middle ><IMG alt=\"" + iconComment +"\" src=\"images/calendar.gif\" hspace=0 vspace=0 align=top height=22 width=24 border=0></span>";
+		output = output + "</A>";
+		
+		output = output + "<DIV id=slcalcod"+id+" style=\"Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px\">";
+		output = output + "<SCRIPT>";
+
+		if(displayTime.booleanValue())
 		{
-			onClickFunction = "showCalendar('" + identifier + "'," + year + "," + month + "," + day
-					+ ",'" + pattern + "','" + formName + "','" + name + "',event," + startYear
-					+ "," + endYear + ");";
+			output = output + "printTimeCalendar('"+id+"',"+day+","+month+","+year+","+hour+","+minutes+");";
 		}
 		else
 		{
-			onClickFunction = onClickImage;
+			output = output + "printCalendar('"+id+"',"+day+","+month+","+year+");";
 		}
-		return onClickFunction;
-	}
+		output = output + "</SCRIPT>";
+		output = output + "</DIV>";
 
-	/**
-	 * Method to initialize the optional parameters.
+		System.out.println(output);
+		return output;
+		/*
+		<A onclick="showCalendar(2006,7,25,'MM/dd/yyyy','newsForm','date',event,1901,2099);" href="javascript://">
+			<IMG alt="date"  src="images/calendar.gif" border=0>
+		</A>
+		<DIV id=slcalcod style="Z-INDEX: 10; LEFT: 100px; VISIBILITY: hidden; POSITION: absolute; TOP: 100px">
+			<SCRIPT>
+				printTimeCalendar(25,7,2006,12,50);
+				//printCalendar(25,7,2006);
+			</SCRIPT>
+		</DIV>
+		*/
+	}
+	
+	/*
+	 * Method to initialize the optional parameters
 	 */
 	private void initializeParameters()
 	{
-		if (value == null)
+		if(value == null)
+		    value = "";	   
+		
+		if(value.trim().length() > 0)
 		{
-			value = "";
+			Integer specimenYear = new Integer(Utility.getYear(value ));
+			Integer specimenMonth = new Integer(Utility.getMonth(value ));
+			Integer specimenDay = new Integer(Utility.getDay(value ));
+			day=specimenDay.intValue();
+			month=specimenMonth.intValue();
+			year=specimenYear.intValue();
+			
 		}
-		Integer specimenYear = 0;
-		Integer specimenMonth = 0;
-		Integer specimenDay = 0;
-		if (!"".equals(value.trim()))
+		
+		Date currentDate = Calendar.getInstance().getTime();
+		 
+		if(Utility.isNull(month)   )
 		{
-			specimenYear = Integer.valueOf(Utility.getYear(value));
-			specimenMonth = Integer.valueOf(Utility.getMonth(value));
-			specimenDay = Integer.valueOf(Utility.getDay(value));
+			month = new Integer((Calendar.getInstance().get(Calendar.MONTH))+1); 
 		}
-		initiializeMonthDayYear(specimenYear, specimenMonth, specimenDay);
+		if(Utility.isNull(day)   )
+		{
+			day = new Integer(Calendar.getInstance().get(Calendar.DAY_OF_MONTH )); 
+		}
+		if(Utility.isNull(year)   )
+		{
+			year = new Integer(Calendar.getInstance().get(Calendar.YEAR )); 
+		}
+		if(Utility.isNull(pattern)   )
+		{
+			pattern = new String("MM-dd-yyyy"); 
+		}
+		if(Utility.isNull(displayTime)   )
+		{
+			displayTime = new Boolean(false); 
+		}
+		if(Utility.isNull(hour)   )
+		{
+			hour = new Integer(Calendar.getInstance().get(Calendar.HOUR_OF_DAY  )); 
+		}
+		if(Utility.isNull(minutes)   )
+		{
+			minutes = new Integer(Calendar.getInstance().get(Calendar.MINUTE  )); 
+		}
+		if(Utility.isNull(startYear)   )
+		{
+			startYear = new Integer(1900); 
+		}
+		if(Utility.isNull(endYear)   )
+		{
+			endYear = new Integer(2020); 
+		}
+		if(Utility.isNull(iconComment)   )
+		{
+			iconComment = new String("This is a Calendar"); 
+		}
+		if(Utility.isNull(value)   )
+		{
+			value = new String(""); 
+		}
+		if(Utility.isNull(styleClass )   )
+		{
+			styleClass = new String(""); 
+		}
+		if(Utility.isNull(size)   )
+		{
+			size = new Integer(15); 
+		}
+		if(Utility.isNull(disabled)   )
+		{
+			disabled  = new Boolean(false); 
+		}
+
 	}
-
-	/**
-	 * This method initiialize Month Day Year.
-	 * @param specimenYear specimen Year
-	 * @param specimenMonth specimen Month
-	 * @param specimenDay specimen Day.
-	 */
-	private void initiializeMonthDayYear(Integer specimenYear, Integer specimenMonth,
-			Integer specimenDay)
-	{
-		day = specimenDay.intValue();
-		month = specimenMonth.intValue();
-		year = specimenYear.intValue();
-
-		if (month == 0)
-		{
-			month = Integer.valueOf((Calendar.getInstance().get(Calendar.MONTH)) + 1);
-		}
-		if (day == 0)
-		{
-			day = Integer.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-		}
-		if (year == 0)
-		{
-			year = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-		}
-	}
-
-	/**
-	 * @param args arguments.
-	 * @throws IOException Generic IO exception
-	 */
-	public static void main(String[] args) throws IOException
+	
+	public static void main(String [] args) throws Exception
 	{
 		DateTimeComponent obj = new DateTimeComponent();
 		obj.name = "mddate";
-		obj.identifier = "mddate";
+		obj.id = "mddate";
 		obj.formName = "newsForm";
-		//	obj.onClickImage ="f1()";
+	//	obj.onClickImage ="f1()";
 		obj.initializeParameters();
 		obj.generateOutput();
+		
 	}
 }
