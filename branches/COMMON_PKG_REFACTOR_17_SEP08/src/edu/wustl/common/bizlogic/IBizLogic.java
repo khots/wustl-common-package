@@ -233,6 +233,24 @@ public interface IBizLogic
 			String valueField, String[] whereColumnName, String[] whereColumnCondition,
 			Object[] whereColumnValue, String joinCondition, String separatorBetweenFields,
 			boolean isToExcludeDisabled) throws BizLogicException;
+	
+	
+	/**
+	 *
+	 * @param sourceObjectName source Object Name
+	 * @param displayNameFields display Name Fields
+	 * @param valueField value Field
+	 * @param whereColumnName An array of field names.
+	 * @param whereColumnCondition The comparison condition for the field values.
+	 * @param whereColumnValue An array of field values.
+	 * @param joinCondition The join condition.
+	 * @param separatorBetweenFields separator Between Fields
+	 * @return Returns collection
+	 * @throws BizLogicException generic BizLogic Exception.
+	 */
+	List getList(String sourceObjectName, String[] displayNameFields,
+			String valueField, String[] whereColumnName, String[] whereColumnCondition,
+			Object[] whereColumnValue, String joinCondition, String separatorBetweenFields) throws BizLogicException;
 
 	/**
 	 *
