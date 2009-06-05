@@ -583,7 +583,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String separatorBetweenFields,QueryWhereClause queryWhereClause)
 			method can be used.
 	 */
-	private List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, String separatorBetweenFields) throws BizLogicException
 	{
