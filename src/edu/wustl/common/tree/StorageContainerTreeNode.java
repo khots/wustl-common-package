@@ -78,6 +78,20 @@ public class StorageContainerTreeNode extends TreeNodeImpl implements Serializab
 	}
 
 	/**
+     * Parameterized constructor.
+     * @param identifier identifier to set.
+	 * @param value value to set.
+	 * @param type type to set.
+	 * @param activityStatus activity Status to set. 
+     */
+    public StorageContainerTreeNode(Long identifier, String value, String type, String activityStatus)
+    {
+        super(identifier, value);
+        this.type = type;
+        this.activityStatus = activityStatus;
+    }
+	
+	/**
 	 * @return Returns the toolTip.
 	 */
 	public String getToolTip()
