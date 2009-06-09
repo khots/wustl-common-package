@@ -98,20 +98,19 @@ public class HibernateMetaData
 	public static Class getSupermostClassInPackage(Object obj) {
 		Class objClass = obj.getClass();
 		Package objPackage = objClass.getPackage();
-		Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
+		//Logger.out.debug("Input Class: " + objClass.getName()+" Package:"+objPackage.getName());
 
 		PersistentClass persistentClass = cfg.getClassMapping(objClass.getName());
 		if (persistentClass != null && persistentClass.getSuperclass()!=null) {
 
-			Logger.out.debug(objPackage.getName()+" "+persistentClass.getClassName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
-					);
-			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
-					.equals(objPackage.getName()));
+			//Logger.out.debug(objPackage.getName()+" "+persistentClass.getClassName()+"*********"+persistentClass.getSuperclass().getMappedClass().getPackage().getName());
+//			Logger.out.debug("!!!!!!!!!!! "+persistentClass.getSuperclass().getMappedClass().getPackage().getName()
+//					.equals(objPackage.getName()));
 			do {
 				persistentClass = persistentClass.getSuperclass();
 			}while(persistentClass !=null);
-			Logger.out.debug("Supermost class in the same package:"
-					+ persistentClass.getMappedClass().getName());
+//			Logger.out.debug("Supermost class in the same package:"
+//					+ persistentClass.getMappedClass().getName());
 		} else {
 			return objClass;
 		}
@@ -121,8 +120,11 @@ public class HibernateMetaData
 
 	public static String getTableName(Class classObj)
 	{
-		
-		Table tbl = cfg.getClassMapping(classObj.getName()).getTable();
+		Table tbl=null;
+		if((cfg.getClassMapping(classObj.getName())) != null)
+		{
+			tbl = cfg.getClassMapping(classObj.getName()).getTable();
+		}
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
@@ -130,7 +132,11 @@ public class HibernateMetaData
 	}
 	public static String getRootTableName(Class classObj)
 	{
-		Table tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
+		Table tbl;
+		if(cfg.getClassMapping(classObj.getName())!=null)
+			tbl = cfg.getClassMapping(classObj.getName()).getRootTable();
+		else
+			tbl = null;
 		if(tbl!=null)
 			return tbl.getName();
 		return "";
@@ -211,6 +217,10 @@ public class HibernateMetaData
 		else if (dialect.toLowerCase().indexOf("db2") != -1)
 		{
 			dbName = Constants.DB2_DATABASE;
+		}
+		else if (dialect.toLowerCase().indexOf("sqlserver") != -1)
+		{
+			dbName = Constants.MSSQLSERVER_DATABASE;
 		}
 		return dbName;
 	}
@@ -465,7 +475,7 @@ public class HibernateMetaData
 		{
 			HibernateProxy hp  = (HibernateProxy)domainObject;
 			Object obj = hp.getHibernateLazyInitializer().getImplementation();
-			Logger.out.debug(obj+" : obj");
+			//Logger.out.debug(obj+" : obj");
 			return (AbstractDomainObject)obj;
 		}
         return domainObject;

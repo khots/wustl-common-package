@@ -454,12 +454,20 @@ public class Validator
 	    	int []daysInMonth = DaysArray(12);
 	    	int pos1=dtStr.indexOf(dtCh);
 	    	int pos2=dtStr.indexOf(dtCh,pos1+1);
-	    	String strMonth=dtStr.substring(0,pos1);
-	    	String strDay=dtStr.substring(pos1+1,pos2);
+	    	String strMonth=null;
+	    	String strDay=null;
+//	    	 Added by Geeta for date change
+	    	String pattern=Variables.dateFormat;
+	    	if((pattern.substring(0,2).equals("dd"))){
+	    		strDay=dtStr.substring(0,pos1);
+		    	strMonth=dtStr.substring(pos1+1,pos2);
+	    	}else{
+	    		strMonth=dtStr.substring(0,pos1);
+		    	strDay=dtStr.substring(pos1+1,pos2);
+	    	}
 	    	String strYear=dtStr.substring(pos2+1);
-	    	//System.out.println("pos1 : "+pos1 + " pos2 : "+pos2 + " strMonth : "+strMonth + "strDay : "+strDay + "strYear : "+strYear  );
-	    	String strYr=strYear;
-	    	
+    		String strYr=strYear;
+        	
 	    	if (strDay.charAt(0)=='0' && strDay.length()>1) strDay=strDay.substring(1);
 	    	
 	    	if (strMonth.charAt(0)=='0' && strMonth.length()>1) strMonth=strMonth.substring(1);
@@ -472,7 +480,7 @@ public class Validator
 	    	int year=Integer.parseInt(strYr);
 	    	
 	    	if (pos1==-1 || pos2==-1){
-	    		Logger.out.debug("The date format should be : mm/dd/yyyy");
+	    		Logger.out.debug("The date format should be :"+pattern);
 	    		//System.out.println("The date format should be : mm/dd/yyyy");
 	    		return false;
 	    	}
@@ -544,7 +552,9 @@ public class Validator
     		//System.out.println("1 : -- "+ dateToCheck );
     		//System.out.println("currentDate : "+ currentDate );
     		//String pattern="MM-dd-yyyy";
-    		String pattern="MM" + dtCh  +"dd" + dtCh + "yyyy";
+    		//String pattern="MM" + dtCh  +"dd" + dtCh + "yyyy";
+    		// added By Geeta 
+    		String pattern=Variables.dateFormat;
     		//System.out.println("\n\n\n\n\n\n------------\n"+pattern+"\n\n\n\n\n\n------------\n");
 			SimpleDateFormat dF = new SimpleDateFormat(pattern);
     		Date toCheck = 	dF.parse(dateToCheck );
@@ -571,24 +581,21 @@ public class Validator
     {
     	boolean result = true;
     	try
-		{
-    		// currentdate = enddate
-//    		Date currentDate = Calendar.getInstance().getTime();
-    		
-    		//System.out.println("1 : -- "+ startDate );
+		{    		
     		isValidDatePattern(startDate  );
-    		String pattern="MM" + dtCh  +"dd" + dtCh + "yyyy";
-    		//System.out.println("\n------------\n"+pattern+"\n------------\n");
+    		//String pattern="MM" + dtCh  +"dd" + dtCh + "yyyy";
+    		String pattern=Variables.dateFormat;
+    		
 			SimpleDateFormat dF = new SimpleDateFormat(pattern);
     		Date toCheck = 	dF.parse(startDate );
 
     		//System.out.println(toCheck.toString()+"\n-------------\n" );
-    		
     		//System.out.println("2 : -- "+ endDate );
-    		isValidDatePattern(endDate  );
-    		String pattern1 = "MM" + dtCh  +"dd" + dtCh + "yyyy";
+    		//isValidDatePattern(endDate  );
+    		//String pattern1 = "MM" + dtCh  +"dd" + dtCh + "yyyy";
     		//System.out.println("\n------------\n"+pattern1+"\n------------\n");
-    		SimpleDateFormat dF1 = new SimpleDateFormat(pattern1);
+    		
+    		SimpleDateFormat dF1 = new SimpleDateFormat(pattern);
     		Date maxDate = 	dF1.parse(endDate );
 
     		//System.out.println("2");

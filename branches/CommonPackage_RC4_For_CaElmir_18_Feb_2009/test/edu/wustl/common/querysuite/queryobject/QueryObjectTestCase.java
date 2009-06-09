@@ -416,19 +416,14 @@ public class QueryObjectTestCase extends TestCase {
 //
 //    }
 //
-//    private static void mockCache() {
-//        MockEntityCache.entityGroup = QueryGeneratorMock.entityManager.entityGroup;
-//        new MockEntityCache();
-//    }
-//
 //    public static void main(String[] args) {
 //        // saveQuery1();
 ////         saveTemporalDateOffset();
 ////         saveTemporalDateDiff();
-////         saveTemporalOutput();
+//         saveTemporalOutput();
 //        // savePartCPR();
 ////         saveTemporalQueryOffsetAttribute();
-//         getQueries();
+////         getQueries();
 ////        getRealQueries();
 ////         deleteTemporalDateDiff();
 ////        deleteTemporalOutput();
@@ -436,15 +431,15 @@ public class QueryObjectTestCase extends TestCase {
 //
 //    private static void deleteTemporalDateDiff() {
 //       QueryGeneratorMock.createTemporalQueryDateDiff();
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        IQuery query =  new HibernateDatabaseOperations<IQuery>(HibernateUtil.currentSession()).retrieveById(Query.class.getName(), 31L);
 //        new HibernateDatabaseOperations<IQuery>(HibernateUtil.currentSession()).delete(query);
 //    }
 //    
 //    private static void deleteTemporalOutput() {
 //        QueryGeneratorMock.createTemporalOutputDSIntervalQuery(TimeInterval.Day);
-//        mockCache();
-//         IQuery query =  new HibernateDatabaseOperations<IQuery>(HibernateUtil.currentSession()).retrieveById(Query.class.getName(), 35L);
+//        QueryGeneratorMock.mockCache();
+//         IQuery query =  new HibernateDatabaseOperations<IQuery>(HibernateUtil.currentSession()).retrieveById(Query.class.getName(), 3L);
 //         new HibernateDatabaseOperations<IQuery>(HibernateUtil.currentSession()).delete(query);
 //     }
 //
@@ -461,23 +456,24 @@ public class QueryObjectTestCase extends TestCase {
 //    private static void saveQuery1() {
 //        IParameterizedQuery query = QueryGeneratorMock.createSpecimenBioHazardQuery4();
 //        query.setName("foo2");
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        save(query);
 //    }
 //
 //    private static void getQueries() {
 ////        QueryGeneratorMock.createSpecimenBioHazardQuery4();
-//        // QueryGeneratorMock.createTemporalOutputDSIntervalQuery(TimeInterval.Day);
-//         QueryGeneratorMock.createTemporalQueryOffsetAttribute();
-//        mockCache();
+//         QueryGeneratorMock.createTemporalOutputDSIntervalQuery(TimeInterval.Day);
+////         QueryGeneratorMock.createTemporalQueryOffsetAttribute();
+////        QueryGeneratorMock.create
+//        QueryGeneratorMock.mockCache();
 //
-//        IQuery query = new HibernateDatabaseOperations<IQuery>(HibernateUtil.newSession()).retrieveById(Query.class.getName(), 2L);
+//        IQuery query = new HibernateDatabaseOperations<IQuery>(HibernateUtil.newSession()).retrieveById(Query.class.getName(), 5L);
 //        System.out.println(query);
 //        setDataBaseType();
 ////        System.out.println(getSql(QueryGeneratorMock.createTemporalQueryOffsetAttribute()).equals(getSql(query)));
 //
-//        // System.out.println(getSql(QueryGeneratorMock.createTemporalOutputDSIntervalQuery())
-//        // .equals(getSql(query.get(0))));
+//         System.out.println(getSql(QueryGeneratorMock.createTemporalOutputDSIntervalQuery(TimeInterval.Day))
+//         .equals(getSql(query)));
 //
 //        // System.out.println(getSql(QueryGeneratorMock.createTemporalQueryOffsetAttribute())
 //        // .equals(getSql(query.get(0))));
@@ -503,31 +499,31 @@ public class QueryObjectTestCase extends TestCase {
 //
 //    private static void savePartCPR() {
 //        IQuery query = QueryGeneratorMock.createTemporalQueryParticipantCPR();
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        save(query);
 //    }
 //
 //    private static void saveTemporalDateOffset() {
 //        IQuery query = QueryGeneratorMock.createTemporalQueryDateOffset();
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        save(query);
 //    }
 //
 //    private static void saveTemporalDateDiff() {
 //        IQuery query = QueryGeneratorMock.createTemporalQueryDateDiff();
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        save(query);
 //    }
 //
 //    private static void saveTemporalQueryOffsetAttribute() {
 //        IQuery query = QueryGeneratorMock.createTemporalQueryOffsetAttribute();
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        save(query);
 //    }
 //
 //    private static void saveTemporalOutput() {
 //        IQuery query = QueryGeneratorMock.createTemporalOutputDSIntervalQuery(TimeInterval.Day);
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        save(query);
 //    }
 //
@@ -538,31 +534,9 @@ public class QueryObjectTestCase extends TestCase {
 //
 //    private static void getTemporalOutput() {
 //        QueryGeneratorMock.createTemporalOutputDSIntervalQuery(null);
-//        mockCache();
+//        QueryGeneratorMock.mockCache();
 //        IQuery query = new HibernateDatabaseOperations<IQuery>().retrieveById(Query.class.getName(), 1L);
 //        System.out.println(query);
 //    }
 //
-//    @SuppressWarnings("serial")
-//    static class MockEntityCache extends AbstractEntityCache {
-//        private static EntityGroupInterface entityGroup;
-//
-//        MockEntityCache() {
-//            entityCache = this;
-//        }
-//
-//        @Override
-//        protected Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
-//            return Collections.singleton(entityGroup);
-//        }
-//
-//        public MatchedClass getCategories(Collection<EntityInterface> entityCollection) {
-//            return null;
-//        }
-//
-//        public MatchedClass getCategoriesAttributes(Collection<AttributeInterface> attributeCollection) {
-//            return null;
-//        }
-//
-//    }
 }

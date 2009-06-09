@@ -9,14 +9,18 @@
  */
 package edu.wustl.common.bizlogic;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import titli.controller.Name;
 import titli.controller.RecordIdentifier;
 import titli.controller.interfaces.IndexRefresherInterface;
+import titli.controller.interfaces.ObjectMetadataInterface;
 import titli.controller.interfaces.TitliInterface;
 import titli.model.Titli;
 import titli.model.TitliException;
@@ -33,11 +37,14 @@ import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.security.exceptions.SMException;
 import edu.wustl.common.security.exceptions.UserNotAuthorizedException;
+import titli.model.util.TitliResultGroup;
+import titli.model.util.TitliTableMapper;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.dbManager.DAOException;
 import edu.wustl.common.util.dbManager.DBUtil;
 import edu.wustl.common.util.dbManager.HibernateMetaData;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
   
 /**
@@ -157,7 +164,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        delete(obj, dao);
 	        dao.commit();
 	        //refresh the index for titli search
-//			refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
+	        if(TitliResultGroup.isTitliConfigured == true)
+	        {
+	        	refreshTitliSearchIndex(Constants.TITLI_DELETE_OPERATION, obj);
+	        }
 		}
 		catch(DAOException ex)
 		{
@@ -238,7 +248,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	        	insert(obj, sessionDataBean, isInsertOnly, dao);
 		        dao.commit();
 		        //refresh the index for titli search
-		        //refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+		        if(TitliResultGroup.isTitliConfigured == true)
+		        {
+		        	refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+		        }
 		        postInsert(obj, dao, sessionDataBean);
             }	        
 		}
@@ -294,6 +307,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 	    	preInsert(objCollection, dao, sessionDataBean);
 	    	insertMultiple(objCollection,dao,sessionDataBean);
 			dao.commit();
+			if(TitliResultGroup.isTitliConfigured == true)
+			{
+				for(AbstractDomainObject obj : objCollection)
+				{
+				    refreshTitliSearchIndex(Constants.TITLI_INSERT_OPERATION, obj);
+				}
+			}
 			postInsert(objCollection, dao, sessionDataBean);
 		}
 		catch (DAOException ex)
@@ -412,7 +432,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 		        }  
 		        dao.commit();
 		        //refresh the index for titli search
-	//			refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
+		        if(TitliResultGroup.isTitliConfigured == true)
+		        {
+		        	refreshTitliSearchIndex(Constants.TITLI_UPDATE_OPERATION, currentObj);
+		        }
 		        postUpdate(dao, currentObj, oldObj, sessionDataBean);
 	        }
 		}
@@ -555,38 +578,73 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @param operation the operation to be performed : "insert", "update" or "delete"
 	 * @param obj the object correspondig to the record to be refreshed
 	 */
-	private void refreshTitliSearchIndex(String operation, Object obj) 
+	protected void refreshTitliSearchIndex(String operation, Object obj) 
 	{            
 		try
 		{ 
 			TitliInterface titli = Titli.getInstance();
 			Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0]; 
-			String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
+			
+			Properties prop = new Properties();
+			prop.load(getClass().getClassLoader().getResourceAsStream("titli.properties"));
+			String className=prop.getProperty("titliObjectMetadataImplementor");
+
+			ObjectMetadataInterface objectMetadataInterface = (ObjectMetadataInterface)Class.forName(className).newInstance();
+			String tableName = objectMetadataInterface.getTableName(obj);
+			
+			//String tableName = HibernateMetaData.getTableName(obj.getClass()).toLowerCase();
 			System.out.println("tableName: "+tableName);
-			String id= ((AbstractDomainObject) obj).getId().toString();
-			System.out.println("id: "+id);
-						
-			Map<Name, String> uniqueKey = new HashMap<Name, String>();
-			uniqueKey.put(new Name(Constants.IDENTIFIER), id);
 			
-			RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,	new Name(tableName), uniqueKey);
-		
-			IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
+			if(!tableName.equalsIgnoreCase(""))
+			{
+				String id = objectMetadataInterface.getUniqueIdentifier(obj);;
+				//String id= ((AbstractDomainObject) obj).getId().toString();
+				System.out.println("id: "+id);
+							
+				Map<Name, String> uniqueKey = new HashMap<Name, String>();
+				uniqueKey.put(new Name(Constants.IDENTIFIER), id);
+				
+				String mainTableName = TitliTableMapper.getInstance().returnMainTable(tableName);
+				if(mainTableName != null)
+				{
+					tableName = mainTableName;
+				}
 			
-			if (operation != null && operation.equalsIgnoreCase(Constants.TITLI_INSERT_OPERATION)) 
-			{
-				indexRefresher.insert(recordIdentifier);
-			}
-			else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_UPDATE_OPERATION)) 
-			{   
-				indexRefresher.update(recordIdentifier);
-			}
-			else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_DELETE_OPERATION)) 
-			{
-				indexRefresher.delete(recordIdentifier);
+				RecordIdentifier recordIdentifier = new RecordIdentifier(dbName,new Name(tableName),uniqueKey);
+			
+				IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
+				
+				if (operation != null && operation.equalsIgnoreCase(Constants.TITLI_INSERT_OPERATION)) 
+				{
+					indexRefresher.insert(recordIdentifier);
+				}
+				else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_UPDATE_OPERATION)) 
+				{  
+					indexRefresher.update(recordIdentifier);
+				}
+				else if (operation != null	&& operation.equalsIgnoreCase(Constants.TITLI_DELETE_OPERATION)) 
+				{
+					indexRefresher.delete(recordIdentifier);
+				}
 			}
 		} 
 		catch (TitliException e) 
+		{
+			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+		}
+		catch(IOException e)
+		{
+			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+		}
+		catch(ClassNotFoundException e)
+		{
+			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+		}
+		catch(InstantiationException e)
+		{
+			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
+		}
+		catch(IllegalAccessException e)
 		{
 			logger.error("Titli search index cound not be refreshed for opeartion "+operation, e);
 		}

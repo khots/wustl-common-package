@@ -80,7 +80,7 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (HibernateException dbex)
         {
-            Logger.out.error(dbex.getMessage(), dbex);
+           // Logger.out.error(dbex.getMessage(), dbex);
             throw handleError(Constants.GENERIC_DATABASE_ERROR, dbex);
         }
     }
@@ -100,7 +100,7 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (HibernateException dx)
         {
-            Logger.out.error(dx.getMessage(), dx);
+            //Logger.out.error(dx.getMessage(), dx);
             throw handleError(Constants.GENERIC_DATABASE_ERROR, dx);
         }
         session = null;
@@ -124,7 +124,7 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (HibernateException dbex)
         {
-            Logger.out.error(dbex.getMessage(), dbex);
+            //Logger.out.error(dbex.getMessage(), dbex);
             throw handleError("Error in commit: ", dbex);
         }
     }
@@ -153,7 +153,7 @@ public class HibernateDAOImpl implements HibernateDAO
 	        }
 	        catch (HibernateException dbex)
 	        {
-	            Logger.out.error(dbex.getMessage(), dbex);
+	            //Logger.out.error(dbex.getMessage(), dbex);
 	            throw handleError("Error in rollback: ", dbex);
 	        }
         }
@@ -181,12 +181,12 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (HibernateException dbex)
         {
-        	Logger.out.error(dbex.getMessage(),dbex);
+        	//Logger.out.error(dbex.getMessage(),dbex);
         	throw handleError("Error in JDBC connection: ",dbex);
         }
         catch (SQLException sqlEx)
         {
-        	Logger.out.error(sqlEx.getMessage(),sqlEx);
+        	//Logger.out.error(sqlEx.getMessage(),sqlEx);
         	throw handleError("Error in disabling Related Objects: ",sqlEx);
         }
 	}
@@ -243,7 +243,7 @@ public class HibernateDAOImpl implements HibernateDAO
     
    private DAOException handleError(String message, Exception hibExp)
     {
-        Logger.out.error(hibExp.getMessage(), hibExp);
+       // Logger.out.error(hibExp.getMessage(), hibExp);
         String msg = generateErrorMessage(message, hibExp);
         return new DAOException(msg, hibExp);
     }
@@ -365,7 +365,7 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (HibernateException hibExp)
         {
-            Logger.out.error(hibExp.getMessage(), hibExp);
+           // Logger.out.error(hibExp.getMessage(), hibExp);
             throw new DAOException("Error in delete", hibExp);
         }
     }
@@ -540,13 +540,13 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (HibernateException hibExp)
         {
-            Logger.out.error(hibExp.getMessage(), hibExp);
+            //Logger.out.error(hibExp.getMessage(), hibExp);
             throw new DAOException("Error in retrieve " + hibExp.getMessage(),
                     hibExp);
         }
         catch (Exception exp)
         {
-            Logger.out.error(exp.getMessage(), exp);
+            //Logger.out.error(exp.getMessage(), exp);
             throw new DAOException("Logical Erroe in retrieve method "
                     + exp.getMessage(), exp);
         }
@@ -563,13 +563,13 @@ public class HibernateDAOImpl implements HibernateDAO
         }
         catch (ClassNotFoundException cnFoundExp)
         {
-            Logger.out.error(cnFoundExp.getMessage(), cnFoundExp);
+           // Logger.out.error(cnFoundExp.getMessage(), cnFoundExp);
             throw new DAOException("Error in retrieve "
                     + cnFoundExp.getMessage(), cnFoundExp);
         }
         catch (HibernateException hibExp)
         {
-            Logger.out.error(hibExp.getMessage(), hibExp);
+           // Logger.out.error(hibExp.getMessage(), hibExp);
             throw new DAOException("Error in retrieve " + hibExp.getMessage(),
                     hibExp);
         }

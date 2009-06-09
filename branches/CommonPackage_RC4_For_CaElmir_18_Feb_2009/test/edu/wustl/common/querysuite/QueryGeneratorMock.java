@@ -1,14 +1,19 @@
 package edu.wustl.common.querysuite;
 
+import java.rmi.RemoteException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
+import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.beans.MatchedClass;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.queryobject.ArithmeticOperator;
@@ -42,7 +47,7 @@ import edu.wustl.common.querysuite.queryobject.impl.Expression;
  */
 public class QueryGeneratorMock {
 
-    public static EntityManagerMock entityManager = new EntityManagerMock();
+    private static EntityManagerMock entityManager = new EntityManagerMock();
 
     /**
      * Creates query with empty child expression.
@@ -52,7 +57,7 @@ public class QueryGeneratorMock {
     public static IQuery emptyChildExpression() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -138,7 +143,7 @@ public class QueryGeneratorMock {
     public static IQuery emptyRootExpression() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -402,7 +407,7 @@ public class QueryGeneratorMock {
      */
     public static IQuery createParticipantQuery1() {
         IQuery query = null;
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -465,7 +470,7 @@ public class QueryGeneratorMock {
 
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -589,7 +594,7 @@ public class QueryGeneratorMock {
      */
     public static IQuery creatParticipantQuery2() {
         IQuery query = null;
-        entityManager = new EntityManagerMock();
+        
         try {
 
             query = QueryObjectFactory.createQuery();
@@ -769,7 +774,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery1() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -899,7 +904,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery1WithEmptyExp() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = createSampleQuery1();
             IConstraints constraints = query.getConstraints();
@@ -960,7 +965,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery2() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -1118,7 +1123,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery3() {
         IQuery query = QueryObjectFactory.createQuery();
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -1330,7 +1335,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery4() {
         IQuery query = QueryObjectFactory.createQuery();
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -1528,7 +1533,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery5() {
         IQuery query = QueryObjectFactory.createQuery();
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -1663,7 +1668,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery6() {
         IQuery query = QueryObjectFactory.createQuery();
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -1865,7 +1870,7 @@ public class QueryGeneratorMock {
     public static IQuery createNBNSampleQuery2() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2055,7 +2060,7 @@ public class QueryGeneratorMock {
     public static IQuery createMultipleParentQuery1() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2171,7 +2176,7 @@ public class QueryGeneratorMock {
     public static IQuery createMultipleParentQuery2() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2303,7 +2308,7 @@ public class QueryGeneratorMock {
     public static IQuery createMultipleParentQuery3() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2451,7 +2456,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQuery1() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2498,7 +2503,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQuery2() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2541,7 +2546,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQuery3() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2597,7 +2602,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQueryWithAssociation1() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2671,7 +2676,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQueryWithAssociation2() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2741,7 +2746,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQueryWithManyToMany() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2809,7 +2814,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQueryWithPAND1() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -2930,7 +2935,7 @@ public class QueryGeneratorMock {
     public static IQuery createQueryWithEmptyExp() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -3245,7 +3250,7 @@ public class QueryGeneratorMock {
     public static IQuery createSampleQuery1WithSelectView3() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = createSampleQuery1();
             IConstraints constraints = query.getConstraints();
@@ -3299,7 +3304,7 @@ public class QueryGeneratorMock {
     public static IQuery createSpecimenBioHazardQuery1() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -3369,7 +3374,7 @@ public class QueryGeneratorMock {
     public static IQuery createSpecimenBioHazardQuery2() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -3458,7 +3463,7 @@ public class QueryGeneratorMock {
     public static IQuery createSpecimenBioHazardQuery3() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -3588,7 +3593,7 @@ public class QueryGeneratorMock {
     public static IParameterizedQuery createSpecimenBioHazardQuery4() {
         IParameterizedQuery parameterizedQuery = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             parameterizedQuery = QueryObjectFactory.createParameterizedQuery();
             parameterizedQuery.setName("TestParameterizedQuery");
@@ -3727,7 +3732,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQueryLevel4() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();;
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -3756,7 +3761,7 @@ public class QueryGeneratorMock {
     public static IQuery createInheritanceQueryLevel4StaticToDE() {
         IQuery query = null;
 
-        entityManager = new EntityManagerMock();
+        
         try {
             query = QueryObjectFactory.createQuery();
             IConstraints constraints = QueryObjectFactory.createConstraints();
@@ -3808,7 +3813,6 @@ public class QueryGeneratorMock {
      * @return
      */
     public static IQuery createTemporalQueryParticipantCPR() {
-        entityManager = new EntityManagerMock();
         try {
             IQuery query = QueryObjectFactory.createQuery();
             IConstraints constraints = query.getConstraints();
@@ -3856,14 +3860,13 @@ public class QueryGeneratorMock {
 
     /**
      * <pre>
-     * SCG
+     * Specimen
      *      CollectionEventParam (C)
      *      FrozenEventParam (F) 
      *      Temporal (F.timestamp - 30mins &lt;= C.timestamp)
      * </pre>
      */
     public static IQuery createTemporalQueryDateOffset() {
-        entityManager = new EntityManagerMock();
         try {
             IQuery query = QueryObjectFactory.createQuery();
             IConstraints constraints = query.getConstraints();
@@ -3883,10 +3886,10 @@ public class QueryGeneratorMock {
                     QueryObjectFactory.createIntraModelAssociation(specFroz));
 
             IExpressionAttribute collTime = QueryObjectFactory.createExpressionAttribute(
-                    collEvtParam, entityManager.getAttribute(EntityManagerMock.COLL_EVT_NAME,
+                    collEvtParam, entityManager.getAttribute(EntityManagerMock.SPECIMEN_EVT_NAME,
                             "timestamp"));
             IExpressionAttribute frozTime = QueryObjectFactory.createExpressionAttribute(frozenEvtParam
-                    , entityManager.getAttribute(EntityManagerMock.FROZEN_EVT_NAME, "timestamp"));
+                    , entityManager.getAttribute(EntityManagerMock.SPECIMEN_EVT_NAME, "timestamp"));
 
             ITerm lhs = QueryObjectFactory.createTerm();
             lhs.addOperand(frozTime);
@@ -3910,7 +3913,7 @@ public class QueryGeneratorMock {
 
     /**
      * <pre>
-     * SCG
+     * Specimen
      *      CollectionEventParam (C)
      *      FrozenEventParam (F) 
      *      Temporal (F.timestamp - C.timestamp = 30 mins)
@@ -3927,6 +3930,7 @@ public class QueryGeneratorMock {
             formula.addRhs(newRhs);
 
             formula.getLhs().setOperand(1, collTime.getOperand(0));
+            formula.setOperator(RelationalOperator.Equals);
             return query;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -3935,10 +3939,10 @@ public class QueryGeneratorMock {
     
     /**
      * <pre>
-     * SCG
+     * Specimen
      *      CollectionEventParam (C)
      *      FrozenEventParam (F) 
-     *      Temporal (F.timestamp - C.timestamp = 30 mins)
+     *      Temporal (F.timestamp - C.timestamp <= 6 Years)
      * </pre>
      */
     public static IQuery createTemporalQueryYMDateDiff() {
@@ -3967,7 +3971,7 @@ public class QueryGeneratorMock {
      * </pre>
      */
     public static IQuery createTemporalQueryOffsetAttribute() {
-        entityManager = new EntityManagerMock();
+        
         try {
             IQuery query = QueryObjectFactory.createQuery();
             IConstraints constraints = query.getConstraints();
@@ -3994,9 +3998,9 @@ public class QueryGeneratorMock {
             IExpressionAttribute regTime = QueryObjectFactory.createExpressionAttribute(collProtReg,
                     entityManager.getAttribute(EntityManagerMock.COLLECTION_PROTOCOL_REGISTRATION_NAME,
                             "registrationDate"));
-            IExpressionAttribute evtPoint = QueryObjectFactory.createExpressionAttribute(collProtEvt,
+            IExpressionAttribute evtPoint = QueryObjectFactory.createDateOffsetAttribute(collProtEvt,
                     entityManager.getAttribute(EntityManagerMock.COLLECTION_PROTOCOL_EVT_NAME,
-                            "studyCalendarEventPoint"));
+                            "studyCalendarEventPoint"), TimeInterval.Day);
             // regTime + evtPoint = "05-30-2008"
             ITerm lhs = QueryObjectFactory.createTerm();
             lhs.addOperand(regTime);
@@ -4019,7 +4023,6 @@ public class QueryGeneratorMock {
     }
 
     public static IQuery createTemporalQueryWithOtherCond() {
-        entityManager = new EntityManagerMock();
         try {
             IQuery query = createTemporalQueryDateOffset();
             IExpression scg = query.getConstraints().getRootExpression();
@@ -4028,7 +4031,7 @@ public class QueryGeneratorMock {
             scg.addOperand(0, rule, getAndConnector());
 
             ICondition cond = rule.addCondition();
-            cond.setAttribute(entityManager.getAttribute(EntityManagerMock.SPECIMEN_COLLECTION_GROUP_NAME, "id"));
+            cond.setAttribute(entityManager.getAttribute(EntityManagerMock.SPECIMEN_NAME, "id"));
             cond.setRelationalOperator(RelationalOperator.IsNotNull);
             return query;
         } catch (Exception e) {
@@ -4068,7 +4071,7 @@ public class QueryGeneratorMock {
     }
 
     private static IQueryEntity newEntity(String name) {
-        entityManager = new EntityManagerMock();
+        
         try {
             EntityInterface entity = entityManager.getEntityByName(name);
             return QueryObjectFactory.createQueryEntity(entity);
@@ -4076,4 +4079,38 @@ public class QueryGeneratorMock {
             throw new RuntimeException(e);
         }
     }
+    
+    
+
+    @SuppressWarnings("serial")
+    private static class MockEntityCache extends AbstractEntityCache {
+        private static EntityGroupInterface entityGroup;
+
+        MockEntityCache() {
+            entityCache = this;
+        }
+
+        @Override
+        protected Collection<EntityGroupInterface> getCab2bEntityGroups() throws RemoteException {
+            return Collections.singleton(entityGroup);
+        }
+
+        public MatchedClass getCategories(Collection<EntityInterface> entityCollection) {
+            return null;
+        }
+
+        public MatchedClass getCategoriesAttributes(Collection<AttributeInterface> attributeCollection) {
+            return null;
+        }
+
+    }
+    
+   public static void mockCache() {
+        MockEntityCache.entityGroup = entityManager.entityGroup;
+        new MockEntityCache();
+    }
+
+   public static void clear() {
+       entityManager = new EntityManagerMock();
+   }
 }

@@ -448,6 +448,10 @@ public class PrivilegeCache
 		{
 			return 104;
 		}
+		if(Permissions.EXECUTE_QUERY.equals(privilegeName))
+		{
+			return 31;
+		}
 		return 0;
 	}
 

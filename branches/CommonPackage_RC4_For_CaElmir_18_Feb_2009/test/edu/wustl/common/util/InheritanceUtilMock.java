@@ -70,7 +70,7 @@ public class InheritanceUtilMock implements InheritanceUtilsInterface
 			}
 		}
 
-		return null;
+		return attribute;
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class InheritanceUtilMock implements InheritanceUtilsInterface
 		{
 			Logger.out.error("UnExpected Exception:" + e.getMessage(), e);
 		}
-		return null;
+		return association;
 	}
 
 	/**

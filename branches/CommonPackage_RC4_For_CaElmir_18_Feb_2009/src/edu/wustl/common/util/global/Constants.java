@@ -156,7 +156,6 @@ public class Constants
 	public static final String  POSTGRESQL_DATABASE = "POSTGRESQL";
 	public static final String  DB2_DATABASE = "DB2";
 	
-	
 	// The unique key voilation message is "Duplicate entry %s for key %d"
 	// This string is used for searching " for key " string in the above error message
 	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
@@ -557,6 +556,10 @@ public class Constants
 	public static final String hashedOut = "##";
 	public static final int ONE = 1;
 	public static final int INITIALIZE = -1;
+	
+	// changes for ACORN
+	public static final String MSSQLSERVER_DATABASE = "MSSQLSERVER";
+	public static final String FORMAT_FILE_EXTENTION = "_FormatFile.txt";
 }
 
 
