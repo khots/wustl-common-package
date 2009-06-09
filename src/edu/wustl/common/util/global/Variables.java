@@ -52,4 +52,5 @@ public class Variables
      public static Map<String, String> privilegeDetailsMap = new HashMap<String, String>();
      public static Map<String, List<NameValueBean>> privilegeGroupingMap = new HashMap<String, List<NameValueBean>>();
      public static String validatorClassname=CONST_VARIABLES_VALUE;
+     public static String dateFormat="MM-dd-yyyy";
 }

@@ -80,7 +80,9 @@ public class Utility
 			patch id: 4205_1*/  
 				if(pattern == null || pattern.equals(""))
 				{
-					pattern = Constants.DATE_PATTERN_MM_DD_YYYY;
+					//pattern = Constants.DATE_PATTERN_MM_DD_YYYY;
+					//Added by Geeta
+					pattern = Variables.dateFormat;
 				}
 				throw new ParseException("Date '"+date+"' is not in format of "+pattern,0);
 			}
@@ -117,8 +119,15 @@ public class Utility
     		
     		if(result)
             {
-    			dtSep  = Constants.DATE_SEPARATOR; 
-                datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+    			//dtSep  = Constants.DATE_SEPARATOR; 
+                //datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+                
+    			//Added by Geeta
+    			if(Variables.dateFormat!=null)
+    			{
+        			datePattern=Variables.dateFormat;
+        			datePattern=datePattern.replaceAll("/", "-");
+    			}
             }
     		
     		// check for  / separator
@@ -130,8 +139,15 @@ public class Utility
         		//System.out.println("is Valid Date Pattern : / : "+result);
         		if(result)
                 {
-        			dtSep  = Constants.DATE_SEPARATOR_SLASH; 
-                    datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+        			//dtSep  = Constants.DATE_SEPARATOR_SLASH; 
+                    //datePattern = "MM"+dtSep+"dd"+dtSep+"yyyy";
+                    
+                    // Added by Geeta
+        			if(Variables.dateFormat!=null)
+        			{
+        				datePattern =Variables.dateFormat;
+        				datePattern=datePattern.replaceAll("-", "/");
+        			}
                 }
             }
             
@@ -797,19 +813,21 @@ public class Utility
 	private static String pattern = "MM-dd-yyyy";
 	public static int getMonth(String date) {
 		int month = 0;
-
-		month = getCalendar(date, pattern).get(Calendar.MONTH);
+		  // date pattern changed by geeta
+		month = getCalendar(date, Variables.dateFormat).get(Calendar.MONTH);
 		month = month + 1;
 		return month;
 	}
 	public static int getDay(String date) {
 		int day = 0;
-		day = getCalendar(date, pattern).get(Calendar.DAY_OF_MONTH);
+		 // date pattern changed by geeta
+		day = getCalendar(date, Variables.dateFormat).get(Calendar.DAY_OF_MONTH);
 		return day;
 	}
 	public static int getYear(String date) {
 		int year = 0;
-		year = getCalendar(date, pattern).get(Calendar.YEAR);
+		 // date pattern changed by geeta
+		year = getCalendar(date, Variables.dateFormat).get(Calendar.YEAR);
 		return year;
 	}
 	private static Calendar getCalendar(String date, String pattern) {
@@ -1071,5 +1089,44 @@ public class Utility
     	}
 		return cpIdsList;
 	}
+	
+	/**
+	 * To check the validity of the date format specified by user in the config file.
+	 */
+	public static boolean isValidDateFormat(String dateFormat){
+    	boolean result = false;
+    	boolean result1 = false;
+    	boolean isValidDatePattern = false;
+    	try
+		{
+    		Pattern re = Pattern.compile("MM-dd-yyyy", Pattern.CASE_INSENSITIVE);
+    		Pattern re1 = Pattern.compile("dd-MM-yyyy", Pattern.CASE_INSENSITIVE);
+    		Matcher  mat =re.matcher(dateFormat);
+    		Matcher  mat1 =re1.matcher(dateFormat);
+    		result = mat.matches();
+    		result1 = mat1.matches();
+    		if(!(result || result1))
+    		{
+    			re = Pattern.compile("MM/dd/yyyy", Pattern.CASE_INSENSITIVE);
+        		re1 = Pattern.compile("dd/MM/yyyy", Pattern.CASE_INSENSITIVE);
+        		mat =re.matcher(dateFormat);
+        		mat1 =re1.matcher(dateFormat);
+        		result = mat.matches();
+        		result1 = mat1.matches();
+    		}
+    		if(result || result1){
+    			isValidDatePattern=true;
+        	}else{
+        		isValidDatePattern=false;
+        	}
+		}
+    	catch(Exception exp)
+		{
+			Logger.out.error("IsValidDatePattern : exp : " + exp);
+    		return false;
+		}
+    	//System.out.println("dtCh : " +dtCh );
+    	return isValidDatePattern;	
+    }
 
 }

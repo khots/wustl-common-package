@@ -406,7 +406,8 @@ public class JDBCDAOImpl implements JDBCDAO
 		//Logger.out.debug("Column value: " + value);
 		try
 		{
-			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+			// Date format changed by by geeta
+			DateFormat formatter = new SimpleDateFormat(Variables.dateFormat);
 			formatter.setLenient(false);
 			java.util.Date date = formatter.parse((String) value);
 			Timestamp t = new Timestamp(date.getTime());
@@ -683,6 +684,12 @@ public class JDBCDAOImpl implements JDBCDAO
 		{
 			Logger.out.debug("MYSQL*****************************");
 			query = new StringBuffer("DROP TABLE IF EXISTS " + tableName);
+			executeUpdate(query.toString());
+		}
+		else if (Variables.databaseName.equals(Constants.MSSQLSERVER_DATABASE))
+		{
+			Logger.out.debug("MSSQLSERVER*****************************");
+			query = new StringBuffer("IF EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '"+tableName+"') DROP TABLE "+tableName);
 			executeUpdate(query.toString());
 		}
 		else if (Variables.databaseName.equals(Constants.DB2_DATABASE))

@@ -38,10 +38,9 @@ public interface Permissions {
 	public static final String GENERAL_SITE_ADMINISTRATION = "GENERAL_SITE_ADMINISTRATION";
 	public static final String GENERAL_ADMINISTRATION = "GENERAL_ADMINISTRATION";
 	public static final String SHIPMENT_PROCESSING = "SHIPMENT_PROCESSING";
-
 	public static final String STUDY_ADMINISTRATOR = "STUDY_ADMINISTRATION";
 	public static final String EXPERIMENT_ADMINISTRATOR = "EXPERIMENT_ADMINISTRATION";
 	public static final String COHORT_ADMINISTRATOR = "COHORT_MANAGEMENT";
 	public static final String EXPERIMENT_DATA_ENTRY = "EXPERIMENT_DATA_ENTRY";
-	
+	public static final String EXECUTE_QUERY="EXECUTE_QUERY";
 }

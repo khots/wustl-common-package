@@ -1,12 +1,15 @@
 package edu.wustl.common.querysuite.queryengine.impl;
 
+import static edu.wustl.common.querysuite.queryengine.impl.SqlKeyWords.SELECT;
+import static edu.wustl.common.querysuite.queryengine.impl.SqlKeyWords.SELECT_DISTINCT;
+import static edu.wustl.common.querysuite.queryengine.impl.SqlKeyWords.WHERE;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +21,6 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation;
-import edu.common.dynamicextensions.domaininterface.AssociationInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.AttributeTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.BooleanTypeInformationInterface;
@@ -29,20 +31,15 @@ import edu.common.dynamicextensions.domaininterface.FileTypeInformationInterface
 import edu.common.dynamicextensions.domaininterface.IntegerTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.LongTypeInformationInterface;
 import edu.common.dynamicextensions.domaininterface.StringTypeInformationInterface;
-import edu.common.dynamicextensions.domaininterface.databaseproperties.ConstraintPropertiesInterface;
 import edu.common.dynamicextensions.entitymanager.EntityManager;
-import edu.common.dynamicextensions.util.global.Constants.InheritanceStrategy;
 import edu.wustl.cab2b.server.category.CategoryOperations;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.exceptions.SqlException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
-import edu.wustl.common.querysuite.metadata.associations.IAssociation;
-import edu.wustl.common.querysuite.metadata.associations.IIntraModelAssociation;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryengine.ISqlGenerator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
-import edu.wustl.common.querysuite.queryobject.IConnector;
 import edu.wustl.common.querysuite.queryobject.IConstraints;
 import edu.wustl.common.querysuite.queryobject.ICustomFormula;
 import edu.wustl.common.querysuite.queryobject.IExpression;
@@ -56,15 +53,12 @@ import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.ITerm;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import edu.wustl.common.querysuite.queryobject.TermType;
 import edu.wustl.common.querysuite.queryobject.TimeInterval;
 import edu.wustl.common.querysuite.queryobject.impl.Connector;
 import edu.wustl.common.querysuite.queryobject.impl.Expression;
 import edu.wustl.common.querysuite.queryobject.impl.JoinGraph;
 import edu.wustl.common.querysuite.queryobject.impl.OutputTreeDataNode;
 import edu.wustl.common.querysuite.queryobject.impl.metadata.QueryOutputTreeAttributeMetadata;
-import edu.wustl.common.querysuite.queryobject.util.InheritanceUtils;
-import edu.wustl.common.querysuite.queryobject.util.QueryObjectProcessor;
 import edu.wustl.common.querysuite.utils.CustomFormulaProcessor;
 import edu.wustl.common.querysuite.utils.DatabaseSQLSettings;
 import edu.wustl.common.querysuite.utils.DatabaseType;
@@ -87,19 +81,6 @@ import edu.wustl.metadata.util.DyExtnObjectCloner;
 public class SqlGenerator implements ISqlGenerator {
 
     /**
-     * This map holds integer value that will be appended to each table alias in
-     * the sql.
-     */
-    Map<IExpression, Integer> aliasAppenderMap = new HashMap<IExpression, Integer>();
-
-    /**
-     * This map holds the alias name generated for each fully Qualified
-     * className, where className id key & value is the aliasName generated for
-     * that className.
-     */
-    Map<String, String> aliasNameMap = new HashMap<String, String>();
-
-    /**
      * reference to the joingraph object present in the query object.
      */
     private JoinGraph joinGraph;
@@ -111,6 +92,7 @@ public class SqlGenerator implements ISqlGenerator {
 
     public static final String COLUMN_NAME = "Column";
 
+    private static final String SELECT_COMMA = ", ";
     /**
      * This set will contain the expression ids of the empty expression. An
      * expression is empty expression when it does not contain any Rule & its
@@ -119,35 +101,20 @@ public class SqlGenerator implements ISqlGenerator {
      */
     private Set<IExpression> emptyExpressions;// Set of Empty Expressions.
 
-    private Set<IExpression> pAndExpressions;// Set of Empty Expressions.
-
     // Variables required for output tree.
     /**
      * List of Roots of the output tree node.
      */
     List<OutputTreeDataNode> rootOutputTreeNodeList;
 
-    /**
-     * This map is used in output tree creation logic. It is map of alias
-     * appender verses the output tree node. This map is used to ensure that no
-     * duplicate output tree node is created for the expressions having same
-     * alias appender.
-     */
-    Map<Integer, OutputTreeDataNode> outputTreeNodeMap;
+    FromBuilder fromBuilder;
 
-    /**
-     * This map contains information about the tree node ids, attributes & their
-     * correspoiding column names in the generated SQL. - Inner most map Map<AttributeInterface,
-     * String> contains mapping of attribute interface verses the column name in
-     * SQL. - The outer map Map<Long, Map<AttributeInterface, String>>
-     * contains mapping of treenode Id verses the map in above step. This map
-     * contains mapping required for one output tree. - The List contains the
-     * mapping of all output trees that are formed by the query.
-     */
-    // List<Map<Long, Map<AttributeInterface, String>>> columnMapList;
     private int treeNo; // this count represents number of output trees formed.
-    private Map<AttributeInterface,String> attributeColumnNameMap = new HashMap<AttributeInterface, String>();
+
+    private Map<AttributeInterface, String> attributeColumnNameMap = new HashMap<AttributeInterface, String>();
+
     private boolean containsCLOBTypeColumn = false;
+
     /**
      * Default Constructor to instantiate SQL generator object.
      */
@@ -171,33 +138,6 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     /**
-     * Changes made for adding new rule in expression which do not have rule
-     * provided that expression contains Activity status attribute.
-     * 
-     * @param expressionId Root Expression Id
-     */
-    private void addactivityStatusToEmptExpr(int expressionId) {
-        Expression expression = (Expression) constraints.getExpression(expressionId);
-
-        List<IExpression> operandList = joinGraph.getChildrenList(expression);
-        for (IExpression subExpression : operandList) {
-            // TODO check this code.
-            // if (subExpression.isSubExpressionOperand()) {
-            addactivityStatusToEmptExpr(subExpression.getExpressionId());
-            // }
-        }
-
-        if (!expression.containsRule()) {
-            if (getActivityStatusAttribute(expression.getQueryEntity().getDynamicExtensionsEntity()) != null) {
-                IRule rule = QueryObjectFactory.createRule();
-                IConnector<LogicalOperator> logicalConnector = QueryObjectFactory
-                        .createLogicalConnector(LogicalOperator.And);
-                expression.addOperand(0, rule, logicalConnector);
-            }
-        }
-    }
-
-    /**
      * To initialize map the variables. & build the SQL for the Given Query
      * Object.
      * 
@@ -208,41 +148,29 @@ public class SqlGenerator implements ISqlGenerator {
      * @throws SqlException When there is error in the passed IQuery object.
      */
     String buildQuery(IQuery query) throws MultipleRootsException, SqlException, RuntimeException {
-        IQuery queryClone = new DyExtnObjectCloner().clone(query);
-        // IQuery queryClone = query;
+        IQuery queryClone = cloneQuery(query);
         constraints = queryClone.getConstraints();
-
-        QueryObjectProcessor.replaceMultipleParents(constraints);
 
         processExpressionsWithCategories(queryClone);
 
         this.joinGraph = (JoinGraph) constraints.getJoinGraph();
         IExpression rootExpression = constraints.getRootExpression();
 
-        // Initializin map variables.
-        aliasAppenderMap = new HashMap<IExpression, Integer>();
-        aliasNameMap = new HashMap<String, String>();
-        createAliasAppenderMap();
-
-        addactivityStatusToEmptExpr(rootExpression.getExpressionId());
         // Identifying empty Expressions.
         emptyExpressions = new HashSet<IExpression>();
         isEmptyExpression(rootExpression.getExpressionId());
-
-        pAndExpressions = new HashSet<IExpression>();
 
         // Generating output tree.
         createTree();
 
         // Creating SQL.
+        fromBuilder = new FromBuilder(joinGraph);
+        // String fromPart = fromBuilder.getFromPartSQL(rootExpression, null,
+        // new HashSet<IExpression>());
+        String fromPart = fromBuilder.fromClause();
         String wherePart = getCompleteWherePart(rootExpression);
-
-        String fromPart = getFromPartSQL(rootExpression, null, new HashSet<Integer>());
         String selectPart = getSelectPart();
-        // SRINATH
-        if (selectPart.length() > 0) {
-            selectPart += " ,";
-        }
+
         selectPart += getSelectForOutputTerms(queryClone.getOutputTerms());
         selectPart = removeLastComma(selectPart);
 
@@ -252,8 +180,11 @@ public class SqlGenerator implements ISqlGenerator {
         return sql;
     }
 
+    IQuery cloneQuery(IQuery query) {
+        return new DyExtnObjectCloner().clone(query);
+    }
+
     private void log(String sql) {
-        // TODO format.
         try {
             new SQLLogger().log(sql);
         } catch (IOException e) {
@@ -269,56 +200,9 @@ public class SqlGenerator implements ISqlGenerator {
      * @throws SqlException
      */
     private String getCompleteWherePart(IExpression rootExpression) throws SqlException, RuntimeException {
-
-        String wherePart = getWherePartSQL(rootExpression, null, false);
-
-        // Adding extra where condition for PAND to check activity status value
-        // as disabled or null
-        StringBuffer extraWherePAnd = new StringBuffer();
-
-        Set<Integer> expressionIDs = new HashSet<Integer>(); // set to hold
-        // values of
-        // aliasAppender,
-        // so that
-        // duplicate
-        // condition
-        // should not
-        // get added in
-        // Query.
-        for (IExpression expression : pAndExpressions) {
-            if (expressionIDs.add(aliasAppenderMap.get(expression))) {
-                AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity()
-                        .getDynamicExtensionsEntity());
-                if (attributeObj != null) {
-                    // creating activityStatus is null condition, this is
-                    // required in case of Pseudo-Anded expressions.
-                    ICondition condition = QueryObjectFactory.createCondition(attributeObj, RelationalOperator.IsNull,
-                            null);
-                    extraWherePAnd.append("(").append(getSQL(condition, expression)).append(" OR ");
-
-                    // creating activityStatus != disabled condition.
-                    condition = createActivityStatusCondition(attributeObj);
-                    extraWherePAnd.append(getSQL(condition, expression));
-                    extraWherePAnd.append(")").append(LogicalOperator.And).append(" ");
-                }
-            }
-            // expression.getQueryEntity()
-        }
-        wherePart = "Where " + extraWherePAnd.toString() + wherePart;
+        String wherePart = getWherePartSQL(rootExpression);
+        wherePart = WHERE + wherePart;
         return wherePart;
-    }
-
-    /**
-     * Creates condition ActivitiStatus!='disabled'
-     * 
-     * @param attributeObj
-     * @return
-     */
-    private ICondition createActivityStatusCondition(AttributeInterface attributeObj) {
-        List<String> values = new ArrayList<String>();
-        values.add(Constants.ACTIVITY_STATUS_DISABLED);
-        ICondition condition = QueryObjectFactory.createCondition(attributeObj, RelationalOperator.NotEquals, values);
-        return condition;
     }
 
     /**
@@ -400,26 +284,23 @@ public class SqlGenerator implements ISqlGenerator {
      */
     String getSelectPart() {
         selectIndex = 0;
-        // columnMapList = new
-        // ArrayList<Map<Long,Map<AttributeInterface,String>>>();
         String selectAttribute = "";
         for (OutputTreeDataNode rootOutputTreeNode : rootOutputTreeNodeList) {
             selectAttribute += getSelectAttributes(rootOutputTreeNode);
         }
-        //Deepti : added quick fix for bug 6950. Add distinct only when columns do not include CLOB type.
-        if(containsCLOBTypeColumn)
-        { 
-        	selectAttribute = "Select "+ selectAttribute;
-        }else
-        {
-        	selectAttribute = "Select distinct "+ selectAttribute;
+        // Deepti : added quick fix for bug 6950. Add distinct only when columns
+        // do not include CLOB type.
+        if (containsCLOBTypeColumn) {
+            selectAttribute = SELECT + selectAttribute;
+        } else {
+            selectAttribute = SELECT_DISTINCT + selectAttribute;
         }
-        return removeLastComma(selectAttribute);
+        return selectAttribute;
     }
 
     private String removeLastComma(String select) {
-        if (select.endsWith(" ,")) {
-            select = select.substring(0, select.length() - 2);
+        if (select.endsWith(SELECT_COMMA)) {
+            select = select.substring(0, select.length() - SELECT_COMMA.length());
         }
         return select;
     }
@@ -440,9 +321,9 @@ public class SqlGenerator implements ISqlGenerator {
         List<AttributeInterface> attributes = outputEntity.getSelectedAttributes();
 
         for (AttributeInterface attribute : attributes) {
-            selectPart.append(getSQL(attribute, expression));
+            selectPart.append(fromBuilder.aliasOf(attribute, expression));
             String columnAliasName = COLUMN_NAME + selectIndex;
-            selectPart.append(" " + columnAliasName + " ,");
+            selectPart.append(" " + columnAliasName + SELECT_COMMA);
             // code to get displayname. & pass it to the Constructor along with
             // treeNode.
             String displayNameForColumn = Utility.getDisplayNameForColumn(attribute);
@@ -450,9 +331,8 @@ public class SqlGenerator implements ISqlGenerator {
                     displayNameForColumn));
             attributeColumnNameMap.put(attribute, columnAliasName);
             selectIndex++;
-            if("file".equalsIgnoreCase(attribute.getDataType()))
-            {
-            	containsCLOBTypeColumn = true;
+            if ("file".equalsIgnoreCase(attribute.getDataType())) {
+                containsCLOBTypeColumn = true;
             }
         }
         List<OutputTreeDataNode> children = treeNode.getChildren();
@@ -465,465 +345,16 @@ public class SqlGenerator implements ISqlGenerator {
     private int selectIndex;
 
     /**
-     * To get the From clause of the Query.
-     * 
-     * @param expression The Root Expression.
-     * @param leftAlias the String representing alias of left table. This will
-     *            be alias of table represented by Parent Expression. Will be
-     *            null for the Root Expression.
-     * @param processedAlias The set of aliases processed.
-     * @return the From clause of the SQL.
-     * @throws SqlException When there is problem in creating from part. problem
-     *             can be like: no primary key found in entity for join.
-     */
-    String getFromPartSQL(IExpression expression, String leftAlias, Set<Integer> processedAlias) throws SqlException {
-        StringBuffer buffer = new StringBuffer("");
-        int parentExpressionId = expression.getExpressionId();
-
-        if (processedAlias.isEmpty()) // this will be true only for root node.
-        {
-            EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
-            leftAlias = getAliasName(expression);
-            buffer.append("From " + leftEntity.getTableProperties().getName() + " " + leftAlias);
-
-            createFromPartForDerivedEntity(expression, buffer);
-        }
-
-        Integer parentExpressionAliasAppender = aliasAppenderMap.get(expression);
-        processedAlias.add(parentExpressionAliasAppender);
-
-        // Processing children
-        buffer.append(processChildExpressions(leftAlias, processedAlias, expression));
-        return buffer.toString();
-    }
-
-    /**
-     * To create From path for the deirved entity.
-     * 
-     * @param expression the reference to expression.
-     * @param buffer The buffer to which the Output will be appended.
-     * @throws SqlException
-     */
-    private void createFromPartForDerivedEntity(IExpression expression, StringBuffer buffer) throws SqlException {
-        EntityInterface leftEntity = expression.getQueryEntity().getDynamicExtensionsEntity();
-        EntityInterface superClassEntity = leftEntity.getParentEntity();
-        // processing Parent class heirarchy.
-        if (superClassEntity != null) {
-            EntityInterface theLeftEntity = leftEntity;
-            while (superClassEntity != null) {
-                InheritanceStrategy inheritanceType = theLeftEntity.getInheritanceStrategy();
-                if (InheritanceStrategy.TABLE_PER_SUB_CLASS.equals(inheritanceType)) // only
-                // need
-                // to
-                // handle
-                // this
-                // type
-                // of
-                // inheritance
-                // here.
-                {
-                    AttributeInterface primaryKey = getPrimaryKey(theLeftEntity);
-                    String primaryKeyColumnName = primaryKey.getColumnProperties().getName();
-                    String subClassAlias = getAliasFor(expression, theLeftEntity);
-                    String superClassAlias = getAliasFor(expression, superClassEntity);
-                    buffer.append(" left join " + superClassEntity.getTableProperties().getName() + " "
-                            + superClassAlias + " on ");
-                    String leftAttribute = subClassAlias + "." + primaryKeyColumnName;
-                    String rightAttribute = superClassAlias + "." + primaryKeyColumnName;
-                    buffer.append("(" + leftAttribute + "=" + rightAttribute + ")");
-                }
-                theLeftEntity = superClassEntity;
-                superClassEntity = superClassEntity.getParentEntity();
-            }
-        }
-    }
-
-    /**
-     * To process all child expression of the given Expression & get their SQL
-     * representation for where part.
-     * 
-     * @param leftAlias left table alias in join.
-     * @param processedAlias The list of precessed alias.
-     * @param parentExpressionId The reference to expression whose children to
-     *            be processed.
-     * @return the left join sql for children expression.
-     * @throws SqlException when there is error in the passed IQuery object.
-     */
-    private String processChildExpressions(String leftAlias, Set<Integer> processedAlias, IExpression parentExpression)
-            throws SqlException {
-        StringBuffer buffer = new StringBuffer();
-
-        List<IExpression> children = joinGraph.getChildrenList(parentExpression);
-        if (!children.isEmpty()) {
-            // processing all outgoing edges/nodes from the current node in the
-            // joingraph.
-            for (IExpression childExpression : children) {
-                // IExpression childExpression =
-                // constraints.getExpression(childExpressionId);
-
-                IAssociation association = joinGraph.getAssociation(parentExpression, childExpression);
-
-                AssociationInterface actualEavAssociation = ((IIntraModelAssociation) association)
-                        .getDynamicExtensionsAssociation();
-                AssociationInterface eavAssociation = actualEavAssociation;
-                EntityInterface rightEntity = eavAssociation.getTargetEntity();
-                String actualRightAlias = getAliasFor(childExpression, rightEntity);
-                String rightAlias = actualRightAlias;
-                if (!processedAlias.contains(aliasAppenderMap.get(childExpression))) {
-                    if (InheritanceUtils.getInstance().isInherited(eavAssociation)) {
-                        eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
-                        rightEntity = eavAssociation.getTargetEntity();
-
-                        leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
-                        rightAlias = getAliasFor(childExpression, eavAssociation.getTargetEntity());
-                    } else
-                    {
-                    	leftAlias = getAliasFor(parentExpression, eavAssociation.getEntity());
-                    }
-
-                    EntityInterface childEntity = childExpression.getQueryEntity().getDynamicExtensionsEntity();
-
-                    EntityInterface leftEntity = eavAssociation.getEntity();
-
-                    ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
-                    if (constraintProperties.getSourceEntityKey() != null
-                            && constraintProperties.getTargetEntityKey() != null)// Many
-                    // to
-                    // Many
-                    // Case
-                    {
-
-                        String leftAttribute = null;
-                        String rightAttribute = null;
-
-                        String middleTableName = constraintProperties.getName();
-                        String middleTableAlias = getAliasForMiddleTable(childExpression, middleTableName);
-
-                        AttributeInterface primaryKey = getPrimaryKey(leftEntity);
-                        leftAttribute = leftAlias + "." + primaryKey.getColumnProperties().getName();
-
-                        rightAttribute = middleTableAlias + "." + constraintProperties.getSourceEntityKey();
-                        // Forming joing with middle table.
-                        buffer.append(" left join " + middleTableName + " " + middleTableAlias + " on ");
-                        buffer.append("(" + leftAttribute + "=" + rightAttribute);
-
-                        /*
-                         * Adding descriminator column condition for the 1st
-                         * parent node while forming FROM part left joins. This
-                         * will be executed only once i.e. when only one node is
-                         * processed.
-                         */
-                        if (processedAlias.size() == 1) {
-                            buffer.append(getDescriminatorCondition(actualEavAssociation.getEntity(), leftAlias));
-                        }
-                        buffer.append(")");
-
-                        // Forming join with child table.
-                        leftAttribute = middleTableAlias + "." + constraintProperties.getTargetEntityKey();
-                        primaryKey = getPrimaryKey(rightEntity);
-                        rightAttribute = rightAlias + "." + primaryKey.getColumnProperties().getName();
-
-                        buffer.append(" left join " + rightEntity.getTableProperties().getName() + " " + rightAlias
-                                + " on ");
-                        buffer.append("(" + leftAttribute + "=" + rightAttribute);
-
-                        /*
-                         * Adding descriminator column condition for the child
-                         * node while forming FROM part left joins.
-                         */
-                        buffer.append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(), rightAlias)
-                                + ")");
-                    } else {
-                        String leftAttribute = null;
-                        String rightAttribute = null;
-                        if (constraintProperties.getSourceEntityKey() != null)// Many
-                        // Side
-                        {
-                            leftAttribute = leftAlias + "." + constraintProperties.getSourceEntityKey();
-                            AttributeInterface primaryKey = getPrimaryKey(rightEntity);
-                            rightAttribute = rightAlias + "." + primaryKey.getColumnProperties().getName();
-                        } else
-                        // One Side
-                        {
-                            AttributeInterface primaryKey = getPrimaryKey(leftEntity);
-                            leftAttribute = leftAlias + "." + primaryKey.getColumnProperties().getName();
-                            rightAttribute = rightAlias + "." + constraintProperties.getTargetEntityKey();
-                        }
-                        buffer.append(" left join " + rightEntity.getTableProperties().getName() + " " + rightAlias
-                                + " on ");
-                        buffer.append("(" + leftAttribute + "=" + rightAttribute);
-
-                        /*
-                         * Adding descriminator column condition for the 1st
-                         * parent node while forming FROM part left joins. This
-                         * will be executed only once i.e. when only one node is
-                         * processed.
-                         */
-                        if (processedAlias.size() == 1) {
-                            buffer.append(getDescriminatorCondition(actualEavAssociation.getEntity(), leftAlias));
-                        }
-                        /*
-                         * Adding descriminator column condition for the child
-                         * node while forming FROM part left joins.
-                         */
-                        buffer.append(getDescriminatorCondition(actualEavAssociation.getTargetEntity(), rightAlias)
-                                + ")");
-                    }
-
-                    buffer.append(getParentHeirarchy(childExpression, childEntity, rightEntity));
-                }
-                // append from part SQL for the next Expressions.
-                buffer.append(getFromPartSQL(childExpression, actualRightAlias, processedAlias));
-            }
-        }
-        return buffer.toString();
-    }
-
-    /**
-     * To get the SQL for the descriminator column condition for the given
-     * entity. It will return SQL for condition in format: " AND
-     * <DescriminatorColumnName> = '<DescriminatorColumnValue>'"
-     * 
-     * @param entity The reference to the entity.
-     * @param aliasName The alias Name assigned to that entity table in the SQL.
-     * @return The String representing SQL for the descriminator column
-     *         condition for the given entity, if inheritance strategy is
-     *         TABLE_PER_HEIRARCHY. Returns empty String if there is no
-     *         Descriminator column condition present for the Entity. i.e. when
-     *         either of following is true: 1. when entity is not derived
-     *         entity.(Parent entity is null) 2. Inheritance strategy is not
-     *         TABLE_PER_HEIRARCHY.
-     */
-    private String getDescriminatorCondition(EntityInterface entity, String aliasName) {
-        String sql = "";
-        EntityInterface parentEntity = entity.getParentEntity();
-        // Checking whether the entity is derived or not.
-        if (parentEntity != null) {
-            InheritanceStrategy inheritanceType = entity.getInheritanceStrategy();
-            if (inheritanceType.equals(InheritanceStrategy.TABLE_PER_HEIRARCHY)) {
-                String columnName = entity.getDiscriminatorColumn();
-                String columnValue = entity.getDiscriminatorValue();
-                // Assuming Discrimanator is of type String.
-                String condition = aliasName + "." + columnName + "='" + columnValue + "'";
-                sql = " " + LogicalOperator.And + " " + condition;
-            }
-        }
-        return sql;
-    }
-
-    /**
-     * To get the alias name for the Many to Many table.
-     * 
-     * @param childExpression The child Expression of the association.
-     * @param middleTableName The Many to Mant table name.
-     * @return The String representing aliasName for the Many to Many table.
-     */
-    private String getAliasForMiddleTable(IExpression childExpression, String middleTableName) {
-        return getAliasForClassName("." + middleTableName) + "_" + aliasAppenderMap.get(childExpression);
-    }
-
-    /**
-     * To add the Parent Heirarchy to the join part.
-     * 
-     * @param childExpression The Expression to which the entity belongs.
-     * @param childEntity The entity whose parent heirarchy to be joined.
-     * @param alreadyAddedEntity The entity already added in join part.
-     * @return left join sql for childEntity.
-     * @throws SqlException when there is error in the passed IQuery object.
-     */
-    private String getParentHeirarchy(IExpression childExpression, EntityInterface childEntity,
-            EntityInterface alreadyAddedEntity) throws SqlException {
-        StringBuffer combinedJoinPart = new StringBuffer();
-        if (childEntity.getParentEntity() != null) // Joining Parent & child
-        // classes of the entity.
-        {
-            EntityInterface entity = childEntity;
-            EntityInterface parent = childEntity.getParentEntity();
-            boolean isReverse = false;
-            List<String> joinSqlList = new ArrayList<String>();
-            while (parent != null) {
-                if (entity.equals(alreadyAddedEntity)) {
-                    isReverse = true;
-                }
-
-                if (entity.getInheritanceStrategy().equals(InheritanceStrategy.TABLE_PER_SUB_CLASS)) {
-                    String leftEntityalias = getAliasFor(childExpression, entity);
-                    String rightEntityalias = getAliasFor(childExpression, parent);
-                    AttributeInterface primaryKey = getPrimaryKey(entity);
-                    String primaryKeyColumnName = primaryKey.getColumnProperties().getName();
-
-                    String leftAttributeColumn = leftEntityalias + "." + primaryKeyColumnName;
-                    String rightAttributeColumn = rightEntityalias + "." + primaryKeyColumnName;
-                    String sql = null;
-                    if (isReverse) {
-                        sql = " inner join " + parent.getTableProperties().getName() + " " + rightEntityalias + " on ";
-                        sql += "(" + leftAttributeColumn + "=" + rightAttributeColumn + ")";
-                    } else {
-                        sql = " inner join " + entity.getTableProperties().getName() + " " + leftEntityalias + " on ";
-                        sql += "(" + rightAttributeColumn + "=" + leftAttributeColumn + ")";
-                    }
-                    // joinSqlList.add(0, sql);
-                    joinSqlList.add(sql);
-
-                }
-                entity = parent;
-                parent = parent.getParentEntity();
-            }
-
-            if (isReverse) {
-                for (String joinSql : joinSqlList) {
-                    combinedJoinPart.append(joinSql);
-                }
-            } else {
-                for (String joinSql : joinSqlList) {
-                    combinedJoinPart.insert(0, joinSql);
-                }
-            }
-
-        }
-        return combinedJoinPart.toString();
-    }
-
-    /**
      * To compile the SQL & get the SQL representation of the Expression.
      * 
      * @param expression the Expression whose SQL to be generated.
-     * @param parentExpression The Parent Expression.
-     * @param isPAND true if this Expression is psuedo anded with other
-     *            Expression.
      * @return The SQL representation of the Expression.
      * @throws SqlException When there is error in the passed IQuery object.
      */
-    String getWherePartSQL(IExpression expression, IExpression parentExpression, boolean isPAND) throws SqlException, RuntimeException {
+    String getWherePartSQL(IExpression expression) throws SqlException, RuntimeException {
         StringBuffer buffer = new StringBuffer("");
-
-        EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
-
-        String pseudoAndSQL = null;
-
-        if (parentExpression != null) // This will be true only for Expression
-        // which is not root Expression of the
-        // Query.
-        {
-            IAssociation association = joinGraph.getAssociation(parentExpression, expression);
-            AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
-                    .getDynamicExtensionsAssociation();
-
-            if (InheritanceUtils.getInstance().isInherited(eavAssociation)) {
-                eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
-            }
-
-            if (isPAND) {
-                // Adding Pseudo and condition in the where part.
-                pseudoAndSQL = createPseudoAndCondition(expression, parentExpression, eavAssociation);
-            }
-        }
-
-        buffer.append(processOperands(expression));
-
-        /*
-         * If the Query has only one Expression, which referes to an entity
-         * having inheritance strategy as TABLE_PER_HEIRARCHY, then the
-         * Descriminator column condition needs to be added in the WHERE part of
-         * SQL as it can not be added in the FROM part of the query. This can be
-         * identified by following checks 1. parentExpression is null & 2.
-         * expression have no child expression.
-         * 
-         * If this expression is PseudoAnded then the same check should be made
-         * which will be add descriminatorCondition in the innersql of pseudoAnd
-         * query.
-         */
-        if (parentExpression == null || isPAND) // This will be true only for
-        // root Expression of the Query.
-        {
-            List<IExpression> childrenList = joinGraph.getChildrenList(expression);
-            if (childrenList == null || childrenList.isEmpty()) {
-                /*
-                 * No Child Expressions present for the root node, so this is
-                 * only Expression in the Query. So check for the Inheritance
-                 * strategy. If its derived entity with inheritance strategy as
-                 * TABLE_PER_HEIRARCHY, then append the descriminator condition
-                 * SQL in buffer.
-                 */
-                if (entity.getParentEntity() != null
-                        && InheritanceStrategy.TABLE_PER_HEIRARCHY.equals(entity.getInheritanceStrategy())) {
-                    String descriminatorCondition = getDescriminatorCondition(entity, getAliasFor(expression, entity));
-                    buffer.insert(0, "(");
-                    buffer.append(")");
-                    buffer.append(descriminatorCondition);
-                }
-            }
-        }
-
-        if (isPAND) // Append Pseudo can sql if the expression is psuedo anded.
-        {
-            buffer.insert(0, pseudoAndSQL);
-        }
-        return buffer.toString();
-    }
-
-    /**
-     * To form the Pseudo-And condition for the expression.
-     * 
-     * @param expression The child Expression reference.
-     * @param parentExpression The parent Expression.
-     * @param eavAssociation The association between parent & child expression.
-     * @return The Pseudo-And SQL condition.
-     * @throws SqlException When there is problem in creating from part. problem
-     *             can be like: no primary key found in entity for join.
-     */
-    private String createPseudoAndCondition(IExpression expression, IExpression parentExpression,
-            AssociationInterface eavAssociation) throws SqlException {
-        String pseudoAndSQL;
-        EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
-        String tableName = entity.getTableProperties().getName() + " ";
-        String leftAlias = getAliasName(expression);
-        String selectAttribute = leftAlias + ".";
-
-        ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
-        if (constraintProperties.getSourceEntityKey() != null && constraintProperties.getTargetEntityKey() != null)// Many
-        // to
-        // many
-        // case.
-        {
-            // This will start FROM part of SQL from the parent table.
-            selectAttribute = getAliasName(parentExpression)
-                    + "."
-                    + getPrimaryKey(parentExpression.getQueryEntity().getDynamicExtensionsEntity())
-                            .getColumnProperties().getName();
-            pseudoAndSQL = "Select " + selectAttribute;
-            Set<Integer> processedAlias = new HashSet<Integer>();
-            String fromPart = getFromPartSQL(parentExpression, leftAlias, processedAlias);
-            pseudoAndSQL += " " + fromPart + " where ";
-        } else {
-            if (constraintProperties.getTargetEntityKey() == null) {
-                selectAttribute += getPrimaryKey(entity).getColumnProperties().getName();
-            } else {
-                selectAttribute += constraintProperties.getTargetEntityKey();
-            }
-            pseudoAndSQL = "Select " + selectAttribute;
-            Set<Integer> processedAlias = new HashSet<Integer>();
-            processedAlias.add(aliasAppenderMap.get(expression));
-            String fromPart = getFromPartSQL(expression, leftAlias, processedAlias);
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(" From ").append(tableName).append(" ").append(leftAlias);
-            createFromPartForDerivedEntity(expression, buffer);
-            buffer.append(fromPart).append(" where ");
-            pseudoAndSQL += buffer.toString();
-        }
-        return pseudoAndSQL;
-    }
-
-    /**
-     * To process all child operands of the expression.
-     * 
-     * @param expression the reference to Expression.
-     * @return the SQL representation for the child operands.
-     * @throws SqlException When there is error in the passed IQuery object.
-     */
-    private String processOperands(IExpression expression) throws SqlException, RuntimeException {
-        StringBuffer buffer = new StringBuffer("");
-        int currentNestingCounter = 0;// holds current nesting number count
+        int currentNestingCounter = 0;
+        // holds current nesting number count
         // i.e. no of opening Braces that needs
         // to be closed.
 
@@ -933,23 +364,24 @@ public class SqlGenerator implements ISqlGenerator {
             String operandSQL = "";
             boolean emptyExppression = false;
             if (operand instanceof IRule) {
-                operandSQL = getSQL((IRule) operand); // Processing Rule.
-            } else if (operand instanceof IExpression)
-            // Processing sub Expression.
-            {
+                // Processing Rule.
+                operandSQL = getSQL((IRule) operand);
+            } else if (operand instanceof IExpression) {
+                // Processing sub Expression.
                 emptyExppression = emptyExpressions.contains(operand);
                 if (!emptyExppression) {
-                    operandSQL = processSubExpression(expression, (IExpression) operand);
+                    operandSQL = getWherePartSQL((IExpression) operand);
                 }
             } else {
                 operandSQL = getCustomFormulaString((ICustomFormula) operand);
             }
 
             if (!operandSQL.equals("") && noOfRules != 1) {
-                operandSQL = "(" + operandSQL + ")"; // putting RuleSQL in
-                // Braces so that it
-                // will not get mixed
-                // with other Rules.
+                operandSQL = "(" + operandSQL + ")";
+                /*
+                 * putting RuleSQL in Braces so that it will not get mixed with
+                 * other Rules.
+                 */
             }
 
             if (i != noOfRules - 1) {
@@ -965,8 +397,8 @@ public class SqlGenerator implements ISqlGenerator {
                             break;
                         }
                     }
-                    if (nextIndex == noOfRules)// Expression over add closing
-                    // parenthesis.
+                    if (nextIndex == noOfRules)
+                    // Expression over add closing parenthesis.
                     {
                         buffer.append(operandSQL);
                         buffer.append(getParenthesis(currentNestingCounter, ")"));
@@ -976,23 +408,19 @@ public class SqlGenerator implements ISqlGenerator {
                         int newNestingNumber = newConnector.getNestingNumber();
                         currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL,
                                 newNestingNumber);
-                        buffer.append(" " + newConnector.getOperator());
+                        if(buffer.length() > 0)
+                            buffer.append(" " + newConnector.getOperator());
                     }
                     i = nextIndex - 1;
                 } else {
                     currentNestingCounter = attachOperandSQL(buffer, currentNestingCounter, operandSQL, nestingNumber);
-                    buffer.append(" " + connector.getOperator());
+                    if(buffer.length() > 0)
+                        buffer.append(" " + connector.getOperator());
                 }
             } else {
                 buffer.append(operandSQL);
-                buffer.append(getParenthesis(currentNestingCounter, ")"));// Finishing
-                // SQL
-                // by
-                // adding
-                // closing
-                // parenthesis
-                // if
-                // any.
+                // Finishing SQL by adding closing parenthesis if any.
+                buffer.append(getParenthesis(currentNestingCounter, ")"));
                 currentNestingCounter = 0;
             }
         }
@@ -1042,92 +470,6 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     /**
-     * Adds an pseudo anded expression & all its child expressions to
-     * pAndExpressions set.
-     * 
-     * @param expression pAnd expression
-     */
-    private void addpAndExpression(IExpression expression) {
-        List<IExpression> childList = joinGraph.getChildrenList(expression);
-        pAndExpressions.add(expression);
-
-        for (IExpression newExp : childList) {
-            addpAndExpression(newExp);
-        }
-
-    }
-
-    /**
-     * To Proceess sub Expression.
-     * 
-     * @param expression The reference to parent Expression.
-     * @param childExpressionId The refrence to child Expression.
-     * @return The SQL representation for the Sub expression.
-     * @throws SqlException When there is error in the passed IQuery object.
-     */
-    private String processSubExpression(IExpression expression, IExpression childExpression) throws SqlException, RuntimeException {
-        // boolean isPAND = ((Expression)
-        // expression).isPseudoAnded(childExpression.getExpressionId(),
-        // constraints);
-        boolean isPAND = false;
-        String sql = getWherePartSQL(childExpression, expression, isPAND);
-        if (isPAND) {
-            // Set.add(childExpression);
-            if (!pAndExpressions.contains(childExpression)) {
-                addpAndExpression(childExpression);
-            }
-            IAssociation association = joinGraph.getAssociation(expression, childExpression);
-            AssociationInterface eavAssociation = ((IIntraModelAssociation) association)
-                    .getDynamicExtensionsAssociation();
-
-            if (InheritanceUtils.getInstance().isInherited(eavAssociation)) {
-                eavAssociation = InheritanceUtils.getInstance().getActualAassociation(eavAssociation);
-            }
-
-            String joinAttribute = getAliasName(expression) + ".";
-
-            ConstraintPropertiesInterface constraintProperties = eavAssociation.getConstraintProperties();
-            if (constraintProperties.getSourceEntityKey() != null && constraintProperties.getTargetEntityKey() != null)// Many
-            // to
-            // Many
-            // Case
-            {
-                joinAttribute += getPrimaryKey(expression.getQueryEntity().getDynamicExtensionsEntity())
-                        .getColumnProperties().getName();
-            } else {
-                if (constraintProperties.getSourceEntityKey() == null) {
-                    joinAttribute += getPrimaryKey(expression.getQueryEntity().getDynamicExtensionsEntity())
-                            .getColumnProperties().getName();
-                } else {
-                    joinAttribute += constraintProperties.getSourceEntityKey();
-                }
-            }
-
-            sql = joinAttribute + " = ANY(" + sql + ")";
-        }
-        return sql;
-    }
-
-    /**
-     * Check for activity status present in entity.
-     * 
-     * @param entityInterfaceObj The Entity for which we required to check if
-     *            activity status present.
-     * @return Reference to the AttributeInterface if activityStatus attribute
-     *         present in the entity, else null.
-     */
-    private AttributeInterface getActivityStatusAttribute(EntityInterface entityInterfaceObj) {
-        Collection<AttributeInterface> attributes = entityInterfaceObj.getEntityAttributesForQuery();
-
-        for (AttributeInterface attribute : attributes) {
-            if (attribute.getName().equals(Constants.ACTIVITY_STATUS)) {
-                return attribute;
-            }
-        }
-        return null;
-    }
-
-    /**
      * To get the SQL representation of the Rule.
      * 
      * @param rule The reference to Rule.
@@ -1137,22 +479,12 @@ public class SqlGenerator implements ISqlGenerator {
     String getSQL(IRule rule) throws SqlException {
         StringBuffer buffer = new StringBuffer("");
 
-        IExpression expression = rule.getContainingExpression();
-        AttributeInterface attributeObj = getActivityStatusAttribute(expression.getQueryEntity()
-                .getDynamicExtensionsEntity());
-
-        if (attributeObj != null) {
-            ICondition condition = createActivityStatusCondition(attributeObj);
-            rule.addCondition(condition);
-        }
-
         int noOfConditions = rule.size();
         if (noOfConditions == 0) {
             throw new SqlException("No conditions defined in the Rule!!!");
         }
-        for (int i = 0; i < noOfConditions; i++) // Processing all conditions
-        // in Rule combining them
-        // with AND operator.
+        for (int i = 0; i < noOfConditions; i++)
+        // Processing all conditions in Rule combining them with AND operator.
         {
             String condition = getSQL(rule.getCondition(i), rule.getContainingExpression());
 
@@ -1180,40 +512,23 @@ public class SqlGenerator implements ISqlGenerator {
     String getSQL(ICondition condition, IExpression expression) throws SqlException {
         String sql = null;
         AttributeInterface attribute = condition.getAttribute();
-        String attributeName = getSQL(attribute, expression);
+        String attributeName = fromBuilder.aliasOf(attribute, expression);
 
         RelationalOperator operator = condition.getRelationalOperator();
 
-        if (operator.equals(RelationalOperator.Between))// Processing Between
-        // Operator, it will be
-        // treated as (op>=val1
-        // and op<=val2)
-        {
+        if (operator.equals(RelationalOperator.Between)) {
+            // Processing Between Operator, it will be treated as
+            // (op>=val1 and op<=val2)
             sql = processBetweenOperator(condition, attributeName);
-        } else if (operator.equals(RelationalOperator.In) || operator.equals(RelationalOperator.NotIn)) // Processing
-        // In
-        // Operator
-        {
-
+        } else if (operator.equals(RelationalOperator.In) || operator.equals(RelationalOperator.NotIn)) {
             sql = processInOperator(condition, attributeName);
-        } else if (operator.equals(RelationalOperator.IsNotNull) || operator.equals(RelationalOperator.IsNull)) // Processing
-        // isNull
-        // &
-        // isNotNull
-        // operator.
-        {
-
+        } else if (operator.equals(RelationalOperator.IsNotNull) || operator.equals(RelationalOperator.IsNull)) {
             sql = processNullCheckOperators(condition, attributeName);
         } else if (operator.equals(RelationalOperator.Contains) || operator.equals(RelationalOperator.StartsWith)
-                || operator.equals(RelationalOperator.EndsWith)) // Processing
-        // String
-        // related
-        // Operators.
-        {
+                || operator.equals(RelationalOperator.EndsWith)) {
             sql = processLikeOperators(condition, attributeName);
-        } else
-        // Processing rest operators like =, !=, <, > , <=, >= etc.
-        {
+        } else {
+            // Processing rest operators like =, !=, <, > , <=, >= etc.
             sql = processComparisionOperator(condition, attributeName);
         }
 
@@ -1287,12 +602,12 @@ public class SqlGenerator implements ISqlGenerator {
             value = "'%" + value + "'";
         }
         String str = "";
-        switch (getDatabaseSQLSettings().getDatabaseType()) 
-        {
-	        case MySQL :
-	            str = attributeName + " like " + value;
-	        case Oracle :
-	            str = "lower(" +attributeName+") like lower("+value +")";
+        switch (getDatabaseSQLSettings().getDatabaseType()) {
+            case MySQL :
+                str = attributeName + " like " + value;
+                break;
+            case Oracle :
+                str = "lower(" + attributeName + ") like lower(" + value + ")";
         }
         return str;
     }
@@ -1461,187 +776,12 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     /**
-     * Get the SQL representatio for Attribute.
-     * 
-     * @param attribute The reference to AttributeInterface
-     * @param expression The reference to Expression to which this attribute
-     *            belongs.
-     * @return The SQL representatio for Attribute.
-     */
-    String getSQL(AttributeInterface attribute, IExpression expression) {
-
-        AttributeInterface actualAttribute = attribute;
-
-        if (InheritanceUtils.getInstance().isInherited(attribute)) {
-            actualAttribute = InheritanceUtils.getInstance().getActualAttribute(attribute);
-        }
-        EntityInterface attributeEntity = actualAttribute.getEntity();
-        String aliasName = getAliasFor(expression, attributeEntity);
-
-        String attributeName = aliasName + "." + actualAttribute.getColumnProperties().getName();
-
-        return attributeName;
-    }
-
-    private static final int ALIAS_NAME_LENGTH = 25;
-
-    /**
-     * To get the Alias Name for the given IExpression. It will return alias
-     * name for the DE entity associated with constraint entity.
-     * 
-     * @param expression The reference to IExpression.
-     * @return The Alias Name for the given Entity.
-     */
-    String getAliasName(IExpression expression) {
-        EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
-        return getAliasFor(expression, entity);
-    }
-
-    /**
-     * To get the aliasName for the given entity present which is associated
-     * with Expression.
-     * 
-     * @param expression The reference to IExpression.
-     * @param attributeEntity The reference to the Entity for which the alias to
-     *            be searched.
-     * @return The Alias Name for the given Entity.
-     */
-    private String getAliasFor(IExpression expression, EntityInterface attributeEntity) {
-        EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
-        EntityInterface aliasEntity = entity;
-
-        EntityInterface parentEntity = entity.getParentEntity();
-
-        while (parentEntity != null && !attributeEntity.equals(entity)) {
-            InheritanceStrategy type = entity.getInheritanceStrategy();
-
-            if (type.equals(InheritanceStrategy.TABLE_PER_CONCRETE_CLASS)) {
-                aliasEntity = entity;
-                break;
-            } else if (type.equals(InheritanceStrategy.TABLE_PER_SUB_CLASS)) {
-                entity = parentEntity;
-                aliasEntity = parentEntity;
-                parentEntity = parentEntity.getParentEntity();
-            } else if (type.equals(InheritanceStrategy.TABLE_PER_HEIRARCHY)) {
-                while (parentEntity != null && type.equals(InheritanceStrategy.TABLE_PER_HEIRARCHY)) {
-                    entity = parentEntity;
-                    if (attributeEntity.equals(entity)) {
-                        break;
-                    }
-                    type = entity.getInheritanceStrategy();
-                    parentEntity = parentEntity.getParentEntity();
-                }
-                aliasEntity = entity;
-            }
-        }
-
-        // Need an extra check for the TABLE_PER_HEIRARCHY case.
-        // Because even if attribute belongs to this aliasEntity, but if its
-        // association with parent is of TABLE_PER_HEIRARCHY type, its alias
-        // will be one of its parent heirarchy.
-        parentEntity = aliasEntity.getParentEntity();
-        InheritanceStrategy type = aliasEntity.getInheritanceStrategy();
-        while (parentEntity != null && type.equals(InheritanceStrategy.TABLE_PER_HEIRARCHY)) {
-            aliasEntity = parentEntity;
-            type = aliasEntity.getInheritanceStrategy();
-            parentEntity = parentEntity.getParentEntity();
-        }
-
-        String aliasName = getAliasForClassName(aliasEntity.getName());
-        Integer aliasAppender = aliasAppenderMap.get(expression);
-        if (aliasAppender == null)// for Junits
-        {
-            aliasAppender = 0;
-        }
-        aliasName = aliasName + "_" + aliasAppender;
-        return aliasName;
-    }
-
-    /**
-     * To get the alias for the given Class Name.
-     * 
-     * @param className The follyQualified class Name.
-     * @return The alias name for the given class Name.
-     */
-    private String getAliasForClassName(String className) {
-        String aliasName = aliasNameMap.get(className);
-
-        if (aliasName == null) {
-            aliasName = className.substring(className.lastIndexOf('.') + 1, className.length());
-            if (aliasName.length() > ALIAS_NAME_LENGTH) {
-                aliasName = aliasName.substring(0, ALIAS_NAME_LENGTH);
-            }
-
-            // aliasName = aliasName.replaceAll(Constants.REGEX_EXPRESION,
-            // Constants.REPLACEMENT);
-            aliasName = Utility.removeSpecialCharactersFromString(aliasName);
-            // get unique aliasName for the given class.
-            int count = 1;
-            String theAliasName = aliasName;
-            Collection<String> allAssignedAliases = aliasNameMap.values();
-            while (allAssignedAliases.contains(theAliasName)) {
-                theAliasName = aliasName + count++;
-            }
-            aliasName = theAliasName;
-            aliasNameMap.put(className, aliasName);
-        }
-        return aliasName;
-    }
-
-    /**
-     * To assign alias to each tablename in the Expression. It will generate
-     * alias that will be assigned to each entity in Expression.
-     * 
-     * @param expression the Root Expression of the Query.
-     * @param currentAliasCount The count from which it will start to assign
-     *            alias appender.
-     * @param aliasToSet The alias to set for the current expression.
-     * @param pathMap The map of path verses the ExpressionId. entry in this map
-     *            means, for such path, there is already alias assigned to some
-     *            Expression.
-     * @return The int representing the modified alias appender count that will
-     *         be used for further processing.
-     * @throws MultipleRootsException if there are multpile roots present in
-     *             join graph.
-     */
-    void createAliasAppenderMap() throws MultipleRootsException {
-        for (IExpression expr : constraints) {
-            aliasAppenderMap.put(expr, expr.getExpressionId());
-        }
-    }
-
-    /**
      * This method will be used by Query Mock to set the join Graph externally.
      * 
      * @param joinGraph the reference to joinGraph.
      */
     void setJoinGraph(JoinGraph joinGraph) {
         this.joinGraph = joinGraph;
-    }
-
-    /**
-     * To get the primary key attribute of the given entity.
-     * 
-     * @param entity the DE entity.
-     * @return The Primary key attribute of the given entity.
-     * @throws SqlException If there is no such attribute present in the
-     *             attribute list of the entity.
-     */
-    private AttributeInterface getPrimaryKey(EntityInterface entity) throws SqlException {
-        Collection<AttributeInterface> attributes = entity.getEntityAttributesForQuery();
-        for (AttributeInterface attribute : attributes) {
-            if (attribute.getIsPrimaryKey() || attribute.getName().equals("id")) {
-                return attribute;
-            }
-        }
-        EntityInterface parentEntity = entity.getParentEntity();
-        if (parentEntity != null)// &&
-        // entity.getInheritanceStrategy().equals(InheritanceStrategy.TABLE_PER_SUB_CLASS))
-        {
-            return getPrimaryKey(parentEntity);
-        }
-
-        throw new SqlException("No Primary key attribute found for Entity:" + entity.getName());
     }
 
     /**
@@ -1691,15 +831,13 @@ public class SqlGenerator implements ISqlGenerator {
     private void createTree() throws MultipleRootsException {
         IExpression rootExpression = joinGraph.getRoot();
         rootOutputTreeNodeList = new ArrayList<OutputTreeDataNode>();
-        outputTreeNodeMap = new HashMap<Integer, OutputTreeDataNode>();
+
         OutputTreeDataNode rootOutputTreeNode = null;
         treeNo = 0;
         if (rootExpression.isInView()) {
             IOutputEntity rootOutputEntity = getOutputEntity(rootExpression);
             rootOutputTreeNode = new OutputTreeDataNode(rootOutputEntity, rootExpression.getExpressionId(), treeNo++);
-
             rootOutputTreeNodeList.add(rootOutputTreeNode);
-            outputTreeNodeMap.put(aliasAppenderMap.get(rootExpression), rootOutputTreeNode);
         }
         completeTree(rootExpression, rootOutputTreeNode);
     }
@@ -1722,24 +860,13 @@ public class SqlGenerator implements ISqlGenerator {
              */
             if (childExp.isInView()) {
                 IOutputEntity childOutputEntity = getOutputEntity(childExp);
-                Integer childAliasAppender = aliasAppenderMap.get(childExp);
-
-                /**
-                 * Check whether output tree node for expression with the same
-                 * alias already added or not. if its not added then need to add
-                 * it alias in the outputTreeNodeMap
-                 */
-                childNode = outputTreeNodeMap.get(childAliasAppender);
-                if (childNode == null) {
-                    if (parentOutputTreeNode == null) {
-                        // New root node for output tree found, so create root
-                        // node & add it in the rootOutputTreeNodeList.
-                        childNode = new OutputTreeDataNode(childOutputEntity, childExp.getExpressionId(), treeNo++);
-                        rootOutputTreeNodeList.add(childNode);
-                    } else {
-                        childNode = parentOutputTreeNode.addChild(childOutputEntity, childExp.getExpressionId());
-                    }
-                    outputTreeNodeMap.put(childAliasAppender, childNode);
+                if (parentOutputTreeNode == null) {
+                    // New root node for output tree found, so create root
+                    // node & add it in the rootOutputTreeNodeList.
+                    childNode = new OutputTreeDataNode(childOutputEntity, childExp.getExpressionId(), treeNo++);
+                    rootOutputTreeNodeList.add(childNode);
+                } else {
+                    childNode = parentOutputTreeNode.addChild(childOutputEntity, childExp.getExpressionId());
                 }
             }
             completeTree(childExp, childNode);
@@ -1789,7 +916,7 @@ public class SqlGenerator implements ISqlGenerator {
         return new IAttributeAliasProvider() {
 
             public String getAliasFor(IExpressionAttribute exprAttr) {
-                return getSQL(exprAttr.getAttribute(), exprAttr.getExpression());
+                return fromBuilder.aliasOf(exprAttr.getAttribute(), exprAttr.getExpression());
             }
 
         };
@@ -1806,23 +933,9 @@ public class SqlGenerator implements ISqlGenerator {
     }
 
     private String getTermString(ITerm term) {
-        // TODO this is a tad ugly now; if/when sqlGen moves to query project, it won't be.
         TermString termString = getTermProcessor().convertTerm(term);
         String s = termString.getString();
-        if (termString.getTermType() != TermType.DSInterval) {
-            return s;
-        }
-
-        s = "(" + s + ")";
-        switch (getDatabaseSQLSettings().getDatabaseType()) {
-            case MySQL :
-                return s;
-            case Oracle :
-                return "extract(day from " + s + ")*86400 + extract(hour from " + s + ")*3600 + extract(minute from " + s + ")*60 + extract(second from "
-                        + s + ")";
-            default :
-                throw new RuntimeException("won't occur.");
-        }
+        return s;
     }
 
     private String getSelectForOutputTerms(List<IOutputTerm> terms) {
@@ -1832,7 +945,7 @@ public class SqlGenerator implements ISqlGenerator {
             String termString = "(" + getTermString(term.getTerm()) + ")";
             termString = modifyForTimeInterval(termString, term.getTimeInterval());
             String columnName = COLUMN_NAME + selectIndex++;
-            s.append(termString + " " + columnName + " ,");
+            s.append(termString + " " + columnName + SELECT_COMMA);
             outputTermsColumns.put(columnName, term);
         }
         return removeLastComma(s.toString());
@@ -1852,8 +965,8 @@ public class SqlGenerator implements ISqlGenerator {
     public Map<String, IOutputTerm> getOutputTermsColumns() {
         return outputTermsColumns;
     }
-    public Map<AttributeInterface, String> getAttributeColumnNameMap()
-    {
-    	return attributeColumnNameMap;
+
+    public Map<AttributeInterface, String> getAttributeColumnNameMap() {
+        return attributeColumnNameMap;
     }
 }

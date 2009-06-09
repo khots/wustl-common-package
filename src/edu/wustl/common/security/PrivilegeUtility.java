@@ -14,6 +14,7 @@ import java.util.Vector;
 import edu.wustl.common.security.PrivilegeUtility;
 import edu.wustl.common.security.SecurityManager;
 import edu.wustl.common.security.exceptions.SMException;
+import edu.wustl.common.util.Identifiable;
 import edu.wustl.common.util.logger.Logger;
 import gov.nih.nci.security.AuthorizationManager;
 import gov.nih.nci.security.SecurityServiceProvider;
@@ -121,7 +122,7 @@ public class PrivilegeUtility
 			Set protectionObjects) throws CSException {
 		ProtectionElement protectionElement;
 		Set protectionElements = new HashSet();
-		AbstractDomainObject protectionObject;
+		Identifiable protectionObject;
 		Iterator it;
 
 		UserProvisioningManager userProvisioningManager = getUserProvisioningManager();
@@ -129,7 +130,7 @@ public class PrivilegeUtility
 		if (protectionObjects != null) {
 			for (it = protectionObjects.iterator(); it.hasNext();) {
 				protectionElement = new ProtectionElement();
-				protectionObject = (AbstractDomainObject) it.next();
+				protectionObject = (Identifiable) it.next();
 				protectionElement.setObjectId(protectionObject.getObjectId());
 
 				populateProtectionElement(
@@ -321,7 +322,7 @@ public class PrivilegeUtility
 	 */
 	private void populateProtectionElement(
 			ProtectionElement protectionElement,
-			AbstractDomainObject protectionObject, 
+			Identifiable protectionObject, 
 			UserProvisioningManager userProvisioningManager) throws CSException {
 		try
 		{

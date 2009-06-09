@@ -60,30 +60,27 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CommonAddEditAction extends Action
 {
-
     /**
      * Overrides the execute method of Action class.
      * Adds / Updates the data in the database.
      * */
 	long startTime = System.currentTimeMillis();
-	
-    String target = null;
-    AbstractDomainObject abstractDomain = null;
-    ActionMessages messages = null;  
-    public ActionForward execute(ActionMapping mapping, ActionForm form,HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
+	public ActionForward execute(ActionMapping mapping, ActionForm form,HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
-        try
+		String target = null;
+		AbstractDomainObject abstractDomain = null;
+		ActionMessages messages = null;  
+		try
         {
-        
-            AbstractActionForm abstractForm = (AbstractActionForm) form;
+           AbstractActionForm abstractForm = (AbstractActionForm) form;
            if (abstractForm.isAddOperation())
             {
             	 
-            	return executeAdd(mapping,request,abstractForm);
+            	return executeAdd(mapping,request,abstractForm,abstractDomain, messages,target);
             }
             else
             {
-            	return executeEdit(mapping,request,abstractForm);
+            	return executeEdit(mapping,request,abstractForm,abstractDomain, messages, target);
             }
             
            
@@ -113,7 +110,8 @@ public class CommonAddEditAction extends Action
         	{
         	    userName = sessionDataBean.getUserName();
         	}
-            String className = getActualClassName(abstractDomain.getClass().getName());
+            //bug 11568
+            String className = getActualClassName(excp.getBaseObject());
             String decoratedPrivilegeName = Utility.getDisplayLabelForUnderscore(excp.getPrivilegeName());
             String baseObject = "";
             if (excp.getBaseObject() != null && excp.getBaseObject().trim().length() != 0)
@@ -123,8 +121,8 @@ public class CommonAddEditAction extends Action
             {
                 baseObject = className;
             }
-                
-            ActionError error = new ActionError("access.addedit.object.denied", userName, className,decoratedPrivilegeName,baseObject);
+            //bug 11568    
+            ActionError error = new ActionError("access.addedit.object.denied", userName, className,decoratedPrivilegeName,className);
         	errors.add(ActionErrors.GLOBAL_ERROR, error);
         	saveErrors(request, errors);
         	target = Constants.FAILURE;
@@ -134,6 +132,10 @@ public class CommonAddEditAction extends Action
         {
             target = Constants.FAILURE;
             Logger.out.error(excp.getMessage(), excp);
+        }
+        finally
+        {
+        	abstractDomain = null;
         }
         
         Logger.out.debug("target....................."+target); 
@@ -182,7 +184,9 @@ public class CommonAddEditAction extends Action
 
 	}
 	
-	public ActionForward executeAdd(ActionMapping mapping,HttpServletRequest request,AbstractActionForm abstractForm) throws AssignDataException, BizLogicException, UserNotAuthorizedException
+	public ActionForward executeAdd(ActionMapping mapping,HttpServletRequest request,
+			AbstractActionForm abstractForm,AbstractDomainObject abstractDomain, ActionMessages messages, String target) 
+			throws AssignDataException, BizLogicException, UserNotAuthorizedException
     {
         //If operation is add, add the data in the database.
 		AbstractDomainObjectFactory abstractDomainObjectFactory=getAbstractDomainObjectFactory();
@@ -199,8 +203,9 @@ public class CommonAddEditAction extends Action
         //Setting the system identifier after inserting the object in the DB.
         if (abstractDomain.getId() != null)
         {
-            abstractForm.setId(abstractDomain.getId().longValue());
-            request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
+        	long abstractDomainId = abstractDomain.getId().longValue();
+        	abstractForm.setId(abstractDomainId);
+            request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomainId);
             Logger.out.debug("New id in CommonAddEditAction===>"+abstractDomain.getId());
             abstractForm.setMutable(false);
         }
@@ -234,7 +239,7 @@ public class CommonAddEditAction extends Action
     	            Logger.out.debug("forwardTo in CommonAddEditAction--------->"+forwardTo);
     	            
     	            //Setting Identifier of new object into the FormBean to populate it on the JSP page 
-    	            sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getId());
+    	            sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getId().longValue());
     	            
     	            sessionFormBean.setMutable(false);
     	            
@@ -342,7 +347,9 @@ public class CommonAddEditAction extends Action
        return mapping.findForward(target);
     
     }
-    public ActionForward executeEdit(ActionMapping mapping,HttpServletRequest request,AbstractActionForm abstractForm)throws AssignDataException, BizLogicException, UserNotAuthorizedException, DAOException
+    public ActionForward executeEdit(ActionMapping mapping,HttpServletRequest request,
+    		AbstractActionForm abstractForm,AbstractDomainObject abstractDomain, ActionMessages messages, String target)
+    throws AssignDataException, BizLogicException, UserNotAuthorizedException, DAOException
     {
         target = new String(Constants.SUCCESS);
         
