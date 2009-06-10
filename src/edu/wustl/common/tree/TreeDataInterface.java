@@ -4,14 +4,15 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-
 package edu.wustl.common.tree;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.dao.exception.DAOException;
+
 
 /**
  * @author gautam_shetty
@@ -21,23 +22,6 @@ import edu.wustl.dao.exception.DAOException;
  */
 public interface TreeDataInterface
 {
-
-	/**
-	 * gets Tree View Data.
-	 * @return List.
-	 * @throws DAOException generic DAO Exception.
-	 */
-	List getTreeViewData() throws DAOException;
-
-	/**
-	 * gets Tree View Data.
-	 * @param sessionData session Data
-	 * @param map map
-	 * @param list list
-	 * @return list
-	 * @throws DAOException generic DAO Exception.
-	 * @throws ClassNotFoundException Class Not Found Exception.
-	 */
-	List getTreeViewData(SessionDataBean sessionData, Map map, List list) throws DAOException,
-			ClassNotFoundException;
+    public abstract Vector getTreeViewData() throws DAOException;
+    public abstract Vector getTreeViewData(SessionDataBean sessionData,Map map,List list) throws DAOException,ClassNotFoundException;
 }

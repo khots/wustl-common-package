@@ -8,8 +8,7 @@
 package edu.wustl.common.tree;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 /**
  * @author gautam_shetty
@@ -21,42 +20,34 @@ public class TreeNodeImpl implements Serializable, TreeNode
 {
 
 	/**
-	 * Serial version id.
-	 */
-	private static final long serialVersionUID = -6991311769537160227L;
-
-	/**
 	 * identifier for the node.
 	 */
-	private Long identifier;
+	Long identifier;
 
 	/**
 	 * Name of the node.
 	 */
-	private String value;
+	String value;
 
 	/**
 	 * Parent node of this node.
 	 */
-	private TreeNode parentNode;
+	TreeNode parentNode;
 
 	/**
 	 * List of child nodes.
 	 */
-	private List childNodes = new ArrayList();
+	Vector childNodes = new Vector();
 
 	/**
 	 * Default Constructor.
 	 */
 	public TreeNodeImpl()
 	{
-		super();
 	}
 
 	/**
 	 * Default Constructor.
-	 * @param identifier identifier for the node.
-	 * @param value Name of the node..
 	 */
 	public TreeNodeImpl(Long identifier, String value)
 	{
@@ -115,7 +106,7 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/**
 	 * @return Returns the childNodes.
 	 */
-	public List getChildNodes()
+	public Vector getChildNodes()
 	{
 		return childNodes;
 	}
@@ -123,16 +114,11 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/**
 	 * @param childNodes The childNodes to set.
 	 */
-	public void setChildNodes(List childNodes)
+	public void setChildNodes(Vector childNodes)
 	{
 		this.childNodes = childNodes;
 	}
 
-	/**
-	 * overrides java.lang.Object.equals.
-	 * @param obj Object.
-	 * @return true if equal else false.
-	 */
 	public boolean equals(Object obj)
 	{
 		boolean flag = false;
@@ -151,24 +137,17 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
-	/**
-	 * overrides java.lang.Object.hashCode.
-	 * @return hashCode.
-	 */
 	public int hashCode()
 	{
-		int hashCode = 0;
+		int i = 0;
 		if (getIdentifier() != null)
-		{
-			hashCode += getIdentifier().hashCode();
-		}
-		return hashCode;
+			i += getIdentifier().hashCode();
+		return i;
 	}
 
 	/**
-	 * To display Tooltip for the Tree node.
-	 * By default it will return value, override this method if need different tool tip.
-	 * @return The tooltip to display.
+	 * To display Tooltip for the Tree node. By default it will return value, override this method if need different tool tip.
+	 * @return The tooltip to display 
 	 */
 	String getToolTip()
 	{
@@ -178,18 +157,13 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	/**
-	 *  overrides java.lang.Object.toString.
-	 *  @return value
-	 */
 	public String toString()
 	{
-		String value = this.value;
 		if (this.identifier.longValue() != 0)
 		{
-			value = this.value + " : " + this.identifier;
+			return this.value + " : " + this.identifier;
 		}
 
-		return value;
+		return this.value;
 	}
 }

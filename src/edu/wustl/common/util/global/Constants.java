@@ -353,6 +353,55 @@ public final class Constants extends CommonConstants
 	 * MSSQLSERVER_DUPL_KEY_MSG_END.
 	 */
 	public static final String MSSQLSERVER_DUPL_KEY_MSG_END = "'.";
-
+	
+	public static final String TREE_APPLET_NAME = "treeApplet";
+	
+	// TissueSite Tree View Constants.
+	public static final String PROPERTY_NAME = "propertyName";
+	
+	
+	public static final String TISSUE_SITE = "Tissue Site";
+	public static final String CLINICAL_DIAGNOSIS="Clinical Diagnosis";
+	
+	
+	public static final String PARTICIPANT = "Participant";
+	public static final String SPECIMEN = "Specimen";
+	public static final String SPECIMEN_COLLECTION_GROUP ="SpecimenCollectionGroup";
+	public static final String STORAGE_CONTAINER = "storageContainerName";
+	
+	// For Tree Applet
+	public static final String PAGEOF_STORAGE_LOCATION = "pageOfStorageLocation";
+	public static final String PAGEOF_SPECIMEN = "pageOfSpecimen";
+	public static final String PAGEOF_STORAGECONTAINER="pageOfStorageContainer";
+	public static final String PAGEOF_TISSUE_SITE = "pageOfTissueSite";
+	public static final String PAGEOF_MULTIPLE_SPECIMEN = "pageOfMultipleSpecimen";
+	
+	// Constants for Storage Container.
+	public static final String STORAGE_CONTAINER_TYPE = "storageType";
+	public static final String STORAGE_CONTAINER_TO_BE_SELECTED = "storageToBeSelected";
+	public static final String STORAGE_CONTAINER_POSITION = "position";
+	
+	public static final String PAGEOF_ALIQUOT = "pageOfAliquot";
+	public static final String PAGEOF_QUERY_RESULTS = "pageOfQueryResults";
+	public static final int QUERY_RESULTS_TREE_ID = 3;
+	
+	public static final String CDE_NAME = "cdeName";
+	
+	//Added By Ramya
+	public static final String PAGEOF_SPECIMEN_TREE = "pageOfSpecimenTree";
+	public static final String TREE_DATA_ACTION = "Data.do";
+	
+	// Constants for type of query results view.
+	public static final String SPREADSHEET_VIEW = "Spreadsheet View";
+	public static final String OBJECT_VIEW = "Edit View";
+	
+	// Tree Data Action
+	public static final String SHOW_STORAGE_CONTAINER_GRID_VIEW_ACTION = "ShowStorageGridView.do";
+	
+	public static final String DATA_VIEW_FRAME = "myframe1";
+	
+	// NodeSelectionlistener - Query Results Tree node selection (For spreadsheet or individual view).
+	public static final String DATA_VIEW_ACTION = "DataView.do?nodeName=";
+	public static final String VIEW_TYPE = "viewType";
 
 }
