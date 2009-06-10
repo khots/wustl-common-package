@@ -293,4 +293,55 @@
 				</manifest>
 			</jar>
 	</target>
+	
+	<property name="applet.dir" value="${base.dir}/Applet" />
+	<!-- Compile all files, generated and hand-written -->
+		<target name="applet_compile" depends="init">
+			<delete>
+				<fileset dir="${applet.dir}">
+					<exclude name="**/CVS*" />
+					<exclude name="**/java.policy.applet*" />
+				</fileset>
+			</delete>
+
+			<javac destdir="${applet.dir}" includeAntRuntime="false" fork="yes" executable="C:/Program Files/Java/jdk1.5.0_05/bin/javac" compiler="javac1.5">
+				<src path="${src.dir}" />
+
+				<include name="**/edu/wustl/common/tree/*.java" />
+				<include name="**/edu/wustl/common/treeApplet/*.java" />
+				<classpath>
+					<fileset dir="${lib.dir}">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+			</javac>
+		</target>
+
+		<!-- Create the Applet JAR Begins-->
+		<target name="AppletJAR" depends="applet_compile">
+
+			<delete>
+				<fileset dir="${applet.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+			</delete>
+
+			<copy todir="${applet.dir}/images">
+				<fileset dir="${base.dir}/images">
+					<include name="**/*" />
+				</fileset>
+			</copy>
+
+			<jar taskname="buildJar" jarfile="${applet.dir}/TreeApplet.jar">
+				<manifest>
+					<attribute name="Class-Path" value="swingx-2006_10_08.jar" />
+				</manifest>
+				<fileset dir="${applet.dir}">
+					<exclude name="**/CVS*" />
+					<exclude name="**/java.policy.applet*" />
+				</fileset>
+			</jar>
+		</target>
+		<!-- Create the Applet JAR Ends-->
+	
 </project>
