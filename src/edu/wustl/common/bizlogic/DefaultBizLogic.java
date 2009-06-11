@@ -516,9 +516,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
 			throws BizLogicException
 	{
-		String[] whereColName = null;
+		/*String[] whereColName = null;
 		String[] whereColCondition = null;
-		Object[] whereColValue = null;
+		Object[] whereColValue = null;*/
 		/*
 		//bug 12652 start
 		if(whereColumnName != null && whereColumnCondition != null && whereColumnValue != null && whereColumnName.length > 0)
@@ -529,17 +529,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 		} Many issues occurs if we uncomment this.
 		*/
 
+
 		if (isToExcludeDisabled)
 		{
-			whereColName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
-			whereColCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
-			whereColValue = Utility.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED
-					.getStatus());
-
+			whereColumnName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
+			whereColumnCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
+			whereColumnValue = Utility.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED.toString());
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColName,
-				whereColCondition, whereColValue, joinCondition, separatorBetweenFields);
+		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
+				separatorBetweenFields);
+	
 	}
 
 	/*	private List getList(String sourceObjectName,String[] displayNameFields,
