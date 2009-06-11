@@ -1,15 +1,5 @@
 package edu.wustl.common.util.global;
 
-import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.bizlogic.DefaultBizLogic;
-import edu.wustl.common.bizlogic.IBizLogic;
-import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.exception.PasswordEncryptionException;
-import edu.wustl.common.util.XMLPropertyHandler;
-import edu.wustl.dao.exception.DAOException;
-import gov.nih.nci.security.util.StringEncrypter;
-import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +9,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
+
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.bizlogic.IBizLogic;
+import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.exception.PasswordEncryptionException;
+import edu.wustl.common.util.XMLPropertyHandler;
+import edu.wustl.common.util.logger.Logger;
+import edu.wustl.common.util.logger.LoggerConfig;
+import edu.wustl.dao.exception.DAOException;
+import gov.nih.nci.security.util.StringEncrypter;
+import gov.nih.nci.security.util.StringEncrypter.EncryptionException;
 
 /**
  * Removed all logger statement in this file because
@@ -33,7 +35,15 @@ import java.util.regex.Pattern;
 
 public final class PasswordManager
 {
-
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	static
+	{
+		LoggerConfig.configureLogger(System.getProperty("user.dir"));
+	}
+	private static Logger logger = Logger.getCommonLogger(PasswordManager.class);
+	
 	/**
 	 * private constructor.
 	 */

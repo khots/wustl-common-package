@@ -8,6 +8,7 @@ import java.util.Map;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.common.util.logger.LoggerConfig;
 
 /**
  * Database utility class.
@@ -20,6 +21,10 @@ public class DatabaseUtility
 	/**
 	* LOGGER Logger - Generic LOGGER.
 	*/
+	static
+	{
+		LoggerConfig.configureLogger(System.getProperty("user.dir"));
+	}
 	private static final Logger LOGGER = Logger.getCommonLogger(DatabaseUtility.class);
 	/**
 	 * This map contains class name for Automate import/export and their database type.
