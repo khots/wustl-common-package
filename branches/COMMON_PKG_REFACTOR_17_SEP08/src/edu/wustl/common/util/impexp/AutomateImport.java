@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.logger.Logger;
+import edu.wustl.common.util.logger.LoggerConfig;
 
 
 /**
@@ -14,6 +16,14 @@ import edu.wustl.common.exception.ErrorKey;
  */
 public final class AutomateImport
 {
+	/**
+	 * logger Logger - Generic logger.
+	 */
+	static
+	{
+		LoggerConfig.configureLogger(System.getProperty("user.dir"));
+	}
+	private static Logger logger = Logger.getCommonLogger(AutomateImport.class);
 	/**
 	 * Private constructor for utility class.
 	 */
