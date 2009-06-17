@@ -257,12 +257,12 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			DAOException exception = new DAOException(errorKey, new Exception(""),
-					"MyJDAOImpl.java :" + DAOConstants.EXECUTE_QUERY_ERROR);
+					"MyJDAOImpl.java :");
 
 			String mess = defaultBizLogic.formatException(exception, null, null);
 			assertNotNull(mess);
 		}
-		catch (ApplicationException exception)
+		catch (Exception exception)
 		{
 			fail("Not able to Format Exception.");
 			logger.fatal(exception.getMessage(), exception);
@@ -283,7 +283,7 @@ public class AbstractBizLogicTestCase extends CommonBaseTestCase
 			String mess = defaultBizLogic.formatException(null, null, null);
 			assertNotNull(mess);
 		}
-		catch (ApplicationException exception)
+		catch (Exception exception)
 		{
 			logger.fatal(exception.getMessage(), exception);
 			fail("Not able to Format Exception With Null Exception.");

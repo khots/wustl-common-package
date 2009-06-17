@@ -21,9 +21,9 @@ public class NumericDataType implements IDBDataType
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(NumericDataType.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(NumericDataType.class);
 
 	/* (non-Javadoc)
 	 * @see edu.wustl.common.actionForm.ValidatorDataTypeInterface#
@@ -39,19 +39,19 @@ public class NumericDataType implements IDBDataType
 	{
 		Validator validator = new Validator();
 		boolean condonError = false;
-		logger.debug(" Check for integer");
+		LOGGER.debug(" Check for integer");
 		if (validator.convertToLong(enteredValue) == null)
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.intvalue.required"));
 			condonError = true;
-			logger.debug(enteredValue + " is not a valid integer");
+			LOGGER.debug(enteredValue + " is not a valid integer");
 		}
 		else if (!validator.isPositiveNumeric(enteredValue, 0))
 		{
 			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
 					"simpleQuery.intvalue.poisitive.required"));
 			condonError = true;
-			logger.debug(enteredValue + " is not a positive integer");
+			LOGGER.debug(enteredValue + " is not a positive integer");
 		}
 		return condonError;
 	}

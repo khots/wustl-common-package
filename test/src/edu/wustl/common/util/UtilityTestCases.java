@@ -50,9 +50,24 @@ public class UtilityTestCases extends CommonBaseTestCase
 		try
 		{
 			String dateStr = "01-02-2008";
-			String expectedPattern = "dd-MM-yyyy";
+			String expectedPattern = "MM-dd-yyyy";
 			String datPattern = Utility.datePattern(dateStr);
-			assertEquals("Date is not in formate:" + expectedPattern, expectedPattern, datPattern);
+			assertEquals(expectedPattern, datPattern);
+			
+			dateStr = "01/02/2008";
+			expectedPattern = "MM/dd/yyyy";
+			datPattern = Utility.datePattern(dateStr);
+			assertEquals(expectedPattern, datPattern);
+			
+			dateStr = "2008-05-06";
+			expectedPattern = "yyyy-MM-dd";
+			datPattern = Utility.datePattern(dateStr);
+			assertEquals(expectedPattern, datPattern);
+			
+			dateStr = "2008/05/06";
+			expectedPattern = "yyyy/MM/dd";
+			datPattern = Utility.datePattern(dateStr);
+			assertEquals(expectedPattern, datPattern);
 		}
 		catch (Exception exception)
 		{
@@ -265,7 +280,7 @@ public class UtilityTestCases extends CommonBaseTestCase
 		{
 			NameValueBean bean = new NameValueBean();
 			String beanName = Utility.getFormBeanName(bean);
-			assertEquals("namevaluebean", beanName);
+			assertEquals("nameValueBean", beanName);
 		}
 		catch (Exception exception)
 		{

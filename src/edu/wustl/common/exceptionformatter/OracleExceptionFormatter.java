@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
@@ -23,7 +24,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 	/**
 	 * Class Logger.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(OracleExceptionFormatter.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(OracleExceptionFormatter.class);
 
 	/**
 	 * This will generate the formatted error messages.
@@ -61,7 +62,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
          }
         catch(Exception e)
         {
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
         }
         return formattedErrMsg;
     }
@@ -99,13 +100,13 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 				substring(0,columnNameBuff.toString().length()-1);
 				String displayName = Utility.getDisplayName(tableName,jdbcdao);
 				Object[] arguments = new Object[]{displayName,columnName};
-				formattedErrMsg = MessageFormat.format(DAOConstants.
+				formattedErrMsg = MessageFormat.format(Constants.
 						CONSTRAINT_VOILATION_ERROR,arguments);
 			}
 		}
 		catch (Exception exp)
 		{
-			logger.fatal(exp.getMessage(), exp);
+			LOGGER.fatal(exp.getMessage(), exp);
 		}
 		return formattedErrMsg;
 	}

@@ -46,9 +46,9 @@ public class ResponseServlet extends HttpServlet
 	private static final long serialVersionUID = -7659915815532090389L;
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(ResponseServlet.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ResponseServlet.class);
 
 	/**
 	 * do Get method.
@@ -187,7 +187,7 @@ public class ResponseServlet extends HttpServlet
 	{
 		if (!operation.equals(Constants.LOGIN) && !operation.equals(Constants.LOGOUT))
 		{
-			logger
+			LOGGER
 					.debug("id in ResponseServlet-->"
 							+ req.getAttribute(Constants.SYSTEM_IDENTIFIER));
 

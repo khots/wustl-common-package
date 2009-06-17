@@ -47,9 +47,9 @@ public class CommonSearchAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonSearchAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonSearchAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -66,7 +66,7 @@ public class CommonSearchAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws IOException,
 			ApplicationException
 	{
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		//long startTime = System.currentTimeMillis();
 		String target = null;
 		String obj = request.getParameter(Constants.SYSTEM_IDENTIFIER);
@@ -141,7 +141,7 @@ public class CommonSearchAction extends Action
 		}
 		catch (ApplicationException excp)
 		{
-			logger.error(excp.getMessage(), excp);
+			LOGGER.error(excp.getMessage(), excp);
 			saveErrors(request, "access.view.action.denied", "");
 			target = Constants.ACCESS_DENIED;
 		}
@@ -187,7 +187,7 @@ public class CommonSearchAction extends Action
 		}
 		catch (BizLogicException excp)
 		{
-			logger.error(excp.getMessage(), excp);
+			LOGGER.error(excp.getMessage(), excp);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), excp,
 					"Failed while updating in common search.");
 		}

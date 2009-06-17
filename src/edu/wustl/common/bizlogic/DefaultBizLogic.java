@@ -29,7 +29,7 @@ import edu.wustl.common.domain.AuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.CommonServiceLocator;
+import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
@@ -43,7 +43,7 @@ import edu.wustl.dao.condition.INClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.util.DAOConstants;
+import edu.wustl.dao.util.HibernateMetaData;
 
 /**
  * DefaultBizLogic is a class which contains the default
@@ -51,7 +51,7 @@ import edu.wustl.dao.util.DAOConstants;
  * @author kapil_kaveeshwar
  */
 public class DefaultBizLogic extends AbstractBizLogic
-{	
+{
 	/**
 	 * Constructor with argument as application name.
 	 * This application is used to get DAO.
@@ -69,9 +69,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 		super();
 	}
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(DefaultBizLogic.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(DefaultBizLogic.class);
 
 	/**
 	 * This method gets called before insert method.
@@ -113,6 +113,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.insert.error",
 					"Exception in insert operation.");
 		}
@@ -146,6 +147,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.delete.error",
 					"Exception in delete operation.");
 		}
@@ -184,6 +186,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.update.error",
 					"Exception in update operation.");
 		}
@@ -247,6 +250,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -286,6 +290,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error",
 					"Not able to retrieve data using QueryWhereClause.");
 		}
@@ -345,6 +350,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -372,6 +378,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -400,6 +407,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -428,6 +436,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.ret.error", "Not able to retrieve data.");
 		}
 		finally
@@ -572,9 +581,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 				results = retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 			}
 		}
-		catch (DAOException exception)
+		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(exception, "biz.getlist.error", "Not able to get list.");
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, "biz.getlist.error", "Not able to get list.");
 		}
 		/**
 		 * For each row in the result a vector will be created.Vector will contain all the columns
@@ -701,15 +711,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier,
 			String tablename, String colName, Long[] objIDArr) throws BizLogicException
 	{
-		try
-		{
-			disableRelatedObjects(dao, tablename, colName, objIDArr);
-		}
-		catch (DAOException exception)
-		{
-			throw getBizLogicException(exception, "biz.disableobj.error",
-					"Exception in disableObject method.");
-		}
+		disableRelatedObjects(dao, tablename, colName, objIDArr);
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
@@ -761,9 +763,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 			HibernateDAO hibDAO = (HibernateDAO) dao;
 			hibDAO.addAuditEventLogs(auditEventLogsCollection);
 		}
-		catch (DAOException daoEx)
+		catch (DAOException daoExp)
 		{
-			throw getBizLogicException(daoEx, "biz.disableaudit.error",
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, "biz.disableaudit.error",
 					"Exception in disableAndAuditObjects method.");
 		}
 	}
@@ -829,20 +832,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		String whereColumnName = classIdentifier + "." + Constants.SYSTEM_IDENTIFIER;
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new INClause(whereColumnName, objIDArr, sourceObjectName));
-
 		List list = null;
 		try
 		{
+			queryWhereClause.addCondition(new INClause(whereColumnName, objIDArr, sourceObjectName));
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Exception in getRelatedObjects method.");
 		}
 		list = Utility.removeNull(list);
-		logger.debug(sourceClass.getName() + " Related objects to "
+		LOGGER.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		return list;
 	}
@@ -876,6 +879,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Not able to fetch related objects.");
 		}
@@ -912,6 +916,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Exception in getRelatedObjects method.");
 		}
@@ -939,6 +944,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.getrelatedobj.error",
 					"Exception in getRelatedObjects method.");
 		}
@@ -993,7 +999,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 				if (activityStatus.equals(Status.ACTIVITY_STATUS_CLOSED.toString()))
 				{
 					throw getBizLogicException(null, "biz.checkstatus.error",
-							"Exception in checkStatus method.");
+							errorName + " " + ApplicationProperties.getValue("error.object.closed"));
 				}
 			}
 		}
@@ -1012,16 +1018,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		String[] selectColumnName = {Status.ACTIVITY_STATUS.getStatus()};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER, indetifier
-				.toString(), sourceObjectName));
+		
 
 		List<Object> list;
 		try
 		{
+			queryWhereClause.addCondition(new EqualClause(Constants.SYSTEM_IDENTIFIER, indetifier
+					.toString(), sourceObjectName));
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoEx)
 		{
+			LOGGER.debug(daoEx.getMessage(), daoEx);
 			throw getBizLogicException(daoEx, "biz.activitystatus.error",
 					"Exception in getActivityStatus method.");
 		}
@@ -1029,7 +1037,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		if (!list.isEmpty())
 		{
 			Object obj = list.get(0);
-			logger.debug("obj Class " + obj.getClass());
+			LOGGER.debug("obj Class " + obj.getClass());
 			//Object[] objArr = (String)obj
 			activityStatus = (String) obj;
 		}
@@ -1050,6 +1058,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException daoEx)
 		{
+			LOGGER.debug(daoEx.getMessage(), daoEx);
 			throw getBizLogicException(daoEx, "biz.insert.error",
 					"Exception during insert operation.");
 		}
@@ -1069,6 +1078,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.update.error",
 					"Exception during update operation.");
 		}
@@ -1091,10 +1101,40 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao = getHibernateDao(getAppName(),null);
-			attribute = dao.retrieveAttribute(objClass, identifier, attributeName, columnName);
+			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
+			
+			/*
+			 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+			 */
+			if (Utility.isColumnNameContainsElements(attributeName))
+			{
+				Collection collection = new HashSet();
+				attribute = collection;
+				for(int i=0;i<list.size();i++)
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
+				}
+			}
+			else
+			{
+				if (!list.isEmpty())
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
+				}
+			}
+	
 		}
 		catch (DAOException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.retattr.error",
 					"Exception during retrieveAttribute method.");
 		}
@@ -1104,6 +1144,66 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return attribute;
 	}
+	
+	
+	
+	/**
+	 * This method retrieve Attribute.
+	 * @param objClass objClass
+	 * @param identifier identifier
+	 * @param attributeName attribute Name
+	 * @return attribute.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	public Object retrieveAttribute(DAO dao,Class objClass, Long identifier, String attributeName)
+			throws BizLogicException
+	{
+		String columnName = Constants.SYSTEM_IDENTIFIER;
+		Object attribute = null;
+
+		try
+		{
+			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
+
+			/*
+			 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+			 */
+			if (Utility.isColumnNameContainsElements(attributeName))
+			{
+				Collection collection = new HashSet();
+				attribute = collection;
+				for(int i=0;i<list.size();i++)
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
+				}
+			}
+			else
+			{
+				if (!list.isEmpty())
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 */
+					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
+				}
+			}
+
+		}
+		catch (DAOException daoExp)
+		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, "biz.retattr.error",
+			"Exception during retrieveAttribute method.");
+		}
+
+		return attribute;
+	}
+
 
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
@@ -1127,6 +1227,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (ClassNotFoundException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.retattr.error",
 					"DefaultBizLogic-Not able to find class:" + sourceObjectName);
 		}
@@ -1220,11 +1321,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		catch (HibernateException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.exequery.error",
 					"HibernateException in executeQuery method:");
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.exequery.error",
 					"DAOException in executeQuery method:");
 		}
@@ -1236,6 +1339,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 			catch (Exception exception)
 			{
+				LOGGER.debug(exception.getMessage(), exception);
 				exception.printStackTrace();
 				throw getBizLogicException(exception, "biz.exequery.error",
 						"DAOException in executeQuery method:");
@@ -1252,8 +1356,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws DAOException :Generic DAO exception.
 	 */
 	public void disableRelatedObjects(DAO dao, String tableName, String whereColumnName,
-			Long[] whereColumnValues) throws DAOException
+			Long[] whereColumnValues) throws BizLogicException
 	{
+		JDBCDAO jdbcDAO=null;
 		try
 		{
 			StringBuffer buff = new StringBuffer();
@@ -1268,20 +1373,22 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String sql = "UPDATE " + tableName + " SET ACTIVITY_STATUS = '"
 					+ Status.ACTIVITY_STATUS_DISABLED.toString() + "' WHERE " + whereColumnName
 					+ " IN ( " + buff.toString() + ")";
-			String appName = CommonServiceLocator.getInstance().getAppName();
-			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
-			JDBCDAO jdbcDAO = daoFactory.getJDBCDAO();
+			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory(getAppName());
+			jdbcDAO = daoFactory.getJDBCDAO();
 			jdbcDAO.openSession(null);
-			jdbcDAO.executeQuery(sql);
+			jdbcDAO.executeUpdate(sql);
 			jdbcDAO.commit();
-			jdbcDAO.closeSession();
 		}
 		catch (Exception dbex)
 		{
-			logger.error(dbex.getMessage(), dbex);
+			LOGGER.error(dbex.getMessage(), dbex);
 			ErrorKey errorKey = ErrorKey.getErrorKey("biz.exequery.error");
-			throw new DAOException(errorKey, dbex, "DefaultBizLogic.java :"
-					+ DAOConstants.DISABLE_RELATED_OBJ);
+			throw new BizLogicException(errorKey, dbex, "DefaultBizLogic.java :"
+					+ Constants.DISABLE_RELATED_OBJ);
+		}
+		finally
+		{
+			closeSession((DAO)jdbcDAO);
 		}
 	}
 

@@ -23,6 +23,8 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.ApplicationProperties;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author mandar_deshmukh
@@ -32,6 +34,10 @@ import edu.wustl.common.util.Utility;
 public class DateTimeComponent extends TagSupport
 {
 
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(DateTimeComponent.class);
 	/**
 	 * specify serialVersionUID.
 	 */
@@ -44,11 +50,11 @@ public class DateTimeComponent extends TagSupport
 	/**
 	 * Constant for Size.
 	 */
-	private static final int START_YEAR = 1900;
+	private static final int START_YEAR = Integer.parseInt(ApplicationProperties.getValue("min.year"));
 	/**
 	 * Constant for Size.
 	 */
-	private static final int END_YEAR = 2020;
+	private static final int END_YEAR = Integer.parseInt(ApplicationProperties.getValue("max.year"));;
 	/**
 	 * Name of the text field for the date component.
 	 */
@@ -309,6 +315,7 @@ public class DateTimeComponent extends TagSupport
 		}
 		catch (IOException ioe)
 		{
+			LOGGER.debug(ioe.getMessage(), ioe);
 			throw new JspTagException("Error:IOException while writing to the user");
 		}
 

@@ -14,6 +14,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
@@ -26,6 +27,10 @@ import edu.wustl.dao.util.HibernateMetaData;
 public class MysqlExceptionFormatter implements
 IDBExceptionFormatter
 {
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(MysqlExceptionFormatter.class);
 	/**
 	 * Index name.
 	 */
@@ -65,11 +70,11 @@ IDBExceptionFormatter
 			arguments[1] = columnNames;
 
 			// Insert Table_Name and Column_Name in  CONSTRAINT_VOILATION_ERROR message
-			formattedErrMsg = MessageFormat.format(DAOConstants.CONSTRAINT_VOILATION_ERROR,arguments);
+			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,arguments);
 		}
 		catch(Exception e)
 		{
-
+			LOGGER.debug(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;
@@ -102,6 +107,7 @@ IDBExceptionFormatter
 		}
 		catch(SQLException sqlExp)
 		{
+			LOGGER.debug(sqlExp.getMessage(), sqlExp);
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			throw new DAOException(errorKey,sqlExp,"MysqlFormattedErrorMessages.java :");
 		}
@@ -192,8 +198,8 @@ IDBExceptionFormatter
 
 			int key = -1;
 			int indexofMsg = 0;
-			indexofMsg = sqlMessage.indexOf(DAOConstants.MYSQL_DUPL_KEY_MSG);
-			indexofMsg += DAOConstants.MYSQL_DUPL_KEY_MSG.length();
+			indexofMsg = sqlMessage.indexOf(Constants.MYSQL_DUPL_KEY_MSG);
+			indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
 
 			// Get the %d part of the string
 			String strKey =sqlMessage.substring(indexofMsg,sqlMessage.length()-1);

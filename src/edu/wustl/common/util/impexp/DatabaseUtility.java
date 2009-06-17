@@ -7,6 +7,7 @@ import java.util.Map;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * Database utility class.
@@ -16,6 +17,10 @@ import edu.wustl.common.exception.ErrorKey;
 public class DatabaseUtility
 {
 
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(DatabaseUtility.class);
 	/**
 	 * This map contains class name for Automate import/export and their database type.
 	 */
@@ -263,6 +268,7 @@ public class DatabaseUtility
 		}
 		catch (Exception exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.dbtype.error");
 			throw new ApplicationException(errorKey,exception,
 				"Not able to get import/export class. Please make sure database type is correct.");

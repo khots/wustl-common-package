@@ -21,6 +21,7 @@ import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * @author Santosh Chandak
@@ -31,6 +32,10 @@ import edu.wustl.common.util.global.TextConstants;
 public class AutoCompleteTag extends TagSupport
 {
 
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(AutoCompleteTag.class);
 	/**
 	 * serialVersionUID long - version ID.
 	 */
@@ -137,6 +142,7 @@ public class AutoCompleteTag extends TagSupport
 		}
 		catch (IOException ioe)
 		{
+			LOGGER.debug(ioe.getMessage(), ioe);
 			throw new JspTagException("Error:IOException while writing to the user");
 		}
 

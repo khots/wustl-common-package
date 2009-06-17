@@ -365,5 +365,23 @@ public final class Constants
 	 * constant for CATISSUE_CORE.
 	 */
 	public static final String CATISSUE_CORE = "caTissue Core";
+	
+	/**
+	 * Disabling objects.
+	 */
+	public static final String DISABLE_RELATED_OBJ = "Object disabling error:";
+	
+	/**
+	 * error message.
+	 */
+	public static final String CONSTRAINT_VOILATION_ERROR =" Submission failed since a " +
+			"{0} with the same {1} already exists";
+	
+	/**
+	 *  The unique key error message is "Duplicate entry %s for key %d".
+	 *  This string is used for searching " for key " string in the above error message
+	 */
+	public static final String MYSQL_DUPL_KEY_MSG = " for key ";
+
 
 }

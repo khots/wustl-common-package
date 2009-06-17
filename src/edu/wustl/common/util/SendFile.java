@@ -30,9 +30,9 @@ public final class SendFile
 
 	}
 	/**
-	 * logger Logger Generic logger.
+	 * LOGGER Logger Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(SendFile.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(SendFile.class);
 
 	/**
 	 *
@@ -57,7 +57,7 @@ public final class SendFile
 			}
 			else
 			{
-				logger.error("Sorry Cannot Download as fileName is null");
+				LOGGER.error("Sorry Cannot Download as fileName is null");
 			}
 		}
 	}
@@ -87,16 +87,16 @@ public final class SendFile
 			boolean isDeleted = file.delete();
 			if(!isDeleted)
 			{
-				logger.info("Not able to delete file "+file.getName());
+				LOGGER.info("Not able to delete file "+file.getName());
 			}
 		}
 		catch (FileNotFoundException ex)
 		{
-			logger.error("Exception in method sendFileToClient:"+ex.getMessage(), ex);
+			LOGGER.error("Exception in method sendFileToClient:"+ex.getMessage(), ex);
 		}
 		catch (IOException ex)
 		{
-			logger.error("Exception in method sendFileToClient:"+ex.getMessage(), ex);
+			LOGGER.error("Exception in method sendFileToClient:"+ex.getMessage(), ex);
 		}
 	}
 }

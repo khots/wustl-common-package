@@ -46,9 +46,9 @@ public abstract class BaseAddEditAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(BaseAddEditAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(BaseAddEditAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -90,7 +90,7 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			logger.error("Failed to get QueryBizLogic object from BizLogic Factory");
+			LOGGER.error("Failed to get QueryBizLogic object from BizLogic Factory");
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get DomainObjectFactory in base Add/Edit.");
 		}
@@ -111,7 +111,7 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			logger.error("Failed to get QueryBizLogic object from BizLogic Factory");
+			LOGGER.error("Failed to get QueryBizLogic object from BizLogic Factory");
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get QueryBizLogic in base Add/Edit.");
 		}
@@ -131,7 +131,7 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			logger.error("Failed to get BizLogic object from BizLogic Factory");
+			LOGGER.error("Failed to get BizLogic object from BizLogic Factory");
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed to get BizLogic in base Add/Edit.");
 		}
@@ -181,7 +181,7 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			logger.error("Failed to generateforward hash map", exception);
+			LOGGER.error("Failed to generateforward hash map", exception);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed at generateForwardToHashMap in base Add/Edit.");
 
@@ -208,7 +208,7 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			logger.error("Failed to generateforward print map", exception);
+			LOGGER.error("Failed to generateforward print map", exception);
 			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
 					"Failed at generateForwardToPrintMap in base Add/Edit.");
 
@@ -263,8 +263,26 @@ public abstract class BaseAddEditAction extends Action
 		catch (Exception excp)
 		{
 			displayName = AbstractDomainObject.parseClassName(objectName);
-			logger.error(excp.getMessage(), excp);
+			LOGGER.error(excp.getMessage(), excp);
 		}
 		return displayName;
+	}
+
+	/**
+	 * This method returns ActionForward object. In some cases we get forward url,
+	 * in that case we don't need to find ActionForward in mapping.
+	 * @param mapping ActionMapping object.
+	 * @param target target configured in struts-config file or url to forward.
+	 * @return ActionForward object
+	 */
+	protected ActionForward getActionForward(ActionMapping mapping,String target)
+	{
+		ActionForward actionForward =mapping.findForward(target);
+		if(null==actionForward)
+		{
+			actionForward = new ActionForward();
+			actionForward.setPath(target );
+		}
+		return actionForward;
 	}
 }

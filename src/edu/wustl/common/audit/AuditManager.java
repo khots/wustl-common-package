@@ -32,9 +32,9 @@ public class AuditManager
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AuditManager.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(AuditManager.class);
 
 	/**
 	 *  Instance of Audit event.
@@ -104,7 +104,7 @@ public class AuditManager
 	private void compare(Auditable currentObj, Auditable previousObj, String eventType)
 			throws AuditException
 	{
-		logger.debug("Inside isObjectAuditable method.");
+		LOGGER.debug("Inside isObjectAuditable method.");
 
 			Auditable auditableObject = (Auditable)currentObj;
 			if (auditableObject == null)
@@ -251,12 +251,12 @@ public class AuditManager
 				}
 				catch (IllegalAccessException ex)
 				{
-					logger.error(ex.getMessage(), ex);
+					LOGGER.error(ex.getMessage(), ex);
 					throw new AuditException(ex, "while comparing audit objects");
 				}
 				catch (InvocationTargetException iTException)
 				{
-					logger.error(iTException.getMessage(), iTException);
+					LOGGER.error(iTException.getMessage(), iTException);
 					throw new AuditException(iTException, "while comparing audit objects");
 				}
 		}

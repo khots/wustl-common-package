@@ -31,10 +31,10 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger
-			.getLogger(ApplicationRequestProcessor.class);
+	private static final Logger LOGGER = Logger
+			.getCommonLogger(ApplicationRequestProcessor.class);
 
 	/**
 	 * Constructor.
@@ -54,7 +54,7 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 	protected ActionForm processActionForm(HttpServletRequest request,
 			HttpServletResponse response, ActionMapping mapping)
 	{
-		logger.debug("contentType " + request.getContentType());
+		LOGGER.debug("contentType " + request.getContentType());
 		ActionForm form = null;
 		if (request.getContentType() != null && request.getContentType().equals(Constants.HTTP_API))
 		{
@@ -67,13 +67,13 @@ public class ApplicationRequestProcessor extends TilesRequestProcessor
 
 				form = wrapperObject.getForm();
 
-				logger.debug("mapping.getAttribute() " + mapping.getAttribute());
+				LOGGER.debug("mapping.getAttribute() " + mapping.getAttribute());
 
 				setMappingAttribute(request, mapping, form);
 			}
 			catch (Exception e)
 			{
-				logger.debug(e.getMessage(), e);
+				LOGGER.debug(e.getMessage(), e);
 			}
 		}
 		else

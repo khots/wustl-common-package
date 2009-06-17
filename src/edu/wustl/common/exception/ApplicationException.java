@@ -25,7 +25,7 @@ public class ApplicationException extends Exception
 	/**
 	 * Logger object used to log messages.
 	 */
-	private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(ApplicationException.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(ApplicationException.class);
 
 	/**
 	 *The errorKey object for the exception occurred.
@@ -102,7 +102,8 @@ public class ApplicationException extends Exception
 	 */
 	public String getLogMessage()
 	{
-		StringBuffer logMsg = new StringBuffer(getFormattedMessage());
+		StringBuffer logMsg = new StringBuffer();
+		logMsg.append(getFormattedMessage());
 		if (!TextConstants.EMPTY_STRING.equals(getErrorMsg()))
 		{
 			logMsg.append(" Error caused at- ").append(getErrorMsg());
@@ -127,6 +128,24 @@ public class ApplicationException extends Exception
 		return errorKey;
 	}
 
+	/**
+	 * this function returns the key name of the error used from applicationResource
+	 * bundle.
+	 * @return error key name.
+	 */
+	public String getErrorKeyName()
+	{
+		String keyName;
+		if (errorKey == null)
+		{
+			keyName="";
+		}
+		else
+		{
+			keyName=errorKey.getErrorKey();
+		}
+		return keyName;
+	}
 	/**
 	 * Sets errorKey object. This function accessible only by child classes
 	 * @param errorKey erroKey object to be set.

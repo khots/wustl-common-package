@@ -34,9 +34,9 @@ public class SendEmail
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(SendEmail.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(SendEmail.class);
 
 	/**
 	 * From email address.
@@ -58,7 +58,7 @@ public class SendEmail
 	{
 		if(null==host)
 		{
-			logger.fatal("Host can't be null");
+			LOGGER.fatal("Host can't be null");
 			throw new MessagingException("Host can't be null");
 		}
 		this.host=host;
@@ -82,7 +82,7 @@ public class SendEmail
 		}
 		catch (MessagingException mex)
 		{
-			logger.warn("Unable to send mail to: " + emailDetails.getToAddress(),mex);
+			LOGGER.warn("Unable to send mail to: " + emailDetails.getToAddress(),mex);
 			sendStatus = false;
 		}
 		return sendStatus;

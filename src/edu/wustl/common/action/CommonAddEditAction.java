@@ -36,9 +36,9 @@ public class CommonAddEditAction extends Action
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonAddEditAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonAddEditAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -56,7 +56,7 @@ public class CommonAddEditAction extends Action
 			ServletException
 	{
 
-		logger.info("in execute method");
+		LOGGER.info("in execute method");
 		BaseAddEditAction addEditAction;
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		ActionForward actionfwd;
@@ -75,7 +75,7 @@ public class CommonAddEditAction extends Action
 		}
 		catch (ApplicationException applicationException)
 		{
-			logger.error("Common Add/Edit failed.." + applicationException.getLogMessage(),
+			LOGGER.error("Common Add/Edit failed.." + applicationException.getLogMessage(),
 					applicationException);
 			ActionErrors actionErrors = new ActionErrors();
 			ActionError actionError = new ActionError("errors.item",applicationException.toMsgValuesArray());

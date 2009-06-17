@@ -59,7 +59,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * Application name to get DAO.
 	 */
 	private String appName;
-	
+
 	/**
 	 * Constructor with argument as application name.
 	 * This application is used to get DAO.
@@ -81,26 +81,26 @@ public abstract class AbstractBizLogic implements IBizLogic
 	}
 
 	/**
-	 * This method returns application name. 
-	 * @return
+	 * This method returns application name.
+	 * @return appName
 	 */
 	public String getAppName()
 	{
 		return this.appName;
 	}
-	
+
 	/**
-	 * This method returns application name. 
-	 * @return
+	 * This method returns application name.
+	 * @param appName application Name.
 	 */
 	public void setAppName(String appName)
 	{
 		this.appName=appName;
 	}
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(AbstractBizLogic.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(AbstractBizLogic.class);
 
 	/**
 	 * This method gets called before insert method.
@@ -252,6 +252,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(ex,obj,"Deleting");
+			LOGGER.debug(errMsg, ex);
 			throw getBizLogicException(ex, "biz.delete.error", errMsg);
 		}
 		finally
@@ -291,8 +292,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			String errMsg = getErrorMessage(exception,obj,"Inserting");
-			throw getBizLogicException(exception, "biz.insert.error",errMsg);
+			String errMssg = getErrorMessage(exception,obj,"Inserting");
+			LOGGER.debug(errMssg, exception);
+			throw getBizLogicException(exception, "biz.insert.error",errMssg);
 		}
 		finally
 		{
@@ -347,6 +349,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
+			LOGGER.debug(errMsg, exception);
 			throw getBizLogicException(exception, "biz.insert.error",errMsg);
 		}
 		finally
@@ -502,6 +505,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			rollback(dao);
 			String errMsg = getErrorMessage(ex,currentObj,"Updating");
+			LOGGER.debug(errMsg, ex);
 			throw getBizLogicException(ex, "biz.update.error", errMsg);
 		}
 		finally
@@ -597,7 +601,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (ApplicationException except)
 		{
-			logger.error(except.getMessage(), except);
+			LOGGER.error(except.getMessage(), except);
 			// if Error occured while formating message then get message
 			// formatted through Default Formatter
 			String[] arg = {operation, tableName};
@@ -637,7 +641,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (Exception excep)
 		{
-			logger.error("Titli search index cound not be refreshed for opeartion." + operation,
+			LOGGER.error("Titli search index cound not be refreshed for opeartion." + operation,
 					excep);
 		}
 
@@ -711,6 +715,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (ApplicationException daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.popbean.error", "Exception in bean population");
 		}
 		finally
@@ -721,7 +726,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		//String simpleClassName = Utility.parseClassName(className);
 
 		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - " + simpleClassName + " : "
+		//LOGGER.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR UI - " + simpleClassName + " : "
 		//	+ (endTime - startTime));
 
 		return isSuccess;
@@ -749,6 +754,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (Exception daoExp)
 		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp, "biz.popdomain.error",
 					"Exception in domain population");
 		}
@@ -759,7 +765,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		//String simpleClassName = Utility.parseClassName(className);
 		//long endTime = System.currentTimeMillis();
-		//logger.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
+		//LOGGER.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
 		//+ (endTime - startTime));
 
 		return abstractDomain;
@@ -845,7 +851,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	protected BizLogicException getBizLogicException(Exception exception, String key,
 			String logMessage)
 	{
-		logger.debug(logMessage);
+		LOGGER.debug(logMessage);
 		ErrorKey errorKey = ErrorKey.getErrorKey(key);
 		return new BizLogicException(errorKey, exception, logMessage);
 	}
@@ -861,7 +867,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException daoEx)
 		{
-			logger.fatal("Rollback unsuccessful in method.", daoEx);
+			LOGGER.fatal("Rollback unsuccessful in method.", daoEx);
 		}
 	}
 
@@ -877,7 +883,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException exception)
 		{
-			logger.error("Not able to close DAO session.", exception);
+			LOGGER.error("Not able to close DAO session.", exception);
 			throw new BizLogicException(exception);
 		}
 	}
@@ -895,7 +901,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		JDBCDAO jdbcDao=null;
 		try
 		{
-			logger.debug("Insert hashed data to database");
+			LOGGER.debug("Insert hashed data to database");
 			String appName=CommonServiceLocator.getInstance().getAppName();
 			jdbcDao = DAOConfigFactory.getInstance().getDAOFactory(appName).getJDBCDAO();
 			jdbcDao.openSession(null);
@@ -904,10 +910,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		catch (DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw new BizLogicException(exception);
 		}
 		catch (Exception exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, "biz.insert.error",
 					"Exception in insert hashed values operation.");
 		}
@@ -919,6 +927,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			catch (DAOException exception)
 			{
+				LOGGER.debug(exception.getMessage(), exception);
 				throw new BizLogicException(exception);
 			}
 		}
@@ -962,11 +971,35 @@ public abstract class AbstractBizLogic implements IBizLogic
     	}
     	else
     	{
-    		errMsg = formatException(exception.getWrapException(),obj,operation);
+    		errMsg = formatException(getWrapException(exception),obj,operation);
     	}
 
         return errMsg;
     }
     
+    /**
+     * This method returns root exception used in message formatter.
+     * @param exception ApplicationException
+     * @return exception used in message formatter.
+     */
+    private Exception getWrapException(ApplicationException exception)
+    {
+    	Throwable rootException=null;
+    	Throwable wrapException=exception;
+		while(true)
+		{
+    		if((wrapException instanceof ApplicationException))
+    		{
+    			wrapException= wrapException.getCause();
+    			continue;
+    		}
+    		else
+    		{
+    			rootException= wrapException;
+    			break;
+    		}
+		}
+    	return (Exception)rootException;
+    }
     
 }

@@ -18,7 +18,6 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
@@ -33,9 +32,9 @@ public class CommonEdtAction extends BaseAddEditAction
 {
 
 	/**
-	 * logger Logger - Generic logger.
+	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static org.apache.log4j.Logger logger = Logger.getLogger(CommonEdtAction.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonEdtAction.class);
 
 	/**
 	 * Overrides the execute method of Action class.
@@ -51,7 +50,7 @@ public class CommonEdtAction extends BaseAddEditAction
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException
 	{
 		String target;
-		logger.debug("in method executeEdit()");
+		LOGGER.debug("in method executeEdit()");
 		AbstractActionForm abstractForm = (AbstractActionForm) form;
 		ActionMessages messages = new ActionMessages();
 		String objectName = getObjectName(abstractForm);
@@ -76,7 +75,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		//Status message key.
 		setStatusMsgKey(request, abstractForm);
 
-		return mapping.findForward(target);
+		return getActionForward(mapping,target);
 	}
 
 	/**
@@ -119,11 +118,9 @@ public class CommonEdtAction extends BaseAddEditAction
 	private AbstractDomainObject getDomainObject(AbstractActionForm abstractForm, String objectName)
 			throws ApplicationException
 	{
-		AbstractDomainObject abstractDomain;
-		DefaultBizLogic defaultBizLogic = new DefaultBizLogic();
-		abstractDomain = defaultBizLogic.populateDomainObject(objectName, Long
+		IBizLogic defaultBizLogic =getIBizLogic(abstractForm);
+		return defaultBizLogic.populateDomainObject(objectName, Long
 				.valueOf(abstractForm.getId()), abstractForm);
-		return abstractDomain;	
 	}
 
 	/**
@@ -164,19 +161,19 @@ public class CommonEdtAction extends BaseAddEditAction
 		HibernateDAO hibernateDao = null;
 		try
 		{
-			String appName = CommonServiceLocator.getInstance().getAppName();
+			//String appName = CommonServiceLocator.getInstance().getAppName();
+			IBizLogic bizLogic = getIBizLogic(abstractForm);
+			String appName =((DefaultBizLogic)bizLogic).getAppName();
 			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
 					.getDAO();
 			hibernateDao.openSession(null);
 
 			AbstractDomainObject abstractDomainOld;
 			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
-					abstractForm.getId());
-			IBizLogic bizLogic = getIBizLogic(abstractForm);
+					abstractForm.getId());			
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
-		}		
+		}
 		finally
-
 		{
 			try
 			{

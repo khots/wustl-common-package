@@ -29,6 +29,7 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.tree.CDETreeNode;
 import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.tree.TreeNode;
+import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.exception.DAOException;
 
@@ -51,6 +52,10 @@ import edu.wustl.dao.exception.DAOException;
 public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 {
 
+	/**
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(CDEBizLogic.class);
 	/**
 	 * Saves the storageType object in the database.
 	 * @param obj The storageType object to be saved.
@@ -77,6 +82,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 		}
 		catch(DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw new BizLogicException(exception);
 		}
 	}
@@ -101,6 +107,7 @@ public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
 		}
 		catch(DAOException exception)
 		{
+			LOGGER.debug(exception.getMessage(), exception);
 			throw new BizLogicException(exception);
 		}
 	}
