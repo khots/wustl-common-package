@@ -378,7 +378,7 @@ public class AuditManager
 				dao.insert(auditEventDetails);
 			}
 		}
-		auditEvent = new AuditEvent();
+		//auditEvent = new AuditEvent();
 
 	}
 
@@ -405,7 +405,7 @@ public class AuditManager
 	{
 		if (currentObj instanceof Auditable)
 		{
-			audit(currentObj, null, "UPDATE");
+			audit(currentObj, previousObj, "UPDATE");
 			insert(dao);
 		}
 	}
