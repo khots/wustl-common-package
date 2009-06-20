@@ -158,6 +158,8 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 								.append('/').append(getDbUtility().getDbPassword())
 								.append('@').append(oracleTnsName)
 								.append(" control=").append(fileName);
+		System.out.println("Command ::  "+cmd);
+		
 		Runtime runtime = Runtime.getRuntime();
 		Process proc = runtime.exec(cmd.toString());
 		// any error message?
