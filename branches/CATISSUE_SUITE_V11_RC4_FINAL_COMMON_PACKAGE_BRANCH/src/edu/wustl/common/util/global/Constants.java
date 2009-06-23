@@ -557,6 +557,8 @@ public class Constants
 	public static final String hashedOut = "##";
 	public static final int ONE = 1;
 	public static final int INITIALIZE = -1;
+	public static final String IS_READ_DENIED = "isReadDenied";
+	public static final String HAS_PHI_ACCESS = "hasPHIAccess";
 }
 
 
