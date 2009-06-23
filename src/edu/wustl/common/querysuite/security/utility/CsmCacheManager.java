@@ -9,6 +9,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -684,5 +685,49 @@ public class CsmCacheManager
 			validator.hasPrivilegeToViewTemporalColumn(tqColumnMetadataList,
 					aList, isAuthorizedUser);
 		}
-	}	
+	}
+	
+	/**
+	 * This method is called from CacoreAppServiceDelegator.
+	 * It checks whether the user is readdenied or has access on phi data.
+	 * @param objName name of the object
+	 * @param identifier identifier of the object
+	 * @param sessionDataBean session data
+	 * @param cache Csmcache object for storing CP access data
+	 * @return map having values for readDenied and phiAccess for each cp
+	 */
+	public Map<String,Boolean> getAccessPrivilegeMap(String objName, Long identifier, 
+			SessionDataBean sessionDataBean,CsmCache cache)
+	{
+		Boolean isAuthorisedUser = true;
+		Boolean hasPrivilegeOnIdentifiedData = true;
+		Map<String,Boolean> accessprivilegeMap = new HashMap<String, Boolean>();
+		List<List<String>> cpIdsList = getCpIdsListForGivenEntityId(sessionDataBean,
+				objName, identifier.intValue());
+		
+		if(cpIdsList.isEmpty())
+		{
+			hasPrivilegeOnIdentifiedData = checkPermissionOnGlobalParticipant(sessionDataBean);
+		}
+		else
+		{
+			List<Boolean> readPrivilegeList = new ArrayList<Boolean>();
+			List<Boolean> IdentifiedPrivilegeList = new ArrayList<Boolean>();
+
+			for (int i = 0; i < cpIdsList.size(); i++)
+			{
+				List<String> cpIdList = (List<String>) cpIdsList.get(i);
+				updatePrivilegeList(sessionDataBean, cache, readPrivilegeList,
+						IdentifiedPrivilegeList, cpIdList);
+			}
+			isAuthorisedUser = isAuthorizedUser(readPrivilegeList, true);
+			hasPrivilegeOnIdentifiedData = isAuthorizedUser(IdentifiedPrivilegeList,
+					false);
+		
+		}
+		accessprivilegeMap.put(Constants.IS_READ_DENIED, !isAuthorisedUser);
+		accessprivilegeMap.put(Constants.HAS_PHI_ACCESS, hasPrivilegeOnIdentifiedData);
+
+		return accessprivilegeMap;
+	}
 }
