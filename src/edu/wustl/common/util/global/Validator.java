@@ -564,14 +564,19 @@ public class Validator
 	{
 		boolean result = false;
 		try
-		{		
-			Date toCheck = getDateFromStr(startDate); //dateFormat.parse(startDate);
-			Date maxDate = getDateFromStr(endDate); //dF1.parse(endDate);
-			int dateCheckResult = maxDate.compareTo(toCheck);
-			if (dateCheckResult >= 0)
+		{
+			boolean isDate1 = isValidDatePattern(startDate);
+			boolean isDate2 = isValidDatePattern(endDate);	
+			if(isDate1 && isDate2)
 			{
-				result = true;
-			}		
+				Date toCheck = getDateFromStr(startDate);
+				Date maxDate = getDateFromStr(endDate);
+				int dateCheckResult = maxDate.compareTo(toCheck);
+				if (dateCheckResult >= 0)
+				{
+					result = true;
+				}
+			}
 		}
 		catch (Exception exp)
 		{
