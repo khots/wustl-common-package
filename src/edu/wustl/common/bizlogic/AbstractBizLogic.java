@@ -11,20 +11,9 @@
 package edu.wustl.common.bizlogic;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
-import titli.controller.Name;
-import titli.controller.RecordIdentifier;
-import titli.controller.interfaces.IndexRefresherInterface;
-import titli.controller.interfaces.ObjectMetadataInterface;
-import titli.controller.interfaces.TitliInterface;
-import titli.model.Titli;
-import titli.model.TitliException;
-import titli.model.util.TitliResultGroup;
-import titli.model.util.TitliTableMapper;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -35,7 +24,6 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
-import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TitliSearchConstants;
@@ -242,11 +230,13 @@ public abstract class AbstractBizLogic implements IBizLogic
 			dao = getHibernateDao(getAppName(),null);
 			delete(obj, dao);
 			dao.commit();
+			
 			//refresh the index for titli search
-			if (TitliResultGroup.isTitliConfigured)
-			{
-				refreshTitliSearchIndex(TitliSearchConstants.TITLI_DELETE_OPERATION, obj);
-			}
+			
+			Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
+			collection.add((AbstractDomainObject)obj);			
+			refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_DELETE_OPERATION);
+			
 		}
 		catch (ApplicationException exception)
 		{
@@ -283,10 +273,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 				preInsert(obj, dao, sessionDataBean);
 				insert(obj, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
-				if (TitliResultGroup.isTitliConfigured)
-				{
-					refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
-				}
+				
+				Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
+				collection.add((AbstractDomainObject)obj);
+				refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_INSERT_OPERATION);
+				
 				postInsert(obj, dao, sessionDataBean);
 			}
 		}
@@ -337,13 +328,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
-			if (TitliResultGroup.isTitliConfigured)
-			{
-				for (AbstractDomainObject obj : objCollection)
-				{
-					refreshTitliSearchIndex(TitliSearchConstants.TITLI_INSERT_OPERATION, obj);
-				}
-			}
+			
+			Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
+			collection.addAll(objCollection);
+			refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_INSERT_OPERATION);
+			
 			postInsert(objCollection, dao, sessionDataBean);
 		}
 		catch (ApplicationException exception)
@@ -489,11 +478,12 @@ public abstract class AbstractBizLogic implements IBizLogic
 					update(dao, currentObj, oldObj, sessionDataBean);
 				}
 				dao.commit();
-				if (TitliResultGroup.isTitliConfigured)
-				{
-					refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION,
-							currentObj);
-				}
+				
+				
+				Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
+				collection.add((AbstractDomainObject)currentObj);
+				refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_UPDATE_OPERATION);
+				
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
 			else
@@ -611,75 +601,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		return errMsg;
 	}
 
-	/**
-	 * refresh the titli search index to reflect the changes in the database.
-	 * @param operation the operation to be performed : "insert", "update" or "delete"
-	 * @param obj the object corresponding to the record to be refreshed
-	 */
-	protected void refreshTitliSearchIndex(String operation, Object obj)
-	{
-		try
-		{
-			Properties prop = new Properties();
-			prop.load(Utility.getCurrClassLoader().getResourceAsStream("titli.properties"));
-			String className = prop.getProperty("titliObjectMetadataImplementor");
-			ObjectMetadataInterface objectMetadataInterface = (ObjectMetadataInterface) Class
-					.forName(className).newInstance();
-			String tableName = objectMetadataInterface.getTableName(obj);
-			if (!tableName.equalsIgnoreCase(""))
-			{
-				String objId = objectMetadataInterface.getUniqueIdentifier(obj);
-				String mainTableName = TitliTableMapper.getInstance().returnMainTable(tableName);
-				if (mainTableName != null)
-				{
-					tableName = mainTableName;
-				}
-				if (operation != null)
-				{
-					performOperation(operation, tableName, objId);
-				}
-			}
-		}
-		catch (Exception excep)
-		{
-			LOGGER.error("Titli search index cound not be refreshed for opeartion." + operation,
-					excep);
-		}
-
-	}
-
-	/**
-	 * This method perform insert,update or delete operation.
-	 * @param operation type of operation.
-	 * @param tableName Table Name
-	 * @param objId Object Id
-	 * @throws TitliException throws this exception if operation unsuccessful.
-	 */
-	private void performOperation(String operation, String tableName, String objId)
-			throws TitliException
-	{
-		Map<Name, String> uniqueKey = new HashMap<Name, String>();
-		uniqueKey.put(new Name(Constants.IDENTIFIER), objId);
-		TitliInterface titli = Titli.getInstance();
-		Name dbName = (titli.getDatabases().keySet().toArray(new Name[0]))[0];
-		RecordIdentifier recordIdentifier = new RecordIdentifier(dbName, new Name(tableName),
-				uniqueKey);
-
-		IndexRefresherInterface indexRefresher = titli.getIndexRefresher();
-
-		if (TitliSearchConstants.TITLI_INSERT_OPERATION.equalsIgnoreCase(operation))
-		{
-			indexRefresher.insert(recordIdentifier);
-		}
-		else if (TitliSearchConstants.TITLI_UPDATE_OPERATION.equalsIgnoreCase(operation))
-		{
-			indexRefresher.update(recordIdentifier);
-		}
-		else if (TitliSearchConstants.TITLI_DELETE_OPERATION.equalsIgnoreCase(operation))
-		{
-			indexRefresher.delete(recordIdentifier);
-		}
-	}
+	
 
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
@@ -1015,5 +937,15 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
     	return (Exception)rootException;
     }
+    
+    /**
+     * 
+     * @param objCollection
+     * @param operation
+     * @throws BizLogicException
+     */
+    public abstract void refreshTitliSearchIndex(Collection<AbstractDomainObject> objCollection,String operation)
+    throws BizLogicException ;
+    
     
 }
