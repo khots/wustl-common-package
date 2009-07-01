@@ -80,7 +80,6 @@ public class LoginAuditManager
 			.getDAO();
 			hibernateDao.openSession(null);
 			this.loginEvent.setIsLoginSuccessful(loginStatus);
-			hibernateDao.openSession(null);
 			insert(hibernateDao, this.loginEvent);
 			hibernateDao.commit();
 		}
