@@ -33,12 +33,12 @@ public class Validator
 	/**
 	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc
 	 * */
-	private static final String REGEX_XSS_VULNERABLE = "[()<>]";
+	private static final String REGEX_XSS_VULNERABLE = "[()<>&;]";
 	
 	/**
 	 * This is regular expression to check for SQL injection characters e.g =,*, etc
 	 * */
-	private static final String REGEX_SQLINJECTION_VULNERABLE = "[()<>'=\\*]";
+	private static final String REGEX_SQLINJECTION_VULNERABLE = "[()<>'=\\*&;]";
 	
     /**
      * Checks that the input String is a valid email address.
