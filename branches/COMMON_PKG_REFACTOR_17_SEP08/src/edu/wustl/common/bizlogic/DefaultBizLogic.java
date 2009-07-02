@@ -1496,6 +1496,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public void refreshTitliSearchIndex(
 			Collection<AbstractDomainObject> objCollection, String operation) throws BizLogicException 
 	{
-		throw getBizLogicException(null, "title.error", "");
+		throw getBizLogicException(null, "titli.error", "");
 	}
 }
