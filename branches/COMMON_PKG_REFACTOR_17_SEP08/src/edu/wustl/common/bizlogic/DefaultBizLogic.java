@@ -1492,10 +1492,5 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return auditManager;
 	
 	}
-	@Override
-	public void refreshTitliSearchIndex(
-			Collection<AbstractDomainObject> objCollection, String operation) throws BizLogicException 
-	{
-		throw getBizLogicException(null, "titli.error", "");
-	}
+
 }
