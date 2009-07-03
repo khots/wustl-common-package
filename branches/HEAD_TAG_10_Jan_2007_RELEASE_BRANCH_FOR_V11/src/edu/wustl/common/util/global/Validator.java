@@ -36,6 +36,11 @@ public class Validator
 	private static final String REGEX_XSS_VULNERABLE = "[()<>&;]";
 	
 	/**
+	 * This is regular expression to check for XXS vulnerable strings like script, table etc.
+	 * */
+	private static final String REGEX_XSS_VULNERABLE_KEYWORDS = "/*(table|drop|delete|applet|meta|xml|blink|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base|alert|absolute|relative)[^>(gt)(lt)]*";
+	
+	/**
 	 * This is regular expression to check for SQL injection characters e.g =,*, etc
 	 * */
 	private static final String REGEX_SQLINJECTION_VULNERABLE = "[()<>'=\\*&;]";
@@ -1084,6 +1089,13 @@ public class Validator
     		Pattern p = Pattern.compile(REGEX_SQLINJECTION_VULNERABLE);
     		Matcher m = p.matcher(value);
     		isXssVulnerable= m.find();
+    		
+    		if(!isXssVulnerable)
+    		{
+	    		p = Pattern.compile(REGEX_XSS_VULNERABLE_KEYWORDS);
+	    		m = p.matcher(value);
+	    		isXssVulnerable= m.find();
+    		}
     	}
     	return isXssVulnerable;
     }
