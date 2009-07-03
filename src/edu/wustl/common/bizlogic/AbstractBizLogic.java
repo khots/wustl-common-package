@@ -230,13 +230,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			dao = getHibernateDao(getAppName(),null);
 			delete(obj, dao);
 			dao.commit();
-			
-			//refresh the index for titli search
-			
-			Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
-			collection.add((AbstractDomainObject)obj);			
-			refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_DELETE_OPERATION);
-			
 		}
 		catch (ApplicationException exception)
 		{
@@ -273,11 +266,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 				preInsert(obj, dao, sessionDataBean);
 				insert(obj, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
-				
-				Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
-				collection.add((AbstractDomainObject)obj);
-				refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_INSERT_OPERATION);
-				
 				postInsert(obj, dao, sessionDataBean);
 			}
 		}
@@ -328,11 +316,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
-			
-			Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
-			collection.addAll(objCollection);
-			refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_INSERT_OPERATION);
-			
 			postInsert(objCollection, dao, sessionDataBean);
 		}
 		catch (ApplicationException exception)
@@ -478,12 +461,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 					update(dao, currentObj, oldObj, sessionDataBean);
 				}
 				dao.commit();
-				
-				
-				Collection<AbstractDomainObject> collection = new HashSet<AbstractDomainObject>(); 
-				collection.add((AbstractDomainObject)currentObj);
-				refreshTitliSearchIndex(collection, TitliSearchConstants.TITLI_UPDATE_OPERATION);
-				
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
 			else
@@ -938,14 +915,5 @@ public abstract class AbstractBizLogic implements IBizLogic
     	return (Exception)rootException;
     }
     
-    /**
-     * 
-     * @param objCollection
-     * @param operation
-     * @throws BizLogicException
-     */
-    public abstract void refreshTitliSearchIndex(Collection<AbstractDomainObject> objCollection,String operation)
-    throws BizLogicException ;
-    
-    
+      
 }
