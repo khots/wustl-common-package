@@ -6,6 +6,7 @@
  */
 package edu.wustl.common.bizlogic;
 
+import java.util.Collection;
 import java.util.List;
 
 import edu.wustl.common.actionForm.IValueObject;
@@ -40,6 +41,7 @@ public interface IBizLogic
 	public void insert(Object obj,SessionDataBean sessionDataBean, int daoType) throws BizLogicException, UserNotAuthorizedException;
 	
 	public void insert(Object obj, int daoType) throws BizLogicException, UserNotAuthorizedException;
+	public void insert(Collection<AbstractDomainObject> objCollection, SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly) throws BizLogicException, UserNotAuthorizedException;
     
     public void update(Object currentObj,Object oldObj,int daoType, SessionDataBean sessionDataBean) throws BizLogicException, UserNotAuthorizedException;
 	
