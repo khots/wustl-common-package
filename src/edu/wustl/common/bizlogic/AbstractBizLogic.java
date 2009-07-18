@@ -12,6 +12,8 @@ package edu.wustl.common.bizlogic;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.wustl.common.actionForm.IValueObject;
@@ -563,6 +565,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
+				if(obj instanceof LinkedHashSet && !((LinkedHashSet)obj).isEmpty())
+				{
+					obj = ((LinkedHashSet)obj).iterator().next(); 
+				}
+				
 				tableName = HibernateMetaData.getTableName(obj.getClass());
 				errMsg = exFormatter.formatMessage(exception);
 			}
