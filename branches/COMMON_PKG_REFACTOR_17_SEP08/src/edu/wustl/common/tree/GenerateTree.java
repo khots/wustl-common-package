@@ -60,17 +60,17 @@ public class GenerateTree
 	 * @param treeType the type of tree.
 	 * @return the JTree from the vector of data nodes passed.
 	 */
-	public JTree createTree(Vector dataVector, int treeType, boolean isJXTree)
+	public JTree createTree(Vector dataVector, TreeNode rootTreeNode, boolean isJXTree)
 	{
-		TreeNode rootName = null;
+	/*	TreeNode rootName = null;
 		if (dataVector != null && (dataVector.isEmpty() == false))
 		{
 			rootName = (TreeNode) dataVector.get(0);
 		}
-
+*/
 		//Get the root node.
-		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
-		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
+		//TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
+		TreeNodeImpl rootNode = (TreeNodeImpl) rootTreeNode;
 		rootNode.setChildNodes(dataVector);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
 
@@ -116,17 +116,17 @@ public class GenerateTree
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 
-	public JTree createTree(Vector dataVector, int treeType, ArrayList tempList)
+	public JTree createTree(Vector dataVector, TreeNode rootTreeNode, ArrayList tempList)
 	{
-		TreeNode rootName = null;
+		/*TreeNode rootName = null;
 		if (dataVector != null && (dataVector.isEmpty() == false))
 		{
 			rootName = (TreeNode) dataVector.get(0);
 		}
 
 		//Get the root node.
-		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);
-		TreeNodeImpl rootNode = (TreeNodeImpl) root1;
+		TreeNode root1 = TreeNodeFactory.getTreeNode(treeType, rootName);*/
+		TreeNodeImpl rootNode = (TreeNodeImpl) rootTreeNode;
 		rootNode.setChildNodes(dataVector);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootNode);
 		createHierarchy(root, dataVector);
@@ -168,9 +168,9 @@ public class GenerateTree
 	 * @param treeType the type of tree.
 	 * @return the JTree from the vector of data nodes passed.
 	 */
-	public JTree createTree(Vector dataVector, int treeType)
+	public JTree createTree(Vector dataVector, TreeNode rootTreeNode)
 	{
-		return createTree(dataVector, treeType, null);
+		return createTree(dataVector, rootTreeNode, null);
 	}
 
 	/**
