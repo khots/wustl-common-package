@@ -30,6 +30,11 @@ public class AuditEvent implements java.io.Serializable
 	 *  Id of the User who performs the event.
 	 */
 	private Long userId;
+	
+	/**
+	 * Type of the event.
+	 */
+	private String eventType;
 
 	/**
 	 * Text comments on event.
@@ -44,7 +49,9 @@ public class AuditEvent implements java.io.Serializable
 	/**
 	 * Specifies audit Event Log Collection.
 	 */
-	private Collection<AuditEventLog> auditEventLogCollection = new HashSet<AuditEventLog>();
+	//Niha
+//	private Collection<AuditEventLog> auditEventLogCollection = new HashSet<AuditEventLog>();
+	private Collection<AbstractAuditEventLog> auditEventLogCollection = new HashSet<AbstractAuditEventLog>();
 
 	/**
 	 * Returns System generated unique id.
@@ -91,6 +98,27 @@ public class AuditEvent implements java.io.Serializable
 		this.timestamp = (Date)timestamp.clone();
 	}
 
+	//Niha
+	/**
+	 * This method get the type of the event.
+	 * @return the type of the event
+	 * @hibernate.property name="eventType" type="string"
+	 * column="EVENT_TYPE" length="50"
+	 */
+	public String getEventType()
+	{
+		return eventType;
+	}
+	/**
+	 * set the type of the event.
+	 * @param eventType the type of the event.
+	 */
+	public void setEventType(String eventType)
+	{
+		this.eventType = eventType;
+	}
+	//end Niha
+	
 	/**
 	 * @hibernate.property name="userId" type="long" column="USER_ID"
 	 * @return Returns the Id of the user who performs the event.
@@ -159,7 +187,7 @@ public class AuditEvent implements java.io.Serializable
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
 	 */
-	public Collection<AuditEventLog> getAuditEventLogCollection()
+	public Collection<AbstractAuditEventLog> getAuditEventLogCollection()
 	{
 		return auditEventLogCollection;
 	}
@@ -171,7 +199,7 @@ public class AuditEvent implements java.io.Serializable
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
 	 */
-	public void setAuditEventLogCollection(Collection<AuditEventLog> auditEventLogCollection)
+	public void setAuditEventLogCollection(Collection<AbstractAuditEventLog> auditEventLogCollection)
 	{
 		this.auditEventLogCollection = auditEventLogCollection;
 	}
