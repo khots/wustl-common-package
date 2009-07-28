@@ -35,7 +35,7 @@ public class AuditEventDetails implements java.io.Serializable
 	/**
 	 * Specifies AuditEventLog instance.
 	 */
-	private AuditEventLog auditEventLog;
+	private DataAuditEventLog auditEventLog;
 
 	/**
 	 * Returns System generated unique id.
@@ -135,7 +135,7 @@ public class AuditEventDetails implements java.io.Serializable
 	 * class="edu.wustl.common.domain.AuditEventLog" constrained="true"
 	 * @see #setParticipant(Site)
 	 */
-	public AuditEventLog getAuditEventLog()
+	public DataAuditEventLog getAuditEventLog()
 	{
 		return auditEventLog;
 	}
@@ -144,7 +144,7 @@ public class AuditEventDetails implements java.io.Serializable
 	 * set the value of audit event in audit event log.
 	 * @param auditEventLog The auditEventLog to set.
 	 */
-	public void setAuditEventLog(AuditEventLog auditEventLog)
+	public void setAuditEventLog(DataAuditEventLog auditEventLog)
 	{
 		this.auditEventLog = auditEventLog;
 	}
