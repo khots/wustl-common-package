@@ -47,7 +47,7 @@ public class ExceptionFormatterFactory
 		}
 		catch (Exception e)
 		{
-			LOGGER.error(e.getMessage() + " " + e);
+			LOGGER.debug(e.getMessage() + " " + e);
 		}
 	}
 
@@ -68,7 +68,7 @@ public class ExceptionFormatterFactory
 			String formatterClassName = prop.getString(excpClassName);
 			if (formatterClassName == null)
 			{
-				LOGGER.error("ExceptionFormatter Class not found for " + excpClassName);
+				LOGGER.debug("ExceptionFormatter Class not found for " + excpClassName);
 			}
 			else
 			{
@@ -80,7 +80,7 @@ public class ExceptionFormatterFactory
 		}
 		catch (Exception e)
 		{
-			LOGGER.error(e.getMessage() + " " + e);
+			LOGGER.debug(e.getMessage() + " " + e);
 		}
 		return expFormatter;
 	}
@@ -111,7 +111,7 @@ public class ExceptionFormatterFactory
 		}
 		catch (Exception exception)
 		{
-			LOGGER.error(exception.getMessage(), exception);
+			LOGGER.debug(exception.getMessage(), exception);
 		}
 		return displayName;
 	}

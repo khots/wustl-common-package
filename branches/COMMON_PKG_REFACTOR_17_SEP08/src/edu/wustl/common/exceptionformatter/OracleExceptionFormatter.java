@@ -12,7 +12,6 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.util.DAOConstants;
 
 /**
  * @author kalpana_thakur
@@ -62,7 +61,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
          }
         catch(Exception e)
         {
-            LOGGER.error(e.getMessage(),e);
+            LOGGER.debug(e.getMessage(),e);
         }
         return formattedErrMsg;
     }
@@ -106,7 +105,7 @@ public class OracleExceptionFormatter implements IDBExceptionFormatter
 		}
 		catch (Exception exp)
 		{
-			LOGGER.fatal(exp.getMessage(), exp);
+			LOGGER.debug(exp.getMessage(), exp);
 		}
 		return formattedErrMsg;
 	}

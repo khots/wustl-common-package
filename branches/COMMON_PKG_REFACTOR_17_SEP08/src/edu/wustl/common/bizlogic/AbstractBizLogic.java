@@ -11,9 +11,7 @@
 package edu.wustl.common.bizlogic;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import edu.wustl.common.actionForm.IValueObject;
@@ -28,7 +26,6 @@ import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.TitliSearchConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.HashedDataHandler;
@@ -352,9 +349,8 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
-				ErrorKey errorKey = ErrorKey.getErrorKey("biz.multinsert.error");
-				throw new BizLogicException(errorKey, null,
-						"AbstractBizLogic-User Not Authorized");
+				ErrorKey errorKey = ErrorKey.getErrorKey("access.execute.action.denied");
+				throw new BizLogicException(errorKey, null,	"");
 			}
 		}
 		for (AbstractDomainObject obj : objCollection)
@@ -467,8 +463,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
-				throw getBizLogicException(null, "biz.update.error",
-						"AbstractBizLogic:User Not Authorized.");
+				throw getBizLogicException(null, "access.execute.action.denied","");
 			}
 		}
 		catch (ApplicationException exception)
@@ -819,12 +814,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		{
 			LOGGER.debug(exception.getMessage(), exception);
 			throw new BizLogicException(exception);
-		}
-		catch (Exception exception)
-		{
-			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, "biz.insert.error",
-					"Exception in insert hashed values operation.");
 		}
 		finally
 		{

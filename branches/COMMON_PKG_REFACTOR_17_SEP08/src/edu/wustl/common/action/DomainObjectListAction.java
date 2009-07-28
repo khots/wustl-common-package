@@ -25,7 +25,6 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
@@ -133,9 +132,8 @@ public class DomainObjectListAction extends SecureAction
 		}
 		catch (BizLogicException exception)
 		{
-			LOGGER.error("Failed to get BizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
-					"Failed to get BizLogic in base Add/Edit.");
+			LOGGER.error("Problem in object retrieve."+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
 		}
 		return list;
 	}

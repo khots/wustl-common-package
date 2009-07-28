@@ -188,8 +188,7 @@ public class CommonSearchAction extends Action
 		catch (BizLogicException excp)
 		{
 			LOGGER.error(excp.getMessage(), excp);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), excp,
-					"Failed while updating in common search.");
+			throw new ApplicationException(excp.getErrorKey(), excp,excp.getMsgValues());
 		}
 	}
 

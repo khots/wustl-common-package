@@ -121,7 +121,7 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage(), e);
+			logger.debug(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;

@@ -179,10 +179,9 @@ public class CommonEdtAction extends BaseAddEditAction
 			{
 				hibernateDao.closeSession();
 			}
-			catch (Exception e)
+			catch (ApplicationException e)
 			{
-				throw new ApplicationException(ErrorKey.getErrorKey("common.errors.item"), e,
-						"Failed while updating in common edit.");
+				throw new ApplicationException(e.getErrorKey(), e,e.getMsgValues());
 			}
 		}
 	}
