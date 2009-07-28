@@ -25,7 +25,7 @@ import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEventDetails;
-import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.domain.DataAuditEventLog;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
@@ -109,7 +109,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.insert(obj, true);
+			dao.insert(obj, true,"INSERT");
 		}
 		catch (DAOException exception)
 		{
@@ -182,7 +182,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.update(obj);
-			dao.update(obj, oldObj);
+			dao.update(obj, oldObj,"UPDATE");
 		}
 		catch (DAOException exception)
 		{
@@ -780,10 +780,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	private void addAuditEventstoColl(String tablename, Collection auditEventLogsCollection,
 			Long objectId)
 	{
-		AuditEventLog auditEventLog = new AuditEventLog();
+		DataAuditEventLog auditEventLog = new DataAuditEventLog();
 		auditEventLog.setObjectIdentifier(objectId);
 		auditEventLog.setObjectName(tablename);
-		auditEventLog.setEventType(Constants.UPDATE_OPERATION);
+		//auditEventLog.setEventType(Constants.UPDATE_OPERATION);
 
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
