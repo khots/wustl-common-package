@@ -18,6 +18,11 @@ public class LoginAuditManager
 {
 
 	public static org.apache.log4j.Logger logger = Logger.getLogger(LoginAuditManager.class);
+	
+	/**
+	 * Constant for Login event type
+	 */
+	public static final String LOGIN="Login";
 
 	/**
 	 * Login Event instance which contains the event details
@@ -40,6 +45,7 @@ public class LoginAuditManager
 	public LoginAuditManager(LoginDetails loginDetails)
 	{
 		loginEvent = new LoginEvent();
+		loginEvent.setEventType(LOGIN);
 		loginEvent.setIpAddress(loginDetails.getIpAddress());
 		loginEvent.setSourceId(loginDetails.getSourceId());
 		loginEvent.setUserLoginId(loginDetails.getUserLoginId());
@@ -56,7 +62,7 @@ public class LoginAuditManager
 		try
 		{
 			//dao.insert(loginEvent, null, false, false);
-			dao.insert(loginEvent, false);
+			dao.insert(loginEvent, false,"");
 		}
 		catch (DAOException ex)
 		{
@@ -80,7 +86,6 @@ public class LoginAuditManager
 			.getDAO();
 			hibernateDao.openSession(null);
 			this.loginEvent.setIsLoginSuccessful(loginStatus);
-			hibernateDao.openSession(null);
 			insert(hibernateDao, this.loginEvent);
 			hibernateDao.commit();
 		}
