@@ -27,7 +27,6 @@ import edu.wustl.common.cde.PermissibleValue;
 import edu.wustl.common.cde.PermissibleValueImpl;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.tree.CDETreeNode;
-import edu.wustl.common.tree.TreeDataInterface;
 import edu.wustl.common.tree.TreeNode;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.exception.DAOException;
@@ -48,7 +47,7 @@ import edu.wustl.dao.exception.DAOException;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CDEBizLogic extends DefaultBizLogic implements TreeDataInterface
+public class CDEBizLogic extends DefaultBizLogic
 {
     
     /**

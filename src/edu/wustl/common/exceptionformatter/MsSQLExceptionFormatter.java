@@ -115,7 +115,7 @@ public class MsSQLExceptionFormatter implements IDBExceptionFormatter
 		}
 		catch (Exception e)
 		{
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.debug(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
 		}
 		return formattedErrMsg;

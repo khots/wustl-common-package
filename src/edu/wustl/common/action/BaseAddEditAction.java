@@ -27,7 +27,6 @@ import edu.wustl.common.bizlogic.IQueryBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
-import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
@@ -90,9 +89,8 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			LOGGER.error("Failed to get QueryBizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
-					"Failed to get DomainObjectFactory in base Add/Edit.");
+			LOGGER.debug("Failed to get object"+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
 		}
 	}
 
@@ -111,9 +109,8 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			LOGGER.error("Failed to get QueryBizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
-					"Failed to get QueryBizLogic in base Add/Edit.");
+			LOGGER.debug("Failed to get object"+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
 		}
 	}
 
@@ -131,9 +128,8 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			LOGGER.error("Failed to get BizLogic object from BizLogic Factory");
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
-					"Failed to get BizLogic in base Add/Edit.");
+			LOGGER.debug("Failed to get object"+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
 		}
 	}
 
@@ -181,9 +177,8 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			LOGGER.error("Failed to generateforward hash map", exception);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
-					"Failed at generateForwardToHashMap in base Add/Edit.");
+			LOGGER.debug("Error in generating data: "+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
 
 		}
 	}
@@ -208,9 +203,8 @@ public abstract class BaseAddEditAction extends Action
 		}
 		catch (BizLogicException exception)
 		{
-			LOGGER.error("Failed to generateforward print map", exception);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), exception,
-					"Failed at generateForwardToPrintMap in base Add/Edit.");
+			LOGGER.debug("Error in generating data: "+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
 
 		}
 	}
@@ -219,7 +213,7 @@ public abstract class BaseAddEditAction extends Action
 	 * This method will add the success message into ActionMessages object.
 	 * @param abstractDomain AbstractDomainObject
 	 * @param objectName String
-	 * @return displayparams.
+	 * @return display param.
 	 * @throws ApplicationException Application Exception
 	 */
 	protected String[] addMessage(AbstractDomainObject abstractDomain, String objectName)

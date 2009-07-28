@@ -171,8 +171,7 @@ public class CommonAddAction extends BaseAddEditAction
 		catch (AssignDataException e)
 		{
 			LOGGER.debug(e.getMessage(), e);
-			throw new ApplicationException(ErrorKey.getErrorKey("errors.item"), e,
-					"Failed while populating domain object in common add.");
+			throw new ApplicationException(e.getErrorKey(), e,e.getMsgValues());
 		}
 	}
 
