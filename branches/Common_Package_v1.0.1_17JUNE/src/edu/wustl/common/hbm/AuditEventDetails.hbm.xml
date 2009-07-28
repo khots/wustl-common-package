@@ -6,7 +6,7 @@
 <hibernate-mapping default-lazy="false">
     <class
         name="edu.wustl.common.domain.AuditEventDetails"
-        table="CATISSUE_AUDIT_EVENT_DETAILS"
+        table="AUDIT_EVENT_DETAILS"
         dynamic-update="false"
         dynamic-insert="false"
     >
@@ -19,7 +19,7 @@
             unsaved-value="null"
         >
             <generator class="native">
-                <param name="sequence">CATISSUE_AUDIT_EVENT_DET_SEQ</param>
+                <param name="sequence">AUDIT_EVENT_DET_SEQ</param>
             </generator>
         </id>
 
@@ -52,7 +52,7 @@
 
         <many-to-one
             name="auditEventLog"
-            class="edu.wustl.common.domain.AuditEventLog"
+            class="edu.wustl.common.domain.DataAuditEventLog"
             cascade="none"
             outer-join="auto"
             update="true"
