@@ -6,7 +6,7 @@
 <hibernate-mapping default-lazy="false">
     <class
         name="edu.wustl.common.domain.AuditEvent"
-        table="CATISSUE_AUDIT_EVENT"
+        table="AUDIT_EVENT"
         dynamic-update="false"
         dynamic-insert="false"
     >
@@ -19,7 +19,7 @@
             unsaved-value="null"
         >
             <generator class="native">
-                <param name="sequence">CATISSUE_AUDIT_EVENT_PARAM_SEQ</param>
+                <param name="sequence">AUDIT_EVENT_PARAM_SEQ</param>
             </generator>
         </id>
 
@@ -30,6 +30,16 @@
             insert="true"
             column="EVENT_TIMESTAMP"
         />
+        
+         <property
+            name="eventType"
+            type="string"
+            update="true"
+            insert="true"
+            column="EVENT_TYPE"
+            length="200"
+        />
+        
 
         <property
             name="userId"
@@ -59,7 +69,7 @@
 
         <set
             name="auditEventLogCollection"
-            table="CATISSUE_AUDIT_EVENT_LOG"
+            table="AUDIT_EVENT_LOG"
             lazy="false"
             inverse="false"
             cascade="none"
@@ -71,9 +81,47 @@
               />
 
               <one-to-many
-                  class="edu.wustl.common.domain.AuditEventLog"
+                  class="edu.wustl.common.domain.AbstractAuditEventLog"
               />
         </set>
+        
+        <joined-subclass
+            name="edu.wustl.common.domain.LoginEvent"
+        	table="LOGIN_EVENT"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+	        <key
+	            column="IDENTIFIER"
+	        />
+	
+	        <property
+            name="sourceId"
+            type="long"
+            update="true"
+            insert="true"
+            column="SOURCE_ID"
+        />
+
+        <property
+            name="userLoginId"
+            type="string"
+            update="true"
+            insert="true"
+            column="USER_LOGIN_ID"
+            length="20"
+        />
+        
+        <property
+            name="isLoginSuccessful"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="LOGIN_SUCCESS"
+        />
+
+        </joined-subclass>
+      
 
         <!--
             To add non XDoclet property mappings, create a file named
