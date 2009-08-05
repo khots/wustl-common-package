@@ -35,11 +35,22 @@ public class Validator
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(Validator.class);
-
+	
 	/**
-	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc.
+	 * This is regular expression to check for XXS vulnerable characters e.g <, >, (, ) etc
 	 * */
-	private static final String REGEX_XSS_VULNERABLE = "[()<>]";
+	private static final String REGEX_XSS_VULNERABLE = "[()<>&;]";
+	
+	/**
+	 * This is regular expression to check for XXS vulnerable strings like script, table etc.
+	 * */
+	private static final String REGEX_XSS_VULNERABLE_KEYWORDS = "/*(table|drop|delete|applet|meta|xml|blink|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base|alert|absolute|relative)[^>(gt)(lt)]*";
+	
+	/**
+	 * This is regular expression to check for SQL injection characters e.g =,*, etc
+	 * */
+	private static final String REGEX_SQLINJECTION_VULNERABLE = "[()<>'=\\*&;]";
+
 	/**
 	 * This is regular expression to validate email id.
 	 */
@@ -912,4 +923,27 @@ public class Validator
 		}
 		return isXssVulnerable;
 	}
+	
+	/**
+     * This method check for xxs vulnerable characters like <, >, (, ) etc.
+     * @param String for which xss vulnerable character [ (,),< or > ] to be checked.
+     * @return true if the string contains any xss vulnerable character else false.
+     */
+    public static boolean isXssSQLVulnerable(String value){
+    	boolean isXssVulnerable=false;
+    	if(value!=null)
+    	{
+    		Pattern p = Pattern.compile(REGEX_SQLINJECTION_VULNERABLE);
+    		Matcher m = p.matcher(value);
+    		isXssVulnerable= m.find();
+    		
+    		if(!isXssVulnerable)
+    		{
+	    		p = Pattern.compile(REGEX_XSS_VULNERABLE_KEYWORDS);
+	    		m = p.matcher(value);
+	    		isXssVulnerable= m.find();
+    		}
+    	}
+    	return isXssVulnerable;
+    }
 }
