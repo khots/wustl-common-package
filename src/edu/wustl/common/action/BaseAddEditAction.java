@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.bizlogic.IQueryBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -37,6 +38,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * This Class is used to Add/Edit data in the database.
@@ -44,6 +46,8 @@ import edu.wustl.dao.util.HibernateMetaData;
  */
 public abstract class BaseAddEditAction extends Action
 {
+
+	private String applicationName;
 
 	/**
 	 * LOGGER Logger - Generic LOGGER.
@@ -127,7 +131,12 @@ public abstract class BaseAddEditAction extends Action
 		try
 		{
 			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
-			return factory.getBizLogic(abstractForm.getFormId());
+			IBizLogic bizLogic = factory.getBizLogic(abstractForm.getFormId());
+			if (bizLogic instanceof DefaultBizLogic)
+			{
+				applicationName = ((DefaultBizLogic) bizLogic).getAppName();
+			}
+			return bizLogic;
 		}
 		catch (BizLogicException exception)
 		{
@@ -257,8 +266,17 @@ public abstract class BaseAddEditAction extends Action
 		String displayName;
 		try
 		{
-			displayName = queryBizLogic.getDisplayNamebyTableName(HibernateMetaData
-					.getTableName(abstractDomain.getClass()));
+			HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+					.getHibernateMetaData(applicationName);
+			if (hibernateMetaData != null)
+			{
+				displayName = queryBizLogic.getDisplayNamebyTableName(hibernateMetaData
+						.getTableName(abstractDomain.getClass()));
+			}
+			else
+			{
+				displayName = "";
+			}
 		}
 		catch (Exception excp)
 		{
@@ -275,13 +293,13 @@ public abstract class BaseAddEditAction extends Action
 	 * @param target target configured in struts-config file or url to forward.
 	 * @return ActionForward object
 	 */
-	protected ActionForward getActionForward(ActionMapping mapping,String target)
+	protected ActionForward getActionForward(ActionMapping mapping, String target)
 	{
-		ActionForward actionForward =mapping.findForward(target);
-		if(null==actionForward)
+		ActionForward actionForward = mapping.findForward(target);
+		if (null == actionForward)
 		{
 			actionForward = new ActionForward();
-			actionForward.setPath(target );
+			actionForward.setPath(target);
 		}
 		return actionForward;
 	}
