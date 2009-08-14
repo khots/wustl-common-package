@@ -1,3 +1,4 @@
+
 package edu.wustl.common.audit.util;
 
 import java.io.InputStream;
@@ -13,13 +14,14 @@ import edu.wustl.common.audit.AuditableMetaData;
  * to be audited and also their attributes to be audited. 
  * @author niharika_sharma
  */
-public class AuditableMetadataUtil {
-	
+public class AuditableMetadataUtil
+{
+
 	/**
 	 * Single instance of the AuditableMetaData class.
 	 */
 	private static AuditableMetaData metadata = null;
-	
+
 	/**
 	 * Private method to initialize the AuditableMetaData instance.
 	 */
@@ -30,13 +32,14 @@ public class AuditableMetadataUtil {
 			// -- Load a mapping file
 			Mapping mapping = new Mapping();
 			//InputSource inputSource = new InputSource(AuditableMetadataUtil.class.getResourceAsStream("mapping.xml"));
-			mapping.loadMapping(AuditableMetadataUtil.class.getClassLoader().getResource("mapping.xml"));
-
+			mapping.loadMapping(AuditableMetadataUtil.class.getClassLoader().getResource(
+					"mapping.xml"));
 			Unmarshaller un = new Unmarshaller(AuditableMetaData.class);
 			un.setMapping(mapping);
 
 			// -- Read in the migration.xml using the mapping
-			InputStream inputStream=AuditableMetadataUtil.class.getClassLoader().getResourceAsStream("auditablemetadata.xml");
+			InputStream inputStream = AuditableMetadataUtil.class.getClassLoader()
+					.getResourceAsStream("auditablemetadata.xml");
 			InputSource inputSource = new InputSource(inputStream);
 			//FileReader in = new FileReader("migrationmetadata.xml");
 			metadata = (AuditableMetaData) un.unmarshal(inputSource);
@@ -45,21 +48,20 @@ public class AuditableMetadataUtil {
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			System.out.println(e);
 		}
 	}
-	
+
 	/**
 	 * Public constructor that initializes the AuditableMetaData instance in case it is not already initialized.
 	 */
 	public AuditableMetadataUtil()
 	{
-		if(metadata==null)
+		if (metadata == null)
 		{
 			init();
 		}
 	}
-	
+
 	/**
 	 * This method returns the instance of AuditableMetaData which contains all the metadata required 
 	 * for auditing the domain objects of the host application.
