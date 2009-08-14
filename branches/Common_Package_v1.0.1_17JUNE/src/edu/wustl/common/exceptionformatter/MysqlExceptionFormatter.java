@@ -1,6 +1,7 @@
 /*
  * TODO
  */
+
 package edu.wustl.common.exceptionformatter;
 
 import java.sql.ResultSet;
@@ -13,20 +14,22 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.DAOConstants;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * @author kalpana_thakur
  *
  */
-public class MysqlExceptionFormatter implements
-IDBExceptionFormatter
+public class MysqlExceptionFormatter implements IDBExceptionFormatter
 {
+
 	/**
 	* LOGGER Logger - Generic LOGGER.
 	*/
@@ -34,7 +37,7 @@ IDBExceptionFormatter
 	/**
 	 * Index name.
 	 */
-	private static final  String INDEX_NAME = "INDEX_NAME";
+	private static final String INDEX_NAME = "INDEX_NAME";
 
 	/**
 	 * This will generate the formatted error messages.
@@ -42,13 +45,13 @@ IDBExceptionFormatter
 	 * @param jdbcDAO : jdbcDAO.
 	 * @return the formated messages.
 	 */
-	public String getFormatedMessage(Exception objExp,JDBCDAO jdbcDAO)
+	public String getFormatedMessage(Exception objExp, JDBCDAO jdbcDAO)
 	{
 
-		Exception objExcp = objExp ;
-		if(objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
+		Exception objExcp = objExp;
+		if (objExcp instanceof gov.nih.nci.security.exceptions.CSTransactionException)
 		{
-			objExcp = (Exception)objExcp.getCause();
+			objExcp = (Exception) objExcp.getCause();
 		}
 
 		String dispTableName = "";
@@ -57,22 +60,21 @@ IDBExceptionFormatter
 		String formattedErrMsg = ""; // Formatted Error Message return by this method
 
 		try
-	     {
+		{
 			tableName = getTableName(objExcp);
-			columnNames = getColumnNames(objExcp, tableName,jdbcDAO);
+			columnNames = getColumnNames(objExcp, tableName, jdbcDAO);
 
-
-        	// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
-        	Object[] arguments = new Object[2];
-        	dispTableName = Utility.getDisplayName(tableName,jdbcDAO);
-			arguments[0]=dispTableName;
-			columnNames=columnNames.substring(0,columnNames.length());
+			// Create arrays of object containing data to insert in CONSTRAINT_VOILATION_ERROR
+			Object[] arguments = new Object[2];
+			dispTableName = Utility.getDisplayName(tableName, jdbcDAO);
+			arguments[0] = dispTableName;
+			columnNames = columnNames.substring(0, columnNames.length());
 			arguments[1] = columnNames;
 
 			// Insert Table_Name and Column_Name in  CONSTRAINT_VOILATION_ERROR message
-			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR,arguments);
+			formattedErrMsg = MessageFormat.format(Constants.CONSTRAINT_VOILATION_ERROR, arguments);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			LOGGER.debug(e.getMessage(), e);
 			formattedErrMsg = Constants.GENERIC_DATABASE_ERROR;
@@ -80,7 +82,6 @@ IDBExceptionFormatter
 		return formattedErrMsg;
 
 	}
-
 
 	/**
 	 *For the key extracted from the string, get the column name on which the
@@ -94,8 +95,8 @@ IDBExceptionFormatter
 	 * @throws DAOException :
 	 * @throws SQLException :
 	 */
-	private String getColumnNames(Exception objExcp, String tableName,
-			JDBCDAO jdbcDAO) throws DAOException, SQLException
+	private String getColumnNames(Exception objExcp, String tableName, JDBCDAO jdbcDAO)
+			throws DAOException, SQLException
 	{
 		String columnNames = "";
 		ResultSet resultSet = null;
@@ -103,17 +104,17 @@ IDBExceptionFormatter
 		{
 			int key = getErrorKey(objExcp);
 			resultSet = jdbcDAO.getDBMetaDataResultSet(tableName);
-			columnNames = getColumnNames( resultSet, key);
+			columnNames = getColumnNames(resultSet, key);
 		}
-		catch(SQLException sqlExp)
+		catch (SQLException sqlExp)
 		{
 			LOGGER.debug(sqlExp.getMessage(), sqlExp);
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
-			throw new DAOException(errorKey,sqlExp,"MysqlFormattedErrorMessages.java :");
+			throw new DAOException(errorKey, sqlExp, "MysqlFormattedErrorMessages.java :");
 		}
 		finally
 		{
-			if(resultSet != null)
+			if (resultSet != null)
 			{
 				resultSet.close();
 			}
@@ -122,37 +123,35 @@ IDBExceptionFormatter
 		return columnNames;
 	}
 
-
 	/**
 	 * @param resultSet :
 	 * @param key :
 	 * @return :
 	 * @throws SQLException :
 	 */
-	private String getColumnNames(ResultSet resultSet, int key)
-	throws SQLException
+	private String getColumnNames(ResultSet resultSet, int key) throws SQLException
 	{
 		StringBuffer columnNames = new StringBuffer("");
-		boolean found=false;
+		boolean found = false;
 
-		HashMap<String,StringBuffer> indexDetails = new HashMap<String,StringBuffer>();
+		HashMap<String, StringBuffer> indexDetails = new HashMap<String, StringBuffer>();
 
 		int indexCount = 1;
 		String constraintVoilated = "";
-		while(resultSet.next())
+		while (resultSet.next())
 		{
 
-			if(key == indexCount)
+			if (key == indexCount)
 			{
-				constraintVoilated=resultSet.getString(INDEX_NAME);
-				found=true; // column name for given key index found
+				constraintVoilated = resultSet.getString(INDEX_NAME);
+				found = true; // column name for given key index found
 				//break;
 			}
 			updateIndexDetailsMap(resultSet, indexDetails);
 			indexCount++; // increment record count*/
 		}
 
-		if(found)
+		if (found)
 		{
 			columnNames = (StringBuffer) indexDetails.get(constraintVoilated);
 		}
@@ -164,15 +163,15 @@ IDBExceptionFormatter
 	 * @param indexDetails : Map holding details of indexes.
 	 * @throws SQLException :Exception.
 	 */
-	private void updateIndexDetailsMap(ResultSet resultSet, Map<String,StringBuffer>  indexDetails)
+	private void updateIndexDetailsMap(ResultSet resultSet, Map<String, StringBuffer> indexDetails)
 			throws SQLException
 	{
-		StringBuffer temp = (StringBuffer)indexDetails.get(resultSet.getString(INDEX_NAME));
-		if(temp == null)
+		StringBuffer temp = (StringBuffer) indexDetails.get(resultSet.getString(INDEX_NAME));
+		if (temp == null)
 		{
 			temp = new StringBuffer(resultSet.getString("COLUMN_NAME"));
 			temp.append(DAOConstants.SPLIT_OPERATOR);
-			indexDetails.put(resultSet.getString(INDEX_NAME),temp);
+			indexDetails.put(resultSet.getString(INDEX_NAME), temp);
 
 		}
 		else
@@ -180,7 +179,7 @@ IDBExceptionFormatter
 			temp.append(resultSet.getString("COLUMN_NAME"));
 			temp.append(DAOConstants.SPLIT_OPERATOR);
 			indexDetails.remove(resultSet.getString(INDEX_NAME));
-			indexDetails.put(resultSet.getString(INDEX_NAME),temp);
+			indexDetails.put(resultSet.getString(INDEX_NAME), temp);
 		}
 	}
 
@@ -191,48 +190,59 @@ IDBExceptionFormatter
 	private int getErrorKey(Exception objExcp)
 	{
 		// Generate Error Message by appending all messages of previous cause Exceptions
-			String sqlMessage = Utility.generateErrorMessage(objExcp);
+		String sqlMessage = Utility.generateErrorMessage(objExcp);
 
-			// From the MySQL error message and extract the key ID
-			// The unique key Error message is "Duplicate entry %s for key %d"
+		// From the MySQL error message and extract the key ID
+		// The unique key Error message is "Duplicate entry %s for key %d"
 
-			int key = -1;
-			int indexofMsg = 0;
-			indexofMsg = sqlMessage.indexOf(Constants.MYSQL_DUPL_KEY_MSG);
-			indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
+		int key = -1;
+		int indexofMsg = 0;
+		indexofMsg = sqlMessage.indexOf(Constants.MYSQL_DUPL_KEY_MSG);
+		indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
 
-			// Get the %d part of the string
-			String strKey =sqlMessage.substring(indexofMsg,sqlMessage.length()-1);
-			key = Integer.parseInt(strKey);
+		// Get the %d part of the string
+		String strKey = sqlMessage.substring(indexofMsg, sqlMessage.length() - 1);
+		key = Integer.parseInt(strKey);
 		return key;
 	}
+
 	/**
 	 * @param objExcp :
 	 * @return :
 	 * @throws ClassNotFoundException :
 	 */
-	private String getTableName(Exception objExcp)
-			throws ClassNotFoundException
+	private String getTableName(Exception objExcp) throws ClassNotFoundException
 	{
 		String tableName;
 		//get Class name from message "could not insert [class name]"
-		ConstraintViolationException  cEX = (ConstraintViolationException)objExcp;
+		ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
 		String message = objExcp.getMessage();
 
 		int startIndex = message.indexOf('[');
 		int endIndex = message.indexOf('#');
-		if(endIndex == -1)
+		if (endIndex == -1)
 		{
 			endIndex = message.indexOf(']');
 		}
-		String className = message.substring((startIndex+1),endIndex);
+		String className = message.substring((startIndex + 1), endIndex);
 		Class classObj = Class.forName(className);
 		// get table name from class
-		tableName = HibernateMetaData.getRootTableName(classObj);
-		if(!(cEX.getSQL().contains(tableName)))
+		String appName = CommonServiceLocator.getInstance().getAppName();
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+				.getHibernateMetaData(appName);
+		if (hibernateMetaData != null)
 		{
-			 tableName = HibernateMetaData.getTableName(classObj);
+			tableName = hibernateMetaData.getRootTableName(classObj);
+			if (!(cEX.getSQL().contains(tableName)))
+			{
+				tableName = hibernateMetaData.getTableName(classObj);
+			}
 		}
+		else
+		{
+			tableName = "";
+		}
+
 		return tableName;
 	}
 
