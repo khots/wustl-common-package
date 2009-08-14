@@ -47,6 +47,7 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * AbstractBizLogic is the base class of all the Biz Logic classes.
@@ -68,8 +69,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public AbstractBizLogic(String appName)
 	{
 		super();
-		this.appName=appName;
+		this.appName = appName;
 	}
+
 	/**
 	 * constructor initialized with default application name.
 	 */
@@ -77,7 +79,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		super();
 		String appName = CommonServiceLocator.getInstance().getAppName();
-		this.appName=appName;
+		this.appName = appName;
 	}
 
 	/**
@@ -95,8 +97,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	public void setAppName(String appName)
 	{
-		this.appName=appName;
+		this.appName = appName;
 	}
+
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
@@ -239,7 +242,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),null);
+			dao = getHibernateDao(getAppName(), null);
 			delete(obj, dao);
 			dao.commit();
 			//refresh the index for titli search
@@ -251,7 +254,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException ex)
 		{
 			rollback(dao);
-			String errMsg = getErrorMessage(ex,obj,"Deleting");
+			String errMsg = getErrorMessage(ex, obj, "Deleting");
 			LOGGER.debug(errMsg, ex);
 			throw getBizLogicException(ex, "biz.delete.error", errMsg);
 		}
@@ -274,7 +277,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),sessionDataBean);
+			dao = getHibernateDao(getAppName(), sessionDataBean);
 			// Authorization to ADD object checked here
 			if (isAuthorized(dao, obj, sessionDataBean))
 			{
@@ -292,9 +295,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			String errMssg = getErrorMessage(exception,obj,"Inserting");
+			String errMssg = getErrorMessage(exception, obj, "Inserting");
 			LOGGER.debug(errMssg, exception);
-			throw getBizLogicException(exception, "biz.insert.error",errMssg);
+			throw getBizLogicException(exception, "biz.insert.error", errMssg);
 		}
 		finally
 		{
@@ -332,7 +335,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),sessionDataBean);
+			dao = getHibernateDao(getAppName(), sessionDataBean);
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
 			dao.commit();
@@ -348,9 +351,9 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException exception)
 		{
 			rollback(dao);
-			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
+			String errMsg = getErrorMessage(exception, objCollection, "Inserting");
 			LOGGER.debug(errMsg, exception);
-			throw getBizLogicException(exception, "biz.insert.error",errMsg);
+			throw getBizLogicException(exception, "biz.insert.error", errMsg);
 		}
 		finally
 		{
@@ -378,8 +381,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 			else
 			{
 				ErrorKey errorKey = ErrorKey.getErrorKey("biz.multinsert.error");
-				throw new BizLogicException(errorKey, null,
-						"AbstractBizLogic-User Not Authorized");
+				throw new BizLogicException(errorKey, null, "AbstractBizLogic-User Not Authorized");
 			}
 		}
 		for (AbstractDomainObject obj : objCollection)
@@ -473,7 +475,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),sessionDataBean);
+			dao = getHibernateDao(getAppName(), sessionDataBean);
 			// Authorization to UPDATE object checked here
 			if (isAuthorized(dao, currentObj, sessionDataBean))
 			{
@@ -490,8 +492,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 				dao.commit();
 				if (TitliResultGroup.isTitliConfigured)
 				{
-					refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION,
-							currentObj);
+					refreshTitliSearchIndex(TitliSearchConstants.TITLI_UPDATE_OPERATION, currentObj);
 				}
 				postUpdate(dao, currentObj, oldObj, sessionDataBean);
 			}
@@ -504,7 +505,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		catch (ApplicationException ex)
 		{
 			rollback(dao);
-			String errMsg = getErrorMessage(ex,currentObj,"Updating");
+			String errMsg = getErrorMessage(ex, currentObj, "Updating");
 			LOGGER.debug(errMsg, ex);
 			throw getBizLogicException(ex, "biz.update.error", errMsg);
 		}
@@ -595,7 +596,16 @@ public abstract class AbstractBizLogic implements IBizLogic
 			}
 			else
 			{
-				tableName = HibernateMetaData.getTableName(obj.getClass());
+				HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+						.getHibernateMetaData(appName);
+				if (hibernateMetaData != null)
+				{
+					tableName = hibernateMetaData.getTableName(obj.getClass());
+				}
+				else
+				{
+					tableName = "";
+				}
 				errMsg = exFormatter.formatMessage(exception);
 			}
 		}
@@ -696,7 +706,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),null);
+			dao = getHibernateDao(getAppName(), null);
 			Object object = dao.retrieveById(className, identifier);
 
 			if (object != null)
@@ -748,7 +758,7 @@ public abstract class AbstractBizLogic implements IBizLogic
 		AbstractDomainObject abstractDomain = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),null);
+			dao = getHibernateDao(getAppName(), null);
 			Object object = dao.retrieveById(className, identifier);
 			abstractDomain = populateFormBean(uiForm, object);
 		}
@@ -898,11 +908,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 	public void insertHashedValues(String tableName, List<Object> columnValues,
 			List<String> columnNames) throws BizLogicException
 	{
-		JDBCDAO jdbcDao=null;
+		JDBCDAO jdbcDao = null;
 		try
 		{
 			LOGGER.debug("Insert hashed data to database");
-			String appName=CommonServiceLocator.getInstance().getAppName();
+			String appName = CommonServiceLocator.getInstance().getAppName();
 			jdbcDao = DAOConfigFactory.getInstance().getDAOFactory(appName).getJDBCDAO();
 			jdbcDao.openSession(null);
 			HashedDataHandler hashedDataHandler = new HashedDataHandler();
@@ -933,73 +943,75 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 
 	}
+
 	/**
 	 * This method returns hibernate DAO according to the application name.
 	 * @param appName Application name.
 	 * @return DAO
 	 * @throws DAOException Generic DAO exception.
 	 */
-	protected static DAO getHibernateDao(String appName,SessionDataBean sessionDataBean) throws DAOException
+	protected static DAO getHibernateDao(String appName, SessionDataBean sessionDataBean)
+			throws DAOException
 	{
 		IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(appName);
 		DAO dao = daofactory.getDAO();
 		dao.openSession(sessionDataBean);
 		return dao;
 	}
-	
-	/**
-     * This method gives the error message.
-     * This method should be overrided for customizing error message
-     * @param exception - Exception
-     * @param obj - Object
-     * @return - error message string
-     */
-    public String getErrorMessage(ApplicationException exception, Object obj, String operation)
-    {
-    	String errMsg;
-    	
-    	if (exception.getWrapException() == null)
-    	{
-    		if(exception.toMsgValuesArray().length>0)
-    		{
-    			errMsg = exception.toMsgValuesArray()[0];
-    		}
-    		else
-    		{
-    			errMsg = exception.getMessage();
-    		}
-    	}
-    	else
-    	{
-    		errMsg = formatException(getWrapException(exception),obj,operation);
-    	}
 
-        return errMsg;
-    }
-    
-    /**
-     * This method returns root exception used in message formatter.
-     * @param exception ApplicationException
-     * @return exception used in message formatter.
-     */
-    private Exception getWrapException(ApplicationException exception)
-    {
-    	Throwable rootException=null;
-    	Throwable wrapException=exception;
-		while(true)
+	/**
+	 * This method gives the error message.
+	 * This method should be overrided for customizing error message
+	 * @param exception - Exception
+	 * @param obj - Object
+	 * @return - error message string
+	 */
+	public String getErrorMessage(ApplicationException exception, Object obj, String operation)
+	{
+		String errMsg;
+
+		if (exception.getWrapException() == null)
 		{
-    		if((wrapException instanceof ApplicationException))
-    		{
-    			wrapException= wrapException.getCause();
-    			continue;
-    		}
-    		else
-    		{
-    			rootException= wrapException;
-    			break;
-    		}
+			if (exception.toMsgValuesArray().length > 0)
+			{
+				errMsg = exception.toMsgValuesArray()[0];
+			}
+			else
+			{
+				errMsg = exception.getMessage();
+			}
 		}
-    	return (Exception)rootException;
-    }
-    
+		else
+		{
+			errMsg = formatException(getWrapException(exception), obj, operation);
+		}
+
+		return errMsg;
+	}
+
+	/**
+	 * This method returns root exception used in message formatter.
+	 * @param exception ApplicationException
+	 * @return exception used in message formatter.
+	 */
+	private Exception getWrapException(ApplicationException exception)
+	{
+		Throwable rootException = null;
+		Throwable wrapException = exception;
+		while (true)
+		{
+			if ((wrapException instanceof ApplicationException))
+			{
+				wrapException = wrapException.getCause();
+				continue;
+			}
+			else
+			{
+				rootException = wrapException;
+				break;
+			}
+		}
+		return (Exception) rootException;
+	}
+
 }
