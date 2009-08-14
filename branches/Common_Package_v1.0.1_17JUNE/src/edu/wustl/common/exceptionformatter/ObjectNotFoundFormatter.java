@@ -10,6 +10,7 @@ import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * Description: Object Not Found Formatter.
@@ -37,7 +38,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		int startIndex = -1;
 		int endIndex = -1;
 		int tempIndex = -1;
-		JDBCDAO jdbcDAO=null;
+		JDBCDAO jdbcDAO = null;
 		try
 		{
 			String appName = CommonServiceLocator.getInstance().getAppName();
@@ -65,8 +66,18 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			LOGGER.debug(className + "--" + className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class
-			String displayName = ExceptionFormatterFactory.
-				getDisplayName(HibernateMetaData.getTableName(classObj), jdbcDAO);
+			String displayName;
+			HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+					.getHibernateMetaData(appName);
+			if (hibernateMetaData != null)
+			{
+				displayName = ExceptionFormatterFactory.getDisplayName(hibernateMetaData
+						.getTableName(classObj), jdbcDAO);
+			}
+			else
+			{
+				displayName = "";
+			}
 
 			Object[] arguments = new Object[]{displayName, columnName, value};
 			formattedErrMsg = MessageFormat.format(Constants.OBJECT_NOT_FOUND_ERROR, arguments);
@@ -78,6 +89,7 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		}
 		return formattedErrMsg;
 	}
+
 	/**
 	 * @param args arguments.
 	 */
@@ -93,8 +105,8 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 		try
 		{
 			// get Message from exception object
-			String message = "No row with the given identifier exists: 123," +
-					" of class: edu.wustl.catissuecore.domain.StorageContainer";
+			String message = "No row with the given identifier exists: 123,"
+					+ " of class: edu.wustl.catissuecore.domain.StorageContainer";
 
 			// get column name from message
 			startIndex = message.indexOf(temp1) - 1;
