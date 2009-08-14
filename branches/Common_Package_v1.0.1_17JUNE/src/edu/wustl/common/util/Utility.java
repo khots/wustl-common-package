@@ -43,6 +43,7 @@ import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * @author kapil_kaveeshwar
@@ -118,21 +119,21 @@ public final class Utility
 	public static String datePattern(String strDate)
 	{
 		String datePattern = null;
-		if(strDate != null)
+		if (strDate != null)
 		{
 			List<SimpleDateFormat> datePatternList = new ArrayList<SimpleDateFormat>();
-			datePatternList.add(new SimpleDateFormat("MM-dd-yyyy", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("MM/dd/yyyy", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("yyyy-MM-dd", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("yyyy/MM/dd", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
-			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator.getInstance()
-					.getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("MM-dd-yyyy", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("MM/dd/yyyy", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("yyyy-MM-dd", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("yyyy/MM/dd", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("dd-MM-yyyy", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
 			Date date = null;
 			String matchingPattern = null;
 			for (SimpleDateFormat dtPattern : datePatternList)
@@ -152,7 +153,7 @@ public final class Utility
 				}
 				catch (ParseException exception)
 				{
-					LOGGER.info(strDate+" date not in formate:" + dtPattern.toPattern());
+					LOGGER.info(strDate + " date not in formate:" + dtPattern.toPattern());
 				}
 			}
 		}
@@ -254,8 +255,6 @@ public final class Utility
 		}
 		return method;
 	}
-
-	
 
 	/**
 	 * This method gets Array String of Object Array.
@@ -381,8 +380,6 @@ public final class Utility
 		return newObjectArr;
 	}
 
-	
-
 	/**
 	 * This method removes null values from given list.
 	 * @param list list.
@@ -428,12 +425,12 @@ public final class Utility
 	 */
 	public static String getFormBeanName(Object obj)
 	{
-		String className=obj.getClass().getSimpleName();
-		 String classNameFirstCharacter=className.substring(0,1);
+		String className = obj.getClass().getSimpleName();
+		String classNameFirstCharacter = className.substring(0, 1);
 
-		className=classNameFirstCharacter.toLowerCase(CommonServiceLocator.getInstance().getDefaultLocale())
-		+className.substring(1,
-				(className.length()));
+		className = classNameFirstCharacter.toLowerCase(CommonServiceLocator.getInstance()
+				.getDefaultLocale())
+				+ className.substring(1, (className.length()));
 		return className;
 	}
 
@@ -618,9 +615,21 @@ public final class Utility
 	 * @return Length of the column.
 	 * @see HibernateMetaData.getColumnWidth()
 	 */
-	public static String getColumnWidth(Class className, String attributeName)
+	public static String getColumnWidth(Class className, String attributeName, String appName)
 	{
-		return Integer.toString((HibernateMetaData.getColumnWidth(className, attributeName)));
+		String colWidth;
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+				.getHibernateMetaData(appName);
+		if (hibernateMetaData != null)
+		{
+			colWidth = Integer
+					.toString((hibernateMetaData.getColumnWidth(className, attributeName)));
+		}
+		else
+		{
+			colWidth = "0";
+		}
+		return colWidth;
 
 	}
 
@@ -726,7 +735,7 @@ public final class Utility
 		try
 		{
 
-			if(date != null && !date.trim().equals(""))
+			if (date != null && !date.trim().equals(""))
 			{
 				SimpleDateFormat dateformat = new SimpleDateFormat(pattern, CommonServiceLocator
 						.getInstance().getDefaultLocale());
@@ -905,34 +914,34 @@ public final class Utility
 		}
 		return className;
 	}
-	
-	 /**
-	 * @param tableName :
-	 * @param jdbcDAO :
-	 * @return :
-     * @throws DAOException :
-	 */
-	public static String getDisplayName(String tableName,JDBCDAO jdbcDAO) throws DAOException
+
+	/**
+	* @param tableName :
+	* @param jdbcDAO :
+	* @return :
+	* @throws DAOException :
+	*/
+	public static String getDisplayName(String tableName, JDBCDAO jdbcDAO) throws DAOException
 	{
-		String displayName="";
-		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"+tableName+"'";
+		String displayName = "";
+		String sql = "select DISPLAY_NAME from CATISSUE_QUERY_TABLE_DATA where TABLE_NAME='"
+				+ tableName + "'";
 		try
 		{
 			ResultSet resultSet = jdbcDAO.getQueryResultSet(sql);
-			while(resultSet.next())
+			while (resultSet.next())
 			{
-				displayName=resultSet.getString("DISPLAY_NAME");
+				displayName = resultSet.getString("DISPLAY_NAME");
 				break;
 			}
 			resultSet.close();
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
-			LOGGER.error(ex.getMessage(),ex);
+			LOGGER.error(ex.getMessage(), ex);
 		}
 		return displayName;
 	}
-
 
 	/**
 	 * This method returns method object.
@@ -948,7 +957,7 @@ public final class Utility
 		return method.invoke(obj, new Object[0]);
 
 	}
-	
+
 	/**
 	 * This method parse Attribute Name.
 	 * @param methodName method Name to be parse.
@@ -975,45 +984,45 @@ public final class Utility
 	{
 		String messageToReturn = "";
 		if (exep instanceof HibernateException)
-        {
-            HibernateException hibernateException = (HibernateException) exep;
-            StringBuffer message = new StringBuffer(messageToReturn);
-            String[] str = hibernateException.getMessages();
-            if (str == null)
-            {
-            	messageToReturn = "Unknown Error";
-            }
-            else
-            {
-            	  for (int i = 0; i < str.length; i++)
-                  {
-                  	message.append(str[i]).append(' ');
-                  }
-                  messageToReturn =  message.toString();
-            }
+		{
+			HibernateException hibernateException = (HibernateException) exep;
+			StringBuffer message = new StringBuffer(messageToReturn);
+			String[] str = hibernateException.getMessages();
+			if (str == null)
+			{
+				messageToReturn = "Unknown Error";
+			}
+			else
+			{
+				for (int i = 0; i < str.length; i++)
+				{
+					message.append(str[i]).append(' ');
+				}
+				messageToReturn = message.toString();
+			}
 
-        }
-        else
-        {
-        	messageToReturn = exep.getMessage();
-        }
-		  return messageToReturn;
+		}
+		else
+		{
+			messageToReturn = exep.getMessage();
+		}
+		return messageToReturn;
 	}
-	
-	 /**
-     * Constants that will appear in HQL for retreiving Attributes of the Collection data type.
-     */
-    private static final String ELEMENTS = "elements";
+
+	/**
+	* Constants that will appear in HQL for retreiving Attributes of the Collection data type.
+	*/
+	private static final String ELEMENTS = "elements";
+
 	/**
 	 * Check whether the select Column start with "elements" & ends with ")" or not
 	 * @param columnName The columnName
 	 * @return true if the select Column start with "elements" & ends with ")" or not
 	 */
-	public static boolean isColumnNameContainsElements(String columnName) 
+	public static boolean isColumnNameContainsElements(String columnName)
 	{
 		columnName = columnName.toLowerCase().trim();
 		return columnName.startsWith(ELEMENTS) && columnName.endsWith(")");
 	}
 
-	
 }
