@@ -27,6 +27,7 @@ import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * AuditManager is an algorithm to figure out the changes with respect to
@@ -34,13 +35,13 @@ import edu.wustl.dao.util.HibernateMetaData;
  * 
  * @author kapil_kaveeshwar
  */
-public class AuditManager {
+public class AuditManager
+{
 
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
-	private static final Logger LOGGER = Logger
-			.getCommonLogger(AuditManager.class);
+	private static final Logger LOGGER = Logger.getCommonLogger(AuditManager.class);
 
 	/**
 	 * Instance of Audit event. All the change under one database session are
@@ -49,11 +50,24 @@ public class AuditManager {
 	 */
 	private transient AuditEvent auditEvent;
 
+	private String applicationName;
+
 	/**
 	 * Instantiate a new instance of AuditManager.
 	 * */
-	public AuditManager() {
+	public AuditManager()
+	{
 		auditEvent = new AuditEvent();
+	}
+
+	public String getApplicationName()
+	{
+		return applicationName;
+	}
+
+	public void setApplicationName(String applicationName)
+	{
+		this.applicationName = applicationName;
 	}
 
 	/**
@@ -62,7 +76,8 @@ public class AuditManager {
 	 * @param userId
 	 *            System identifier of logged-in user who performed the changes.
 	 * */
-	public void setUserId(Long userId) {
+	public void setUserId(Long userId)
+	{
 		auditEvent.setUserId(userId);
 	}
 
@@ -72,7 +87,8 @@ public class AuditManager {
 	 * @param iPAddress
 	 *            ip address of the machine to set.
 	 * */
-	public void setIpAddress(String iPAddress) {
+	public void setIpAddress(String iPAddress)
+	{
 		auditEvent.setIpAddress(iPAddress);
 	}
 
@@ -84,10 +100,10 @@ public class AuditManager {
 	 *            object.
 	 * @return return true if object type is a premitive data type else false.
 	 */
-	private boolean isVariable(Object obj) {
+	private boolean isVariable(Object obj)
+	{
 		boolean objectType = obj instanceof Number || obj instanceof String
-				|| obj instanceof Boolean || obj instanceof Character
-				|| obj instanceof Date;
+				|| obj instanceof Boolean || obj instanceof Character || obj instanceof Date;
 		return objectType;
 	}
 
@@ -104,8 +120,9 @@ public class AuditManager {
 	 * @throws AuditException
 	 *             Audit Exception.
 	 */
-	public void audit(Auditable currentObj, Auditable previousObj,
-			String eventType) throws AuditException {
+	public void audit(Auditable currentObj, Auditable previousObj, String eventType)
+			throws AuditException
+	{
 		compare(currentObj, previousObj, eventType);
 	}
 
@@ -122,12 +139,14 @@ public class AuditManager {
 	 * @throws AuditException
 	 *             Audit Exception.
 	 */
-	private void compare(Auditable currentObj, Auditable previousObj,
-			String eventType) throws AuditException {
+	private void compare(Auditable currentObj, Auditable previousObj, String eventType)
+			throws AuditException
+	{
 		LOGGER.debug("Inside isObjectAuditable method.");
 
 		Auditable auditableObject = (Auditable) currentObj;
-		if (auditableObject == null) {
+		if (auditableObject == null)
+		{
 			return;
 		}
 
@@ -154,21 +173,24 @@ public class AuditManager {
 	 * @throws AuditException
 	 *             Audit Exception.
 	 */
-	private void compareClassOfObject(Auditable currentObj,
-			Auditable previousObj) throws AuditException {
+	private void compareClassOfObject(Auditable currentObj, Auditable previousObj)
+			throws AuditException
+	{
 
 		// Class of the object being compared
 		Class currentObjClass = currentObj.getClass();
 		Class previousObjClass = currentObjClass;
 
-		if (previousObj != null) {
+		if (previousObj != null)
+		{
 			previousObjClass = previousObj.getClass();
 		}
 
 		// check the class for both objects are equals or not.
-		if (previousObjClass.equals(currentObjClass)) {
-			DataAuditEventLog auditEventLog = processMethods(currentObj,
-					previousObj, currentObjClass);
+		if (previousObjClass.equals(currentObjClass))
+		{
+			DataAuditEventLog auditEventLog = processMethods(currentObj, previousObj,
+					currentObjClass);
 
 			auditEvent.getAuditEventLogCollection().add(auditEventLog);
 		}
@@ -190,8 +212,9 @@ public class AuditManager {
 	 * @throws AuditException
 	 *             Audit Exception.
 	 */
-	private DataAuditEventLog processMethods(Auditable obj,
-			Auditable previousObj, Class currentObjClass) throws AuditException {
+	private DataAuditEventLog processMethods(Auditable obj, Auditable previousObj,
+			Class currentObjClass) throws AuditException
+	{
 
 		// An audit event will contain many logs.
 		DataAuditEventLog auditEventLog = new DataAuditEventLog();
@@ -206,16 +229,17 @@ public class AuditManager {
 
 		Collection<AuditableClass> classList = metadata.getAuditableClass();
 
-		if (classList != null) {
+		if (classList != null)
+		{
 			Iterator<AuditableClass> classListIterator = classList.iterator();
-			while (classListIterator.hasNext()) {
+			while (classListIterator.hasNext())
+			{
 				AuditableClass klass = classListIterator.next();
-				if (obj.getClass().getName()
-						.equals(klass.getClassName())) {
+				if (obj.getClass().getName().equals(klass.getClassName()))
+				{
 					auditableClass = klass;
 
-					auditClassInstance(obj, previousObj, auditEventLog,
-							auditableClass);
+					auditClassInstance(obj, previousObj, auditEventLog, auditableClass);
 					break;
 				}
 			}
@@ -232,27 +256,32 @@ public class AuditManager {
 	 * @throws AuditException
 	 */
 	private void auditClassInstance(Auditable obj, Auditable previousObj,
-			DataAuditEventLog auditEventLog, AuditableClass auditableClass)
-			throws AuditException {
+			DataAuditEventLog auditEventLog, AuditableClass auditableClass) throws AuditException
+	{
 		// Set System identifier if the current object.
 		auditEventLog.setObjectIdentifier(obj.getId());
 
-		auditEventLog.setObjectName(HibernateMetaData
-				.getTableName(obj.getClass()));
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+				.getHibernateMetaData(this.applicationName);
+		if (hibernateMetaData != null)
+		{
+			auditEventLog.setObjectName(hibernateMetaData.getTableName(obj.getClass()));
+		}
+		else
+		{
+			auditEventLog.setObjectName("");
+		}
 
-		Object currentObj = HibernateMetaData
-				.getProxyObjectImpl(obj);
-		
+		Object currentObj = HibernateMetaData.getProxyObjectImpl(obj);
+
 		//Audit simple attributes of the object
-		auditSimpleAttributes(previousObj, auditEventLog, auditableClass,
-				currentObj);
+		auditSimpleAttributes(previousObj, auditEventLog, auditableClass, currentObj);
 
 		//Audit reference attributes of the object
 		auditReferences(previousObj, auditEventLog, auditableClass, currentObj);
 
 		//Audit containment associations of the object
-		auditContainments(previousObj, auditEventLog, auditableClass,
-				currentObj);
+		auditContainments(previousObj, auditEventLog, auditableClass, currentObj);
 	}
 
 	/**
@@ -263,16 +292,14 @@ public class AuditManager {
 	 * @param currentObj
 	 * @throws AuditException
 	 */
-	private void auditContainments(Auditable previousObj,
-			DataAuditEventLog auditEventLog, AuditableClass auditableClass,
-			Object currentObj) throws AuditException {
+	private void auditContainments(Auditable previousObj, DataAuditEventLog auditEventLog,
+			AuditableClass auditableClass, Object currentObj) throws AuditException
+	{
 		if (auditableClass.getContainmentAssociationCollection() != null
-				&& !auditableClass
-						.getContainmentAssociationCollection()
-						.isEmpty()) {
-			processContainments(auditEventLog, currentObj,
-					previousObj, auditableClass, auditableClass
-							.getContainmentAssociationCollection());
+				&& !auditableClass.getContainmentAssociationCollection().isEmpty())
+		{
+			processContainments(auditEventLog, currentObj, previousObj, auditableClass,
+					auditableClass.getContainmentAssociationCollection());
 		}
 	}
 
@@ -284,25 +311,20 @@ public class AuditManager {
 	 * @param currentObj
 	 * @throws AuditException
 	 */
-	private void auditReferences(Auditable previousObj,
-			DataAuditEventLog auditEventLog, AuditableClass auditableClass,
-			Object currentObj) throws AuditException {
+	private void auditReferences(Auditable previousObj, DataAuditEventLog auditEventLog,
+			AuditableClass auditableClass, Object currentObj) throws AuditException
+	{
 		Set<AuditEventDetails> collectionAuditEventDetailsCollection = null;
 		if (auditableClass.getReferenceAssociationCollection() != null
-				&& !auditableClass
-						.getReferenceAssociationCollection()
-						.isEmpty()) {
-			collectionAuditEventDetailsCollection = processAssociations(
-					currentObj, previousObj, auditableClass,
-					auditableClass
-							.getReferenceAssociationCollection());
+				&& !auditableClass.getReferenceAssociationCollection().isEmpty())
+		{
+			collectionAuditEventDetailsCollection = processAssociations(currentObj, previousObj,
+					auditableClass, auditableClass.getReferenceAssociationCollection());
 			if (collectionAuditEventDetailsCollection != null
-					&& !collectionAuditEventDetailsCollection
-							.isEmpty()) {
-				auditEventLog
-						.getAuditEventDetailsCollcetion()
-						.addAll(
-								collectionAuditEventDetailsCollection);
+					&& !collectionAuditEventDetailsCollection.isEmpty())
+			{
+				auditEventLog.getAuditEventDetailsCollcetion().addAll(
+						collectionAuditEventDetailsCollection);
 			}
 		}
 	}
@@ -315,19 +337,17 @@ public class AuditManager {
 	 * @param currentObj
 	 * @throws AuditException
 	 */
-	private void auditSimpleAttributes(Auditable previousObj,
-			DataAuditEventLog auditEventLog, AuditableClass auditableClass,
-			Object currentObj) throws AuditException {
-		Set<AuditEventDetails> auditEventDetailsCollection = null; 
+	private void auditSimpleAttributes(Auditable previousObj, DataAuditEventLog auditEventLog,
+			AuditableClass auditableClass, Object currentObj) throws AuditException
+	{
+		Set<AuditEventDetails> auditEventDetailsCollection = null;
 		if (auditableClass.getAttributeCollection() != null
-				&& !auditableClass.getAttributeCollection()
-						.isEmpty()) {
-			auditEventDetailsCollection = processAttributes(
-					previousObj, auditableClass, currentObj);
-			if (auditEventDetailsCollection != null
-					&& !auditEventDetailsCollection.isEmpty()) {
-				auditEventLog.getAuditEventDetailsCollcetion()
-						.addAll(auditEventDetailsCollection);
+				&& !auditableClass.getAttributeCollection().isEmpty())
+		{
+			auditEventDetailsCollection = processAttributes(previousObj, auditableClass, currentObj);
+			if (auditEventDetailsCollection != null && !auditEventDetailsCollection.isEmpty())
+			{
+				auditEventLog.getAuditEventDetailsCollcetion().addAll(auditEventDetailsCollection);
 			}
 		}
 	}
@@ -342,28 +362,28 @@ public class AuditManager {
 	 * @param containmentAssociationCollection
 	 * @throws AuditException
 	 */
-	private void processContainments(DataAuditEventLog auditEventLog,
-			Object currentObj, Auditable previousObj,
-			AuditableClass auditableClass,
-			Collection<AuditableClass> containmentAssociationCollection)
-			throws AuditException {
-		Iterator<AuditableClass> containmentItert = containmentAssociationCollection
-				.iterator();
+	private void processContainments(DataAuditEventLog auditEventLog, Object currentObj,
+			Auditable previousObj, AuditableClass auditableClass,
+			Collection<AuditableClass> containmentAssociationCollection) throws AuditException
+	{
+		Iterator<AuditableClass> containmentItert = containmentAssociationCollection.iterator();
 
-		while (containmentItert.hasNext()) {
+		while (containmentItert.hasNext())
+		{
 			AuditableClass containmentClass = containmentItert.next();
 
-			Object containedObj = auditableClass.invokeGetterMethod(
-					containmentClass.getRoleName(), currentObj);
+			Object containedObj = auditableClass.invokeGetterMethod(containmentClass.getRoleName(),
+					currentObj);
 
-			if (containedObj instanceof Collection) {
-				for (Object object : (Collection) containedObj) {
-					if (object instanceof Auditable) {
-						DataAuditEventLog childAuditEventLog = processMethods(
-								(Auditable) object, (Auditable) null, object
-										.getClass());
-						auditEventLog.getContainedObjectLogs().add(
-								childAuditEventLog);
+			if (containedObj instanceof Collection)
+			{
+				for (Object object : (Collection) containedObj)
+				{
+					if (object instanceof Auditable)
+					{
+						DataAuditEventLog childAuditEventLog = processMethods((Auditable) object,
+								(Auditable) null, object.getClass());
+						auditEventLog.getContainedObjectLogs().add(childAuditEventLog);
 					}
 				}
 			}
@@ -380,47 +400,52 @@ public class AuditManager {
 	 * @return
 	 * @throws AuditException
 	 */
-	private Set<AuditEventDetails> processAssociations(Object currentObj,
-			Auditable previousObj, AuditableClass auditableClass,
-			Collection<AuditableClass> referenceAssociationCollection)
-			throws AuditException {
+	private Set<AuditEventDetails> processAssociations(Object currentObj, Auditable previousObj,
+			AuditableClass auditableClass, Collection<AuditableClass> referenceAssociationCollection)
+			throws AuditException
+	{
 		Set<AuditEventDetails> collectionAuditEventDetailsCollection = new HashSet<AuditEventDetails>();
-		Iterator<AuditableClass> associationItert = referenceAssociationCollection
-				.iterator();
-		while (associationItert.hasNext()) {
+		Iterator<AuditableClass> associationItert = referenceAssociationCollection.iterator();
+		while (associationItert.hasNext())
+		{
 			// the associated object to the main object
 			AuditableClass associationClass = associationItert.next();
-			Object currentReferencedObj = auditableClass.invokeGetterMethod(
-					associationClass.getRoleName(), currentObj);
+			Object currentReferencedObj = auditableClass.invokeGetterMethod(associationClass
+					.getRoleName(), currentObj);
 
 			Object previousReferencedObj = null;
-			if (previousObj != null) {
-				previousReferencedObj = auditableClass.invokeGetterMethod(
-						associationClass.getRoleName(), previousObj);
+			if (previousObj != null)
+			{
+				previousReferencedObj = auditableClass.invokeGetterMethod(associationClass
+						.getRoleName(), previousObj);
 			}
-			if (currentReferencedObj instanceof Collection) {
+			if (currentReferencedObj instanceof Collection)
+			{
 				List<String> currentValue = getCollectionValueList(currentReferencedObj);
 				List<String> previousValue = null;
-				if (previousReferencedObj != null) {
+				if (previousReferencedObj != null)
+				{
 					previousValue = getCollectionValueList(previousReferencedObj);
 				}
-				for (String currentFieldValue : currentValue) {
-					AuditEventDetails eventDetails = processRefernceAttribute(
-							currentObj, associationClass.getRoleName(),
-							previousValue, currentFieldValue);
-					if (eventDetails != null) {
+				for (String currentFieldValue : currentValue)
+				{
+					AuditEventDetails eventDetails = processRefernceAttribute(currentObj,
+							associationClass.getRoleName(), previousValue, currentFieldValue);
+					if (eventDetails != null)
+					{
 						collectionAuditEventDetailsCollection.add(eventDetails);
 					}
 				}
 
-				if (previousValue != null && previousValue.size() > 0) {
-					for (String previousFieldValue : previousValue) {
-						AuditEventDetails eventDetails = processRefernceAttribute(
-								currentObj, associationClass.getRoleName(),
-								previousValue, previousFieldValue);
-						if (eventDetails != null) {
-							collectionAuditEventDetailsCollection
-									.add(eventDetails);
+				if (previousValue != null && previousValue.size() > 0)
+				{
+					for (String previousFieldValue : previousValue)
+					{
+						AuditEventDetails eventDetails = processRefernceAttribute(currentObj,
+								associationClass.getRoleName(), previousValue, previousFieldValue);
+						if (eventDetails != null)
+						{
+							collectionAuditEventDetailsCollection.add(eventDetails);
 						}
 					}
 				}
@@ -440,14 +465,15 @@ public class AuditManager {
 	 * @throws AuditException
 	 */
 	private Set<AuditEventDetails> processAttributes(Auditable previousObj,
-			AuditableClass auditableClass, Object currentObj)
-			throws AuditException {
+			AuditableClass auditableClass, Object currentObj) throws AuditException
+	{
 		Set<AuditEventDetails> auditEventDetailsCollection = new HashSet<AuditEventDetails>();
-		for (Attribute attribute : auditableClass.getAttributeCollection()) {
-			AuditEventDetails auditEventDetails = processSingleAttirubte(
-					auditableClass, attribute.getName(), currentObj,
-					previousObj);
-			if (auditEventDetails != null) {
+		for (Attribute attribute : auditableClass.getAttributeCollection())
+		{
+			AuditEventDetails auditEventDetails = processSingleAttirubte(auditableClass, attribute
+					.getName(), currentObj, previousObj);
+			if (auditEventDetails != null)
+			{
 				auditEventDetailsCollection.add(auditEventDetails);
 			}
 		}
@@ -465,44 +491,57 @@ public class AuditManager {
 	 * @throws AuditException
 	 */
 	private AuditEventDetails processSingleAttirubte(AuditableClass auditableClass,
-			String attributeName, Object currentObj, Auditable previousObj)
-			throws AuditException {
+			String attributeName, Object currentObj, Auditable previousObj) throws AuditException
+	{
 		// Get the old value of the attribute from previousObject
-		Object prevVal = auditableClass.invokeGetterMethod(attributeName,
-				previousObj);
+		Object prevVal = auditableClass.invokeGetterMethod(attributeName, previousObj);
 		prevVal = getObjectValue(null, prevVal);
 
 		// Get the current value of the attribute from currentObject
-		Object currVal = auditableClass.invokeGetterMethod(attributeName,
-				currentObj);
+		Object currVal = auditableClass.invokeGetterMethod(attributeName, currentObj);
 		currVal = getObjectValue(null, currVal);
 
 		// Find the currosponding column in the database
-		String columnName = HibernateMetaData.getColumnName(currentObj
-				.getClass(), attributeName);
+		String columnName;
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+				.getHibernateMetaData(this.applicationName);
+		if (hibernateMetaData != null)
+		{
+			columnName = hibernateMetaData.getColumnName(currentObj.getClass(), attributeName);
+		}
+		else
+		{
+			columnName = "";
+		}
 
 		AuditEventDetails auditEventDetails = null;
 		// Case of transient object
-		if (!(TextConstants.EMPTY_STRING.equals(columnName))) {
+		if (!(TextConstants.EMPTY_STRING.equals(columnName)))
+		{
 			// Compare the old and current value
 			auditEventDetails = compareValue(prevVal, currVal);
-			if (auditEventDetails != null) {
+			if (auditEventDetails != null)
+			{
 				auditEventDetails.setElementName(columnName);
 			}
 		}
 		return auditEventDetails;
 	}
 
-	private List<String> getCollectionValueList(Object currentContainedObj) {
+	private List<String> getCollectionValueList(Object currentContainedObj)
+	{
 		List<String> collectionValueList = new ArrayList<String>();
 
-		if (currentContainedObj instanceof Collection) {
-			for (Object object : (Collection) currentContainedObj) {
-				if (object instanceof AbstractDomainObject) {
-					collectionValueList.add(((AbstractDomainObject) object)
-							.getId().toString());
+		if (currentContainedObj instanceof Collection)
+		{
+			for (Object object : (Collection) currentContainedObj)
+			{
+				if (object instanceof AbstractDomainObject)
+				{
+					collectionValueList.add(((AbstractDomainObject) object).getId().toString());
 				}
-				if (isVariable(object)) {
+				if (isVariable(object))
+				{
 					collectionValueList.add("" + object);
 				}
 			}
@@ -520,9 +559,9 @@ public class AuditManager {
 	 * @param currentFieldValue
 	 * @return
 	 */
-	private AuditEventDetails processRefernceAttribute(Object currentObj,
-			String attributeName, List<String> previousValue,
-			String currentFieldValue) {
+	private AuditEventDetails processRefernceAttribute(Object currentObj, String attributeName,
+			List<String> previousValue, String currentFieldValue)
+	{
 
 		AuditEventDetails auditEventDetails = null;
 		// Get the old value of the attribute from previousObject
@@ -533,14 +572,17 @@ public class AuditManager {
 
 		AuditEventDetails collectionAuditEventDetails = null;
 		// Case of transient object
-		if (!(TextConstants.EMPTY_STRING.equals(attributeName))) {
+		if (!(TextConstants.EMPTY_STRING.equals(attributeName)))
+		{
 			// Compare the old and current value
 			auditEventDetails = compareValue(prevVal, currVal);
-			if (auditEventDetails != null) {
+			if (auditEventDetails != null)
+			{
 				auditEventDetails.setElementName(attributeName);
 			}
 		}
-		if (previousValue != null && previousValue.size() > 0) {
+		if (previousValue != null && previousValue.size() > 0)
+		{
 			previousValue.remove(currentFieldValue);
 		}
 
@@ -563,8 +605,8 @@ public class AuditManager {
 	 * @throws AuditException
 	 *             Audit Exception.
 	 * */
-	private AuditEventDetails processField(Method method, Object currentObj,
-			Object previousObj) throws AuditException
+	private AuditEventDetails processField(Method method, Object currentObj, Object previousObj)
+			throws AuditException
 
 	{
 		// Get the old value of the attribute from previousObject
@@ -577,15 +619,26 @@ public class AuditManager {
 		String attributeName = Utility.parseAttributeName(method.getName());
 
 		// Find the currosponding column in the database
-		String columnName = HibernateMetaData.getColumnName(currentObj
-				.getClass(), attributeName);
+		String columnName;
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+				.getHibernateMetaData(this.applicationName);
+		if (hibernateMetaData != null)
+		{
+			columnName = hibernateMetaData.getColumnName(currentObj.getClass(), attributeName);
+		}
+		else
+		{
+			columnName = "";
+		}
 
 		AuditEventDetails auditEventDetails = null;
 		// Case of transient object
-		if (!(TextConstants.EMPTY_STRING.equals(columnName))) {
+		if (!(TextConstants.EMPTY_STRING.equals(columnName)))
+		{
 			// Compare the old and current value
 			auditEventDetails = compareValue(prevVal, currVal);
-			if (auditEventDetails != null) {
+			if (auditEventDetails != null)
+			{
 				auditEventDetails.setElementName(columnName);
 			}
 		}
@@ -605,20 +658,26 @@ public class AuditManager {
 	 * @throws AuditException
 	 *             Audit Exception.
 	 */
-	private Object getValue(Object obj, Method method) throws AuditException {
+	private Object getValue(Object obj, Method method) throws AuditException
+	{
 		Object value = null;
-		if (obj != null) {
+		if (obj != null)
+		{
 			Object val;
-			try {
+			try
+			{
 				val = Utility.getValueFor(obj, method);
 				value = getObjectValue(value, val);
-			} catch (IllegalAccessException ex) {
+			}
+			catch (IllegalAccessException ex)
+			{
 				LOGGER.error(ex.getMessage(), ex);
 				throw new AuditException(ex, "while comparing audit objects");
-			} catch (InvocationTargetException iTException) {
+			}
+			catch (InvocationTargetException iTException)
+			{
 				LOGGER.error(iTException.getMessage(), iTException);
-				throw new AuditException(iTException,
-						"while comparing audit objects");
+				throw new AuditException(iTException, "while comparing audit objects");
 			}
 		}
 		return value;
@@ -631,12 +690,16 @@ public class AuditManager {
 	 *            method object
 	 * @return value
 	 */
-	private Object getObjectValue(Object value, Object val) {
+	private Object getObjectValue(Object value, Object val)
+	{
 		Object reqValue = value;
-		if (val instanceof Auditable) {
+		if (val instanceof Auditable)
+		{
 			Auditable auditable = (Auditable) val;
 			reqValue = auditable.getId();
-		} else if (isVariable(val)) {
+		}
+		else if (isVariable(val))
+		{
 			reqValue = val;
 		}
 		return reqValue;
@@ -652,9 +715,11 @@ public class AuditManager {
 	 *            current value
 	 * @return AuditEventDetails
 	 */
-	private AuditEventDetails compareValue(Object prevVal, Object currVal) {
+	private AuditEventDetails compareValue(Object prevVal, Object currVal)
+	{
 		AuditEventDetails auditEventDetails = null;
-		if (prevVal != null || currVal != null) {
+		if (prevVal != null || currVal != null)
+		{
 			auditEventDetails = compareValLogic(prevVal, currVal);
 		}
 		return auditEventDetails;
@@ -670,11 +735,15 @@ public class AuditManager {
 	 *            curr Value
 	 * @return auditEventDetails
 	 */
-	private AuditEventDetails compareValLogic(Object prevVal, Object currVal) {
+	private AuditEventDetails compareValLogic(Object prevVal, Object currVal)
+	{
 		AuditEventDetails auditEventDetails;
-		if (prevVal == null || currVal == null) {
+		if (prevVal == null || currVal == null)
+		{
 			auditEventDetails = compareLogic(prevVal, currVal);
-		} else {
+		}
+		else
+		{
 			auditEventDetails = new AuditEventDetails();
 			auditEventDetails.setPreviousValue(prevVal.toString());
 			auditEventDetails.setCurrentValue(currVal.toString());
@@ -692,11 +761,15 @@ public class AuditManager {
 	 *            current Value
 	 * @return auditEventDetails
 	 */
-	private AuditEventDetails compareLogic(Object prevVal, Object currVal) {
+	private AuditEventDetails compareLogic(Object prevVal, Object currVal)
+	{
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
-		if (prevVal == null) {
+		if (prevVal == null)
+		{
 			auditEventDetails.setCurrentValue(currVal.toString());
-		} else {
+		}
+		else
+		{
 			auditEventDetails.setPreviousValue(prevVal.toString());
 		}
 		return auditEventDetails;
@@ -710,17 +783,19 @@ public class AuditManager {
 	 * @throws DAOException
 	 *             generic DAOException
 	 */
-	public void insert(DAO dao) throws DAOException {
-		if (auditEvent.getAuditEventLogCollection().isEmpty()) {
+	public void insert(DAO dao) throws DAOException
+	{
+		if (auditEvent.getAuditEventLogCollection().isEmpty())
+		{
 			return;
 		}
 
 		dao.insert(auditEvent, false, "");
-		Iterator<AbstractAuditEventLog> auditLogIterator = auditEvent
-				.getAuditEventLogCollection().iterator();
-		while (auditLogIterator.hasNext()) {
-			AbstractAuditEventLog auditEventLog = (AbstractAuditEventLog) auditLogIterator
-					.next();
+		Iterator<AbstractAuditEventLog> auditLogIterator = auditEvent.getAuditEventLogCollection()
+				.iterator();
+		while (auditLogIterator.hasNext())
+		{
+			AbstractAuditEventLog auditEventLog = (AbstractAuditEventLog) auditLogIterator.next();
 			auditEventLog.setAuditEvent(auditEvent);
 			dao.insert(auditEventLog, false, "");
 
@@ -730,12 +805,13 @@ public class AuditManager {
 
 	}
 
-	private void insertAuditEventDetails(DAO dao,
-			AbstractAuditEventLog auditEventLog) throws DAOException {
-		if (auditEventLog instanceof DataAuditEventLog) {
+	private void insertAuditEventDetails(DAO dao, AbstractAuditEventLog auditEventLog)
+			throws DAOException
+	{
+		if (auditEventLog instanceof DataAuditEventLog)
+		{
 			DataAuditManager auditManager = new DataAuditManager();
-			auditManager.insertAuditEventLogs(dao,
-					(DataAuditEventLog) auditEventLog);
+			auditManager.insertAuditEventLogs(dao, (DataAuditEventLog) auditEventLog);
 		}
 	}
 
@@ -745,10 +821,9 @@ public class AuditManager {
 	 * @param auditEventLogsCollection
 	 *            audit Event Logs Collection.
 	 */
-	public void addAuditEventLogs(
-			Collection<AbstractAuditEventLog> auditEventLogsCollection) {
-		auditEvent.getAuditEventLogCollection()
-				.addAll(auditEventLogsCollection);
+	public void addAuditEventLogs(Collection<AbstractAuditEventLog> auditEventLogsCollection)
+	{
+		auditEvent.getAuditEventLogCollection().addAll(auditEventLogsCollection);
 	}
 
 }
