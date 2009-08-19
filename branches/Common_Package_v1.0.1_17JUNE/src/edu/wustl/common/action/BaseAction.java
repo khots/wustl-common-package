@@ -51,7 +51,7 @@ public abstract class BaseAction extends Action
 	public final ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		LOGGER.info("in execute method");
+		//LOGGER.info("in execute method");
 		//long startTime = System.currentTimeMillis();
 		preExecute(mapping, form, request, response);
 		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
