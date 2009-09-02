@@ -8,7 +8,6 @@ import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.actionForm.MyActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.MyDomainObject;
-import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.logger.Logger;
@@ -17,7 +16,6 @@ import edu.wustl.dao.MyDAOImpl;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.util.DAOConstants;
 
 /**
  * This class for juint test cases for methods in AbstractBizLogic.

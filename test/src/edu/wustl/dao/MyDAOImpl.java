@@ -100,14 +100,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		throwDaoException();
 		return object;
 	}
-	public String  formatMessage(Exception exception, String message)
-	{
-		return null;
-	}
-	public String  formatMessage(Exception excp,Connection connection)
-	{
-		return null;
-	}
 
 	public void setIsDefaultDAOFactory(Boolean isDefaultDAOFactory )
 	{
@@ -117,13 +109,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public Boolean getIsDefaultDAOFactory()
 	{
 		return true;
-	}
-
-	public void audit(Object obj, Object oldObj, SessionDataBean sessionDataBean,
-			boolean isAuditable) throws DAOException
-	{
-		throwDaoException();
-
 	}
 
 	public void closeSession() throws DAOException
@@ -142,20 +127,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		throwDaoException();
 		//NOT TO DO ANYTHING.
-	}
-
-	public void disableRelatedObjects(String tableName, String whereColumnName,
-			Long[] whereColumnValues) throws DAOException
-	{
-		throwDaoException();
-	}
-
-	public List<Object> executeQuery(String query, SessionDataBean sessionDataBean,
-			boolean isSecureExecute, Map<Object, QueryDataBean> queryResultObjectDataMap)
-			throws ClassNotFoundException, DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public IConnectionManager getConnectionManager()
@@ -181,7 +152,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		return (List<Object>)getList();
 	}
 
-	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
+/*	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 		Object obj;
 		if(isTestForFail)
@@ -202,7 +173,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		}
 		return obj;
 	}
-
+*/
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws DAOException
 	{
@@ -256,18 +227,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		throwDaoException();
 	}
 
-	public Object loadCleanObj(String sourceObjectName, Long identifier) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object loadCleanObj(Class objectClass, Long identifier) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void buildSessionFactory() throws DAOException
 	{
 		this.setApplicationName("commonpackagetest");
@@ -282,11 +241,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public String getConfigurationFile()
 	{
 		return this.configurationFile;
-	}
-
-	public String getConnectionManagerName()
-	{
-		return this.connectionManagerName;
 	}
 
 	public DAO getDAO() throws DAOException
@@ -345,12 +299,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	}
 
-	public void setConnectionManagerName(String connectionManagerName)
-	{
-		this.connectionManagerName=connectionManagerName;
-
-	}
-
 	public void setDefaultDAOClassName(String defaultDAOClassName)
 	{
 		this.defaultDAOClassName=defaultDAOClassName;
@@ -360,44 +308,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public void setJdbcDAOClassName(String jdbcDAOClassName)
 	{
 		this.jdbcDAOClassName=jdbcDAOClassName;
-	}
-
-	public void createTable(String query) throws DAOException
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void createTable(String tableName, String[] columnNames) throws DAOException
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void delete(String tableName) throws DAOException
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public PagenatedResultData executeQuery(QueryParams queryParams) throws ClassNotFoundException,
-			DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*public int executeUpdate(String sql) throws DAOException
-	{
-		return 0;
-		// TODO Auto-generated method stub
-
-	}*/
-
-	public String formatMessage(Exception excp, Object[] args)
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public String getDateFormatFunction()
@@ -436,13 +346,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		return null;
 	}
 
-	public void insertHashedValues(String tableName, List<Object> columnValues,
-			List<String> columnNames) throws DAOException, SQLException
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
 	{
@@ -463,18 +366,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 
 	}
 
-	public Session currentSession() throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Session getCleanSession() throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public Configuration getConfiguration()
 	{
 		// TODO Auto-generated method stub
@@ -493,12 +384,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		return null;
 	}
 
-	public Session newSession() throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void setConfiguration(Configuration cfg)
 	{
 		// TODO Auto-generated method stub
@@ -509,44 +394,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		// TODO Auto-generated method stub
 
-	}
-	public void closeCleanConnection() throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	public void closeCleanSession() throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	public Connection getCleanConnection() throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public void executeAuditSql(String sql, SessionDataBean sessionData, String comments)
-			throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	public int getColumnCount(int columnCount, boolean getSublistOfResult)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	public Object getPrimitiveOperationProcessor()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public String getSQLForLikeOperator(String attributeName, String value)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	}	
 	//////////////////////////////////
 	/**
 	 * This member will store the Connection Manager name.
@@ -591,11 +439,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		list.add(innerList);
 		return list;
 	}
-	public void addAuditEventLogs(Collection<AuditEventLog> arg0)
-	{
-		// TODO Auto-generated method stub
-		
-	}
 	public String getDataSource()
 	{
 		// TODO Auto-generated method stub
@@ -626,46 +469,12 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 
 	}
-	/*public SQLFormatter getSQLFormatter(String arg0) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}*/
-	/*public void insert(SQLFormatter arg0, String arg1, String arg2, int arg3) throws DAOException
-	{
-		// TODO Auto-generated method stub
 
-	}*/
-	public void updateClob(String arg0, String arg1) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	public String getMaxBarcodeCol()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public String getMaxLabelCol()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public void insert(Object obj, boolean isAuditable) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		throwDaoException();
-	}
 	public Object retrieveById(String sourceObjectName, Long identifier) throws DAOException
 	{
 		// TODO Auto-generated method stub
 		
 		return getObject();
-	}
-	public void update(Object obj, Object oldObj) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
 	}
 	public List executeNamedQuery(String queryName, Map<String, NamedQueryParam> namedQueryParams)
 			throws DAOException
@@ -704,11 +513,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public void insert(String sql) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
+
 	public ResultSet retrieveResultSet(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause, boolean onlyDistinctRows) throws DAOException
 	{
@@ -725,44 +530,20 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		return null;
 	}
-	/*public List retrieveAttribute(Class objClass, Long identifier, String attributeName,
-			String columnName) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}*/
+
 	public  StatementData executeUpdate(String sql) throws DAOException
 	{
 		// TODO Auto-generated method stub
 		return null;
 		
 	}
-	public void audit(Object obj, Object oldObj) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
+
 	public void closeStatement(ResultSet resultSet) throws DAOException
 	{
 		// TODO Auto-generated method stub
 		
 	}
-	public void insert(QueryData queryData) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	public void update(QueryData queryData) throws DAOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	public List executeQuery(String arg0, Integer arg1, Integer arg2, List arg3)
-			throws DAOException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 	public void batchClose() throws DAOException
 	{
 		// TODO Auto-generated method stub
@@ -785,11 +566,6 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		
 	}
 	
-	public void openTransaction()
-	{
-		// TODO Auto-generated method stub
-		
-	}
 	public StatementData executeUpdate(String tableName,
 			LinkedList<ColumnValueBean> columnValueBeanSet) throws DAOException
 	{
@@ -798,6 +574,19 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	}
 	public List executeQuery(String query, Integer startIndex,
 			Integer maxRecords, LinkedList paramValues) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void insert(Object arg0) throws DAOException
+	{
+		if(isTestForFail)
+		{
+		throwDaoException();
+		}
+		
+	}
+	public StatementData executeUpdateWithGeneratedKey(String arg0) throws DAOException
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}	

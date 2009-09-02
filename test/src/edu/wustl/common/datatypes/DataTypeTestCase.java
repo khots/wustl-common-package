@@ -288,7 +288,7 @@ public class DataTypeTestCase extends CommonBaseTestCase
 		try
 		{
 			dbDataType = DataTypeConfigFactory.getInstance().getDataType("string");
-			assertNull(dbDataType.getObjectValue(""));
+			assertEquals("",dbDataType.getObjectValue(""));
 		}
 		catch (Exception e)
 		{

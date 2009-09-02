@@ -9,17 +9,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
-import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.beans.NameValueBean;
-import edu.wustl.common.tree.SpecimenTreeNode;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.dao.util.HibernateMetaData;
 
 public class UtilityTestCases extends CommonBaseTestCase
 {
@@ -29,22 +24,6 @@ public class UtilityTestCases extends CommonBaseTestCase
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(UtilityTestCases.class);
 
-	static
-	{
-	    Configuration config = new Configuration().
-	        setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
-	        setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
-	        setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:baseball").
-	        setProperty("hibernate.connection.username", "sa").
-	        setProperty("hibernate.connection.password", "").
-	        setProperty("hibernate.connection.pool_size", "1").
-	        setProperty("hibernate.connection.autocommit", "true").
-	        setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
-	        setProperty("hibernate.hbm2ddl.auto", "create-drop").
-	        setProperty("hibernate.show_sql", "true").
-	        addClass(edu.wustl.common.audit.AuditableImpl.class);
-	    	HibernateMetaData.initHibernateMetaData(config);
-	}
 	public void testDatePattern()
 	{
 		try

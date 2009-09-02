@@ -1,11 +1,13 @@
 package edu.wustl.common;
 
+import org.hibernate.cfg.Configuration;
+
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.test.BaseTestCase;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.HibernateProperties;
-import edu.wustl.common.util.logger.Logger;
 import edu.wustl.common.util.logger.LoggerConfig;
+import edu.wustl.dao.util.HibernateMetaData;
 /**
  * This is common test class.
  * All test classes in common package should extends this class.  
@@ -22,6 +24,7 @@ public class CommonBaseTestCase extends BaseTestCase
 		{
 			HibernateProperties.initBundle(System.getProperty("user.dir")+"/test/junitConf.properties");
 			XMLPropertyHandler.init(System.getProperty("app.propertiesFile"));
+			setHibernateConfiguration();
 			ErrorKey.init("~");
 		}
 		catch (Exception e)
@@ -41,6 +44,25 @@ public class CommonBaseTestCase extends BaseTestCase
 
 	protected void setUp()
 	{
+		
+	}
+	
+	private static void setHibernateConfiguration()
+	{
+		Configuration config = new Configuration().
+        setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
+        setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver").
+        setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:baseball").
+        setProperty("hibernate.connection.username", "sa").
+        setProperty("hibernate.connection.password", "").
+        setProperty("hibernate.connection.pool_size", "1").
+        setProperty("hibernate.connection.autocommit", "true").
+        setProperty("hibernate.cache.provider_class", "org.hibernate.cache.HashtableCacheProvider").
+        setProperty("hibernate.hbm2ddl.auto", "create-drop").
+        setProperty("hibernate.show_sql", "true").
+        addClass(edu.wustl.common.domain.MyDomainObject.class).
+		addClass(edu.wustl.common.audit.AuditableImpl.class);
+    	HibernateMetaData.initHibernateMetaData(config);
 		
 	}
 }
