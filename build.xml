@@ -31,7 +31,7 @@
 	
 	<path id="app.classpath">
 		<fileset dir="${lib.dir}">
-			<include name="*.jar" />
+			<include name="**/*.jar" />
 		</fileset>
 	</path>
 
@@ -55,7 +55,7 @@
 		<pathelement location="${cobertura.home}/cobertura.jar" />
 		<pathelement location="${cobertura.lib}/jakarta-oro-2.0.8.jar" />
 		<pathelement location="${cobertura.lib}/asm-2.2.1.jar" />
-		<pathelement location="lib/log4j-1.2.9.jar" />
+		<pathelement location="${lib.dir}/log4j.jar" />
 	</path>
 
 	<!-- sub tasks -->
