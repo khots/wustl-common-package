@@ -2,9 +2,16 @@
 
 <!--Ant Script for create Build for Common package-->
 <project name="CommonPackage" default="compile">
+	<!--define require dir and Properties -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="./lib/ant-contrib.jar" />
+		</classpath>
+	</taskdef>
 	<property file="commonpackage.properties"/>
 	<!--define require dir and Properties -->
 	<property name="base.dir" value="." />
+	<property file="${base.dir}/test/junitConf.properties"/>
 	<property name="src.dir" value="${base.dir}/src" />
 	<property name="test.dir" value="${base.dir}/test" />
 	<property name="test.src.dir" value="${test.dir}/src" />
@@ -22,6 +29,8 @@
 	<property name="cobertura.lib" value="${cobertura.home}/lib"/>
 	<property name="metadatatest.dir" value="${base.dir}/metadataTestReport" />
 	<property name="metadatatest.report.dir" value="${metadatatest.dir}/Report" />
+	<property name="oracle.driver.string" value="oracle.jdbc.driver.OracleDriver" />
+	<property name="mysql.driver.string" value="org.gjt.mm.mysql.Driver" />
 
 	<loadfile property="dist.revision" srcFile="./.svn/entries">  
 			<filterchain>  
@@ -262,37 +271,12 @@
 	</target>
 	
 	<!-- Target to run junit test cases and generate cobertura coverage report-->
-	<target name="Generate_Report_Cobertura" depends="compile">			 
+	<target name="run_nightly_build" depends="compile,databasSetup">			 
 		<antcall target="instrument" />
 		<antcall target="junitForCobertura" />
 		<antcall target="cobertura_report" />
-	</target>	
-	
-	<target name="create_cde_src_zip">
-		<zip destfile="${build.dir}/cde-src.zip">
-			<fileset dir="${src.dir}">
-				<include name="edu/wustl/common/cde/*" />
-				<include name="edu/wustl/common/cde/xml/*" />
-				<include name="edu/wustl/common/cde/xml/impl/*" />
-				<include name="edu/wustl/common/cde/xml/impl/runtime/*" />
-			</fileset>
-		</zip>
 	</target>
-	<target name="create_cde_jar">
-		<delete file="${build.dir}/cde.jar" failonerror="false"/>
-		<tstamp />
-		<jar taskname="build_jar" jarfile="${build.dir}/cde.jar">
-			<fileset dir="${target.dir}">
-				<include name="edu/wustl/common/cde/*" />
-				<include name="edu/wustl/common/cde/xml/*" />
-				<include name="edu/wustl/common/cde/xml/impl/*" />
-				<include name="edu/wustl/common/cde/xml/impl/runtime/*" />
-			</fileset>
-			<manifest>
-				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
-			</manifest>
-		</jar>
-	</target>
+
 	<target name="build_exception_jar" depends="compile">		
 			<tstamp />
 			<jar taskname="build_jar" jarfile="${build.dir}/commonpkgexcepion.jar">
@@ -354,5 +338,45 @@
 			</jar>
 		</target>
 		<!-- Create the Applet JAR Ends-->
+
+		<target name="databasSetup">			
+			<if>
+				<equals arg1="mysql" arg2="${database.type}"/>
+				<then>
+					<antcall target="databasSetup_mysql"/>
+				</then>
+				<elseif>
+					<equals arg1="oracle" arg2="${database.type}"/>
+					<then>
+						<antcall target="databasSetup_oracle"/>
+					</then>
+				</elseif>				
+			</if>		
+		</target>
+	
+		<target name="databasSetup_mysql">
+			<echo message="Database set up for mysql..."/>
+			<sql driver="${mysql.driver.string}" url="jdbc:mysql://${database.host}:${database.port}/${database.name}" userid="${database.username}" password="${database.password}" >
+				<transaction src="${base.dir}/SQL/MySQL/createUser.sql" />
+				<transaction>commit;</transaction>
+				<classpath>
+					<fileset dir="${lib.dir}">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+			</sql>
+		</target>
+
+		<target name="databasSetup_oracle">			
+			<sql driver="${oracle.driver.string}" url="jdbc:oracle:thin:@${database.host}:${database.port}:${database.name}" userid="${database.username}" password="${database.password}" rdbms="oracle">
+				<transaction src="${base.dir}/SQL/Oracle/createUser.sql" />
+				<transaction>commit;</transaction>
+				<classpath>
+					<fileset dir="${lib.dir}">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+			</sql>
+		</target>
 	
 </project>

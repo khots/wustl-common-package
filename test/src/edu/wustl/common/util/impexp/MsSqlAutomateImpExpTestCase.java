@@ -33,7 +33,7 @@ public class MsSqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 			ARGS[5]=HibernateProperties.getValue("mssql.db.password");
 			ARGS[6]=HibernateProperties.getValue("mssql.db.driver");
 	}
-	public void testMsSqlAutomateImport()
+	private void testMsSqlAutomateImport()
 	{
 		ARGS[7]="import";
 		ARGS[8]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt";
@@ -50,7 +50,7 @@ public class MsSqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
+	private void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
 	{
 		DatabaseUtility dbUtility= new DatabaseUtility();
 		dbUtility.setDbParams(ARGS);
@@ -68,9 +68,19 @@ public class MsSqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void executeQuery(Connection conn,String query) throws SQLException
+	private void executeQuery(Connection conn,String query) throws SQLException
 	{
 		Statement statement=conn.createStatement();
 		statement.execute(query);
+	}
+
+	public void testImport()
+	{
+		testMsSqlAutomateImport();
+	}
+	
+	public void testExport()
+	{
+		// this has not been implemented.
 	}
 }

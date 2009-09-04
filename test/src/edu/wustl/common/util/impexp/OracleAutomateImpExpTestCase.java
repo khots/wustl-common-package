@@ -19,17 +19,17 @@ public class OracleAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 	private static final String []ARGS= new String[12];
 	static
 	{
-			ARGS[0]=HibernateProperties.getValue("oracle.db.host");
-			ARGS[1]=HibernateProperties.getValue("oracle.db.port");
-			ARGS[2]="oracle";
-			ARGS[3]=HibernateProperties.getValue("oracle.db.name");
-			ARGS[4]=HibernateProperties.getValue("oracle.db.username");
-			ARGS[5]=HibernateProperties.getValue("oracle.db.password");
-			ARGS[6]=HibernateProperties.getValue("oracle.db.driver");
-			ARGS[11]=HibernateProperties.getValue("oracle.db.tnsname");
+		ARGS[0]=HibernateProperties.getValue("database.host");
+		ARGS[1]=HibernateProperties.getValue("database.port");
+		ARGS[2]=HibernateProperties.getValue("database.type");
+		ARGS[3]=HibernateProperties.getValue("database.name");
+		ARGS[4]=HibernateProperties.getValue("database.username");
+		ARGS[5]=HibernateProperties.getValue("database.password");
+		ARGS[6]=HibernateProperties.getValue("database.driver");
+		ARGS[11]=HibernateProperties.getValue("oracle.tns.name");
 	}
 
-	public void testOracleAutomateImport()
+	private void testOracleAutomateImport()
 	{
 		ARGS[7]="import";
 		ARGS[8]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt";
@@ -47,7 +47,7 @@ public class OracleAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void testOracleAutomateExport()
+	private void testOracleAutomateExport()
 	{
 		try
 		{
@@ -65,7 +65,7 @@ public class OracleAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
+	private void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
 	{
 		DatabaseUtility dbUtility= new DatabaseUtility();
 		dbUtility.setDbParams(ARGS);
@@ -100,5 +100,15 @@ public class OracleAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 			getStatement().addBatch(query.toString());
 			query.setLength(0);
 		}
+	}
+	
+	public void testImport()
+	{
+		testOracleAutomateImport();
+	}
+	
+	public void testExport()
+	{
+		testOracleAutomateExport();
 	}
 }

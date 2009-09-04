@@ -23,15 +23,15 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 	private static final String []ARGS= new String[10];
 	static
 	{
-			ARGS[0]=HibernateProperties.getValue("mysql.db.host");
-			ARGS[1]=HibernateProperties.getValue("mysql.db.port");
-			ARGS[2]="mysql";
-			ARGS[3]=HibernateProperties.getValue("mysql.db.name");
-			ARGS[4]=HibernateProperties.getValue("mysql.db.username");
-			ARGS[5]=HibernateProperties.getValue("mysql.db.password");
-			ARGS[6]=HibernateProperties.getValue("mysql.db.driver");
+			ARGS[0]=HibernateProperties.getValue("database.host");
+			ARGS[1]=HibernateProperties.getValue("database.port");
+			ARGS[2]=HibernateProperties.getValue("database.type");
+			ARGS[3]=HibernateProperties.getValue("database.name");
+			ARGS[4]=HibernateProperties.getValue("database.username");
+			ARGS[5]=HibernateProperties.getValue("database.password");
+			ARGS[6]=HibernateProperties.getValue("database.driver");
 	}
-	public void testMySqlAutomateImport()
+	private void testMySqlAutomateImport()
 	{
 		ARGS[7]="import";
 		ARGS[8]=System.getProperty("user.dir")+"/SQL/Common/test/Permissible_values/dumpFileColumnInfo.txt";
@@ -48,7 +48,7 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void testMySqlAutomateExport()
+	private void testMySqlAutomateExport()
 	{
 
 		try
@@ -66,7 +66,7 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		}
 	}
 
-	public void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
+	private void preImport() throws IOException, SQLException, ClassNotFoundException, ApplicationException
 	{
 		DatabaseUtility dbUtility= new DatabaseUtility();
 		dbUtility.setDbParams(ARGS);
@@ -80,5 +80,15 @@ public class MySqlAutomateImpExpTestCase extends CommonAutomateImpExpTestCase
 		{
 			getConnection().close();
 		}
+	}
+	
+	public void testImport()
+	{
+		testMySqlAutomateImport();
+	}
+	
+	public void testExport()
+	{
+		testMySqlAutomateExport();
 	}
 }
