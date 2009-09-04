@@ -11,7 +11,7 @@ import java.sql.Statement;
 import edu.wustl.common.CommonBaseTestCase;
 
 
-public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
+public abstract class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 {
 	public final static char QUERY_ENDS = ';';
 
@@ -121,5 +121,15 @@ public class CommonAutomateImpExpTestCase extends CommonBaseTestCase
 	{
 		this.statement = statement;
 	}
+	
+	/**
+	 * Method to test Automate Import.
+	 */
+	public abstract void testImport();
+	
+	/**
+	 * Method to test Automate Export.
+	 */
+	public abstract void testExport();	
 	
 }

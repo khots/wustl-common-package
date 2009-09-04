@@ -6,6 +6,7 @@ package edu.wustl.common;
  */
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import edu.wustl.common.audit.AuditManagerTestCase;
 import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
@@ -16,7 +17,6 @@ import edu.wustl.common.util.ExportReportTestCase;
 import edu.wustl.common.util.UtilityTestCases;
 import edu.wustl.common.util.XMLPropertyHandlerTestCase;
 import edu.wustl.common.util.global.ApplicationPropertiesTestCase;
-import edu.wustl.common.util.global.CommonFileReaderTestCase;
 import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
 import edu.wustl.common.util.global.HibernatePropertiesTestCase;
 import edu.wustl.common.util.global.PasswordEncrypterTestCase;
@@ -25,16 +25,14 @@ import edu.wustl.common.util.global.SendEmailTestCase;
 import edu.wustl.common.util.global.StatusTestCase;
 import edu.wustl.common.util.global.ValidatorTestCase;
 import edu.wustl.common.util.global.XMLParserUtilityTestCase;
-import edu.wustl.common.util.impexp.MsSqlAutomateImpExpTestCase;
-import edu.wustl.common.util.impexp.MySqlAutomateImpExpTestCase;
-import edu.wustl.common.util.impexp.OracleAutomateImpExpTestCase;
+import edu.wustl.common.util.impexp.AutomateImportTest;
 
 
 /**
  * @author ravi kumar
  * Test Suite for testing all Common package test classes.
  */
-public class TestAll
+public class TestAll extends TestCase
 {
 	/**
 	 * Main method called by junit target in build.xml.
@@ -42,7 +40,7 @@ public class TestAll
 	 */
 	public static void main(String[] args)
 	{
-		junit.swingui.TestRunner.run(TestAll.class);
+		junit.textui.TestRunner.run(TestAll.class);
 	}
 	/**
 	 *
@@ -60,12 +58,9 @@ public class TestAll
 		suite.addTestSuite(CommonServiceLocatorTestCase.class);
 		suite.addTestSuite(AuditManagerTestCase.class);
 		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
-		suite.addTestSuite(MySqlAutomateImpExpTestCase.class);
-		suite.addTestSuite(MsSqlAutomateImpExpTestCase.class);
-		suite.addTestSuite(OracleAutomateImpExpTestCase.class);
+		suite.addTestSuite(AutomateImportTest.class);
 		suite.addTestSuite(ExportReportTestCase.class);
 		suite.addTestSuite(ApplicationPropertiesTestCase.class);
-		suite.addTestSuite(CommonFileReaderTestCase.class);
 		suite.addTestSuite(SendEmailTestCase.class);
 		suite.addTestSuite(HibernatePropertiesTestCase.class);
 		suite.addTestSuite(XMLParserUtilityTestCase.class);

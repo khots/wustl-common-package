@@ -14,13 +14,13 @@ public class PasswordEncrypterTestCase extends CommonBaseTestCase
 	public void testMainForPasswordEncryption()
 	{
 		String []args={
-				HibernateProperties.getValue("mysql.db.host"),
-				HibernateProperties.getValue("mysql.db.port"),
-				"mysql",		//databse type
-				HibernateProperties.getValue("mysql.db.name"),
-				HibernateProperties.getValue("mysql.db.username"),
-				HibernateProperties.getValue("mysql.db.password"),
-				HibernateProperties.getValue("mysql.db.driver"),
+				HibernateProperties.getValue("database.host"),
+				HibernateProperties.getValue("database.port"),
+				HibernateProperties.getValue("database.type"),
+				HibernateProperties.getValue("database.name"),
+				HibernateProperties.getValue("database.username"),
+				HibernateProperties.getValue("database.password"),
+				HibernateProperties.getValue("database.driver"),
 				"catissue_password", //table name
 				"password"	//field
 		};
