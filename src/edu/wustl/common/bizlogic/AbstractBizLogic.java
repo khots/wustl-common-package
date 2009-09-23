@@ -765,7 +765,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		try
 		{
-			dao.rollback();
+			if(dao != null)
+			{
+				dao.rollback();
+			}
 		}
 		catch (DAOException daoEx)
 		{
@@ -781,7 +784,10 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		try
 		{
-			dao.closeSession();
+			if(dao != null)
+			{
+				dao.closeSession();
+			}
 		}
 		catch (DAOException exception)
 		{
