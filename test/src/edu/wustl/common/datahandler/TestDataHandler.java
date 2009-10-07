@@ -5,10 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.util.global.Constants;
-
+/**
+ * This is TestDataHandler class.
+ * @author
+ *
+ */
 public class TestDataHandler
 {
-
+	/**
+	 * This is the main method.
+	 * @param args Arguments pass to the main.
+	 * @throws Exception throw Exception
+	 */
 	public static void main(String[] args) throws Exception
 	{
 		DataHandlerParameter parameter = new DataHandlerParameter();
@@ -32,7 +40,7 @@ public class TestDataHandler
 		handler.appendData(values);
 		handler.appendData(values);
 		handler.closeFile();
-		System.out.println("DONE.........");
+		//System.out.println("DONE.........");
 	}
 
 }
