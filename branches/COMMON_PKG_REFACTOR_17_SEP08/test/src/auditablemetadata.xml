@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<AuditableMetaData>
+
+	<AuditableClass className="edu.wustl.common.testdomain.Address"
+		relationShipType="main" roleName="">
+		<attribute name="identifier" dataType="Long" />
+		<attribute name="street" dataType="String" />
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.common.testdomain.Person"
+		relationShipType="main" roleName="">
+		<attribute name="identifier" dataType="Long" />
+		<attribute name="name" dataType="String" />
+		<attribute name="address" dataType="edu.wustl.common.testdomain.Address"/>
+		<referenceAssociationCollection
+			className="edu.wustl.common.testdomain.Order" relationShipType="association"
+			roleName="orderCollection">
+		</referenceAssociationCollection>
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.common.testdomain.Order"
+		relationShipType="main" roleName="">
+		<attribute name="identifier" dataType="Long" />
+		<attribute name="person" dataType="edu.wustl.common.testdomain.Person" />
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.common.testdomain.User"
+		relationShipType="main" roleName="">
+		<attribute name="identifier" dataType="Long" />
+		<attribute name="lastName" dataType="String" />
+		<attribute name="firstName" dataType="String" />
+		<attribute name="emailAddress" dataType="String" />
+		<attribute name="activityStatus" dataType="String" />
+		<referenceAssociationCollection
+			className="edu.wustl.common.testdomain.UserRole" relationShipType="association"
+			roleName="roleCollection" >
+		</referenceAssociationCollection>
+		
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.common.testdomain.UserRole"
+		relationShipType="main" roleName="" >
+		<attribute name="identifier" dataType="Long" />
+		<attribute name="user" dataType="edu.wustl.common.testdomain.User" />
+	</AuditableClass>
+	
+</AuditableMetaData>
