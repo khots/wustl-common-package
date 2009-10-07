@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.Date;
 
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.domain.AbstractAuditEventLog;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
-import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.domain.DataAuditEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
@@ -26,8 +27,13 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 	 * Generic Logger.
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(AuditManagerTestCase.class);
-	private static final String IP_ADDR="127.0.0.1";
-	
+	/**
+	 * IP Address constant.
+	 */
+	private static final String IP_ADDR="127.0.0.1"; // NOPMD
+	/**
+	 *
+	 */
 	public void testCompare()
 	{
 		Auditable auditable1=new AuditableImpl(Long.valueOf(1));
@@ -46,7 +52,9 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 			logger.debug("Not able to compare.", exception);
 		}
 	}
-
+	/**
+	 *
+	 */
 	public void testCompareWithPrevIdValueNull()
 	{
 		Auditable currentObj=new AuditableImpl(Long.valueOf(1));
@@ -66,7 +74,9 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 			logger.debug("Not able to compare.", exception);
 		}
 	}
-	
+	/**
+	 *
+	 */
 	public void testCompareWithCurrentIdValueNull()
 	{
 		Auditable currentObj=new AuditableImpl(Long.valueOf(1));
@@ -86,6 +96,9 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 			logger.debug("Not able to compare.", exception);
 		}
 	}
+	/**
+	 *
+	 */
 	public void testCompareWithCurrentValueNull()
 	{
 		Auditable previousObj=new AuditableImpl(Long.valueOf(2));
@@ -103,13 +116,15 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 			logger.debug("Not able to compare.", exception);
 		}
 	}
-
+	/**
+	 *
+	 */
 	public void testInsert()
 	{
 		MyDAOImpl.isTestForFail=false;
 		AuditManager auditManager= new AuditManager();
 		auditManager.setIpAddress(IP_ADDR);
-		auditManager.setUserId(Long.valueOf(100));		
+		auditManager.setUserId(Long.valueOf(100));
 		try
 		{
 			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
@@ -124,12 +139,16 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 			logger.debug("Fail to insert Event in database.", exception);
 		}
 	}
-
-	Collection<AuditEventLog> getAuditEventLogCollection()
+	/**
+	 *
+	 * @return Collection
+	 */
+	Collection<AbstractAuditEventLog> getAuditEventLogCollection()
 	{
 
 		AuditEvent auditEvent=getAuditEvent(1);
-		AuditEventLog auditEventLog=getAuditEventLog(1);
+		auditEvent.setEventType("eventType") ;
+		DataAuditEventLog auditEventLog=getAuditEventLog(1);
 		AuditEventDetails auditEventDetails=getAuditEventDetails(1);
 
 		auditEventLog.setAuditEvent(auditEvent);
@@ -138,22 +157,31 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 		Collection<AuditEventDetails> auditEventDetailsColl= new ArrayList<AuditEventDetails>();
 		auditEventDetailsColl.add(auditEventDetails);
 
-		Collection<AuditEventLog> auditEventLogColl= new ArrayList<AuditEventLog>();
+		Collection<AbstractAuditEventLog> auditEventLogColl= new ArrayList<AbstractAuditEventLog>();
 		auditEventLogColl.add(auditEventLog);
 
 		auditEvent.setAuditEventLogCollection(auditEventLogColl);
 		return auditEventLogColl;
 	}
-	private AuditEventLog getAuditEventLog(int auditEventLogId)
+	/**
+	 *
+	 * @param auditEventLogId AuditEvent Id
+	 * @return AuditEvent Log
+	 */
+	private DataAuditEventLog getAuditEventLog(int auditEventLogId)
 	{
-		AuditEventLog auditEventLog= new AuditEventLog();
-		auditEventLog.setEventType("eventType");
+		DataAuditEventLog auditEventLog= new DataAuditEventLog();
+		//auditEventLog.setEventType("eventType");
 		auditEventLog.setObjectIdentifier(Long.valueOf(auditEventLogId));
 		auditEventLog.setId(Long.valueOf(auditEventLogId));
 		auditEventLog.setObjectName("objectName");
 		return auditEventLog;
 	}
-
+	/**
+	 *
+	 * @param AuditEventDetailsId AuditEventDetails Id
+	 * @return AuditEventDetails object.
+	 */
 	private AuditEventDetails getAuditEventDetails(int AuditEventDetailsId)
 	{
 		AuditEventDetails auditEventDetails= new AuditEventDetails();
@@ -163,6 +191,11 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 		auditEventDetails.setPreviousValue("previousValue");
 		return auditEventDetails;
 	}
+	/**
+	 *
+	 * @param auditEventId AuditEvent Id
+	 * @return AuditEvent object.
+	 */
 	private AuditEvent getAuditEvent(int auditEventId)
 	{
 		AuditEvent auditEvent= new AuditEvent();
