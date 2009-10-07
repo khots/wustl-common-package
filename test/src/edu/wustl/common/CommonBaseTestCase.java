@@ -1,16 +1,13 @@
 package edu.wustl.common;
 
-import org.hibernate.cfg.Configuration;
-
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.test.BaseTestCase;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.HibernateProperties;
 import edu.wustl.common.util.logger.LoggerConfig;
-import edu.wustl.dao.util.HibernateMetaData;
 /**
  * This is common test class.
- * All test classes in common package should extends this class.  
+ * All test classes in common package should extends this class.
  * @author ravi_kumar
  *
  */
@@ -18,13 +15,15 @@ public class CommonBaseTestCase extends BaseTestCase
 {
 	static
 	{
-		System.setProperty("app.propertiesFile",System.getProperty("user.dir")+"/caTissueCore_Properties.xml");
+		System.setProperty("app.propertiesFile",
+				System.getProperty("user.dir")+"/caTissueCore_Properties.xml");
 		LoggerConfig.configureLogger(System.getProperty("user.dir"));
 		try
 		{
-			HibernateProperties.initBundle(System.getProperty("user.dir")+"/test/junitConf.properties");
+			HibernateProperties.initBundle
+			(System.getProperty("user.dir")+"/test/junitConf.properties");
 			XMLPropertyHandler.init(System.getProperty("app.propertiesFile"));
-			setHibernateConfiguration();
+			//setHibernateConfiguration();
 			ErrorKey.init("~");
 		}
 		catch (Exception e)
@@ -32,22 +31,29 @@ public class CommonBaseTestCase extends BaseTestCase
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * Constructor.
+	 */
 	public CommonBaseTestCase()
 	{
 		super();
 	}
-
+	/**
+	 * Parameterized constructor.
+	 * @param name name.
+	 */
 	public CommonBaseTestCase(String name)
 	{
 		super(name);
 	}
-
+	/**
+	 *
+	 */
 	protected void setUp()
 	{
-		
+		//empty method.
 	}
-	
-	private static void setHibernateConfiguration()
+	/*private static void setHibernateConfiguration()
 	{
 		Configuration config = new Configuration().
         setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
@@ -63,6 +69,5 @@ public class CommonBaseTestCase extends BaseTestCase
         addClass(edu.wustl.common.domain.MyDomainObject.class).
 		addClass(edu.wustl.common.audit.AuditableImpl.class);
     	HibernateMetaData.initHibernateMetaData(config);
-		
-	}
+	}*/
 }
