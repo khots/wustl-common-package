@@ -10,7 +10,7 @@ import edu.wustl.dao.exception.DAOException;
 
 
 /**
- * Mock test class for test cases of methods in Bizlogic. 
+ * Mock test class for test cases of methods in Bizlogic.
  * @author ravi_kumar
  *
  */
@@ -36,8 +36,19 @@ public class MyDefaultBizLogic extends DefaultBizLogic
 			throw getBizLogicException(exception, "biz.popdomain.error", "");
 		}
 	}
-	
-	protected void setPrivilege(DAO dao, String privilegeName, Class objectType,
+	/**
+	 * This method sets the privilege.
+	 * @param dao DAO object.
+	 * @param privilegeName Privilege to set.
+	 * @param objectType Object Type.
+	 * @param objectIds Object Id.
+	 * @param userId User Id.
+	 * @param roleId Role Id.
+	 * @param assignToUser Whether to assign to user or not.
+	 * @param assignOperation Whether to assign operation
+	 * @throws BizLogicException throw BizLogicException
+	 */
+	protected void setPrivilege(DAO dao, String privilegeName, Class objectType, // NOPMD
 			Long[] objectIds, Long userId, String roleId, boolean assignToUser,
 			boolean assignOperation) throws BizLogicException
 	{
