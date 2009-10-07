@@ -1,7 +1,14 @@
 package edu.wustl.common.datahandler;
 
-
-public enum HandlerTypeEnum 
+/**
+ *
+ * @author
+ *
+ */
+public enum HandlerTypeEnum
 {
+	/**
+	 *
+	 */
 	TEXT, CSV
 };

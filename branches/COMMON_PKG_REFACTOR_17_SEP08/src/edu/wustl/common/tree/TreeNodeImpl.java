@@ -18,43 +18,43 @@ import java.util.Vector;
  */
 public class TreeNodeImpl implements Serializable, TreeNode
 {
-
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * identifier for the node.
 	 */
-	Long identifier;
-
+	private Long identifier;
 	/**
 	 * Name of the node.
 	 */
-	String value;
-
+	private String value;
 	/**
 	 * Parent node of this node.
 	 */
-	TreeNode parentNode;
-
+	private TreeNode parentNode;
 	/**
 	 * List of child nodes.
 	 */
-	Vector childNodes = new Vector();
-
+	private  Vector childNodes = new Vector();
 	/**
 	 * Default Constructor.
 	 */
 	public TreeNodeImpl()
 	{
+		// Empty Constructor TreeNodeImpl.
 	}
-
 	/**
 	 * Default Constructor.
+	 * @param identifier Long object
+	 * @param value String value
 	 */
 	public TreeNodeImpl(Long identifier, String value)
 	{
 		this.identifier = identifier;
 		this.value = value;
 	}
-
 	/**
 	 * @return Returns the identifier.
 	 */
@@ -62,7 +62,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		return identifier;
 	}
-
 	/**
 	 * @param identifier The identifier to set.
 	 */
@@ -70,7 +69,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		this.identifier = identifier;
 	}
-
 	/**
 	 * @return Returns the value.
 	 */
@@ -78,7 +76,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		return value;
 	}
-
 	/**
 	 * @param value The value to set.
 	 */
@@ -86,7 +83,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		this.value = value;
 	}
-
 	/**
 	 * @return Returns the parentNode.
 	 */
@@ -94,7 +90,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		return parentNode;
 	}
-
 	/**
 	 * @param parentNode The parentNode to set.
 	 */
@@ -102,7 +97,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		this.parentNode = parentNode;
 	}
-
 	/**
 	 * @return Returns the childNodes.
 	 */
@@ -110,7 +104,6 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		return childNodes;
 	}
-
 	/**
 	 * @param childNodes The childNodes to set.
 	 */
@@ -118,7 +111,10 @@ public class TreeNodeImpl implements Serializable, TreeNode
 	{
 		this.childNodes = childNodes;
 	}
-
+	/**
+	 * @param obj Object
+	 * @return boolean result.
+	 */
 	public boolean equals(Object obj)
 	{
 		boolean flag = false;
@@ -130,40 +126,39 @@ public class TreeNodeImpl implements Serializable, TreeNode
 				flag = true;
 			}
 		}
-
 		return flag;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * @return integer hash code.
 	 */
 	public int hashCode()
 	{
 		int i = 0;
 		if (getIdentifier() != null)
+		{
 			i += getIdentifier().hashCode();
+		}
 		return i;
 	}
-
 	/**
-	 * To display Tooltip for the Tree node. By default it will return value, override this method if need different tool tip.
-	 * @return The tooltip to display 
+	 * To display Tooltip for the Tree node. By default it will return value,
+	 * override this method if need different tool tip.
+	 * @return The tooltip to display
 	 */
-	String getToolTip()
+	public String getToolTip()
 	{
 		return this.value;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * @return String value.
 	 */
 	public String toString()
 	{
+		String str = this.value ;
 		if (this.identifier.longValue() != 0)
 		{
-			return this.value + " : " + this.identifier;
+			str =  this.value + " : " + this.identifier;
 		}
-
-		return this.value;
+		return str ;
 	}
 }

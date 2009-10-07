@@ -27,9 +27,8 @@ import edu.wustl.common.util.logger.Logger;
  * @author Kapil Kaveeshwar
  *
  */
-public class MapDataParser
+public class MapDataParser // NOPMD
 {
-
 	/**
 	 * LOGGER Logger - generic LOGGER.
 	 */
@@ -46,7 +45,6 @@ public class MapDataParser
 	 * dataList Collection list of data.
 	 */
 	private Collection dataList;
-
 	/**
 	 * Create a map and linked hash set.
 	 * @param packageName String name of package.
@@ -57,7 +55,6 @@ public class MapDataParser
 		bigMap = new HashMap();
 		dataList = new LinkedHashSet();
 	}
-
 	/**
 	 * Create map of specimen data.
 	 * @return map containing specimen data.
@@ -73,7 +70,6 @@ public class MapDataParser
 		map.put("DistributedItem:2_Specimen_className", "Molecular");
 		return map;
 	}
-
 	/**
 	 * Determine the type of object from the class name and type passed as parameters.
 	 * @param str String specify object.
@@ -93,14 +89,12 @@ public class MapDataParser
 		}
 		else
 		{
-			
 			String dataType = type.getSimpleName().toLowerCase();
 			IDBDataType dbDataType = DataTypeConfigFactory.getInstance().getDataType(dataType);
 			object=dbDataType.getObjectValue(str);
 		}
 		return object;
 	}
-
 	/**
 	 * Create array containing methods details of the class passed as parameters.
 	 * @param objClass Class class for object.
@@ -122,7 +116,6 @@ public class MapDataParser
 		}
 		return methdName;
 	}
-
 	/**
 	 * Get the methods of the class by parsing the string.
 	 * @param parentObj Object parent object.
@@ -161,7 +154,6 @@ public class MapDataParser
 			}
 		}
 	}
-
 	/**
 	 * This method gets the instance of the class.
 	 * @param parentObj Object parent object.
@@ -170,7 +162,7 @@ public class MapDataParser
 	 * @return Object object of class.
 	 * @throws Exception generic exception.
 	 */
-	private Object parseClassAndGetInstance(Object parentObj, String str, String mapKey)
+	private Object parseClassAndGetInstance(Object parentObj, String str, String mapKey) // NOPMD
 			throws Exception
 	{
 		StringTokenizer innerST = new StringTokenizer(str, ":");
@@ -223,7 +215,6 @@ public class MapDataParser
 		}
 		return obj;
 	}
-
 	/**
 	 * Get the qualified class name and create instance of it.
 	 * @param coll Collection collection of objects.
@@ -247,7 +238,6 @@ public class MapDataParser
 		}
 		return obj;
 	}
-
 	/**
 	 * @param parentObj Object parent object.
 	 * @param str String collection string.
@@ -259,7 +249,6 @@ public class MapDataParser
 		String attrName = str + "Collection";
 		return (Collection) Utility.getValueFor(parentObj, attrName);
 	}
-
 	/**
 	 * @param map Map map of generated data.
 	 * @param isOrdered boolean check for ordered.
@@ -274,7 +263,6 @@ public class MapDataParser
 		}
 		return generateData(map);
 	}
-
 	/**
 	 * @param map Map generated map.
 	 * @return collection containing data.
@@ -293,7 +281,6 @@ public class MapDataParser
 		}
 		return dataList;
 	}
-
 	/**
 	 * This method get the row no.
 	 * @param key String key to get row no.
@@ -305,7 +292,6 @@ public class MapDataParser
 		int end = key.indexOf('_');
 		return Integer.parseInt(key.substring(start + 1, end));
 	}
-
 	/**
 	 * display information about the collection of data.
 	 * @param args String[] arguments.
@@ -319,7 +305,6 @@ public class MapDataParser
 		Collection dataCollection = aMapDataParser.generateData(map);
 		LOGGER.info(dataCollection);
 	}
-
 	/**
 	 * @param list List list of row
 	 * @param map Map mapped the form details.
@@ -329,7 +314,6 @@ public class MapDataParser
 	{
 		deleteRow(list, map, status, null);
 	}
-
 	/**
 	 * This method delete the data on clicking of delete button.
 	 * @param list List list of row.
@@ -337,7 +321,7 @@ public class MapDataParser
 	 * @param status String status of execution.
 	 * @param outer String
 	 */
-	public static void deleteRow(List<String> list, Map map, String status, String outer)
+	public static void deleteRow(List<String> list, Map map, String status, String outer) // NOPMD
 	{
 
 		//whether delete button is clicked or not
@@ -392,9 +376,10 @@ public class MapDataParser
 							for (int j = 1; j <= values.size(); j++)
 							{
 								id = first + ":" + i + third + ":" + j + fourth;
-								mapId = first + ":" + outerCount + third + ":" + j + fourth;
-
-								//checking whether map from form contains keys or not
+								mapId = first + ":" + outerCount + third + ":"
+								+ j + fourth;
+								//checking whether map from
+								//form contains keys or not
 								if (values.containsKey(id))
 								{
 									values.put(mapId, map.get(id));
@@ -405,7 +390,8 @@ public class MapDataParser
 						else
 						{
 							id = first + ":" + outer + third + ":" + i + fourth;
-							mapId = first + ":" + outer + third + ":" + innerCount + fourth;
+							mapId = first + ":" + outer + third
+							+ ":" + innerCount + fourth;
 						}
 					}
 					else

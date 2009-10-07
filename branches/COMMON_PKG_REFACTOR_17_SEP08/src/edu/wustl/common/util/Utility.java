@@ -40,8 +40,10 @@ import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * @author kapil_kaveeshwar
@@ -49,15 +51,13 @@ import edu.wustl.dao.util.HibernateMetaData;
  */
 public final class Utility extends CommonUtilities
 {
-
 	/**
 	 * private constructor.
 	 */
 	private Utility()
 	{
-
+		super() ;
 	}
-
 	/**
 	 * Constant for TWO.
 	 */
@@ -66,10 +66,6 @@ public final class Utility extends CommonUtilities
 	 * LOGGER -Generic Logger.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(Utility.class);
-
-	
-
-	
 	/**
 	 * Changes the format of the string compatible to Grid Format,
 	 * removing escape characters and special characters from the string.
@@ -93,7 +89,6 @@ public final class Utility extends CommonUtilities
 
 		return retObj;
 	}
-
 	/**
 	 * checking whether key's value is persisted or not.
 	 * @param map map.
@@ -116,7 +111,6 @@ public final class Utility extends CommonUtilities
 		}
 		return isPersistedValue;
 	}
-
 	/**
 	 * This method is used in JSP pages to get the width of columns for the html fields.
 	 * It acts as a wrapper for the HibernateMetaData getColumnWidth() method.
@@ -127,10 +121,11 @@ public final class Utility extends CommonUtilities
 	 */
 	public static String getColumnWidth(Class className, String attributeName)
 	{
-		return Integer.toString((HibernateMetaData.getColumnWidth(className, attributeName)));
-
+		DAOFactory daoFactory = new DAOFactory() ;
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+					.getHibernateMetaData(daoFactory.getApplicationName()) ;
+		return Integer.toString((hibernateMetaData.getColumnWidth(className, attributeName)));
 	}
-
 	/**
 	 * To sort the Tree nodes based on the comparators overidden by the TreeNodeImpl object.
 	 * @param nodes reference to the Vector containing object of class implementing TreeNodeImpl class.
@@ -144,7 +139,6 @@ public final class Utility extends CommonUtilities
 			sortTreeVector(child.getChildNodes());
 		}
 	}
-
 	/**
 	 * Remove special characters and white space from a string.
 	 * @param str string.
@@ -155,7 +149,6 @@ public final class Utility extends CommonUtilities
 		String regexExpression = "[\\p{Punct}\\s]";
 		return str.replaceAll(regexExpression, "");
 	}
-
 	/**
 	 * Returns the label for objects name. It compares ascii value of each char for lower or upper case and
 	 * then forms a capitalized label.
@@ -185,7 +178,6 @@ public final class Utility extends CommonUtilities
 		formatedStr.append(initCap(tempStr));
 		return formatedStr.toString();
 	}
-
 	/**
 	 * This method gets time.
 	 * @param date Date.
@@ -200,13 +192,11 @@ public final class Utility extends CommonUtilities
 		time[1] = Integer.toString(cal.get(Calendar.MINUTE));
 		return time;
 	}
-
 	/**
 	 * For MSR changes.
 	 * @throws edu.wustl.common.exception.ParseException throws this exception if
 	 * specified xml file not found or not able to parse the file.
 	 */
-
 	public static void initializePrivilegesMap() throws edu.wustl.common.exception.ParseException
 	{
 		Map<String, String> privDetMap = Variables.privilegeDetailsMap;
@@ -253,7 +243,6 @@ public final class Utility extends CommonUtilities
 			privGroupMap.put("GLOBAL", getPriviligesList(root, "globalMapping"));
 		}
 	}
-
 	/**
 	 * returns Privilege List.
 	 * @param root root Element.
@@ -274,7 +263,6 @@ public final class Utility extends CommonUtilities
 		}
 		return sitePrivList;
 	}
-
 	/**
 	 * For MSR changes.
 	 * @return All Privileges.
@@ -294,7 +282,6 @@ public final class Utility extends CommonUtilities
 		allPrivileges.addAll(list4);
 		return allPrivileges;
 	}
-
 	/**
 	 * This method returns records per page from session.
 	 * @param session HttpSession
@@ -316,9 +303,6 @@ public final class Utility extends CommonUtilities
 		}
 		return recordsPerPage;
 	}
-
-	
-
 	/**
 	 * return the  actual class name.
 	 * @param name String
@@ -338,12 +322,11 @@ public final class Utility extends CommonUtilities
 		}
 		return className;
 	}
-	
-	 /**
-	 * @param tableName :
-	 * @param jdbcDAO :
-	 * @return :
-     * @throws DAOException :
+	/**
+	 * @param tableName : name of the table.
+	 * @param jdbcDAO : JDBCDAO object.
+	 * @return : String value
+	 * @throws DAOException : throw DAOException
 	 */
 	public static String getDisplayName(String tableName,JDBCDAO jdbcDAO) throws DAOException
 	{
@@ -365,8 +348,6 @@ public final class Utility extends CommonUtilities
 		}
 		return displayName;
 	}
-
-
 	/**
 	 * This method returns method object.
 	 * @param obj Object
@@ -381,9 +362,6 @@ public final class Utility extends CommonUtilities
 		return method.invoke(obj, new Object[0]);
 
 	}
-	
-	
-
 	/**
 	 * Generates error messages.
 	 * @param exep :
@@ -417,29 +395,27 @@ public final class Utility extends CommonUtilities
         }
 		  return messageToReturn;
 	}
-	
 	 /**
      * Constants that will appear in HQL for retreiving Attributes of the Collection data type.
      */
     private static final String ELEMENTS = "elements";
 	/**
-	 * Check whether the select Column start with "elements" & ends with ")" or not
+	 * Check whether the select Column start with "elements" & ends with ")" or not.
 	 * @param columnName The columnName
 	 * @return true if the select Column start with "elements" & ends with ")" or not
 	 */
-	public static boolean isColumnNameContainsElements(String columnName) 
+	public static boolean isColumnNameContainsElements(String columnName) // NOPMD
 	{
 		columnName = columnName.toLowerCase().trim();
 		return columnName.startsWith(ELEMENTS) && columnName.endsWith(")");
 	}
-
 	/**
 	 * Parse the exception object and find DB table name.
 	 * @param objExcp exception object.
 	 * @throws Exception Exception
 	 * @return table Name.
 	 */
-	public static String parseException(Exception objExcp) throws Exception
+	public static String parseException(Exception objExcp) throws Exception // NOPMD
 	{
 		LOGGER.debug(objExcp.getClass().getName());
 		String tableName = "";
@@ -448,19 +424,14 @@ public final class Utility extends CommonUtilities
 			objExcp = (Exception) objExcp.getCause();
 			LOGGER.debug(objExcp);
 		}
-		/*	if(args[0]!=null) {
-				tableName = (String)args[0];
-			} else {
-				logger.debug("Table Name not specified");
-				tableName=new String("Unknown Table");
-			}
+		/*	if(args[0]!=null) {	tableName = (String)args[0]; }
+		 *  else {logger.debug("Table Name not specified"); tableName=new String("Unknown Table"); }
 			logger.debug("Table Name:" + tableName);*/
 		//get Class name from message "could not insert [classname]"
 		ConstraintViolationException cEX = (ConstraintViolationException) objExcp;
 		String message = cEX.getMessage();
 		LOGGER.debug("message :" + message);
 		int startIndex = message.indexOf("[");
-
 		/**
 		 * Bug ID: 4926
 		 * Description:In case of Edit, get Class name from message "could not insert [classname #id]"
@@ -473,27 +444,28 @@ public final class Utility extends CommonUtilities
 		String className = message.substring((startIndex + 1), endIndex);
 		LOGGER.debug("ClassName: " + className);
 		Class classObj = Class.forName(className);
-		// get table name from class
-		tableName = HibernateMetaData.getRootTableName(classObj);
+		
+		DAOFactory daoFactory = new DAOFactory() ;
+		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+								.getHibernateMetaData(daoFactory.getApplicationName()) ;
+		tableName = hibernateMetaData.getRootTableName(classObj); // get table name from class
 		/**
 		 * Bug ID: 6034
 		 * Description:To retrive the appropriate tablename checking the SQL"
 		*/
 		if (!(cEX.getSQL().contains(tableName)))
 		{
-			tableName = HibernateMetaData.getTableName(classObj);
+			tableName = hibernateMetaData.getTableName(classObj);
 			Properties prop = new Properties();
 			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(
 					"tablemapping.properties"));
 			if (prop.getProperty(tableName) != null)
 			{
-				tableName = prop.getProperty(tableName);
+				tableName = prop.getProperty(tableName); // NOPMD
 			}
 		}
-
 		return tableName;
 	}
-
 	/**
 	 * Format and return message to display.
 	 * @param columnNames column Names
@@ -521,5 +493,4 @@ public final class Utility extends CommonUtilities
 
 		return formattedErrMsg;
 	}
-
 }

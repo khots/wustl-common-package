@@ -8,22 +8,18 @@ package edu.wustl.common.vo;
  */
 public class HTMLField
 {
-
 	/**
 	 * Name referred as property in field's attribute.
 	 */
 	private String name = "";
-
 	/**
 	 * Id of each field including label.
 	 */
 	private String id = "";
-
 	/**
 	 * Used for enabling & disabling field.
 	 */
 	private boolean isDisabled = false;
-
 	/**
 	 * Used for populating value in case of comboBox.
 	 */
@@ -38,7 +34,6 @@ public class HTMLField
 	{
 		this(name, id, dataListName, false);
 	}
-
 	/**
 	 * @param name Name of field of page
 	 * @param id Id associated with field
@@ -52,7 +47,6 @@ public class HTMLField
 		this.dataListName = dataListName;
 		this.isDisabled = isDisabled;
 	}
-
 	/**
 	 * For populating value in case of comboBox.
 	 * @return String
@@ -61,7 +55,6 @@ public class HTMLField
 	{
 		return dataListName;
 	}
-
 	/**
 	 * @param dataListName to set
 	 */
@@ -69,7 +62,6 @@ public class HTMLField
 	{
 		this.dataListName = dataListName;
 	}
-
 	/**
 	 * Id associated with field.
 	 * @return String
@@ -78,7 +70,6 @@ public class HTMLField
 	{
 		return id;
 	}
-
 	/**
 	 * @param id to set
 	 */
@@ -86,7 +77,6 @@ public class HTMLField
 	{
 		this.id = id;
 	}
-
 	/**
 	 * Used for enabling & disabling field.
 	 * @return boolean
@@ -95,7 +85,6 @@ public class HTMLField
 	{
 		return isDisabled;
 	}
-
 	/**
 	 * @param isDisabled to set
 	 */
@@ -103,7 +92,6 @@ public class HTMLField
 	{
 		this.isDisabled = isDisabled;
 	}
-
 	/**
 	 * Name of field of page.
 	 * @return String
@@ -112,7 +100,6 @@ public class HTMLField
 	{
 		return name;
 	}
-
 	/**
 	 * @param name to set
 	 */

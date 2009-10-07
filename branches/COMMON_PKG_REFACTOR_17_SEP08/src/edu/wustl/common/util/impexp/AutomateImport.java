@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.util.logger.Logger;
+
 import edu.wustl.common.util.logger.LoggerConfig;
 
 
@@ -23,7 +23,7 @@ public final class AutomateImport
 	{
 		LoggerConfig.configureLogger(System.getProperty("user.dir"));
 	}
-	private static Logger logger = Logger.getCommonLogger(AutomateImport.class);
+	//private static final Logger logger = Logger.getCommonLogger(AutomateImport.class);
 	/**
 	 * Private constructor for utility class.
 	 */
@@ -35,12 +35,10 @@ public final class AutomateImport
 	 * Minimum number of arguments required.
 	 */
 	private static final int MIN_NO_OF_ARGS=10;
-
 	/**
 	 * Index for CA model operation like import or export.
 	 */
 	private static final int  INDX_FOR_OPERATION=7;
-
 	/**
 	 *
 	 * @param args the arguments to be passed are:
@@ -75,7 +73,6 @@ public final class AutomateImport
 			impExpObj.executeExport(args);
 		}
 	}
-
 	/**
 	 * assigning database parameters.
 	 * @param args String[] of configuration info
@@ -101,4 +98,3 @@ public final class AutomateImport
 		dbUtility.setDbParams(args);
 	}
 }
-

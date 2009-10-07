@@ -4,7 +4,7 @@
 
 package edu.wustl.common.exceptionformatter;
 
-import java.sql.Connection;
+
 import java.sql.ResultSet;
 import java.util.HashMap;
 
@@ -17,94 +17,75 @@ import edu.wustl.dao.JDBCDAO;
  * @author kalpana_thakur
  *
  */
-public class MysqlExceptionFormatter implements IDBExceptionFormatter
+public class MysqlExceptionFormatter implements IDBExceptionFormatter // NOPMD
 {
-
 	/**
 	* LOGGER Logger - Generic LOGGER.
 	*/
 	private static final Logger logger = Logger.getCommonLogger(MysqlExceptionFormatter.class);
 	/**
-	 * Index name.
+	 * Index name Constant.
 	 */
 	private static final String INDEX_NAME = "INDEX_NAME";
-
 	/**
 	 * This will generate the formatted error messages.
 	 * @param objExp :Exception.
 	 * @param jdbcDAO : jdbcDAO.
 	 * @return the formated messages.
 	 */
-	public String getFormatedMessage(Exception objExp, JDBCDAO jdbcDAO)
+	public String getFormatedMessage(Exception objExp, JDBCDAO jdbcDAO) // NOPMD
 	{
 		String formattedErrMsg = null; // Formatted Error Message return by this method
-		Connection connection = null;
-
+		//Connection connection = null;
 		try
 		{
-			// Get table name from DB exception message.
-			String tableName = Utility.parseException(objExp);
-
+			String tableName = Utility.parseException(objExp); // Get table name from DB exceptn msg.
 			// Generate Error Message by appending all messages of previous cause Exceptions
 			String sqlMessage = Utility.generateErrorMessage(objExp);
-
 			// From the MySQL error msg and extract the key ID
 			// The unique key voilation message is "Duplicate entry %s for key %d"
-
 			int key = -1;
 			int indexofMsg = 0;
 			indexofMsg = sqlMessage.indexOf(Constants.MYSQL_DUPL_KEY_MSG);
 			indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
-
 			// Get the %d part of the string
 			String strKey = sqlMessage.substring(indexofMsg, sqlMessage.length() - 1);
 			key = Integer.parseInt(strKey);
 			logger.debug(String.valueOf(key));
-
-			// For the key extracted frm the string, get the column name on which the
-			// costraint has failed
+			// For the key extracted frm the string, get the column name on which costraint has failed
 			boolean found = false;
 			/*// get connection from arguments
-			if(args[1]!=null) {
-				connection =(Connection)args[1];
-			} else {
-				logger.debug("Error Message: Connection object not given");
-			}
-			// Get database metadata object for the connection
-			DatabaseMetaData dbmd = connection.getMetaData();*/
-
+			if(args[1]!=null) {	connection =(Connection)args[1];}
+			else {	logger.debug("Error Message: Connection object not given");	}
+			DatabaseMetaData dbmd = connection.getMetaData(); Get DB metadata object for connection*/
 			//  Get a description of the given table's indices and statistics
 			ResultSet rs = jdbcDAO.getDBMetaDataResultSet(tableName);
 			HashMap indexDetails = new HashMap();
 			int indexCount = 1;
 			String constraintVoilated = "";
-			while (rs.next())
-			{
-				// In this loop, all the indexes are stored as key of the HashMap
-				// and the column names are stored as value.
+			while (rs.next())	// In this loop, all the indexes are stored as key of the HashMap
+			{					// and the column names are stored as value.
 				logger.debug("Key: " + indexCount);
 				if (key == indexCount)
 				{
-					constraintVoilated = rs.getString("INDEX_NAME");
+					constraintVoilated = rs.getString(INDEX_NAME);
 					logger.debug("Constraint: " + constraintVoilated);
-					found = true; // column name for given key index found
-					//break;
+					found = true; // break;  column name for given key index found
 				}
-				StringBuffer temp = (StringBuffer) indexDetails.get(rs.getString("INDEX_NAME"));
+				StringBuffer temp = (StringBuffer) indexDetails.get(rs.getString(INDEX_NAME));
 				if (temp != null)
 				{
 					temp.append(rs.getString("COLUMN_NAME"));
 					temp.append(",");
-					indexDetails.remove(rs.getString("INDEX_NAME"));
-					indexDetails.put(rs.getString("INDEX_NAME"), temp);
+					indexDetails.remove(rs.getString(INDEX_NAME));
+					indexDetails.put(rs.getString(INDEX_NAME), temp);
 					logger.debug("Column :" + temp.toString());
 				}
 				else
 				{
 					temp = new StringBuffer(rs.getString("COLUMN_NAME"));
-					//temp.append(rs.getString("COLUMN_NAME"));
-					temp.append(",");
-					indexDetails.put(rs.getString("INDEX_NAME"), temp);
+					temp.append(","); 		//temp.append(rs.getString("COLUMN_NAME"));
+					indexDetails.put(rs.getString(INDEX_NAME), temp);
 				}
 				indexCount++; // increment record count*/
 			}
@@ -126,7 +107,6 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 		}
 		return formattedErrMsg;
 	}
-
 	/**
 	 *For the key extracted from the string, get the column name on which the
 	  constraint has failed.It get a description of the given table's indices and statistics.
@@ -167,14 +147,12 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 			}
 			return columnNames;
 		}
-
-
-		*//**
-		 * @param resultSet :
-		 * @param key :
-		 * @return :
-		 * @throws SQLException :
-		 */
+	 *//**
+	 * @param resultSet :
+	 * @param key :
+	 * @return :
+	 * @throws SQLException :
+	 */
 	/*
 		private String getColumnNames(ResultSet resultSet, int key)
 		throws SQLException
@@ -206,11 +184,11 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 			return columnNames.toString();
 		}
 
-		*//**
-		 * @param resultSet :Result set
-		 * @param indexDetails : Map holding details of indexes.
-		 * @throws SQLException :Exception.
-		 */
+	 *//**
+	 * @param resultSet :Result set
+	 * @param indexDetails : Map holding details of indexes.
+	 * @throws SQLException :Exception.
+	 */
 	/*
 		private void updateIndexDetailsMap(ResultSet resultSet, Map<String,StringBuffer>  indexDetails)
 				throws SQLException
@@ -232,10 +210,10 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 			}
 		}
 
-		*//**
-		 * @param objExcp :
-		 * @return :
-		 */
+	 *//**
+	 * @param objExcp :
+	 * @return :
+	 */
 	/*
 		private int getErrorKey(Exception objExcp)
 		{
@@ -255,11 +233,11 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 				key = Integer.parseInt(strKey);
 			return key;
 		}
-		*//**
-		 * @param objExcp :
-		 * @return :
-		 * @throws ClassNotFoundException :
-		 */
+	 *//**
+	 * @param objExcp :
+	 * @return :
+	 * @throws ClassNotFoundException :
+	 */
 	/*
 		private String getTableName(Exception objExcp)
 				throws ClassNotFoundException
@@ -285,5 +263,5 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter
 			}
 			return tableName;
 		}
-	*/
+	 */
 }

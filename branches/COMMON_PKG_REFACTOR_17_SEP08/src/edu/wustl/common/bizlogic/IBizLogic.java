@@ -24,7 +24,6 @@ import edu.wustl.dao.QueryWhereClause;
  */
 public interface IBizLogic
 {
-
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -34,14 +33,12 @@ public interface IBizLogic
 	 * delete(Object obj) throws UserNotAuthorizedException,BizLogicException;
 	 */
 	void delete(Object obj, int daoType) throws BizLogicException;
-
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void delete(Object obj) throws BizLogicException;
-
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
@@ -53,7 +50,6 @@ public interface IBizLogic
 	 * throws BizLogicException, UserNotAuthorizedException;
 	 */
 	void insert(Object obj, SessionDataBean sessionDataBean, int daoType) throws BizLogicException;
-
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
@@ -62,7 +58,6 @@ public interface IBizLogic
 	 */
 	void insert(Object obj, SessionDataBean sessionDataBean)
 			throws BizLogicException;
-
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
@@ -72,15 +67,12 @@ public interface IBizLogic
 	 * insert(Object obj) throws BizLogicException,UserNotAuthorizedException;
 	 */
 	void insert(Object obj, int daoType) throws BizLogicException;
-
-
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void insert(Object obj) throws BizLogicException;
-
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
@@ -94,20 +86,15 @@ public interface IBizLogic
 	 */
 	void update(Object currentObj, Object oldObj, int daoType,
 			SessionDataBean sessionDataBean) throws BizLogicException;
-
-
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
 	 * @param oldObj old Object.
 	 * @param sessionDataBean session specific Data
 	 * @throws BizLogicException BizLogic Exception
-
 	 */
 	void update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean)
 	throws BizLogicException;
-
-
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
@@ -117,21 +104,18 @@ public interface IBizLogic
 	 * update(Object currentObj) throws BizLogicException,UserNotAuthorizedException;
 	 */
 	void update(Object currentObj, int daoType) throws BizLogicException;
-
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void update(Object currentObj) throws BizLogicException;
-
 	/**
 	 * creates Protection Element.
 	 * @param currentObj current Object.
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
 	void createProtectionElement(Object currentObj) throws BizLogicException;
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName source Object Name
@@ -143,10 +127,9 @@ public interface IBizLogic
 	 * @return List
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
-	List retrieve(String sourceObjectName, String[] selectColumnName,
+	List retrieve(String sourceObjectName, String[] selectColumnName, // NOPMD
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws BizLogicException;
-
 	/**
 	 * This method checks for a particular privilege on a particular Object_Id.
 	 * Gets privilege name as well as Object_Id from appropriate BizLogic
@@ -161,7 +144,6 @@ public interface IBizLogic
 	 */
 	boolean isAuthorized(DAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws BizLogicException;
-
 	/**
 	 * This method returns the protection element name which should be used to authorize.
 	 * Default Implementation
@@ -170,9 +152,9 @@ public interface IBizLogic
 	 * @param dao The dao object.
 	 * @param domainObject domain Object.
 	 * @return Object Id.
+	 * @throws BizLogicException generic BizLogic Exception.
 	 */
 	String getObjectId(DAO dao, Object domainObject)throws BizLogicException;
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName source Object Name.
@@ -183,10 +165,9 @@ public interface IBizLogic
 	 * @return List.
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
-	List retrieve(String sourceObjectName, String[] whereColumnName,
+	List retrieve(String sourceObjectName, String[] whereColumnName, // NOPMD
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
 			throws BizLogicException;
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param className class Name.
@@ -197,7 +178,6 @@ public interface IBizLogic
 	 */
 	List retrieve(String className, String colName, Object colValue)
 			throws BizLogicException;
-
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the classname whose records are to be retrieved.
@@ -205,7 +185,6 @@ public interface IBizLogic
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
 	List retrieve(String sourceObjectName) throws BizLogicException;
-
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName source Object Name.
@@ -214,7 +193,6 @@ public interface IBizLogic
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
 	Object retrieve(String sourceObjectName, Long identifier) throws BizLogicException;
-
 	/**
 	 *
 	 * @param sourceObjectName source Object Name
@@ -229,12 +207,10 @@ public interface IBizLogic
 	 * @return Returns collection
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
-	List getList(String sourceObjectName, String[] displayNameFields,
+	List getList(String sourceObjectName, String[] displayNameFields, // NOPMD
 			String valueField, String[] whereColumnName, String[] whereColumnCondition,
 			Object[] whereColumnValue, String joinCondition, String separatorBetweenFields,
 			boolean isToExcludeDisabled) throws BizLogicException;
-	
-	
 	/**
 	 *
 	 * @param sourceObjectName source Object Name
@@ -248,10 +224,10 @@ public interface IBizLogic
 	 * @return Returns collection
 	 * @throws BizLogicException generic BizLogic Exception.
 	 */
-	List getList(String sourceObjectName, String[] displayNameFields,
+	List getList(String sourceObjectName, String[] displayNameFields, // NOPMD
 			String valueField, String[] whereColumnName, String[] whereColumnCondition,
-			Object[] whereColumnValue, String joinCondition, String separatorBetweenFields) throws BizLogicException;
-
+			Object[] whereColumnValue, String joinCondition,
+			String separatorBetweenFields) throws BizLogicException;
 	/**
 	 *
 	 * @param sourceObjectName source Object Name
@@ -263,7 +239,6 @@ public interface IBizLogic
 	 */
 	List getList(String sourceObjectName, String[] displayNameFields,
 			String valueField, boolean isToExcludeDisabled) throws BizLogicException;
-
 	/**
 	 *
 	 * @param dao The dao object.
@@ -275,7 +250,6 @@ public interface IBizLogic
 	 */
 	List getRelatedObjects(DAO dao, Class sourceClass, String classIdentifier,
 			Long [] objIDArr) throws BizLogicException;
-
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
 	 * @param sourceObjectName Source object in the Database.
@@ -286,7 +260,6 @@ public interface IBizLogic
 	 */
 	Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws BizLogicException;
-
 	/**
 	 * This is a wrapper function to retrieves attribute  for given class
 	 * name and identifier using dao.retrieveAttribute().
@@ -298,7 +271,6 @@ public interface IBizLogic
 	 */
 	Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws BizLogicException;
-
 	/**
 	 * populates UIBean.
 	 * @param className class Name
@@ -309,7 +281,6 @@ public interface IBizLogic
 	 */
 	boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
 			throws BizLogicException;
-
 	/**
 	 * populates Domain Object.
 	 * @param className class Name
@@ -320,29 +291,26 @@ public interface IBizLogic
 	 */
 	AbstractDomainObject populateDomainObject(String className, Long identifier,
 			IValueObject uiForm) throws BizLogicException;
-
 	/**
 	 * Checkes is ReadDenied.
 	 * @return isReadDenied
 	 */
 	boolean isReadDeniedTobeChecked();
-
 	/**
 	 * Check Privilege To View.
 	 * @param objName object Name.
 	 * @param identifier identifier
 	 * @param sessionDataBean session specific Data
 	 * @return hasPrivilegeToView.
+	 * @throws BizLogicException BizLogic Exception.
 	 */
 	boolean hasPrivilegeToView(String objName, Long identifier,
 			SessionDataBean sessionDataBean)throws BizLogicException;
-
 	/**
 	 * gets ReadDenied Privilege Name.
 	 * @return Read Denied Privilege Name.
 	 */
 	String getReadDeniedPrivilegeName();
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName as per the where clause.
 	 * @param sourceObjectName :   source Class object

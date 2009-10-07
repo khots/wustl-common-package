@@ -5,29 +5,29 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
- * 
+ *
  * @author ravindra_jain
  * @version 1.0
  * @created 21-Apr-2009 6:57:50 PM
  */
-public class DataHandlerFactory
+public class DataHandlerFactory // NOPMD
 {
-
 	/*private HandlerTypeEnum fileType;
 	private String fileName;
 	private int bufferSize;*/
-
 	/**
-	 * 
-	 * @param fileType
-	 * @param fileName
-	 * @throws ClassNotFoundException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws IllegalArgumentException 
-	 * @throws NoSuchMethodException 
-	 * @throws SecurityException 
+	 *
+	 * @param handlerType HandlerTypeEnum object.
+	 * @param parameters DataHandlerParameter object
+	 * @param fileName Name of File.
+	 * @return AbstractDataHandler object.
+	 * @throws ClassNotFoundException throw ClassNotFoundException
+	 * @throws InvocationTargetException throw InvocationTargetException
+	 * @throws IllegalAccessException throw IllegalAccessException
+	 * @throws InstantiationException throw InstantiationException
+	 * @throws IllegalArgumentException throw IllegalArgumentException
+	 * @throws NoSuchMethodException throw NoSuchMethodException
+	 * @throws SecurityException throw SecurityException
 	 */
 	public static AbstractDataHandler getDataHandler(HandlerTypeEnum handlerType,
 			DataHandlerParameter parameters, String fileName) throws ClassNotFoundException,
@@ -47,7 +47,6 @@ public class DataHandlerFactory
 		{
 			delimiter = parametersMap.get(ParametersEnum.DELIMITER).toString();
 		}
-
 		switch (handlerType)
 		{
 			case CSV :
@@ -57,6 +56,7 @@ public class DataHandlerFactory
 			case TEXT :
 				dataHandler = new TextDataHandler(fileName, rowCount);
 				break;
+			default :
 		}
 		return dataHandler;
 	}

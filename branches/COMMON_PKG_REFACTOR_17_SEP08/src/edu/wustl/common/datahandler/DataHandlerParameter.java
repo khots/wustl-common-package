@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 
 /**
- * 
+ *
  * @author ravindra_jain
  * @version 1.0
  * @since April 22, 20009
@@ -12,17 +12,19 @@ import java.util.HashMap;
  */
 public class DataHandlerParameter
 {
-	
+	/**
+	 * HashMap object.
+	 */
 	private HashMap<ParametersEnum, Object> parametersMap = new HashMap<ParametersEnum, Object>();
-	
-	// CONSTRUCTOR
+	/**
+	 *  CONSTRUCTOR.
+	 */
 	public DataHandlerParameter()
 	{
 		parametersMap = new HashMap<ParametersEnum, Object>();
 	}
-	
 	/**
-	 * 
+	 *
 	 * @param key ParametersEnum
 	 * @param value Object
 	 */
@@ -30,10 +32,9 @@ public class DataHandlerParameter
 	{
 		parametersMap.put(key, value);
 	}
-
 	/**
-	 * 
-	 * @return
+	 *
+	 * @return HashMap object.
 	 */
 	public HashMap<ParametersEnum, Object> getParametersMap()
 	{

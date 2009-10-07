@@ -36,6 +36,7 @@ import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * This Class is used to Add/Edit data in the database.
@@ -43,12 +44,14 @@ import edu.wustl.dao.util.HibernateMetaData;
  */
 public abstract class BaseAddEditAction extends Action
 {
-
+	/**
+	 * Application Name
+	 */
+	private String applicationName ;
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(BaseAddEditAction.class);
-
 	/**
 	 * Overrides the execute method of Action class.
 	 * Adds / Updates the data in the database.
@@ -61,7 +64,6 @@ public abstract class BaseAddEditAction extends Action
 	 * */
 	public abstract ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException;
-
 	/**
 	 * get Object Name.
 	 * @param abstractForm AbstractActionForm
@@ -74,7 +76,6 @@ public abstract class BaseAddEditAction extends Action
 		IDomainObjectFactory iDomainObjectFactory = getIDomainObjectFactory();
 		return iDomainObjectFactory.getDomainObjectName(abstractForm.getFormId());
 	}
-
 	/**
 	 * @return  the object of IDomainObjectFactory
 	 * @throws ApplicationException Application Exception.
@@ -90,10 +91,10 @@ public abstract class BaseAddEditAction extends Action
 		catch (BizLogicException exception)
 		{
 			LOGGER.debug("Failed to get object"+exception.getMessage());
-			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
+			throw new ApplicationException(exception.getErrorKey(),
+					exception,exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * get object required for all API,for query purpose.
 	 * @return QueryBizLogic
@@ -110,10 +111,10 @@ public abstract class BaseAddEditAction extends Action
 		catch (BizLogicException exception)
 		{
 			LOGGER.debug("Failed to get object"+exception.getMessage());
-			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
+			throw new ApplicationException(exception.getErrorKey(),
+					exception,exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * @param abstractForm AbstractActionForm
 	 * @return IBizLogic
@@ -129,10 +130,10 @@ public abstract class BaseAddEditAction extends Action
 		catch (BizLogicException exception)
 		{
 			LOGGER.debug("Failed to get object"+exception.getMessage());
-			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
+			throw new ApplicationException(exception.getErrorKey(),
+					exception,exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * get session data from current session.
 	 * @param request HttpServletRequest
@@ -155,7 +156,6 @@ public abstract class BaseAddEditAction extends Action
 		}
 		return sessionData;
 	}
-
 	/**
 	 * This method generates HashMap of data required to be forwarded.
 	 * @param abstractForm	Form submitted
@@ -178,11 +178,11 @@ public abstract class BaseAddEditAction extends Action
 		catch (BizLogicException exception)
 		{
 			LOGGER.debug("Error in generating data: "+exception.getMessage());
-			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
+			throw new ApplicationException(exception.getErrorKey(),
+					exception,exception.getMsgValues());
 
 		}
 	}
-
 	/**
 	 * This method generates HashMap of data required to be forwarded if Form is submitted for Print request.
 	 * @param abstractForm	Form submitted
@@ -204,11 +204,11 @@ public abstract class BaseAddEditAction extends Action
 		catch (BizLogicException exception)
 		{
 			LOGGER.debug("Error in generating data: "+exception.getMessage());
-			throw new ApplicationException(exception.getErrorKey(), exception,exception.getMsgValues());
+			throw new ApplicationException(exception.getErrorKey(),
+					exception,exception.getMsgValues());
 
 		}
 	}
-
 	/**
 	 * This method will add the success message into ActionMessages object.
 	 * @param abstractDomain AbstractDomainObject
@@ -237,7 +237,6 @@ public abstract class BaseAddEditAction extends Action
 		}
 		return displayparams;
 	}
-
 	/**
 	 * get Display Name Of Domain Object.
 	 * @param abstractDomain AbstractDomainObject
@@ -251,8 +250,17 @@ public abstract class BaseAddEditAction extends Action
 		String displayName;
 		try
 		{
-			displayName = queryBizLogic.getDisplayNamebyTableName(HibernateMetaData
-					.getTableName(abstractDomain.getClass()));
+			HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+			.getHibernateMetaData(applicationName);
+			if (hibernateMetaData != null)
+			{
+				displayName = queryBizLogic.getDisplayNamebyTableName(hibernateMetaData
+						.getTableName(abstractDomain.getClass()));
+			}
+			else
+			{
+				displayName = "";
+			}
 		}
 		catch (Exception excp)
 		{
@@ -261,7 +269,6 @@ public abstract class BaseAddEditAction extends Action
 		}
 		return displayName;
 	}
-
 	/**
 	 * This method returns ActionForward object. In some cases we get forward url,
 	 * in that case we don't need to find ActionForward in mapping.
