@@ -30,7 +30,10 @@ public class AuditEvent implements java.io.Serializable
 	 *  Id of the User who performs the event.
 	 */
 	private Long userId;
-
+	/**
+	 * Type of the event.
+	 */
+	private String eventType;
 	/**
 	 * Text comments on event.
 	 */
@@ -44,7 +47,9 @@ public class AuditEvent implements java.io.Serializable
 	/**
 	 * Specifies audit Event Log Collection.
 	 */
-	private Collection<AuditEventLog> auditEventLogCollection = new HashSet<AuditEventLog>();
+	//private Collection<AuditEventLog> auditEventLogCollection = new HashSet<AuditEventLog>();
+	private Collection<AbstractAuditEventLog> auditEventLogCollection = new HashSet<AbstractAuditEventLog>();
+
 
 	/**
 	 * Returns System generated unique id.
@@ -80,7 +85,24 @@ public class AuditEvent implements java.io.Serializable
 	{
 		return (Date)timestamp.clone();
 	}
-
+	/**
+	 * This method get the type of the event.
+	 * @return the type of the event
+	 * @hibernate.property name="eventType" type="string"
+	 * column="EVENT_TYPE" length="50"
+	 */
+	public String getEventType()
+	{
+		return eventType;
+	}
+	/**
+	 * set the type of the event.
+	 * @param eventType the type of the event.
+	 */
+	public void setEventType(String eventType)
+	{
+		this.eventType = eventType;
+	}
 	/**
 	 * Sets date and time of the event.
 	 * @param timestamp Date and time of the event.
@@ -157,21 +179,25 @@ public class AuditEvent implements java.io.Serializable
 	 * @return the collection.
 	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
-	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
+	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AbstractAuditEventLog"
 	 */
-	public Collection<AuditEventLog> getAuditEventLogCollection()
+	public Collection<AbstractAuditEventLog> getAuditEventLogCollection()
 	{
 		return auditEventLogCollection;
 	}
 
 	/**
-	 * set the vlue in audit event collection.
+	 * set the value in audit event collection.
+	 * @param auditEventLogCollection AbstractAuditEventLog collection object.
+	 */
+	/**
+	 * set the value in audit event collection.
 	 * @param auditEventLogCollection audit Event Log Collection.
 	 * @hibernate.set name="auditEventLogCollection" table="CATISSUE_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="AUDIT_EVENT_ID"
-	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventLog"
+	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AbstractAuditEventLog"
 	 */
-	public void setAuditEventLogCollection(Collection<AuditEventLog> auditEventLogCollection)
+	public void setAuditEventLogCollection(Collection<AbstractAuditEventLog> auditEventLogCollection)
 	{
 		this.auditEventLogCollection = auditEventLogCollection;
 	}

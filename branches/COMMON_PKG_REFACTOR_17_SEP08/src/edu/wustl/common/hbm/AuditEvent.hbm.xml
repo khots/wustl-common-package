@@ -38,7 +38,16 @@
             insert="true"
             column="USER_ID"
         />
-
+<!-- ADD NEW COLUMN AS EVENT_TYPE FOR STORING THE EVENT TYPE. -->        
+        <property
+            name="eventType"
+            type="string"
+            update="true"
+            insert="true"
+            column="EVENT_TYPE"
+            length="50"
+        />
+        
         <property
             name="comments"
             type="string"
@@ -71,7 +80,7 @@
               />
 
               <one-to-many
-                  class="edu.wustl.common.domain.AuditEventLog"
+                  class="edu.wustl.common.domain.AbstractAuditEventLog"
               />
         </set>
 

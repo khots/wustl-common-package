@@ -11,37 +11,39 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
 
 /**
- * This class handles the insertion of Login Events details into the database  
+ * This class handles the insertion of Login Events details into the database.
  * @author niharika_sharma
  */
 public class LoginAuditManager
 {
-
-	public static org.apache.log4j.Logger logger = Logger.getLogger(LoginAuditManager.class);
-
 	/**
-	 * Login Event instance which contains the event details
+	 * Logger object.
+	 */
+	private static org.apache.log4j.Logger logger = Logger.getLogger(LoginAuditManager.class);
+	/**
+	 * Login Event instance which contains the event details.
 	 */
 	private LoginEvent loginEvent;
-
 	/**
-	 * Public constructor to instantiate LoginAuditManager from SecurityManager.java 
+	 * Public constructor to instantiate LoginAuditManager from SecurityManager.java.
 	 */
 	public LoginAuditManager()
 	{
 		loginEvent = new LoginEvent();
 	}
-
 	/**
-	 * Create an instance of LoginAuditManager and initialize the contained loginEvent object with
-	 * the details provided by the LoginDetails object
-	 * @param loginDetails
+	 * Create an instance of LoginAuditManager and initialize the contained loginEvent object with.
+	 * the details provided by the LoginDetails object.
+	 * @param loginDetails LoginDetails object.
 	 */
 	public LoginAuditManager(LoginDetails loginDetails)
 	{
 		setLoginDetails(loginDetails);
 	}
-
+	/**
+	 * Sets the LoginDetails.
+	 * @param loginDetails LoginDetails object to set.
+	 */
 	private void setLoginDetails(LoginDetails loginDetails)
 	{
 		loginEvent = new LoginEvent();
@@ -49,12 +51,11 @@ public class LoginAuditManager
 		loginEvent.setSourceId(loginDetails.getSourceId());
 		loginEvent.setUserLoginId(loginDetails.getUserLoginId());
 	}
-
 	/**
-	 * Inserts the loginEvent object in the database using the DAO implementation provided as argument
-	 * @param dao
-	 * @param loginEvent
-	 * @throws DAOException
+	 * Inserts the loginEvent object in the database using the DAO implementation provided as argument.
+	 * @param dao DAO object.
+	 * @param loginEvent LoginEvent object.
+	 * @throws DAOException throw DAOException.
 	 */
 	protected void insert(DAO dao, LoginEvent loginEvent) throws DAOException
 	{
@@ -69,11 +70,11 @@ public class LoginAuditManager
 			throw ex;
 		}
 	}
-
 	/**
 	 * To be called by SecurityManager.java to audit this login attempt.
 	 * Sets the status of LoginAttempt to loginStatus provided as an argument.
-	 * @param loginStatus
+	 * @param loginStatus LoginStatus boolean value.
+	 * @param loginDetails LoginDetails object.
 	 */
 	public void audit(boolean loginStatus,LoginDetails loginDetails)
 	{
@@ -104,7 +105,7 @@ public class LoginAuditManager
 			catch (DAOException daoException)
 			{
 				logger.debug(
-						"Exception while Auditing Login Attempt. " + daoException.getMessage(),
+					"Exception while Auditing Login Attempt. " + daoException.getMessage(),
 						daoException);
 			}
 		}
