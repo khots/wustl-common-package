@@ -27,7 +27,6 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class OracleAutomateImpExp extends AbstractAutomateImpExp
 {
-
 	/**
 	 * logger Logger - Generic logger.
 	 */
@@ -36,22 +35,18 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	 * Index for CTL file name.
 	 */
 	private static final int  INDX_FOR_CTL_FILE_PATH=10;
-
 	/**
 	 * Index for oracle tns name.
 	 */
 	private static final int  INDX_FOR_TNS_NAME=11;
-
 	/**
 	 * oracle tns name.
 	 */
 	private String oracleTnsName;
-
 	/**
 	 * path of CTL file.
 	 */
 	private String filePathCTL;
-
 	/**
 	 * This method do some process before import/export operation.
 	 * @param args String array of parameters.
@@ -63,7 +58,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		setOracleTnsName(args[INDX_FOR_TNS_NAME]);
 		setFilePathCTL(args[INDX_FOR_CTL_FILE_PATH].replaceAll("\\\\", "//"));
 	}
-
 	/**
 	 * Method to export meta data.
 	 * @param args String array of parameters.
@@ -78,8 +72,8 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			{
 				String ctlFilePath = filePathCTL + getTableNamesList().get(i) + ".ctl";
 				String csvFilePath = getFilePath() + getTableNamesList().get(i) + ".csv";
-				System.out.println("csvFilePath path ::"+csvFilePath);
-				System.out.println("ctlFilePath path ::"+ctlFilePath);
+				//System.out.println("csvFilePath path ::"+csvFilePath);
+				//System.out.println("ctlFilePath path ::"+ctlFilePath);
 				createCTLFiles(csvFilePath, ctlFilePath,
 						getTableNamesList().get(i));
 			}
@@ -109,9 +103,8 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			{
 				String csvFilePath = getFilePath()
 					+ getTableNamesList().get(i) + ".csv";
-				
-				System.out.println("csvFilePath path ::"+csvFilePath);
-				System.out.println("ctlFilePath path ::"+ctlFilePath);
+				//System.out.println("csvFilePath path ::"+csvFilePath);
+				//System.out.println("ctlFilePath path ::"+ctlFilePath);
 				createCTLFiles(csvFilePath,ctlFilePath,
 						getTableNamesList().get(i));
 			}
@@ -124,9 +117,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			ErrorKey errorKey=ErrorKey.getErrorKey("impexp.oraimport.error");
 			throw new ApplicationException(errorKey,exception,"OracleAutomateImpExp");
 		}
-
 	}
-
 	/**
 	 * Method to get database connection.
 	 * @return Oracle database connection
@@ -145,7 +136,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 						,dbUtil.getDbPassword());
 		return connection;
 	}
-
 	/**
 	 * This method will insert the data to database.
 	 * @param fileName File Name
@@ -158,8 +148,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 								.append('/').append(getDbUtility().getDbPassword())
 								.append('@').append(oracleTnsName)
 								.append(" control=").append(fileName);
-		System.out.println("Command ::  "+cmd);
-		
+		//System.out.println("Command ::  "+cmd);
 		Runtime runtime = Runtime.getRuntime();
 		Process proc = runtime.exec(cmd.toString());
 		// any error message?
@@ -170,9 +159,7 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		errorGobbler.start();
 		outputGobbler.start();
 		proc.waitFor();
-
 	}
-
 	/**
 	 * This method will create control file for SQL loader.
 	 * @param csvFileName CSV file name.
@@ -206,7 +193,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		bufferedWriter.flush();
 		bufferedWriter.close();
 	}
-
 	/**
 	 * This method will retrieve the column name list for a given table.
 	 * @param tableName Table Name.
@@ -241,7 +227,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 			connection.close();
 		}
 	}
-
 	/**
 	 * @param resultSet ResultSet object.
 	 * @return list of column name
@@ -261,7 +246,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		columnNameList.append(')');
 		return columnNameList;
 	}
-
 	/**
 	 * @param columnNameList column Name List.
 	 * @param rsMetaData rs Meta Data
@@ -286,7 +270,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		}
 		columnNameList.append(',');
 	}
-
 	/**
 	 * @return the oracleTnsName
 	 */
@@ -294,7 +277,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	{
 		return oracleTnsName;
 	}
-
 	/**
 	 * @param oracleTnsName the oracleTnsName to set
 	 */
@@ -302,7 +284,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	{
 		this.oracleTnsName = oracleTnsName;
 	}
-
 	/**
 	 * @return the filePathCTL
 	 */
@@ -310,7 +291,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	{
 		return filePathCTL;
 	}
-
 	/**
 	 * @param filePathCTL the filePathCTL to set
 	 */
@@ -318,8 +298,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	{
 		this.filePathCTL = filePathCTL;
 	}
-
-
 	/**
 	 *This class is for output of any  message(or error message) during import.
 	 *
@@ -330,7 +308,6 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		 * InputStream object.
 		 */
 		private final InputStream inputStream;
-
 		/**
 		 * One argument constructor.
 		 * @param inputStream InputStream object.
@@ -358,9 +335,9 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 	        }
 	        catch (IOException ioe)
 	        {
-	        	ioe.printStackTrace();  
+	        	logger.debug(ioe.getMessage()) ;
+	        	//ioe.printStackTrace();
 	        }
 	    }
 	}
-
 }

@@ -30,12 +30,10 @@ import edu.wustl.common.util.logger.Logger;
  */
 public abstract class BaseAction extends Action
 {
-
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(BaseAction.class);
-
 	/**
 	 * Method ensures that the user is authenticated before calling the
 	 * executeAction of the subclass. If the User is not authenticated then an
@@ -69,7 +67,6 @@ public abstract class BaseAction extends Action
 		//+ " : " + (endTime - startTime));
 		return actionForward;
 	}
-
 	/**
 	 * sets the URL of the application in proper format.
 	 * @param mapping	ActionMapping
@@ -88,7 +85,6 @@ public abstract class BaseAction extends Action
 			CommonServiceLocator.getInstance().setAppURL(request.getRequestURL().toString());
 		}
 	}
-
 	/**
 	 * @param request HttpServletRequest
 	 * @param paramName String -parameter name
@@ -101,7 +97,6 @@ public abstract class BaseAction extends Action
 			request.setAttribute(paramName, paramValue);
 		}
 	}
-
 	/**
 	 * Returns the current User authenticated by CSM Authentication from current session.
 	 * @param request HttpServletRequest
@@ -117,7 +112,6 @@ public abstract class BaseAction extends Action
 		}
 		return userName;
 	}
-
 	/**
 	 * get data from the current session.
 	 * @param request HttpServletRequest
@@ -127,7 +121,6 @@ public abstract class BaseAction extends Action
 	{
 		return (SessionDataBean) request.getSession().getAttribute(Constants.SESSION_DATA);
 	}
-
 	/**
 	 * Subclasses should implement the action's business logic in this method
 	 * and can be sure that an authenticated user is present.
@@ -141,7 +134,6 @@ public abstract class BaseAction extends Action
 	 */
 	protected abstract ActionForward executeAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception;
-
 	/**
 	 * This function checks call to the action and sets/removes required attributes
 	 *  if AddNew or ForwardTo activity is executing.
@@ -178,7 +170,6 @@ public abstract class BaseAction extends Action
 			removeFormBeanStack(request);
 		}
 	}
-
 	/**
 	 * sets required attributes.
 	 * @param request HTTPServletRequest calling the action
@@ -195,7 +186,6 @@ public abstract class BaseAction extends Action
 			request.setAttribute(Constants.SUBMITTED_FOR, Constants.SUBMITTED_FOR_ADD_NEW);
 		}
 	}
-
 	/**
 	 * remove data from current session.
 	 * @param request HttpServletRequest
@@ -208,7 +198,6 @@ public abstract class BaseAction extends Action
 			session.removeAttribute(Constants.FORM_BEAN_STACK);
 		}
 	}
-
 	/**
 	 * This method calls the specified method passed as parameter.
 	 * This allows us to have different entry points.
@@ -227,7 +216,7 @@ public abstract class BaseAction extends Action
 	 * @return 	ActionForward
 	 * @throws Exception generic exception
 	 */
-	protected ActionForward invokeMethod(String methodName, ActionMapping mapping, ActionForm form,
+	protected ActionForward invokeMethod(String methodName, ActionMapping mapping, ActionForm form, // NOPMD
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		ActionForward actionForward = null;
@@ -242,7 +231,6 @@ public abstract class BaseAction extends Action
 		}
 		return actionForward;
 	}
-
 	/**
 	 * This method returns the method with the specified name if the method exists. Return null other wise.
 	 * @param name - String name of method

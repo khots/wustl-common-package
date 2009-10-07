@@ -29,7 +29,6 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CommonExceptionHandler extends ExceptionHandler
 {
-
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
@@ -45,7 +44,7 @@ public class CommonExceptionHandler extends ExceptionHandler
 	 * @throws ServletException servlet exception.
 	 * @return the output of execute method.
 	 */
-	public ActionForward execute(Exception exception, ExceptionConfig exConfig, ActionMapping mapping,
+	public ActionForward execute(Exception exception, ExceptionConfig exConfig, ActionMapping mapping, // NOPMD
 			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException
 	{
@@ -56,7 +55,6 @@ public class CommonExceptionHandler extends ExceptionHandler
 		request.getSession().setAttribute(Constants.ERROR_DETAIL,mess);
 		return super.execute(exception, exConfig, mapping, formInstance, request, response);
 	}
-
 	/**
 	* @param exception the Exception.
 	* @return the string of the error message.
@@ -79,5 +77,4 @@ public class CommonExceptionHandler extends ExceptionHandler
 		}
 		return msg.toString();
 	}
-
 }

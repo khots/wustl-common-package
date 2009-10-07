@@ -10,6 +10,7 @@ import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * Description: Object Not Found Formatter.
@@ -17,18 +18,16 @@ import edu.wustl.dao.util.HibernateMetaData;
  */
 public class ObjectNotFoundFormatter implements ExceptionFormatter
 {
-
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(ObjectNotFoundFormatter.class);
-
 	/**
 	 * This method format Message.
 	 * @param objExcp Exception
 	 * @return formatted Error Message.
 	 */
-	public String formatMessage(Exception objExcp)
+	public String formatMessage(Exception objExcp) // NOPMD
 	{
 		String formattedErrMsg = null;
 		String temp1 = "exists: ";
@@ -65,9 +64,19 @@ public class ObjectNotFoundFormatter implements ExceptionFormatter
 			LOGGER.debug(className + "--" + className.length());
 			Class classObj = Class.forName(className);
 			// get table name from class
-			String displayName = ExceptionFormatterFactory.
-				getDisplayName(HibernateMetaData.getTableName(classObj), jdbcDAO);
-
+			String displayName ;
+			HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+			.getHibernateMetaData(appName);
+			if (hibernateMetaData != null)
+			{
+				displayName = ExceptionFormatterFactory.getDisplayName(hibernateMetaData
+						.getTableName(classObj), jdbcDAO);
+			}
+			else
+			{
+				displayName = "";
+			}
+			
 			Object[] arguments = new Object[]{displayName, columnName, value};
 			formattedErrMsg = MessageFormat.format(Constants.OBJECT_NOT_FOUND_ERROR, arguments);
 		}

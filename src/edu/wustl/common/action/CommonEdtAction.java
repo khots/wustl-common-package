@@ -30,12 +30,10 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
  */
 public class CommonEdtAction extends BaseAddEditAction
 {
-
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(CommonEdtAction.class);
-
 	/**
 	 * Overrides the execute method of Action class.
 	 * Adds / Updates the data in the database.
@@ -77,7 +75,6 @@ public class CommonEdtAction extends BaseAddEditAction
 
 		return getActionForward(mapping,target);
 	}
-
 	/**
 	 * This method sets Status message key.
 	 * @param request HttpServletRequest
@@ -90,7 +87,6 @@ public class CommonEdtAction extends BaseAddEditAction
 		statusMsgKey.append(abstractForm.isAddOperation());
 		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMsgKey.toString());
 	}
-
 	/**
 	 * Set Success Message.
 	 * @param request HttpServletRequest
@@ -107,7 +103,6 @@ public class CommonEdtAction extends BaseAddEditAction
 				displayNameParams));
 		saveMessages(request, messages);
 	}
-
 	/**
 	 * This method gets Domain Object.
 	 * @param abstractForm AbstractActionForm
@@ -122,7 +117,6 @@ public class CommonEdtAction extends BaseAddEditAction
 		return defaultBizLogic.populateDomainObject(objectName, Long
 				.valueOf(abstractForm.getId()), abstractForm);
 	}
-
 	/**
 	 * This method updates Domain Object.
 	 * @param request HttpServletRequest
@@ -146,7 +140,6 @@ public class CommonEdtAction extends BaseAddEditAction
 		}
 		persistUsingBizLogic(request, abstractForm, abstractDomain, objectName);
 	}
-
 	/**
 	 * This method updates Domain Object.
 	 * @param request HttpServletRequest
@@ -170,7 +163,7 @@ public class CommonEdtAction extends BaseAddEditAction
 
 			AbstractDomainObject abstractDomainOld;
 			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
-					abstractForm.getId());			
+					abstractForm.getId());
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
 		}
 		finally
@@ -185,7 +178,6 @@ public class CommonEdtAction extends BaseAddEditAction
 			}
 		}
 	}
-
 	/**
 	 * This method gets ForwardTo Target.
 	 * @param request HttpServletRequest
@@ -224,7 +216,6 @@ public class CommonEdtAction extends BaseAddEditAction
 		// The successful edit message. Changes done according to bug# 945, 947
 		return target;
 	}
-
 	/**
 	 * This method sets ForwardTo HashMap.
 	 * @param request HttpServletRequest
@@ -246,7 +237,6 @@ public class CommonEdtAction extends BaseAddEditAction
 		}
 		//----------ForwardTo Ends----------------
 	}
-
 	/**
 	 * This method checks is String Not Empty.
 	 * @param str String

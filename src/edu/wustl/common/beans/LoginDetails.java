@@ -4,37 +4,32 @@ package edu.wustl.common.beans;
 /**
  * This class acts as a POJO for all the Login Attempt related information.
  * An instance of this class is passed to the LoginAuditManager's audit() method,
- * to audit the login attempt 
+ * to audit the login attempt
  * @author niharika_sharma
  */
 public class LoginDetails
 {
-
 	/**
-	 * User's login id
+	 * User's login id.
 	 */
-	protected String userLoginId;
-
+	private String userLoginId;
 	/**
-	 * User's source or domain he belongs to
+	 * User's source or domain he belongs to.
 	 */
-	protected Long sourceId;
-
+	private Long sourceId;
 	/**
 	 * IP address of the machine.
 	 */
-	protected String ipAddress;
-
+	private String ipAddress;
 	/**
-	 * Status of the login attempt, success or failure
+	 * Status of the login attempt, success or failure.
 	 */
-	protected boolean isLoginSuccessful;
-
+	private boolean isLoginSuccessful;
 	/**
-	 * Constructor accepting the details required to create the LoginDetails object
-	 * @param userLoginId
-	 * @param sourceId
-	 * @param ipAddress
+	 * Constructor accepting the details required to create the LoginDetails object.
+	 * @param userLoginId User Login Id.
+	 * @param sourceId Source Id.
+	 * @param ipAddress IP Address.
 	 */
 	public LoginDetails(String userLoginId, Long sourceId, String ipAddress)
 	{
@@ -42,14 +37,13 @@ public class LoginDetails
 		this.userLoginId = userLoginId;
 		this.sourceId = sourceId;
 	}
-
 	/**
-	 * Constructor accepting the details required to create the LoginDetails object 
-	 * along with login status 
-	 * @param userLoginId
-	 * @param sourceId
-	 * @param ipAddress
-	 * @param isLoginSuccessful
+	 * Constructor accepting the details required to create the LoginDetails object.
+	 * along with login status.
+	 * @param userLoginId User Login Id.
+	 * @param sourceId Source Id.
+	 * @param ipAddress IP Address.
+	 * @param isLoginSuccessful boolean value.
 	 */
 	public LoginDetails(String userLoginId, Long sourceId, String ipAddress,
 			boolean isLoginSuccessful)
@@ -57,73 +51,65 @@ public class LoginDetails
 		this(userLoginId, sourceId, ipAddress);
 		this.isLoginSuccessful = isLoginSuccessful;
 	}
-
 	/**
-	 * Returns the userLoginId
-	 * @return
+	 * Returns the userLoginId.
+	 * @return user Login Id.
 	 */
 	public String getUserLoginId()
 	{
 		return userLoginId;
 	}
-
 	/**
-	 * Sets the userLoginId
-	 * @param userLoginId
+	 * Sets the userLoginId.
+	 * @param userLoginId userLoginId to set.
 	 */
 	public void setUserLoginId(String userLoginId)
 	{
 		this.userLoginId = userLoginId;
 	}
-
 	/**
-	 * Returns the sourceId
-	 * @return
+	 * Returns the sourceId.
+	 * @return sourceId.
 	 */
 	public Long getSourceId()
 	{
 		return sourceId;
 	}
-
 	/**
-	 * Sets the sourceId
-	 * @param sourceId
+	 * Sets the sourceId.
+	 * @param sourceId sourceId to set.
 	 */
 	public void setSourceId(Long sourceId)
 	{
 		this.sourceId = sourceId;
 	}
-
 	/**
-	 * Returns the ipAddress
-	 * @return
+	 * Returns the ipAddress.
+	 * @return ipAddress.
 	 */
 	public String getIpAddress()
 	{
 		return ipAddress;
 	}
-
 	/**
-	 * Sets the ipAddress
-	 * @param ipAddress
+	 * Sets the ipAddress.
+	 * @param ipAddress ipAddress to set.
 	 */
 	public void setIpAddress(String ipAddress)
 	{
 		this.ipAddress = ipAddress;
 	}
-
 	/**
-	 * Returns the isLoginSuccessful
-	 * @return
+	 * Returns the isLoginSuccessful.
+	 * @return boolean result.
 	 */
 	public boolean isLoginSuccessful()
 	{
 		return isLoginSuccessful;
 	}
-
 	/**
-	 * Sets the isLoginSuccessful
-	 * @param isLoginSuccessful
+	 * Sets the isLoginSuccessful.
+	 * @param isLoginSuccessful Sets the boolean value.
 	 */
 	public void setLoginSuccessful(boolean isLoginSuccessful)
 	{

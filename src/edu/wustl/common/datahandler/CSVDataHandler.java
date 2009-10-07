@@ -9,30 +9,43 @@ import java.util.List;
 import edu.wustl.common.util.global.Constants;
 
 /**
- * 
+ *
  * @author ravindra_jain
  * @version 1.0
  * @created 21-Apr-2009 6:57:50 PM
  */
 public class CSVDataHandler extends AbstractDataHandler
 {
-
-	private BufferedWriter bufferedWriter;
-	private Integer bufferSize;
-	private static int rowCount;
-	private String delimiter;
-	
 	/**
-	 * PRIVATE CONSTRUCTOR
-	 * @param fileName
-	 * @param bufferSize
-	 * @throws IOException 
+	 * BufferedWriter object.
 	 */
-	CSVDataHandler(String fileName, Integer bufferSize, String delimiter)
+	private BufferedWriter bufferedWriter;
+	/**
+	 * Buffer Size.
+	 */
+	private Integer bufferSize;
+	/**
+	 * Count Number of Rows.
+	 */
+	private static int rowCount;
+	/**
+	 * Use the separator.
+	 */
+	private String delimiter;
+	/**
+	 * PRIVATE CONSTRUCTOR.
+	 * @param fileName Name of the File
+	 * @param bufferSize Size of the Buffer
+	 * @param delimiter delimiter
+	 */
+	CSVDataHandler(String fileName, Integer bufferSize, String delimiter) // NOPMD
 	{
+		super() ;
 		if(bufferSize == null)
 		{
-			// Default value
+			/**
+			 *  Default value.
+			 */
 			bufferSize = 100;
 		}
 		if (bufferSize <= 0)
@@ -47,30 +60,30 @@ public class CSVDataHandler extends AbstractDataHandler
 		}
 		this.delimiter = delimiter;
 	}
-
-	@Override
+	/**
+	 * @override.
+	 * @throws IOException throw IOException
+	 */
 	public void openFile() throws IOException
 	{
 		bufferedWriter = new BufferedWriter(new FileWriter(fileName));
 	}
-
 	/**
-	 * 
-	 * @param values
+	 *
+	 * @param values String data to append
 	 */
 	public void appendData(String values)
 	{
 		throw new UnsupportedOperationException();
 	}
-
 	/**
-	 * 
-	 * @param values
-	 * @throws IOException 
+	 *
+	 * @param values List of object.
+	 * @throws IOException throw IOException
 	 */
 	public void appendData(List<Object> values) throws IOException
 	{
-		//Writes the list of data into file 
+		//Writes the list of data into file
 		String newLine = System.getProperty(("line.separator"));
 
 		if (values != null)
@@ -79,11 +92,11 @@ public class CSVDataHandler extends AbstractDataHandler
 			{
 				if(obj == null)
 				{
-					obj = new String("");
+					obj = new String(""); // NOPMD
 				}
 				String value = obj.toString();
 				value = value.replaceAll("\"", "'");
-				value = "\"" + value + "\"";
+				value = "\"" + value + "\""; // NOPMD
 				String data = value + delimiter;
 				bufferedWriter.write(data);
 			}
@@ -97,21 +110,18 @@ public class CSVDataHandler extends AbstractDataHandler
 			rowCount = 0;
 		}
 	}
-
 	/**
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException throw IOException
 	 */
 	public void flush() throws IOException
 	{
 		bufferedWriter.flush();
 	}
-
 	/**
-	 * 
-	 * @throws IOException 
-	 * 
-	 */
+	 *
+	 * @throws IOException throw IOException
+	*/
 	public void closeFile() throws IOException
 	{
 		if (bufferedWriter != null)

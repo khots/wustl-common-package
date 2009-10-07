@@ -34,19 +34,18 @@ import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
+import edu.wustl.dao.util.HibernateMetaDataFactory;
 
 /**
  * AbstractBizLogic is the base class of all the Biz Logic classes.
  * @author gautam_shetty
  */
-public abstract class AbstractBizLogic implements IBizLogic
+public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 {
-
 	/**
 	 * Application name to get DAO.
 	 */
 	private String appName;
-
 	/**
 	 * Constructor with argument as application name.
 	 * This application is used to get DAO.
@@ -66,7 +65,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		String appName = CommonServiceLocator.getInstance().getAppName();
 		this.appName=appName;
 	}
-
 	/**
 	 * This method returns application name.
 	 * @return appName
@@ -75,7 +73,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		return this.appName;
 	}
-
 	/**
 	 * This method returns application name.
 	 * @param appName application Name.
@@ -88,7 +85,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(AbstractBizLogic.class);
-
 	/**
 	 * This method gets called before insert method.
 	 * Any logic before inserting into database can be included here.
@@ -99,7 +95,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * */
 	protected abstract void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException;
-
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
@@ -109,7 +104,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	protected abstract void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException;
-
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
@@ -117,7 +111,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected abstract void insert(Object obj, DAO dao) throws BizLogicException;
-
 	/**
 	 * This method gets called after insert method.
 	 * Any logic after inserting object in database can be included here.
@@ -128,7 +121,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * */
 	protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException;
-
 	/**
 	 * This method gets called after insert method.
 	 * Any logic after inserting object in database can be included here.
@@ -139,7 +131,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * */
 	protected abstract void postInsert(Collection<AbstractDomainObject> objCollection, DAO dao,
 			SessionDataBean sessionDataBean) throws BizLogicException;
-
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -147,7 +138,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected abstract void delete(Object obj, DAO dao) throws BizLogicException;
-
 	/**
 	 * This method gets called before update method.
 	 * Any logic before updating into database can be included here.
@@ -159,7 +149,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * */
 	protected abstract void preUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException;
-
 	/**
 	 * Updates an objects into the database.
 	 * @param dao the dao object.
@@ -170,7 +159,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	protected abstract void update(DAO dao, Object obj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException;
-
 	/**
 	 * This method gets called after update method.
 	 * Any logic after updating into database can be included here.
@@ -182,7 +170,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	protected abstract void postUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException;
-
 	/**
 	 * Updates an objects into the database.
 	 * @param dao the dao object
@@ -190,7 +177,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected abstract void update(DAO dao, Object obj) throws BizLogicException;
-
 	/**
 	 * Validates the domain object for enumerated values.
 	 * @param obj The domain object to be validated.
@@ -201,7 +187,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	protected abstract boolean validate(Object obj, DAO dao, String operation)
 			throws BizLogicException;
-
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -215,7 +200,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		delete(obj);
 	}
-
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -236,14 +220,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 			String errMsg = getErrorMessage(exception,obj,"Deleting");
 			//exception.getErrorKey().setErrorMessage(errMsg);
 			LOGGER.debug(errMsg, exception);
-			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
 			closeSession(dao);
 		}
 	}
-
 	/**
 	 * This method inserts object. If insert only is true then insert of Defaultbiz logic is called.
 	 * @param obj The object to be inserted
@@ -273,14 +257,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 			rollback(dao);
 			String errMssg = getErrorMessage(exception,obj,"Inserting");
 			LOGGER.debug(errMssg, exception);
-			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMssg);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMssg);
 		}
 		finally
 		{
 			closeSession(dao);
 		}
 	}
-
 	/**
 	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
@@ -297,7 +281,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		insert(objCollection, sessionDataBean, isInsertOnly);
 	}
-
 	/**
 	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
@@ -322,14 +305,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
 			LOGGER.debug(errMsg, exception);
-			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
 			closeSession(dao);
 		}
 	}
-
 	/**
 	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
@@ -358,7 +341,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			insert(obj, sessionDataBean, false, dao);
 		}
 	}
-
 	/**
 	 * @param obj object to be insert and validate
 	 * @param sessionDataBean session specific Data
@@ -378,7 +360,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			insert(obj, dao, sessionDataBean);
 		}
 	}
-
 	/**
 	 * This method insert object.
 	 * @param obj object to be insert
@@ -394,7 +375,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		insert(obj, sessionDataBean, false);
 	}
-
 	/**
 	 * This method insert object.
 	 * @param obj object to be insert
@@ -406,7 +386,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		insert(obj, sessionDataBean, false);
 	}
-
 	/**
 	 * This method insert object.
 	 * @param obj object to be insert
@@ -419,7 +398,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		insert(obj, null, true);
 	}
-
 	/**
 	 * This method insert object.
 	 * @param obj object to be insert
@@ -429,7 +407,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		insert(obj, null, true);
 	}
-
 	/**
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
@@ -471,14 +448,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 			rollback(dao);
 			String errMsg = getErrorMessage(exception,currentObj,"Updating");
 			LOGGER.debug(errMsg, exception);
-			throw new BizLogicException(exception.getErrorKey(), exception,exception.getMsgValues(),errMsg);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMsg);
 		}
 		finally
 		{
 			closeSession(dao);
 		}
 	}
-
 	/**
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
@@ -495,7 +472,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		update(currentObj, oldObj, sessionDataBean, false);
 	}
-
 	/**
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
@@ -508,7 +484,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		update(currentObj, oldObj, sessionDataBean, false);
 	}
-
 	/**
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
@@ -521,7 +496,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		update(currentObj, null, null, true);
 	}
-
 	/**
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
@@ -531,16 +505,14 @@ public abstract class AbstractBizLogic implements IBizLogic
 	{
 		update(currentObj, null, null, true);
 	}
-
 	/**
 	 * This method formats Exception.
 	 * @param exception exception
 	 * @param obj object
 	 * @param operation operation
 	 * @return error message.
-	 * @throws ApplicationException Application Exception.
 	 */
-	public String formatException(Exception exception, Object obj, String operation)
+	public String formatException(Exception exception, Object obj, String operation) // NOPMD
 	{
 		String errMsg;
 		String tableName = null;
@@ -562,10 +534,19 @@ public abstract class AbstractBizLogic implements IBizLogic
 			{
 				if(obj instanceof LinkedHashSet && !((LinkedHashSet)obj).isEmpty())
 				{
-					obj = ((LinkedHashSet)obj).iterator().next(); 
+					obj = ((LinkedHashSet)obj).iterator().next();
 				}
-				
-				tableName = HibernateMetaData.getTableName(obj.getClass());
+
+				HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
+				.getHibernateMetaData(appName);
+				if (hibernateMetaData != null)
+				{
+					tableName = hibernateMetaData.getTableName(obj.getClass());
+				}
+				else
+				{
+					tableName = "";
+				}
 				errMsg = exFormatter.formatMessage(exception);
 			}
 		}
@@ -579,9 +560,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		return errMsg;
 	}
-
-	
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param className Contains class Name.
@@ -633,7 +611,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		return isSuccess;
 	}
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param className Contains the class Name.
@@ -672,7 +649,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 
 		return abstractDomain;
 	}
-
 	/**
 	 * @param uiForm Form object.
 	 * @param object object to populate.
@@ -697,7 +673,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
 		return abstractDomain;
 	}
-
 	/**
 	 * This method gets called before populateUIBean method.
 	 * Any logic before updating uiForm can be included here.
@@ -707,7 +682,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	protected abstract void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException;
-
 	/**
 	 * This method gets called after populateUIBean method.
 	 * Any logic after populating  object uiForm can be included here.
@@ -717,32 +691,29 @@ public abstract class AbstractBizLogic implements IBizLogic
 	 */
 	protected abstract void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException;
-
 	/**
 	 * This method checks Read Denied.
 	 * @return Read Denied or not.
 	 */
 	public abstract boolean isReadDeniedTobeChecked();
-
 	/**
 	 * This method gets Read Denied Privilege Name.
 	 * @return Denied Privilege Name.
 	 */
 	public abstract String getReadDeniedPrivilegeName();
-
 	/**
 	 * boolean value true if Privilege to view else false.
 	 * @param objName object.
 	 * @param identifier Long Id
 	 * @param sessionDataBean SessionDataBean object.
 	 * @return true if Privilege to view else false.
+	 * @throws BizLogicException throw BizLogicException
 	 */
-	public boolean hasPrivilegeToView(String objName, Long identifier,
+	public boolean hasPrivilegeToView(String objName, Long identifier, // NOPMD
 			SessionDataBean sessionDataBean)throws BizLogicException
 	{
 		return false;
 	}
-
 	/**
 	 * @param exception Exception object thrown in a catch block.
 	 * @param key error-key in applicationResource file.
@@ -757,7 +728,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 		ErrorKey errorKey = ErrorKey.getErrorKey(key);
 		return new BizLogicException(errorKey, exception, logMessage);
 	}
-
 	/**
 	 * @param dao DAO object.
 	 */
@@ -775,7 +745,6 @@ public abstract class AbstractBizLogic implements IBizLogic
 			LOGGER.fatal("Rollback unsuccessful in method.", daoEx);
 		}
 	}
-
 	/**
 	 * @param dao DAO object
 	 * @throws BizLogicException :Generic BizLogic Exception- session not closed.
@@ -833,11 +802,11 @@ public abstract class AbstractBizLogic implements IBizLogic
 				throw new BizLogicException(exception);
 			}
 		}
-
 	}
 	/**
 	 * This method returns hibernate DAO according to the application name.
 	 * @param appName Application name.
+	 * @param sessionDataBean SessionDataBean object.
 	 * @return DAO
 	 * @throws DAOException Generic DAO exception.
 	 */
@@ -848,23 +817,23 @@ public abstract class AbstractBizLogic implements IBizLogic
 		dao.openSession(sessionDataBean);
 		return dao;
 	}
-	
 	/**
      * This method gives the error message.
      * This method should be overrided for customizing error message
      * @param exception - Exception
      * @param obj - Object
+     * @param operation operation
      * @return - error message string
      */
-    public String getErrorMessage(ApplicationException exception, Object obj, String operation)
+    public String getErrorMessage(ApplicationException exception, Object obj, String operation) // NOPMD
     {
-    
     	StringBuffer buff = new StringBuffer();
-    	
+
     	if (exception.getWrapException() == null)
     	{
-    		
-    		if(exception.getErrorKey()== null && exception.toMsgValuesArray() != null && exception.toMsgValuesArray().length>0)
+
+    		if(exception.getErrorKey()== null && exception.toMsgValuesArray()
+    				!= null && exception.toMsgValuesArray().length>0)
     		{
     			for(String msg :exception.toMsgValuesArray())
     			{
@@ -888,10 +857,8 @@ public abstract class AbstractBizLogic implements IBizLogic
     			buff.append(exception.getMessage());
     		}
     	}
-
         return buff.toString();
     }
-    
     /**
      * This method returns root exception used in message formatter.
      * @param exception ApplicationException
@@ -916,6 +883,4 @@ public abstract class AbstractBizLogic implements IBizLogic
 		}
     	return (Exception)rootException;
     }
-    
-      
 }

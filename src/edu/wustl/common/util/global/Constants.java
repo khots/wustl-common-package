@@ -512,4 +512,8 @@ public final class Constants extends CommonConstants
     * CONSTANT NINE.
     */
    public static final int CONSTANT_NINE = 9 ;
+   /**
+    * COLON SEPARATOR.
+    */
+   public static final String COLON_SEPARATOR = ":";
 }

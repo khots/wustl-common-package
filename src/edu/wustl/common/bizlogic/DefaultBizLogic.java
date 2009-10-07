@@ -23,8 +23,10 @@ import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
+import edu.wustl.common.domain.DataAuditEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.Utility;
@@ -70,7 +72,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * LOGGER Logger - Generic LOGGER.
 	 */
 	private static final Logger LOGGER = Logger.getCommonLogger(DefaultBizLogic.class);
-
 	/**
 	 * This method gets called before insert method.
 	 * Any logic before inserting into database can be included here.
@@ -82,9 +83,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void preInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException
 	{
-
+		//Empty preInsert method.
 	}
-
 	/**
 	 *
 	 * @param currentObj current Object.
@@ -92,9 +92,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 */
 	public void createProtectionElement(Object currentObj) throws BizLogicException
 	{
-
+		// Empty createProtectionElement method.
 	}
-
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
@@ -109,20 +108,21 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.insert(obj);
 			AuditManager auditManager = getAuditManager(sessionDataBean);
-			auditManager.insertAudit(dao, obj);
-			
+			auditManager.insertAudit(dao, obj,"INSERT");
 		}
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),exception.getMsgValues());
-		} catch (AuditException exception) {
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(),exception.getMsgValues());
+		}
+		catch (AuditException exception)
+		{
 			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, exception.getErrorKeyName(),
 					exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method gets called after insert method.
 	 * Any logic after inserting object in database can be included here.
@@ -134,9 +134,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException
 	{
-
+		// Empty postInsert method.
 	}
-
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -152,10 +151,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(),exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method gets called before update method.
 	 * Any logic before updating into database can be included here.
@@ -168,9 +167,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void preUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException
 	{
-
+		// Empty preUpdate method.
 	}
-
 	/**
 	 * Updates an objects into the database.
 	 * @param dao The dao object.
@@ -186,8 +184,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.update(obj);
 			AuditManager auditManager = getAuditManager(sessionDataBean);
-			auditManager.updateAudit(dao, obj, oldObj);
-			
+			auditManager.updateAudit(dao, obj, oldObj,"UPDATE");
 		}
 		catch (DAOException exception)
 		{
@@ -195,13 +192,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throw getBizLogicException(exception, exception.getErrorKeyName(),
 					exception.getMsgValues());
 		}
-		 catch (AuditException exception) {
+		 catch (AuditException exception)
+		 {
 				LOGGER.debug(exception.getMessage(), exception);
 				throw getBizLogicException(exception, exception.getErrorKeyName(),
 						exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method gets called after update method.
 	 * Any logic after updating into database can be included here.
@@ -214,9 +211,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void postUpdate(DAO dao, Object currentObj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException
 	{
-
+		// Empty postUpdate method.
 	}
-
 	/**
 	 * This method validate the object.
 	 * @param obj object.
@@ -229,7 +225,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return true;
 	}
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName	source object name
@@ -245,7 +240,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			QueryWhereClause queryWhereClause)
 			method can be used.
 	 */
-	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName, // NOPMD
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition) throws BizLogicException
 	{
@@ -269,8 +264,20 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
-
-	private QueryWhereClause createWhereClause(String sourceObjectName, String[] whereColumnName,
+	/**
+	 * Retrieves the records for class name in sourceObjectName according to field values passed.
+	 * @param sourceObjectName	source object name
+	 * @param whereColumnName column name used in where clause
+	 * @param whereColumnCondition conditions used in where clause.
+	 * @param whereColumnValue column values used in where clause.
+	 * @param joinCondition join condition used in  where clause.
+	 * @return list retrieved objects list
+	 * @throws DAOException throw DAOException
+	 *  instead of this method retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause)
+			method can be used.
+	 */
+	private QueryWhereClause createWhereClause(String sourceObjectName, String[] whereColumnName, // NOPMD
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
 			throws DAOException
 	{
@@ -279,7 +286,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 				whereColumnValue, joinCondition);
 		return queryWhereClause;
 	}
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
 	 * @param sourceObjectName :source object name
@@ -309,7 +315,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName source Object Name
@@ -324,17 +329,16 @@ public class DefaultBizLogic extends AbstractBizLogic
 			QueryWhereClause queryWhereClause)
 			method can be used.
 	 */
-	public List retrieve(String sourceObjectName, String[] whereColumnName,
+	public List retrieve(String sourceObjectName, String[] whereColumnName, // NOPMD
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
 			throws BizLogicException
 	{
 		return retrieve(sourceObjectName, null, whereColumnName, whereColumnCondition,
 				whereColumnValue, joinCondition);
 	}
-
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
-	 * @param className class Name
+	 * @param sourceObjectName class Name
 	 * @param colName Contains the field name.
 	 * @param colValue Contains the field value.
 	 * @return records
@@ -343,7 +347,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	public List retrieve(String sourceObjectName, String colName, Object colValue)
 			throws BizLogicException
 	{
-		
 		String[] whereColumnName = {colName};
 		String[] whereColumnCondition = {"="};
 		Object[] whereColumnValue = {colValue};
@@ -354,7 +357,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao = getHibernateDao(getAppName(),null);
 			QueryWhereClause queryWhereClause = createWhereClause(sourceObjectName,
-					whereColumnName, whereColumnCondition, whereColumnValue, Constants.AND_JOIN_CONDITION);
+					whereColumnName, whereColumnCondition,
+					whereColumnValue, Constants.AND_JOIN_CONDITION);
 			list = dao.retrieve(sourceObjectName, selectColumnName, queryWhereClause);
 		}
 		catch (DAOException daoExp)
@@ -368,8 +372,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
-
-
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the class name whose records are to be retrieved.
@@ -396,7 +398,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
-
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the class name whose records are to be retrieved.
@@ -426,7 +427,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		return list;
 	}
-
 	/**
 	 * Retrieve object.
 	 * @param sourceObjectName Contains the class name whose object is to be retrieved.
@@ -456,7 +456,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return object;
 
 	}
-
 	/**
 	 * This method gets list.
 	 * @param sourceObjectName source Object Name
@@ -485,7 +484,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName,
 				whereColumnCondition, whereColumnValue, joinCondition, separatorBetweenFields);
 	}
-
 	/**
 	 * Returns collection of name value pairs.
 	 * @param sourceObjectName source Object Name
@@ -504,8 +502,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String separatorBetweenFields,QueryWhereClause queryWhereClause)
 			method can be used.
 	 */
-	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
-			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
+	public List getList(String sourceObjectName, String[] displayNameFields, String valueField, // NOPMD
+			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue, // NOPMD
 			String joinCondition, String separatorBetweenFields, boolean isToExcludeDisabled)
 			throws BizLogicException
 	{
@@ -514,27 +512,27 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Object[] whereColValue = null;*/
 		/*
 		//bug 12652 start
-		if(whereColumnName != null && whereColumnCondition != null && whereColumnValue != null && whereColumnName.length > 0)
+		if(whereColumnName != null && whereColumnCondition != null
+		&& whereColumnValue != null && whereColumnName.length > 0)
 		{
 			whereColName = whereColumnName;
 			whereColCondition = whereColumnCondition;
-			whereColValue = whereColumnValue;		  
+			whereColValue = whereColumnValue;
 		} Many issues occurs if we uncomment this.
 		*/
-
 
 		if (isToExcludeDisabled)
 		{
 			whereColumnName = (String[]) Utility.addElement(whereColumnName, "activityStatus");
 			whereColumnCondition = (String[]) Utility.addElement(whereColumnCondition, "!=");
-			whereColumnValue = Utility.addElement(whereColumnValue, Status.ACTIVITY_STATUS_DISABLED.toString());
+			whereColumnValue = Utility.addElement(whereColumnValue,
+					Status.ACTIVITY_STATUS_DISABLED.toString());
 		}
 
-		return getList(sourceObjectName, displayNameFields, valueField, whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
+		return getList(sourceObjectName, displayNameFields, valueField,
+				whereColumnName, whereColumnCondition, whereColumnValue, joinCondition,
 				separatorBetweenFields);
-	
 	}
-
 	/*	private List getList(String sourceObjectName,String[] displayNameFields,
 				String valueField,QueryWhereClause queryWhereClause, String separatorBetweenFields)
 				 throws BizLogicException
@@ -576,7 +574,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			String separatorBetweenFields,QueryWhereClause queryWhereClause)
 			method can be used.
 	 */
-	public List getList(String sourceObjectName, String[] displayNameFields, String valueField,
+	public List getList(String sourceObjectName, String[] displayNameFields, String valueField, // NOPMD
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
 			String joinCondition, String separatorBetweenFields) throws BizLogicException
 	{
@@ -616,7 +614,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collections.sort(nameValuePairs);
 		return nameValuePairs;
 	}
-
 	/**
 	 * Sorting of ID columns.
 	 * @param sourceObjectName source Object Name
@@ -637,7 +634,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collections.sort(nameValuePairs);
 		return nameValuePairs;
 	}
-
 	/**
 	 * @param separatorBetweenFields separator Between Fields
 	 * @param nameValuePairs list to add attributes.
@@ -668,7 +664,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 		}
 	}
-
 	/**
 	 * @param separatorBetweenFields separator Between Fields
 	 * @param tmpBuffer buffer
@@ -699,7 +694,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return tmpObj;
 	}
-
 	/**
 	 * @param columnArray column array
 	 * @param tmpBuffer buffer
@@ -714,7 +708,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 		}
 	}
-
 	/**
 	 * This method disable Objects.
 	 * @param dao The dao object.
@@ -726,7 +719,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return listOfSubElement
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier,
+	protected List disableObjects(DAO dao, Class sourceClass, String classIdentifier, // NOPMD
 			String tablename, String colName, Long[] objIDArr) throws BizLogicException
 	{
 		disableRelatedObjects(dao, tablename, colName, objIDArr);
@@ -734,7 +727,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
 	}
-
 	/**
 	 * This method disable Objects.
 	 * @param dao The dao object.
@@ -745,14 +737,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return listOfSubElement
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	protected List disableObjects(DAO dao, String tablename, Class sourceClass,
+	protected List disableObjects(DAO dao, String tablename, Class sourceClass, // NOPMD
 			String classIdentifier, Long[] objIDArr) throws BizLogicException
 	{
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
 		disableAndAuditObjects(dao, sourceClass.getName(), tablename, listOfSubElement);
 		return listOfSubElement;
 	}
-
 	/**
 	 * This metod disabled And Audit Objects.
 	 * @param dao The dao object.
@@ -781,19 +772,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 			HibernateDAO hibDAO = (HibernateDAO) dao;
 			AuditManager auditManager = getAuditManager(null);
 			auditManager.addAuditEventLogs(hibDAO, auditEventLogsCollection);
-		
 		}
 		catch (DAOException daoExp)
 		{
 			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp,  daoExp.getErrorKeyName(), daoExp.getMsgValues());
 		}
-		catch (AuditException exception) {
+		catch (AuditException exception)
+		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception,  exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method add Audit Events to Collection.
 	 * @param tablename Contains the field table name
@@ -803,10 +794,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	private void addAuditEventstoColl(String tablename, Collection auditEventLogsCollection,
 			Long objectId)
 	{
-		AuditEventLog auditEventLog = new AuditEventLog();
+		AuditEvent event = new AuditEvent() ;
+		DataAuditEventLog auditEventLog = new DataAuditEventLog();
 		auditEventLog.setObjectIdentifier(objectId);
 		auditEventLog.setObjectName(tablename);
-		auditEventLog.setEventType(Constants.UPDATE_OPERATION);
+		event.setEventType(Constants.UPDATE_OPERATION);
+		auditEventLog.setAuditEvent(event) ;
 
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
@@ -818,14 +811,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 		auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
 		auditEventLogsCollection.add(auditEventLog);
 	}
-
 	/**
 	 * @param dao The dao object.
 	 * @param tablename Contains the field table name
 	 * @param listOfSubElement list Of SubElement
-	 * @throws BizLogicException 
+	 * @throws BizLogicException throw BizLogicException
 	 */
-	protected void auditDisabledObjects(DAO dao, String tablename, List listOfSubElement) throws BizLogicException
+	protected void auditDisabledObjects(DAO dao, String tablename,
+			List listOfSubElement) throws BizLogicException
 	{
 		try
 		{
@@ -841,15 +834,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 			AuditManager auditManager = getAuditManager(null);
 			auditManager.addAuditEventLogs(hibDAO, auditEventLogsCollection);
 		}
-		catch (AuditException exception) {
+		catch (AuditException exception)
+		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
-		} catch (DAOException exception) {
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
+		}
+		catch (DAOException exception)
+		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method gets related objects.
 	 * @param dao The dao object.
@@ -876,14 +873,14 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 		list = Utility.removeNull(list);
 		LOGGER.debug(sourceClass.getName() + " Related objects to "
 				+ edu.wustl.common.util.Utility.getArrayString(objIDArr) + " are " + list);
 		return list;
 	}
-
 	/**
 	 * Overloaded to let selectColumnName and whereColumnName also be
 	 * parameters to method and are not hardcoded.
@@ -895,7 +892,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName,
+	public List getRelatedObjects(DAO dao, Class sourceClass, String[] selectColumnName, // NOPMD
 			String[] whereColumnName, Long[] objIDArr) throws BizLogicException
 	{
 
@@ -914,12 +911,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 		list = Utility.removeNull(list);
 		return list;
 	}
-
 	/**
 	 * Overloaded to let selectColumnName and whereColumnName also be
 	 * parameters to method and are not hardcoded.
@@ -932,7 +929,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @deprecated
 	 */
-	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName,
+	public List getRelatedObjects(DAO dao, Class sourceClass, String[] whereColumnName, // NOPMD
 			String[] whereColumnValue, String[] whereColumnCondition) throws BizLogicException
 	{
 
@@ -950,12 +947,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 		list = Utility.removeNull(list);
 		return list;
 	}
-
 	/**
 	 * This method returns related objects.
 	 * @param dao The dao object.
@@ -977,12 +974,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 		list = Utility.removeNull(list);
 		return list;
 	}
-
 	/**
 	 * This method gets Corresponding Old Object.
 	 * @param objectCollection object Collection
@@ -1005,7 +1002,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return abstractDomainObject;
 	}
-
 	/**
 	 *  Method to check the ActivityStatus of the given identifier.
 	 * @param dao The dao object.
@@ -1034,7 +1030,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			}
 		}
 	}
-
 	/**
 	 * This method gets Activity Status.
 	 * @param dao The dao object.
@@ -1048,8 +1043,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		String[] selectColumnName = {Status.ACTIVITY_STATUS.getStatus()};
 		QueryWhereClause queryWhereClause = new QueryWhereClause(sourceObjectName);
-		
-
 		List<Object> list;
 		try
 		{
@@ -1072,7 +1065,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return activityStatus;
 	}
-
 	/**
 	 * This method insert object.
 	 * @param obj object to be inserted.
@@ -1091,7 +1083,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throw getBizLogicException(daoEx, daoEx.getErrorKeyName(), daoEx.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method updates object in database.
 	 * @param dao The dao object.
@@ -1107,10 +1098,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(), exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 	}
-
 	/**
 	 * This method retrieve Attribute.
 	 * @param objClass objClass
@@ -1119,7 +1110,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @return attribute.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
-	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
+	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName) // NOPMD
 			throws BizLogicException
 	{
 		String columnName = Constants.SYSTEM_IDENTIFIER;
@@ -1129,9 +1120,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao = getHibernateDao(getAppName(),null);
 			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
-			
 			/*
-			 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+			 * if the attribute is of type collection,
+			 *  then it needs to be returned as Collection(HashSet)
 			 */
 			if (Utility.isColumnNameContainsElements(attributeName))
 			{
@@ -1141,7 +1132,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					/**
 					 * Name: Prafull
-					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 * Calling HibernateMetaData.getProxyObject()
+					 * because it could be proxy object.
 					 */
 					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
 				}
@@ -1152,12 +1144,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					/**
 					 * Name: Prafull
-					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 * Calling HibernateMetaData.getProxyObject()
+					 *  because it could be proxy object.
 					 */
 					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
 				}
 			}
-	
 		}
 		catch (DAOException daoExp)
 		{
@@ -1170,11 +1162,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return attribute;
 	}
-	
-	
-	
 	/**
 	 * This method retrieve Attribute.
+	 * @param dao DAO object.
 	 * @param objClass objClass
 	 * @param identifier identifier
 	 * @param attributeName attribute Name
@@ -1192,7 +1182,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
 
 			/*
-			 * if the attribute is of type collection, then it needs to be returned as Collection(HashSet)
+			 * if the attribute is of type collection,
+			 *  then it needs to be returned as Collection(HashSet)
 			 */
 			if (Utility.isColumnNameContainsElements(attributeName))
 			{
@@ -1202,7 +1193,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					/**
 					 * Name: Prafull
-					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 * Calling HibernateMetaData.getProxyObject()
+					 * because it could be proxy object.
 					 */
 					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
 				}
@@ -1213,7 +1205,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 				{
 					/**
 					 * Name: Prafull
-					 * Calling HibernateMetaData.getProxyObject() because it could be proxy object.
+					 * Calling HibernateMetaData.getProxyObject()
+					 * because it could be proxy object.
 					 */
 					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
 				}
@@ -1228,8 +1221,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		return attribute;
 	}
-
-
 	/**
 	 * To retrieve the attribute value for the given source object name & Id.
 	 * @param sourceObjectName Source object in the Database.
@@ -1257,7 +1248,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return attribute;
 	}
-
 	/**
 	 * This method gets called before populateUIBean method.
 	 * Any logic before updating uiForm can be included here.
@@ -1268,9 +1258,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void prePopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException
 	{
-
+		//Empty prePopulateUIBean method.
 	}
-
 	/**
 	 * This method gets called after populateUIBean method.
 	 * Any logic after populating  object uiForm can be included here.
@@ -1281,9 +1270,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	protected void postPopulateUIBean(AbstractDomainObject domainObj, IValueObject uiForm)
 			throws BizLogicException
 	{
-
+		// Empty postPopulateUIBean method.
 	}
-
 	/**
 	 *@param objCollection object collection.
 	 *@param dao The dao object.
@@ -1297,7 +1285,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		// TODO Auto-generated method stub
 
 	}
-
 	/**
 	 * Gets privilege name depending upon operation performed.
 	 * @param domainObject Object on which authorization is reqd.
@@ -1307,7 +1294,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return Variables.privilegeDetailsMap.get(getPrivilegeKey(domainObject));
 	}
-
 	/**
 	 * @param domainObject Object on which authorization is required.
 	 * @return Privilege Key
@@ -1316,18 +1302,17 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return null;
 	}
-
 	/**
 	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.DAO, java.lang.Object)
 	 * @param dao The dao object.
 	 * @param domainObject Object on which authorization is required.
 	 * @return allow Operation.
+	 * @throws BizLogicException throw BizLogicException
 	 */
 	public String getObjectId(DAO dao, Object domainObject)throws BizLogicException
 	{
 		return Constants.ALLOW_OPERATION;
 	}
-
 	/**
 	 * Executes the HQL query.
 	 * @param query HQL query to execute.
@@ -1346,7 +1331,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),exception.getMsgValues());
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(),exception.getMsgValues());
 		}
 		finally
 		{
@@ -1358,18 +1344,18 @@ public class DefaultBizLogic extends AbstractBizLogic
 			{
 				LOGGER.debug(exception.getMessage(), exception);
 				exception.printStackTrace();
-				throw getBizLogicException(exception, exception.getErrorKeyName(),exception.getMsgValues());
+				throw getBizLogicException(exception,
+						exception.getErrorKeyName(),exception.getMsgValues());
 			}
 		}
 		return returner;
 	}
-
 	/**
 	 * @param dao DAO object
 	 * @param tableName : table Name
 	 * @param whereColumnName : column name in where clause.
 	 * @param whereColumnValues : value of column name in where clause.
-	 * @throws DAOException :Generic DAO exception.
+	 * @throws BizLogicException :Generic BizLogicException.
 	 */
 	public void disableRelatedObjects(DAO dao, String tableName, String whereColumnName,
 			Long[] whereColumnValues) throws BizLogicException
@@ -1405,7 +1391,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 			closeSession((DAO)jdbcDAO);
 		}
 	}
-
 	/**
 	 * Read Denied To be Checked.
 	 * @return false
@@ -1415,7 +1400,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return false;
 	}
-
 	/**
 	 * This method gets Read Denied Privilege Name.
 	 * @return Privilege Name
@@ -1425,7 +1409,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return null;
 	}
-
 	/**
 	 * this method return true if authorized user.
 	 * @param dao DAO object.
@@ -1439,11 +1422,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return false;
 	}
-	
 	/**
 	 * This method will be called to return the Audit manager.
-	 * @param sessionDataBean
-	 * @return
+	 * @param sessionDataBean SessionDataBean sessionDataBean object
+	 * @return AuditManager object.
 	 */
 	public AuditManager getAuditManager(SessionDataBean sessionDataBean)
 	{
@@ -1459,7 +1441,5 @@ public class DefaultBizLogic extends AbstractBizLogic
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
 		}
 		return auditManager;
-	
 	}
-
 }

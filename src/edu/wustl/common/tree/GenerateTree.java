@@ -26,38 +26,41 @@ import org.jdesktop.swingx.JXTree;
  * GenerateTree generates tree for the storage structure.
  * @author gautam_shetty
  */
-public class GenerateTree
+public class GenerateTree // NOPMD
 {
-
-	ArrayList list;
-	String containerName;
-
 	/**
-	 * Default consructor
+	 *  ArrayList.
+	 */
+	ArrayList list;
+	/**
+	 * Container name.
+	 */
+	String containerName;
+	/**
+	 * Default consructor.
 	 */
 	public GenerateTree()
 	{
-
+		//Empty Constructor GenerateTree.
 	}
-
 	/**
-	 * parameterised consructor
+	 * parameterised consructor.
+	 * @param containerName String value to set.
 	 */
 	public GenerateTree(String containerName)
 	{
 		this.containerName = containerName;
 	}
-
 	//	public JTree createTree(Vector dataVector, int treeType)
 	//    {
 	//		JTree tree = createTree(dataVector, treeType, false);
 	//		return tree;
 	//    }
-
 	/**
 	 * Creates and returns the JTree from the vector of data nodes passed.
 	 * @param dataVector the data vector.
-	 * @param treeType the type of tree.
+	 * @param rootTreeNode TreeNode object
+	 * @param isJXTree boolean variable
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 	public JTree createTree(Vector dataVector, TreeNode rootTreeNode, boolean isJXTree)
@@ -95,7 +98,8 @@ public class GenerateTree
 						Object treeNode = path.getLastPathComponent();
 						if (treeNode instanceof DefaultMutableTreeNode)
 						{
-							TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode)
+							TreeNodeImpl userObject = (TreeNodeImpl)
+							((DefaultMutableTreeNode) treeNode)
 									.getUserObject();
 							tip = userObject.getToolTip();
 						}
@@ -111,12 +115,12 @@ public class GenerateTree
 	/**
 	 * Creates and returns the JTree from the vector of data nodes passed.
 	 * @param dataVector the data vector.
-	 * @param treeType the type of tree.
+	 * @param rootTreeNode TreeNode object.
 	 * @param tempList List in which id is set
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 
-	public JTree createTree(Vector dataVector, TreeNode rootTreeNode, ArrayList tempList)
+	public JTree createTree(Vector dataVector, TreeNode rootTreeNode, ArrayList tempList) // NOPMD
 	{
 		/*TreeNode rootName = null;
 		if (dataVector != null && (dataVector.isEmpty() == false))
@@ -143,7 +147,8 @@ public class GenerateTree
 					Object treeNode = path.getLastPathComponent();
 					if (treeNode instanceof DefaultMutableTreeNode)
 					{
-						TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode)
+						TreeNodeImpl userObject = (TreeNodeImpl)
+						((DefaultMutableTreeNode) treeNode)
 								.getUserObject();
 						tip = userObject.getToolTip();
 					}
@@ -155,28 +160,28 @@ public class GenerateTree
 		{
 			tree.setSelectionPath((TreePath) list.get(0));
 			if (tempList != null)
+			{
 				tempList.add(list.get(1));
+			}
 		}
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		return tree;
 
 	}
-
 	/**
 	 * Creates and returns the JTree from the vector of data nodes passed.
 	 * @param dataVector the data vector.
-	 * @param treeType the type of tree.
+	 * @param rootTreeNode TreeNode object.
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 	public JTree createTree(Vector dataVector, TreeNode rootTreeNode)
 	{
 		return createTree(dataVector, rootTreeNode, null);
 	}
-
 	/**
 	 * Creates and returns the JTree from the vector of data nodes passed.
-	 * @param dataVector the data vector.
-	 * @param treeType the type of tree.
+	 * @param rootNode TreeNodeImpl object.
+	 * @param isJXTree boolean variable.
 	 * @return the JTree from the vector of data nodes passed.
 	 */
 	public JTree createTree(TreeNodeImpl rootNode, boolean isJXTree)
@@ -204,7 +209,8 @@ public class GenerateTree
 						Object treeNode = path.getLastPathComponent();
 						if (treeNode instanceof DefaultMutableTreeNode)
 						{
-							TreeNodeImpl userObject = (TreeNodeImpl) ((DefaultMutableTreeNode) treeNode)
+							TreeNodeImpl userObject = (TreeNodeImpl)
+							((DefaultMutableTreeNode) treeNode)
 									.getUserObject();
 							tip = userObject.getToolTip();
 						}
@@ -216,7 +222,6 @@ public class GenerateTree
 		}
 		return tree;
 	}
-
 	/**
 	 * Creates the hierarchy of nodes under the parent node with the child nodes passed.
 	 * @param parentNode the parent node.
@@ -243,5 +248,4 @@ public class GenerateTree
 			createHierarchy(childTreeNode, childNode.getChildNodes());
 		}
 	}
-
 }
