@@ -107,7 +107,7 @@ public class AuditManager // NOPMD
 	 * will be called. e.g. Insert, update, delete etc.
 	 * @throws AuditException Audit Exception.
 	 */
-	public void audit(Object currentObj, Object previousObj, String eventType)
+	protected void audit(Object currentObj, Object previousObj, String eventType)
 	throws AuditException
 	{
 		if (currentObj instanceof Auditable)
@@ -213,7 +213,7 @@ public class AuditManager // NOPMD
 	 * @return boolean result showing audit event details added successfully.
 	 * @throws AuditException throws the Audit Exception.
 	 */
-	public boolean callAuditClassMethod(Auditable obj,Auditable previousObj,
+	private boolean callAuditClassMethod(Auditable obj,Auditable previousObj,
 			DataAuditEventLog auditEventLog,AuditableClass auditableClass) throws AuditException
 	{
 		boolean flag = false ;
@@ -253,7 +253,9 @@ public class AuditManager // NOPMD
 			auditEventLog.setObjectIdentifier(obj.getId());
 		}
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-				.getHibernateMetaData(this.applicationName);
+				.getHibernateMetaData(this.applicationName); 
+		
+		LOGGER.info(" ::: Application name ::: " + applicationName) ;
 		if (hibernateMetaData == null)
 		{
 			auditEventLog.setObjectName("");
@@ -373,7 +375,6 @@ public class AuditManager // NOPMD
 		while (containmentItert.hasNext())
 		{
 			AuditableClass containmentClass = containmentItert.next();
-
 			Object containedObj = auditableClass.invokeGetterMethod(containmentClass.getRoleName(),
 					currentObj);
 
@@ -405,7 +406,7 @@ public class AuditManager // NOPMD
 	 * @return Collection of AuditEventLog object.
 	 * @throws AuditException throws an Audit Exception.
 	 */
-	public Collection<DataAuditEventLog> addContainmentObjects(Object containedObj)
+	private Collection<DataAuditEventLog> addContainmentObjects(Object containedObj)
 							throws AuditException
 	{
 		DataAuditEventLog auditEventLog = new DataAuditEventLog() ;
@@ -818,15 +819,14 @@ public class AuditManager // NOPMD
 	 * This method inserts the audit details of object which has passed as a parameter.
 	 * @param dao DAO object.
 	 * @param currentObj Object.
-	 * @param eventType Event Type
 	 * @throws AuditException throw AuditException.
 	 * @throws DAOException throw DAOException.
 	 */
-	public void insertAudit(DAO dao,Object currentObj,String eventType)throws AuditException, DAOException
+	public void insertAudit(DAO dao,Object currentObj)throws AuditException, DAOException
 	{
 		if (currentObj instanceof Auditable)
 		{
-			audit(currentObj, null, eventType);
+			audit(currentObj, null, "INSERT");
 			insert(dao);
 		}
 	}
@@ -835,16 +835,15 @@ public class AuditManager // NOPMD
 	 * @param dao DAO object.
 	 * @param currentObj Current Object.
 	 * @param previousObj Previous object.
-	 * @param eventType Event type.
 	 * @throws AuditException throw AuditException.
 	 * @throws DAOException throw DAOException.
 	 */
-	public void updateAudit(DAO dao,Object currentObj, Object previousObj,String eventType)
+	public void updateAudit(DAO dao,Object currentObj, Object previousObj)
 					throws AuditException, DAOException
 	{
 		if (currentObj instanceof Auditable)
 		{
-			audit(currentObj, previousObj, eventType);
+			audit(currentObj, previousObj, "UPDATE");
 			insert(dao);
 		}
 	}
@@ -869,7 +868,7 @@ public class AuditManager // NOPMD
 	 * @return DataAuditEventLog object.
 	 * @throws AuditException throw AuditException.
 	 */
-	public Collection<DataAuditEventLog> getContainmentObject(Auditable currentObject,
+	private Collection<DataAuditEventLog> getContainmentObject(Auditable currentObject,
 			Auditable previousObject) throws AuditException
 	{
 		DataAuditEventLog auditEventLog = new DataAuditEventLog();
@@ -888,7 +887,7 @@ public class AuditManager // NOPMD
 	 * @param prevCollectionIds Previous Collection values.
 	 * @return AuditEventDetails Object.
 	 */
-	public AuditEventDetails getAuditEventCollList
+	private AuditEventDetails getAuditEventCollList
 					(String currentCollectionIds,String prevCollectionIds)
 	{
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
@@ -905,7 +904,7 @@ public class AuditManager // NOPMD
 	 * @return DataAuditEventLog object which represents current values and previous values.
 	 * @throws AuditException throw AuditException.
 	 */
-	public Collection<DataAuditEventLog> getContainmentsForUpdate(Object containedObjColl,Object prevObjColl
+	private Collection<DataAuditEventLog> getContainmentsForUpdate(Object containedObjColl,Object prevObjColl
 			) throws AuditException
 	{
 		DataAuditEventLog auditEventLog = new DataAuditEventLog();
@@ -961,7 +960,7 @@ public class AuditManager // NOPMD
 	 * @return DataAuditEventLog object showing current and previous collection value list.
 	 * @throws AuditException throw AuditException.
 	 */
-	public DataAuditEventLog getRemainingContainements(Object prevObj,
+	private DataAuditEventLog getRemainingContainements(Object prevObj,
 			String previousIds, String currentIds) throws AuditException
 	{
 		DataAuditEventLog auditEventLog = new DataAuditEventLog() ;
@@ -990,7 +989,7 @@ public class AuditManager // NOPMD
 	 * @param currentIds Current values.
 	 * @return Collection of auditEventDetails object.
 	 */
-	public Collection<AuditEventDetails> addRemAssoObjColl(List<String> previousValue, // NOPMD
+	private Collection<AuditEventDetails> addRemAssoObjColl(List<String> previousValue, // NOPMD
 			Object currentObj,String attributeName,String previousIds,String currentIds)
 	{
 		Collection<AuditEventDetails> auditEventDetailsCollection
@@ -1028,7 +1027,7 @@ public class AuditManager // NOPMD
 	 * @param attributeName Role name of the Collection.
 	 * @return Collection of AuditEventDetails to add into the database.
 	 */
-	public Collection<AuditEventDetails> getRefObjectCollection(List<String> // NOPMD
+	private Collection<AuditEventDetails> getRefObjectCollection(List<String> // NOPMD
 			currentValue,List<String> previousValue,Object previousObj,
 			Object currentObj,String attributeName)
 	{
@@ -1091,7 +1090,7 @@ public class AuditManager // NOPMD
 	 * @param currentFieldValue Current value.
 	 * @return Collection of AuditEventDetails.
 	 */
-	public Collection<AuditEventDetails> getAssoDetailsColl(Object currentObj,
+	private Collection<AuditEventDetails> getAssoDetailsColl(Object currentObj,
 			String attributeName,String previousFieldValue,String currentFieldValue)
 	{
 		Collection<AuditEventDetails> auditEventDetailsCollection =
@@ -1113,7 +1112,7 @@ public class AuditManager // NOPMD
 	 * @param previousObject Previous AuditableObject.
 	 * @return boolean result whether same object or not.
 	 */
-	public boolean compareAuditableObject(Object currentObject, Object previousObject)
+	private boolean compareAuditableObject(Object currentObject, Object previousObject)
 	{
 		boolean flag = false ;
 

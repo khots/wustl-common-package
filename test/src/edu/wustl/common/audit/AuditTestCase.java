@@ -77,7 +77,7 @@ public class AuditTestCase extends CommonBaseTestCase
 			Order order2 = getOrder(person);
 			person.setOrderCollection(getOrderCollection(order1, order2));
 			dao.insert(person);
-			auditManager.insertAudit(dao, person, "INSERT");
+			auditManager.insertAudit(dao, person);
 			dao.commit();
 			testUpdateAudit(person, address);
 		}
@@ -120,7 +120,7 @@ public class AuditTestCase extends CommonBaseTestCase
 			//update the dao object
 			dao.update(person);
 			//Insert the audit information.
-			auditManager.updateAudit(dao, person,oldPerson, "UPDATE");
+			auditManager.updateAudit(dao, person,oldPerson);
 			dao.commit();
 		}
 		catch(Exception exception)
