@@ -108,7 +108,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.insert(obj);
 			AuditManager auditManager = getAuditManager(sessionDataBean);
-			auditManager.insertAudit(dao, obj,"INSERT");
+			auditManager.insertAudit(dao, obj);
 		}
 		catch (DAOException exception)
 		{
@@ -184,7 +184,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			dao.update(obj);
 			AuditManager auditManager = getAuditManager(sessionDataBean);
-			auditManager.updateAudit(dao, obj, oldObj,"UPDATE");
+			auditManager.updateAudit(dao, obj, oldObj);
 		}
 		catch (DAOException exception)
 		{
