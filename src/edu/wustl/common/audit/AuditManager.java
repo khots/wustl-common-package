@@ -258,7 +258,7 @@ public class AuditManager // NOPMD
 			auditEventLog.setObjectIdentifier(obj.getId());
 		}
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-				.getHibernateMetaData(this.applicationName); 
+				.getHibernateMetaData(applicationName); 
 		
 		LOGGER.info(" ::: Application name ::: " + applicationName) ;
 		if (hibernateMetaData == null)
@@ -556,7 +556,7 @@ public class AuditManager // NOPMD
 		// Find the corresponding column in the database
 		String columnName = "";
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-				.getHibernateMetaData(this.applicationName);
+				.getHibernateMetaData(applicationName);
 
 		if (hibernateMetaData == null)
 		{
@@ -639,7 +639,7 @@ public class AuditManager // NOPMD
 		//Find the currosponding column in the database
 		String columnName ;
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-		.getHibernateMetaData(this.applicationName);
+		.getHibernateMetaData(applicationName);
 		if (hibernateMetaData == null)
 		{
 			columnName = "";

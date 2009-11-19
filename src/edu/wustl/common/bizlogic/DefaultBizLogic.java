@@ -30,6 +30,7 @@ import edu.wustl.common.domain.DataAuditEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
@@ -1439,6 +1440,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			auditManager.setUserId(sessionDataBean.getUserId());
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
+			auditManager.setApplicationName(CommonServiceLocator.getInstance().getAppName());
 		}
 		return auditManager;
 	}
