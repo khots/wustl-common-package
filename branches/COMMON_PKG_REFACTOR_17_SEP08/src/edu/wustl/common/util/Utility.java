@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
 import edu.wustl.common.tree.TreeNodeImpl;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.CommonUtilities;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
@@ -40,6 +41,7 @@ import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.DAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
@@ -121,9 +123,9 @@ public final class Utility extends CommonUtilities
 	 */
 	public static String getColumnWidth(Class className, String attributeName)
 	{
-		DAOFactory daoFactory = new DAOFactory() ;
+		String applicationName = CommonServiceLocator.getInstance().getAppName() ;		
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-					.getHibernateMetaData(daoFactory.getApplicationName()) ;
+					.getHibernateMetaData(applicationName) ;
 		return Integer.toString((hibernateMetaData.getColumnWidth(className, attributeName)));
 	}
 	/**
@@ -445,9 +447,9 @@ public final class Utility extends CommonUtilities
 		LOGGER.debug("ClassName: " + className);
 		Class classObj = Class.forName(className);
 		
-		DAOFactory daoFactory = new DAOFactory() ;
+		
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-								.getHibernateMetaData(daoFactory.getApplicationName()) ;
+								.getHibernateMetaData(CommonServiceLocator.getInstance().getAppName()) ;
 		tableName = hibernateMetaData.getRootTableName(classObj); // get table name from class
 		/**
 		 * Bug ID: 6034

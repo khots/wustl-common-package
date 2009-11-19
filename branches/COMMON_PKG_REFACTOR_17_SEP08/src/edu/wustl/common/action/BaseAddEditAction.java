@@ -32,6 +32,7 @@ import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.IForwordToFactory;
 import edu.wustl.common.util.AbstractForwardToProcessor;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
@@ -44,10 +45,6 @@ import edu.wustl.dao.util.HibernateMetaDataFactory;
  */
 public abstract class BaseAddEditAction extends Action
 {
-	/**
-	 * Application Name
-	 */
-	private String applicationName ;
 	/**
 	 * LOGGER Logger - Generic LOGGER.
 	 */
@@ -251,7 +248,7 @@ public abstract class BaseAddEditAction extends Action
 		try
 		{
 			HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
-			.getHibernateMetaData(applicationName);
+			.getHibernateMetaData(CommonServiceLocator.getInstance().getAppName());
 			if (hibernateMetaData != null)
 			{
 				displayName = queryBizLogic.getDisplayNamebyTableName(hibernateMetaData
