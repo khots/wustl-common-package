@@ -42,16 +42,16 @@ public final class PasswordManager
 	{
 		LoggerConfig.configureLogger(System.getProperty("user.dir"));
 	}
-	private static Logger logger = Logger.getCommonLogger(PasswordManager.class);
-	
+	/**
+	 * Logger object.
+	 */
+	private static final Logger logger = Logger.getCommonLogger(PasswordManager.class);
 	/**
 	 * private constructor.
 	 */
 	private PasswordManager()
 	{
-
 	}
-
 	/**
 	 * Constant for TEN.
 	 */
@@ -69,7 +69,6 @@ public final class PasswordManager
 	 */
 	private static final String KEY = "AWelcomeTocaTISSUECOREOfThisIsThe" +
 			"FirstReleaseOfcaTISSUECOREDevelopedByWashUAtPersistentSystemsPrivateLimited";
-
 	/**
 	 * array used for password encryption.
 	 */
@@ -160,12 +159,10 @@ public final class PasswordManager
 		}
 		return passwordBuff.toString();
 	}
-
 	/**
 	 * specify stringEncrypter.
 	 */
 	private static StringEncrypter stringEncrypter = null;
-
 	/**
 	 * TO get the instance of StringEncrypter class.
 	 * @return The Object reference of StringEncrypter class.
@@ -179,7 +176,6 @@ public final class PasswordManager
 		}
 		return stringEncrypter;
 	}
-
 	/**
 	 * TO get Encrypted password for the given password.
 	 * @param password The password to be encrypted.
@@ -197,7 +193,6 @@ public final class PasswordManager
 			throw new PasswordEncryptionException(e.getMessage(), e);
 		}
 	}
-
 	/**
 	 * TO get Decrypted password for the given password.
 	 * @param password The password to be Decrypted.
@@ -215,7 +210,6 @@ public final class PasswordManager
 			throw new PasswordEncryptionException(e.getMessage(), e);
 		}
 	}
-
 	/**
 	 * This method encode input string.
 	 * @param input string
@@ -229,7 +223,6 @@ public final class PasswordManager
 		return stringBuffer.toString();
 
 	}
-
 	/**
 	 * @param inString a string for encryption.
 	 * @return Encoded string.
@@ -247,7 +240,6 @@ public final class PasswordManager
 		}
 		return stringBuffer;
 	}
-
 	/**
 	 * Create a string for encryption.
 	 * @param input input-string.
@@ -263,7 +255,6 @@ public final class PasswordManager
 		}
 		return inString;
 	}
-
 	/**
 	 * This method decode string.
 	 * @param decodeString string to decode
@@ -281,8 +272,7 @@ public final class PasswordManager
 		}
 		return sout.toString();
 	}
-
-	/**
+/**
 	 * @param decodeString String to be decoded.
 	 * @return string as byte array.
 	 */
@@ -300,7 +290,6 @@ public final class PasswordManager
 		}
 		return bytes;
 	}
-
 	/**
 	 * @param digit digit to be encoded.
 	 * @return encoded digit.
@@ -318,7 +307,6 @@ public final class PasswordManager
 		}
 		return encodedDigit;
 	}
-
 	/**
 	 * This method returns the validation results on Form Bean. This method should be called
 	 * from validate method of form bean.
@@ -339,7 +327,6 @@ public final class PasswordManager
 		errorNo = getErrorNumber(newPassword, errorNo);
 		return errorNo;
 	}
-
 	/**
 	 * to Check new password is different as old password ,if both are same return FAIL_SAME_AS_OLD.
 	 * @param newPassword new password
@@ -356,7 +343,6 @@ public final class PasswordManager
 		}
 		return erroNo;
 	}
-
 	/**
 	 * @param newPassword New Password.
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
@@ -377,7 +363,6 @@ public final class PasswordManager
 		}
 		return erroNo;
 	}
-
 	/**
 	 * to check whether password change in same session
 	 * get attribute (Boolean) from session object stored when password is changed successfully.
@@ -397,7 +382,6 @@ public final class PasswordManager
 		}
 		return erroNo;
 	}
-
 	/**
 	 * following code checks pattern i.e password must include atleast one UCase,LCASE and Number
 	 * and must not contain space character.
@@ -428,7 +412,6 @@ public final class PasswordManager
 		}
 		return erroNo;
 	}
-
 	/**
 	 * This method combines UI validation and business rules validation which is incorrect.
 	 * Call validatePasswordOnFormBean for Form bean validations.
@@ -464,7 +447,6 @@ public final class PasswordManager
 		errorNo = getErrorNumber(newPassword, errorNo);
 		return errorNo;
 	}
-
 	/**
 	 * @param newPassword new Password
 	 * @param errorNo error No.
@@ -483,7 +465,6 @@ public final class PasswordManager
 		}
 		return errNumber;
 	}
-
 	/**
 	 * to check password is different than user name if same return FAIL_SAME_AS_USERNAME =4
 	 * eg. username=abc@abc.com newpassword=abc is not valid.
@@ -507,7 +488,6 @@ public final class PasswordManager
 		}
 		return errorNo;
 	}
-
 	/**
 	 * to check password is different than user name if same return FAIL_SAME_AS_USERNAME =4
 	 * eg. username=abc@abc.com newpassword=abc@abc.com is not valid
@@ -525,7 +505,6 @@ public final class PasswordManager
 		}
 		return errorNo;
 	}
-
 	/**
 	 * @param oldPassword Old Password.
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
@@ -556,7 +535,6 @@ public final class PasswordManager
 		}
 		return errorNo;
 	}
-
 	/**
 	 * @param userName user Name.
 	 * @return old password of a user.
@@ -582,7 +560,6 @@ public final class PasswordManager
 		}
 		return password;
 	}
-
 	/**
 	 * Error message.
 	 * @param errorCode int value return by validate() method
@@ -601,7 +578,6 @@ public final class PasswordManager
 		}
 		return errMsg;
 	}
-
 	/**
 	 * This methods take a decision whether map can be initialized or not and accordingly
 	 * call a method initErrorMessMap.
@@ -658,7 +634,6 @@ public final class PasswordManager
 			writeToFile(filename, encodedPWD);
 		}
 	}
-
 	/**
 	 * This method writes the encoded password to the file.
 	 * @param filename File to be written.
