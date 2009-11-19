@@ -44,7 +44,7 @@ public class CDECacheManager // NOPMD by shrishail_kalshetty on 8/31/09 2:42 PM
 	 * of the CDEs. The errors if generated are reported to the administrator by email.
 	 * @throws CDEException throws CDEException
 	 */
-	public void refresh(Map cdeXMLMAP) throws CDEException // NOPMD by shrishail_kalshetty on 8/31/09 2:41 PM
+	public void refresh(Map cdeXMLMAP) throws CDEException // NOPMD
 	{
 		logger.info("Initializing CDE Cache Manager");
 		CDEDownloader cdeDownloader = null;

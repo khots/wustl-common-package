@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * @hibernate.class table="LOGIN_EVENT"
+ * @hibernate.class table="CATISSUE_LOGIN_AUDIT_EVENT_LOG"
  **/
 public class LoginEvent implements Serializable
 {
@@ -41,7 +41,7 @@ public class LoginEvent implements Serializable
      * Returns user's login Status.
      * @return user's login Status
      * @hibernate.property name="isLoginSuccessful" type="boolean"
-     * column="LOGIN_SUCCESS"
+     * column="IS_LOGIN_SUCCESSFUL"
      */
 	public boolean getIsLoginSuccessful()
 	{
@@ -99,7 +99,7 @@ public class LoginEvent implements Serializable
      * @return Date and time of the event.
      * @see #setTimestamp(Date)
      * @hibernate.property name="timestamp" type="timestamp"
-     * column="EVENT_TIMESTAMP"
+     * column="LOGIN_TIMESTAMP"
      */
 	public Date getTimestamp()
 	{
@@ -115,7 +115,7 @@ public class LoginEvent implements Serializable
 		this.timestamp = timestamp;
 	}
 	/**
-     * @hibernate.property name="sourceId" type="long" column="SOURCE_ID"
+     * @hibernate.property name="sourceId" type="long" column="LOGIN_SOURCE_ID"
      * @return Returns the institutionId.
      */
     public Long getSourceId()
@@ -132,7 +132,7 @@ public class LoginEvent implements Serializable
     /**
      * @return IPAddress in String format.
 	 * @hibernate.property name="ipAddress" type="string"
-     * column="IP_ADDRESS" length="20"
+     * column="LOGIN_IP_ADDRESS" length="20"
 	 **/
 	public String getIpAddress()
 	{

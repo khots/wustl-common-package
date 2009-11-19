@@ -15,16 +15,21 @@ import java.util.List;
 import java.util.Set;
 
 import edu.wustl.common.audit.util.AuditableMetadataUtil;
+import edu.wustl.common.beans.LoginDetails;
 import edu.wustl.common.domain.AbstractAuditEventLog;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.DataAuditEventLog;
+import edu.wustl.common.domain.LoginEvent;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.HibernateDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
 import edu.wustl.dao.util.HibernateMetaDataFactory;
@@ -771,7 +776,7 @@ public class AuditManager // NOPMD
 	 * @param dao DAO object.
 	 * @throws DAOException generic DAOException.
 	 */
-	public void insert(DAO dao) throws DAOException
+	private void insert(DAO dao) throws DAOException
 	{
 		if (auditEvent.getAuditEventLogCollection().isEmpty())
 		{
@@ -803,8 +808,26 @@ public class AuditManager // NOPMD
 	{
 		if (auditEventLog instanceof DataAuditEventLog)
 		{
-			DataAuditManager auditManager = new DataAuditManager();
-			auditManager.insertAuditEventLogs(dao, (DataAuditEventLog) auditEventLog);
+			insertAuditEventLogs(dao, (DataAuditEventLog) auditEventLog);
+		}
+	}
+	/**
+	 *
+	 * @param dao DAO object.
+	 * @param auditEventLog DataAuditEventLog object.
+	 * @throws DAOException throw DAOException
+	 */
+	private void insertAuditEventLogs(DAO dao,DataAuditEventLog auditEventLog) throws DAOException
+	{
+		Iterator<AuditEventDetails> auditEventDetailsIterator = auditEventLog
+		.getAuditEventDetailsCollcetion().iterator();
+		while (auditEventDetailsIterator.hasNext())
+		{
+			AuditEventDetails auditEventDetails = (AuditEventDetails) auditEventDetailsIterator
+			.next();
+			auditEventDetails.setAuditEventLog(auditEventLog);
+			dao.insert(auditEventDetails);
+			//dao.insert(auditEventDetails,false,"");
 		}
 	}
 	/**
@@ -851,7 +874,7 @@ public class AuditManager // NOPMD
 	 * Adds the record of AuditableObject into the Database.
 	 * @param dao DAO object.
 	 * @param auditEventLogsCollection Collection object.
-	 * @throws AuditException throw AuditException.
+	 * @throws AuditException throw AuditException.o
 	 * @throws DAOException throw DAOException.
 	 */
 	public void addAuditEventLogs(DAO dao,Collection<AbstractAuditEventLog> auditEventLogsCollection)
@@ -904,8 +927,8 @@ public class AuditManager // NOPMD
 	 * @return DataAuditEventLog object which represents current values and previous values.
 	 * @throws AuditException throw AuditException.
 	 */
-	private Collection<DataAuditEventLog> getContainmentsForUpdate(Object containedObjColl,Object prevObjColl
-			) throws AuditException
+	private Collection<DataAuditEventLog> getContainmentsForUpdate(Object containedObjColl,
+			Object prevObjColl) throws AuditException
 	{
 		DataAuditEventLog auditEventLog = new DataAuditEventLog();
 		StringBuffer currentObjectIds= new StringBuffer("") ;
@@ -1123,5 +1146,54 @@ public class AuditManager // NOPMD
 			flag = true ;
 		}
 		return flag ;
+	}
+	/**
+	 * Sets the LoginDetails.
+	 * @param loginDetails LoginDetails object to set.
+	 */
+	private LoginEvent setLoginDetails(LoginDetails loginDetails)
+	{
+		LoginEvent loginEvent = new LoginEvent();
+		loginEvent.setIpAddress(loginDetails.getIpAddress());
+		loginEvent.setSourceId(loginDetails.getSourceId());
+		loginEvent.setUserLoginId(loginDetails.getUserLoginId());
+		return loginEvent ;
+	}
+	/**
+	 * Sets the status of LoginAttempt to loginStatus provided as an argument.
+	 * @param loginStatus LoginStatus boolean value.
+	 * @param loginDetails LoginDetails object.
+	 */
+	public void loginAudit(boolean loginStatus,LoginDetails loginDetails)
+	{
+		LoginEvent loginEvent = setLoginDetails(loginDetails);
+		HibernateDAO hibernateDao = null;
+		String appName = CommonServiceLocator.getInstance().getAppName();
+		try
+		{
+			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
+			.getDAO();
+			hibernateDao.openSession(null);
+			loginEvent.setIsLoginSuccessful(loginStatus);
+			hibernateDao.insert(loginEvent);
+			hibernateDao.commit();
+		}
+		catch (DAOException daoException)
+		{
+			Logger.out.debug("Exception while Auditing Login Attempt. " 
+					+ daoException.getMessage(), daoException);
+		}
+		finally
+		{
+			try
+			{
+				hibernateDao.closeSession();
+			}
+			catch (DAOException daoException)
+			{
+				Logger.out.debug("Exception while Auditing Login Attempt. " 
+						+ daoException.getMessage(),daoException);
+			}
+		}
 	}
 }
