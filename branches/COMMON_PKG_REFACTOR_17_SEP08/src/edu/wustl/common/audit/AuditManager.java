@@ -460,11 +460,11 @@ public class AuditManager // NOPMD
 			}
 			if (currentReferencedObj instanceof Collection)
 			{
-				List<String> currentValue = getCollectionValueList(currentReferencedObj);
+				List<String> currentValue = getCollectionIdsList(currentReferencedObj);
 				List<String> previousValue = null;
 				if (previousReferencedObj != null)
 				{
-					previousValue = getCollectionValueList(previousReferencedObj);
+					previousValue = getCollectionIdsList(previousReferencedObj);
 				}
 				/**
 				 * call this method for either insert or update with new
@@ -593,7 +593,7 @@ public class AuditManager // NOPMD
 	 * @param currentContainedObj Object.
 	 * @return List of String values.
 	 */
-	private List<String> getCollectionValueList(Object currentContainedObj)
+	private List<String> getCollectionIdsList(Object currentContainedObj)
 	{
 		List<String> collectionValueList = new ArrayList<String>();
 
@@ -910,11 +910,11 @@ public class AuditManager // NOPMD
 	 * @param prevCollectionIds Previous Collection values.
 	 * @return AuditEventDetails Object.
 	 */
-	private AuditEventDetails getAuditEventCollList
-					(String currentCollectionIds,String prevCollectionIds)
+	private AuditEventDetails auditRefrenceAssociationsIds
+					(String currentCollectionIds,String prevCollectionIds, String attributeName)
 	{
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
-		auditEventDetails.setElementName("PREV_CURR_IDS_LIST");
+		auditEventDetails.setElementName(attributeName+"_PREV_CURR_IDS_LIST");
 		auditEventDetails.setCurrentValue(currentCollectionIds.substring(Constants.CONSTANT_ONE));
 		auditEventDetails.setPreviousValue(prevCollectionIds.substring(Constants.CONSTANT_ONE));
 		return auditEventDetails;
@@ -997,8 +997,8 @@ public class AuditManager // NOPMD
 				auditEventLog = processMethods((Auditable) null,
 						(Auditable) prevObject);
 			}
-			auditEventLog.getAuditEventDetailsCollcetion().
-			add(getAuditEventCollList(currentIds, prevIds.toString())) ;
+			
+			//auditEventLog.getAuditEventDetailsCollcetion().add(getAuditEventCollList(currentIds, prevIds.toString())) ;
 		}
 		return auditEventLog ;
 	}
@@ -1037,7 +1037,7 @@ public class AuditManager // NOPMD
 				}
 			}
 			auditEventDetailsCollection.
-			add(getAuditEventCollList(currentIds, prevIds.toString()));
+			add(auditRefrenceAssociationsIds(currentIds, prevIds.toString(),attributeName));
 		}
 		return auditEventDetailsCollection ;
 	}
