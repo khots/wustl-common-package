@@ -130,7 +130,6 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 			IDAOFactory daoFactory = DAOConfigFactory.getInstance().getDAOFactory("commonpackagetest");
 			DAO dao = daoFactory.getDAO();
 			auditManager.addAuditEventLogs(dao,getAuditEventLogCollection());
-			auditManager.insert(dao);
 			assertTrue("Event details inserted successfully in database.", true);
 		}
 		catch(Exception exception)
