@@ -61,7 +61,7 @@
         />
 
         <set
-            name="auditEventDetailsCollcetion"
+            name="auditEventDetailsCollection"
             table="CATISSUE_AUDIT_EVENT_DETAILS"
             lazy="false"
             inverse="false"

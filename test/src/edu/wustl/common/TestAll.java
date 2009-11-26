@@ -8,7 +8,24 @@ package edu.wustl.common;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import edu.wustl.common.audit.AuditManagerTestCase;
 import edu.wustl.common.audit.AuditTestCase;
+import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
+import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
+import edu.wustl.common.datatypes.DataTypeTestCase;
+import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
+import edu.wustl.common.util.ExportReportTestCase;
+import edu.wustl.common.util.XMLPropertyHandlerTestCase;
+import edu.wustl.common.util.global.ApplicationPropertiesTestCase;
+import edu.wustl.common.util.global.CommonServiceLocatorTestCase;
+import edu.wustl.common.util.global.HibernatePropertiesTestCase;
+import edu.wustl.common.util.global.PasswordEncrypterTestCase;
+import edu.wustl.common.util.global.PasswordManagerTestCase;
+import edu.wustl.common.util.global.SendEmailTestCase;
+import edu.wustl.common.util.global.StatusTestCase;
+import edu.wustl.common.util.global.ValidatorTestCase;
+import edu.wustl.common.util.global.XMLParserUtilityTestCase;
+import edu.wustl.common.util.impexp.AutomateImportTest;
 
 
 /**
@@ -33,7 +50,7 @@ public class TestAll extends TestCase
 	{
 		TestSuite suite = new TestSuite("Test suite for Query Interface Classes");
 		//suite.addTestSuite(UtilityTestCases.class);
-		/*suite.addTestSuite(DefaultBizLogicTestCase.class);
+		suite.addTestSuite(DefaultBizLogicTestCase.class);
 		suite.addTestSuite(AbstractBizLogicTestCase.class);
 		suite.addTestSuite(StatusTestCase.class);
 		suite.addTestSuite(DataTypeTestCase.class);
@@ -49,7 +66,7 @@ public class TestAll extends TestCase
 		suite.addTestSuite(XMLParserUtilityTestCase.class);
 		suite.addTestSuite(PasswordManagerTestCase.class);
 		suite.addTestSuite(PasswordEncrypterTestCase.class);
-		suite.addTestSuite(ValidatorTestCase.class);*/
+		suite.addTestSuite(ValidatorTestCase.class);
 		suite.addTestSuite(AuditTestCase.class);
 		return suite;
 	}

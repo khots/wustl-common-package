@@ -26,7 +26,7 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.domain.AuditEventLog;
-import edu.wustl.common.domain.DataAuditEventLog;
+import edu.wustl.common.domain.AuditDataEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.Utility;
@@ -796,7 +796,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			Long objectId)
 	{
 		AuditEvent event = new AuditEvent() ;
-		DataAuditEventLog auditEventLog = new DataAuditEventLog();
+		AuditDataEventLog auditEventLog = new AuditDataEventLog();
 		auditEventLog.setObjectIdentifier(objectId);
 		auditEventLog.setObjectName(tablename);
 		event.setEventType(Constants.UPDATE_OPERATION);
@@ -809,7 +809,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 
 		auditEventDetailsCollection.add(auditEventDetails);
 
-		auditEventLog.setAuditEventDetailsCollcetion(auditEventDetailsCollection);
+		auditEventLog.setAuditEventDetailsCollection(auditEventDetailsCollection);
 		auditEventLogsCollection.add(auditEventLog);
 	}
 	/**
