@@ -52,7 +52,7 @@ public class AuditManager // NOPMD
 	/**
 	 * Collection of all the auditable classes.
 	 */
-	Collection<AuditableClass> auditableMetadata  = new ArrayList<AuditableClass>();
+	private Collection<AuditableClass> auditableMetadata  = new ArrayList<AuditableClass>();
 	
 	/**
 	 * application name.
@@ -280,12 +280,11 @@ public class AuditManager // NOPMD
 					if ((currentAuditableObject instanceof Collection) && (previousAuditableObject instanceof Collection))
 					{
 
-						String containmentCollectionObjectName = getAssociationCollectionObjectName(
-								(Collection)currentAuditableObject,(Collection)previousAuditableObject);
-
 						if(!(((Collection)currentAuditableObject).isEmpty() && ((Collection)previousAuditableObject).isEmpty()))
-						{					
+						{
 							//Audit identifiers of current and previous objects of collections.
+							String containmentCollectionObjectName = getAssociationCollectionObjectName(
+									(Collection)currentAuditableObject,(Collection)previousAuditableObject);
 							auditEventLog.getAuditEventDetailsCollection().add(
 									auditRefrenceAssociationsIds(getColonSeparatedIds((Collection)currentAuditableObject),
 											getColonSeparatedIds((Collection)previousAuditableObject),containmentCollectionObjectName));
@@ -393,7 +392,7 @@ public class AuditManager // NOPMD
 								(Collection)currentAuditableObject,null);
 						if(!(((Collection)currentAuditableObject).isEmpty()))
 						{
-							//colon separated identifier.
+							//Audit identifiers of current and previous objects of collections.
 							auditEventLog.getAuditEventDetailsCollection().add(
 								auditRefrenceAssociationsIds(getColonSeparatedIds((Collection)currentAuditableObject),
 									null,associationObjectName));
@@ -401,7 +400,7 @@ public class AuditManager // NOPMD
 					}//for one to one Reference Associations.
 					else if (currentAuditableObject instanceof Auditable)
 					{
-						//colon separated identifier.
+						//Audit identifiers of current and previous objects.
 						auditEventLog.getAuditEventDetailsCollection().add(
 								auditRefrenceAssociationsIds(((Auditable) currentAuditableObject).getId().toString(),
 									null,((Auditable) currentAuditableObject).getClass().getName()));
@@ -416,12 +415,12 @@ public class AuditManager // NOPMD
 					//for one to many reference association. 
 					if ((currentAuditableObject instanceof Collection) &&(prevAuditableObject instanceof Collection))
 					{
-						String containmentCollectionObjectName = getAssociationCollectionObjectName(
-								(Collection)currentAuditableObject,(Collection)prevAuditableObject);
-							
 						if(!(((Collection)currentAuditableObject).isEmpty() && ((Collection)prevAuditableObject).isEmpty()))
 						{
-							//colon separated identifier.
+							//Audit identifiers of current and previous objects of collections.
+							String containmentCollectionObjectName = getAssociationCollectionObjectName(
+									(Collection)currentAuditableObject,(Collection)prevAuditableObject);
+
 							auditEventLog.getAuditEventDetailsCollection().add(
 								auditRefrenceAssociationsIds(getColonSeparatedIds((Collection)currentAuditableObject),
 									getColonSeparatedIds((Collection)prevAuditableObject),containmentCollectionObjectName));
@@ -430,7 +429,7 @@ public class AuditManager // NOPMD
 					}//for one to one reference association.
 					else if (currentAuditableObject instanceof Auditable)
 					{
-						//colon separated identifier.
+						//Audit identifiers of current and previous objects.
 						auditEventLog.getAuditEventDetailsCollection().add(
 								auditRefrenceAssociationsIds(((Auditable) currentAuditableObject).getId().toString(),
 										((Auditable)prevAuditableObject).getId().toString(),((Auditable) currentAuditableObject).getClass().getName()));
