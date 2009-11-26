@@ -52,7 +52,7 @@
 
         <many-to-one
             name="auditEventLog"
-            class="edu.wustl.common.domain.DataAuditEventLog"
+            class="edu.wustl.common.domain.AuditDataEventLog"
             cascade="none"
             outer-join="auto"
             update="true"

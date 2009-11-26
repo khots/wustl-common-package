@@ -7,7 +7,7 @@ import java.util.HashSet;
 /**
  * @hibernate.class table="CATISSUE_DATA_AUDIT_EVENT_LOG"
  **/
-public class DataAuditEventLog extends AbstractAuditEventLog implements java.io.Serializable
+public class AuditDataEventLog extends AbstractAuditEventLog implements java.io.Serializable
 {
 
 	/**
@@ -27,18 +27,16 @@ public class DataAuditEventLog extends AbstractAuditEventLog implements java.io.
 	 * Name of the event object.
 	 */
 	private String objectName;
-//	/**
-//	 * object of audit event.
-//	 */
-//	private AuditEvent auditEvent;
+
 	/**
-	 *
+	 * AuditDataEventLog.
 	 */
-	private Collection<DataAuditEventLog> containedObjectLogs=new HashSet<DataAuditEventLog>();
+	private Collection<AuditDataEventLog> auditDataEventLogs = new HashSet<AuditDataEventLog>();
+	
 	/**
 	 * collection that contains details of event audit.
 	 */
-	private Collection<AuditEventDetails> auditEventDetailsCollcetion = new HashSet<AuditEventDetails>();
+	private Collection<AuditEventDetails> auditEventDetailsCollection = new HashSet<AuditEventDetails>();
 	/**
 	 * This method gets the id.
 	 * @return the id.
@@ -97,66 +95,45 @@ public class DataAuditEventLog extends AbstractAuditEventLog implements java.io.
 		this.objectName = objectName;
 	}
 
-
-//	/**
-//	 * This method get the audit event object.
-//	 * @return the audit event object.
-//	 * @hibernate.many-to-one column="AUDIT_EVENT_ID"
-//	 * class="edu.wustl.common.domain.AuditEvent" constrained="true"
-//	 * @see #setParticipant(Site)
-//	 */
-//	public AuditEvent getAuditEvent()
-//	{
-//		return auditEvent;
-//	}
-//	/**
-//	 * set the audit event object.
-//	 * @param auditEvent the AuditEvent object.
-//	 */
-//	public void setAuditEvent(AuditEvent auditEvent)
-//	{
-//		this.auditEvent = auditEvent;
-//	}
-
 	/**
 	 * This method get the Audit Event Details Collcetion.
 	 * @return Audit Event Details Collcetion.
-	 * @hibernate.set name="auditEventDetailsCollcetion" table="CATISSUE_AUDIT_EVENT_DETAILS"
+	 * @hibernate.set name="auditEventDetailsCollection" table="CATISSUE_AUDIT_EVENT_DETAILS"
 	 * @hibernate.collection-key column="AUDIT_EVENT_LOG_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventDetails"
 	 */
-	public Collection<AuditEventDetails> getAuditEventDetailsCollcetion()
+	public Collection<AuditEventDetails> getAuditEventDetailsCollection()
 	{
-		return auditEventDetailsCollcetion;
+		return auditEventDetailsCollection;
 	}
 	/**
 	 * set the collection with audit event details.
-	 * @param auditEventDetailsCollcetion the audit Event Details Collcetion.
+	 * @param auditEventDetailsCollection the audit Event Details Collcetion.
 	 */
-	public void setAuditEventDetailsCollcetion(
-			Collection<AuditEventDetails> auditEventDetailsCollcetion)
+	public void setAuditEventDetailsCollection(
+			Collection<AuditEventDetails> auditEventDetailsCollection)
 	{
-		this.auditEventDetailsCollcetion = auditEventDetailsCollcetion;
+		this.auditEventDetailsCollection = auditEventDetailsCollection;
 	}
 	/**
 	 * This method get the Audit Event Details Collcetion.
-	 * @return DataAuditEventLog object Details.
-	 * @hibernate.set name="containedObjectLogs" table="CATISSUE_DATA_AUDIT_EVENT_LOG"
+	 * @return AuditDataEventLog object Details.
+	 * @hibernate.set name="auditDataEventLogs" table="CATISSUE_DATA_AUDIT_EVENT_LOG"
 	 * @hibernate.collection-key column="PARENT_LOG_ID"
-	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.DataAuditEventLog"
+	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditDataEventLog"
 	 */
-	public Collection<DataAuditEventLog> getContainedObjectLogs()
+	public Collection<AuditDataEventLog> getAuditDataEventLogs()
 	{
-		return containedObjectLogs;
+		return auditDataEventLogs;
 	}
 	/**
 	 *
-	 * @param containedObjectLogs Set the Collection object.
+	 * @param auditDataEventLogs Set the Collection object.
 	 */
-	public void setContainedObjectLogs(
-			Collection<DataAuditEventLog> containedObjectLogs)
+	public void setAuditDataEventLogs(
+			Collection<AuditDataEventLog> auditDataEventLogs)
 	{
-		this.containedObjectLogs = containedObjectLogs;
+		this.auditDataEventLogs = auditDataEventLogs;
 	}
 
 	/* (non-Javadoc)
@@ -169,6 +146,6 @@ public class DataAuditEventLog extends AbstractAuditEventLog implements java.io.
 	public String toString()
 	{
 		return getId() + " " + objectIdentifier + " " + objectName + " \n "
-				+ auditEventDetailsCollcetion;
+				+ auditEventDetailsCollection;
 	}
 }

@@ -39,7 +39,7 @@
         />
 
         <joined-subclass
-            name="edu.wustl.common.domain.DataAuditEventLog"
+            name="edu.wustl.common.domain.AuditDataEventLog"
             table="CATISSUE_DATA_AUDIT_EVENT_LOG"
             dynamic-update="false"
             dynamic-insert="false"
@@ -67,7 +67,7 @@
 	        />
 	        
 	        <set
-	            name="containedObjectLogs"
+	            name="auditDataEventLogs"
 	            table="CATISSUE_DATA_AUDIT_EVENT_LOG"
 	            lazy="false"
 	            cascade="all"
@@ -79,12 +79,12 @@
 	              />
 	
 	              <one-to-many
-	                  class="edu.wustl.common.domain.DataAuditEventLog"
+	                  class="edu.wustl.common.domain.AuditDataEventLog"
 	              />
 	        </set>
 	        
 	        <set
-	            name="auditEventDetailsCollcetion"
+	            name="auditEventDetailsCollection"
 	            table="CATISSUE_AUDIT_EVENT_DETAILS"
 	            lazy="false"
 	           	inverse="false"

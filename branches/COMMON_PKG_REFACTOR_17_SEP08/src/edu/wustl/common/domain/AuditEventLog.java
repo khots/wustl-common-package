@@ -38,7 +38,7 @@ public class AuditEventLog implements java.io.Serializable
 	/**
 	 * collection that contains details of event audit.
 	 */
-	private Collection<AuditEventDetails> auditEventDetailsCollcetion = new HashSet<AuditEventDetails>();
+	private Collection<AuditEventDetails> auditEventDetailsCollection = new HashSet<AuditEventDetails>();
 
 	/**
 	 * This method gets the id.
@@ -140,22 +140,22 @@ public class AuditEventLog implements java.io.Serializable
 	/**
 	 * This method get the Audit Event Details Collcetion.
 	 * @return Audit Event Details Collcetion.
-	 * @hibernate.set name="auditEventDetailsCollcetion" table="CATISSUE_AUDIT_EVENT_DETAILS"
+	 * @hibernate.set name="auditEventDetailsCollection" table="CATISSUE_AUDIT_EVENT_DETAILS"
 	 * @hibernate.collection-key column="AUDIT_EVENT_LOG_ID"
 	 * @hibernate.collection-one-to-many class="edu.wustl.common.domain.AuditEventDetails"
 	 */
-	public Collection<AuditEventDetails> getAuditEventDetailsCollcetion()
+	public Collection<AuditEventDetails> getAuditEventDetailsCollection()
 	{
-		return auditEventDetailsCollcetion;
+		return auditEventDetailsCollection;
 	}
 	/**
 	 * set the collection with audit event details.
-	 * @param auditEventDetailsCollcetion the audit Event Details Collcetion.
+	 * @param auditEventDetailsCollection the audit Event Details Collcetion.
 	 */
-	public void setAuditEventDetailsCollcetion(
-			Collection<AuditEventDetails> auditEventDetailsCollcetion)
+	public void setAuditEventDetailsCollection(
+			Collection<AuditEventDetails> auditEventDetailsCollection)
 	{
-		this.auditEventDetailsCollcetion = auditEventDetailsCollcetion;
+		this.auditEventDetailsCollection = auditEventDetailsCollection;
 	}
 
 	/* (non-Javadoc)
@@ -168,6 +168,6 @@ public class AuditEventLog implements java.io.Serializable
 	public String toString()
 	{
 		return id + " " + objectIdentifier + " " + objectName + " " + eventType + " \n "
-				+ auditEventDetailsCollcetion;
+				+ auditEventDetailsCollection;
 	}
 }

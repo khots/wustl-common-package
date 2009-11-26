@@ -8,7 +8,7 @@ import edu.wustl.common.CommonBaseTestCase;
 import edu.wustl.common.domain.AbstractAuditEventLog;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
-import edu.wustl.common.domain.DataAuditEventLog;
+import edu.wustl.common.domain.AuditDataEventLog;
 import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
@@ -147,7 +147,7 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 
 		AuditEvent auditEvent=getAuditEvent(1);
 		auditEvent.setEventType("eventType") ;
-		DataAuditEventLog auditEventLog=getAuditEventLog(1);
+		AuditDataEventLog auditEventLog=getAuditEventLog(1);
 		AuditEventDetails auditEventDetails=getAuditEventDetails(1);
 
 		auditEventLog.setAuditEvent(auditEvent);
@@ -167,9 +167,9 @@ public class AuditManagerTestCase extends CommonBaseTestCase
 	 * @param auditEventLogId AuditEvent Id
 	 * @return AuditEvent Log
 	 */
-	private DataAuditEventLog getAuditEventLog(int auditEventLogId)
+	private AuditDataEventLog getAuditEventLog(int auditEventLogId)
 	{
-		DataAuditEventLog auditEventLog= new DataAuditEventLog();
+		AuditDataEventLog auditEventLog= new AuditDataEventLog();
 		//auditEventLog.setEventType("eventType");
 		auditEventLog.setObjectIdentifier(Long.valueOf(auditEventLogId));
 		auditEventLog.setId(Long.valueOf(auditEventLogId));
