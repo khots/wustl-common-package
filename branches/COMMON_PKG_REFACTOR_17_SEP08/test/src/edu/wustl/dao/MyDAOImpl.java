@@ -18,6 +18,11 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.global.PasswordManager;
+import edu.wustl.dao.DAO;
+import edu.wustl.dao.DatabaseProperties;
+import edu.wustl.dao.HibernateDAO;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
@@ -840,5 +845,41 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public void beginTransaction() throws DAOException
 	{
 		// TODO Auto-generated method stub
+	}
+	public List executeQuery(String arg0, Integer arg1,
+			LinkedList<ColumnValueBean> arg2) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void executeUpdate(String arg0,
+			LinkedList<LinkedList<ColumnValueBean>> arg1) throws DAOException {
+		// TODO Auto-generated method stub
+		
+	}
+	public ResultSet getResultSet(String arg0,
+			LinkedList<ColumnValueBean> arg1, Integer arg2) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List retrieve(String arg0, String[] arg1, QueryWhereClause arg2,
+			LinkedList<ColumnValueBean> arg3) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List retrieve(String arg0, String arg1, Object arg2,
+			LinkedList<ColumnValueBean> arg3) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List retrieve(String arg0, String[] arg1, QueryWhereClause arg2,
+			LinkedList<ColumnValueBean> arg3, boolean arg4) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public ResultSet retrieveResultSet(String arg0, String[] arg1,
+			QueryWhereClause arg2, LinkedList<ColumnValueBean> arg3,
+			boolean arg4) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

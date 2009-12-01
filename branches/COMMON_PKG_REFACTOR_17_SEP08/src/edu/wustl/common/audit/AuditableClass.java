@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import edu.wustl.common.audit.util.AuditUtil;
 import edu.wustl.common.exception.AuditException;
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is the POJO for the details of the objects read from the XML.
@@ -15,6 +17,11 @@ import edu.wustl.common.exception.AuditException;
  */
 public class AuditableClass
 {
+	/**
+	 * LOGGER Logger - Generic LOGGER.
+	 */
+	private static final Logger LOGGER = Logger.getCommonLogger(AuditManager.class);
+
 	/**
 	 * Class name of the domain object being referred to.
 	 */
@@ -31,7 +38,7 @@ public class AuditableClass
 	/**
 	 * Class object containing the instance of the domain object.
 	 */
-	private Class klass;
+	private Class auditClass;
 	/**
 	 * Collection of attributes of the objects that are reference associations.
 	 */
@@ -151,17 +158,17 @@ public class AuditableClass
 	{
 		try
 		{
-			if(klass==null)
+			if(auditClass==null)
 			{
-				klass = Class.forName(className);
+				auditClass = Class.forName(className);
 			}
 		}
 		catch (ClassNotFoundException e)
 		{
-			e.printStackTrace();
-			throw new AuditException(e,null);
+			LOGGER.error(e.getMessage(),e);
+			throw new AuditException(ErrorKey.getErrorKey("class.not.found.exp"),e,className);
 		}
-		return  klass;
+		return  auditClass;
 	}
 	/**
 	 * This method creates an instance of the class mentioned by className in the XML.
@@ -177,8 +184,8 @@ public class AuditableClass
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			throw new AuditException(e,null);
+			LOGGER.error(e.getMessage(),e);
+			throw new AuditException(ErrorKey.getErrorKey("problem.getting.new.instance"),e,className);
 		}
 		return  returnObject;
 	}
@@ -204,8 +211,8 @@ public class AuditableClass
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			throw new AuditException(e,null);
+			LOGGER.error(e.getMessage(),e);
+			throw new AuditException(ErrorKey.getErrorKey("problem.getting.methods"),e,className);
 		}
 		return returnObject;
 	}

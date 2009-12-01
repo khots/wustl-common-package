@@ -8,6 +8,9 @@ import org.exolab.castor.xml.Unmarshaller;
 import org.xml.sax.InputSource;
 
 import edu.wustl.common.audit.AuditableMetaData;
+import edu.wustl.common.exception.AuditException;
+import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class reads the Castor mappings present in the host application to read a list of the objects
@@ -18,14 +21,20 @@ public class AuditableMetadataUtil
 {
 
 	/**
+	 * LOGGER Logger - Generic LOGGER.
+	 */
+	private static final Logger logger = Logger
+			.getCommonLogger(AuditableMetadataUtil.class);
+	/**
 	 * Single instance of the AuditableMetaData class.
 	 */
 	private static AuditableMetaData metadata = null;
 
 	/**
 	 * Private method to initialize the AuditableMetaData instance.
+	 * @throws AuditException  Exception while auditing.
 	 */
-	private static void init()
+	private static void init() throws AuditException
 	{
 		try
 		{
@@ -48,15 +57,17 @@ public class AuditableMetadataUtil
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			throw new AuditException(ErrorKey.getErrorKey("problem.parsing.xml"),null, "");
 		}
 	}
 
 	/**
 	 * Public constructor that initializes the AuditableMetaData instance.
 	 *  in case it is not already initialized.
+	 * @throws AuditException  Exception while auditing.
 	 */
-	public AuditableMetadataUtil()
+	public AuditableMetadataUtil() throws AuditException
 	{
 		if (metadata == null)
 		{
