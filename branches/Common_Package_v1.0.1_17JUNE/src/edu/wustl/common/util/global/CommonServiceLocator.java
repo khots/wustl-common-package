@@ -54,7 +54,7 @@ public final class CommonServiceLocator
 	/**
 	 * Date separator.
 	 */
-	private String dateSeparatorSlash="/";
+	private final String dateSeparatorSlash="/";
 
 	/**
 	 * Minimum year.
@@ -83,13 +83,17 @@ public final class CommonServiceLocator
 	 */
 	private String timeStampPattern;
 	/**
+	 * Path the request should be redirected to in case of XSS validation failures.
+	 */
+	private String xssFailurePath;
+	/**
 	 *No argument constructor.
 	 *Here all the properties are set
 	 */
 	private CommonServiceLocator()
 	{
 		initProps();
-		LoggerConfig.configureLogger(this.propDirPath);
+		LoggerConfig.configureLogger(propDirPath);
 	}
 
 	/**
@@ -106,11 +110,11 @@ public final class CommonServiceLocator
 	 */
 	private void initProps()
 	{
-		InputStream stream = CommonServiceLocator.class.getClassLoader()
+		final InputStream stream = CommonServiceLocator.class.getClassLoader()
 		.getResourceAsStream("ApplicationResources.properties");
 	    try
 		{
-			Properties props= new Properties();
+			final Properties props= new Properties();
 			props.load(stream);
 			setAppName(props);
 			setPropDirPath();
@@ -120,14 +124,27 @@ public final class CommonServiceLocator
 			setTimeStampPattern(props);
 			setMinYear(props);
 			setMaxYear(props);
+
+			//Added by Niharika
+			setXSSFailurePath(props);
 			stream.close();
 		}
-		catch (IOException exception)
+		catch (final IOException exception)
 		{
 			logger.fatal("Not able to load properties file",exception);
 		}
 	}
-	/**
+	private void setXSSFailurePath(final Properties props)
+    {
+	    xssFailurePath = props.getProperty("xss.failure.redirect.path");
+    }
+
+	public String getXSSFailurePath()
+	{
+	    return xssFailurePath;
+	}
+
+    /**
 	 * @return the application name.
 	 */
 	public String getAppName()
@@ -140,7 +157,7 @@ public final class CommonServiceLocator
 	 * Set the application name.
 	 * @param props Object of Properties
 	 */
-	private void setAppName(Properties props)
+	private void setAppName(final Properties props)
 	{
 		appName=props.getProperty("app.name");
 	}
@@ -157,7 +174,7 @@ public final class CommonServiceLocator
 	 * Set application home directory where application is running.
 	 * @param appHome Object of Properties
 	 */
-	public void setAppHome(String appHome)
+	public void setAppHome(final String appHome)
 	{
 		this.appHome=appHome;
 	}
@@ -176,14 +193,14 @@ public final class CommonServiceLocator
 	 */
 	private void setPropDirPath()
 	{
-		String path = System.getProperty("app.propertiesFile");
+		final String path = System.getProperty("app.propertiesFile");
 		if(path==null)
 		{
 			propDirPath = "";
 		}
 		else
 		{
-			File propetiesDirPath = new File(path);
+			final File propetiesDirPath = new File(path);
 			propDirPath = propetiesDirPath.getParent();
 		}
 	}
@@ -202,19 +219,19 @@ public final class CommonServiceLocator
 	 * This method Set Application URL.
 	 * @param requestURL request URL.
 	 */
-	public void setAppURL(String requestURL)
+	public void setAppURL(final String requestURL)
 	{
 		if (appURL == null || TextConstants.EMPTY_STRING.equals(appURL.trim()))
 		{
 			String tempUrl=TextConstants.EMPTY_STRING;
 			try
 			{
-				URL url = new URL(requestURL);
+				final URL url = new URL(requestURL);
 				tempUrl = url.getProtocol() + "://" + url.getAuthority() + url.getPath();
 				appURL = tempUrl.substring(0, tempUrl.lastIndexOf('/'));
 				logger.debug("Application URL set: " + appURL);
 			}
-			catch (MalformedURLException urlExp)
+			catch (final MalformedURLException urlExp)
 			{
 				logger.error(urlExp.getMessage(), urlExp);
 			}
@@ -233,9 +250,9 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public void setDateSeparator(Properties props)
+	public void setDateSeparator(final Properties props)
 	{
-		this.dateSeparator = props.getProperty("date.separator");
+		dateSeparator = props.getProperty("date.separator");
 	}
 
 	/**
@@ -257,9 +274,9 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties.
 	 */
-	public void setMinYear(Properties props)
+	public void setMinYear(final Properties props)
 	{
-		this.minYear = props.getProperty("min.year");
+		minYear = props.getProperty("min.year");
 	}
 
 	/**
@@ -273,9 +290,9 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties.
 	 */
-	public void setMaxYear(Properties props)
+	public void setMaxYear(final Properties props)
 	{
-		this.maxYear = props.getProperty("max.year");
+		maxYear = props.getProperty("max.year");
 	}
 
 	/**
@@ -289,9 +306,9 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public void setDatePattern(Properties props)
+	public void setDatePattern(final Properties props)
 	{
-		this.datePattern = props.getProperty("date.pattern");
+		datePattern = props.getProperty("date.pattern");
 	}
 
 	/**
@@ -305,9 +322,9 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public void setTimePattern(Properties props)
+	public void setTimePattern(final Properties props)
 	{
-		this.timePattern = props.getProperty("time.pattern");
+		timePattern = props.getProperty("time.pattern");
 	}
 
 	/**
@@ -321,9 +338,9 @@ public final class CommonServiceLocator
 	/**
 	 * @param props Object of Properties
 	 */
-	public void setTimeStampPattern(Properties props)
+	public void setTimeStampPattern(final Properties props)
 	{
-		this.timeStampPattern = props.getProperty("timestamp.pattern");
+		timeStampPattern = props.getProperty("timestamp.pattern");
 	}
 
 	/**
