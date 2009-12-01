@@ -212,14 +212,18 @@
 						<include name="**/TestAll.java"/>
 				    </fileset>
 				</batchtest>
+				<classpath location="${instrumented.classes.dir}" />
+				<classpath location="${target.dir}" />
+				
 				<classpath>
-					<pathelement location="${test.src.dir}" />
 					<pathelement location="${junit.classes.dir}" />
 					<pathelement location="${cobertura.home}/cobertura.jar" />
 					<fileset dir="${junit.dir}/lib">
 						<include name="*.jar" />
+						<exclude name="inscommonpackage.jar"/>
+						<exclude name="commonpackage-1.1.5.jar"/>
 					</fileset>
-					<pathelement location="${target.dir}" />					
+									
 				</classpath>
 			</junit>
 			<antcall target="createJunitReport" />
