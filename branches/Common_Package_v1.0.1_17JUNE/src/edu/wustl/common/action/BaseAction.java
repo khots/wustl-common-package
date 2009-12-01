@@ -187,7 +187,7 @@ public abstract class BaseAction extends Action
     {
         boolean isAjaxRequest = false;
         if (!Validator.isEmpty(ajaxRequest)
-                && Constants.BOOLEAN_YES.equals(ajaxRequest))
+                && Constants.BOOLEAN_YES.equalsIgnoreCase(ajaxRequest))
         {
             isAjaxRequest = true;
         }
