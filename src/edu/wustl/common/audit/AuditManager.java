@@ -287,7 +287,7 @@ public class AuditManager // NOPMD
 				}
 				else
 				{
-					//case of update 
+					//case of update
 					Object previousAuditableObject = auditableClass.
 					invokeGetterMethod(containmentClass.getRoleName(),previousObj);
 

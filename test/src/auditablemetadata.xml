@@ -50,4 +50,14 @@
 		<attribute name="user" dataType="edu.wustl.common.testdomain.User" />
 	</AuditableClass>
 	
+	<AuditableClass className="edu.wustl.common.domain.MyDomainObject"
+		relationShipType="main" roleName="" >
+		
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.common.audit.AuditableImpl"
+		relationShipType="main" roleName="" >
+		
+	</AuditableClass>
+	
 </AuditableMetaData>
