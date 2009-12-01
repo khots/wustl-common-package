@@ -56,7 +56,7 @@ public class TestAll extends TestCase
 		suite.addTestSuite(DataTypeTestCase.class);
 		suite.addTestSuite(AbstractFactoryConfigTestCase.class);
 		suite.addTestSuite(CommonServiceLocatorTestCase.class);
-		suite.addTestSuite(AuditManagerTestCase.class);
+		//suite.addTestSuite(AuditManagerTestCase.class);
 		suite.addTestSuite(XMLPropertyHandlerTestCase.class);
 		suite.addTestSuite(AutomateImportTest.class);
 		suite.addTestSuite(ExportReportTestCase.class);

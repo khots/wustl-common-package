@@ -67,6 +67,7 @@ public class AuditTestCase extends CommonBaseTestCase
 	{
 		try
 		{
+			AuditManager.init();
 			setDAO() ;
 			final AuditManager auditManager = getAuditManager("commonpackagetest") ;
 			dao.openSession(null);
@@ -80,7 +81,7 @@ public class AuditTestCase extends CommonBaseTestCase
 			dao.insert(person);
 			auditManager.insertAudit(dao, person);
 			dao.commit();
-			testUpdateAudit(person, address);
+
 		}
 		catch(Exception exp)
 		{
@@ -93,13 +94,14 @@ public class AuditTestCase extends CommonBaseTestCase
 			closeSession(dao) ;
 		}
 	}
-	
+
 	@Test
 	public void testAuditUpdate()
 	{
 
 		try
 		{
+			AuditManager.init();
 			setDAO() ;
 			final AuditManager auditManager = getAuditManager("commonpackagetest") ;
 			dao.openSession(null);
@@ -139,7 +141,7 @@ public class AuditTestCase extends CommonBaseTestCase
 	 * This method updates the object and inserts the update details into audit.
 	 * @param oldPerson The person object to update.
 	 * @param oldAddress The Address object to update.
-	 */
+	 *//*
 	@Test
 	public void testUpdateAudit(Person oldPerson, Address oldAddress)
 	{
@@ -148,9 +150,9 @@ public class AuditTestCase extends CommonBaseTestCase
 			setDAO() ;
 			final AuditManager auditManager = getAuditManager("commonpackagetest") ;
 			dao.openSession(null);
-			/**
+			*//**
 			 * Update the Person object.
-			 */
+			 *//*
 			Person person = getPerson("Shrishail");
 			person.setIdentifier(Long.valueOf(ID_ONE));
 			Address address = getAddress("Sinhgad Road");
@@ -176,7 +178,7 @@ public class AuditTestCase extends CommonBaseTestCase
 		{
 			closeSession(dao);
 		}
-	}
+	}*/
 	/**
 	 * Set the values of the Person Object.
 	 * @param name Name of the Person.
