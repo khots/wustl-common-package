@@ -4,7 +4,7 @@
 		<DAOFactory name="edu.wustl.dao.daofactory.DAOFactory" default="true">
 	
 			<DefaultDAO>
-				<Class-name name = "edu.wustl.dao.HibernateDAOImpl"/>
+				<Class-name name = "edu.wustl.dao.MyDAOImpl"/>
 				<Config-file name = "hibernate.cfg.xml"/>
 				<DefaultConnectionManager name = "edu.wustl.dao.connectionmanager.ConnectionManager"/>
 			</DefaultDAO>

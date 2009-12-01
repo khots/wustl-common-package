@@ -25,4 +25,17 @@ public class AuditException extends ApplicationException
 	{
 		super(ErrorKey.getErrorKey("error.audit.fail"),exception,msgValues);
 	}
+	
+	/**
+	 * The public constructor to restrict creating object without
+	 * initializing mandatory members.
+	 * It will called on occurrence of database related exception.
+	 * @param errorKey : key assigned to the error
+	 * @param exception :exception
+	 * @param msgValues : message displayed when error occurred
+	 */
+	public AuditException(final ErrorKey errorKey, final Exception exception, final String msgValues)
+	{
+		super(errorKey, exception, msgValues);
+	}
 }

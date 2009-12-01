@@ -8,25 +8,28 @@ import java.util.Collection;
  * @author niharika_sharma
  *
  */
-public class AuditableMetaData {
-	
+public class AuditableMetaData
+{
+
 	/**
 	 * Collection of all the auditable classes.
 	 */
-	Collection<AuditableClass> auditableMetadataClass  = new ArrayList<AuditableClass>();
-	
+	private Collection<AuditableClass> auditableMetadataClass  =
+		new ArrayList<AuditableClass>();
+
 	/**
 	 * Default constructor.
 	 */
 	public AuditableMetaData()
 	{
 	}
-	
+
 	/**
 	 * Returns the collection of auditable classes.
-	 * @return
+	 * @return AuditableClass collection.
 	 */
-	public Collection<AuditableClass> getAuditableClass() {
+	public Collection<AuditableClass> getAuditableClass()
+	{
 		return auditableMetadataClass;
 	}
 }

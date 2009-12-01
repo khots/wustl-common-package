@@ -6,6 +6,7 @@ import java.util.HashSet;
 import org.junit.Test;
 
 import edu.wustl.common.CommonBaseTestCase;
+import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.testdomain.Address;
@@ -92,6 +93,48 @@ public class AuditTestCase extends CommonBaseTestCase
 			closeSession(dao) ;
 		}
 	}
+	
+	@Test
+	public void testAuditUpdate()
+	{
+
+		try
+		{
+			setDAO() ;
+			final AuditManager auditManager = getAuditManager("commonpackagetest") ;
+			dao.openSession(null);
+			/**
+			 * Update the Person object.
+			 */
+			Person person = getPerson("Shrishail");
+			person.setIdentifier(Long.valueOf(ID_ONE));
+			Address address = getAddress("Sinhgad Road");
+			dao.insert(address);
+			person.setAddress(address);
+			Order order1 = getOrder(person);
+			order1.setIdentifier(Long.valueOf(ID_ONE));
+			Order order2 = getOrder(person);
+			person.setOrderCollection(getOrderCollection(order1, order2));
+			//update the dao object
+			dao.update(person);
+			//Insert the audit information.
+			auditManager.updateAudit(dao, person,person);
+			dao.commit();
+		}
+		catch(Exception exception)
+		{
+			ApplicationException appExp = (ApplicationException)exception;
+			logger.fatal(appExp.getLogMessage());
+			assertFalse("Failed while Updating object :", true);
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+
+
+	}
+
 	/**
 	 * This method updates the object and inserts the update details into audit.
 	 * @param oldPerson The person object to update.

@@ -16,6 +16,12 @@
 			className="edu.wustl.common.testdomain.Order" relationShipType="association"
 			roleName="orderCollection">
 		</referenceAssociationCollection>
+		
+		<containmentAssociationCollection
+			className="edu.wustl.common.testdomain.Address" relationShipType="containment"
+			roleName="address">
+		</containmentAssociationCollection>
+		
 	</AuditableClass>
 	
 	<AuditableClass className="edu.wustl.common.testdomain.Order"
@@ -31,10 +37,10 @@
 		<attribute name="firstName" dataType="String" />
 		<attribute name="emailAddress" dataType="String" />
 		<attribute name="activityStatus" dataType="String" />
-		<referenceAssociationCollection
-			className="edu.wustl.common.testdomain.UserRole" relationShipType="association"
+		<containmentAssociationCollection
+			className="edu.wustl.common.testdomain.UserRole" relationShipType="containment"
 			roleName="roleCollection" >
-		</referenceAssociationCollection>
+		</containmentAssociationCollection>
 		
 	</AuditableClass>
 	

@@ -6,7 +6,7 @@ package edu.wustl.common.util.tag;
 /**
  * @author Santosh Chandak
  * JSP tag for Autocomplete feature. The body of this tag is executed once for every call of the tag
- * when the page is rendered. 
+ * when the page is rendered.
  * To use this tag, include AutocompleterCommon.jsp in your page
  */
 
