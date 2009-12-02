@@ -175,6 +175,7 @@ public class AuditManager // NOPMD
 	private AuditDataEventLog obtainAuditableEventLog(Auditable obj,
 			Auditable previousObj) throws AuditException
 	{
+		LOGGER.debug("Inside obtainAuditableEventLog method.");
 		// An audit event will contain many logs.
 		AuditDataEventLog auditEventLog = new AuditDataEventLog();
 
@@ -229,6 +230,7 @@ public class AuditManager // NOPMD
 	private void startAuditing(Auditable obj, Auditable previousObj,
 			AuditDataEventLog auditEventLog, AuditableClass auditableClass) throws AuditException
 	{
+		LOGGER.debug("Inside startAuditing method.");
 		// Set System identifier if the current object.
 		auditEventLog.setObjectIdentifier(obj.getId());
 
@@ -266,6 +268,7 @@ public class AuditManager // NOPMD
 	private void auditContainmentAssociation(Auditable previousObj, AuditDataEventLog auditEventLog,
 			AuditableClass auditableClass, Object currentObj) throws AuditException
 	{
+		LOGGER.debug("Inside auditContainmentAssociation method.");
 		if (auditableClass.getContainmentAssociationCollection() != null
 				&& !auditableClass.getContainmentAssociationCollection().isEmpty())
 		{
@@ -282,6 +285,10 @@ public class AuditManager // NOPMD
 				//Case of Insert : when previous object is null.
 				if(previousObj == null)
 				{
+					//To audit the ids.
+					auditRefrenceAssociationforNewEntry(auditEventLog,
+							currentAuditableObject);
+					//To audit the other entries.
 					auditContainmentsforNewEntry(auditEventLog,
 							currentAuditableObject);
 				}
@@ -290,7 +297,10 @@ public class AuditManager // NOPMD
 					//case of update
 					Object previousAuditableObject = auditableClass.
 					invokeGetterMethod(containmentClass.getRoleName(),previousObj);
-
+					//To audit the ids.
+					auditRefrenceAssociationforExistingEntries(auditEventLog,
+							currentAuditableObject, previousAuditableObject);
+					//To audit the other entries.
 					auditContainmentsforExistingEntries(auditEventLog,
 							currentAuditableObject, previousAuditableObject);
 				}
@@ -309,23 +319,11 @@ public class AuditManager // NOPMD
 			AuditDataEventLog auditEventLog, Object currentAuditableObject,
 			Object previousAuditableObject) throws AuditException
 			{
+		LOGGER.debug("Inside auditContainmentsforExistingEntries method.");
 		//for one to many containment Associations.
 		if ((currentAuditableObject instanceof Collection)
 				&& (previousAuditableObject instanceof Collection))
 		{
-
-			if(!(((Collection)currentAuditableObject).isEmpty() &&
-					((Collection)previousAuditableObject).isEmpty()))
-			{
-				//Audit identifiers of current and previous objects of collections.
-				String containmentCollectionObjectName = getAssociationCollectionObjectName(
-					(Collection)currentAuditableObject,(Collection)previousAuditableObject);
-				auditEventLog.getAuditEventDetailsCollection().add(
-					auditRefrenceAssociationsIds(getColonSeparatedIds
-							((Collection)currentAuditableObject),
-						getColonSeparatedIds((Collection)previousAuditableObject),
-						containmentCollectionObjectName));
-			}
 
 			//Audit collection entries.
 			auditEventLog.getAuditDataEventLogs().addAll(
@@ -351,6 +349,7 @@ public class AuditManager // NOPMD
 	private void auditContainmentsforNewEntry(AuditDataEventLog auditEventLog,
 			Object currentAuditableObject) throws AuditException
 	{
+		LOGGER.debug("Inside auditContainmentsforNewEntry method.");
 		//for one to many containment Associations.
 		if (currentAuditableObject instanceof Collection)
 		{
@@ -437,6 +436,7 @@ public class AuditManager // NOPMD
 	private void auditReferenceAssociations(Auditable previousObj, AuditDataEventLog auditEventLog,
 			AuditableClass auditableClass, Object currentObj) throws AuditException
 	{
+		LOGGER.debug("Inside auditReferenceAssociations method.");
 		if (auditableClass.getReferenceAssociationCollection() != null
 				&& !auditableClass.getReferenceAssociationCollection().isEmpty())
 		{
@@ -905,6 +905,7 @@ public class AuditManager // NOPMD
 	 * Sets the status of LoginAttempt to loginStatus provided as an argument.
 	 * @param loginStatus LoginStatus boolean value.
 	 * @param loginDetails LoginDetails object.
+	 * @throws AuditException AuditException
 	 */
 	public void loginAudit(boolean loginStatus,LoginDetails loginDetails)throws AuditException
 	{
@@ -922,7 +923,7 @@ public class AuditManager // NOPMD
 		}
 		catch (DAOException daoException)
 		{
-			Logger.out.debug("Exception while Auditing Login Attempt. "
+			LOGGER.debug("Exception while Auditing Login Attempt. "
 					+ daoException.getMessage(), daoException);
 
 			throw new AuditException(ErrorKey.getErrorKey("error.in.login.audit"),daoException,"");
@@ -936,7 +937,7 @@ public class AuditManager // NOPMD
 			}
 			catch (DAOException daoException)
 			{
-				Logger.out.debug("Exception while Auditing Login Attempt. "
+				LOGGER.debug("Exception while Auditing Login Attempt. "
 						+ daoException.getMessage(),daoException);
 			throw new AuditException(ErrorKey.getErrorKey("error.in.login.audit"),daoException,"");
 			}
