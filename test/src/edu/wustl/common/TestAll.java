@@ -8,8 +8,6 @@ package edu.wustl.common;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import edu.wustl.common.audit.AuditManagerTestCase;
-import edu.wustl.common.audit.AuditTestCase;
 import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
 import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.datatypes.DataTypeTestCase;
@@ -67,7 +65,6 @@ public class TestAll extends TestCase
 		suite.addTestSuite(PasswordManagerTestCase.class);
 		suite.addTestSuite(PasswordEncrypterTestCase.class);
 		suite.addTestSuite(ValidatorTestCase.class);
-		suite.addTestSuite(AuditTestCase.class);
 		return suite;
 	}
 }

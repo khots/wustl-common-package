@@ -4,14 +4,12 @@ package edu.wustl.common.testdomain;
 import java.util.Collection;
 import java.util.HashSet;
 
-import edu.wustl.common.audit.Auditable;
-
 /**
  * @author kalpana_thakur
  *
  */
 
-public class User implements Auditable
+public class User
 {
 	/**
 	 * Default Serial Version Id.

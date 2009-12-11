@@ -3,15 +3,13 @@ package edu.wustl.common.testdomain;
 import java.util.Collection;
 import java.util.HashSet;
 
-import edu.wustl.common.audit.Auditable;
-
 
 
 /**
  * @author kalpana_thakur
  *
  */
-public class Person implements Auditable
+public class Person
 {
 	/**
 	 * Default Serial Version Id.

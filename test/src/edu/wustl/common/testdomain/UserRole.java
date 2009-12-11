@@ -3,13 +3,12 @@
  */
 package edu.wustl.common.testdomain;
 
-import edu.wustl.common.audit.Auditable;
 
 /**
  * @author shrishail_kalshetty
  *
  */
-public class UserRole implements Auditable
+public class UserRole
 {
 	/**
 	 * Default Serial Id.
