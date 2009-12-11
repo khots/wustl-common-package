@@ -2,8 +2,6 @@ package edu.wustl.common.testdomain;
 
 import java.util.Collection;
 
-import edu.wustl.common.audit.Auditable;
-
 
 
 /**
@@ -11,7 +9,7 @@ import edu.wustl.common.audit.Auditable;
  *
  */
 
-public class Address implements Auditable
+public class Address
 {
 	/**
 	 * Default Serial Version Id.

@@ -633,6 +633,7 @@ public final class PasswordManager
 			String encodedPWD = encrypt(password);
 			writeToFile(filename, encodedPWD);
 		}
+		System.out.println(decrypt("0ErYD0RAPBW8j2uyHEABIQ=="));
 	}
 	/**
 	 * This method writes the encoded password to the file.

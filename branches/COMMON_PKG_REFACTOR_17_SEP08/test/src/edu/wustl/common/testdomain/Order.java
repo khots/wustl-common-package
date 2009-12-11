@@ -2,13 +2,12 @@ package edu.wustl.common.testdomain;
 
 
 
-import edu.wustl.common.audit.Auditable;
 
 /**
  * @author kalpana_thakur
  *
  */
-public class Order implements Auditable
+public class Order
 {
 	/**
 	 * Default Serial Version Id.

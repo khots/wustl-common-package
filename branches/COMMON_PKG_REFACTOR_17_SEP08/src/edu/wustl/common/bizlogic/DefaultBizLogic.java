@@ -23,11 +23,9 @@ import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.AuditDataEventLog;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
-import edu.wustl.common.domain.AuditEventLog;
-import edu.wustl.common.domain.AuditDataEventLog;
-import edu.wustl.common.exception.AuditException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.CommonServiceLocator;
@@ -36,7 +34,6 @@ import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
-import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.condition.EqualClause;
@@ -108,8 +105,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.insert(obj);
-			AuditManager auditManager = getAuditManager(sessionDataBean);
-			auditManager.insertAudit(dao, obj);
 		}
 		catch (DAOException exception)
 		{
@@ -117,12 +112,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 			throw getBizLogicException(exception,
 					exception.getErrorKeyName(),exception.getMsgValues());
 		}
-		catch (AuditException exception)
-		{
-			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception, exception.getErrorKeyName(),
-					exception.getMsgValues());
-		}
+
 	}
 	/**
 	 * This method gets called after insert method.
@@ -184,20 +174,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao.update(obj);
-			AuditManager auditManager = getAuditManager(sessionDataBean);
-			auditManager.updateAudit(dao, obj, oldObj);
 		}
 		catch (DAOException exception)
 		{
 			LOGGER.debug(exception.getMessage(), exception);
 			throw getBizLogicException(exception, exception.getErrorKeyName(),
 					exception.getMsgValues());
-		}
-		 catch (AuditException exception)
-		 {
-				LOGGER.debug(exception.getMessage(), exception);
-				throw getBizLogicException(exception, exception.getErrorKeyName(),
-						exception.getMsgValues());
 		}
 	}
 	/**
@@ -725,7 +707,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		disableRelatedObjects(dao, tablename, colName, objIDArr);
 		List listOfSubElement = getRelatedObjects(dao, sourceClass, classIdentifier, objIDArr);
-		auditDisabledObjects(dao, tablename, listOfSubElement);
 		return listOfSubElement;
 	}
 	/**
@@ -770,20 +751,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 				addAuditEventstoColl(tablename, auditEventLogsCollection, objectId);
 			}
 
-			HibernateDAO hibDAO = (HibernateDAO) dao;
-			AuditManager auditManager = getAuditManager(null);
-			auditManager.addAuditEventLogs(hibDAO, auditEventLogsCollection);
 		}
 		catch (DAOException daoExp)
 		{
 			LOGGER.debug(daoExp.getMessage(), daoExp);
 			throw getBizLogicException(daoExp,  daoExp.getErrorKeyName(), daoExp.getMsgValues());
-		}
-		catch (AuditException exception)
-		{
-			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception,
-					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 	}
 	/**
@@ -812,42 +784,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		auditEventLog.setAuditEventDetailsCollection(auditEventDetailsCollection);
 		auditEventLogsCollection.add(auditEventLog);
 	}
-	/**
-	 * @param dao The dao object.
-	 * @param tablename Contains the field table name
-	 * @param listOfSubElement list Of SubElement
-	 * @throws BizLogicException throw BizLogicException
-	 */
-	protected void auditDisabledObjects(DAO dao, String tablename,
-			List listOfSubElement) throws BizLogicException
-	{
-		try
-		{
-			Iterator iterator = listOfSubElement.iterator();
-			Collection auditEventLogsCollection = new HashSet();
-
-			while (iterator.hasNext())
-			{
-				Long objectIdentifier = (Long) iterator.next();
-				addAuditEventstoColl(tablename, auditEventLogsCollection, objectIdentifier);
-			}
-			HibernateDAO hibDAO = (HibernateDAO) dao;
-			AuditManager auditManager = getAuditManager(null);
-			auditManager.addAuditEventLogs(hibDAO, auditEventLogsCollection);
-		}
-		catch (AuditException exception)
-		{
-			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception,
-					exception.getErrorKeyName(), exception.getMsgValues());
-		}
-		catch (DAOException exception)
-		{
-			LOGGER.debug(exception.getMessage(), exception);
-			throw getBizLogicException(exception,
-					exception.getErrorKeyName(), exception.getMsgValues());
-		}
-	}
+	
 	/**
 	 * This method gets related objects.
 	 * @param dao The dao object.
