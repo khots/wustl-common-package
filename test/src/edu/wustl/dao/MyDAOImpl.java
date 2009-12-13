@@ -22,6 +22,7 @@ import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.query.generator.ColumnValueBean;
+import edu.wustl.dao.util.HibernateMetaData;
 import edu.wustl.dao.util.NamedQueryParam;
 import edu.wustl.dao.util.StatementData;
 
@@ -197,12 +198,12 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * @throws DAOException throw DAOException.
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName)
-			throws DAOException
+	throws DAOException
 	{
 		return (List<Object>)getList();
 	}
 
-/*	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
+	/*	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
 	{
 		Object obj;
 		if(isTestForFail)
@@ -223,7 +224,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		}
 		return obj;
 	}
-*/
+	 */
 	/**
 	 * @param sourceObjectName Source Object name.
 	 * @param selectColumnName List of selectColumn values.
@@ -233,7 +234,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws DAOException
-	{
+			{
 		List<Object> pass= new ArrayList<Object>();
 		if(returnUserPassword)
 		{
@@ -247,7 +248,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 			pass = getList();
 		}
 		return pass;
-	}
+			}
 	/**
 	 * @param sourceObjectName Source Object name.
 	 * @param whereColumnName  whereColumnName values.
@@ -257,10 +258,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public List<Object> retrieve(String sourceObjectName, String whereColumnName,
 			Object whereColumnValue) throws DAOException
-	{
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	/**
 	 * @param objClass Class.
 	 * @param columnName column name.
@@ -270,7 +271,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * @throws DAOException throw DAOException
 	 */
 	public List retrieveAttribute(Class objClass,String columnName, Long identifier, String attributeName
-			) throws DAOException
+	) throws DAOException
 	{
 		List attributte = new ArrayList();
 		attributte.add(getObjectAttribute());
@@ -337,8 +338,8 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		DAO dao = null;
 		try
 		{
-		   dao = (DAO)Class.forName(defaultDAOClassName).newInstance();
-		   dao.setConnectionManager(getConnectionManager());
+			dao = (DAO)Class.forName(defaultDAOClassName).newInstance();
+			dao.setConnectionManager(getConnectionManager());
 
 		}
 		catch (Exception excp )
@@ -364,8 +365,8 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		JDBCDAO dao = null;
 		try
 		{
-		   dao = (JDBCDAO)Class.forName(defaultDAOClassName).newInstance();
-		   dao.setConnectionManager(getConnectionManager());
+			dao = (JDBCDAO)Class.forName(defaultDAOClassName).newInstance();
+			dao.setConnectionManager(getConnectionManager());
 
 		}
 		catch (Exception excp )
@@ -470,10 +471,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			boolean onlyDistinctRows) throws DAOException
-	{
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	/**
 	 * @param sourceObjectName source object name.
 	 * @param selectColumnName select column name.
@@ -484,10 +485,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClauseImpl, boolean onlyDistinctRows) throws DAOException
-	{
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	/**
 	 * @throws DAOException throw DAOException.
 	 */
@@ -647,7 +648,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * @throws DAOException throw DAOException
 	 */
 	public List executeNamedQuery(String queryName, Map<String, NamedQueryParam> namedQueryParams)
-			throws DAOException
+	throws DAOException
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -715,10 +716,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public ResultSet retrieveResultSet(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause, boolean onlyDistinctRows) throws DAOException
-	{
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	/**
 	 * @param batchSize batch size.
 	 * @throws DAOException throw DAOException.
@@ -775,7 +776,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 * @throws DAOException throw DAOException.
 	 */
 	public void batchInitialize(int batchSize, String tableName, SortedSet<String> columnSet)
-			throws DAOException
+	throws DAOException
 	{
 		// TODO Auto-generated method stub
 	}
@@ -795,10 +796,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public StatementData executeUpdate(String tableName,
 			LinkedList<ColumnValueBean> columnValueBeanSet) throws DAOException
-	{
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	/**
 	 * @param query String value.
 	 * @param startIndex Start index.
@@ -809,10 +810,10 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public List executeQuery(String query, Integer startIndex,
 			Integer maxRecords, LinkedList paramValues) throws DAOException
-	{
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	/**
 	 * @param arg0 Object.
 	 * @throws DAOException throw DAOException.
@@ -821,7 +822,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	{
 		if(isTestForFail)
 		{
-		throwDaoException();
+			throwDaoException();
 		}
 	}
 	/**
@@ -842,15 +843,17 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 	}
 	public List executeQuery(String arg0, Integer arg1,
-			LinkedList<ColumnValueBean> arg2) throws DAOException {
+			LinkedList<ColumnValueBean> arg2) throws DAOException 
+			{
 		// TODO Auto-generated method stub
 		return null;
-	}
+			}
 	public void executeUpdate(String arg0,
-			LinkedList<LinkedList<ColumnValueBean>> arg1) throws DAOException {
+			LinkedList<LinkedList<ColumnValueBean>> arg1) throws DAOException
+			{
 		// TODO Auto-generated method stub
-		
-	}
+
+			}
 	public ResultSet getResultSet(String arg0,
 			LinkedList<ColumnValueBean> arg1, Integer arg2) throws DAOException {
 		// TODO Auto-generated method stub
@@ -877,12 +880,12 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public void update(Object arg0, Object arg1) throws DAOException {
-		// TODO Auto-generated method stub
-		
+	public void update(Object arg0, Object arg1) throws DAOException
+	{
+		throwDaoException();
 	}
 	public List executeQuery(String arg0, Integer arg1, Integer arg2, List arg3)
-			throws DAOException {
+	throws DAOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -892,14 +895,14 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		return null;
 	}
 	public StatementData executeUpdate(String arg0, List<ColumnValueBean> arg1)
-			throws DAOException {
+	throws DAOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	public void executeUpdate(String arg0,
 			List<LinkedList<ColumnValueBean>> arg1) throws DAOException {
 		// TODO Auto-generated method stub
-		
+
 	}
 	public ResultSet getResultSet(String arg0, List<ColumnValueBean> arg1,
 			Integer arg2) throws DAOException {
@@ -918,7 +921,19 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	}
 	public ResultSet retrieveResultSet(String arg0, String[] arg1,
 			QueryWhereClause arg2, List<ColumnValueBean> arg3, boolean arg4)
-			throws DAOException {
+	throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public HibernateMetaData getHibernateMetaData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void setHibernateMetaData(HibernateMetaData arg0) {
+		// TODO Auto-generated method stub
+
+	}
+	public DatabaseProperties getDatabaseProperties() {
 		// TODO Auto-generated method stub
 		return null;
 	}

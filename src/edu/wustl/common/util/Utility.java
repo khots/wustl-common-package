@@ -119,11 +119,12 @@ public final class Utility extends CommonUtilities
 	 * @param className Class name of the field
 	 * @param attributeName Attribute name of the field.
 	 * @return Length of the column.
+	 * @throws DAOException database exception.
 	 * @see HibernateMetaData.getColumnWidth()
 	 */
-	public static String getColumnWidth(Class className, String attributeName)
+	public static String getColumnWidth(Class className, String attributeName) throws DAOException
 	{
-		String applicationName = CommonServiceLocator.getInstance().getAppName() ;		
+		String applicationName = CommonServiceLocator.getInstance().getAppName() ;
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
 					.getHibernateMetaData(applicationName) ;
 		return Integer.toString((hibernateMetaData.getColumnWidth(className, attributeName)));

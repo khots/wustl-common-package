@@ -59,11 +59,11 @@ public class TestAll extends TestCase
 		suite.addTestSuite(AutomateImportTest.class);
 		suite.addTestSuite(ExportReportTestCase.class);
 		suite.addTestSuite(ApplicationPropertiesTestCase.class);
-		suite.addTestSuite(SendEmailTestCase.class);
+		//suite.addTestSuite(SendEmailTestCase.class);
 		suite.addTestSuite(HibernatePropertiesTestCase.class);
 		suite.addTestSuite(XMLParserUtilityTestCase.class);
 		suite.addTestSuite(PasswordManagerTestCase.class);
-		suite.addTestSuite(PasswordEncrypterTestCase.class);
+		//suite.addTestSuite(PasswordEncrypterTestCase.class);
 		suite.addTestSuite(ValidatorTestCase.class);
 		return suite;
 	}

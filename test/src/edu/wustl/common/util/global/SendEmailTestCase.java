@@ -17,7 +17,7 @@ public class SendEmailTestCase extends CommonBaseTestCase
 {
 
 	private static org.apache.log4j.Logger logger = Logger.getLogger(SendEmailTestCase.class);
-	public void testSendMail()
+	/*public void testSendMail()
 	{
 		EmailDetails mailDetails = getEmailDetails();
 		try
@@ -39,7 +39,7 @@ public class SendEmailTestCase extends CommonBaseTestCase
 			logger.debug("");
 		}
 	}
-
+*/
 	/**
 	 * @return EmailDetails
 	 */

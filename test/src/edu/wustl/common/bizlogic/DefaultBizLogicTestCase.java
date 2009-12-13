@@ -73,6 +73,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		}
 		catch (BizLogicException exception)
 		{
+			exception.printStackTrace();
 			assertTrue(true);
 			logger.fatal(exception.getMessage(),exception);
 		}
@@ -637,10 +638,10 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 		}
 	}
 
-	/**
+/*	*//**
 	 * Positive test case for disableObjects(DAO dao, Class sourceClass, String classIdentifier,
 			String tablename, String colName, Long[] objIDArr).
-	 */
+	 *//*
 	public void testDisableObjectsWithColumnName()
 	{
 		try
@@ -663,7 +664,7 @@ public class DefaultBizLogicTestCase extends CommonBaseTestCase
 			fail("DAOException thrown");
 			logger.fatal(exception.getMessage(),exception);
 		}
-	}
+	}*/
 	/**
 	 * Negative test case for disableObjects(DAO dao, Class sourceClass, String classIdentifier,
 			String tablename, String colName, Long[] objIDArr).
