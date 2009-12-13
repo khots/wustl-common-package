@@ -11,7 +11,7 @@ public class PasswordEncrypterTestCase extends CommonBaseTestCase
 	 */
 	private static org.apache.log4j.Logger logger = Logger.getLogger(PasswordEncrypterTestCase.class);
 
-	public void testMainForPasswordEncryption()
+	/*public void testMainForPasswordEncryption()
 	{
 		String []args={
 				HibernateProperties.getValue("database.host"),
@@ -34,5 +34,5 @@ public class PasswordEncrypterTestCase extends CommonBaseTestCase
 			logger.debug("Password not updated.", exception);
 			fail("Password not updated.");
 		}
-	}
+	}*/
 }

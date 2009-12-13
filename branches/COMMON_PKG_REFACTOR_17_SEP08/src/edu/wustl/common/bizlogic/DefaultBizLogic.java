@@ -173,7 +173,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		try
 		{
-			dao.update(obj);
+			dao.update(obj,oldObj);
 		}
 		catch (DAOException exception)
 		{
@@ -1377,7 +1377,6 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			auditManager.setUserId(sessionDataBean.getUserId());
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
-			auditManager.setApplicationName(CommonServiceLocator.getInstance().getAppName());
 		}
 		return auditManager;
 	}
