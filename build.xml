@@ -8,8 +8,9 @@
 	<property name="src.dir" value="${base.dir}/src" />
 	<property name="test.dir" value="${base.dir}/test" />
 	<property name="test.src.dir" value="${test.dir}/src" />
-	<property name="target.dir" value="${base.dir}/classes" />	
+	<property name="target.dir" value="${base.dir}/classes" />
 	<property name="lib.dir" value="${base.dir}/lib" />
+	<property name="lib.poi.dir" value="${base.dir}/lib-apache-poi" />
 	<property name="build.dir" value="${base.dir}/build" />
 	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
 	<property name="generateforce" value="true" />
@@ -45,7 +46,7 @@
 
 
 
-	<path id="junit.classpath">		
+	<path id="junit.classpath">
 		<pathelement location="${cobertura.home}/cobertura.jar" />
 		<pathelement location="${cobertura.lib}/jakarta-oro-2.0.8.jar" />
 		<pathelement location="${cobertura.lib}/asm-2.2.1.jar" />
@@ -72,8 +73,11 @@
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
 				</fileset>
+				<fileset dir="${lib.poi.dir}">
+					<include name="*.jar" />
+				</fileset>
 			</classpath>
-		</javac>		
+		</javac>
 		<copy todir="${target.dir}">
 			<fileset dir="${src.dir}">
 				<include name="**/*.properties" />
@@ -81,12 +85,12 @@
 				<include name="**/*.hbm.xml" />
 				<include name="**/*.ser" />
 				<exclude name="**/cab2b.properties"/>
-			</fileset>			
-		</copy>				
+			</fileset>
+		</copy>
 	</target>
-	
+
 	<!-- compile all test classes-->
-	<target name="compileTest">			
+	<target name="compileTest">
 			<javac destdir="${junit.classes.dir}" includes="**/*.*" debug="on" includeAntRuntime="false" target="1.5">
 				<src path="${test.src.dir}" />
 				<classpath>
@@ -95,7 +99,7 @@
 					</fileset>
 					<pathelement location="${target.dir}" />
 				</classpath>
-			</javac>			
+			</javac>
 			<copy todir="${junit.classes.dir}">
 				<fileset dir="${test.src.dir}">
 					<include name="**/*.properties" />
@@ -103,7 +107,7 @@
 					<include name="**/*.hbm.xml" />
 					<include name="**/*.ser" />
 				</fileset>
-			</copy>			
+			</copy>
 		</target>
 	<!--Create zip file of common package source files.-->
 	<target name="build_code_zip" depends="compile">
@@ -115,7 +119,7 @@
 		</zip>
 	</target>
 
-	<target name="build_jar" depends="build_code_zip,compile">		
+	<target name="build_jar" depends="build_code_zip,compile">
 		<tstamp />
 		<jar taskname="build_jar" jarfile="${build.dir}/commonpackage.jar">
 			<fileset dir="${target.dir}">
@@ -137,7 +141,7 @@
 		<delete failonerror="false">
 			<fileset dir="${junit.report.dir}" includes="**/*" />
 		</delete>
-		<mkdir dir="${junit.report.dir}" />		
+		<mkdir dir="${junit.report.dir}" />
 		<mkdir dir="${junit.report.dir}/Html_reports" />
 	</target>
 	<!-- copy all jar files to junit/lib folder-->
@@ -145,8 +149,8 @@
 		<mkdir dir="${junit.dir}/lib" />
 		<copy todir="${junit.dir}/lib">
 			<fileset dir="${base.dir}/lib">
-				<include name="**/*.jar" />				
-			</fileset>			
+				<include name="**/*.jar" />
+			</fileset>
 		</copy>
 		<copy todir="${junit.dir}/lib" file="${build.dir}/commonpackage.jar" failonerror="false"/>
 	</target>
@@ -160,9 +164,9 @@
 		</junitreport>
 	</target>
 	<!-- run junit test cases-->
-	<taskdef classpathref="junit.classpath" resource="tasks.properties" /> 
+	<taskdef classpathref="junit.classpath" resource="tasks.properties" />
 	<target name="runJunitTestCases" depends="build_jar,compileTest,copyJarsToJunitLib">
-		<antcall target="initJunit"/>		
+		<antcall target="initJunit"/>
 		<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
 			<formatter type="xml" />
 			<sysproperty key="net.sourceforge.cobertura.datafile" file="${base.dir}/cobertura.ser" />
@@ -181,9 +185,9 @@
 		</junit>
 		<antcall target="createJunitReport" />
 	</target>
-	
+
 	<target name="junitForCobertura" depends="compileTest,copyJarsToJunitLib">
-			<antcall target="initJunit"/>		
+			<antcall target="initJunit"/>
 			<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
 				<formatter type="xml" />
 				<sysproperty key="net.sourceforge.cobertura.datafile" file="${base.dir}/cobertura.ser" />
@@ -199,17 +203,17 @@
 					<fileset dir="${junit.dir}/lib">
 						<include name="*.jar" />
 					</fileset>
-					<pathelement location="${target.dir}" />					
+					<pathelement location="${target.dir}" />
 				</classpath>
 			</junit>
 			<antcall target="createJunitReport" />
 		</target>
-	
+
 	<target name="create_instrumented_jar">
 		<delete file="${build.dir}/inscommonpackage.jar" failonerror="false"/>
 		<jar taskname="build_jar" jarfile="${build.dir}/inscommonpackage.jar">
 			<fileset dir="${instrumented.classes.dir}">
-				<include name="**/*" />			
+				<include name="**/*" />
 			</fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
 			<manifest>
@@ -217,18 +221,18 @@
 			</manifest>
 		</jar>
 	</target>
-	
+
 	<!-- Instrument all classes-->
 	<target name="instrument">
 		<mkdir dir="${code.coverage.report.dir}" />
 		<mkdir dir="${instrumented.classes.dir}" />
-		<cobertura-instrument todir="${instrumented.classes.dir}" >	
+		<cobertura-instrument todir="${instrumented.classes.dir}" >
 			<ignore regex="org.apache.log4j.*" />
 			<fileset dir="${target.dir}">
 				<include name="**/*.class" />
 				<exclude name="**/*Test.class" />
 				<exclude name="**/Mock*.class" />
-			</fileset>				
+			</fileset>
 		</cobertura-instrument>
 		<copy todir="${instrumented.classes.dir}">
 			<fileset dir="${src.dir}">
@@ -237,26 +241,26 @@
 				<include name="**/*.hbm.xml" />
 				<include name="**/*.ser" />
 				<exclude name="**/cab2b.properties"/>
-			</fileset>			
+			</fileset>
 		</copy>
 		<antcall target="create_instrumented_jar" />
 		<delete file="${build.dir}/commonpackage.jar" failonerror="false"/>
 		<copy todir="${junit.dir}/lib" file="${build.dir}/inscommonpackage.jar"/>
 	</target>
-	
+
 	<!-- Target to generate cobertura coverage report-->
 	<target name="cobertura_report">
 		<cobertura-report srcdir="${src.dir}" destdir="${code.coverage.report.dir}" />
 		<delete file="${instrumented.classes.dir}/cobertura.ser" />
 	</target>
-	
+
 	<!-- Target to run junit test cases and generate cobertura coverage report-->
-	<target name="Generate_Report_Cobertura" depends="compile">			 
+	<target name="Generate_Report_Cobertura" depends="compile">
 		<antcall target="instrument" />
 		<antcall target="junitForCobertura" />
 		<antcall target="cobertura_report" />
-	</target>	
-	
+	</target>
+
 	<target name="create_cde_src_zip">
 		<zip destfile="${build.dir}/cde-src.zip">
 			<fileset dir="${src.dir}">
@@ -282,7 +286,7 @@
 			</manifest>
 		</jar>
 	</target>
-	<target name="build_exception_jar" depends="compile">		
+	<target name="build_exception_jar" depends="compile">
 			<tstamp />
 			<jar taskname="build_jar" jarfile="${build.dir}/commonpkgexcepion.jar">
 				<fileset dir="${target.dir}">

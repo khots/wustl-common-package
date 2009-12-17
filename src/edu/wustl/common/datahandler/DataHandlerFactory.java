@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
- * 
+ *
  * @author ravindra_jain
  * @version 1.0
  * @created 21-Apr-2009 6:57:50 PM
@@ -18,16 +18,16 @@ public class DataHandlerFactory
 	private int bufferSize;*/
 
 	/**
-	 * 
+	 *
 	 * @param fileType
 	 * @param fileName
-	 * @throws ClassNotFoundException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws IllegalArgumentException 
-	 * @throws NoSuchMethodException 
-	 * @throws SecurityException 
+	 * @throws ClassNotFoundException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws IllegalArgumentException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
 	 */
 	public static AbstractDataHandler getDataHandler(HandlerTypeEnum handlerType,
 			DataHandlerParameter parameters, String fileName) throws ClassNotFoundException,
@@ -57,6 +57,9 @@ public class DataHandlerFactory
 			case TEXT :
 				dataHandler = new TextDataHandler(fileName, rowCount);
 				break;
+
+			case EXCELSHEET :
+				dataHandler = new ExcelsheetDataHandler(fileName);
 		}
 		return dataHandler;
 	}
