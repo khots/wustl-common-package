@@ -18,16 +18,16 @@ public class TestJobManager extends CommonBaseTestCase
 		JobData jobData=new JobData("test", "1", jobStatusListener);
 		jobmanager.addJob(dummyJob);
 		System.out.println("successfull");
-		try
-		{
-			Thread.sleep(4000);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		Object[] keys= new Object[]{"Log_File_Name"};
-		Object[] values=new Object[]{"abc.zip"};
+//		try
+//		{
+////			Thread.sleep(4000);
+//		}
+//		catch (InterruptedException e)
+//		{
+//			e.printStackTrace();
+//		}
+		Object[] keys= new Object[]{"LOG_FILE_KEY","NO_OF_RECORDS_PROCESSED","NO_OF_FAILED_RECORDS","NO_OF_TOTAL_RECORDS","JOB_STATUS_KEY","TIME_TAKEN_KEY",};
+		Object[] values=new Object[]{"abc.zip","3","4","45","InProgress","231"};
 
 //		jobStatusListener.jobStatusUpdated(jobData);
 		jobData.updateJobStatus(keys, values, "Completed");

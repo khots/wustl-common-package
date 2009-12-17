@@ -1,18 +1,21 @@
 
 package edu.wustl.common.jobmanager;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import org.hibernate.Hibernate;
+
+import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.util.global.CommonServiceLocator;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.DAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.daofactory.IDAOFactory;
+import edu.wustl.dao.exception.AuditException;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.query.generator.ColumnValueBean;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,72 +35,49 @@ public class DefaultJobStatusListner implements JobStatusListener
 	 */
 	public void jobStatusCreated(final JobData jobData)
 	{
-		JDBCDAO jdbcdao = null;
-		ResultSet resultSet = null;
 		try
 		{
-			LinkedList<ColumnValueBean> columnValueBeanlist = new LinkedList<ColumnValueBean>();
+			AuditManager.init();
+		}
+		catch (AuditException ex)
+		{
+			LOGGER.error(ex.getMessage(), ex);
+		}
+		DAO dao = null;
+		try
+		{
 
-			final String applicationName = CommonServiceLocator.getInstance().getAppName();
-			jdbcdao = DAOConfigFactory.getInstance().getDAOFactory(applicationName).getJDBCDAO();
-			jdbcdao.openSession(null);
-			resultSet = jdbcdao.getQueryResultSet("select count(*) from "
-					+ Constants.BULK_OPERATION_LOG_TABLE);
-			resultSet.next();
-			long count = resultSet.getLong(1);
-			long identifier = count + 1;
+			JobDetails jobDetails = new JobDetails();
+			jobDetails.setJobName(jobData.getJobName());
+			jobDetails.setJobStartedBy(Long.valueOf(jobData.getJobStartedBy()));
+			jobDetails.setStartTime(jobData.getStartedTime());
+			jobDetails.setStatus(jobData.getJobStatus());
 
-			Iterator keyItr = jobData.getJobStatusEntry().keySet().iterator();
-			StringBuffer query = new StringBuffer();
-			StringBuffer valueQuery = new StringBuffer();
-			query.append("insert into " + Constants.BULK_OPERATION_LOG_TABLE
-					+ " (IDENTIFIER,operation_name,status,USER_ID,started_time");
-			valueQuery.append("values(?,?,?,?,?");
+			final IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(
+					CommonServiceLocator.getInstance().getAppName());
+			dao = daofactory.getDAO();
+			dao.openSession(null);
 
-			columnValueBeanlist.add(new ColumnValueBean("IDENTIFIER", identifier));
-			columnValueBeanlist.add(new ColumnValueBean("operation_name", jobData.getJobName()));
-			columnValueBeanlist.add(new ColumnValueBean("status", jobData.getJobStatus()));
-			columnValueBeanlist.add(new ColumnValueBean("USER_ID", jobData.getJobStartedBy()));
-			columnValueBeanlist.add(new ColumnValueBean("started_time", jobData.getStartedTime()));
-
-			Object key = null;
-			while (keyItr.hasNext())
-			{
-				key = keyItr.next();
-				valueQuery.append(",?");
-				query.append(',');
-				query.append(key);
-				//				valueQuery.append("?");
-				columnValueBeanlist.add(new ColumnValueBean(key.toString(), jobData
-						.getJobStatusEntryValue(key)));
-			}
-			valueQuery.append(')');
-			query.append(')');
-			query.append(valueQuery);
-			jdbcdao.executeUpdate(query.toString(), columnValueBeanlist);
-			jdbcdao.commit();
-			jobData.setJobID(identifier);
+			dao.insert(jobDetails);
+			dao.commit();
+			jobData.setJobID(jobDetails.getId());
 		}
 		catch (final DAOException daoExp)
 		{
-			LOGGER.debug(daoExp.getMessage(), daoExp);
-		}
-		catch (SQLException e)
-		{
-			LOGGER.debug(e.getMessage(), e);
+			LOGGER.error(daoExp.getMessage(), daoExp);
 		}
 		finally
 		{
 			try
 			{
-				if (jdbcdao != null)
+				if (dao != null)
 				{
-					jdbcdao.closeSession();
+					dao.closeSession();
 				}
 			}
 			catch (final DAOException daoExp)
 			{
-				LOGGER.debug(daoExp.getMessage(), daoExp);
+				LOGGER.error(daoExp.getMessage(), daoExp);
 			}
 		}
 
@@ -109,54 +89,64 @@ public class DefaultJobStatusListner implements JobStatusListener
 	 */
 	public void jobStatusUpdated(final JobData jobData)
 	{
-		JDBCDAO jdbcdao = null;
-		ResultSet resultSet = null;
+
+		FileInputStream fin = null;
+		DAO dao = null;
+		JobDetails jobDetails = new JobDetails();
+		jobDetails.setId(jobData.getJobID());
+		jobDetails.setJobName(jobData.getJobName());
+		jobDetails.setJobStartedBy(Long.valueOf(jobData.getJobStartedBy()));
+		jobDetails.setStatus(jobData.getJobStatus());
+		final Object fileObj = jobData.getJobStatusEntry().get(JobData.LOG_FILE_KEY);
+		jobDetails.setCurrentRecordsProcessed(Long.valueOf(jobData.getJobStatusEntryValue(
+				JobData.NO_OF_RECORDS_PROCESSED_KEY).toString()));
+		jobDetails.setFailedRecordsCount(Long.valueOf(jobData.getJobStatusEntryValue(
+				JobData.NO_OF_FAILED_RECORDS_KEY).toString()));
+		jobDetails.setTimeTaken(Long.valueOf(jobData.getJobStatusEntryValue(JobData.TIME_TAKEN_KEY)
+				.toString()));
+		jobDetails.setTotalRecordsCount(Long.valueOf(jobData.getJobStatusEntryValue(
+				JobData.NO_OF_TOTAL_RECORDS_KEY).toString()));
+
 		try
 		{
-			LinkedList<ColumnValueBean> columnValueBeanlist = new LinkedList<ColumnValueBean>();
-			final String applicationName = CommonServiceLocator.getInstance().getAppName();
-			jdbcdao = DAOConfigFactory.getInstance().getDAOFactory(applicationName).getJDBCDAO();
-			jdbcdao.openSession(null);
-
-			Iterator keyItr = jobData.getJobStatusEntry().keySet().iterator();
-			StringBuffer query = new StringBuffer();
-			query.append("update " + Constants.BULK_OPERATION_LOG_TABLE
-					+ " set operation_name=?,status=?");
-
-			columnValueBeanlist.add(new ColumnValueBean("operation_name", jobData.getJobName()));
-			columnValueBeanlist.add(new ColumnValueBean("status", jobData.getJobStatus()));
-
-			Object key = null;
-			while (keyItr.hasNext())
+			if (fileObj instanceof File)
 			{
-				key = keyItr.next();
-				query.append(',');
-				query.append(key);
-				query.append("=? ");
-				columnValueBeanlist.add(new ColumnValueBean(key.toString(), jobData
-						.getJobStatusEntryValue(key)));
+				fin = new FileInputStream((File) fileObj);
+
+				jobDetails.setLogFile(Hibernate.createBlob(fin));
 			}
-			query.append(" where IDENTIFIER=" + jobData.getJobID() + " and USER_ID="
-					+ jobData.getJobStartedBy());
-			jdbcdao.executeUpdate(query.toString(), columnValueBeanlist);
-			jdbcdao.commit();
+			final IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(
+					CommonServiceLocator.getInstance().getAppName());
+			dao = daofactory.getDAO();
+			dao.openSession(null);
+
+			dao.update(jobDetails);
+			dao.commit();
 		}
-		catch (final DAOException daoExp)
+		catch (FileNotFoundException ex)
 		{
-			LOGGER.debug(daoExp.getMessage(), daoExp);
+			LOGGER.error(ex.getMessage(), ex);
+		}
+		catch (IOException ex)
+		{
+			LOGGER.error(ex.getMessage(), ex);
+		}
+		catch (DAOException ex)
+		{
+			LOGGER.error(ex.getMessage(), ex);
 		}
 		finally
 		{
 			try
 			{
-				if (jdbcdao != null)
+				if (dao != null)
 				{
-					jdbcdao.closeSession();
+					dao.closeSession();
 				}
 			}
 			catch (final DAOException daoExp)
 			{
-				LOGGER.debug(daoExp.getMessage(), daoExp);
+				LOGGER.error(daoExp.getMessage(), daoExp);
 			}
 		}
 
