@@ -60,11 +60,17 @@ public class JobData
 	/** The Constant NO_OF_FAILED_RECORDS_KEY. */
 	public final static String NO_OF_FAILED_RECORDS_KEY = "NO_OF_FAILED_RECORDS";
 
+	public final static String NO_OF_TOTAL_RECORDS_KEY="NO_OF_TOTAL_RECORDS";
+
 	/** The Constant JOB_STATUS_KEY. */
 	public final static String JOB_STATUS_KEY = "JOB_STATUS_KEY";
 
 	/** The Constant TIME_TAKEN_KEY. */
 	public final static String TIME_TAKEN_KEY = "TIME_TAKEN_KEY";
+
+	/** The constant LOG_FILE_KEY. */
+	public final static String LOG_FILE_KEY = "LOG_FILE_KEY";
+
 
 	/**
 	 * Instantiates a new job data.
@@ -81,7 +87,7 @@ public class JobData
 		this.jobStatus = JOB_IN_PROGRESS_STATUS;
 		this.jobName = jobName;
 		this.jobStartedBy = jobStartedBy;
-		this.startedTime = new Timestamp(new Date().getTime());
+//		this.startedTime = new Timestamp(new Date().getTime());
 		this.jobStatusListener.jobStatusCreated(this);
 
 	}

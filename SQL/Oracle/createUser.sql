@@ -50,7 +50,7 @@ create table CATISSUE_USER (
    FIRST_TIME_LOGIN number(1,0) default 1,
    primary key (IDENTIFIER)
 );
-CREATE TABLE CSM_USER ( 
+CREATE TABLE CSM_USER (
 	USER_ID NUMBER(38) NOT NULL,
 	LOGIN_NAME VARCHAR2(100) NOT NULL,
 	FIRST_NAME VARCHAR2(100) NOT NULL,
@@ -65,6 +65,22 @@ CREATE TABLE CSM_USER (
 	END_DATE DATE,
 	UPDATE_DATE DATE NOT NULL
 );
+
+CREATE TABLE JOB_DETAILS (
+  IDENTIFIER NUMBER(38) NOT NULL,
+  JOB_NAME varchar(255) NOT NULL,
+  JOB_STATUS varchar(50) default NULL,
+  TOTAL_RECORDS_COUNT NUMBER(20) default NULL,
+  FAILED_RECORDS_COUNT NUMBER(20) default NULL,
+  TIME_TAKEN NUMBER(20) default NULL,
+  LOG_FILE blob,
+  JOB_STARTED_BY NUMBER(20) default NULL,
+  START_TIME NUMBER(20) default NULL,
+  CURRENT_RECORDS_PROCESSED NUMBER(20) default NULL,
+
+  PRIMARY KEY  (IDENTIFIER)
+);
+
 ALTER TABLE CSM_USER ADD CONSTRAINT PK_USER PRIMARY KEY (USER_ID);
 ALTER TABLE CSM_USER ADD CONSTRAINT UQ_LOGIN_NAME UNIQUE (LOGIN_NAME);
 
@@ -79,7 +95,7 @@ UPDATE CSM_USER SET LOGIN_NAME='admin@admin.com',
 					DEPARTMENT=1,
 					EMAIL_ID='admin@admin.com',
 					PASSWORD='${first.admin.encodedPassword}'
-				WHERE USER_ID=1;	
+				WHERE USER_ID=1;
 
 UPDATE catissue_user SET EMAIL_ADDRESS='admin@admin.com',
 							LOGIN_NAME='admin@admin.com',
@@ -87,12 +103,12 @@ UPDATE catissue_user SET EMAIL_ADDRESS='admin@admin.com',
 							INSTITUTION_ID=1,
 							CANCER_RESEARCH_GROUP_ID=1,
 							ADDRESS_ID=1
-						WHERE 
+						WHERE
 							IDENTIFIER = 1;
 
-							
+
 UPDATE catissue_password set PASSWORD='@@first.admin.encodedPassword@@',
 							UPDATE_DATE=sysdate
-						WHERE 
+						WHERE
 							IDENTIFIER = 1;
 commit;
