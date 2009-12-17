@@ -1,7 +1,7 @@
 package edu.wustl.common.datahandler;
 
 
-public enum HandlerTypeEnum 
+public enum HandlerTypeEnum
 {
-	TEXT, CSV
+	TEXT, CSV, EXCELSHEET
 };
