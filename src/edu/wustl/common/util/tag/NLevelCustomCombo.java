@@ -243,6 +243,25 @@ public class NLevelCustomCombo extends TagSupport
 	}
 
 	/**
+	 * This method will be called to return HTML String for TAG.
+	 * @return HTML String for TAG
+	 */
+	public String getCombosHTMLStr()
+	{
+		return combosHTMLStr;
+	}
+
+	/**
+	 *  This method will be called to set HTML String for TAG.
+	 * @param combosHTMLStr HTML String for TAG
+	 */
+	public void setCombosHTMLStr(String combosHTMLStr)
+	{
+		this.combosHTMLStr = combosHTMLStr;
+	}
+
+
+	/**
 	 * A call back function to set a list of label names.
 	 * @param value String array.
 	 */
@@ -689,5 +708,18 @@ public class NLevelCustomCombo extends TagSupport
 		List<String> tdStyleClassList = Arrays.asList(tdStyleClassArray);
 		String[] tdStyleClass = new String[tdStyleClassList.size()];
 		this.tdStyleClassArray = tdStyleClassList.toArray(tdStyleClass);
+	}
+    /**
+     * This method is used to set html representation of nlevelcombo tag.
+     * Used in StorageContainerAjaxAction.java.
+     * @param containerMap - container map
+     * @param props - retrieve properties from Tag.properties
+     * @throws IOException - IOException
+     */
+	public void setComboProperties(Map containerMap, Properties props) throws IOException
+	{
+		setDataMap(containerMap);
+		numberOfCombosNeeded();
+		getCombos(containerMap,props);
 	}
 }
