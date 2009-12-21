@@ -520,4 +520,8 @@ public final class Constants extends CommonConstants
     * bulk_operation_log table name
     */
    public static final String BULK_OPERATION_LOG_TABLE="bulk_operation_log";
+   /**
+    * EMPTY STRING.
+    */
+   public static final String EMPTY_STRING = "";
 }
