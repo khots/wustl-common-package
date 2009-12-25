@@ -1,7 +1,7 @@
 
 package edu.wustl.common.datahandler;
 
-public enum ParametersEnum 
+public enum ParametersEnum
 {
-	BUFFERSIZE, DELIMITER
+	BUFFERSIZE, DELIMITER, SHEET_NAME
 };

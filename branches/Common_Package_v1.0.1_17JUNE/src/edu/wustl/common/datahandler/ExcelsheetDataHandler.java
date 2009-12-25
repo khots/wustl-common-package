@@ -3,6 +3,7 @@ package edu.wustl.common.datahandler;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,6 +14,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import edu.wustl.common.util.global.Constants;
 
 /**
  * Data handler to create Excel sheet.
@@ -25,15 +28,33 @@ public class ExcelsheetDataHandler extends AbstractDataHandler
 	private Workbook book;
 	private Sheet sheet;
 	private int rowCount;
+	private String sheetName;
 
 	/**
 	 * Parameterized constructor.
 	 * @param excelFileName excel sheet file name
 	 */
-	public ExcelsheetDataHandler(String excelFileName)
+	public ExcelsheetDataHandler(String excelFileName,String sheetName)
 	{
 		super();
 		this.fileName = excelFileName;
+		this.sheetName=sheetName;
+	}
+	/**
+	 * 	Method is to get the valid sheet name.
+	 *	added by amit_doshi date:25 Dec 2009.
+	 * @param sheetName
+	 * @return
+	 */
+	private String getValidSheetName(final String sheetName)
+	{
+		String newSheetName=sheetName;
+		final int length=sheetName.length();
+		if(length>30)
+		{
+			newSheetName=sheetName.substring(0,14)+Constants.UNDERSCORE+sheetName.substring(length-14);
+		}
+		return newSheetName;
 	}
 
 	/**
@@ -98,8 +119,54 @@ public class ExcelsheetDataHandler extends AbstractDataHandler
 	public void openFile() throws IOException
 	{
 		book = new XSSFWorkbook();
-		sheet = book.createSheet();
+		addSheet();
 		rowCount = 0;
 	}
 
-}
+	/**
+	 *  Method to read the existing workBook.
+	 *  added by amit_doshi date:25 Dec 2009.
+	 */
+	 private XSSFWorkbook readWoorkBook(final String filename) throws IOException {
+         return new XSSFWorkbook(new FileInputStream(filename));
+	 }
+
+     /**
+      * Method to add the sheet in workbook.
+      * added by amit_doshi date:25 Dec 2009.
+      * @throws IOException
+      *
+      */
+	 private synchronized void addSheet() throws IOException
+     {
+    	final File file=new File(fileName);
+    	if( ! file.exists())
+ 		{
+    		 createSheet();
+ 		}
+    	else
+    	{
+    		book = readWoorkBook(fileName);
+    		createSheet();
+    	}
+     }
+	 /**
+	  *  Method to create sheet in workbook
+	  *  added by amit_doshi date:25 Dec 2009.
+	  */
+	private void createSheet()
+	{
+		if(sheetName!=null)
+		{
+			sheet=book.createSheet(getValidSheetName(sheetName));
+		}
+		else
+		{
+			sheet=book.createSheet();
+		}
+
+
+	}
+ }
+
+
