@@ -406,4 +406,6 @@ public final class Constants
 
     public static final String IS_AJAX_REQEUST="AjaxRequest";
 
+    public static final String UNDERSCORE="_";
+
 }

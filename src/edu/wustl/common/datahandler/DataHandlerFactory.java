@@ -37,6 +37,7 @@ public class DataHandlerFactory
 		AbstractDataHandler dataHandler = null;
 		Integer rowCount = null;
 		String delimiter = null;
+		String sheetName = null;
 		Map<ParametersEnum, Object> parametersMap = parameters.getParametersMap();
 
 		if (parametersMap.get(ParametersEnum.BUFFERSIZE) != null)
@@ -47,6 +48,11 @@ public class DataHandlerFactory
 		{
 			delimiter = parametersMap.get(ParametersEnum.DELIMITER).toString();
 		}
+		if (parametersMap.get(ParametersEnum.SHEET_NAME) != null)
+		{
+			sheetName = parametersMap.get(ParametersEnum.SHEET_NAME).toString();
+		}
+
 
 		switch (handlerType)
 		{
@@ -59,7 +65,7 @@ public class DataHandlerFactory
 				break;
 
 			case EXCELSHEET :
-				dataHandler = new ExcelsheetDataHandler(fileName);
+				dataHandler = new ExcelsheetDataHandler(fileName,sheetName);
 		}
 		return dataHandler;
 	}
