@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Hibernate;
+
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.audit.AuditManager;
 import edu.wustl.common.beans.NameValueBean;
@@ -777,14 +779,15 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
 		auditEventDetails.setElementName(Status.ACTIVITY_STATUS.toString());
-		auditEventDetails.setCurrentValue(Status.ACTIVITY_STATUS_DISABLED.getStatus());
+		auditEventDetails.setCurrentValue(Hibernate.createClob(
+				Status.ACTIVITY_STATUS_DISABLED.getStatus()));
 
 		auditEventDetailsCollection.add(auditEventDetails);
 
 		auditEventLog.setAuditEventDetailsCollection(auditEventDetailsCollection);
 		auditEventLogsCollection.add(auditEventLog);
 	}
-	
+
 	/**
 	 * This method gets related objects.
 	 * @param dao The dao object.
