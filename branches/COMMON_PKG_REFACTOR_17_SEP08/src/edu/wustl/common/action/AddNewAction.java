@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -30,7 +29,7 @@ import edu.wustl.common.util.logger.Logger;
  * This Class is used to maintain FormBean for AddNew operation.
  * @author Krunal Thakkar
  */
-public class AddNewAction extends Action
+public class AddNewAction extends BaseAction
 {
 
 	/**
@@ -47,7 +46,7 @@ public class AddNewAction extends Action
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
 	 * */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,
+	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 	{
 		ActionForward actionForward;

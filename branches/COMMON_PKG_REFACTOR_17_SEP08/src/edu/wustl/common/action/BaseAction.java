@@ -1,13 +1,18 @@
 
 package edu.wustl.common.action;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -16,6 +21,7 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.UserNotAuthenticatedException;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -61,12 +67,216 @@ public abstract class BaseAction extends Action
 		}
 		setAttributeFromParameter(request, Constants.OPERATION);
 		setAttributeFromParameter(request, Constants.MENU_SELECTED);
-		ActionForward actionForward = executeAction(mapping, form, request, response);
+		ActionForward actionForward = checkForXSSViolation(mapping, form,
+				request, response);
 		//long endTime = System.currentTimeMillis();
 		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName()
 		//+ " : " + (endTime - startTime));
 		return actionForward;
 	}
+
+	/**
+	 * @param mapping mapping
+	 * @param form form
+	 * @param request request
+	 * @param response response
+	 * @return actionForward
+	 * @throws Exception Exception
+	 * @throws IOException IOException
+	 */
+	private ActionForward checkForXSSViolation(ActionMapping mapping,
+			ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception, IOException
+	{
+		ActionForward actionForward = null;
+		boolean isRedirected = false;
+
+        isRedirected = getIsRedirected(request);
+        final boolean isToRedirect = isToExecuteXSSSafeAction(request);
+
+        final String ajaxRequest = request
+                .getParameter(Constants.IS_AJAX_REQEUST);
+
+        boolean isToExecuteAction = true;
+        boolean isAjaxRequest = false;
+
+        isAjaxRequest = getIsAjaxRequest(ajaxRequest);
+        if (isToRedirect)
+        {
+            if (isAjaxRequest)
+            {
+                isToExecuteAction = processAjaxRequestViolations(request,
+                        response);
+                addXSSValidationError(request);
+            }
+            else
+            {
+                if (!isRedirected)
+                {
+                    isToExecuteAction = false;
+                    actionForward = setActionForward(mapping, request,
+							response);
+                }
+            }
+        }
+        if (isToExecuteAction)
+        {
+        	actionForward = executeAction(mapping, form, request, response);
+        }
+		return actionForward;
+	}
+
+	/**
+	 * @param mapping mapping
+	 * @param request request
+	 * @param response response
+	 * @param actionForward actionForward
+	 * @return actionForward
+	 * @throws IOException IOException
+	 */
+	private ActionForward setActionForward(ActionMapping mapping,
+			HttpServletRequest request, HttpServletResponse response) throws IOException
+	{
+		ActionForward actionForward = null;
+		request.setAttribute(Constants.PAGE_REDIRECTED,
+		        Constants.BOOLEAN_YES);
+		if (mapping.getValidate())
+		{
+		    actionForward = mapping.getInputForward();
+		}
+		else
+		{
+		    response.sendRedirect("XssViolation.do");
+		}
+		return actionForward;
+	}
+
+	private boolean getIsRedirected(final HttpServletRequest request)
+    {
+        boolean isRedirected = false;
+        final Object redirectedObject = request
+                .getAttribute(Constants.PAGE_REDIRECTED);
+        if (redirectedObject != null
+                && Constants.BOOLEAN_YES.equalsIgnoreCase(redirectedObject
+                        .toString()))
+        {
+            isRedirected = true;
+        }
+
+        final Object errorObjects = request
+                .getAttribute("org.apache.struts.action.ERROR");
+        if (!isRedirected)
+        {
+
+            isRedirected = setIsRedirected(isRedirected, errorObjects);
+        }
+        return isRedirected;
+    }
+
+	/**
+	 * @param isRedirected isRedirected
+	 * @param errorObjects errorObjects
+	 * @return redirect
+	 */
+	private boolean setIsRedirected(boolean isRedirected,
+			final Object errorObjects)
+	{
+		boolean redirect = isRedirected;
+		if (errorObjects instanceof ActionErrors
+		        && !((ActionErrors) errorObjects).isEmpty())
+		{
+			redirect = true;
+		}
+		return redirect;
+	}
+
+	private boolean getIsAjaxRequest(final String ajaxRequest)
+    {
+        boolean isAjaxRequest = false;
+        if (!Validator.isEmpty(ajaxRequest)
+                && Constants.BOOLEAN_YES.equalsIgnoreCase(ajaxRequest))
+        {
+            isAjaxRequest = true;
+        }
+        return isAjaxRequest;
+    }
+
+	/**
+	 * @param request request
+	 * @param response response
+	 * @return isToExecuteAction
+	 * @throws IOException IOException
+	 */
+	private boolean processAjaxRequestViolations(
+            final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException
+    {
+        boolean isToExecuteAction;
+        isToExecuteAction = false;
+        final Writer writer = response.getWriter();
+
+        final Object propNameObject = request
+                .getAttribute(Constants.VIOLATING_PROPERTY_NAMES);
+        if (propNameObject instanceof List)
+        {
+            writer.append(Constants.XSS_ERROR_FIELDS
+                    + Constants.PROPERTY_NAMES_DELIMITER);
+            final List<String> propertyNamesList = (List<String>) propNameObject;
+            for (final String string : propertyNamesList)
+            {
+                writer.append(string);
+                writer.append(Constants.PROPERTY_NAMES_DELIMITER);
+            }
+        }
+        return isToExecuteAction;
+    }
+
+	/**
+	 * @param request request
+	 * @return isXSSViolation
+	 * @throws Exception Exception
+	 */
+	private boolean isToExecuteXSSSafeAction(final HttpServletRequest request) throws Exception
+    {
+        boolean isXSSViolation = false;
+
+        if (request.getAttribute(Constants.VIOLATING_PROPERTY_NAMES)
+        	instanceof List && ((List<String>)request.getAttribute
+        			(Constants.VIOLATING_PROPERTY_NAMES)).size()>0)
+        {
+            addXSSValidationError(request);
+            isXSSViolation = true;
+        }
+        return isXSSViolation;
+    }
+
+	/**
+	 * @param request request
+	 */
+	private void addXSSValidationError(final HttpServletRequest request)
+    {
+        final Object isToAddError = request.getAttribute("isToAddError");
+        if (isToAddError instanceof Boolean
+                && ((Boolean) isToAddError).equals(Boolean.TRUE))
+        {
+            final ActionErrors errors;
+            final Object actionErrosObject = request
+                    .getAttribute("org.apache.struts.action.ERROR");
+            if (actionErrosObject instanceof ActionErrors)
+            {
+                errors = (ActionErrors) actionErrosObject;
+            } else
+            {
+                errors = new ActionErrors();
+            }
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
+                    "errors.xssvulnerable"));
+
+            saveErrors(request, errors);
+            request.setAttribute("isToAddError", false);
+        }
+    }
+
 	/**
 	 * sets the URL of the application in proper format.
 	 * @param mapping	ActionMapping

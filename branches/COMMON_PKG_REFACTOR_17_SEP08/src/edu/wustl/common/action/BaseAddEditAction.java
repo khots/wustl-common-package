@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -43,7 +42,7 @@ import edu.wustl.dao.util.HibernateMetaDataFactory;
  * This Class is used to Add/Edit data in the database.
  * @author gautam_shetty
  */
-public abstract class BaseAddEditAction extends Action
+public abstract class BaseAddEditAction extends BaseAction
 {
 	/**
 	 * LOGGER Logger - Generic LOGGER.
@@ -59,7 +58,7 @@ public abstract class BaseAddEditAction extends Action
 	 * @return ActionForward
 	 * @throws ApplicationException Generic exception
 	 * */
-	public abstract ActionForward execute(ActionMapping mapping, ActionForm form,
+	public abstract ActionForward executeAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException;
 	/**
 	 * get Object Name.
