@@ -524,4 +524,28 @@ public final class Constants extends CommonConstants
     * EMPTY STRING.
     */
    public static final String EMPTY_STRING = "";
+
+   /**
+    * Constants required for XSS Changes.
+    */
+   /**
+    * PAGE REDIRECTED.
+    */
+   public static final String PAGE_REDIRECTED = "redirected";
+   /**
+    * IS AJAX REQUEST.
+    */
+   public static final String IS_AJAX_REQEUST = "AjaxRequest";
+   /**
+    * VIOLATING PROPERTY NAMES.
+    */
+   public static final String VIOLATING_PROPERTY_NAMES = "propertyNamesList";
+   /**
+    * XSS ERROR FIELDS.
+    */
+   public static final String XSS_ERROR_FIELDS = "xssErrorFields";
+   /**
+    * PROPERTY NAMES DELIMITER.
+    */
+   public static final String PROPERTY_NAMES_DELIMITER = "|";
 }

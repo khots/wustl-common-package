@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -32,7 +31,7 @@ import edu.wustl.common.util.logger.Logger;
  * This Class is used to Add/Edit data in the database.
  * @author gautam_shetty
  */
-public class CommonAddEditAction extends Action
+public class CommonAddEditAction extends BaseAction
 {
 
 	/**
@@ -51,9 +50,8 @@ public class CommonAddEditAction extends Action
 	 * @throws IOException Generic exception
 	 * @throws ServletException Generic exception
 	 * */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException
+	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 
 		LOGGER.info("in execute method");
@@ -69,14 +67,13 @@ public class CommonAddEditAction extends Action
 			else
 			{
 				addEditAction = new CommonEdtAction();
-
 			}
-			actionfwd = addEditAction.execute(mapping, abstractForm, request, response);
+			actionfwd = addEditAction.executeAction(mapping, abstractForm, request, response);
 		}
 		catch (ApplicationException applicationException)
 		{
 			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg());
-					
+
 			ActionErrors actionErrors = new ActionErrors();
 			ActionError actionError = new ActionError("errors.item",applicationException.getCustomizedMsg());
 			actionErrors.add(ActionErrors.GLOBAL_ERROR, actionError);

@@ -18,7 +18,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -43,7 +42,7 @@ import edu.wustl.common.util.logger.Logger;
  * This class is used to retrieve the information whose record is to be modified.
  * @author gautam_shetty
  */
-public class CommonSearchAction extends Action
+public class CommonSearchAction extends BaseAction
 {
 
 	/**
@@ -62,9 +61,8 @@ public class CommonSearchAction extends Action
 	 * @exception IOException Generic exception
 	 * @exception ApplicationException Application Exception.
 	 * */
-	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ApplicationException
+	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		LOGGER.info("in execute method");
 		//long startTime = System.currentTimeMillis();
