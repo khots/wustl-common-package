@@ -9,7 +9,7 @@ import java.util.List;
 import edu.wustl.common.util.global.Constants;
 
 /**
- * 
+ *
  * @author ravindra_jain
  * @version 1.0
  * @created 21-Apr-2009 6:57:50 PM
@@ -21,12 +21,12 @@ public class CSVDataHandler extends AbstractDataHandler
 	private Integer bufferSize;
 	private static int rowCount;
 	private String delimiter;
-	
+
 	/**
 	 * PRIVATE CONSTRUCTOR
 	 * @param fileName
 	 * @param bufferSize
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	CSVDataHandler(String fileName, Integer bufferSize, String delimiter)
 	{
@@ -55,7 +55,7 @@ public class CSVDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
+	 *
 	 * @param values
 	 */
 	public void appendData(String values)
@@ -64,13 +64,13 @@ public class CSVDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
+	 *
 	 * @param values
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void appendData(List<Object> values) throws IOException
 	{
-		//Writes the list of data into file 
+		//Writes the list of data into file
 		String newLine = System.getProperty(("line.separator"));
 
 		if (values != null)
@@ -99,8 +99,8 @@ public class CSVDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 */
 	public void flush() throws IOException
 	{
@@ -108,9 +108,9 @@ public class CSVDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
-	 * @throws IOException 
-	 * 
+	 *
+	 * @throws IOException
+	 *
 	 */
 	public void closeFile() throws IOException
 	{
@@ -119,5 +119,26 @@ public class CSVDataHandler extends AbstractDataHandler
 			bufferedWriter.flush();
 			bufferedWriter.close();
 		}
+	}
+
+	@Override
+	public void openSheet() throws IOException
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void saveSheet(String sheetName) throws IOException
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addHeader(List<Object> headers) throws IOException
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

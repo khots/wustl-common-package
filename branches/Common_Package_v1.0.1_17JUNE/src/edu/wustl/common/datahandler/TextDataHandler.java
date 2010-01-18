@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * 
+ *
  * @author ravindra_jain
  * @version 1.0
  * @created 21-Apr-2009 6:57:51 PM
@@ -18,7 +18,7 @@ public class TextDataHandler extends AbstractDataHandler
 	private int bufferSize;
 
 	/**
-	 * 
+	 *
 	 * @param fileName
 	 */
 	TextDataHandler(String fileName)
@@ -27,7 +27,7 @@ public class TextDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
+	 *
 	 * @param fileName
 	 * @param bufferSize
 	 */
@@ -44,7 +44,7 @@ public class TextDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
+	 *
 	 * @param values
 	 */
 	public void appendData(List<Object> values)
@@ -53,7 +53,7 @@ public class TextDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
+	 *
 	 * @param values
 	 */
 	public void appendData(String values)
@@ -62,7 +62,7 @@ public class TextDataHandler extends AbstractDataHandler
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void closeFile()
 	{
@@ -73,6 +73,28 @@ public class TextDataHandler extends AbstractDataHandler
 	public void flush() throws IOException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
+
+	@Override
+	public void openSheet() throws IOException
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void saveSheet(String sheetName) throws IOException
+	{
+		// TODO Auto-generated method stub
+
+	}
+	@Override
+	public void addHeader(List<Object> headers) throws IOException
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+
 }

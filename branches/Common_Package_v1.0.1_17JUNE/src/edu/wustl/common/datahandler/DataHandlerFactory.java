@@ -2,6 +2,8 @@
 package edu.wustl.common.datahandler;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +40,8 @@ public class DataHandlerFactory
 		Integer rowCount = null;
 		String delimiter = null;
 		String sheetName = null;
+		List<String> sheetNames = null;
+
 		Map<ParametersEnum, Object> parametersMap = parameters.getParametersMap();
 
 		if (parametersMap.get(ParametersEnum.BUFFERSIZE) != null)
@@ -52,6 +56,10 @@ public class DataHandlerFactory
 		{
 			sheetName = parametersMap.get(ParametersEnum.SHEET_NAME).toString();
 		}
+		if (parametersMap.get(ParametersEnum.SHEET_NAMES) != null)
+		{
+			sheetNames = (ArrayList<String>)parametersMap.get(ParametersEnum.SHEET_NAMES);
+		}
 
 
 		switch (handlerType)
@@ -59,13 +67,17 @@ public class DataHandlerFactory
 			case CSV :
 				dataHandler = new CSVDataHandler(fileName, rowCount, delimiter);
 				break;
-
 			case TEXT :
 				dataHandler = new TextDataHandler(fileName, rowCount);
 				break;
 
 			case EXCELSHEET :
 				dataHandler = new ExcelsheetDataHandler(fileName,sheetName);
+				break;
+			case EXCELSHEET_FOR_LARGE_DATA :
+				dataHandler = new ExcelsheetForLargeDataHandler(fileName,sheetNames);
+				break;
+
 		}
 		return dataHandler;
 	}
