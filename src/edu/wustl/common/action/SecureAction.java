@@ -8,8 +8,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.exception.UserNotAuthenticatedException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Variables;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * Class intercepts the struts action call and performs authorization to ensure
@@ -31,6 +33,10 @@ public abstract class SecureAction extends BaseAction
 {
 
 	/**
+	 * LOGGER Logger - Generic LOGGER.
+	 */
+	private static final Logger LOGGER = Logger.getCommonLogger(SecureAction.class);
+	/**
 	 * Authorizes the user and executes the secure workflow. If authorization
 	 * fails, the user is denied access to the secured action
 	 *
@@ -44,9 +50,35 @@ public abstract class SecureAction extends BaseAction
 	protected ActionForward executeAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
+
+		LOGGER.info("In execute method of secure Action");
+		//long startTime = System.currentTimeMillis();
+		preExecute(mapping, form, request, response);
+		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
+		Object accessObj = request.getParameter(Constants.ACCESS);
+		if (!(sessionData != null && accessObj != null) && getSessionData(request) == null)
+		{
+				//Forward to the Login
+				throw new UserNotAuthenticatedException();
+		}
+		setAttributeFromParameter(request, Constants.OPERATION);
+		setAttributeFromParameter(request, Constants.MENU_SELECTED);
 		checkAddNewOperation(request);
 		return executeSecureAction(mapping, form, request, response);
 
+	}
+
+	/**
+	 * @param request HttpServletRequest
+	 * @param paramName String -parameter name
+	 */
+	private void setAttributeFromParameter(HttpServletRequest request, String paramName)
+	{
+		String paramValue = request.getParameter(paramName);
+		if (paramValue != null)
+		{
+			request.setAttribute(paramName, paramValue);
+		}
 	}
 
 	/**
