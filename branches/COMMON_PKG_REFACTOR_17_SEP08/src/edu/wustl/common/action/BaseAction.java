@@ -18,7 +18,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.beans.SessionDataBean;
-import edu.wustl.common.exception.UserNotAuthenticatedException;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
@@ -55,23 +54,15 @@ public abstract class BaseAction extends Action
 	public final ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		LOGGER.info("in execute method");
-		//long startTime = System.currentTimeMillis();
-		preExecute(mapping, form, request, response);
-		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
-		Object accessObj = request.getParameter(Constants.ACCESS);
-		if (!(sessionData != null && accessObj != null) && getSessionData(request) == null)
-		{
-				//Forward to the Login
-				throw new UserNotAuthenticatedException();
-		}
-		setAttributeFromParameter(request, Constants.OPERATION);
-		setAttributeFromParameter(request, Constants.MENU_SELECTED);
-		ActionForward actionForward = checkForXSSViolation(mapping, form,
-				request, response);
-		//long endTime = System.currentTimeMillis();
-		//Logger.out.info("EXECUTE TIME FOR ACTION - " + this.getClass().getSimpleName()
-		//+ " : " + (endTime - startTime));
+		LOGGER.info("Inside execute method of BaseAction ");
+		ActionForward actionForward = null;
+		 boolean isToExecuteAction = checkForXSSViolation(mapping,form,
+				request, response,actionForward);
+
+		if (isToExecuteAction)
+        {
+        	actionForward = executeAction(mapping, form, request, response);
+        }
 		return actionForward;
 	}
 
@@ -80,15 +71,18 @@ public abstract class BaseAction extends Action
 	 * @param form form
 	 * @param request request
 	 * @param response response
+	 * @param actionForward actionForward
 	 * @return actionForward
 	 * @throws Exception Exception
 	 * @throws IOException IOException
 	 */
-	private ActionForward checkForXSSViolation(ActionMapping mapping,
+	protected boolean checkForXSSViolation(ActionMapping mapping,
 			ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception, IOException
+			HttpServletResponse response,ActionForward actionForward)
+				throws Exception, IOException
 	{
-		ActionForward actionForward = null;
+
+		LOGGER.info("Checking for XSS validations");
 		boolean isRedirected = false;
 
         isRedirected = getIsRedirected(request);
@@ -119,18 +113,13 @@ public abstract class BaseAction extends Action
                 }
             }
         }
-        if (isToExecuteAction)
-        {
-        	actionForward = executeAction(mapping, form, request, response);
-        }
-		return actionForward;
+		return isToExecuteAction;
 	}
 
 	/**
 	 * @param mapping mapping
 	 * @param request request
 	 * @param response response
-	 * @param actionForward actionForward
 	 * @return actionForward
 	 * @throws IOException IOException
 	 */
@@ -151,6 +140,11 @@ public abstract class BaseAction extends Action
 		return actionForward;
 	}
 
+	/**
+	 * Check if it's redirected.
+	 * @param request request
+	 * @return true if redirected.
+	 */
 	private boolean getIsRedirected(final HttpServletRequest request)
     {
         boolean isRedirected = false;
@@ -190,6 +184,11 @@ public abstract class BaseAction extends Action
 		return redirect;
 	}
 
+	/**
+	 * Check if it's Ajax Request.
+	 * @param ajaxRequest ajaxRequest.
+	 * @return true if ajax request.
+	 */
 	private boolean getIsAjaxRequest(final String ajaxRequest)
     {
         boolean isAjaxRequest = false;
@@ -265,7 +264,8 @@ public abstract class BaseAction extends Action
             if (actionErrosObject instanceof ActionErrors)
             {
                 errors = (ActionErrors) actionErrosObject;
-            } else
+            }
+            else
             {
                 errors = new ActionErrors();
             }
@@ -295,18 +295,7 @@ public abstract class BaseAction extends Action
 			CommonServiceLocator.getInstance().setAppURL(request.getRequestURL().toString());
 		}
 	}
-	/**
-	 * @param request HttpServletRequest
-	 * @param paramName String -parameter name
-	 */
-	private void setAttributeFromParameter(HttpServletRequest request, String paramName)
-	{
-		String paramValue = request.getParameter(paramName);
-		if (paramValue != null)
-		{
-			request.setAttribute(paramName, paramValue);
-		}
-	}
+
 	/**
 	 * Returns the current User authenticated by CSM Authentication from current session.
 	 * @param request HttpServletRequest
