@@ -1,0 +1,300 @@
+<?xml version ="1.0"?>
+
+<!--Ant Script for create Build for Common package-->
+<project name="CommonPackage" default="compile">
+
+	<!--define require dir and Properties -->
+	<property name="base.dir" value="." />
+	<property name="src.dir" value="${base.dir}/src" />
+	<property name="test.dir" value="${base.dir}/test" />
+	<property name="test.src.dir" value="${test.dir}/src" />
+	<property name="target.dir" value="${base.dir}/classes" />
+	<property name="lib.dir" value="${base.dir}/lib" />
+	<property name="lib.poi.dir" value="${base.dir}/lib-apache-poi" />
+	<property name="build.dir" value="${base.dir}/build" />
+	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
+	<property name="generateforce" value="true" />
+	<property name="junit.dir" value="${base.dir}/junit" />
+	<property name="junit.report.dir" value="${junit.dir}/reports" />
+	<property name="junit.classes.dir" value="${junit.dir}/classes" />
+	<property name="code.coverage.report.dir" value="${junit.dir}/coverage-reports" />
+	<property name="instrumented.classes.dir" value="${junit.dir}/instrumented-classes" />
+	<property name="cobertura.home" value="${base.dir}/cobertura"/>
+	<property name="cobertura.lib" value="${cobertura.home}/lib"/>
+	<property name="metadatatest.dir" value="${base.dir}/metadataTestReport" />
+	<property name="metadatatest.report.dir" value="${metadatatest.dir}/Report" />
+
+	<path id="app.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<path id="xdoclet.classpath">
+		<path refid="app.classpath" />
+		<pathelement location="${extra_lib.dir}/commons-net-1.2.2.jar" />
+		<pathelement location="${extra_lib.dir}/hibernate-tools.jar" />
+		<pathelement location="${extra_lib.dir}/servlet-api.jar" />
+		<pathelement location="${extra_lib.dir}/xdoclet-1.2.3.jar" />
+		<pathelement location="${extra_lib.dir}/xdoclet-hibernate-module-1.2.jar" />
+		<pathelement location="${extra_lib.dir}/xdoclet-xdoclet-module-1.2.jar" />
+		<pathelement location="${extra_lib.dir}/xerces.jar" />
+		<pathelement location="${extra_lib.dir}/xjavadoc-1.1-j5-v4.jar" />
+		<pathelement location="${extra_lib.dir}/xsdlib.jar" />
+		<pathelement location="${test.dir}" />
+	</path>
+
+
+
+	<path id="junit.classpath">
+		<pathelement location="${cobertura.home}/cobertura.jar" />
+		<pathelement location="${cobertura.lib}/jakarta-oro-2.0.8.jar" />
+		<pathelement location="${cobertura.lib}/asm-2.2.1.jar" />
+		<pathelement location="lib/log4j-1.2.9.jar" />
+	</path>
+
+	<!-- sub tasks -->
+	<target name="init">
+		<!-- Create the build directory structure used by compile -->
+		<delete dir="${target.dir}" failonerror="false"/>
+		<mkdir dir="${target.dir}" />
+		<mkdir dir="${build.dir}" />
+		<delete dir="${junit.dir}" failonerror="false"/>
+		<mkdir dir="${junit.dir}" />
+		<delete dir="${junit.classes.dir}" failonerror="false"/>
+		<mkdir dir="${junit.classes.dir}" />
+	</target>
+
+	<!-- Compile all files -->
+	<target name="compile" depends="init">
+		<javac destdir="${target.dir}" includes="**/*.*" debug="on" includeAntRuntime="false" target="1.5">
+			<src path="${src.dir}" />
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${lib.poi.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${target.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.hbm.xml" />
+				<include name="**/*.ser" />
+				<exclude name="**/cab2b.properties"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- compile all test classes-->
+	<target name="compileTest">
+			<javac destdir="${junit.classes.dir}" includes="**/*.*" debug="on" includeAntRuntime="false" target="1.5">
+				<src path="${test.src.dir}" />
+				<classpath>
+					<fileset dir="${lib.dir}">
+						<include name="*.jar" />
+					</fileset>
+					<pathelement location="${target.dir}" />
+				</classpath>
+			</javac>
+			<copy todir="${junit.classes.dir}">
+				<fileset dir="${test.src.dir}">
+					<include name="**/*.properties" />
+					<include name="**/*.xml" />
+					<include name="**/*.hbm.xml" />
+					<include name="**/*.ser" />
+				</fileset>
+			</copy>
+		</target>
+	<!--Create zip file of common package source files.-->
+	<target name="build_code_zip" depends="compile">
+		<delete>
+			<fileset dir="${build.dir}" includes="**/*" />
+		</delete>
+		<zip destfile="${build.dir}/commonpackage-src.zip">
+			<fileset dir="${src.dir}" includes="**/*" />
+		</zip>
+	</target>
+
+	<target name="build_jar" depends="build_code_zip,compile">
+		<tstamp />
+		<jar taskname="build_jar" jarfile="${build.dir}/commonpackage.jar">
+			<fileset dir="${target.dir}">
+				<include name="**/*" />
+				<exclude name="**/SqlGeneratorTestCase*" />
+				<exclude name="**/ExpressionTestCases*" />
+				<exclude name="**/JoinGraphTestCase*" />
+				<exclude name="**/CSMGroupConf.xml" />
+				<exclude name="**/Factory.xml" />
+				<exclude name="**/ApplicationResources.properties" />
+			</fileset>
+			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<manifest>
+				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="initJunit">
+		<delete failonerror="false">
+			<fileset dir="${junit.report.dir}" includes="**/*" />
+		</delete>
+		<mkdir dir="${junit.report.dir}" />
+		<mkdir dir="${junit.report.dir}/Html_reports" />
+	</target>
+	<!-- copy all jar files to junit/lib folder-->
+	<target name="copyJarsToJunitLib">
+		<mkdir dir="${junit.dir}/lib" />
+		<copy todir="${junit.dir}/lib">
+			<fileset dir="${base.dir}/lib">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${junit.dir}/lib" file="${build.dir}/commonpackage.jar" failonerror="false"/>
+	</target>
+	<!-- Create junit report-->
+	<target name="createJunitReport" >
+		<junitreport todir="${junit.report.dir}/Html_reports">
+			<fileset dir="${junit.report.dir}/Html_reports">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${junit.report.dir}/Html_reports" />
+		</junitreport>
+	</target>
+	<!-- run junit test cases-->
+	<taskdef classpathref="junit.classpath" resource="tasks.properties" />
+	<target name="runJunitTestCases" depends="build_jar,compileTest,copyJarsToJunitLib">
+		<antcall target="initJunit"/>
+		<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
+			<formatter type="xml" />
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="${base.dir}/cobertura.ser" />
+			<batchtest todir="${junit.report.dir}/Html_reports">
+      			<fileset dir="${test.src.dir}">
+					<include name="**/TestAll.java"/>
+			    </fileset>
+			</batchtest>
+			<classpath>
+				<pathelement location="${test.src.dir}" />
+				<pathelement location="${junit.classes.dir}" />
+				<fileset dir="${junit.dir}/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</junit>
+		<antcall target="createJunitReport" />
+	</target>
+
+	<target name="junitForCobertura" depends="compileTest,copyJarsToJunitLib">
+			<antcall target="initJunit"/>
+			<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
+				<formatter type="xml" />
+				<sysproperty key="net.sourceforge.cobertura.datafile" file="${base.dir}/cobertura.ser" />
+				<batchtest todir="${junit.report.dir}/Html_reports">
+	      			<fileset dir="${test.src.dir}">
+						<include name="**/TestAll.java"/>
+				    </fileset>
+				</batchtest>
+				<classpath>
+					<pathelement location="${test.src.dir}" />
+					<pathelement location="${junit.classes.dir}" />
+					<pathelement location="${cobertura.home}/cobertura.jar" />
+					<fileset dir="${junit.dir}/lib">
+						<include name="*.jar" />
+					</fileset>
+					<pathelement location="${target.dir}" />
+				</classpath>
+			</junit>
+			<antcall target="createJunitReport" />
+		</target>
+
+	<target name="create_instrumented_jar">
+		<delete file="${build.dir}/inscommonpackage.jar" failonerror="false"/>
+		<jar taskname="build_jar" jarfile="${build.dir}/inscommonpackage.jar">
+			<fileset dir="${instrumented.classes.dir}">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<manifest>
+				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Instrument all classes-->
+	<target name="instrument">
+		<mkdir dir="${code.coverage.report.dir}" />
+		<mkdir dir="${instrumented.classes.dir}" />
+		<cobertura-instrument todir="${instrumented.classes.dir}" >
+			<ignore regex="org.apache.log4j.*" />
+			<fileset dir="${target.dir}">
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+				<exclude name="**/Mock*.class" />
+			</fileset>
+		</cobertura-instrument>
+		<copy todir="${instrumented.classes.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.hbm.xml" />
+				<include name="**/*.ser" />
+				<exclude name="**/cab2b.properties"/>
+			</fileset>
+		</copy>
+		<antcall target="create_instrumented_jar" />
+		<delete file="${build.dir}/commonpackage.jar" failonerror="false"/>
+		<copy todir="${junit.dir}/lib" file="${build.dir}/inscommonpackage.jar"/>
+	</target>
+
+	<!-- Target to generate cobertura coverage report-->
+	<target name="cobertura_report">
+		<cobertura-report srcdir="${src.dir}" destdir="${code.coverage.report.dir}" />
+		<delete file="${instrumented.classes.dir}/cobertura.ser" />
+	</target>
+
+	<!-- Target to run junit test cases and generate cobertura coverage report-->
+	<target name="Generate_Report_Cobertura" depends="compile">
+		<antcall target="instrument" />
+		<antcall target="junitForCobertura" />
+		<antcall target="cobertura_report" />
+	</target>
+
+	<target name="create_cde_src_zip">
+		<zip destfile="${build.dir}/cde-src.zip">
+			<fileset dir="${src.dir}">
+				<include name="edu/wustl/common/cde/*" />
+				<include name="edu/wustl/common/cde/xml/*" />
+				<include name="edu/wustl/common/cde/xml/impl/*" />
+				<include name="edu/wustl/common/cde/xml/impl/runtime/*" />
+			</fileset>
+		</zip>
+	</target>
+	<target name="create_cde_jar">
+		<delete file="${build.dir}/cde.jar" failonerror="false"/>
+		<tstamp />
+		<jar taskname="build_jar" jarfile="${build.dir}/cde.jar">
+			<fileset dir="${target.dir}">
+				<include name="edu/wustl/common/cde/*" />
+				<include name="edu/wustl/common/cde/xml/*" />
+				<include name="edu/wustl/common/cde/xml/impl/*" />
+				<include name="edu/wustl/common/cde/xml/impl/runtime/*" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="build_exception_jar" depends="compile">
+			<tstamp />
+			<jar taskname="build_jar" jarfile="${build.dir}/commonpkgexcepion.jar">
+				<fileset dir="${target.dir}">
+					<include name="**/edu/wustl/common/exception/*" />
+				</fileset>
+				<manifest>
+					<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
+				</manifest>
+			</jar>
+	</target>
+</project>
