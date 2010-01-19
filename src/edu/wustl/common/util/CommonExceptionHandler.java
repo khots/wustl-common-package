@@ -14,6 +14,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ExceptionHandler;
 import org.apache.struts.config.ExceptionConfig;
 
+import edu.wustl.common.beans.EmailFormatBean;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -29,37 +31,70 @@ import edu.wustl.common.util.logger.Logger;
  */
 public class CommonExceptionHandler extends ExceptionHandler
 {
+    /**
+     * LOGGER Logger - Generic LOGGER.
+     */
+    private static final Logger LOGGER = Logger
+            .getCommonLogger(CommonExceptionHandler.class);
+
+    /**
+     * Retrieve the error details from request and set it in session.
+     *
+     * @param exception
+     *            Exception generic exception.
+     * @param exConfig
+     *            ExceptionConfig configuration exception.
+     * @param mapping
+     *            ActionMapping information about current page.
+     * @param formInstance
+     *            ActionForm populated form.
+     * @param request
+     *            HttpServletRequest information about request.
+     * @param response
+     *            HttpServletResponse information about response.
+     *
+     * @return the output of execute method.
+     *
+     * @throws ServletException
+     *             servlet exception.
+     */
+    public ActionForward execute(Exception exception,
+            ExceptionConfig exConfig,
+            ActionMapping mapping,
+            ActionForm formInstance, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
+    {
+        LOGGER.error(getErrorMsg(exception), exception);
+        StringBuffer mess = new StringBuffer("Unhandled Exception occured in ")
+                .append(CommonServiceLocator.getInstance().getAppURL()).append(
+                        " : ").append(exception.getMessage());
+        request.getSession().setAttribute(Constants.ERROR_DETAIL, mess);
+
+        // send an email.
+        SessionDataBean sessionDataBean = (SessionDataBean) request
+                .getSession().getAttribute(Constants.SESSION_DATA);
+        EmailFormatBean emailFormatBean = new EmailFormatBean();
+        emailFormatBean.setException(exception);
+        emailFormatBean.setUserId(sessionDataBean.getUserId());
+        StringBuilder username = new StringBuilder();
+        username.append(sessionDataBean.getLastName());
+        username.append(",");
+        username.append(sessionDataBean.getFirstName());
+        emailFormatBean.setUserName(username.toString());
+        SendEmailUtility.sendEmailOnGlobalException(emailFormatBean);
+        return super.execute(exception, exConfig, mapping, formInstance,
+                request, response);
+    }
+
 	/**
-	 * LOGGER Logger - Generic LOGGER.
-	 */
-	private static final Logger LOGGER = Logger.getCommonLogger(CommonExceptionHandler.class);
-	/**
-	 * Retrieve the error details from request and set it in session.
-	 * @param exception Exception generic exception.
-	 * @param exConfig ExceptionConfig configuration exception.
-	 * @param mapping ActionMapping information about current page.
-	 * @param formInstance ActionForm populated form.
-	 * @param request HttpServletRequest information about request.
-	 * @param response HttpServletResponse information about response.
-	 * @throws ServletException servlet exception.
-	 * @return the output of execute method.
-	 */
-	public ActionForward execute(Exception exception, ExceptionConfig exConfig, ActionMapping mapping, // NOPMD
-			ActionForm formInstance, HttpServletRequest request, HttpServletResponse response)
-			throws ServletException
-	{
-		LOGGER.error(getErrorMsg(exception), exception);
-		StringBuffer mess= new StringBuffer("Unhandled Exception occured in ").
-				append(CommonServiceLocator.getInstance().getAppURL()).
-				append(" : ").append(exception.getMessage());
-		request.getSession().setAttribute(Constants.ERROR_DETAIL,mess);
-		return super.execute(exception, exConfig, mapping, formInstance, request, response);
-	}
-	/**
-	* @param exception the Exception.
-	* @return the string of the error message.
-	*/
-	public String getErrorMsg(Exception exception)
+     * Gets the error msg.
+     *
+     * @param exception
+     *            the Exception.
+     *
+     * @return the string of the error message.
+     */
+	public String getErrorMsg(final Exception exception)
 	{
 		StringBuffer msg=new StringBuffer();
 		if (null==exception)
@@ -71,7 +106,7 @@ public class CommonExceptionHandler extends ExceptionHandler
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintWriter printWriter = new PrintWriter(baos, true);
 			exception.printStackTrace(printWriter);
-			msg.append("Unhandled Exception occured in caTISSUE Core \nMessage: ")
+			msg.append("Unhandled Exception occured in application :- \nMessage: ")
 			.append(exception.getMessage())
 			.append("\nStackTrace: ").append(baos.toString());
 		}
