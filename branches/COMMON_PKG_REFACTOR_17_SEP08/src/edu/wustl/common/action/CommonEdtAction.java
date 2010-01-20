@@ -44,7 +44,7 @@ public class CommonEdtAction extends BaseAddEditAction
 	 * @return ActionForward
 	 * @throws ApplicationException Generic exception
 	 * */
-	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException
 	{
 		String target;

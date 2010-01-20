@@ -68,18 +68,6 @@ public abstract class SecureAction extends BaseAction
 
 	}
 
-	/**
-	 * @param request HttpServletRequest
-	 * @param paramName String -parameter name
-	 */
-	private void setAttributeFromParameter(HttpServletRequest request, String paramName)
-	{
-		String paramValue = request.getParameter(paramName);
-		if (paramValue != null)
-		{
-			request.setAttribute(paramName, paramValue);
-		}
-	}
 
 	/**
 	 * Return,about next action to be performed.

@@ -29,7 +29,7 @@ import edu.wustl.common.util.logger.Logger;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class ApplicationFooterAction extends BaseAction
+public class ApplicationFooterAction extends XSSSupportedAction
 {
 
 	/**
@@ -44,7 +44,7 @@ public class ApplicationFooterAction extends BaseAction
 	 * @param response HttpServletResponse
 	 * @return ActionForward
 	 */
-	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 	{
 		LOGGER.info("in execute method");

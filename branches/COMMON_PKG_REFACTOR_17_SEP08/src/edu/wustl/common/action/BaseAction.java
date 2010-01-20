@@ -1,26 +1,20 @@
 
 package edu.wustl.common.action;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.exception.UserNotAuthenticatedException;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
-import edu.wustl.common.util.global.Validator;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -29,11 +23,15 @@ import edu.wustl.common.util.logger.Logger;
  * that the user is authenticated before calling the executeWorkflow of the
  * subclass. If the User is not authenticated then an
  * UserNotAuthenticatedException is thrown.
- *
+ * @deprecated use SecureAction instead of BaseAction
+ * In this release BaseAction is deprecated, use SecureAction instead
+ * of BaseAction for login and authentication validation.
+ * In later releases BaseAction.java will have only cross scripting validations,
+ * all login and authentication validation will be done through SecureAction
  * @author Aarti Sharma
  *
  */
-public abstract class BaseAction extends Action
+public abstract class BaseAction extends XSSSupportedAction
 {
 	/**
 	 * LOGGER Logger - Generic LOGGER.
@@ -51,231 +49,50 @@ public abstract class BaseAction extends Action
 	 * @return ActionForward
 	 * @exception Exception Generic exception
 	 */
-	public final ActionForward execute(ActionMapping mapping, ActionForm form,
+	public final ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		LOGGER.info("Inside execute method of BaseAction ");
-		ActionForward actionForward = null;
-		 boolean isToExecuteAction = checkForXSSViolation(mapping,form,
-				request, response,actionForward);
-
-		if (isToExecuteAction)
-        {
-        	actionForward = executeAction(mapping, form, request, response);
-        }
-		return actionForward;
-	}
-
-	/**
-	 * @param mapping mapping
-	 * @param form form
-	 * @param request request
-	 * @param response response
-	 * @param actionForward actionForward
-	 * @return actionForward
-	 * @throws Exception Exception
-	 * @throws IOException IOException
-	 */
-	protected boolean checkForXSSViolation(ActionMapping mapping,
-			ActionForm form, HttpServletRequest request,
-			HttpServletResponse response,ActionForward actionForward)
-				throws Exception, IOException
-	{
-
-		LOGGER.info("Checking for XSS validations");
-		boolean isRedirected = false;
-
-        isRedirected = getIsRedirected(request);
-        final boolean isToRedirect = isToExecuteXSSSafeAction(request);
-
-        final String ajaxRequest = request
-                .getParameter(Constants.IS_AJAX_REQEUST);
-
-        boolean isToExecuteAction = true;
-        boolean isAjaxRequest = false;
-
-        isAjaxRequest = getIsAjaxRequest(ajaxRequest);
-        if (isToRedirect)
-        {
-            if (isAjaxRequest)
-            {
-                isToExecuteAction = processAjaxRequestViolations(request,
-                        response);
-                addXSSValidationError(request);
-            }
-            else
-            {
-                if (!isRedirected)
-                {
-                    isToExecuteAction = false;
-                    actionForward = setActionForward(mapping, request,
-							response);
-                }
-            }
-        }
-		return isToExecuteAction;
-	}
-
-	/**
-	 * @param mapping mapping
-	 * @param request request
-	 * @param response response
-	 * @return actionForward
-	 * @throws IOException IOException
-	 */
-	private ActionForward setActionForward(ActionMapping mapping,
-			HttpServletRequest request, HttpServletResponse response) throws IOException
-	{
-		ActionForward actionForward = null;
-		request.setAttribute(Constants.PAGE_REDIRECTED,
-		        Constants.BOOLEAN_YES);
-		if (mapping.getValidate())
+		//long startTime = System.currentTimeMillis();
+		preExecute(mapping, form, request, response);
+		Object sessionData = request.getSession().getAttribute(Constants.TEMP_SESSION_DATA);
+		Object accessObj = request.getParameter(Constants.ACCESS);
+		if (!(sessionData != null && accessObj != null) && getSessionData(request) == null)
 		{
-		    actionForward = mapping.getInputForward();
+				//Forward to the Login
+				throw new UserNotAuthenticatedException();
 		}
-		else
-		{
-		    response.sendRedirect("XssViolation.do");
-		}
-		return actionForward;
+		setAttributeFromParameter(request, Constants.OPERATION);
+		setAttributeFromParameter(request, Constants.MENU_SELECTED);
+		checkAddNewOperation(request);
+
+		return executeAction(mapping, form, request, response);
 	}
 
 	/**
-	 * Check if it's redirected.
-	 * @param request request
-	 * @return true if redirected.
+	 * Subclasses should implement this method to execute the Action logic.
+	 *
+	 * @param mapping ActionMapping
+	 * @param form ActionForm
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @return ActionForward
+	 * @throws Exception Generic exception
 	 */
-	private boolean getIsRedirected(final HttpServletRequest request)
-    {
-        boolean isRedirected = false;
-        final Object redirectedObject = request
-                .getAttribute(Constants.PAGE_REDIRECTED);
-        if (redirectedObject != null
-                && Constants.BOOLEAN_YES.equalsIgnoreCase(redirectedObject
-                        .toString()))
-        {
-            isRedirected = true;
-        }
-
-        final Object errorObjects = request
-                .getAttribute("org.apache.struts.action.ERROR");
-        if (!isRedirected)
-        {
-
-            isRedirected = setIsRedirected(isRedirected, errorObjects);
-        }
-        return isRedirected;
-    }
-
+	protected abstract ActionForward executeAction(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) throws Exception;
 	/**
-	 * @param isRedirected isRedirected
-	 * @param errorObjects errorObjects
-	 * @return redirect
+	 * @param request HttpServletRequest
+	 * @param paramName String -parameter name
 	 */
-	private boolean setIsRedirected(boolean isRedirected,
-			final Object errorObjects)
+	protected void setAttributeFromParameter(HttpServletRequest request, String paramName)
 	{
-		boolean redirect = isRedirected;
-		if (errorObjects instanceof ActionErrors
-		        && !((ActionErrors) errorObjects).isEmpty())
+		String paramValue = request.getParameter(paramName);
+		if (paramValue != null)
 		{
-			redirect = true;
+			request.setAttribute(paramName, paramValue);
 		}
-		return redirect;
 	}
-
-	/**
-	 * Check if it's Ajax Request.
-	 * @param ajaxRequest ajaxRequest.
-	 * @return true if ajax request.
-	 */
-	private boolean getIsAjaxRequest(final String ajaxRequest)
-    {
-        boolean isAjaxRequest = false;
-        if (!Validator.isEmpty(ajaxRequest)
-                && Constants.BOOLEAN_YES.equalsIgnoreCase(ajaxRequest))
-        {
-            isAjaxRequest = true;
-        }
-        return isAjaxRequest;
-    }
-
-	/**
-	 * @param request request
-	 * @param response response
-	 * @return isToExecuteAction
-	 * @throws IOException IOException
-	 */
-	private boolean processAjaxRequestViolations(
-            final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException
-    {
-        boolean isToExecuteAction;
-        isToExecuteAction = false;
-        final Writer writer = response.getWriter();
-
-        final Object propNameObject = request
-                .getAttribute(Constants.VIOLATING_PROPERTY_NAMES);
-        if (propNameObject instanceof List)
-        {
-            writer.append(Constants.XSS_ERROR_FIELDS
-                    + Constants.PROPERTY_NAMES_DELIMITER);
-            final List<String> propertyNamesList = (List<String>) propNameObject;
-            for (final String string : propertyNamesList)
-            {
-                writer.append(string);
-                writer.append(Constants.PROPERTY_NAMES_DELIMITER);
-            }
-        }
-        return isToExecuteAction;
-    }
-
-	/**
-	 * @param request request
-	 * @return isXSSViolation
-	 * @throws Exception Exception
-	 */
-	private boolean isToExecuteXSSSafeAction(final HttpServletRequest request) throws Exception
-    {
-        boolean isXSSViolation = false;
-
-        if (request.getAttribute(Constants.VIOLATING_PROPERTY_NAMES)
-        	instanceof List && ((List<String>)request.getAttribute
-        			(Constants.VIOLATING_PROPERTY_NAMES)).size()>0)
-        {
-            addXSSValidationError(request);
-            isXSSViolation = true;
-        }
-        return isXSSViolation;
-    }
-
-	/**
-	 * @param request request
-	 */
-	private void addXSSValidationError(final HttpServletRequest request)
-    {
-        final Object isToAddError = request.getAttribute("isToAddError");
-        if (isToAddError instanceof Boolean
-                && ((Boolean) isToAddError).equals(Boolean.TRUE))
-        {
-            final ActionErrors errors;
-            final Object actionErrosObject = request
-                    .getAttribute("org.apache.struts.action.ERROR");
-            if (actionErrosObject instanceof ActionErrors)
-            {
-                errors = (ActionErrors) actionErrosObject;
-            }
-            else
-            {
-                errors = new ActionErrors();
-            }
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(
-                    "errors.xssvulnerable"));
-
-            saveErrors(request, errors);
-            request.setAttribute("isToAddError", false);
-        }
-    }
 
 	/**
 	 * sets the URL of the application in proper format.
@@ -320,19 +137,7 @@ public abstract class BaseAction extends Action
 	{
 		return (SessionDataBean) request.getSession().getAttribute(Constants.SESSION_DATA);
 	}
-	/**
-	 * Subclasses should implement the action's business logic in this method
-	 * and can be sure that an authenticated user is present.
-	 *
-	 * @param mapping	ActionMapping
-	 * @param form	ActionForm
-	 * @param request	HttpServletRequest
-	 * @param response	HttpServletResponse
-	 * @return ActionForward
-	 * @throws Exception generic exception
-	 */
-	protected abstract ActionForward executeAction(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws Exception;
+
 	/**
 	 * This function checks call to the action and sets/removes required attributes
 	 *  if AddNew or ForwardTo activity is executing.

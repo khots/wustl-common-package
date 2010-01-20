@@ -42,7 +42,7 @@ import edu.wustl.dao.util.HibernateMetaDataFactory;
  * This Class is used to Add/Edit data in the database.
  * @author gautam_shetty
  */
-public abstract class BaseAddEditAction extends BaseAction
+public abstract class BaseAddEditAction extends XSSSupportedAction
 {
 	/**
 	 * LOGGER Logger - Generic LOGGER.
@@ -58,7 +58,7 @@ public abstract class BaseAddEditAction extends BaseAction
 	 * @return ActionForward
 	 * @throws ApplicationException Generic exception
 	 * */
-	public abstract ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	public abstract ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws ApplicationException;
 	/**
 	 * get Object Name.
