@@ -10,9 +10,6 @@
 
 package edu.wustl.common.action;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +28,7 @@ import edu.wustl.common.util.logger.Logger;
  * This Class is used to Add/Edit data in the database.
  * @author gautam_shetty
  */
-public class CommonAddEditAction extends BaseAction
+public class CommonAddEditAction extends XSSSupportedAction
 {
 
 	/**
@@ -47,10 +44,9 @@ public class CommonAddEditAction extends BaseAction
 	 * @param request	HttpServletRequest
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
-	 * @throws IOException Generic exception
-	 * @throws ServletException Generic exception
+	 * @throws Exception Exception
 	 * */
-	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 
@@ -68,14 +64,15 @@ public class CommonAddEditAction extends BaseAction
 			{
 				addEditAction = new CommonEdtAction();
 			}
-			actionfwd = addEditAction.executeAction(mapping, abstractForm, request, response);
+			actionfwd = addEditAction.executeXSS(mapping, abstractForm, request, response);
 		}
 		catch (ApplicationException applicationException)
 		{
 			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg());
 
 			ActionErrors actionErrors = new ActionErrors();
-			ActionError actionError = new ActionError("errors.item",applicationException.getCustomizedMsg());
+			ActionError actionError = new ActionError("errors.item",
+					applicationException.getCustomizedMsg());
 			actionErrors.add(ActionErrors.GLOBAL_ERROR, actionError);
 			saveErrors(request, actionErrors);
 

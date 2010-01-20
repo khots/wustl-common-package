@@ -11,7 +11,6 @@
 
 package edu.wustl.common.action;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ import edu.wustl.common.util.logger.Logger;
  * This class is used to retrieve the information whose record is to be modified.
  * @author gautam_shetty
  */
-public class CommonSearchAction extends BaseAction
+public class CommonSearchAction extends XSSSupportedAction
 {
 
 	/**
@@ -58,10 +57,9 @@ public class CommonSearchAction extends BaseAction
 	 * @param request	HttpServletRequest
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
-	 * @exception IOException Generic exception
-	 * @exception ApplicationException Application Exception.
+	 * @throws Exception : Exception
 	 * */
-	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		LOGGER.info("in execute method");

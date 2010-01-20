@@ -29,7 +29,7 @@ import edu.wustl.common.util.logger.Logger;
  * This Class is used to maintain FormBean for AddNew operation.
  * @author Krunal Thakkar
  */
-public class AddNewAction extends BaseAction
+public class AddNewAction extends XSSSupportedAction
 {
 
 	/**
@@ -46,7 +46,7 @@ public class AddNewAction extends BaseAction
 	 * @param response	HttpServletResponse
 	 * @return ActionForward
 	 * */
-	public ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 	{
 		ActionForward actionForward;
