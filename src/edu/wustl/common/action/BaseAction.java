@@ -64,8 +64,6 @@ public abstract class BaseAction extends XSSSupportedAction
 		}
 		setAttributeFromParameter(request, Constants.OPERATION);
 		setAttributeFromParameter(request, Constants.MENU_SELECTED);
-		checkAddNewOperation(request);
-
 		return executeAction(mapping, form, request, response);
 	}
 
