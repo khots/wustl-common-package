@@ -394,7 +394,7 @@ public class MultiselectUsingComboAndListTag extends TagSupport
 			{
 				NameValueBean nameValue = (NameValueBean) object;
 				multiSelectUsingCombosHTMLStr.append("<option id=\"" + nameValue.getValue()
-						+ "\" value=\"" + nameValue.getValue() + "\" selected=\"selected\">"
+						+ "\" value=\"" + nameValue.getValue() + "\" title=\""+nameValue.getName()+"\" selected=\"selected\">"
 						+ nameValue.getName() + "</option>");
 			}
 		}
