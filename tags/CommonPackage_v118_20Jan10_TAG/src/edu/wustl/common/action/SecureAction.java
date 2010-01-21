@@ -47,7 +47,7 @@ public abstract class SecureAction extends BaseAction
 	 * @return ActionForward
 	 * @exception Exception Generic exception
 	 */
-	protected ActionForward executeAction(ActionMapping mapping, ActionForm form,
+	protected final ActionForward executeAction(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 
