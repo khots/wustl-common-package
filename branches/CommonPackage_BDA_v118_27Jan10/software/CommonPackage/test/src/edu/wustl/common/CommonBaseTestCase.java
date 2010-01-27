@@ -16,8 +16,8 @@ public class CommonBaseTestCase extends BaseTestCase
 	static
 	{
 		System.setProperty("app.propertiesFile",
-				System.getProperty("user.dir")+"/caTissueCore_Properties.xml");
-		LoggerConfig.configureLogger(System.getProperty("user.dir"));
+				System.getProperty("user.dir")+"/extra_conf/caTissueCore_Properties.xml");
+		LoggerConfig.configureLogger(System.getProperty("user.dir")+"/extra_conf");
 		try
 		{
 			HibernateProperties.initBundle
