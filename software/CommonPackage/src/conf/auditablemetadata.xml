@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuditableMetaData>
+	
+	<AuditableClass
+		 	className=""
+			relationShipType="main" 
+			roleName="">
+		
+		<attribute 
+				name="" 
+				dataType="">
+		</attribute>
+		
+		<referenceAssociationCollection
+					className="" 
+					relationShipType="association"
+					roleName="">
+		</referenceAssociationCollection>
+		
+		<containmentAssociationCollection
+					className=""
+					relationShipType="containment" 
+					roleName="">
+		</containmentAssociationCollection>
+		
+	</AuditableClass>
+	
+</AuditableMetaData>
