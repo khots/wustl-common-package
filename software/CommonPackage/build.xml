@@ -8,16 +8,17 @@
 			<pathelement location="./lib/ant-contrib.jar" />
 		</classpath>
 	</taskdef>
-	<property file="commonpackage.properties"/>
+	<property file="./extra_conf/commonpackage.properties"/>
 	<!--define require dir and Properties -->
 	<property name="base.dir" value="." />
+	<property name="build.dir" value="${base.dir}/build" />
 	<property file="${base.dir}/test/junitConf.properties"/>
-	<property name="src.dir" value="${base.dir}/src" />
+	<property name="src.dir" value="${base.dir}/src/java" />
+	<property name="conf.dir" value="${base.dir}/src/conf" />
 	<property name="test.dir" value="${base.dir}/test" />
 	<property name="test.src.dir" value="${test.dir}/src" />
-	<property name="target.dir" value="${base.dir}/classes" />	
+	<property name="target.dir" value="${build.dir}/classes" />	
 	<property name="lib.dir" value="${base.dir}/lib" />
-	<property name="build.dir" value="${base.dir}/build" />
 	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
 	<property name="generateforce" value="true" />
 	<property name="junit.dir" value="${base.dir}/junit" />
@@ -25,7 +26,7 @@
 	<property name="junit.classes.dir" value="${junit.dir}/classes" />
 	<property name="code.coverage.report.dir" value="${junit.dir}/coverage-reports" />
 	<property name="instrumented.classes.dir" value="${junit.dir}/instrumented-classes" />
-	<property name="cobertura.home" value="${base.dir}/cobertura"/>
+	<property name="cobertura.home" value="../../tools/cobertura"/>
 	<property name="cobertura.lib" value="${cobertura.home}/lib"/>
 	<property name="metadatatest.dir" value="${base.dir}/metadataTestReport" />
 	<property name="metadatatest.report.dir" value="${metadatatest.dir}/Report" />
@@ -97,6 +98,16 @@
 				<include name="**/*.ser" />
 				<exclude name="**/cab2b.properties"/>
 			</fileset>			
+		</copy>	
+		
+		<copy todir="${target.dir}">
+					<fileset dir="${conf.dir}">
+						<include name="**/*.properties" />
+						<include name="**/*.xml" />
+						<include name="**/*.hbm.xml" />
+						<include name="**/*.ser" />
+						<exclude name="**/cab2b.properties"/>
+					</fileset>			
 		</copy>				
 	</target>
 	
@@ -122,15 +133,15 @@
 		</target>
 	<!--Create zip file of common package source files.-->
 	<target name="build_code_zip" depends="compile">
-		<delete>
-			<fileset dir="${build.dir}" includes="**/*" />
-		</delete>
+		
 		<zip destfile="${build.dir}/commonpackage-${cp.jar.version}-src.zip">
 			<fileset dir="${src.dir}" includes="**/*" />
+			<fileset dir="${conf.dir}" includes="**/*" />
+			
 		</zip>
 	</target>
 
-	<target name="build_jar" depends="build_code_zip,compile">		
+	<target name="build_jar" depends="build_code_zip, compile">		
 		<tstamp />
 		<jar taskname="build_jar" jarfile="${build.dir}/commonpackage-${cp.jar.version}.jar">
 			<fileset dir="${target.dir}">
@@ -142,7 +153,7 @@
 				<exclude name="**/Factory.xml" />
 				<exclude name="**/ApplicationResources.properties" />
 			</fileset>
-			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<fileset dir="${base.dir}/extra_conf" includes="**/ExceptionFormatter.properties" />
 			<manifest>
 				<section name="${cp.jar.details}">
 				    <attribute name="Version" value="${cp.jar.version}"/>
@@ -153,6 +164,11 @@
 			</manifest>
 		</jar>
 	</target>
+	
+	<target name="dist" depends="build_jar, build_code_zip ">
+			
+	</target>
+	
 	<target name="initJunit">
 		<delete failonerror="false">
 			<fileset dir="${junit.report.dir}" includes="**/*" />
@@ -212,18 +228,14 @@
 						<include name="**/TestAll.java"/>
 				    </fileset>
 				</batchtest>
-				<classpath location="${instrumented.classes.dir}" />
-				<classpath location="${target.dir}" />
-				
 				<classpath>
+					<pathelement location="${test.src.dir}" />
 					<pathelement location="${junit.classes.dir}" />
 					<pathelement location="${cobertura.home}/cobertura.jar" />
 					<fileset dir="${junit.dir}/lib">
 						<include name="*.jar" />
-						<exclude name="inscommonpackage.jar"/>
-						<exclude name="commonpackage-1.1.5.jar"/>
 					</fileset>
-									
+					<pathelement location="${target.dir}" />					
 				</classpath>
 			</junit>
 			<antcall target="createJunitReport" />
@@ -235,7 +247,7 @@
 			<fileset dir="${instrumented.classes.dir}">
 				<include name="**/*" />			
 			</fileset>
-			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
+			<fileset dir="${base.dir}/extra_conf" includes="**/ExceptionFormatter.properties" />
 			<manifest>
 				<attribute name="Built-At-Time" value="${TODAY} ${TSTAMP}" />
 			</manifest>
@@ -263,6 +275,15 @@
 				<exclude name="**/cab2b.properties"/>
 			</fileset>			
 		</copy>
+		<copy todir="${instrumented.classes.dir}">
+		<fileset dir="${conf.dir}">
+								<include name="**/*.properties" />
+								<include name="**/*.xml" />
+								<include name="**/*.hbm.xml" />
+								<include name="**/*.ser" />
+								<exclude name="**/cab2b.properties"/>
+					</fileset>	
+					</copy>
 		<antcall target="create_instrumented_jar" />
 		<delete file="${build.dir}/commonpackage.jar" failonerror="false"/>
 		<copy todir="${junit.dir}/lib" file="${build.dir}/inscommonpackage.jar"/>
@@ -270,7 +291,7 @@
 	
 	<!-- Target to generate cobertura coverage report-->
 	<target name="cobertura_report">
-		<cobertura-report srcdir="${src.dir}" destdir="${code.coverage.report.dir}" format="xml" />
+		<cobertura-report srcdir="${src.dir}" destdir="${code.coverage.report.dir}" />
 		<delete file="${instrumented.classes.dir}/cobertura.ser" />
 	</target>
 	
@@ -293,7 +314,7 @@
 			</jar>
 	</target>
 	
-	<property name="applet.dir" value="${base.dir}/Applet" />
+	<property name="applet.dir" value="${base.dir}/src/web/Applet" />
 	<!-- Compile all files, generated and hand-written -->
 		<target name="applet_compile" depends="init">
 			<delete>
@@ -326,7 +347,7 @@
 			</delete>
 
 			<copy todir="${applet.dir}/images">
-				<fileset dir="${base.dir}/images">
+				<fileset dir="${base.dir}/src/web/images">
 					<include name="**/*" />
 				</fileset>
 			</copy>
