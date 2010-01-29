@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +76,7 @@ public class ExcelsheetForLargeDataHandler extends AbstractDataHandler
 	/**
 	 * Constant for template file.
 	 */
-	final private static  String TEMPLATE_FILE="template.xlsx";
+	final private File TEMPLATE_WORKBOOK=getTemplateFile();
 	/**
 	 * Constant for Excel file extn.
 	 */
@@ -93,6 +96,17 @@ public class ExcelsheetForLargeDataHandler extends AbstractDataHandler
 		super();
 		this.fileName = excelFileName;
 		this.sheetNames=sheetNames;
+	}
+	/**
+	 * Returns the template file object
+	 * @return File
+	 */
+	private File getTemplateFile()
+	{
+		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
+		Date date=new Date();
+		File templateFile= new File(dateFormat.format(date)+"template"+XLSX_FILE_TYPE);
+		return templateFile;
 	}
 	/**
 	 * Method  to create Header for the Excel Sheet.
@@ -159,8 +173,8 @@ public class ExcelsheetForLargeDataHandler extends AbstractDataHandler
 		{
 			file.delete();
 		}
-		file=new File(TEMPLATE_FILE);
-		if(file.exists())
+
+		if(TEMPLATE_WORKBOOK.exists())
 		{
 			file.delete();
 		}
@@ -254,7 +268,7 @@ public class ExcelsheetForLargeDataHandler extends AbstractDataHandler
 		{
 			//Step 3. Substitute the template entry with the generated data
 			out = new FileOutputStream(fileName,true);
-			substitute(new File(TEMPLATE_FILE), tmpXmlFile, sheetRef.substring(1), out);
+			substitute(TEMPLATE_WORKBOOK, tmpXmlFile, sheetRef.substring(1), out);
 		}
         out.close();
     }
@@ -265,7 +279,7 @@ public class ExcelsheetForLargeDataHandler extends AbstractDataHandler
 	private void saveTemplate() throws IOException
 	{
     	 // step 1: save the template
-         FileOutputStream outStream = new FileOutputStream(TEMPLATE_FILE);
+		 FileOutputStream outStream = new FileOutputStream(TEMPLATE_WORKBOOK);
          book.write(outStream);
          outStream.close();
 
