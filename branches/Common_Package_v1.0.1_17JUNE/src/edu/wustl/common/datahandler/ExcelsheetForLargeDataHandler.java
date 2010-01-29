@@ -176,7 +176,7 @@ public class ExcelsheetForLargeDataHandler extends AbstractDataHandler
 
 		if(TEMPLATE_WORKBOOK.exists())
 		{
-			file.delete();
+			TEMPLATE_WORKBOOK.delete();
 		}
 	}
 
