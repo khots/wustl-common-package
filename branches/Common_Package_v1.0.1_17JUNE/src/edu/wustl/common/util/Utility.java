@@ -134,6 +134,8 @@ public final class Utility
 					.getInstance().getDefaultLocale()));
 			datePatternList.add(new SimpleDateFormat("dd/MM/yyyy", CommonServiceLocator
 					.getInstance().getDefaultLocale()));
+			datePatternList.add(new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", CommonServiceLocator
+					.getInstance().getDefaultLocale()));
 			Date date = null;
 			String matchingPattern = null;
 			for (SimpleDateFormat dtPattern : datePatternList)
