@@ -26,7 +26,7 @@
 	<property name="junit.classes.dir" value="${junit.dir}/classes" />
 	<property name="code.coverage.report.dir" value="${junit.dir}/coverage-reports" />
 	<property name="instrumented.classes.dir" value="${junit.dir}/instrumented-classes" />
-	<property name="cobertura.home" value="../../tools/cobertura"/>
+	<property name="cobertura.home" value="./cobertura"/>
 	<property name="cobertura.lib" value="${cobertura.home}/lib"/>
 	<property name="metadatatest.dir" value="${base.dir}/metadataTestReport" />
 	<property name="metadatatest.report.dir" value="${metadatatest.dir}/Report" />
