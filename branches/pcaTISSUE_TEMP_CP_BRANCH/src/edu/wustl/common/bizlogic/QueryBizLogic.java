@@ -1375,6 +1375,7 @@ public class QueryBizLogic extends DefaultBizLogic
 						+ sqlQuery1 + "','" + no + "')";
 				Logger.out.debug("sqlForQueryLog:" + sqlForQueryLog);
 				jdbcDAO.executeUpdate(sqlForQueryLog);
+				jdbcDAO.commit();
 			}
 		}
 		catch(IOException e)
