@@ -291,7 +291,7 @@
 	
 	<!-- Target to generate cobertura coverage report-->
 	<target name="cobertura_report">
-		<cobertura-report srcdir="${src.dir}" destdir="${code.coverage.report.dir}" />
+		<cobertura-report srcdir="${src.dir}" destdir="${code.coverage.report.dir}" format="xml" />
 		<delete file="${instrumented.classes.dir}/cobertura.ser" />
 	</target>
 	
