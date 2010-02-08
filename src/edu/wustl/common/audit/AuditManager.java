@@ -222,13 +222,14 @@ public class AuditManager
 
 		AuditEventDetails auditEventDetails = null;
 		//Case of transient object
-		if (!(TextConstants.EMPTY_STRING.equals(columnName)))
+		if (!(TextConstants.EMPTY_STRING.equals(columnName.trim())))
 		{
 			//Compare the old and current value
 			auditEventDetails = compareValue(prevVal, currVal);
 			if (auditEventDetails != null)
 			{
 				auditEventDetails.setElementName(columnName);
+				
 			}
 		}
 		return auditEventDetails;
