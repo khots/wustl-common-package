@@ -149,6 +149,7 @@ public abstract class BaseAddEditAction extends XSSSupportedAction
 		if (obj != null)
 		{
 			sessionData = (SessionDataBean) obj;
+			sessionData.setIpAddress(request.getRemoteAddr());
 		}
 		return sessionData;
 	}
