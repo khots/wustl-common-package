@@ -15,11 +15,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.domain.LoginDetails;
 import edu.wustl.common.domain.MyDomainObject;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.util.global.PasswordManager;
 import edu.wustl.dao.connectionmanager.IConnectionManager;
 import edu.wustl.dao.daofactory.IDAOFactory;
+import edu.wustl.dao.exception.AuditException;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.query.generator.ColumnValueBean;
 import edu.wustl.dao.util.HibernateMetaData;
@@ -936,5 +938,20 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public DatabaseProperties getDatabaseProperties() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public List executeQuery(String arg0, List<ColumnValueBean> arg1)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List executeParamHQL(String arg0, List<ColumnValueBean> arg1)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void auditLoginEvents(boolean arg0, LoginDetails arg1)
+			throws AuditException {
+		// TODO Auto-generated method stub
+		
 	}
 }
