@@ -954,4 +954,18 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		
 	}
+	public List retrieve(String arg0, ColumnValueBean arg1) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List retrieve(String arg0, String[] arg1, QueryWhereClause arg2,
+			boolean arg3, List<ColumnValueBean> arg4) throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public List retrieveAttribute(Class arg0, ColumnValueBean arg1, String arg2)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
