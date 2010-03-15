@@ -24,6 +24,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
+import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -654,22 +655,21 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @param object object to populate.
 	 * @return AbstractDomainObject
 	 * @throws AssignDataException throws this exception if not able to set all values.
+	 * @throws BizLogicException 
 	 */
 	private AbstractDomainObject populateFormBean(IValueObject uiForm, Object object)
-			throws AssignDataException
+			throws AssignDataException, BizLogicException
 	{
-		AbstractDomainObject abstractDomain = null;
-		if (object != null)
+        AbstractDomainObject abstractDomain = (AbstractDomainObject) object; 
+		if (abstractDomain != null)
 		{
 			/*
 			  If the record searched is present in the database,
 			  populate the formbean with the information retrieved.
 			 */
-			abstractDomain = (AbstractDomainObject) object;
-			if (abstractDomain != null)
-			{
-				abstractDomain.setAllValues(uiForm);
-			}
+            
+                AbstractFactoryConfig.getInstance().
+                    getDomainObjectFactory().overwriteDomainObject(abstractDomain, uiForm);
 		}
 		return abstractDomain;
 	}
