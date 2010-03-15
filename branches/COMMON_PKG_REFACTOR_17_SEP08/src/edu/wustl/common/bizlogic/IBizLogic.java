@@ -15,6 +15,7 @@ import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.QueryWhereClause;
+import edu.wustl.dao.query.generator.ColumnValueBean;
 
 /**
  * @author kapil_kaveeshwar
@@ -206,6 +207,7 @@ public interface IBizLogic
 	 * @param isToExcludeDisabled is To Exclude Disabled
 	 * @return Returns collection
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated
 	 */
 	List getList(String sourceObjectName, String[] displayNameFields, // NOPMD
 			String valueField, String[] whereColumnName, String[] whereColumnCondition,
@@ -223,6 +225,7 @@ public interface IBizLogic
 	 * @param separatorBetweenFields separator Between Fields
 	 * @return Returns collection
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated
 	 */
 	List getList(String sourceObjectName, String[] displayNameFields, // NOPMD
 			String valueField, String[] whereColumnName, String[] whereColumnCondition,
@@ -257,6 +260,7 @@ public interface IBizLogic
 	 * @param attributeName attribute name to be retrieved.
 	 * @return The Attribute value corresponding to the SourceObjectName & id.
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated
 	 */
 	Object retrieveAttribute(String sourceObjectName, Long identifier, String attributeName)
 			throws BizLogicException;
@@ -268,6 +272,7 @@ public interface IBizLogic
 	 * @param attributeName attribute to be retrieved
 	 * @return object.
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated
 	 */
 	Object retrieveAttribute(Class objClass, Long identifier, String attributeName)
 			throws BizLogicException;
@@ -312,13 +317,70 @@ public interface IBizLogic
 	 */
 	String getReadDeniedPrivilegeName();
 	/**
-	 * Retrieves the records for class name in sourceObjectName as per the where clause.
-	 * @param sourceObjectName :   source Class object
-	 * @param selectColumnName : list of columns to select
-	 * @param queryWhereClause : where clause.
-	 * @return the list of objects as per the where clause.
-	 * @throws BizLogicException BizLogic Exception.
+	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
+	 * @param sourceObjectName :source object name
+	 * @param selectColumnName :An array of field names to be selected
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * @return list :retrieved objects list
+	 * @deprecated : Use public List<Object> retrieve(String sourceObjectName,
+	 * String[] selectColumnName,QueryWhereClause queryWhereClause,
+	 * List<ColumnValueBean> columnValueBeans)
 	 */
 	List retrieve(String sourceObjectName,
 			String[] selectColumnName,QueryWhereClause queryWhereClause) throws BizLogicException;
+
+	/**
+	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
+	 * @param sourceObjectName :source object name
+	 * @param selectColumnName :An array of field names to be selected
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @param columnValueBeans : column value beans.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * @return list :retrieved objects list
+	 */
+	List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause,List<ColumnValueBean> columnValueBeans)
+			throws BizLogicException;
+
+	/**
+	 * Sorting of ID columns.
+	 * @param sourceObjectName source Object Name
+	 * @param selectColumnName Select Column Name
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @param columnValueBeans column value beans.
+	 * @return nameValuePairs.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	List getList(String sourceObjectName, String[] selectColumnName,
+			String separatorBetweenFields, QueryWhereClause queryWhereClause,
+			List<ColumnValueBean> columnValueBeans)
+			throws BizLogicException;
+
+	/**
+	 * Retrieves attribute value for given class name and identifier.
+	 * @param objClass source Class object
+	 * @param attributeName attribute to be retrieved
+	 * @param columnValueBean columnValueBean
+	 * @return List.
+	 * @throws BizLogicException generic BizLogicException.
+	 */
+	Object retrieveAttribute(Class objClass,
+			ColumnValueBean columnValueBean, String attributeName)
+			throws BizLogicException;
+
+	/**
+	 * This method returns related objects.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param queryWhereClause object of QueryWhereClause
+	 * @param columnValueBeans column value beans.
+	 * @return list of related objects.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	List getRelatedObjects(DAO dao, Class sourceClass,
+			QueryWhereClause queryWhereClause,List<ColumnValueBean> columnValueBeans)
+			throws BizLogicException;
+
 }

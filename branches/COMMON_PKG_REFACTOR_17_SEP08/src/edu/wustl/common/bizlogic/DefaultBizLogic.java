@@ -30,12 +30,12 @@ import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.QueryWhereClause;
 import edu.wustl.dao.condition.EqualClause;
@@ -43,6 +43,7 @@ import edu.wustl.dao.condition.INClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.daofactory.IDAOFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.query.generator.ColumnValueBean;
 import edu.wustl.dao.util.HibernateMetaData;
 
 /**
@@ -278,6 +279,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param queryWhereClause :object of QueryWhereClause.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @return list :retrieved objects list
+	 * @deprecated : Use public List<Object> retrieve(String sourceObjectName,
+	 * String[] selectColumnName,QueryWhereClause queryWhereClause,
+	 * List<ColumnValueBean> columnValueBeans)
 	 */
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
 			QueryWhereClause queryWhereClause) throws BizLogicException
@@ -300,6 +304,40 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
+
+	/**
+	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
+	 * @param sourceObjectName :source object name
+	 * @param selectColumnName :An array of field names to be selected
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @param columnValueBeans :column value beans.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * @return list :retrieved objects list
+	 */
+	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause,List<ColumnValueBean> columnValueBeans)
+			throws BizLogicException
+	{
+		DAO dao = null;
+		List<Object> list = null;
+		try
+		{
+			dao=getHibernateDao(getAppName(),null);
+			list = ((HibernateDAO)dao).retrieve(sourceObjectName, selectColumnName,
+					queryWhereClause,columnValueBeans);
+		}
+		catch (DAOException daoExp)
+		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, daoExp.getErrorKeyName(),daoExp.getMsgValues());
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+		return list;
+	}
+
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName source Object Name
@@ -328,6 +366,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param colValue Contains the field value.
 	 * @return records
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated
 	 */
 	public List retrieve(String sourceObjectName, String colName, Object colValue)
 			throws BizLogicException
@@ -607,6 +646,9 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param queryWhereClause :object of QueryWhereClause.
 	 * @return nameValuePairs.
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated use getList(String sourceObjectName, String[] selectColumnName,
+	 * String separatorBetweenFields, QueryWhereClause queryWhereClause,
+	 * List<ColumnValueBean> columnValueBeans).
 	 */
 	public List getList(String sourceObjectName, String[] selectColumnName,
 			String separatorBetweenFields, QueryWhereClause queryWhereClause)
@@ -619,6 +661,30 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collections.sort(nameValuePairs);
 		return nameValuePairs;
 	}
+	/**
+	 * Sorting of ID columns.
+	 * @param sourceObjectName source Object Name
+	 * @param selectColumnName Select Column Name
+	 * @param separatorBetweenFields separator Between Fields
+	 * @param queryWhereClause :object of QueryWhereClause.
+	 * @param columnValueBeans column value beans.
+	 * @return nameValuePairs.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	public List getList(String sourceObjectName, String[] selectColumnName,
+			String separatorBetweenFields, QueryWhereClause queryWhereClause,
+			List<ColumnValueBean> columnValueBeans)
+			throws BizLogicException
+	{
+		List results = retrieve(sourceObjectName, selectColumnName,
+				queryWhereClause,columnValueBeans);
+		List<NameValueBean> nameValuePairs = new ArrayList<NameValueBean>();
+		nameValuePairs.add(new NameValueBean(Constants.SELECT_OPTION, "-1"));
+		getNameValueList(separatorBetweenFields, nameValuePairs, results);
+		Collections.sort(nameValuePairs);
+		return nameValuePairs;
+	}
+
 	/**
 	 * @param separatorBetweenFields separator Between Fields
 	 * @param nameValuePairs list to add attributes.
@@ -901,6 +967,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param queryWhereClause object of QueryWhereClause
 	 * @return list of related objects.
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated use List getRelatedObjects(DAO dao, Class sourceClass,
+	 * QueryWhereClause queryWhereClause,List<ColumnValueBean> columnValueBeans)
 	 */
 	public List getRelatedObjects(DAO dao, Class sourceClass, QueryWhereClause queryWhereClause)
 			throws BizLogicException
@@ -921,6 +989,38 @@ public class DefaultBizLogic extends AbstractBizLogic
 		list = Utility.removeNull(list);
 		return list;
 	}
+
+	/**
+	 * This method returns related objects.
+	 * @param dao The dao object.
+	 * @param sourceClass source Class
+	 * @param queryWhereClause object of QueryWhereClause
+	 * @param columnValueBeans column value beans.
+	 * @return list of related objects.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	public List getRelatedObjects(DAO dao, Class sourceClass,
+			QueryWhereClause queryWhereClause,List<ColumnValueBean> columnValueBeans)
+			throws BizLogicException
+	{
+		String sourceObjectName = sourceClass.getName();
+		String[] selectColumnName = {Constants.SYSTEM_IDENTIFIER};
+		List<Object> list = null;
+		try
+		{
+			list = ((HibernateDAO)dao).retrieve(sourceObjectName, selectColumnName,
+					queryWhereClause,columnValueBeans);
+		}
+		catch (DAOException exception)
+		{
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
+		}
+		list = Utility.removeNull(list);
+		return list;
+	}
+
 	/**
 	 * This method gets Corresponding Old Object.
 	 * @param objectCollection object Collection
@@ -1043,6 +1143,64 @@ public class DefaultBizLogic extends AbstractBizLogic
 					exception.getErrorKeyName(), exception.getMsgValues());
 		}
 	}
+
+
+	/**
+	 * Retrieves attribute value for given class name and identifier.
+	 * @param objClass source Class object
+	 * @param attributeName attribute to be retrieved
+	 * @param columnValueBean columnValueBean
+	 * @return List.
+	 * @throws BizLogicException generic BizLogicException.
+	 */
+	public Object retrieveAttribute(Class objClass,
+			ColumnValueBean columnValueBean, String attributeName)
+			throws BizLogicException
+	{
+
+		String columnName = Constants.SYSTEM_IDENTIFIER;
+		DAO dao = null;
+		Object attribute = null;
+		try
+		{
+			dao = getHibernateDao(getAppName(),null);
+			List list = ((HibernateDAO)dao).retrieveAttribute(objClass,
+					columnValueBean, attributeName);
+			/*
+			 * if the attribute is of type collection,
+			 *  then it needs to be returned as Collection(HashSet)
+			 */
+			if (Utility.isColumnNameContainsElements(attributeName))
+			{
+				Collection collection = new HashSet();
+				attribute = collection;
+				for(int i=0;i<list.size();i++)
+				{
+					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
+				}
+			}
+			else
+			{
+				if (!list.isEmpty())
+				{
+					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
+				}
+			}
+		}
+		catch (DAOException daoExp)
+		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, daoExp.getErrorKeyName(), daoExp.getMsgValues());
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+		return attribute;
+
+	}
+
+
 	/**
 	 * This method retrieve Attribute.
 	 * @param objClass objClass
@@ -1050,8 +1208,11 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param attributeName attribute Name
 	 * @return attribute.
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated Object retrieveAttribute(Class objClass,
+	 * ColumnValueBean columnValueBean, String attributeName)
 	 */
-	public Object retrieveAttribute(Class objClass, Long identifier, String attributeName) // NOPMD
+	public Object retrieveAttribute(Class objClass,
+			Long identifier, String attributeName) // NOPMD
 			throws BizLogicException
 	{
 		String columnName = Constants.SYSTEM_IDENTIFIER;
@@ -1060,7 +1221,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 		try
 		{
 			dao = getHibernateDao(getAppName(),null);
-			List list = dao.retrieveAttribute(objClass, columnName, identifier, attributeName);
+			List list = dao.retrieveAttribute(objClass, columnName,
+					identifier, attributeName);
 			/*
 			 * if the attribute is of type collection,
 			 *  then it needs to be returned as Collection(HashSet)
@@ -1111,6 +1273,8 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param attributeName attribute Name
 	 * @return attribute.
 	 * @throws BizLogicException Generic BizLogic Exception
+	 * @deprecated Object retrieveAttribute(Class objClass,
+	 * ColumnValueBean columnValueBean, String attributeName)
 	 */
 	public Object retrieveAttribute(DAO dao,Class objClass, Long identifier, String attributeName)
 			throws BizLogicException
