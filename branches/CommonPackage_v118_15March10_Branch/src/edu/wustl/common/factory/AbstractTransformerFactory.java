@@ -1,9 +1,12 @@
 package edu.wustl.common.factory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.wustl.common.bizlogic.InputUIRepOfDomain;
 import edu.wustl.common.bizlogic.UIDomainTransformer;
@@ -75,7 +78,7 @@ public class AbstractTransformerFactory implements ITransformerFactory {
             // not sure if this can occur??
             throw new IllegalArgumentException(trans + "is not a transformer.");
         }
-        if (isAbstract(trans)) {
+        if (isAbstract(trans) || !hasDefaultConstructor(trans)) {
             return false;
         }
         Class<? extends UIDomainTransformer> existingTrans = transformerMap.put(uiRep, trans);
@@ -87,34 +90,14 @@ public class AbstractTransformerFactory implements ITransformerFactory {
         return true;
     }
 
-    /**
-     * @return all transformers as a <code>map</code> of UIRep -> Transformer;
-     *         the factory is unaffected by changes to returned <code>map</code>.
-     */
-    protected final Map<Class<? extends UIRepOfDomain>, Class<? extends UIDomainTransformer>> getAllTransformers() {
-        return new HashMap<Class<? extends UIRepOfDomain>, Class<? extends UIDomainTransformer>>(transformerMap);
-    }
-
-    protected static boolean isTransformer(Class<?> c) {
-        return UIDomainTransformer.class.isAssignableFrom(c);
-    }
-
-    /**
-     * @see edu.wustl.common.factory.ITransformerFactory#getTransformer(java.lang.Class)
-     */
-    @SuppressWarnings("unchecked")
-    public final UIDomainTransformer<UIRepOfDomain, AbstractDomainObject> getTransformer(
-            Class<? extends UIRepOfDomain> uiClass) {
+    private boolean hasDefaultConstructor(Class<? extends UIDomainTransformer> trans) {
         try {
-            Class<?> c = transformerMap.get(uiClass);
-            if (c == null) {
-                throw new IllegalArgumentException("No transformer found for " + uiClass);
-            }
-            return (UIDomainTransformer<UIRepOfDomain, AbstractDomainObject>) c.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            trans.getDeclaredConstructor();
+            return true;
+        } catch (SecurityException e) {
+            throw new IllegalArgumentException(e);
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 
@@ -128,5 +111,91 @@ public class AbstractTransformerFactory implements ITransformerFactory {
             return null;
 
         return a.value();
+    }
+
+    /**
+     * Returns a transformer for specified <code>uiClass</code>. If a
+     * transformer is already registered for the specified <code>uiClass</code>,
+     * then that transformer is returned.
+     * <p>
+     * Otherwise, an attempt is made to find a transformer for any of the
+     * specified<code>uiClass</code>'s parent classes and interfaces. If no
+     * or multiple transformers are detected, then an
+     * {@link IllegalArgumentException} is thrown.
+     * 
+     * @throws IllegalArgumentException if no or multiple transformers are found
+     *             for the specified <code>uiClass</code>.
+     * @see edu.wustl.common.factory.ITransformerFactory#getTransformer(java.lang.Class)
+     */
+    @SuppressWarnings("unchecked")
+    public final UIDomainTransformer<UIRepOfDomain, AbstractDomainObject> getTransformer(
+            Class<? extends UIRepOfDomain> uiClass) {
+
+        Class<? extends UIDomainTransformer> c = transformerMap.get(uiClass);
+        if (c == null) {
+            c = findTransformer(uiClass);
+        }
+        return (UIDomainTransformer<UIRepOfDomain, AbstractDomainObject>) newInstance(c);
+    }
+
+    private Class<? extends UIDomainTransformer> findTransformer(Class<? extends UIRepOfDomain> uiClass) {
+        Set<Class<?>> supers = new HashSet<Class<?>>();
+        addSuperClasses(uiClass, supers);
+        addInterfaces(uiClass, supers);
+
+        Class<? extends UIDomainTransformer> transformer = null;
+        for (Class<?> superClass : supers) {
+            if (transformerMap.containsKey(superClass)) {
+                if (transformer != null) {
+                    throw new IllegalArgumentException("Multiple potential transformers found for " + uiClass + "; "
+                            + transformer + " and " + transformerMap.get(superClass));
+                }
+                transformer = transformerMap.get(superClass);
+            }
+        }
+
+        if (transformer == null)
+            throw new IllegalArgumentException("No transformer found for " + uiClass);
+
+        addTransformer(uiClass, transformer);
+        return transformer;
+    }
+
+    private void addInterfaces(Class<?> uiClass, Set<Class<?>> supers) {
+        Class[] interfaces = uiClass.getInterfaces();
+        for (Class<?> i : interfaces) {
+            supers.add(i);
+            addInterfaces(i, supers);
+        }
+    }
+
+    private void addSuperClasses(Class<?> uiClass, Set<Class<?>> supers) {
+        Class<?> sup = uiClass.getSuperclass();
+        while (sup != null) {
+            supers.add(sup);
+            sup = sup.getSuperclass();
+        }
+    }
+
+    private UIDomainTransformer newInstance(Class<? extends UIDomainTransformer> c) {
+        try {
+            Constructor<? extends UIDomainTransformer> cons = c.getDeclaredConstructor();
+            cons.setAccessible(true);
+            return cons.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @return all transformers as a <code>map</code> of UIRep -> Transformer;
+     *         the factory is unaffected by changes to returned <code>map</code>.
+     */
+    protected final Map<Class<? extends UIRepOfDomain>, Class<? extends UIDomainTransformer>> getAllTransformers() {
+        return new HashMap<Class<? extends UIRepOfDomain>, Class<? extends UIDomainTransformer>>(transformerMap);
+    }
+
+    protected static boolean isTransformer(Class<?> c) {
+        return UIDomainTransformer.class.isAssignableFrom(c);
     }
 }
