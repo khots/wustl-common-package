@@ -3,10 +3,8 @@ package edu.wustl.common.factory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import edu.wustl.common.bizlogic.InputUIRepOfDomain;
 import edu.wustl.common.bizlogic.UIDomainTransformer;
@@ -139,18 +137,30 @@ public class AbstractTransformerFactory implements ITransformerFactory {
     }
 
     private Class<? extends UIDomainTransformer> findTransformer(Class<? extends UIRepOfDomain> uiClass) {
-        Set<Class<?>> supers = new HashSet<Class<?>>();
-        addSuperClasses(uiClass, supers);
-        addInterfaces(uiClass, supers);
-
         Class<? extends UIDomainTransformer> transformer = null;
-        for (Class<?> superClass : supers) {
-            if (transformerMap.containsKey(superClass)) {
-                if (transformer != null) {
+
+        // init to highermost potential, but impossible (uh?), match
+        Class<? extends UIRepOfDomain> matchingUIClass = UIRepOfDomain.class;
+
+        for (Map.Entry<Class<? extends UIRepOfDomain>, Class<? extends UIDomainTransformer>> entry : transformerMap
+                .entrySet()) {
+            Class<? extends UIRepOfDomain> key = entry.getKey();
+            if (key.isAssignableFrom(matchingUIClass)) {
+                // a lower match was already found
+                continue;
+            }
+            if (key.isAssignableFrom(uiClass)) {
+                if (matchingUIClass.isAssignableFrom(key)) {
+                    // a new lower match is found
+                    matchingUIClass = key;
+                    transformer = entry.getValue();
+                } else {
+                    // two matches that aren't related by inheritance have been
+                    // found.
                     throw new IllegalArgumentException("Multiple potential transformers found for " + uiClass + "; "
-                            + transformer + " and " + transformerMap.get(superClass));
+                            + entry.getKey() + "=" + entry.getValue() + " and " + matchingUIClass + "="
+                            + transformerMap.get(matchingUIClass));
                 }
-                transformer = transformerMap.get(superClass);
             }
         }
 
@@ -159,22 +169,6 @@ public class AbstractTransformerFactory implements ITransformerFactory {
 
         addTransformer(uiClass, transformer);
         return transformer;
-    }
-
-    private void addInterfaces(Class<?> uiClass, Set<Class<?>> supers) {
-        Class[] interfaces = uiClass.getInterfaces();
-        for (Class<?> i : interfaces) {
-            supers.add(i);
-            addInterfaces(i, supers);
-        }
-    }
-
-    private void addSuperClasses(Class<?> uiClass, Set<Class<?>> supers) {
-        Class<?> sup = uiClass.getSuperclass();
-        while (sup != null) {
-            supers.add(sup);
-            sup = sup.getSuperclass();
-        }
     }
 
     private UIDomainTransformer newInstance(Class<? extends UIDomainTransformer> c) {
