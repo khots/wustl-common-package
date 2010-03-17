@@ -12,6 +12,7 @@ import java.util.List;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.UIRepOfDomain;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.QueryWhereClause;
@@ -288,9 +289,23 @@ public interface IBizLogic
 	 * @param uiForm object of the class which implements IValueObject
 	 * @return AbstractDomainObject.
 	 * @throws BizLogicException BizLogic Exception.
+     * @deprecated use {@link IBizLogic#populateDomainObject(String, Long, UIRepOfDomain)} instead.
 	 */
+    @Deprecated
 	AbstractDomainObject populateDomainObject(String className, Long identifier,
 			IValueObject uiForm) throws BizLogicException;
+    
+    /**
+     * populates Domain Object.
+     * @param className class Name
+     * @param identifier identifier
+     * @param uiForm object of the class which implements {@link UIRepOfDomain}
+     * @return AbstractDomainObject.
+     * @throws BizLogicException BizLogic Exception.
+     */
+    AbstractDomainObject populateDomainObject(String className, Long identifier,
+            UIRepOfDomain uiForm) throws BizLogicException;
+            
 	/**
 	 * Checkes is ReadDenied.
 	 * @return isReadDenied

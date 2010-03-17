@@ -622,35 +622,42 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @return AbstractDomainObject
 	 */
 	public AbstractDomainObject populateDomainObject(String className, Long identifier,
-			UIRepOfDomain uiForm) throws BizLogicException
+			IValueObject uiForm) throws BizLogicException
 	{
-		//long startTime = System.currentTimeMillis();
-		DAO dao = null;
-		AbstractDomainObject abstractDomain = null;
-		try
-		{
-			dao = getHibernateDao(getAppName(),null);
-			Object object = dao.retrieveById(className, identifier);
-			abstractDomain = populateFormBean(uiForm, object);
-		}
-		catch (Exception daoExp)
-		{
-			LOGGER.debug(daoExp.getMessage(), daoExp);
-			throw getBizLogicException(daoExp, "biz.popdomain.error",
-					"Exception in domain population");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
-
-		//String simpleClassName = Utility.parseClassName(className);
-		//long endTime = System.currentTimeMillis();
-		//LOGGER.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
-		//+ (endTime - startTime));
-
-		return abstractDomain;
+	    return populateDomainObject(className, identifier, (UIRepOfDomain)uiForm);
 	}
+    
+    public AbstractDomainObject populateDomainObject(String className, Long identifier,
+            UIRepOfDomain uiForm) throws BizLogicException
+    {
+        //long startTime = System.currentTimeMillis();
+        DAO dao = null;
+        AbstractDomainObject abstractDomain = null;
+        try
+        {
+            dao = getHibernateDao(getAppName(),null);
+            Object object = dao.retrieveById(className, identifier);
+            abstractDomain = populateFormBean(uiForm, object);
+        }
+        catch (Exception daoExp)
+        {
+            LOGGER.debug(daoExp.getMessage(), daoExp);
+            throw getBizLogicException(daoExp, "biz.popdomain.error",
+                    "Exception in domain population");
+        }
+        finally
+        {
+            closeSession(dao);
+        }
+
+        //String simpleClassName = Utility.parseClassName(className);
+        //long endTime = System.currentTimeMillis();
+        //LOGGER.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
+        //+ (endTime - startTime));
+
+        return abstractDomain;
+    }
+    
 	/**
 	 * @param uiForm Form object.
 	 * @param object object to populate.
