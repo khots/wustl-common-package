@@ -1,4 +1,3 @@
-
 package edu.wustl.common.action;
 
 import java.util.Stack;
@@ -16,239 +15,312 @@ import org.apache.struts.action.ActionMessages;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.AddNewSessionDataBean;
-import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.ErrorKey;
-import edu.wustl.common.factory.IDomainObjectFactory;
+import edu.wustl.common.processor.CommonAddRequestProcessor;
+import edu.wustl.common.processor.PersistObjectInputInterface;
+import edu.wustl.common.processor.PersistObjectOutputInterface;
+import edu.wustl.common.processor.RequestProcessorInterface;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
 
 /**
- *  This Class is used to Add data in the database.
+ * This Class is used to Add data in the database.
  */
 public class CommonAddAction extends BaseAddEditAction
 {
+    /**
+     * LOGGER Logger - Generic LOGGER.
+     */
+    private static final Logger LOGGER = Logger.getCommonLogger(CommonAddAction.class);
 
-	/**
-	 * LOGGER Logger - Generic LOGGER.
-	 */
-	private static final Logger LOGGER = Logger.getCommonLogger(CommonAddAction.class);
-	/**
-	 * This method get data from form of current session and add it for further operation.
-	 * @param mapping ActionMapping
-	 * @param request HttpServletRequest
-	 * @param response HttpServletResponse
-	 * @param form Action Form.
-	 * @return ActionForward
-	 * @throws ApplicationException Application Exceptio.
-	 */
-	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response) throws ApplicationException
-	{
-		AbstractActionForm abstractForm = (AbstractActionForm) form;
-		ActionForward forward;
-		ActionMessages messages = new ActionMessages();
+    /** The processor. */
+    protected final RequestProcessorInterface<PersistObjectInputInterface,
+    PersistObjectOutputInterface> processor = new CommonAddRequestProcessor();
 
-		String target;
-		String objectName = getObjectName(abstractForm);
-		AbstractDomainObject abstractDomain = insertDomainObject(request, abstractForm);
-		setSuccessMsg(request, messages, objectName, abstractDomain);
-		abstractForm.setId(abstractDomain.getId().longValue());
-		request.setAttribute(Constants.SYSTEM_IDENTIFIER, abstractDomain.getId());
-		abstractForm.setMutable(false);
 
-		String submittedFor = (String) request.getParameter(Constants.SUBMITTED_FOR);
+    /**
+     * This method get data from form of current session and add it for further
+     * operation.
+     *
+     * @param mapping
+     *            ActionMapping
+     * @param request
+     *            HttpServletRequest
+     * @param response
+     *            HttpServletResponse
+     * @param form
+     *            Action Form.
+     * @return ActionForward
+     * @throws ApplicationException
+     *             Application Exceptio.
+     */
+    @Override
+    public ActionForward executeXSS(final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws ApplicationException
+            {
+        final PersistObjectInputInterface inputInterface = getInputDataInterface((AbstractActionForm) form, getSessionData(request));
+        final CommonAddOutputDataCarrier outputInterface = getOutputDataInterface();
+        preProcess(request, form);
+        processor.process(inputInterface, outputInterface);
+        postProcess((AbstractActionForm) form, outputInterface, request);
+        return getForward(mapping, (AbstractActionForm) form, outputInterface, request);
+            }
 
-		if ("AddNew".equals(submittedFor))
-		{
-			//Retrieving AddNewSessionDataBean from Stack
-			forward = getForwardToFromStack(mapping, request, abstractDomain, objectName);
+    /**
+     * This method gets Edit Forward.
+     *
+     * @param mapping
+     *            ActionMapping
+     * @param forwardTo
+     *            forward To.
+     * @return ActionForward.
+     */
+    private ActionForward getEditForward(final ActionMapping mapping, final String forwardTo)
+    {
 
-		}
-		else
-		{
-			target = getForwardTo(request, abstractDomain, abstractForm);
-			forward = mapping.findForward(target);
-		}
+        final ActionForward editForward = new ActionForward();
+        final String addPath = mapping.findForward(forwardTo).getPath();
+        final String editPath = addPath.replaceFirst("operation=add", "operation=edit");
+        editForward.setPath(editPath);
+        return editForward;
+    }
 
-		request.setAttribute("forwardToPrintMap", generateForwardToPrintMap(abstractForm,
-				abstractDomain));
-		//Status message key.
-		StringBuffer statusMessageKey = new StringBuffer();
-		statusMessageKey.append(abstractForm.getFormId()).append('.').append(abstractForm.isAddOperation());
-		request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey.toString());
-		return forward;
-	}
+    /**
+     * Gets the forward.
+     *
+     * @param mapping
+     *            the mapping
+     * @param abstractForm
+     *            the abstract form
+     * @param outputInterface
+     *            the output interface
+     * @param request
+     *            the request
+     *
+     * @return the forward
+     *
+     * @throws ApplicationException
+     *             the application exception
+     */
+    private ActionForward getForward(final ActionMapping mapping, final AbstractActionForm abstractForm,
+            final CommonAddOutputDataCarrier outputInterface, final HttpServletRequest request)
+    throws ApplicationException
+    {
+        final String submittedFor = request.getParameter(Constants.SUBMITTED_FOR);
+        ActionForward forward;
+        if ("AddNew".equals(submittedFor))
+        {
+            // Retrieving AddNewSessionDataBean from Stack
+            forward = getForwardToFromStack(mapping, request, outputInterface.getDomainObject(), outputInterface
+                    .getDomainObjectName());
 
-	/**
-	 * Set Success Message.
-	 * @param request HttpServletRequest
-	 * @param messages ActionMessages
-	 * @param objectName object Name
-	 * @param abstractDomain AbstractDomainObject
-	 * @throws ApplicationException Application Exception.
-	 */
-	private void setSuccessMsg(HttpServletRequest request, ActionMessages messages,
-			String objectName, AbstractDomainObject abstractDomain) throws ApplicationException
-	{
-		String[] displayNameParams = addMessage(abstractDomain, objectName);
-		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.add" + ".successOnly",
-				displayNameParams));
-		saveMessages(request, messages);
-	}
+        }
+        else
+        {
+            final String target = getForwardTo(request, outputInterface.getDomainObject(), abstractForm);
+            forward = mapping.findForward(target);
+        }
+        return forward;
+    }
 
-	/**
-	 * Retrieving AddNewSessionDataBean from Stack.
-	 * @param mapping ActionMapping
-	 * @param request HttpServletRequest
-	 * @param abstractDomain AbstractDomainObject
-	 * @param objectName object Name
-	 * @return ActionForward
-	 * @throws ApplicationException Application Exception.
-	 */
-	private ActionForward getForwardToFromStack(ActionMapping mapping, HttpServletRequest request,
-			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
-	{
+    /**
+     * This method gets target.
+     *
+     * @param request
+     *            HttpServletRequest
+     * @param abstractDomain
+     *            AbstractDomainObject
+     * @param abstractForm
+     *            AbstractActionForm
+     * @return target
+     * @throws ApplicationException
+     *             Application Exception
+     */
+    private String getForwardTo(final HttpServletRequest request, final AbstractDomainObject abstractDomain,
+            final AbstractActionForm abstractForm) throws ApplicationException
+            {
+        String target = Constants.SUCCESS;
+        final String submittedFor = request.getParameter(Constants.SUBMITTED_FOR);
+        if ("ForwardTo".equals(submittedFor))
+        {
+            request.setAttribute(Constants.SUBMITTED_FOR, "Default");
+            request.setAttribute("forwardToHashMap", generateForwardToHashMap(abstractForm, abstractDomain));
+        }
+        if (abstractForm.getForwardTo() != null && abstractForm.getForwardTo().trim().length() > 0)
+        {
+            final String forwardTo = abstractForm.getForwardTo();
+            target = forwardTo;
+        }
+        return target;
+            }
 
-		Stack formBeanStack = (Stack) request.getSession().getAttribute(Constants.FORM_BEAN_STACK);
-		ActionForward forward;
+    /**
+     * Retrieving AddNewSessionDataBean from Stack.
+     *
+     * @param mapping
+     *            ActionMapping
+     * @param request
+     *            HttpServletRequest
+     * @param abstractDomain
+     *            AbstractDomainObject
+     * @param objectName
+     *            object Name
+     * @return ActionForward
+     * @throws ApplicationException
+     *             Application Exception.
+     */
+    private ActionForward getForwardToFromStack(final ActionMapping mapping, final HttpServletRequest request,
+            final AbstractDomainObject abstractDomain, final String objectName) throws ApplicationException
+            {
 
-		if (formBeanStack == null)
-		{
-			forward = mapping.findForward(Constants.SUCCESS);
-		}
-		else
-		{
-			AddNewSessionDataBean addNewSessionDataBean = (AddNewSessionDataBean) formBeanStack
-					.pop();
+        final Stack formBeanStack = (Stack) request.getSession().getAttribute(Constants.FORM_BEAN_STACK);
+        ActionForward forward;
 
-			if (addNewSessionDataBean == null)
-			{
-				throw new ApplicationException(ErrorKey.getErrorKey("errors.item.unknown"), null,
-						AbstractDomainObject.parseClassName(objectName));
+        if (formBeanStack == null)
+        {
+            forward = mapping.findForward(Constants.SUCCESS);
+        }
+        else
+        {
+            final AddNewSessionDataBean addNewSessionDataBean = (AddNewSessionDataBean) formBeanStack.pop();
 
-			}
-			String forwardTo = addNewSessionDataBean.getForwardTo();
-			AbstractActionForm sessionFormBean = updateSessionForm(abstractDomain,
-					addNewSessionDataBean, formBeanStack, request);
+            if (addNewSessionDataBean == null)
+            {
+                throw new ApplicationException(ErrorKey.getErrorKey("errors.item.unknown"), null,
+                        AbstractDomainObject.parseClassName(objectName));
 
-			if ((sessionFormBean.getOperation().equals("edit")))
-			{
-				forward = getEditForward(mapping, forwardTo);
-			}
-			else
-			{
-				forward = (mapping.findForward(forwardTo));
-			}
-		}
-		return forward;
-	}
+            }
+            final String forwardTo = addNewSessionDataBean.getForwardTo();
+            final AbstractActionForm sessionFormBean = updateSessionForm(abstractDomain, addNewSessionDataBean,
+                    formBeanStack, request);
 
-	/**
-	 * inserts Domain Object.
-	 * @param request HttpServletRequest
-	 * @param abstractForm AbstractActionForm
-	 * @return AbstractDomainObject
-	 * @throws ApplicationException Application Exception
-	 */
-	private AbstractDomainObject insertDomainObject(HttpServletRequest request,
-			AbstractActionForm abstractForm) throws ApplicationException
-	{
-		try
-		{
-			AbstractDomainObject abstractDomain;
-			IDomainObjectFactory abstractDomainObjectFactory = getIDomainObjectFactory();
-			abstractDomain = abstractDomainObjectFactory.getDomainObject(abstractForm.getFormId(),
-					abstractForm);
-			IBizLogic bizLogic = getIBizLogic(abstractForm);
-			bizLogic.insert(abstractDomain, getSessionData(request));
+            if (sessionFormBean.getOperation().equals("edit"))
+            {
+                forward = getEditForward(mapping, forwardTo);
+            }
+            else
+            {
+                forward = mapping.findForward(forwardTo);
+            }
+        }
+        return forward;
+            }
 
-			return abstractDomain;
-		}
-		catch (AssignDataException e)
-		{
-			LOGGER.debug(e.getMessage(), e);
-			throw new ApplicationException(e.getErrorKey(), e,e.getMsgValues());
-		}
-	}
 
-	/**
-	 * This method gets target.
-	 * @param request HttpServletRequest
-	 * @param abstractDomain AbstractDomainObject
-	 * @param abstractForm AbstractActionForm
-	 * @return target
-	 * @throws ApplicationException Application Exception
-	 */
-	private String getForwardTo(HttpServletRequest request, AbstractDomainObject abstractDomain,
-			AbstractActionForm abstractForm) throws ApplicationException
-	{
-		String target = Constants.SUCCESS;
-		String submittedFor = (String) request.getParameter(Constants.SUBMITTED_FOR);
-		if ("ForwardTo".equals(submittedFor))
-		{
-			request.setAttribute(Constants.SUBMITTED_FOR, "Default");
-			request.setAttribute("forwardToHashMap", generateForwardToHashMap(abstractForm,
-					abstractDomain));
-		}
-		if (abstractForm.getForwardTo() != null && abstractForm.getForwardTo().trim().length() > 0)
-		{
-			String forwardTo = abstractForm.getForwardTo();
-			target = forwardTo;
-		}
-		return target;
-	}
+    /**
+     * Post process.
+     *
+     * @param abstractForm
+     *            the abstract form
+     * @param outputInterface
+     *            the output interface
+     * @param request
+     *            the request
+     *
+     * @throws ApplicationException
+     *             the application exception
+     */
+    private void postProcess(final AbstractActionForm abstractForm,
+            final CommonAddOutputDataCarrier outputInterface, final HttpServletRequest request)
+    throws ApplicationException
+    {
+        abstractForm.setId(outputInterface.getDomainObject().getId().longValue());
+        abstractForm.setMutable(false);
+        setSuccessMsg(request, outputInterface.getDomainObjectName(), outputInterface.getDomainObject());
+        setRequestAttributes(abstractForm, outputInterface, request);
+    }
 
-	/**
-	 * This method gets Edit Forward.
-	 * @param mapping ActionMapping
-	 * @param forwardTo forward To.
-	 * @return ActionForward.
-	 */
-	private ActionForward getEditForward(ActionMapping mapping, String forwardTo)
-	{
+    private void preProcess(final HttpServletRequest request, final ActionForm form)
+    {
+        // TODO Auto-generated method stub
 
-		ActionForward editForward = new ActionForward();
-		String addPath = (mapping.findForward(forwardTo)).getPath();
-		String editPath = addPath.replaceFirst("operation=add", "operation=edit");
-		editForward.setPath(editPath);
-		return editForward;
-	}
+    }
 
-	/**
-	 * This method updates Session Form.
-	 * @param abstractDomain AbstractDomainObject
-	 * @param addNewSessionDataBean AddNewSessionDataBean
-	 * @param formBeanStack form Bean Stack
-	 * @param request HttpServletRequest
-	 * @return AbstractActionForm.
-	 */
-	private AbstractActionForm updateSessionForm(AbstractDomainObject abstractDomain,
-			AddNewSessionDataBean addNewSessionDataBean, Stack formBeanStack,
-			HttpServletRequest request)
-	{
-		AbstractActionForm sessionFormBean = addNewSessionDataBean.getAbstractActionForm();
-		sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(),
-				abstractDomain.getId());
-		sessionFormBean.setMutable(false);
+    /**
+     * Sets the request attributes.
+     *
+     * @param abstractForm
+     *            the abstract form
+     * @param outputInterface
+     *            the output interface
+     * @param request
+     *            the request
+     *
+     * @throws ApplicationException
+     *             the application exception
+     */
+    private void setRequestAttributes(final AbstractActionForm abstractForm,
+            final CommonAddOutputDataCarrier outputInterface, final HttpServletRequest request)
+    throws ApplicationException
+    {
+        request.setAttribute(Constants.SYSTEM_IDENTIFIER, outputInterface.getDomainObject().getId());
+        request.setAttribute("forwardToPrintMap", generateForwardToPrintMap(abstractForm, outputInterface
+                .getDomainObject()));
+        final StringBuffer statusMessageKey = new StringBuffer();
+        statusMessageKey.append(abstractForm.getFormId()).append('.').append(abstractForm.isAddOperation());
+        request.setAttribute(Constants.STATUS_MESSAGE_KEY, statusMessageKey.toString());
+    }
 
-		if (formBeanStack.isEmpty())
-		{
-			HttpSession session = request.getSession();
-			session.removeAttribute(Constants.FORM_BEAN_STACK);
-			request.setAttribute(Constants.SUBMITTED_FOR, "Default");
-		}
-		else
-		{
-			request.setAttribute(Constants.SUBMITTED_FOR, "AddNew");
-		}
-		String formBeanName = Utility.getFormBeanName(sessionFormBean);
-		request.setAttribute(formBeanName, sessionFormBean);
+    /**
+     * Set Success Message.
+     *
+     * @param request
+     *            HttpServletRequest
+     * @param objectName
+     *            object Name
+     * @param abstractDomain
+     *            AbstractDomainObject
+     * @throws ApplicationException
+     *             Application Exception.
+     */
+    private void setSuccessMsg(final HttpServletRequest request, final String objectName,
+            final AbstractDomainObject abstractDomain) throws ApplicationException
+            {
+        final ActionMessages messages = new ActionMessages();
+        final String[] displayNameParams = addMessage(abstractDomain, objectName);
+        messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.add" + ".successOnly",
+                displayNameParams));
+        saveMessages(request, messages);
+            }
 
-		return sessionFormBean;
-	}
+    /**
+     * This method updates Session Form.
+     *
+     * @param abstractDomain
+     *            AbstractDomainObject
+     * @param addNewSessionDataBean
+     *            AddNewSessionDataBean
+     * @param formBeanStack
+     *            form Bean Stack
+     * @param request
+     *            HttpServletRequest
+     * @return AbstractActionForm.
+     */
+    private AbstractActionForm updateSessionForm(final AbstractDomainObject abstractDomain,
+            final AddNewSessionDataBean addNewSessionDataBean, final Stack formBeanStack,
+            final HttpServletRequest request)
+    {
+        final AbstractActionForm sessionFormBean = addNewSessionDataBean.getAbstractActionForm();
+        sessionFormBean.setAddNewObjectIdentifier(addNewSessionDataBean.getAddNewFor(), abstractDomain.getId());
+        sessionFormBean.setMutable(false);
+
+        if (formBeanStack.isEmpty())
+        {
+            final HttpSession session = request.getSession();
+            session.removeAttribute(Constants.FORM_BEAN_STACK);
+            request.setAttribute(Constants.SUBMITTED_FOR, "Default");
+        }
+        else
+        {
+            request.setAttribute(Constants.SUBMITTED_FOR, "AddNew");
+        }
+        final String formBeanName = Utility.getFormBeanName(sessionFormBean);
+        request.setAttribute(formBeanName, sessionFormBean);
+
+        return sessionFormBean;
+    }
 
 }
