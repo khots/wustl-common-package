@@ -17,6 +17,7 @@ import java.util.List;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.UIRepOfDomain;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
@@ -621,7 +622,7 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @return AbstractDomainObject
 	 */
 	public AbstractDomainObject populateDomainObject(String className, Long identifier,
-			IValueObject uiForm) throws BizLogicException
+			UIRepOfDomain uiForm) throws BizLogicException
 	{
 		//long startTime = System.currentTimeMillis();
 		DAO dao = null;
@@ -657,7 +658,7 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @throws AssignDataException throws this exception if not able to set all values.
 	 * @throws BizLogicException 
 	 */
-	private AbstractDomainObject populateFormBean(IValueObject uiForm, Object object)
+	private AbstractDomainObject populateFormBean(UIRepOfDomain uiForm, Object object)
 			throws AssignDataException, BizLogicException
 	{
         AbstractDomainObject abstractDomain = (AbstractDomainObject) object; 
