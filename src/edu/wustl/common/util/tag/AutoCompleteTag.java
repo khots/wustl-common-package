@@ -1,19 +1,16 @@
 /*
  * Created on Feb 16, 2007
  */
+
 package edu.wustl.common.util.tag;
 
-/**
- * @author Santosh Chandak
- * JSP tag for Autocomplete feature. The body of this tag is executed once for every call of the tag
- * when the page is rendered.
- * To use this tag, include AutocompleterCommon.jsp in your page
- */
-
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
@@ -21,264 +18,475 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.util.global.TextConstants;
+import edu.wustl.common.util.logger.Logger;
 
+/**
+ * @author Santosh Chandak
+ * JSP tag for Autocomplete feature. The body of this tag is executed once for every call of the tag
+ * when the page is rendered.
+ * To use this tag, include AutocompleterCommon.jsp in your page
+ */
 public class AutoCompleteTag extends TagSupport
 {
+
 	/**
-	 * version ID 
+	* LOGGER Logger - Generic LOGGER.
+	*/
+	private static final Logger LOGGER = Logger.getCommonLogger(AutoCompleteTag.class);
+	/**
+	 * serialVersionUID long - version ID.
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * property on which Autocompleter is to be applied
+	 * property on which Auto completer is to be applied.
 	 */
 	private String property;
 
 	/**
-	 * Object containing values of the dropdown. Supported datatypes 
+	 * Object containing values of the dropdown. Supported data types.
 	 * 1. String Array 2. List of Name Value Beans
-	 * 
+	 *
 	 */
 	private Object optionsList;
 
 	/**
-	 * Default style
+	 * Default style.
 	 */
 	private String styleClass = "formFieldSized15";
 
 	/**
-	 * Number of results to be shown, set to 11 as for time dropdowns showing 11 values was more logical 
+	 * Number of results to be shown, set to 11 as for time drop downs showing 11 values was more logical.
 	 */
 	private String numberOfResults = "11";
 
 	/**
-	 * Trigger matching when user enters these number of characters
+	 * Trigger matching when user enters these number of characters.
 	 */
 	private String numberOfCharacters = "1";
 
 	/**
-	 * set to true if the textbox is readOnly
+	 * Constant for FALSE.
 	 */
-	private Object readOnly = "false";
-	
+	private static final String FALSE = "false";
 	/**
-	 * set to true if the textbox is disabled
+	 * Constant for FALSE.
 	 */
-	private Object disabled = "false";
-		
+	private static final String TRUE = "true";
 	/**
-	 * Functions to be called when textbox loses focus
+	 * set to true if the textbox is readOnly.
+	 */
+	private Object readOnly = FALSE;
+
+	/**
+	 * set to true if the textbox is disabled.
+	 */
+	private Object disabled = FALSE;
+
+	/**
+	 * Functions to be called when textbox loses focus.
 	 */
 	private String onChange = "";
 
 	/**
-	 * initial value in the textbox, this is compulsary attribute
+	 * initial value in the textbox, this is compulsory attribute.
 	 */
 	private Object initialValue = "";
 
 	/**
-	 * if the property is dependent on some other property 
+	 * if the property is dependent on some other property.
 	 * eg. type depends on class
-	 * 
+	 *
 	 */
 	private String dependsOn = "";
 
 	/**
-	 * size
+	 * size String.
 	 */
 	private String size = "300";
-	
+
 	/**
 	 *  true - in case of static lists eg. class, type
 	 *  false - in case of dynamic lists eg. site, user
 	 */
-	private String staticField = "true";
-	
+	private String staticField = TRUE;
+
 	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag
 	 * for this custom tag is encountered.
+	 * @exception JspException jsp exception.
+	 * @return integer value to skip body.
 	 */
 	public int doStartTag() throws JspException
 	{
-						
-		try {
+
+		try
+		{
 			JspWriter out = pageContext.getOut();
-			String autocompleteHTMLStr=null;
-			if(staticField.equalsIgnoreCase("true"))
+			String autocompleteHTMLStr = null;
+			if (staticField.equalsIgnoreCase(TRUE))
 			{
-			autocompleteHTMLStr = getAutocompleteHTML();
+				autocompleteHTMLStr = getAutocompleteHTML();
 			}
 			else
 			{
 				autocompleteHTMLStr = getAutocompleteHTMLForDynamicProperty();
 			}
-			
-			
-			  /**
-			    *  Clearing the variables
-			    */
-			   onChange = "";
-			   initialValue = "";
-			   readOnly = "false";
-			   dependsOn = "";
-			   size="300";
-			   disabled="false"; 
+
+			clearTagVariables();
 
 			out.print(autocompleteHTMLStr);
-
-		} catch (IOException ioe) {
+		}
+		catch (IOException ioe)
+		{
+			LOGGER.debug(ioe.getMessage(), ioe);
 			throw new JspTagException("Error:IOException while writing to the user");
 		}
 
 		return SKIP_BODY;
 	}
-	
-//	@SuppressWarnings("unchecked")
-	private String getAutocompleteHTML() {
-	    String autoCompleteResult = "";
-	    
-	    prepareCommonData();
-		
+
+	/**
+	  *  Clearing the variables.
+	  */
+	private void clearTagVariables()
+	{
+		onChange = "";
+		initialValue = "";
+		readOnly = FALSE;
+		dependsOn = "";
+		size = "300";
+		disabled = FALSE;
+	}
+
+	//	@SuppressWarnings("unchecked")
+	/**
+	 * @return String auto complete result.
+	 * @throws IOException IO Exception.
+	 */
+	private String getAutocompleteHTML() throws IOException
+	{
+		StringBuffer autoCompleteResult = new StringBuffer();
+		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
+		Properties props = new Properties();
+		props.load(stream);
+		prepareCommonData();
 		/**
 		 *  Always pass the function with brackets, appending '()' will not be done
 		 */
-	
-			if(onChange.equals(""))
-			{
-				onChange = "trimByAutoTag(this)";
-			}
-			else 
-			{
-				onChange = "trimByAutoTag(this);" + onChange;
-			}
-	    String div = "divFor" + property; 
-	    autoCompleteResult += "<div id=\"" + div + "\" style=\"display: none;\" class=\"autocomplete\">";
-	    autoCompleteResult += "</div>";
-	    autoCompleteResult += "<input type=\"text\" class=\"" + styleClass + "\" value=\"" + initialValue + "\"size=\"" + size + "\" id=\"" + property + "\" name=\"" + property + "\"" + "onmouseover=\"showTip(this.id)\" onmouseout=\"hideTip(this.id)\"";
-	  	   
-	    if (readOnly.toString().equalsIgnoreCase("true"))   
-	    {
-			autoCompleteResult += "readonly";
-		} else 
+		setOnchangeValue();
+
+		StringBuffer readOnly = getReadOnlyValue();
+		Object[] arguments = {styleClass, initialValue, size, property, readOnly.toString()};
+		autoCompleteResult.append(MessageFormat.format(props.getProperty("ACTinputImageTag"),
+				arguments));
+		StringBuffer valueList = getValueInList();
+		String autoC = "";
+		if (property.equals(Constants.SPECIMEN_TYPE))
 		{
-			autoCompleteResult += "onblur=\"" + onChange + "\"";
+			autoC = "var AutoC = ";
 		}
-	  
-	    autoCompleteResult += "/>";
-	    String nameOfArrow = property + "arrow"; 
-	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif' alt='Click' width='18' height='19' hspace='0' vspace='0' align='absmiddle' />";
-	    autoCompleteResult += "<script> var valuesInList = new Array();"; 
-	    
-	    if (optionsList instanceof List) {
-			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0) {
-				
-		    			// TODO other than NVB
-						for (int i = 0; i < nvbList.size(); i++) {
-						NameValueBean nvb = (NameValueBean) nvbList.get(i);
-						autoCompleteResult += "valuesInList[" + i + "] = \""
-								+ nvb.getName() + "\";";
-					}
-									
-				}
-		
-		}
-	    
-	        if(property.equals(Constants.SPECIMEN_TYPE))
-			 autoCompleteResult += "var AutoC = ";
-			 autoCompleteResult += "new Autocompleter.Combobox(\"" + property + "\",\"" + div + "\",\"" + nameOfArrow + "\"" + ",valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInList" + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";
-	     
-	   autoCompleteResult += "</script>";	  
-	    
-       return autoCompleteResult;
+		Object[] args = {property, numberOfResults, numberOfCharacters};
+		String autoCompleteStr = MessageFormat.format(props.getProperty("ACTautocompleter"), args);
+		String autStr = Utility.replaceAll(autoCompleteStr, "*", "{");
+		String autoCompStr = Utility.replaceAll(autStr, "#", "}");
+		Object[] arg = {autoC,valueList, autoCompStr};
+		autoCompleteResult.append(MessageFormat.format(props.getProperty("ACTscript"), arg));
+		return autoCompleteResult.toString();
 	}
-	
-	//@SuppressWarnings("unchecked")
-	private void prepareCommonData() {
-		if(initialValue == null || initialValue.equals(""))
-	    {
-	    	initialValue = pageContext.getRequest().getParameter(property);
-	    	
-	    	 if(initialValue == null || initialValue.equals(""))
-	 	    {
-	    	  String[] title = (String[])
-	    	  pageContext.getRequest().getParameterValues(property);
-	    	  
-	    	  if (title != null && title.length > 0) { if (title[0] != null) {
-	    	  initialValue = title[0]; } }
-	    	 
-	 	    } 
-	    }
-		if (initialValue == null) {
-			initialValue = "";
-		}
-		
-			
-		/**
-		 *  As Type depends on class, get the optionsList as List from optionsList which was passed as a map
-		 */
-		if(property.equalsIgnoreCase(Constants.SPECIMEN_TYPE) && dependsOn!=null && !dependsOn.equals(""))
+
+	/**
+	 * @return valueList.
+	 */
+	private StringBuffer getValueInList()
+	{
+		StringBuffer valueList = new StringBuffer();
+		if (optionsList instanceof List)
 		{
-			 String className = dependsOn;
-			 List specimenTypeList = (List) ((Map)optionsList).get(className);
-			 optionsList = specimenTypeList;
-	    } 
-		
+			List nvbList = (List) optionsList;
+			if (nvbList != null && !nvbList.isEmpty())
+			{
+				for (int i = 0; i < nvbList.size(); i++)
+				{
+					NameValueBean nvb = (NameValueBean) nvbList.get(i);
+					valueList.append("valuesInList[" + i + "] = \"")
+					.append(nvb.getName()).append(
+							"\";");
+				}
+			}
+		}
+		return valueList;
+	}
+
+	/**
+	 * @return readOnly.
+	 */
+	private StringBuffer getReadOnlyValue()
+	{
+		StringBuffer readOnly = new StringBuffer();
+		if (readOnly.toString().equalsIgnoreCase(TRUE))
+		{
+			readOnly.append("readonly");
+		}
+		else
+		{
+			readOnly.append("onblur=\"").append(onChange).append('\"');
+		}
+		return readOnly;
+	}
+
+	/**
+	 * set Onchange Value.
+	 */
+	private void setOnchangeValue()
+	{
+		if (TextConstants.EMPTY_STRING.equals(onChange))
+		{
+			onChange = "trimByAutoTag(this)";
+		}
+		else
+		{
+			onChange = "trimByAutoTag(this);" + onChange;
+		}
+	}
+
+	//@SuppressWarnings("unchecked")
+	/**
+	 * This method prepare common data.
+	 */
+	private void prepareCommonData()
+	{
+		setInitialValue();
+		/**
+		 *  As Type depends on class, get the optionsList
+		 *  as List from optionsList which was passed as a map
+		 */
+		if (property.equalsIgnoreCase(Constants.SPECIMEN_TYPE) && dependsOn != null
+				&& !dependsOn.equals(TextConstants.EMPTY_STRING))
+		{
+			String className = dependsOn;
+			List specimenTypeList = (List) ((Map) optionsList).get(className);
+			optionsList = specimenTypeList;
+		}
+
 		/**
 		 *  Converting other data types to list of Name Value Beans
 		 */
-		
-		if (optionsList instanceof String[]) {
-			String[] stringArray = (String[]) optionsList;
-			List tempNVBList = new ArrayList();
-			if(stringArray!=null)
-			{
-				for(int i=0;i<stringArray.length;i++)
-				{
-					tempNVBList.add(new NameValueBean(stringArray[i],stringArray[i]));
-				}
-			}
-			optionsList = tempNVBList;
+		processStringArrayOptionList();
+		processListOptionList();
+
+	}
+
+	/**
+	 * set Initial Value.
+	 */
+	private void setInitialValue()
+	{
+		if (initialValue == null || initialValue.equals(TextConstants.EMPTY_STRING))
+		{
+			initialValue = pageContext.getRequest().getParameter(property);
+
+			assignInitialValue();
 		}
-		
-		
-		if (optionsList instanceof List) { 
-			
+	}
+
+	/**
+	 * assign Initial Value.
+	 */
+	private void assignInitialValue()
+	{
+		if (initialValue == null)
+		{
+			String[] title = (String[]) pageContext.getRequest().getParameterValues(property);
+
+			if (title != null && title.length > 0)
+			{
+				initialValue = title[0];
+			}
+			else
+			{
+				initialValue = "";
+			}
+
+		}
+	}
+
+	/**
+	 * process OptionList.
+	 */
+	private void processListOptionList()
+	{
+		if (optionsList instanceof List)
+		{
+
 			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0) {
-				
-					// TODO other than NVB
-					NameValueBean nvb1 = (NameValueBean) nvbList.get(0);
-					if (nvb1.getName().equals(Constants.SELECT_OPTION)) {
-						nvbList.remove(0);
-					}
-					
-			} 
+			if (nvbList != null && !nvbList.isEmpty())
+			{
+
+				// TODO other than NVB
+				NameValueBean nvb1 = (NameValueBean) nvbList.get(0);
+				if (nvb1.getName().equals(Constants.SELECT_OPTION))
+				{
+					nvbList.remove(0);
+				}
+
+			}
 			/* if(nvbList == null || nvbList.size() == 0)
 			{
 				initialValue = "No Records Present"; // needed?
 			}  */
-	} 
-	
+		}
 	}
 
 	/**
-	 * This function prepares the HTML to be rendered
+	 * process String Array OptionList.
+	 */
+	private void processStringArrayOptionList()
+	{
+		if (optionsList instanceof String[])
+		{
+			String[] stringArray = (String[]) optionsList;
+			List tempNVBList = new ArrayList();
+			if (stringArray != null)
+			{
+				for (int i = 0; i < stringArray.length; i++)
+				{
+					tempNVBList.add(new NameValueBean(stringArray[i], stringArray[i]));
+				}
+			}
+			optionsList = tempNVBList;
+		}
+	}
+
+	/**
+	 * This function prepares the HTML to be rendered.
 	 * @return String - containing HTML to be rendered
-	 * 
+	 * @throws IOException IO Exception
+	 *
 	 */
 	//@SuppressWarnings("unchecked")
-	private String getAutocompleteHTMLForDynamicProperty() {
-	    String autoCompleteResult = "";
-	    String displayProperty = "display" + property;
-	    prepareCommonData();
-	
+	private String getAutocompleteHTMLForDynamicProperty() throws IOException
+	{
+
+		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
+		Properties props = new Properties();
+		props.load(stream);
+		String displayProperty = "display" + property;
+		prepareCommonData();
 		/**
 		 *  Always pass the function with brackets, appending '()' will not be done
 		 */
-	
-		if(onChange.equals(""))
+		setOnChangeValueForDynamicProperty();
+		String name = setInitialValueForDynamicProperty(displayProperty);
+		String value = TextConstants.EMPTY_STRING;
+		if (optionsList instanceof List)
+		{
+			List nvbList = (List) optionsList;
+			for (int i = 0; i < nvbList.size(); i++)
+			{
+				NameValueBean nvb1 = (NameValueBean) nvbList.get(i);
+				boolean nvbValue = nvb1.getValue().equals(initialValue) || nvb1.getValue() != null
+						&& "00".equals(nvb1.getValue()) && "0".equals(initialValue);
+				if (nvbValue)
+				{
+					name = nvb1.getName();
+					value = nvb1.getValue();
+					break;
+				}
+			}
+		}
+
+		StringBuffer autoCompleteResult = new StringBuffer("<div id=\"");
+		String div = "divFor" + displayProperty;
+		autoCompleteResult.append(div).append(
+				"\" style=\"display: none;\" class=\"autocomplete\"></div>");
+		setInputImageTag(autoCompleteResult, name, value, props);
+		Object[] scriptArgs = {displayProperty, displayProperty};
+		autoCompleteResult.append(MessageFormat.format(props
+				.getProperty("ACTscriptForDynamicProperty"), scriptArgs));
+		autoCompleteResult = setAutocompleter(autoCompleteResult, div, props);
+		autoCompleteResult.append("</script>");
+		return autoCompleteResult.toString();
+	}
+
+	/**
+	 * set Input Image Tag.
+	 * @param autoCompleteResult autoCompleteResult
+	 * @param name name
+	 * @param value value
+	 * @param props Properties object.
+	 */
+	private void setInputImageTag(StringBuffer autoCompleteResult, String name, String value,
+			Properties props)
+	{
+		String readOnlyValue = TextConstants.EMPTY_STRING;
+		if (readOnly.toString().equalsIgnoreCase(TRUE))
+		{
+			readOnlyValue = "readonly";
+		}
+		String onBlur = " onblur=\"" + onChange + "\"";
+		String isDisabled = "";
+		if (disabled.toString().equalsIgnoreCase(TRUE))
+		{
+			isDisabled = "disabled=\"true\"";
+		}
+		Object[] inputtImageTagArgs = {styleClass, name, size, readOnlyValue, onBlur, isDisabled,
+				property, value};
+		autoCompleteResult.append(MessageFormat.format(props.getProperty("ACTinImTagForDP"),
+				inputtImageTagArgs));
+	}
+
+	/**
+	 * @param autoCompleteResult autoComplete Result
+	 * @param div div
+	 * @param props Properties object.
+	 * @return autoCompleteResult.
+	 */
+	private StringBuffer setAutocompleter(StringBuffer autoCompleteResult, String div,
+			Properties props)
+	{
+		StringBuffer valueIds = new StringBuffer();
+		if (optionsList instanceof List)
+		{
+			List nvbList = (List) optionsList;
+			if (nvbList != null && !nvbList.isEmpty())
+			{
+
+				for (int i = 0; i < nvbList.size(); i++)
+				{
+					NameValueBean nvb = (NameValueBean) nvbList.get(i);
+					valueIds.append("valuesInListOfdisplay")
+					.append(property).append('[').append(i)
+							.append("] = \"").append(nvb.getName())
+							.append("\";idsInListOfdisplay")
+							.append(property).append('[')
+							.append(i).append("] = \"").append(
+									nvb.getValue()).append("\";");
+				}
+				/**
+				 *  Giving call to autocompleter constructor
+				 */
+				Object[] autocompleterArgs = {valueIds, property, div, numberOfResults,
+						numberOfCharacters};
+				String autoCompleteStr = MessageFormat.format(props
+						.getProperty("ACTautocompleterDP"), autocompleterArgs);
+				String autStr = Utility.replaceAll(autoCompleteStr, "*", "{");
+				String autoCompStr = Utility.replaceAll(autStr, "#", "}");
+				autoCompleteResult.append(autoCompStr);
+			}
+		}
+		return autoCompleteResult;
+	}
+
+	/**
+	 * set OnChange Value For Dynamic Property.
+	 */
+	private void setOnChangeValueForDynamicProperty()
+	{
+		if (TextConstants.EMPTY_STRING.equals(onChange))
 		{
 			onChange = "trimByAutoTagAndSetIdInForm(this)";
 		}
@@ -286,191 +494,170 @@ public class AutoCompleteTag extends TagSupport
 		{
 			onChange = "trimByAutoTagAndSetIdInForm(this);" + onChange;
 		}
-		String name = "";
-		if(initialValue.equals("0") || initialValue.toString().equalsIgnoreCase("undefined") || initialValue.equals(""))
-		{
-			name = pageContext.getRequest().getParameter(displayProperty);
-	    	
-	    	 if(name == null || name.equals(""))
-	 	    {
-	    	  String[] title = (String[])
-	    	  pageContext.getRequest().getParameterValues(displayProperty);
-	    	  
-	    	  if (title != null && title.length > 0) { if (title[0] != null) {
-	    		  name = title[0]; } }
-	    	 
-	 	    } 
-		}
-		
-		if(name == null)
-		{
-			name = "";
-		}
-		String value = "";
-		if (optionsList instanceof List) { 
-			
-			List nvbList = (List) optionsList;
-					
-			for(int i=0;i<nvbList.size();i++)
-			{
-				NameValueBean nvb1 = (NameValueBean) nvbList.get(i);
-				if(nvb1.getValue().equals(initialValue) || nvb1.getValue()!=null && nvb1.getValue().equals("00") && initialValue.equals("0"))
-				{
-					name = nvb1.getName();
-					value = nvb1.getValue();
-					break;
-				}
-			}
-			
-	} 
-		  
-		
-	    String div = "divFor" + displayProperty; 
-	    autoCompleteResult += "<div id=\"" + div + "\" style=\"display: none;\" class=\"autocomplete\">";
-	    autoCompleteResult += "</div>";
-	    autoCompleteResult += "<input type=\"text\" class=\"" + styleClass + "\" value=\"" + name + "\"size=\"" + size + "\" id=\"" + displayProperty + "\" name=\"" + displayProperty + "\"" + "onmouseover=\"showTip(this.id)\" onmouseout=\"hideTip(this.id)\"";
-	      
-	    if (readOnly.toString().equalsIgnoreCase("true")) 
-	    {
-			autoCompleteResult += "readonly";
-		} 
+	}
 
-	    autoCompleteResult += " onblur=\"" + onChange + "\"";
-	    if (disabled.toString().equalsIgnoreCase("true")) 
-	    {
-			autoCompleteResult += "disabled=\"true\"";
-		}
-	    
-	    autoCompleteResult += "/>";
-	    String nameOfArrow = property + "arrow";
-	    autoCompleteResult += "<image id='" + nameOfArrow + "' src='images/autocompleter.gif' alt='Click' width='18' height='19' hspace='0' vspace='0' align='absmiddle'/>";
-	    autoCompleteResult += "<input type=\"hidden\" id=\"" + property + "\" name=\"" + property + "\"value=\"" + value + "\"/>";
-	    autoCompleteResult += "<script> var valuesInListOf" + displayProperty  +  " = new Array();";
-	    autoCompleteResult += "var idsInListOf" + displayProperty  +  " = new Array();";
-	 	
-	     if (optionsList instanceof List) {
-			List nvbList = (List) optionsList;
-			if (nvbList != null && nvbList.size() > 0) { 
-				
-		    			for (int i = 0; i < nvbList.size(); i++) {
-						NameValueBean nvb = (NameValueBean) nvbList.get(i);
-						autoCompleteResult += "valuesInListOf" + displayProperty  +  "[" + i + "] = \""
-								+ nvb.getName() + "\";";
-						autoCompleteResult += "idsInListOf" + displayProperty + "[" + i + "] = \""
-						+ nvb.getValue() + "\";";
-					}
-						/**
-						 *  Giving call to autocompleter constructor
-						 */
-						 autoCompleteResult += "new Autocompleter.Combobox(\"" + displayProperty + "\",\"" + div + "\",\"" + nameOfArrow + "\"" + ",valuesInListOf" + displayProperty  +  ",  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInListOf" + displayProperty  + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";
-						 // autoCompleteResult += "new Autocompleter.Combobox(\"" + property + "\",\"" + div + "\",'nameofarrow',valuesInList,  { tokens: new Array(), fullSearch: true, partialSearch: true,defaultArray:" + "valuesInList" + ",choices: " + numberOfResults + ",autoSelect:true, minChars: "+ numberOfCharacters +" });";
-				}
-		}
-	     
-	   autoCompleteResult += "</script>";	  
-	 	   
-       return autoCompleteResult;
-	} 
-
-		
 	/**
-     * A call back function
-     */
+	 * @param displayProperty display Property
+	 * @return name
+	 */
+	private String setInitialValueForDynamicProperty(String displayProperty)
+	{
+		String name = TextConstants.EMPTY_STRING;
+		if ("0".equals(initialValue) || initialValue.toString().equalsIgnoreCase("undefined")
+				|| TextConstants.EMPTY_STRING.equals(initialValue))
+		{
+			name = assignInitialValueToName(displayProperty);
+		}
+		return name;
+	}
+
+	/**
+	 * @param displayProperty display Property.
+	 * @return name
+	 */
+	private String assignInitialValueToName(String displayProperty)
+	{
+		String name;
+		name = pageContext.getRequest().getParameter(displayProperty);
+
+		if (name == null || name.equals(TextConstants.EMPTY_STRING))
+		{
+			String[] title = (String[]) pageContext.getRequest()
+					.getParameterValues(displayProperty);
+
+			if (title != null && title.length > 0)
+			{
+				name = title[0];
+			}
+			else
+			{
+				name = TextConstants.EMPTY_STRING;
+			}
+		}
+		return name;
+	}
+
+	/**
+	 * A call back function.
+	 * @exception JspException jsp exception.
+	 * @return integer value for evaluated page.
+	 */
 	public int doEndTag() throws JspException
 	{
 		return EVAL_PAGE;
 	}
 
 	/**
-	 * @return
+	 * @return String number of characters.
 	 */
-	public String getNumberOfCharacters() {
+	public String getNumberOfCharacters()
+	{
 		return numberOfCharacters;
 	}
 
 	/**
-	 * @param numberOfCharacters
+	 * @param numberOfCharacters String number of characters.
 	 */
-	public void setNumberOfCharacters(String numberOfCharacters) {
+	public void setNumberOfCharacters(String numberOfCharacters)
+	{
 		this.numberOfCharacters = numberOfCharacters;
 	}
 
 	/**
-	 * @return
+	 * @return String number of results.
 	 */
-	public String getNumberOfResults() {
+	public String getNumberOfResults()
+	{
 		return numberOfResults;
 	}
 
 	/**
-	 * @param numberOfResults
+	 * @param numberOfResults String number of results.
 	 */
-	public void setNumberOfResults(String numberOfResults) {
+	public void setNumberOfResults(String numberOfResults)
+	{
 		this.numberOfResults = numberOfResults;
 	}
 
 	/**
-	 * @return
+	 * @return Object list of options.
 	 */
-	public Object getOptionsList() {
+	public Object getOptionsList()
+	{
 		return optionsList;
 	}
 
 	/**
-	 * @param optionsList
+	 * @param optionsList Object set the list of option.
 	 */
-	public void setOptionsList(Object optionsList) {
+	public void setOptionsList(Object optionsList)
+	{
 		this.optionsList = optionsList;
 	}
 
 	/**
-	 * @return
+	 * @return String name of property.
 	 */
-	public String getProperty() {
+	public String getProperty()
+	{
 		return property;
 	}
 
 	/**
-	 * @param property
+	 * @param property String set the property.
 	 */
-	public void setProperty(String property) {
+	public void setProperty(String property)
+	{
 		this.property = property;
 	}
 
 	/**
-	 * @return
+	 * @return String size.
 	 */
-	public String getSize() {
+	public String getSize()
+	{
 		return size;
 	}
 
 	/**
-	 * @param size
+	 * @param size String set the size.
 	 */
-	public void setSize(String size) {
+	public void setSize(String size)
+	{
 		this.size = size;
 	}
 
 	/**
-	 * @return
+	 * @return String style class.
 	 */
-	public String getStyleClass() {
+	public String getStyleClass()
+	{
 		return styleClass;
 	}
 
 	/**
-	 * @param styleClass
+	 * @param styleClass set the style class.
 	 */
-	public void setStyleClass(String styleClass) {
+	public void setStyleClass(String styleClass)
+	{
 		this.styleClass = styleClass;
 	}
 
-	public Object getInitialValue() {
+	/**
+	 * @return Object initial value.
+	 */
+	public Object getInitialValue()
+	{
 		return initialValue;
 	}
 
-	public void setInitialValue(Object initialValue) {
-		if (initialValue != null) {
+	/**
+	 * @param initialValue Object set initial value.
+	 */
+	public void setInitialValue(Object initialValue)
+	{
+		if (initialValue != null)
+		{
 			this.initialValue = initialValue.toString();
 		}
 	}
@@ -478,71 +665,81 @@ public class AutoCompleteTag extends TagSupport
 	/**
 	 * @return Returns the onChange.
 	 */
-	public String getOnChange() {
+	public String getOnChange()
+	{
 		return onChange;
 	}
 
 	/**
 	 * @param onChange The onChange to set.
 	 */
-	public void setOnChange(String onChange) {
+	public void setOnChange(String onChange)
+	{
 		this.onChange = onChange;
 	}
 
 	/**
 	 * @return Returns the readOnly.
 	 */
-	public Object getReadOnly() {
+	public Object getReadOnly()
+	{
 		return readOnly;
 	}
 
 	/**
 	 * @param readOnly The readOnly to set.
 	 */
-	public void setReadOnly(Object readOnly) {
+	public void setReadOnly(Object readOnly)
+	{
 		this.readOnly = readOnly;
 	}
 
 	/**
 	 * @return Returns the dependsOn.
 	 */
-	public String getDependsOn() {
+	public String getDependsOn()
+	{
 		return dependsOn;
 	}
 
 	/**
 	 * @param dependsOn The dependsOn to set.
 	 */
-	public void setDependsOn(String dependsOn) {
+	public void setDependsOn(String dependsOn)
+	{
 		this.dependsOn = dependsOn;
 	}
 
 	/**
 	 * @return Returns the staticField.
 	 */
-	public String getStaticField() {
+	public String getStaticField()
+	{
 		return staticField;
 	}
 
 	/**
 	 * @param staticField The staticField to set.
 	 */
-	public void setStaticField(String staticField) {
+	public void setStaticField(String staticField)
+	{
 		this.staticField = staticField;
 	}
 
 	/**
 	 * @return Returns the disabled.
 	 */
-	public Object getDisabled() {
+	public Object getDisabled()
+	{
 		return disabled;
 	}
 
 	/**
 	 * @param disabled The disabled to set.
 	 */
-	public void setDisabled(Object disabled) {
+	public void setDisabled(Object disabled)
+	{
 		this.disabled = disabled;
 	}
-	
+
 }
