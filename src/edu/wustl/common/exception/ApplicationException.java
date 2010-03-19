@@ -16,7 +16,7 @@ public class ApplicationException extends Exception
 	/**
 	 * Wrapped Exception.
 	 */
-	private transient Exception wrapException;
+	private transient final Exception wrapException;
 	/**
 	 * The unique serial version UID.
 	 */
@@ -56,14 +56,14 @@ public class ApplicationException extends Exception
 	 * @param exception root exception, if any, which caused this error.
 	 * @param msgValues custom message, additional information.
 	 */
-	public ApplicationException(ErrorKey errorKey, Exception exception, String msgValues)
+	public ApplicationException(final ErrorKey errorKey, final Exception exception, final String msgValues)
 	{
 		super(exception);
-		this.wrapException = exception;
+		wrapException = exception;
 		if (errorKey == null)
 		{
-			LOGGER.fatal("While constructing application exception errorKey object must not be null");
-			throw new AppRunTimeException();
+			LOGGER.fatal("While constructing application exception errorKey object must not be null"+exception);
+			throw new AppRunTimeException(exception);
 		}
 
 		this.errorKey = errorKey;
@@ -75,7 +75,7 @@ public class ApplicationException extends Exception
 	 * properties of another exception object.
 	 * @param applicationException an exception whose properties will be reused.
 	 */
-	protected ApplicationException(ApplicationException applicationException)
+	protected ApplicationException(final ApplicationException applicationException)
 	{
 		this(applicationException.errorKey,applicationException,applicationException.msgValues);
 	}
@@ -85,9 +85,9 @@ public class ApplicationException extends Exception
 	 */
 	public String getFormattedMessage()
 	{
-		StringBuffer formattedMsg = new StringBuffer();
+		final StringBuffer formattedMsg = new StringBuffer();
 		formattedMsg.append(errorKey.getErrorNumber()).append(":-");
-		String errMsg = errorKey.getMessageWithValues();
+		final String errMsg = errorKey.getMessageWithValues();
 		formattedMsg.append(errMsg);
 		return formattedMsg.toString();
 	}
@@ -102,7 +102,7 @@ public class ApplicationException extends Exception
 	 */
 	public String getLogMessage()
 	{
-		StringBuffer logMsg = new StringBuffer();
+		final StringBuffer logMsg = new StringBuffer();
 		logMsg.append(getFormattedMessage());
 		if (!TextConstants.EMPTY_STRING.equals(getErrorMsg()))
 		{
@@ -150,7 +150,7 @@ public class ApplicationException extends Exception
 	 * Sets errorKey object. This function accessible only by child classes
 	 * @param errorKey erroKey object to be set.
 	 */
-	protected void setErrorKey(ErrorKey errorKey)
+	protected void setErrorKey(final ErrorKey errorKey)
 	{
 		this.errorKey = errorKey;
 	}
@@ -161,7 +161,7 @@ public class ApplicationException extends Exception
 	 */
 	protected String getErrorMsg()
 	{
-		return this.errorMsg;
+		return errorMsg;
 	}
 
 	/**
@@ -170,14 +170,14 @@ public class ApplicationException extends Exception
 	 * errorKey member object.
 	 * @param errorValParam custom error message or values for erroKey text message.
 	 */
-	protected final void setErrorMsg(String errorValParam)
+	protected final void setErrorMsg(final String errorValParam)
 	{
-		this.errorMsg = errorValParam;
+		errorMsg = errorValParam;
 		if (errorValParam.contains(ApplicationException.ERR_MSG_VALUES_SEPARATOR))
 		{
-			this.errorMsg = TextConstants.EMPTY_STRING;
+			errorMsg = TextConstants.EMPTY_STRING;
 			setMsgValues(errorValParam);
-			String[] errorValues = errorValParam.split(ERR_MSG_VALUES_SEPARATOR);
+			final String[] errorValues = errorValParam.split(ERR_MSG_VALUES_SEPARATOR);
 			errorKey.setMessageValues(errorValues);
 		}
 	}
@@ -202,6 +202,14 @@ public class ApplicationException extends Exception
 			super("Failed to construct ApplicationException object."
 					+ " Please see the comple error log above");
 		}
+
+		/**
+         * default constructor.
+         */
+        public AppRunTimeException(final Exception exception)
+        {
+            super(exception);
+        }
 	}
 
 
@@ -234,7 +242,7 @@ public class ApplicationException extends Exception
 	 * sets error message parameters.
 	 * @param msgValues parameters.
 	 */
-	public final void setMsgValues(String msgValues)
+	public final void setMsgValues(final String msgValues)
 	{
 		this.msgValues = msgValues;
 	}
