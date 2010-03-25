@@ -127,6 +127,10 @@ public interface IBizLogic
 	 * @param joinCondition The join condition.
 	 * @return List
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated This method has been deprecated with new DAO implementation.
+	 *  instead of this method retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause)
+			method can be used.
 	 */
 	List retrieve(String sourceObjectName, String[] selectColumnName, // NOPMD
 			String[] whereColumnName, String[] whereColumnCondition, Object[] whereColumnValue,
@@ -165,6 +169,10 @@ public interface IBizLogic
 	 * @param joinCondition The join condition.
 	 * @return List.
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated This method has been deprecated with new DAO implementation.
+	 *  instead of this method retrieve(String sourceObjectName, String[] selectColumnName,
+			QueryWhereClause queryWhereClause)
+			method can be used.
 	 */
 	List retrieve(String sourceObjectName, String[] whereColumnName, // NOPMD
 			String[] whereColumnCondition, Object[] whereColumnValue, String joinCondition)
@@ -176,6 +184,7 @@ public interface IBizLogic
 	 * @param colValue Contains the field value.
 	 * @return List.
 	 * @throws BizLogicException generic BizLogic Exception.
+	 * @deprecated
 	 */
 	List retrieve(String className, String colName, Object colValue)
 			throws BizLogicException;
@@ -344,6 +353,16 @@ public interface IBizLogic
 			throws BizLogicException;
 
 	/**
+	 * Retrieves the records for class name in sourceObjectName according QueryWhereClause.
+	 * @param sourceObjectName :source object name
+	 * @param columnValueBean : column value bean.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * @return list :retrieved objects list
+	 */
+	List<Object> retrieve(String sourceObjectName, ColumnValueBean columnValueBean)
+			throws BizLogicException;
+
+	/**
 	 * Sorting of ID columns.
 	 * @param sourceObjectName source Object Name
 	 * @param selectColumnName Select Column Name
@@ -382,5 +401,8 @@ public interface IBizLogic
 	List getRelatedObjects(DAO dao, Class sourceClass,
 			QueryWhereClause queryWhereClause,List<ColumnValueBean> columnValueBeans)
 			throws BizLogicException;
+
+	Object retrieveAttribute(DAO dao, Class objClass, ColumnValueBean columnValueBean,
+			String attributeName) throws BizLogicException;
 
 }
