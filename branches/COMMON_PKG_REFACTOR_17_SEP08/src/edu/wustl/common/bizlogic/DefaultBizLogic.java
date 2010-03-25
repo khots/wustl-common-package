@@ -396,6 +396,33 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 		return list;
 	}
+
+	/**
+     * Retrieves the records for class name in sourceObjectName according to field values passed.
+     * @param sourceObjectName class Name
+     * @param columnValueBean It holds column name and column values.
+     * @return records
+     * @throws BizLogicException Generic BizLogic Exception
+     */
+    public List retrieve(String sourceObjectName, ColumnValueBean columnValueBean)
+    throws BizLogicException
+    {
+            DAO dao = null;
+            try
+            {
+                    dao = getHibernateDao(getAppName(),null);
+                    return dao.retrieve(sourceObjectName, columnValueBean);
+            }
+            catch (DAOException daoExp)
+            {
+                    LOGGER.debug(daoExp.getMessage(), daoExp);
+                    throw getBizLogicException(daoExp, daoExp.getErrorKeyName(), daoExp.getMsgValues());
+            }
+            finally
+            {
+                    closeSession(dao);
+            }
+    }
 	/**
 	 * Retrieves all the records for class name in sourceObjectName.
 	 * @param sourceObjectName Contains the class name whose records are to be retrieved.
@@ -1423,6 +1450,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 	 * @param query HQL query to execute.
 	 * @throws BizLogicException Generic BizLogic Exception
 	 * @return returner
+	 * @deprecated use List executeQuery(String query,List<ColumnValueBean> beanList)
 	 */
 	public List executeQuery(String query) throws BizLogicException
 	{
@@ -1432,6 +1460,38 @@ public class DefaultBizLogic extends AbstractBizLogic
 		{
 			hibernateDao = getHibernateDao(getAppName(),null);
 			returner = hibernateDao.executeQuery(query);
+		}
+		catch (DAOException exception)
+		{
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(),exception.getMsgValues());
+		}
+		finally
+		{
+			try
+			{
+				hibernateDao.closeSession();
+			}
+			catch (DAOException exception)
+			{
+				LOGGER.debug(exception.getMessage(), exception);
+				exception.printStackTrace();
+				throw getBizLogicException(exception,
+						exception.getErrorKeyName(),exception.getMsgValues());
+			}
+		}
+		return returner;
+	}
+
+	public List executeQuery(String query,List<ColumnValueBean> beanList) throws BizLogicException
+	{
+		DAO hibernateDao = null;
+		List returner = null;
+		try
+		{
+			hibernateDao = getHibernateDao(getAppName(),null);
+			returner = hibernateDao.executeQuery(query,beanList);
 		}
 		catch (DAOException exception)
 		{
@@ -1546,5 +1606,57 @@ public class DefaultBizLogic extends AbstractBizLogic
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
 		}
 		return auditManager;
+	}
+
+	public Object retrieveAttribute(DAO dao, Class objClass, ColumnValueBean columnValueBean,
+			String attributeName) throws BizLogicException
+	{
+		String columnName = Constants.SYSTEM_IDENTIFIER;
+		columnValueBean.setColumnName(columnName);
+		Object attribute = null;
+
+		try
+		{
+			List list = ((HibernateDAO)dao).retrieveAttribute(objClass, columnValueBean, attributeName);
+
+			/*
+			 * if the attribute is of type collection,
+			 *  then it needs to be returned as Collection(HashSet)
+			 */
+			if (Utility.isColumnNameContainsElements(attributeName))
+			{
+				Collection collection = new HashSet();
+				attribute = collection;
+				for (int i = 0; i < list.size(); i++)
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject()
+					 * because it could be proxy object.
+					 */
+					collection.add(HibernateMetaData.getProxyObjectImpl(list.get(i)));
+				}
+			}
+			else
+			{
+				if (!list.isEmpty())
+				{
+					/**
+					 * Name: Prafull
+					 * Calling HibernateMetaData.getProxyObject()
+					 * because it could be proxy object.
+					 */
+					attribute = HibernateMetaData.getProxyObjectImpl(list.get(0));
+				}
+			}
+
+		}
+		catch (DAOException daoExp)
+		{
+			LOGGER.debug(daoExp.getMessage(), daoExp);
+			throw getBizLogicException(daoExp, daoExp.getErrorKeyName(), daoExp.getMsgValues());
+		}
+
+		return attribute;
 	}
 }
