@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuditableMetaData>
+	 <AuditableClass className="edu.wustl.cider.domain.User"
+		relationShipType="main" roleName="">
+		<attribute name="id" dataType="long"/>
+		<attribute name="reasonForDeactivate" dataType="String"/>
+		<attribute name="domainUserId" dataType="String"/>
+		<attribute name="status" dataType="String"/>
+		<attribute name="isHIPAATrained" dataType="boolean"/>
+		<attribute name="isVerifiedByadmin" dataType="boolean"/>
+		<attribute name="isFirstTimeLogin" dataType="boolean"/>
+		<attribute name="termsAcceptenceTime" dataType="Date"/>
+		<attribute name="createdOn" dataType="Date"/>
+		<attribute name="modifiedOn" dataType="Date"/>
+		<attribute name="principalInvestigatorName" dataType="String"/>
+		<attribute name="hippaTrainingId" dataType="String"/>
+		<attribute name="csmUserId" dataType="Long"/>
+		<attribute name="sftpserver" dataType="String"/>
+		<attribute name="sftpdirectory" dataType="String"/>
+		<attribute name="sftpuserid" dataType="String"/>
+		<attribute name="sftppassword" dataType="String"/>
+		<attribute name="principalInvestigator" dataType="edu.wustl.cider.domain.User"/>
+		<attribute name="domain" dataType="edu.wustl.cider.domain.IdentityProvider"/>
+		<attribute name="createdBy" dataType="edu.wustl.cider.domain.User"/>
+		<attribute name="modifiedBy" dataType="edu.wustl.cider.domain.User"/>
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.cider.domain.Project"
+		relationShipType="main" roleName="">
+		<attribute name="id" dataType="long"/>
+		<attribute name="isVerifiedByAdmin" dataType="boolean"/>
+		<attribute name="reasonForDeactivate" dataType="String"/>
+		<attribute name="status" dataType="String"/>
+		<attribute name="name" dataType="String"/>
+		<attribute name="description" dataType="String"/>
+		<attribute name="createdOn" dataType="Date"/>
+		<attribute name="modifiedOn" dataType="Date"/>
+		<attribute name="createdBy" dataType="edu.wustl.cider.domain.User"/>
+		<attribute name="modifiedBy" dataType="edu.wustl.cider.domain.User"/>
+		<containmentAssociationCollection
+			className="edu.wustl.cider.domain.IrbProtocols"
+			relationShipType="containment" 
+			roleName="irbProtocols">
+		</containmentAssociationCollection>
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.cider.domain.IrbProtocols"
+		relationShipType="main" roleName="">
+		<attribute name="id" dataType="long"/>
+		<attribute name="principalInvestigatorName" dataType="String"/>
+		<attribute name="dataViewPrivilege" dataType="String"/>
+		<attribute name="status" dataType="String"/>
+		<attribute name="irbId" dataType="String"/>
+		<attribute name="startDate" dataType="Date"/>
+		<attribute name="endDate" dataType="Date"/>
+		<attribute name="principalInvestigator" dataType="edu.wustl.cider.domain.User"/>
+		<referenceAssociationCollection
+			className="edu.wustl.cider.domain.ProjectRule" relationShipType="association"
+			roleName="rules" />
+		<containmentAssociationCollection
+			className="edu.wustl.cider.domain.File"
+			relationShipType="containment" 
+			roleName="attachments">
+		</containmentAssociationCollection>
+		<referenceAssociationCollection
+			className="edu.wustl.cider.domain.Facility" relationShipType="association"
+			roleName="facilities" />
+		<referenceAssociationCollection
+			className="edu.wustl.cider.domain.User" relationShipType="association"
+			roleName="collaborators" />
+	</AuditableClass>
+	
+	<AuditableClass className="edu.wustl.cider.domain.File"
+		relationShipType="main" roleName="">
+		<attribute name="id" dataType="long"/>
+		<attribute name="fileName" dataType="String"/>
+	</AuditableClass>
+</AuditableMetaData>
