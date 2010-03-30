@@ -1184,10 +1184,10 @@ public class DefaultBizLogic extends AbstractBizLogic
 			ColumnValueBean columnValueBean, String attributeName)
 			throws BizLogicException
 	{
-
 		String columnName = Constants.SYSTEM_IDENTIFIER;
 		DAO dao = null;
 		Object attribute = null;
+		columnValueBean.setColumnName(columnName);
 		try
 		{
 			dao = getHibernateDao(getAppName(),null);
