@@ -25,4 +25,12 @@ public interface IFactory
      * @return An DAO object.
      */
 	IBizLogic getBizLogic(String className);
+	
+	/**
+     * get the BizLogic.
+     * @param domainObj.
+     * @return An DAO object.
+     * Added this method to use shipping & tracking thro' caCore API
+     */
+	IBizLogic getBizLogic(Object domainObj);
 }
