@@ -95,7 +95,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 			list.add(list2);
 			list.add(list3);
 		}
-		return (List<Object>)list;
+		return list;
 	}
 	/**
 	 * This method throws the DAOException.
@@ -191,7 +191,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	 */
 	public List<Object> retrieve(String sourceObjectName) throws DAOException
 	{
-		return (List<Object>)getList();
+		return getList();
 	}
 	/**
 	 * @param sourceObjectName Source Object name.
@@ -202,7 +202,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public List<Object> retrieve(String sourceObjectName, String[] selectColumnName)
 	throws DAOException
 	{
-		return (List<Object>)getList();
+		return getList();
 	}
 
 	/*	public Object retrieve(String sourceObjectName, Long identifier) throws DAOException
@@ -845,7 +845,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 	}
 	public List executeQuery(String arg0, Integer arg1,
-			LinkedList<ColumnValueBean> arg2) throws DAOException 
+			LinkedList<ColumnValueBean> arg2) throws DAOException
 			{
 		// TODO Auto-generated method stub
 		return null;
@@ -939,11 +939,20 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public List executeQuery(String arg0, List<ColumnValueBean> arg1)
-			throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+
+	private static List myList = new ArrayList();
+
+	public static void setData(List dataList)
+	{
+		myList = dataList;
 	}
+
+	public List executeQuery(String arg0, List<ColumnValueBean> arg1) throws DAOException
+	{
+		// TODO Auto-generated method stub
+		return myList;
+	}
+
 	public List executeParamHQL(String arg0, List<ColumnValueBean> arg1)
 			throws DAOException {
 		// TODO Auto-generated method stub
@@ -952,7 +961,7 @@ public class MyDAOImpl implements DAO, HibernateDAO, IDAOFactory, JDBCDAO, IConn
 	public void auditLoginEvents(boolean arg0, LoginDetails arg1)
 			throws AuditException {
 		// TODO Auto-generated method stub
-		
+
 	}
 	public List retrieve(String arg0, ColumnValueBean arg1) throws DAOException {
 		// TODO Auto-generated method stub
