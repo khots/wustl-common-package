@@ -12,6 +12,7 @@ import edu.wustl.common.bizlogic.AbstractBizLogicTestCase;
 import edu.wustl.common.bizlogic.DefaultBizLogicTestCase;
 import edu.wustl.common.datatypes.DataTypeTestCase;
 import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
+import edu.wustl.common.idgenerator.KeySequenceGeneratorTestCases;
 import edu.wustl.common.jobmanager.TestJobManager;
 import edu.wustl.common.util.ExportReportTestCase;
 import edu.wustl.common.util.XMLPropertyHandlerTestCase;
@@ -65,6 +66,7 @@ public class TestAll extends TestCase
 		//suite.addTestSuite(PasswordEncrypterTestCase.class);
 		suite.addTestSuite(ValidatorTestCase.class);
 		suite.addTestSuite(TestJobManager.class);
+		suite.addTestSuite(KeySequenceGeneratorTestCases.class);
 		return suite;
 	}
 }
