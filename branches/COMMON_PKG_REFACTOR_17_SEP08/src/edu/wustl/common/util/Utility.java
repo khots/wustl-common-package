@@ -41,8 +41,6 @@ import edu.wustl.common.util.global.Variables;
 import edu.wustl.common.util.global.XMLParserUtility;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
-import edu.wustl.dao.daofactory.DAOConfigFactory;
-import edu.wustl.dao.daofactory.DAOFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.util.HibernateMetaData;
 import edu.wustl.dao.util.HibernateMetaDataFactory;
@@ -447,8 +445,8 @@ public final class Utility extends CommonUtilities
 		String className = message.substring((startIndex + 1), endIndex);
 		LOGGER.debug("ClassName: " + className);
 		Class classObj = Class.forName(className);
-		
-		
+
+
 		HibernateMetaData hibernateMetaData = HibernateMetaDataFactory
 								.getHibernateMetaData(CommonServiceLocator.getInstance().getAppName()) ;
 		tableName = hibernateMetaData.getRootTableName(classObj); // get table name from class
