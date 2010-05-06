@@ -9,8 +9,6 @@ import java.text.ParseException;
 
 import org.apache.struts.action.ActionErrors;
 
-import edu.wustl.common.util.global.TextConstants;
-
 /**
  * @author prashant_bandal
  *
