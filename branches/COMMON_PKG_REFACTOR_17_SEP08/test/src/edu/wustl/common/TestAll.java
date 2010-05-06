@@ -14,6 +14,7 @@ import edu.wustl.common.datatypes.DataTypeTestCase;
 import edu.wustl.common.factory.AbstractFactoryConfigTestCase;
 import edu.wustl.common.idgenerator.KeySequenceGeneratorTestCases;
 import edu.wustl.common.jobmanager.TestJobManager;
+import edu.wustl.common.tokenprocessor.TokenManagerTestCases;
 import edu.wustl.common.util.ExportReportTestCase;
 import edu.wustl.common.util.XMLPropertyHandlerTestCase;
 import edu.wustl.common.util.global.ApplicationPropertiesTestCase;
@@ -67,6 +68,7 @@ public class TestAll extends TestCase
 		suite.addTestSuite(ValidatorTestCase.class);
 		suite.addTestSuite(TestJobManager.class);
 		suite.addTestSuite(KeySequenceGeneratorTestCases.class);
+		suite.addTestSuite(TokenManagerTestCases.class);
 		return suite;
 	}
 }
