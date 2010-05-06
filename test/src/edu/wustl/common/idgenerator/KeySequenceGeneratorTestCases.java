@@ -28,8 +28,8 @@ public class KeySequenceGeneratorTestCases extends CommonBaseTestCase
 		{
 			List<KeySequenceGenerator> dataList = new ArrayList();
 			MyDAOImpl.setData(dataList);
-			Long uniqueId = KeySequenceGeneratorUtil.getNextUniqeId("100", "test_key_type");
-			assertEquals(Long.valueOf(1), uniqueId);
+			String uniqueId = KeySequenceGeneratorUtil.getNextUniqeId("100", "test_key_type");
+			assertEquals(Long.valueOf(1), Long.valueOf(uniqueId));
 		}
 		catch (DAOException exception)
 		{
@@ -57,8 +57,8 @@ public class KeySequenceGeneratorTestCases extends CommonBaseTestCase
 			dataList.add(generator);
 
 			MyDAOImpl.setData(dataList );
-			Long uniqueId = KeySequenceGeneratorUtil.getNextUniqeId("100", "test_key_type");
-			assertEquals(Long.valueOf(2), uniqueId);
+			String uniqueId = KeySequenceGeneratorUtil.getNextUniqeId("100", "test_key_type");
+			assertEquals(Long.valueOf(2), Long.valueOf(uniqueId));
 		}
 		catch (DAOException exception)
 		{
