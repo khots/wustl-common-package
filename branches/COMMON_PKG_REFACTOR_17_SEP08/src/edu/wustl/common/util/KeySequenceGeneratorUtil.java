@@ -52,10 +52,10 @@ public final class KeySequenceGeneratorUtil
 	 * @throws Exception any exception occurred
 	 */
 	@SuppressWarnings("unchecked")
-	public static synchronized Long getNextUniqeId(final String key, final String type)
+	public static synchronized String getNextUniqeId(final String key, final String type)
 			throws DAOException
 	{
-		Long nextAvailableId = null;
+		String nextAvailableId = null;
 		DAO dao = null;
 		try
 		{
@@ -72,8 +72,8 @@ public final class KeySequenceGeneratorUtil
 					columnValueBeans);
 			if (list.isEmpty())
 			{
-				nextAvailableId = Long.valueOf(1);
-				keySeqObject.setKeySequenceId(Long.valueOf(2).toString());
+				nextAvailableId = "1";
+				keySeqObject.setKeySequenceId("2");
 				keySeqObject.setKeyValue(key);
 				keySeqObject.setKeyType(type);
 				dao.insert(keySeqObject);
@@ -81,7 +81,7 @@ public final class KeySequenceGeneratorUtil
 			else
 			{
 				keySeqObject = list.get(0);
-				nextAvailableId = Long.valueOf(keySeqObject.getKeySequenceId());
+				nextAvailableId = keySeqObject.getKeySequenceId();
 				keySeqObject.setKeySequenceId(Long.valueOf(nextAvailableId + 1).toString());
 				dao.update(keySeqObject);
 			}
