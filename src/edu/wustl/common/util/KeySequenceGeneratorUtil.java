@@ -82,7 +82,8 @@ public final class KeySequenceGeneratorUtil
 			{
 				keySeqObject = list.get(0);
 				nextAvailableId = keySeqObject.getKeySequenceId();
-				keySeqObject.setKeySequenceId(Long.valueOf(nextAvailableId + 1).toString());
+				Long nextKeySequenceId = Long.valueOf(nextAvailableId) + 1;
+				keySeqObject.setKeySequenceId(nextKeySequenceId.toString());
 				dao.update(keySeqObject);
 			}
 			dao.commit();
