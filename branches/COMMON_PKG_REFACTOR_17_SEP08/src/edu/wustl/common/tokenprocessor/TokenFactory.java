@@ -55,7 +55,7 @@ public final class TokenFactory
 				String className = PropertyHandler.getValue(tokenKey);
 				if(Validator.isEmpty(className))
 				{
-					throw new ApplicationException(null, null, "Invalid Token");
+					throw new ApplicationException(null, null, "Invalid Token", "Invalid TokenKey : "+tokenKey);
 				}
 				tokenMap.put(tokenKey, Class.forName(className).newInstance());
 				labelToken = (ILabelTokens) tokenMap.get(tokenKey);

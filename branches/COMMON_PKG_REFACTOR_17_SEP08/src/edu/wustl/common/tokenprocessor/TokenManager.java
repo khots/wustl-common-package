@@ -40,7 +40,6 @@ public class TokenManager
 	public static void parseFormat(final Object object, final String format,
 			final StringBuffer tokenValue) throws ApplicationException
 	{
-
 		final int tokenDelimiterIndex = format.indexOf(Constants.TOKEN_DELIMITER);
 		if (tokenDelimiterIndex > 0)
 		{
@@ -57,7 +56,7 @@ public class TokenManager
 			}
 			catch (StringIndexOutOfBoundsException e)
 			{
-				throw new ApplicationException(null, e, e.getMessage());
+				throw new ApplicationException(null, e, e.getMessage(), "Please enclose tokens between '%' delimiter.");
 			}
 			final String tokenLabel = TokenFactory.getInstance(token).getTokenValue(object);
 			tokenValue.append(tokenLabel);
