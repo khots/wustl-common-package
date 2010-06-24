@@ -3,11 +3,14 @@
  */
 package edu.wustl.common.processor;
 
+import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.domain.UIRepOfDomain;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.dao.HibernateDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
 
 /**
  * The Class CommonEditRequestProcessor is a common request processor
@@ -57,12 +60,35 @@ public class CommonEditRequestProcessor extends CommonAddEditRequestProcessor
         final String objectName = getObjectName(inputDataCarrier);
         final AbstractDomainObject domainObject = getDomainObject(inputDataCarrier, objectName);
         final IBizLogic bizLogic = getBizLogic(inputDataCarrier);
-        final AbstractDomainObject oldObject = (AbstractDomainObject) bizLogic.retrieve(objectName,
-                inputDataCarrier.getObjectId());
-        bizLogic.update(domainObject, oldObject, inputDataCarrier.getSessionData());
-        // bizLogic.insert(domainObject, inputDataCarrier.getSessionData());
-        outputDataCarrier.setDomainObject(domainObject);
-        outputDataCarrier.setDomainObjectName(getObjectName(inputDataCarrier));
-            }
+
+    	HibernateDAO hibernateDao = null;
+		AbstractDomainObject oldObject;
+    	try
+    	{
+    		String appName =((DefaultBizLogic)bizLogic).getAppName();
+			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
+					.getDAO();
+			hibernateDao.openSession(null);
+
+			oldObject = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
+					 inputDataCarrier.getObjectId());
+
+	        bizLogic.update(domainObject, oldObject, inputDataCarrier.getSessionData());
+	        outputDataCarrier.setDomainObject(domainObject);
+	        outputDataCarrier.setDomainObjectName(getObjectName(inputDataCarrier));
+    	}
+	    finally
+		{
+			try
+			{
+				hibernateDao.closeSession();
+			}
+			catch (ApplicationException e)
+			{
+				throw new ApplicationException(e.getErrorKey(), e,e.getMsgValues());
+			}
+		}
+
+      }
 
 }
