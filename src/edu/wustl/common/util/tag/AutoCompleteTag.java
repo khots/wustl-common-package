@@ -226,16 +226,16 @@ public class AutoCompleteTag extends TagSupport
 	 */
 	private StringBuffer getReadOnlyValue()
 	{
-		StringBuffer readOnly = new StringBuffer();
+		StringBuffer readOnlyStr = new StringBuffer();
 		if (readOnly.toString().equalsIgnoreCase(TRUE))
 		{
-			readOnly.append("readonly");
+			readOnlyStr.append("readonly");
 		}
 		else
 		{
-			readOnly.append("onblur=\"").append(onChange).append('\"');
+			readOnlyStr.append("onblur=\"").append(onChange).append('\"');
 		}
-		return readOnly;
+		return readOnlyStr;
 	}
 
 	/**
