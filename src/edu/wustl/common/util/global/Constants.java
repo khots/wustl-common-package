@@ -308,7 +308,7 @@ public final class Constants extends CommonConstants
 	 * error message.
 	 */
 	public static final String CONSTRAINT_VOILATION_ERROR =" Submission failed since a " +
-			"{0} with the same {1} already exists";
+			"{0} with the same {1} already exists.";
 	/**
 	 *  The unique key error message is "Duplicate entry %s for key %d".
 	 *  This string is used for searching " for key " string in the above error message
