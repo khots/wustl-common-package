@@ -58,13 +58,13 @@ public final class Constants extends CommonConstants
 	 * Used in ObjectNotFoundFormatter.java
 	 */
 	public static final String GENERIC_DATABASE_ERROR = "An error occurred during a database operation."
-			+ " Please report this problem to the administrator";
+			+ " Please report this problem to the Administrator.";
 	/**
 	 * Constant for OBJECT_NOT_FOUND_ERROR.
 	 * Used in ObjectNotFoundFormatter.java
 	 */
 	public static final String OBJECT_NOT_FOUND_ERROR = "Submission failed since a {0} with given {1}:"
-			+ " \"{2}\" does not exists";
+			+ " \"{2}\" does not exists.";
 	/**
 	 * Constant for EDIT.
 	 */
