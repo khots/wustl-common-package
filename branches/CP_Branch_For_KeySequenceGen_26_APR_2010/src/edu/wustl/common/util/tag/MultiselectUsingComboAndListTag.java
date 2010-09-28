@@ -1,4 +1,3 @@
-
 package edu.wustl.common.util.tag;
 
 import java.io.IOException;
@@ -355,7 +354,7 @@ public class MultiselectUsingComboAndListTag extends TagSupport
 
 		StringBuffer multiSelectUsingCombosHTMLStr = new StringBuffer(500);
 		multiSelectUsingCombosHTMLStr
-				.append("<table cellpadding='0' cellspacing='0'><tr><td width='35%' valign='top' align='left' style='padding-left:0px'>");
+				.append("<table cellpadding='0' cellspacing='2' width='70%'><tr><td width='35%' valign='top' align='left' style='padding-left:0px'>");
 
 		Object[] inputTagArgs = {identifier, identifier, styleClass, size};
 		multiSelectUsingCombosHTMLStr.append(MessageFormat.format(props
