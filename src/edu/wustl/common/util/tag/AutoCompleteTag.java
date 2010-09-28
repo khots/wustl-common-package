@@ -113,6 +113,11 @@ public class AutoCompleteTag extends TagSupport
 	 *  false - in case of dynamic lists eg. site, user
 	 */
 	private String staticField = TRUE;
+	
+	/**
+	 * Functions to be called when combo-box value changes.
+	 */
+	private String onFocus = "";
 
 	/**
 	 * A call back function, which gets executed by JSP runtime when opening tag
@@ -160,6 +165,7 @@ public class AutoCompleteTag extends TagSupport
 		dependsOn = "";
 		size = "300";
 		disabled = FALSE;
+		onFocus= FALSE;
 	}
 
 	//	@SuppressWarnings("unchecked")
@@ -230,6 +236,10 @@ public class AutoCompleteTag extends TagSupport
 		if (readOnly.toString().equalsIgnoreCase(TRUE))
 		{
 			readOnlyStr.append("readonly");
+		}
+		else if (onFocus.toString().equalsIgnoreCase(TRUE))
+		{
+			readOnlyStr.append("onfocus=\"").append(onChange).append('\"');
 		}
 		else
 		{
@@ -740,6 +750,22 @@ public class AutoCompleteTag extends TagSupport
 	public void setDisabled(Object disabled)
 	{
 		this.disabled = disabled;
+	}
+	
+	/**
+	 * @param Returns the onFocus.
+	 */
+	public String getOnFocus()
+	{
+		return onFocus;
+	}
+
+	/**
+	 * @param onFocus The onFocus to set.
+	 */
+	public void setOnFocus(String onFocus)
+	{
+		this.onFocus = onFocus;
 	}
 
 }
