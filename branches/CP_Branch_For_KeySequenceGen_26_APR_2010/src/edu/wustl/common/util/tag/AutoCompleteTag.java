@@ -658,7 +658,8 @@ public class AutoCompleteTag extends TagSupport
 	{
 		if (initialValue != null)
 		{
-			this.initialValue = initialValue.toString();
+			//Applied escapeHtml to prevent the scripting tags to avoid cross-site scripting attacks
+			this.initialValue = org.apache.commons.lang.StringEscapeUtils.escapeHtml(initialValue.toString());
 		}
 	}
 
