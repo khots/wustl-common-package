@@ -4,6 +4,8 @@
 
 package edu.wustl.common.util.tag;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -277,7 +279,6 @@ public class AutoCompleteTag extends TagSupport
 		 */
 		processStringArrayOptionList();
 		processListOptionList();
-
 	}
 
 	/**
@@ -288,9 +289,9 @@ public class AutoCompleteTag extends TagSupport
 		if (initialValue == null || initialValue.equals(TextConstants.EMPTY_STRING))
 		{
 			initialValue = pageContext.getRequest().getParameter(property);
-
 			assignInitialValue();
 		}
+		initialValue = escapeHtml(initialValue.toString());
 	}
 
 	/**
@@ -321,23 +322,16 @@ public class AutoCompleteTag extends TagSupport
 	{
 		if (optionsList instanceof List)
 		{
-
 			List nvbList = (List) optionsList;
 			if (nvbList != null && !nvbList.isEmpty())
 			{
-
 				// TODO other than NVB
 				NameValueBean nvb1 = (NameValueBean) nvbList.get(0);
 				if (nvb1.getName().equals(Constants.SELECT_OPTION))
 				{
 					nvbList.remove(0);
 				}
-
 			}
-			/* if(nvbList == null || nvbList.size() == 0)
-			{
-				initialValue = "No Records Present"; // needed?
-			}  */
 		}
 	}
 
@@ -370,7 +364,6 @@ public class AutoCompleteTag extends TagSupport
 	//@SuppressWarnings("unchecked")
 	private String getAutocompleteHTMLForDynamicProperty() throws IOException
 	{
-
 		InputStream stream = Utility.getCurrClassLoader().getResourceAsStream("Tag.properties");
 		Properties props = new Properties();
 		props.load(stream);
@@ -454,7 +447,6 @@ public class AutoCompleteTag extends TagSupport
 			List nvbList = (List) optionsList;
 			if (nvbList != null && !nvbList.isEmpty())
 			{
-
 				for (int i = 0; i < nvbList.size(); i++)
 				{
 					NameValueBean nvb = (NameValueBean) nvbList.get(i);
@@ -508,7 +500,7 @@ public class AutoCompleteTag extends TagSupport
 		{
 			name = assignInitialValueToName(displayProperty);
 		}
-		return name;
+		return escapeHtml(name);
 	}
 
 	/**
@@ -517,9 +509,7 @@ public class AutoCompleteTag extends TagSupport
 	 */
 	private String assignInitialValueToName(String displayProperty)
 	{
-		String name;
-		name = pageContext.getRequest().getParameter(displayProperty);
-
+		String name = pageContext.getRequest().getParameter(displayProperty);
 		if (name == null || name.equals(TextConstants.EMPTY_STRING))
 		{
 			String[] title = (String[]) pageContext.getRequest()
@@ -659,7 +649,7 @@ public class AutoCompleteTag extends TagSupport
 		if (initialValue != null)
 		{
 			//Applied escapeHtml to prevent the scripting tags to avoid cross-site scripting attacks
-			this.initialValue = org.apache.commons.lang.StringEscapeUtils.escapeHtml(initialValue.toString());
+			this.initialValue = escapeHtml(initialValue.toString());
 		}
 	}
 
