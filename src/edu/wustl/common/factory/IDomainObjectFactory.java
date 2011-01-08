@@ -12,6 +12,7 @@ package edu.wustl.common.factory;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.UIRepOfDomain;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 
@@ -49,4 +50,26 @@ public interface IDomainObjectFactory
 	 */
 	AbstractActionForm getFormBean(Object domainObject, String operation)
 			throws ApplicationException;
+
+	 /**
+     * Copies the values from specified UI representation into specified domain
+     * object.
+     *
+     * @param domainObject the domain object to be overwritten
+     * @param uiRep the UI representation from which values are to be copied
+     *            into <code>domainObject</code>
+     * @throws AssignDataException
+     */
+    void overwriteDomainObject(AbstractDomainObject domainObject, UIRepOfDomain uiRep) throws AssignDataException;
+
+    /**
+     * Creates a domain object corresponding to specified UI representation.
+     *
+     * @param uiRepOfDomain the UI representation from which a domain object is
+     *            to be created.
+     * @return the domain object corresponding to the specified UI
+     *         representation.
+     * @throws AssignDataException
+     */
+    AbstractDomainObject createDomainObject(UIRepOfDomain uiRepOfDomain) throws AssignDataException;
 }

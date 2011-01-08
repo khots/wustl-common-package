@@ -17,6 +17,7 @@ import java.util.List;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.UIRepOfDomain;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.BizLogicException;
@@ -24,6 +25,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
+import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -619,57 +621,56 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @throws BizLogicException BizLogic Exception
 	 * @return AbstractDomainObject
 	 */
-	public AbstractDomainObject populateDomainObject(String className, Long identifier,
+
+	 public AbstractDomainObject populateDomainObject(String className, Long identifier,
 			IValueObject uiForm) throws BizLogicException
 	{
-		//long startTime = System.currentTimeMillis();
-		DAO dao = null;
-		AbstractDomainObject abstractDomain = null;
-		try
-		{
-			dao = getHibernateDao(getAppName(),null);
-			Object object = dao.retrieveById(className, identifier);
-			abstractDomain = populateFormBean(uiForm, object);
-		}
-		catch (Exception daoExp)
-		{
-			LOGGER.debug(daoExp.getMessage(), daoExp);
-			throw getBizLogicException(daoExp, "biz.popdomain.error",
-					"Exception in domain population");
-		}
-		finally
-		{
-			closeSession(dao);
-		}
-
-		//String simpleClassName = Utility.parseClassName(className);
-		//long endTime = System.currentTimeMillis();
-		//LOGGER.info("EXECUTE TIME FOR RETRIEVE IN EDIT FOR DB - " + simpleClassName + " : "
-		//+ (endTime - startTime));
-
-		return abstractDomain;
+	    return populateDomainObject(className, identifier, (UIRepOfDomain)uiForm);
 	}
+
+	  public AbstractDomainObject populateDomainObject(String className, Long identifier,
+            UIRepOfDomain uiForm) throws BizLogicException
+    {
+        //long startTime = System.currentTimeMillis();
+        DAO dao = null;
+        AbstractDomainObject abstractDomain = null;
+        try
+        {
+            dao = getHibernateDao(getAppName(),null);
+            Object object = dao.retrieveById(className, identifier);
+            abstractDomain = populateFormBean(uiForm, object);
+        }
+        catch (Exception daoExp)
+        {
+            LOGGER.debug(daoExp.getMessage(), daoExp);
+            throw getBizLogicException(daoExp, "biz.popdomain.error",
+                    "Exception in domain population");
+        }
+        finally
+        {
+            closeSession(dao);
+        }
+        return abstractDomain;
+    }
 	/**
 	 * @param uiForm Form object.
 	 * @param object object to populate.
 	 * @return AbstractDomainObject
 	 * @throws AssignDataException throws this exception if not able to set all values.
 	 */
-	private AbstractDomainObject populateFormBean(IValueObject uiForm, Object object)
-			throws AssignDataException
+	private AbstractDomainObject populateFormBean(UIRepOfDomain uiForm, Object object)
+			throws AssignDataException, BizLogicException
 	{
-		AbstractDomainObject abstractDomain = null;
-		if (object != null)
+        AbstractDomainObject abstractDomain = (AbstractDomainObject) object;
+		if (abstractDomain != null)
 		{
 			/*
 			  If the record searched is present in the database,
 			  populate the formbean with the information retrieved.
 			 */
-			abstractDomain = (AbstractDomainObject) object;
-			if (abstractDomain != null)
-			{
-				abstractDomain.setAllValues(uiForm);
-			}
+
+                AbstractFactoryConfig.getInstance().
+                    getDomainObjectFactory().overwriteDomainObject(abstractDomain, uiForm);
 		}
 		return abstractDomain;
 	}
