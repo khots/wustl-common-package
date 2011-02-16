@@ -30,6 +30,7 @@ import edu.wustl.common.factory.AbstractFactoryConfig;
 import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.factory.IForwordToFactory;
+import edu.wustl.common.factory.IUIObjectFactory;
 import edu.wustl.common.util.AbstractForwardToProcessor;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -82,6 +83,26 @@ public abstract class BaseAddEditAction extends XSSSupportedAction
 		{
 			IDomainObjectFactory factory = AbstractFactoryConfig.getInstance()
 					.getDomainObjectFactory();
+			return factory;
+		}
+		catch (BizLogicException exception)
+		{
+			LOGGER.debug("Failed to get object"+exception.getMessage());
+			throw new ApplicationException(exception.getErrorKey(),
+					exception,exception.getMsgValues());
+		}
+	}
+
+	/**
+	 * @return  the object of IUIObjectFactory
+	 * @throws ApplicationException Application Exception.
+	 */
+	public IUIObjectFactory getUIObjectFactory() throws ApplicationException
+	{
+		try
+		{
+			IUIObjectFactory factory = AbstractFactoryConfig.getInstance()
+					.getUIObjectFactory();
 			return factory;
 		}
 		catch (BizLogicException exception)

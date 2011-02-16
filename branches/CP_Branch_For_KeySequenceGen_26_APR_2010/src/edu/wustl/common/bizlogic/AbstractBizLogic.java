@@ -106,6 +106,9 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 */
 	protected abstract void insert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException;
+
+	protected abstract void insert(Object obj, Object uiObject, DAO dao, SessionDataBean sessionDataBean)
+	throws BizLogicException;
 	/**
 	 * Inserts an object into the database.
 	 * @param obj The object to be inserted.
@@ -113,6 +116,8 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected abstract void insert(Object obj, DAO dao) throws BizLogicException;
+
+	protected abstract void insert(Object obj, Object uiObject, DAO dao) throws BizLogicException;
 	/**
 	 * This method gets called after insert method.
 	 * Any logic after inserting object in database can be included here.
@@ -161,6 +166,9 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 */
 	protected abstract void update(DAO dao, Object obj, Object oldObj,
 			SessionDataBean sessionDataBean) throws BizLogicException;
+
+	protected abstract void update(DAO dao, Object obj, Object oldObj, Object uiObject,
+			SessionDataBean sessionDataBean) throws BizLogicException;
 	/**
 	 * This method gets called after update method.
 	 * Any logic after updating into database can be included here.
@@ -179,6 +187,8 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @throws BizLogicException Generic BizLogic Exception
 	 */
 	protected abstract void update(DAO dao, Object obj) throws BizLogicException;
+
+	protected abstract void update(DAO dao, Object obj, Object uiObject) throws BizLogicException;
 	/**
 	 * Validates the domain object for enumerated values.
 	 * @param obj The domain object to be validated.
@@ -250,6 +260,45 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 				validate(obj, dao, Constants.ADD);
 				preInsert(obj, dao, sessionDataBean);
 				insert(obj, sessionDataBean, isInsertOnly, dao);
+				dao.commit();
+				postInsert(obj, dao, sessionDataBean);
+			}
+		}
+		catch (ApplicationException exception)
+		{
+			rollback(dao);
+			String errMssg = getErrorMessage(exception,obj,"Inserting");
+			LOGGER.debug(errMssg, exception);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMssg);
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+	}
+
+	/**
+	 * This method inserts object.
+	 * @param obj obj
+	 * @param uiObject uiObject
+	 * @param sessionDataBean sessionDataBean
+	 * @param isInsertOnly isInsertOnly
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	private void insert(Object obj, Object uiObject, SessionDataBean sessionDataBean, boolean isInsertOnly)
+	throws BizLogicException
+	{
+		DAO dao = null;
+		try
+		{
+			dao = getHibernateDao(getAppName(),sessionDataBean);
+			// Authorization to ADD object checked here
+			if (isAuthorized(dao, obj, sessionDataBean))
+			{
+				validate(obj, dao, Constants.ADD);
+				preInsert(obj, dao, sessionDataBean);
+				insert(obj, uiObject, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
 				postInsert(obj, dao, sessionDataBean);
 			}
@@ -362,6 +411,28 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			insert(obj, dao, sessionDataBean);
 		}
 	}
+
+	/**
+	 * This method inserts the object.
+	 * @param obj obj
+	 * @param uiObject uiObject
+	 * @param sessionDataBean sessionDataBean
+	 * @param isInsertOnly isInsertOnly
+	 * @param dao dao
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	private void insert(Object obj, Object uiObject, SessionDataBean sessionDataBean, boolean isInsertOnly, DAO dao)
+	throws BizLogicException
+	{
+		if (isInsertOnly)
+		{
+			insert(obj, uiObject, dao);
+		}
+		else
+		{
+			insert(obj, uiObject, dao, sessionDataBean);
+		}
+	}
 	/**
 	 * This method insert object.
 	 * @param obj object to be insert
@@ -387,6 +458,19 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	public final void insert(Object obj, SessionDataBean sessionDataBean) throws BizLogicException
 	{
 		insert(obj, sessionDataBean, false);
+	}
+
+	/**
+	 * This method inserts the object.
+	 * @param obj object to be insert
+	 * @param uiObject uiObject
+	 * @param sessionDataBean session specific Data
+	 * @exception BizLogicException BizLogic Exception
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	public final void insert(Object obj, Object uiObject, SessionDataBean sessionDataBean) throws BizLogicException
+	{
+		insert(obj, uiObject, sessionDataBean, false);
 	}
 	/**
 	 * This method insert object.
@@ -458,6 +542,57 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			closeSession(dao);
 		}
 	}
+
+	/**
+	 * Updates an object into the database.
+	 * @param currentObj The object to be updated.
+	 * @param oldObj old Object
+	 * @param uiObject uiObject
+	 * @param sessionDataBean session specific Data
+	 * @param isUpdateOnly isUpdateOnly
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	private void update(Object currentObj, Object oldObj, Object uiObject, SessionDataBean sessionDataBean,
+			boolean isUpdateOnly) throws BizLogicException
+	{
+		DAO dao = null;
+		try
+		{
+			dao = getHibernateDao(getAppName(),sessionDataBean);
+			// Authorization to UPDATE object checked here
+			if (isAuthorized(dao, currentObj, sessionDataBean))
+			{
+				validate(currentObj, dao, Constants.EDIT);
+				preUpdate(dao, currentObj, oldObj, sessionDataBean);
+				if (isUpdateOnly)
+				{
+					update(dao, currentObj, uiObject);
+				}
+				else
+				{
+					update(dao, currentObj, oldObj, uiObject, sessionDataBean);
+				}
+				dao.commit();
+				postUpdate(dao, currentObj, oldObj, sessionDataBean);
+			}
+			else
+			{
+				throw getBizLogicException(null, "access.execute.action.denied","");
+			}
+		}
+		catch (ApplicationException exception)
+		{
+			rollback(dao);
+			String errMsg = getErrorMessage(exception,currentObj,"Updating");
+			LOGGER.debug(errMsg, exception);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMsg);
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+	}
 	/**
 	 * Updates an object into the database.
 	 * @param currentObj The object to be updated.
@@ -485,6 +620,20 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			throws BizLogicException
 	{
 		update(currentObj, oldObj, sessionDataBean, false);
+	}
+
+	/**
+	 * Updates an object into the database.
+	 * @param currentObj The object to be updated.
+	 * @param oldObj old Object
+	 * @param uiObject uiObject
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	public final void update(Object currentObj, Object oldObj, Object uiObject, SessionDataBean sessionDataBean)
+	throws BizLogicException
+	{
+		update(currentObj, oldObj, uiObject, sessionDataBean, false);
 	}
 	/**
 	 * Updates an object into the database.

@@ -263,4 +263,26 @@ public final class AbstractFactoryConfig
 		}
 
 	}
+
+	/**
+	 * Get the UI Object Factory.
+	 * @return IUIObjectFactory
+	 * @throws BizLogicException BizLogic Exception.
+	 */
+	public IUIObjectFactory getUIObjectFactory() throws BizLogicException
+	{
+		try
+		{
+			String className = getFactClassName("uiObjectFactory");
+			Class<IUIObjectFactory> factoryClass = (Class<IUIObjectFactory>) Class
+			.forName(className);
+			return factoryClass.newInstance();
+		}
+		catch(Exception exception)
+		{
+			LOGGER.error(exception.getMessage(), exception);
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
+					"");
+		}
+	}
 }

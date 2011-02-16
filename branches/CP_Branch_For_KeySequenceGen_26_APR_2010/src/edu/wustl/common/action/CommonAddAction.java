@@ -18,10 +18,12 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.beans.AddNewSessionDataBean;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.UIObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.AssignDataException;
 import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.factory.IDomainObjectFactory;
+import edu.wustl.common.factory.IUIObjectFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -163,8 +165,25 @@ public class CommonAddAction extends BaseAddEditAction
 			IDomainObjectFactory abstractDomainObjectFactory = getIDomainObjectFactory();
 			abstractDomain = abstractDomainObjectFactory.getDomainObject(abstractForm.getFormId(),
 					abstractForm);
+			IUIObjectFactory uiObjectFactory = getUIObjectFactory();
+
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
-			bizLogic.insert(abstractDomain, getSessionData(request));
+			if(uiObjectFactory == null)
+			{
+				bizLogic.insert(abstractDomain, getSessionData(request));
+			}
+			else
+			{
+				UIObject uiObject = uiObjectFactory.getUIObject(abstractForm);
+				if(uiObject == null)
+				{
+					bizLogic.insert(abstractDomain, getSessionData(request));
+				}
+				else
+				{
+					bizLogic.insert(abstractDomain, uiObject, getSessionData(request));
+				}
+			}
 
 			return abstractDomain;
 		}

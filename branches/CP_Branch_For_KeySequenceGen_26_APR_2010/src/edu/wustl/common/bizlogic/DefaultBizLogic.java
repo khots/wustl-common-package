@@ -116,6 +116,29 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 
 	}
+
+	/**
+	 * Inserts an object into the database.
+	 * @param obj The object to be inserted.
+	 * @param uiObject uiObject
+	 * @param dao The dao object.
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	protected void insert(Object obj, Object uiObject, DAO dao, SessionDataBean sessionDataBean)
+	throws BizLogicException
+	{
+		try
+		{
+			dao.insert(obj);
+		}
+		catch (DAOException exception)
+		{
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(),exception.getMsgValues());
+		}
+	}
 	/**
 	 * This method gets called after insert method.
 	 * Any logic after inserting object in database can be included here.
@@ -129,6 +152,21 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		// Empty postInsert method.
 	}
+	/**
+	 * This method gets called after insert method.
+	 * Any logic after inserting object in database can be included here.
+	 * @param obj The inserted object.
+	 * @param uiObject uiObject
+	 * @param dao the dao object
+	 * @param sessionDataBean session specific data
+	 * @throws BizLogicException Generic BizLogic Exception
+	 * */
+	protected void postInsert(Object obj, Object uiObject, DAO dao, SessionDataBean sessionDataBean)
+	throws BizLogicException
+	{
+		// Empty postInsert method.
+	}
+
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -1025,6 +1063,25 @@ public class DefaultBizLogic extends AbstractBizLogic
 		}
 	}
 	/**
+	 * This method insert object.
+	 * @param obj object to be inserted.
+	 * @param uiObject uiObject
+	 * @param dao The dao object.
+	 * @throws BizLogicException Generic BizLogic Exception
+	 */
+	protected void insert(Object obj, Object uiObject, DAO dao) throws BizLogicException
+	{
+		try
+		{
+			dao.insert(obj);
+		}
+		catch (DAOException daoEx)
+		{
+			LOGGER.debug(daoEx.getMessage(), daoEx);
+			throw getBizLogicException(daoEx, daoEx.getErrorKeyName(), daoEx.getMsgValues());
+		}
+	}
+	/**
 	 * This method updates object in database.
 	 * @param dao The dao object.
 	 * @param obj object to be updated.
@@ -1382,5 +1439,46 @@ public class DefaultBizLogic extends AbstractBizLogic
 			auditManager.setIpAddress(sessionDataBean.getIpAddress());
 		}
 		return auditManager;
+	}
+
+	protected void update(DAO dao, Object obj, Object oldObj, Object uiObject,
+			SessionDataBean sessionDataBean) throws BizLogicException
+	{
+		try
+		{
+			dao.update(obj,oldObj);
+		}
+		catch (DAOException exception)
+		{
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception, exception.getErrorKeyName(),
+					exception.getMsgValues());
+		}
+	}
+
+	protected void update(DAO dao, Object obj, Object uiObject)
+			throws BizLogicException
+	{
+		try
+		{
+			dao.update(obj);
+		}
+		catch (DAOException exception)
+		{
+			LOGGER.debug(exception.getMessage(), exception);
+			throw getBizLogicException(exception,
+					exception.getErrorKeyName(), exception.getMsgValues());
+		}
+	}
+
+	public void delete(Object obj, Object uiObj) throws BizLogicException
+	{
+		// TODO Auto-generated method stub
+
+	}
+	public void insert(Object obj, Object uiObject) throws BizLogicException
+	{
+		// TODO Auto-generated method stub
+
 	}
 }
