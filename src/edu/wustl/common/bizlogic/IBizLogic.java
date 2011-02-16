@@ -39,6 +39,14 @@ public interface IBizLogic
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void delete(Object obj) throws BizLogicException;
+
+	/**
+	 * Deletes an object from the database.
+	 * @param obj The object to be deleted.
+	 * @param uiObj Corresponding UIObject.
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	void delete(Object obj, Object uiObj) throws BizLogicException;
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
@@ -58,6 +66,17 @@ public interface IBizLogic
 	 */
 	void insert(Object obj, SessionDataBean sessionDataBean)
 			throws BizLogicException;
+
+	/**
+	 * Inserts an object from database.
+	 * @param obj The object to be Inserted.
+	 * @param uiObj The object to be Inserted.
+	 * @param sessionDataBean session specific Data
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	void insert(Object obj, Object uiObject, SessionDataBean sessionDataBean)
+	throws BizLogicException;
+
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
@@ -73,6 +92,13 @@ public interface IBizLogic
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void insert(Object obj) throws BizLogicException;
+	/**
+	 * Inserts an object from database.
+	 * @param obj The object to be Inserted.
+	 * @param uiObject Corresponding UIObject.
+	 * @throws BizLogicException BizLogic Exception
+	 */
+	void insert(Object obj, Object uiObject) throws BizLogicException;
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
@@ -94,6 +120,9 @@ public interface IBizLogic
 	 * @throws BizLogicException BizLogic Exception
 	 */
 	void update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean)
+	throws BizLogicException;
+
+	void update(Object currentObj, Object oldObj, Object uiObject, SessionDataBean sessionDataBean)
 	throws BizLogicException;
 	/**
 	 * Updates an object.

@@ -16,8 +16,10 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
+import edu.wustl.common.domain.UIObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.factory.IUIObjectFactory;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
@@ -164,7 +166,23 @@ public class CommonEdtAction extends BaseAddEditAction
 			AbstractDomainObject abstractDomainOld;
 			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
 					abstractForm.getId());
-			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
+			IUIObjectFactory uiObjectFactory = getUIObjectFactory();
+			if(uiObjectFactory == null)
+			{
+				bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
+			}
+			else
+			{
+				UIObject uiObject = uiObjectFactory.getUIObject(abstractForm);
+				if(uiObject == null)
+				{
+					bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
+				}
+				else
+				{
+					bizLogic.update(abstractDomain, abstractDomainOld, uiObject, getSessionData(request));
+				}
+			}
 		}
 		finally
 		{
