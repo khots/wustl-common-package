@@ -248,6 +248,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return true;
 	}
+
+	protected boolean validate(Object obj, DAO dao, String operation,
+			Object uiObject) throws BizLogicException {
+		return true;
+	}
+
 	/**
 	 * Retrieves the records for class name in sourceObjectName according to field values passed.
 	 * @param sourceObjectName	source object name
@@ -1420,6 +1426,13 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return false;
 	}
+
+	public boolean isAuthorized(DAO dao, Object domainObject, SessionDataBean sessionDataBean,Object uiObject)
+	throws BizLogicException
+	{
+		return false;
+	}
+
 	/**
 	 * This method will be called to return the Audit manager.
 	 * @param sessionDataBean SessionDataBean sessionDataBean object
@@ -1481,4 +1494,12 @@ public class DefaultBizLogic extends AbstractBizLogic
 		// TODO Auto-generated method stub
 
 	}
+
+	protected void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean, Object uiObject)
+			throws BizLogicException
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

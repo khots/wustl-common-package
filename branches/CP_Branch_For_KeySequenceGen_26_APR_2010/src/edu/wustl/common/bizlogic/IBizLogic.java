@@ -173,6 +173,21 @@ public interface IBizLogic
 	 */
 	boolean isAuthorized(DAO dao, Object domainObject,
 			SessionDataBean sessionDataBean) throws BizLogicException;
+
+	/**
+	 * This method checks for a particular privilege on a particular Object_Id.
+	 * Gets privilege name as well as Object_Id from appropriate BizLogic
+	 * depending on the context of the operation.
+	 * @param dao The dao object.
+	 * @param domainObject domain Object.
+	 * @param sessionDataBean session specific Data
+	 * @return Authorized or not.
+	 * @throws BizLogicException generic BizLogic Exception.
+	 * @see edu.wustl.common.bizlogic.IBizLogic#isAuthorized
+	 * (edu.wustl.common.dao.DAO, java.lang.Object, edu.wustl.common.beans.SessionDataBean)
+	 */
+	boolean isAuthorized(DAO dao, Object domainObject,
+			SessionDataBean sessionDataBean,Object uiObject) throws BizLogicException;
 	/**
 	 * This method returns the protection element name which should be used to authorize.
 	 * Default Implementation

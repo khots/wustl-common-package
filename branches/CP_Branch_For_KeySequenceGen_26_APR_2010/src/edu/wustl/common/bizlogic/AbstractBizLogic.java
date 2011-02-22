@@ -128,6 +128,9 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * */
 	protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean)
 			throws BizLogicException;
+
+	protected abstract void postInsert(Object obj, DAO dao, SessionDataBean sessionDataBean,Object uiObject)
+	throws BizLogicException;
 	/**
 	 * This method gets called after insert method.
 	 * Any logic after inserting object in database can be included here.
@@ -199,6 +202,10 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 */
 	protected abstract boolean validate(Object obj, DAO dao, String operation)
 			throws BizLogicException;
+
+	protected abstract boolean validate(Object obj, DAO dao, String operation,Object uiObject)
+	throws BizLogicException;
+
 	/**
 	 * Deletes an object from the database.
 	 * @param obj The object to be deleted.
@@ -294,13 +301,14 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 		{
 			dao = getHibernateDao(getAppName(),sessionDataBean);
 			// Authorization to ADD object checked here
-			if (isAuthorized(dao, obj, sessionDataBean))
+			//if (isAuthorized(dao, obj, sessionDataBean))
+			 if(isAuthorized(dao,obj,sessionDataBean,uiObject))
 			{
-				validate(obj, dao, Constants.ADD);
+				validate(obj, dao, Constants.ADD,uiObject);
 				preInsert(obj, dao, sessionDataBean);
 				insert(obj, uiObject, sessionDataBean, isInsertOnly, dao);
 				dao.commit();
-				postInsert(obj, dao, sessionDataBean);
+				postInsert(obj, dao, sessionDataBean,uiObject);
 			}
 		}
 		catch (ApplicationException exception)
@@ -332,6 +340,13 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	{
 		insert(objCollection, sessionDataBean, isInsertOnly);
 	}
+
+	public final void insert(Collection<AbstractDomainObject> objCollection,
+			SessionDataBean sessionDataBean, int daoType, boolean isInsertOnly,Object uiObject)
+			throws BizLogicException
+	{
+		insert(objCollection, sessionDataBean, isInsertOnly,uiObject);
+	}
 	/**
 	 * This method insert collection of objects.
 	 * @param objCollection Collection of objects to be inserted
@@ -348,6 +363,34 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			dao = getHibernateDao(getAppName(),sessionDataBean);
 			preInsert(objCollection, dao, sessionDataBean);
 			insertMultiple(objCollection, dao, sessionDataBean);
+			dao.commit();
+			postInsert(objCollection, dao, sessionDataBean);
+		}
+		catch (ApplicationException exception)
+		{
+			rollback(dao);
+			String errMsg = getErrorMessage(exception,objCollection,"Inserting");
+			LOGGER.debug(errMsg, exception);
+			throw new BizLogicException(exception.getErrorKey(),
+					exception,exception.getMsgValues(),errMsg);
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+	}
+
+
+
+	public final void insert(Collection<AbstractDomainObject> objCollection,
+			SessionDataBean sessionDataBean, boolean isInsertOnly,Object uiObject) throws BizLogicException
+	{
+		DAO dao = null;
+		try
+		{
+			dao = getHibernateDao(getAppName(),sessionDataBean);
+			preInsert(objCollection, dao, sessionDataBean);
+			insertMultiple(objCollection, dao, sessionDataBean,uiObject);
 			dao.commit();
 			postInsert(objCollection, dao, sessionDataBean);
 		}
@@ -392,6 +435,29 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			insert(obj, sessionDataBean, false, dao);
 		}
 	}
+
+
+	public final void insertMultiple(Collection<AbstractDomainObject> objCollection, DAO dao,
+			SessionDataBean sessionDataBean,Object uiObject) throws BizLogicException
+	{
+		//  Authorization to ADD multiple objects (e.g. Aliquots) checked here
+		for (AbstractDomainObject obj : objCollection)
+		{
+			if (isAuthorized(dao, obj, sessionDataBean))
+			{
+				validate(obj, dao, Constants.ADD);
+			}
+			else
+			{
+				ErrorKey errorKey = ErrorKey.getErrorKey("access.execute.action.denied");
+				throw new BizLogicException(errorKey, null,	"");
+			}
+		}
+		for (AbstractDomainObject obj : objCollection)
+		{
+			insert(obj,uiObject, sessionDataBean, false, dao);
+		}
+	}
 	/**
 	 * @param obj object to be insert and validate
 	 * @param sessionDataBean session specific Data
@@ -411,6 +477,7 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			insert(obj, dao, sessionDataBean);
 		}
 	}
+
 
 	/**
 	 * This method inserts the object.
@@ -560,9 +627,9 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 		{
 			dao = getHibernateDao(getAppName(),sessionDataBean);
 			// Authorization to UPDATE object checked here
-			if (isAuthorized(dao, currentObj, sessionDataBean))
+			if (isAuthorized(dao, currentObj, sessionDataBean,uiObject))
 			{
-				validate(currentObj, dao, Constants.EDIT);
+				validate(currentObj, dao, Constants.EDIT,uiObject);
 				preUpdate(dao, currentObj, oldObj, sessionDataBean);
 				if (isUpdateOnly)
 				{
