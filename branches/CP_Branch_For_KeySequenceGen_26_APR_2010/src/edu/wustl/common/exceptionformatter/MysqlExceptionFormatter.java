@@ -50,8 +50,9 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter // NOPMD
 			indexofMsg += Constants.MYSQL_DUPL_KEY_MSG.length();
 			// Get the %d part of the string
 			String strKey = sqlMessage.substring(indexofMsg, sqlMessage.length() - 1);
-			key = Integer.parseInt(strKey);
-			logger.debug(String.valueOf(key));
+			strKey = strKey.replace('\'', ' ').trim();
+			//key = Integer.parseInt(strKey);
+			//logger.debug(String.valueOf(key));
 			// For the key extracted frm the string, get the column name on which costraint has failed
 			boolean found = false;
 			/*// get connection from arguments
@@ -66,7 +67,7 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter // NOPMD
 			while (rs.next())	// In this loop, all the indexes are stored as key of the HashMap
 			{					// and the column names are stored as value.
 				logger.debug("Key: " + indexCount);
-				if (key == indexCount)
+				if (strKey.equals(rs.getString("COLUMN_NAME")))
 				{
 					constraintVoilated = rs.getString(INDEX_NAME);
 					logger.debug("Constraint: " + constraintVoilated);
@@ -84,7 +85,7 @@ public class MysqlExceptionFormatter implements IDBExceptionFormatter // NOPMD
 				else
 				{
 					temp = new StringBuffer(rs.getString("COLUMN_NAME"));
-					temp.append(","); 		//temp.append(rs.getString("COLUMN_NAME"));
+					//temp.append(","); 		//temp.append(rs.getString("COLUMN_NAME"));
 					indexDetails.put(rs.getString(INDEX_NAME), temp);
 				}
 				indexCount++; // increment record count*/
