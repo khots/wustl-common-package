@@ -10,7 +10,7 @@ package edu.wustl.common.lookup;
 import java.io.Serializable;
 
 /**
- * This contains the matching object with probablity match.
+ * This contains the matching object with probability match.
  * @author vaishali_khandelwal
  *
  */
@@ -34,7 +34,7 @@ public class DefaultLookupResult implements Serializable
 	/**
 	 * isSSNPMI.
 	 */
-	private MatchingStatusForSSNPMI isSSNPMI;
+	private String isSSNPMI;
 
 	/**
 	 * exactMatching.
@@ -43,9 +43,9 @@ public class DefaultLookupResult implements Serializable
 
 	/**
 	 * get IsSSNPMI.
-	 * @return MatchingStatusForSSNPMI.
+	 * @return String.
 	 */
-	public MatchingStatusForSSNPMI getIsSSNPMI()
+	public String getIsSSNPMI()
 	{
 		return isSSNPMI;
 	}
@@ -54,7 +54,7 @@ public class DefaultLookupResult implements Serializable
 	 * set IsSSNPMI.
 	 * @param isSSNPMI isSSNPMI.
 	 */
-	public void setIsSSNPMI(MatchingStatusForSSNPMI isSSNPMI)
+	public void setIsSSNPMI(String isSSNPMI)
 	{
 		this.isSSNPMI = isSSNPMI;
 	}
