@@ -1317,6 +1317,19 @@ public class DefaultBizLogic extends AbstractBizLogic
 	{
 		return Constants.ALLOW_OPERATION;
 	}
+
+	/**
+	 * @see edu.wustl.common.bizlogic.IBizLogic#getObjectId(edu.wustl.common.dao.DAO, java.lang.Object, java.lang.Object)
+	 * @param dao The dao object.
+	 * @param domainObject Object on which authorization is required.
+	 * @param uiObject Object which stores  the transient objects for the domain Object.
+	 * @return allow Operation.
+	 * @throws BizLogicException throw BizLogicException
+	 */
+	public String getObjectId(DAO dao, Object domainObject, Object uiObject)throws BizLogicException
+	{
+		return Constants.ALLOW_OPERATION;
+	}
 	/**
 	 * Executes the HQL query.
 	 * @param query HQL query to execute.
