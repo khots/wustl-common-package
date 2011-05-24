@@ -4,8 +4,15 @@
 
 package edu.wustl.common.tokenprocessor;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.nfunk.jep.JEP;
+import org.nfunk.jep.Node;
+
 import edu.wustl.common.exception.ApplicationException;
-import edu.wustl.common.util.global.Constants;
 
 /**
  * @author suhas_khot
@@ -20,12 +27,12 @@ public class TokenManager
 	 * @param format
 	 * @throws ApplicationException
 	 */
+	private static final JEP parser = new JEP();
+
 	public static String getLabelValue(final Object object, final String format)
 			throws ApplicationException
 	{
-		StringBuffer tokenLabel = new StringBuffer();
-		parseFormat(object, format, tokenLabel);
-		return tokenLabel.toString();
+		return parseFormat(object, format.trim());
 	}
 
 	/**
@@ -37,36 +44,75 @@ public class TokenManager
 	 * @param fileName
 	 * @throws ApplicationException
 	 */
-	public static void parseFormat(final Object object, final String format,
-			final StringBuffer tokenValue) throws ApplicationException
+	public static String parseFormat(final Object object, String format)
+			throws ApplicationException
 	{
-		final int tokenDelimiterIndex = format.indexOf(Constants.TOKEN_DELIMITER);
-		if (tokenDelimiterIndex > 0)
+		StringBuffer tokenValue = new StringBuffer();
+		try
 		{
-			tokenValue.append(format.substring(0, tokenDelimiterIndex));
-			parseFormat(object, format.substring(tokenDelimiterIndex), tokenValue);
-		}
-		else if (tokenDelimiterIndex == 0)
-		{
-			String token;
-			try
+			int formateStringEndsAt=format.indexOf("\"",1)+1;
+			String formateString = format.substring(0, formateStringEndsAt).trim().replace("\"","");
+			String remainingString=format.substring(formateStringEndsAt,format.length()).trim();
+			int valueStringStartsAt=remainingString.indexOf(",")+1;
+			String valueString = remainingString.substring(valueStringStartsAt,remainingString.length()).trim();
+			String[] valueStringArray = valueString.split(",");
+			String value = null;
+			ArrayList<Object> values = new ArrayList<Object>();
+			Enumeration<Object> allKeys = null;
+			Node parsedExpressionNode = null;
+			Double evaluatedValue = null;
+			String keyWord = null;
+			for (int i = 0; i < valueStringArray.length; i++)
 			{
-				token = format.substring(tokenDelimiterIndex + 1, format.indexOf(
-						Constants.TOKEN_DELIMITER, tokenDelimiterIndex + 1));
+				allKeys = PropertyHandler.getAllKeys();
+				value = valueStringArray[i].toString();
+				value=" "+value.replaceAll(" ", "")+" ";
+				while (allKeys.hasMoreElements())
+				{
+					keyWord = (String) allKeys.nextElement();
+					value = getValueAfterProcessingKey(object, value, keyWord);
+				}
+				parsedExpressionNode = parser.parse(value);
+				evaluatedValue = Double.parseDouble(String.valueOf(parser.evaluate(parsedExpressionNode)));
+				values.add(evaluatedValue.longValue());
 			}
-			catch (StringIndexOutOfBoundsException e)
-			{
-				throw new ApplicationException(null, e, e.getMessage(), "Please enclose tokens between '%' delimiter.");
-			}
-			final String tokenLabel = TokenFactory.getInstance(token).getTokenValue(object);
-			tokenValue.append(tokenLabel);
-			final int nextDelimiterIndex = token.length() + 2;
-			parseFormat(object, format.substring(nextDelimiterIndex), tokenValue);
+			tokenValue.append(String.format(formateString, values.toArray()));
 		}
-		else if (tokenDelimiterIndex == -1)
+		catch (ArrayIndexOutOfBoundsException e)
 		{
-			tokenValue.append(format);
+			throw new ApplicationException(null, e, e.getMessage(),
+					"Auto Id generation format seems invalid.Contact administrator.");
 		}
+		catch (StringIndexOutOfBoundsException e)
+		{
+			throw new ApplicationException(null, e, e.getMessage(),
+					"Please enclose tokens between '%' delimiter.");
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			throw new ApplicationException(null, e, e.getMessage(), "Error while generating PPID.");
+		}
+		return tokenValue.toString();
+	}
+
+	private static String getValueAfterProcessingKey(final Object object, String value,
+			String keyWord) throws ApplicationException
+	{
+		String token=null;
+		String finalValue=value;// CSID+MICSID
+		String pattern="[^\\w]"+keyWord+"[^\\w]";// [^\\w]CSID[^\\w]
+		Pattern tokenPattern = Pattern.compile(pattern);
+		Matcher tokenMatcher = tokenPattern.matcher(value);
+		while (tokenMatcher.find() )
+        {
+			token = TokenFactory.getInstance(keyWord).getTokenValue(object);//4
+			String patternString=value.substring(tokenMatcher.start(),tokenMatcher.end());// 4+
+			String patternStringWithTokenValue=patternString.replace(keyWord,token);
+			finalValue=finalValue.replace(patternString,patternStringWithTokenValue);
+        }
+
+		return finalValue;
 	}
 
 }

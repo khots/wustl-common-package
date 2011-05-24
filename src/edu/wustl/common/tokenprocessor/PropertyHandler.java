@@ -4,6 +4,7 @@ package edu.wustl.common.tokenprocessor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import edu.wustl.common.util.global.CommonServiceLocator;
@@ -59,6 +60,16 @@ public final class PropertyHandler
 			init(Constants.LABEL_TOKEN_PROP_FILE_NAME);
 		}
 		return (String) labelTokenProperties.get(propertyName);
+
+	}
+	public static synchronized Enumeration<Object> getAllKeys() throws Exception
+	{
+
+		if (labelTokenProperties == null)
+		{
+			init(Constants.LABEL_TOKEN_PROP_FILE_NAME);
+		}
+		return labelTokenProperties.keys();
 
 	}
 
