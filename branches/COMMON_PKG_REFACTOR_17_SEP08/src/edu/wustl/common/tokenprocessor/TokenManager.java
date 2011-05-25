@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Node;
+import org.nfunk.jep.ParseException;
 
 import edu.wustl.common.exception.ApplicationException;
 
@@ -88,11 +89,16 @@ public class TokenManager
 			throw new ApplicationException(null, e, e.getMessage(),
 					"Please enclose tokens between '%' delimiter.");
 		}
+		catch (ParseException e)
+		{
+			throw new ApplicationException(null, e, e.getMessage(), "Error while generating PPID.");
+		}
 		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			throw new ApplicationException(null, e, e.getMessage(), "Error while generating PPID.");
 		}
+
 		return tokenValue.toString();
 	}
 
