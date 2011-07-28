@@ -78,6 +78,7 @@ public final class PasswordManager
 	 *  constant for MINIMUM_PASSWORD_LENGTH.
 	 */
 	public static final String MINIMUM_PASSWORD_LENGTH = "minimumPasswordLength";
+	public static final String PASSWORD_NOT_SAMEAS_LAST_N="password.not_same_as_last_n";
 	/**
 	 *  constant for USER_CLASS_NAME.
 	 */
@@ -118,6 +119,10 @@ public final class PasswordManager
 	 *  specify fail invalid session.
 	 */
 	public static final int FAIL_INVALID_SESSION = 7;
+	public static final int FAIL_IN_UCASE=8;
+	public static final int FAIL_IN_LCASE=9;
+	public static final int FAIL_IN_NUMBER=10;
+	public static final int FAIL_IN_SPACE=11;
 	/**
 	 *  15 in hexa-decimal.
 	 */
@@ -317,32 +322,14 @@ public final class PasswordManager
 	 * @return SUCCESS if all condition passed
 	 *   else return respective error code (constant int) value
 	 */
-	public static int validatePasswordOnFormBean(String newPassword, String oldPassword,
-			Boolean pwdChangedInsameSession)
+	public static int validatePasswordOnFormBean(String newPassword, String oldPassword)
 	{
 		int errorNo = NOT_FAILED;
-		errorNo = chkChangePassInSameSession(pwdChangedInsameSession, errorNo);
 		errorNo = chkPassForMinLength(newPassword, errorNo);
-		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
 		errorNo = getErrorNumber(newPassword, errorNo);
 		return errorNo;
 	}
-	/**
-	 * to Check new password is different as old password ,if both are same return FAIL_SAME_AS_OLD.
-	 * @param newPassword new password
-	 * @param oldPassword old password.
-	 * @param erNo error number-method body executes only when there is no error earlier.
-	 * @return int error number or -1
-	 */
-	private static int chkPassForOldPass(String newPassword, String oldPassword, int erNo)
-	{
-		int erroNo = erNo;
-		if (NOT_FAILED == erNo && newPassword.equals(oldPassword))
-		{
-			erroNo = FAIL_SAME_AS_OLD;
-		}
-		return erroNo;
-	}
+	
 	/**
 	 * @param newPassword New Password.
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
@@ -363,25 +350,7 @@ public final class PasswordManager
 		}
 		return erroNo;
 	}
-	/**
-	 * to check whether password change in same session
-	 * get attribute (Boolean) from session object stored when password is changed successfully.
-	 * @param passwordChangedInsameSession true if password change in same session otherwise false.
-	 * @param erNo error number-method body executes only when there is no error earlier.
-	 * @return int error number or -1
-	 */
-	private static int chkChangePassInSameSession(Boolean passwordChangedInsameSession, int erNo)
-	{
-		int erroNo = erNo;
-		if (NOT_FAILED == erNo)
-		{
-			if (passwordChangedInsameSession != null && passwordChangedInsameSession.booleanValue())
-			{
-				erroNo = FAIL_SAME_SESSION;
-			}
-		}
-		return erroNo;
-	}
+	
 	/**
 	 * following code checks pattern i.e password must include atleast one UCase,LCASE and Number
 	 * and must not contain space character.
@@ -406,9 +375,22 @@ public final class PasswordManager
 		boolean foundSpace = Pattern.matches(regExpSpace, newPassword);
 
 		// condition to check whether all above condotion is satisfied
-		if (!foundUCase || !foundLCase || !foundNumber || foundSpace)
+		if(!foundSpace)
 		{
-			erroNo = FAIL_IN_PATTERN;
+		
+			if(!foundUCase){
+				return erroNo = FAIL_IN_UCASE;
+			}
+			if(!foundLCase){
+				return erroNo = FAIL_IN_LCASE;
+			}
+			if(!foundNumber){
+				return erroNo = FAIL_IN_NUMBER;
+			}
+		}
+		else
+		{
+			erroNo = FAIL_IN_SPACE;
 		}
 		return erroNo;
 	}
@@ -425,8 +407,7 @@ public final class PasswordManager
 	 * @return SUCCESS (constant int 0) if all condition passed
 	 *   else return respective error code (constant int) value
 	 */
-	public static int validate(String newPassword, String oldPassword,
-			Boolean pwdChangedInsameSession,SessionDataBean sessionData)
+	public static int validate(String newPassword, String oldPassword,SessionDataBean sessionData)
 	{
 		int errorNo = NOT_FAILED;
 		String userName = "";
@@ -439,11 +420,7 @@ public final class PasswordManager
 			userName = sessionData.getUserName();
 		}
 		errorNo = validateOldPassword(oldPassword, errorNo, userName);
-		errorNo = chkChangePassInSameSession(pwdChangedInsameSession, errorNo);
 		errorNo = chkPassForMinLength(newPassword, errorNo);
-		errorNo = chkPassForOldPass(newPassword, oldPassword, errorNo);
-		errorNo = checkPassWithEmail(newPassword, userName, errorNo);
-		errorNo = chkPassWithUserName(newPassword, userName, errorNo);
 		errorNo = getErrorNumber(newPassword, errorNo);
 		return errorNo;
 	}
@@ -465,46 +442,8 @@ public final class PasswordManager
 		}
 		return errNumber;
 	}
-	/**
-	 * to check password is different than user name if same return FAIL_SAME_AS_USERNAME =4
-	 * eg. username=abc@abc.com newpassword=abc is not valid.
-	 * @param newPassword new Password.
-	 * @param userName user name.
-	 * @param erNo error number-method body executes only when there is no error i.e. -1
-	 * @return int error number or -1
-	 */
-	private static int checkPassWithEmail(String newPassword, String userName, int erNo)
-	{
-		int errorNo = erNo;
-		if (NOT_FAILED == erNo)
-		{
-			int usernameBeforeMailaddress = userName.indexOf('@');
-			// get substring of username before '@' character
-			String name = userName.substring(0, usernameBeforeMailaddress);
-			if (name != null && newPassword.equals(name))
-			{
-				errorNo = FAIL_SAME_AS_USERNAME; // return int value 3
-			}
-		}
-		return errorNo;
-	}
-	/**
-	 * to check password is different than user name if same return FAIL_SAME_AS_USERNAME =4
-	 * eg. username=abc@abc.com newpassword=abc@abc.com is not valid
-	 * @param newPassword New Password.
-	 * @param userName User name
-	 * @param erNo error number-method body executes only when there is no error i.e. -1
-	 * @return int error number or -1
-	 */
-	private static int chkPassWithUserName(String newPassword, String userName, int erNo)
-	{
-		int errorNo = erNo;
-		if (NOT_FAILED == erNo && newPassword.equals(userName))
-		{
-			errorNo = FAIL_SAME_AS_USERNAME; // return int value 3
-		}
-		return errorNo;
-	}
+	
+	
 	/**
 	 * @param oldPassword Old Password.
 	 * @param erNo error number-method body executes only when there is no error i.e. -1
@@ -598,26 +537,27 @@ public final class PasswordManager
 	private static void initErrorMessMap()
 	{
 		errorMess = new HashMap<Integer, String>();
-		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler
-				.getValue(MINIMUM_PASSWORD_LENGTH));
-		List<String> placeHolders = new ArrayList<String>();
+		int minimumPasswordLength = Integer.parseInt(XMLPropertyHandler.getValue(MINIMUM_PASSWORD_LENGTH));
+			List<String> placeHolders = new ArrayList<String>();
 		placeHolders.add(Integer.valueOf(minimumPasswordLength).toString());
+		
+		
 		String errorMsg = ApplicationProperties.getValue("errors.newPassword.length", placeHolders);
-		errorMess.put(FAIL_LENGTH, errorMsg);
-		errorMess.put(FAIL_SAME_AS_OLD, ApplicationProperties
-				.getValue("errors.newPassword.sameAsOld"));
-		errorMess.put(FAIL_SAME_AS_USERNAME, ApplicationProperties
-				.getValue("errors.newPassword.sameAsUserName"));
-		errorMess
-				.put(FAIL_IN_PATTERN, ApplicationProperties.
-						getValue("errors.newPassword.pattern"));
-		errorMess.put(FAIL_SAME_SESSION, ApplicationProperties
-				.getValue("errors.newPassword.sameSession"));
-		errorMess.put(FAIL_WRONG_OLD_PASSWORD, ApplicationProperties
-				.getValue("errors.oldPassword.wrong"));
-		errorMess.put(FAIL_INVALID_SESSION, ApplicationProperties
-				.getValue("errors.newPassword.genericmessage"));
+			errorMess.put(FAIL_LENGTH, errorMsg);
+		errorMess.put(FAIL_SAME_AS_OLD, ApplicationProperties.getValue("errors.newPassword.sameAsOld"));
+		errorMess.put(FAIL_SAME_AS_USERNAME, ApplicationProperties.getValue("errors.newPassword.sameAsUserName"));
+		
+		errorMess.put(FAIL_SAME_SESSION, ApplicationProperties.getValue("errors.newPassword.sameSession"));
+		errorMess.put(FAIL_WRONG_OLD_PASSWORD, ApplicationProperties.getValue("errors.oldPassword.wrong"));
+		errorMess.put(FAIL_INVALID_SESSION, ApplicationProperties.getValue("errors.newPassword.genericmessage"));
+		
+	
+		errorMess.put(FAIL_IN_UCASE,ApplicationProperties.getValue("errors.newPassword.ucase"));
+		errorMess.put(FAIL_IN_LCASE,ApplicationProperties.getValue("errors.newPassword.lcase"));
+		errorMess.put(FAIL_IN_NUMBER,ApplicationProperties.getValue("errors.newPassword.number"));
+		errorMess.put(FAIL_IN_SPACE, ApplicationProperties.getValue("errors.newPassword.space"));
 	}
+	
 	/**
 	 *
 	 * @param args filename,password.
