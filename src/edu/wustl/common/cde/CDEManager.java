@@ -16,12 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.cde.xml.XMLCDE;
-import edu.wustl.common.cde.xml.XMLCDECACHE;
+import edu.wustl.common.cde.xml.XMLCDECacheType;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -88,10 +89,10 @@ public final class CDEManager // NOPMD
              *  objects composed of classes from the pspl.cde package.
              */
             String appHome=CommonServiceLocator.getInstance().getAppHome();
-            XMLCDECACHE root =
-                (XMLCDECACHE)unmarshallerObject.unmarshal(new FileInputStream(appHome+
+			JAXBElement<XMLCDECacheType> jaxbElement = (JAXBElement<XMLCDECacheType>) unmarshallerObject.unmarshal(new FileInputStream(appHome+
                 		System.getProperty("file.separator")+ Constants.CDE_CONF_FILE));
-            // display the cde details
+			XMLCDECacheType root = jaxbElement.getValue();
+			// display the cde details
 			List xmlCDEList = root.getXMLCDE();
 			/**
 			 * Use the iterator.
@@ -301,8 +302,9 @@ public final class CDEManager // NOPMD
 	/**
 	 *
 	 * @param args String array object.
+	 * @throws Exception
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 		//Logger.configure("Application.properties");
 //		Logger.out = org.apache.log4j.Logger.getLogger("");
