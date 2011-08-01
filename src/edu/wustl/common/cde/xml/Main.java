@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
@@ -39,9 +40,9 @@ public class Main
             Unmarshaller unMarshaller = jaxbContext.createUnmarshaller();
             // unmarshal a root instance document into a tree of Java content
             // objects composed of classes from the pspl.cde package.
-            XMLCDECACHE root =
-                (XMLCDECACHE)unMarshaller.unmarshal( new FileInputStream( "CDEConfig.xml" ) );
+            JAXBElement<XMLCDECacheType> jaxbElement = (JAXBElement<XMLCDECacheType>) unMarshaller.unmarshal( new FileInputStream( "CDEConfig.xml" ) );
             // display the cde details
+            XMLCDECacheType root = jaxbElement.getValue();
 			java.util.List list1 = root.getXMLCDE();
 			if (!list1.isEmpty())
 			{
