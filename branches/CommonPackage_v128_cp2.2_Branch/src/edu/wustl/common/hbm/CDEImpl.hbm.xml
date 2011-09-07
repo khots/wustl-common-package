@@ -55,7 +55,7 @@
             lazy="false"
             inverse="false"
             cascade="all-delete-orphan"
-            sort="unsorted"
+            order-by="SORTORDER asc,VALUE asc"
         >
 
               <key

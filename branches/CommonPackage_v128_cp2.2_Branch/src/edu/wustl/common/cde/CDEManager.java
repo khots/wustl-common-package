@@ -129,11 +129,11 @@ public final class CDEManager // NOPMD
 		loadCDEInMemory();
 	}
 	/**
-	 * Populates the “in-memory cache” from the “database cache”. The loading
+	 * Populates the ï¿½in-memory cacheï¿½ from the ï¿½database cacheï¿½. The loading
 	 * operation will be performed at application startup time. For faster startup
-	 * time of the application, all CDE’s can be configured for lazy loading at
+	 * time of the application, all CDEï¿½s can be configured for lazy loading at
 	 * the application level as well as individual CDE level. In lazy loading,
-	 * required CDE’s will be loaded in-memory in first call to that CDE.
+	 * required CDEï¿½s will be loaded in-memory in first call to that CDE.
 	 * @throws Exception throw Exception
 	 */
 	private void loadCDEInMemory() throws Exception
@@ -168,7 +168,7 @@ public final class CDEManager // NOPMD
 				list.addAll(pvList);
 			}
 		}
-		Collections.sort(list);
+		//Collections.sort(list);
 		list.add(0,new NameValueBean(Constants.SELECT_OPTION,"-1"));
 //		if(otherValue!=null)
 //			list.add(1,otherValue);
