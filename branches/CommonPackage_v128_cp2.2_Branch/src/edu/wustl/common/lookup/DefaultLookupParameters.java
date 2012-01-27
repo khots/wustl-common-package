@@ -19,6 +19,7 @@ import java.util.Map;
 public class DefaultLookupParameters implements LookupParameters
 {
 
+	private Integer threshold;
 	/**
 	 * Object.
 	 */
@@ -58,5 +59,17 @@ public class DefaultLookupParameters implements LookupParameters
 	public void setObject(Object object)
 	{
 		this.object = object;
+	}
+
+
+	public Integer getThreshold()
+	{
+		return threshold;
+	}
+
+
+	public void setThreshold(Integer threshold)
+	{
+		this.threshold = threshold;
 	}
 }
