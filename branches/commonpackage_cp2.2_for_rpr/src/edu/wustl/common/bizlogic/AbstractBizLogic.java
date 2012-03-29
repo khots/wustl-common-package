@@ -24,6 +24,7 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
+import edu.wustl.common.transformer.TransformerUtil;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -668,7 +669,8 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 			abstractDomain = (AbstractDomainObject) object;
 			if (abstractDomain != null)
 			{
-				abstractDomain.setAllValues(uiForm);
+				//abstractDomain.setAllValues(uiForm);
+				TransformerUtil.transform(uiForm, abstractDomain);
 			}
 		}
 		return abstractDomain;
