@@ -18,12 +18,14 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.newdao.CleanDAO;
 
 /**
  * This Class is used to Edit data in the database.
@@ -152,24 +154,26 @@ public class CommonEdtAction extends BaseAddEditAction
 			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
 		HibernateDAO hibernateDao = null;
+		CleanDAO cleanDao = null;
 		try
 		{
-			//String appName = CommonServiceLocator.getInstance().getAppName();
+			String appName = CommonServiceLocator.getInstance().getAppName();
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
-			String appName =((DefaultBizLogic)bizLogic).getAppName();
+			//String appName =((DefaultBizLogic)bizLogic).getAppName();
 			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
 					.getDAO();
 			hibernateDao.openSession(null);
-
+			cleanDao = CleanDAO.getInstance(appName);
 			AbstractDomainObject abstractDomainOld;
-			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
-					abstractForm.getId());
+			abstractDomainOld = (AbstractDomainObject) cleanDao.retrieveById(objectName,abstractForm.getId());
+			//hibernateDao.retrieveOldObject(abstractDomain);
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
 		}
 		finally
 		{
 			try
 			{
+				cleanDao.closeSession();
 				hibernateDao.closeSession();
 			}
 			catch (ApplicationException e)
