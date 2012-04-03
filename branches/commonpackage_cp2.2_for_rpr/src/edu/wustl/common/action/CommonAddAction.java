@@ -25,6 +25,7 @@ import edu.wustl.common.factory.IDomainObjectFactory;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.newdao.ActionStatus;
 
 /**
  *  This Class is used to Add data in the database.
@@ -97,6 +98,7 @@ public class CommonAddAction extends BaseAddEditAction
 		String[] displayNameParams = addMessage(abstractDomain, objectName);
 		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.add" + ".successOnly",
 				displayNameParams));
+		request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.SUCCESSFUL);
 		saveMessages(request, messages);
 	}
 
