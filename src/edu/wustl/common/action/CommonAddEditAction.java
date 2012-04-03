@@ -23,6 +23,7 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.newdao.ActionStatus;
 
 /**
  * This Class is used to Add/Edit data in the database.
@@ -69,7 +70,7 @@ public class CommonAddEditAction extends XSSSupportedAction
 		catch (ApplicationException applicationException)
 		{
 			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg());
-
+			request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.FAIL);
 			ActionErrors actionErrors = new ActionErrors();
 			ActionError actionError = new ActionError("errors.item",
 					applicationException.getCustomizedMsg());
