@@ -25,6 +25,7 @@ import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.newdao.ActionStatus;
 import edu.wustl.dao.newdao.CleanDAO;
 
 /**
@@ -103,6 +104,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		String[] displayNameParams = addMessage(abstractDomain, objectName);
 		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.edit.successOnly",
 				displayNameParams));
+		request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.SUCCESSFUL);
 		saveMessages(request, messages);
 	}
 	/**
