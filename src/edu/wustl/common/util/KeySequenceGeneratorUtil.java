@@ -86,7 +86,8 @@ public final class KeySequenceGeneratorUtil
 				keySeqObject.setKeySequenceId(nextKeySequenceId.toString());
 				dao.update(keySeqObject);
 			}
-			dao.commit();
+			// Commenting this is now handle in JTA TRANSACTION filter
+			//dao.commit();
 		}
 		catch (DAOException e)
 		{
