@@ -286,4 +286,27 @@ public final class AbstractFactoryConfig
 		}
 
 	}
+	
+	/**
+	 * get Transform Object Factory.
+	 * @return ITransformerFactory
+	 * @throws BizLogicException BizLogicException.
+	 */
+	public IDataValidatorFactory getDataValidatorFactory() throws BizLogicException
+	{
+		try
+		{
+			String className = getFactClassName("dataValidatorFactory");
+			Class<IDataValidatorFactory> factoryClass = (Class<IDataValidatorFactory>) Class
+					.forName(className);
+			return factoryClass.newInstance();
+		}
+		catch (Exception exception)
+		{
+			LOGGER.error(exception.getMessage(), exception);
+			throw new BizLogicException(ErrorKey.getErrorKey("biz.getinstance.error"), exception,
+					"");
+		}
+
+	}
 }
