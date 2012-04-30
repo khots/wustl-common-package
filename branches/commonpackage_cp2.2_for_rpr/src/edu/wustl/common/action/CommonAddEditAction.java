@@ -69,7 +69,7 @@ public class CommonAddEditAction extends XSSSupportedAction
 		}
 		catch (ApplicationException applicationException)
 		{
-			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg());
+			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg(),applicationException);
 			request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.FAIL);
 			ActionErrors actionErrors = new ActionErrors();
 			ActionError actionError = new ActionError("errors.item",
