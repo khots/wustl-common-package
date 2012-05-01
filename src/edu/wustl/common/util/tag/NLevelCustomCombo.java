@@ -425,7 +425,7 @@ public class NLevelCustomCombo extends TagSupport
 	 */
 	private void numberOfCombosNeeded()
 	{
-		if (dataMap.isEmpty())
+		if (dataMap == null || dataMap.isEmpty())
 		{
 			noOfCombosNeeded = Integer.parseInt(noOfEmptyCombos);
 		}
