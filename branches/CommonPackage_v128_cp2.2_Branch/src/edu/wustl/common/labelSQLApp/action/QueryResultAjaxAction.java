@@ -1,5 +1,5 @@
 
-package edu.wustl.labelSQLApp.action;
+package edu.wustl.common.labelSQLApp.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

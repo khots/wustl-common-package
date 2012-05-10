@@ -1,5 +1,5 @@
 
-package edu.wustl.labelSQLApp.bizlogic;
+package edu.wustl.common.labelSQLApp.bizlogic;
 
 import java.util.ArrayList;
 import java.util.Iterator;

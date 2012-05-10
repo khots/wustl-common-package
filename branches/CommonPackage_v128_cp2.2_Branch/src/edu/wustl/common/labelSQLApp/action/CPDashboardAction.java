@@ -1,5 +1,5 @@
 
-package edu.wustl.labelSQLApp.action;
+package edu.wustl.common.labelSQLApp.action;
 
 import java.util.LinkedHashMap;
 

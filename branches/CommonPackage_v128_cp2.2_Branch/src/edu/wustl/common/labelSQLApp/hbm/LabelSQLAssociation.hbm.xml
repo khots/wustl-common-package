@@ -4,7 +4,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="edu.wustl.labelSQLApp.domain.LabelSQLAssociation"
+	<class name="edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation"
 		table="LABELSQLASSOC">
 		<id name="id" type="long" length="30" column="IDENTIFIER">
 			<generator class="native">
@@ -20,7 +20,7 @@
 		<property name="labelSQLCollectionProtocol" type="long"
 			update="true" insert="true" column="CPID" length="30" />
 
-		<many-to-one name="labelSQL" class="edu.wustl.labelSQLApp.domain.LabelSQL"
+		<many-to-one name="labelSQL" class="edu.wustl.common.labelSQLApp.domain.LabelSQL"
 			cascade="none" update="true" insert="true" column="LABELSQLID" lazy="false" />
 
 		<property name="userDefinedLabel" type="string" update="true"

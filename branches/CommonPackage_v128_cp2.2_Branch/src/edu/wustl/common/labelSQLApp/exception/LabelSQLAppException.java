@@ -1,5 +1,5 @@
 
-package edu.wustl.labelSQLApp.exception;
+package edu.wustl.common.labelSQLApp.exception;
 
 import java.io.Serializable;
 

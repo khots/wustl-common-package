@@ -4,7 +4,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="edu.wustl.labelSQLApp.domain.LabelSQL" table="LABELSQL">
+	<class name="edu.wustl.common.labelSQLApp.domain.LabelSQL" table="LABELSQL">
 		<id name="id" type="long" length="30" column="IDENTIFIER">
 			<generator class="native">
                 <param name="sequence">LABELSQL_IDENTIFIER_SEQ</param>

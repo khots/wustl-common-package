@@ -1,5 +1,5 @@
 
-package edu.wustl.labelSQLApp.form;
+package edu.wustl.common.labelSQLApp.form;
 
 import java.util.Collection;
 import java.util.HashMap;
