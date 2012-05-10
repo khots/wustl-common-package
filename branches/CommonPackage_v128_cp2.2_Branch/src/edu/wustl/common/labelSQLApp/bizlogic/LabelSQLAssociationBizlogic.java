@@ -2,17 +2,11 @@
 package edu.wustl.common.labelSQLApp.bizlogic;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import edu.wustl.labelSQLApp.domain.LabelSQL;
-import edu.wustl.labelSQLApp.domain.LabelSQLAssociation;
-
+import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
 import org.hibernate.Session;
-
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
 
