@@ -2,20 +2,13 @@
 package edu.wustl.common.labelSQLApp.bizlogic;
 
 import java.util.ArrayList;
-
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-
 import java.sql.*;
-import edu.wustl.labelSQLApp.domain.LabelSQLAssociation;
-
+import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
-import edu.wustl.common.beans.NameValueBean;
-
 import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.util.logger.Logger;
 
@@ -53,7 +46,7 @@ public class CommonBizlogic
 					else if ("String".equals(objectType))
 					{
 						//sets the value for parameter of String type
-						q.setString(counter, (String)value);
+						q.setString(counter, (String) value);
 					}
 					else
 					{
@@ -175,8 +168,9 @@ public class CommonBizlogic
 	public int executeQuery(String sql, Long CPId) throws Exception
 	{
 		Session session = HibernateUtil.newSession();
-		if(sql.endsWith(";")){
-			sql = sql.substring(0, sql.length()-1);
+		if (sql.endsWith(";"))
+		{
+			sql = sql.substring(0, sql.length() - 1);
 		}
 		PreparedStatement stmt = session.connection().prepareStatement(sql);
 		ResultSet rs = null;

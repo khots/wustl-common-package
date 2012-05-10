@@ -4,12 +4,14 @@ package edu.wustl.common.labelSQLApp.bizlogic;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wustl.labelSQLApp.domain.LabelSQL;
+import edu.wustl.common.labelSQLApp.domain.LabelSQL;
 
 import org.hibernate.Session;
 
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
+
+import edu.wustl.common.labelSQLApp.domain.LabelSQL;
 
 public class LabelSQLBizlogic
 {
@@ -127,7 +129,7 @@ public class LabelSQLBizlogic
 	 * @return
 	 * @throws Exception
 	 */
-	public Long getLabelSQLIdByLabelOrDisplayName(Long CPId,String label) throws Exception
+	public Long getLabelSQLIdByLabelOrDisplayName(Long CPId, String label) throws Exception
 	{
 		List<Object> values = new ArrayList<Object>();
 		values.add(CPId);
@@ -144,7 +146,7 @@ public class LabelSQLBizlogic
 		{
 			return null;
 		}
-		
+
 	}
 
 }
