@@ -1,14 +1,9 @@
 
 package edu.wustl.common.labelSQLApp.form;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import edu.wustl.common.actionForm.AbstractActionForm;
-import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.domain.AbstractDomainObject;
 
 public class CPDashboardForm extends AbstractActionForm
@@ -25,9 +20,9 @@ public class CPDashboardForm extends AbstractActionForm
 	private LinkedHashMap<String, Integer> labelQueryResultMap;
 
 	private String cpId;
-	
-	private LinkedHashMap<String,Long> displayNameAndAssocMap;
-	
+
+	private LinkedHashMap<String, Long> displayNameAndAssocMap;
+
 	private int queryResult;
 
 	public String getCpId()
@@ -74,19 +69,17 @@ public class CPDashboardForm extends AbstractActionForm
 	public void setAllValues(AbstractDomainObject arg0)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
 	/**
 	 * @return the displayNameAnsAssocMap
 	 */
-	public LinkedHashMap<String,Long> getDisplayNameAndAssocMap()
+	public LinkedHashMap<String, Long> getDisplayNameAndAssocMap()
 	{
 		return displayNameAndAssocMap;
 	}
 
-	
 	/**
 	 * @param displayNameAnsAssocMap the displayNameAnsAssocMap to set
 	 */
@@ -95,7 +88,6 @@ public class CPDashboardForm extends AbstractActionForm
 		this.displayNameAndAssocMap = displayNameAndAssocMap;
 	}
 
-	
 	/**
 	 * @return the queryResult
 	 */
@@ -104,7 +96,6 @@ public class CPDashboardForm extends AbstractActionForm
 		return queryResult;
 	}
 
-	
 	/**
 	 * @param queryResult the queryResult to set
 	 */
@@ -112,7 +103,5 @@ public class CPDashboardForm extends AbstractActionForm
 	{
 		this.queryResult = queryResult;
 	}
-	
-	
 
 }
