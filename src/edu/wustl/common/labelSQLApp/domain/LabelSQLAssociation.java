@@ -1,5 +1,5 @@
 
-package edu.wustl.labelSQLApp.domain;
+package edu.wustl.common.labelSQLApp.domain;
 
 public class LabelSQLAssociation
 {

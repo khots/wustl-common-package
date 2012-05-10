@@ -1,4 +1,4 @@
-package edu.wustl.labelSQLApp.domain;
+package edu.wustl.common.labelSQLApp.domain;
 
 import java.util.Collection;
 

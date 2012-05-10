@@ -6,12 +6,12 @@
 <hibernate-mapping>
 	<query name="getLabelSQLAssocByCPId">
 		from
-		edu.wustl.labelSQLApp.domain.LabelSQLAssociation assoc
+		edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation assoc
 		where assoc.labelSQLCollectionProtocol=? order by assoc.seqOrder 
 	</query>
 	<query name="getLabelSQLAssocByCPIdAndLabelSQLId">
 		from
-		edu.wustl.labelSQLApp.domain.LabelSQLAssociation assoc
+		edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation assoc
 		where assoc.labelSQLCollectionProtocol=? 
 		and assoc.labelSQL.id=?
 	</query>
