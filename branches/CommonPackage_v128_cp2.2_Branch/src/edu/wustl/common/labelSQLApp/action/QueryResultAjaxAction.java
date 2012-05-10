@@ -9,7 +9,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.labelSQLApp.bizlogic.CommonBizlogic;
+import edu.wustl.common.labelSQLApp.bizlogic.CommonBizlogic;
 /** 
  * @author Ashraf
  *	AJAX action class for retrieving the query result for dashboard items.
