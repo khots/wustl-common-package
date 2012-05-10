@@ -4,13 +4,12 @@ package edu.wustl.common.labelSQLApp.util;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
-
-import au.com.bytecode.opencsv.CSVReader;
 import edu.wustl.common.util.logger.Logger;
-import edu.wustl.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
-import edu.wustl.labelSQLApp.bizlogic.LabelSQLBizlogic;
-import edu.wustl.labelSQLApp.domain.LabelSQL;
-import edu.wustl.labelSQLApp.exception.LabelSQLAppException;
+import au.com.bytecode.opencsv.CSVReader;
+import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
+import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLBizlogic;
+import edu.wustl.common.labelSQLApp.domain.LabelSQL;
+import edu.wustl.common.labelSQLApp.exception.LabelSQLAppException;
 
 public class InsertCSDashboardItem
 {
@@ -178,7 +177,7 @@ public class InsertCSDashboardItem
 			}
 			catch (Exception e)
 			{
-				Logger.out.error("Error retrieving LabelSQL from label -> "+label);
+				Logger.out.error("Error retrieving LabelSQL from label -> " + label);
 				e.printStackTrace();
 			}
 			if (result.size() == 0)
@@ -189,7 +188,7 @@ public class InsertCSDashboardItem
 				}
 				catch (Exception e)
 				{
-					Logger.out.error("Error inserting label: "+label);
+					Logger.out.error("Error inserting label: " + label);
 					e.printStackTrace();
 				}
 			}
@@ -204,7 +203,7 @@ public class InsertCSDashboardItem
 			}
 			catch (Exception e)
 			{
-				Logger.out.error("Error associating Label Heading "+label);
+				Logger.out.error("Error associating Label Heading " + label);
 				e.printStackTrace();
 			}
 
