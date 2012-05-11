@@ -8,9 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import edu.common.dynamicextensions.exception.DynamicExtensionsApplicationException;
-import edu.common.dynamicextensions.exception.DynamicExtensionsSystemException;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.datahandler.AbstractDataHandler;
 import edu.wustl.common.datahandler.DataHandlerFactory;
@@ -71,8 +68,7 @@ public abstract class ReportGenerator
 	public void generateCSV(ReportBean repoBean) throws IOException, IllegalArgumentException,
 			SecurityException, ClassNotFoundException, InstantiationException,
 			IllegalAccessException, InvocationTargetException, NoSuchMethodException, DAOException,
-			BizLogicException, DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
+			BizLogicException
 	{
 		DataHandlerParameter dataParameter = new DataHandlerParameter();
 		AbstractDataHandler csvdataHandler = DataHandlerFactory.getDataHandler(HandlerTypeEnum.CSV,
@@ -95,8 +91,7 @@ public abstract class ReportGenerator
 	}
 
 	protected void getReportData(AbstractDataHandler handler, ReportBean repoBean)
-			throws IOException, DAOException, BizLogicException, DynamicExtensionsSystemException,
-			DynamicExtensionsApplicationException
+			throws IOException, DAOException, BizLogicException
 	{
 		List<Object> paramList = new ArrayList<Object>();
 		paramList.add("Report Name:");
