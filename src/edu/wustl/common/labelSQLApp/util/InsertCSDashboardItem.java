@@ -26,7 +26,12 @@ public class InsertCSDashboardItem
 			try
 			{
 				cnt++;
-				associateCSWithDashboardItem(Long.valueOf(nextLine[0]), nextLine[1], nextLine[2],
+				Long cpId=null;
+				if(!nextLine[0].equals(""))
+				{
+					cpId=Long.valueOf(nextLine[0]);
+				}
+				associateCSWithDashboardItem(cpId, nextLine[1], nextLine[2],
 						nextLine[3], Integer.parseInt(nextLine[4]));
 
 			}
