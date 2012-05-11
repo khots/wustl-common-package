@@ -552,4 +552,6 @@ public final class Constants extends CommonConstants
    public static final String LABEL_TOKEN_PROP_FILE_NAME = "LabelTokens.Properties";
 
    public static final String TOKEN_DELIMITER = "%";
+   
+   public static final String CSV_FILE_EXTENTION=".csv";
 }

@@ -132,11 +132,15 @@ public class LabelSQLBizlogic
 	public Long getLabelSQLIdByLabelOrDisplayName(Long CPId, String label) throws Exception
 	{
 		List<Object> values = new ArrayList<Object>();
-		values.add(CPId);
+		String hql="getSysLabelSQLIdByLabelOrDisplayName";
 		values.add(label);
 		values.add(label);
-
-		List<?> result = CommonBizlogic.executeHQL("getLabelSQLIdByLabelOrDisplayName", values);
+		if(CPId!=null)
+		{
+			values.add(CPId);
+			hql="getLabelSQLIdByLabelOrDisplayName";
+		}
+		List<?> result = CommonBizlogic.executeHQL(hql, values);
 
 		if (result.size() != 0)
 		{

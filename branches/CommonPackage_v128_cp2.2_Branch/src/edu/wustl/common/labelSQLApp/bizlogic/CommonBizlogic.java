@@ -119,7 +119,7 @@ public class CommonBizlogic
 
 		/*Retrieve all the LabelSQL association associated with the CP/CS*/
 		List<LabelSQLAssociation> labelSQLAssociations = labelSQLAssociationBizlogic
-				.getLabelSQLAssocCollectionByCPId(CPId);
+				.getLabelSQLAssocCollection(CPId);
 
 		for (LabelSQLAssociation labelSQLAssociation : labelSQLAssociations)
 		{
@@ -176,7 +176,10 @@ public class CommonBizlogic
 		ResultSet rs = null;
 		try
 		{
-			stmt.setLong(1, CPId);
+			if(CPId !=null)
+			{
+				stmt.setLong(1, CPId);
+			}
 			rs = stmt.executeQuery();
 			rs.next();
 			return rs.getInt(1);

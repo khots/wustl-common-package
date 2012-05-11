@@ -7,11 +7,18 @@
 
 package edu.wustl.common.util;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Blob;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,16 +29,20 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
+import org.apache.commons.io.FileUtils;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
+import edu.wustl.common.report.bean.FileDetails;
 import edu.wustl.common.tree.TreeNodeImpl;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.CommonUtilities;
@@ -494,4 +505,121 @@ public final class Utility extends CommonUtilities
 
 		return formattedErrMsg;
 	}
+
+	public static FileDetails generateFilePath(String reportFileName) throws IOException
+	{
+		StringBuffer dirName = new StringBuffer(System.getProperty("java.io.tmpdir"));
+		/**
+		 * This check is added for Linux and Mac OS
+		 * System.getProperty(java.io.tmpdir) returns different values for
+		 * different OS.
+		 * On Windows: C:\DOCUME~1\<user>\LOCALS~1\Temp\
+		 * On Solaris: /var/tmp/
+		 * On Linux: /tmp
+		 * On Mac OS X: /tmp
+		 */
+		if (!dirName.toString().endsWith(File.separator))
+		{
+			dirName.append(File.separator);
+		}
+
+		StringBuffer fileName = new StringBuffer(reportFileName);
+		fileName = new StringBuffer(fileName.toString().replaceAll(" ", "_").replaceAll("\\.", "_")
+				.replaceAll("-", "_"));
+
+		/**
+		 * Makes a directory, including any necessary but nonexistent parent directories.
+		 * If there already exists a file with specified name or the
+		 * directory cannot be created then an exception is thrown
+		 */
+
+		fileName.append(File.separator);
+		fileName.append("_");
+		fileName.append(new java.sql.Timestamp(new Date().getTime()));
+		fileName = new StringBuffer(fileName.toString().replaceAll(" ", "_").replaceAll("\\.", "_")
+				.replaceAll("-", "_").replaceAll(":", "_"));
+		fileName = new StringBuffer(Utility.replaceSpCharForFile(fileName.toString(), "_"));
+		dirName.append(fileName.toString());
+		File file = new File(dirName.toString());
+		FileUtils.forceMkdir(file);
+		/**
+		 * Schedules a file to be deleted when JVM exits.
+		 * If file is directory delete it and all sub-directories.
+		 */
+		//FileUtils.forceDeleteOnExit(file);
+		FileDetails fileDetails = new FileDetails(fileName.toString()+ Constants.CSV_FILE_EXTENTION, dirName.toString() + Constants.CSV_FILE_EXTENTION);
+		return fileDetails;
+	}
+
+	public static String replaceSpCharForFile(String input, String replacement)
+	{
+		return input.replaceAll("[?:^/ \\ * < > | \"]", replacement);
+	}
+
+	/**
+	 * @param response
+	 * @param fileName
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ApplicationException
+	 */
+	public static void sendFile(HttpServletResponse response, String fileName)
+			throws FileNotFoundException, IOException, ApplicationException
+	{
+		File file = new File(fileName);
+		FileInputStream inputStream;
+		inputStream = new FileInputStream(file);
+
+		byte[] fileContent = new byte[(int) file.length()];
+		inputStream.read(fileContent);
+
+		Blob reportContent = Hibernate.createBlob(fileContent);
+		String[] tmpFile = fileName.split("/");
+		sendFileToClient(reportContent, tmpFile[tmpFile.length - 1], response);
+	}
+
+	/**
+	 * This method will send the file with the given filename in the response.
+	 * 
+	 * @param fileContent file to send
+	 * @param fileName the file name
+	 * @param response response in which to send the file.
+	 * 
+	 * @throws ApplicationException the application exception
+	 */
+	public static void sendFileToClient(final Blob fileContent, String fileName,
+			final HttpServletResponse response) throws ApplicationException
+	{
+		try
+		{
+			response.setContentType("application/download");
+			String csvFile = fileName.substring(fileName.lastIndexOf(System
+					.getProperty("file.separator")) + 1);
+			response.setHeader("Content-Disposition", "attachment;filename=\"" + csvFile + "\";");
+			response.setContentLength((int) fileContent.length());
+			final OutputStream outputStream = response.getOutputStream();
+			final BufferedInputStream bis = new BufferedInputStream(fileContent.getBinaryStream());
+			final byte buf[] = new byte[4096];
+			outputStream.flush();
+			int count;
+
+			while ((count = bis.read(buf)) > -1)
+			{
+				outputStream.write(buf, 0, count);
+			}
+			outputStream.flush();
+			bis.close();
+			response.flushBuffer();
+		}
+		catch (IOException ioException)
+		{
+			throw new ApplicationException(null, ioException, ioException.getMessage());
+		}
+		catch (SQLException sqlException)
+		{
+			throw new ApplicationException(null, sqlException, sqlException.getMessage());
+		}
+
+	}
+
 }
