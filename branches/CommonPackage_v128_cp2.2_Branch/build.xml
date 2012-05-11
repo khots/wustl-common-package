@@ -91,6 +91,7 @@
 		</javac>		
 		<copy todir="${target.dir}">
 			<fileset dir="${src.dir}">
+				<include name="**/schedulerTag.txt" />
 				<include name="**/*.properties" />
 				<include name="**/*.xml" />
 				<include name="**/*.hbm.xml" />
