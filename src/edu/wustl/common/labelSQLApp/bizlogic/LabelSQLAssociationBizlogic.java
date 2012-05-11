@@ -46,12 +46,19 @@ public class LabelSQLAssociationBizlogic
 	 * @return
 	 * @throws Exception
 	 */
-	public List<LabelSQLAssociation> getLabelSQLAssocCollectionByCPId(Long CPId) throws Exception
+	public List<LabelSQLAssociation> getLabelSQLAssocCollection(Long CPId) throws Exception
 	{
-		List<Object> values = new ArrayList<Object>();
-		values.add(CPId);
-
-		List<?> result = CommonBizlogic.executeHQL("getLabelSQLAssocByCPId", values);//runs the HQL
+		List<?> result = null;
+		if (CPId == null)
+		{
+			result = CommonBizlogic.executeHQL("getSystemLabelSQLAssoc", null);
+		}
+		else
+		{
+			List<Object> values = new ArrayList<Object>();
+			values.add(Long.valueOf(CPId));
+			result = CommonBizlogic.executeHQL("getLabelSQLAssocByCPId", values);//runs the HQL
+		}
 
 		return (List<LabelSQLAssociation>) result;
 	}
@@ -124,7 +131,7 @@ public class LabelSQLAssociationBizlogic
 		LinkedHashMap<String, Long> displayNameAssocMap = new LinkedHashMap<String, Long>();
 
 		//Retrieving LabelSQLAssociation list by CPId.  
-		List<LabelSQLAssociation> labelSQLAssociations = getLabelSQLAssocCollectionByCPId(CPId);
+		List<LabelSQLAssociation> labelSQLAssociations = getLabelSQLAssocCollection(CPId);
 
 		for (LabelSQLAssociation labelSQLAssociation : labelSQLAssociations)
 		{
@@ -160,11 +167,14 @@ public class LabelSQLAssociationBizlogic
 			throws Exception
 	{
 		List<Object> values = new ArrayList<Object>();
-		values.add(cpId);
+		String hql="getSysLabelSQLAssocByCPIdAndLabelSQLId";
+		if(cpId!=null)
+		{
+			hql="getLabelSQLAssocByCPIdAndLabelSQLId";
+			values.add(cpId);
+		} 
 		values.add(labelSQLId);
-
-		List<?> result = CommonBizlogic.executeHQL("getLabelSQLAssocByCPIdAndLabelSQLId", values);
-
+		List<?> result = CommonBizlogic.executeHQL(hql, values);
 		if (result.size() != 0)
 		{
 			return (LabelSQLAssociation) result.get(0);

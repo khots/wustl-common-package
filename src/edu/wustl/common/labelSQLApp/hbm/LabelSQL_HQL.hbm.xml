@@ -9,12 +9,27 @@
 		edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation assoc
 		where assoc.labelSQLCollectionProtocol=? order by assoc.seqOrder 
 	</query>
+	
+	<query name="getSystemLabelSQLAssoc">
+		from
+		edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation assoc
+		where assoc.labelSQLCollectionProtocol is null order by assoc.seqOrder 
+	</query>
+	
 	<query name="getLabelSQLAssocByCPIdAndLabelSQLId">
 		from
 		edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation assoc
 		where assoc.labelSQLCollectionProtocol=? 
 		and assoc.labelSQL.id=?
 	</query>
+	
+	<query name="getSysLabelSQLAssocByCPIdAndLabelSQLId">
+		from
+		edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation assoc
+		where assoc.labelSQLCollectionProtocol is null
+		and assoc.labelSQL.id=?
+	</query>
+	
 	<sql-query name="getQueryByLabelSQLAssocId">
 		select lbl.query from labelsql lbl JOIN
 		labelsqlassoc assoc ON lbl.identifier=assoc.labelsqlid
@@ -31,6 +46,18 @@
 		or
 		assoc.user_defined_label=?
 	</sql-query>
+	
+	<sql-query name="getSysLabelSQLIdByLabelOrDisplayName">
+		select lbl.identifier from labelsql lbl JOIN
+		labelsqlassoc assoc ON lbl.identifier=assoc.labelsqlid
+		where
+		assoc.cpid is null
+		and
+		lbl.label=?
+		or
+		assoc.user_defined_label=?
+	</sql-query>
+	
 	<sql-query name="getLabelsByCPId">
 		<return-scalar column="label" type="string" />
 		select assoc.user_defined_label label

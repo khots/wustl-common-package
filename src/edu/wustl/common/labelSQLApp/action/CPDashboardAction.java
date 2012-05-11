@@ -1,7 +1,9 @@
 
 package edu.wustl.common.labelSQLApp.action;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,8 +13,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
 import edu.wustl.common.labelSQLApp.form.CPDashboardForm;
+import edu.wustl.common.report.ReportGenerator;
 
 /** 
  * @author Ashraf
@@ -25,15 +30,62 @@ public class CPDashboardAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 
-		CPDashboardForm cpDashboardForm = (CPDashboardForm) actionForm;//Form object
+		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
+				"sessionData");
+		String isSystemDashBoard = request.getParameter("isSystemDashboard");
+		String forward = "success";
+		if (isSystemDashBoard != null && isSystemDashBoard.equals("true"))
+		{
+			if (!sessionDataBean.isAdmin())
+			{
+				forward = "redirect";
+			}
+		}
+		if (forward.equals("success"))
+		{
+			loadDashboard(actionForm, request, sessionDataBean.isAdmin(),
+					sessionDataBean.getUserId());
+		}
 
-		Long cpId = Long.valueOf(request.getParameter("cpSearchCpId"));//Get CPId/CSId
+		return actionMapping.findForward(forward);
+	}
 
+	/**
+	 * @param actionForm
+	 * @param request
+	 * @throws Exception
+	 */
+	private void loadDashboard(ActionForm actionForm, HttpServletRequest request, boolean isAdmin,
+			Long userId) throws Exception
+	{
+		CPDashboardForm cpDashboardForm = (CPDashboardForm) actionForm;
+		String cpId = request.getParameter("cpSearchCpId");
+		Long cp = null;
+		if (cpId != null)
+		{
+			cp = Long.valueOf(cpId);
+		}
 		LinkedHashMap<String, Long> displayNameMap = new LabelSQLAssociationBizlogic()
-				.getAssocAndDisplayNameMapByCPId(cpId);//Retrieving association id and display name map from CPId/CSId
+				.getAssocAndDisplayNameMapByCPId(cp);
+		cpDashboardForm.setDisplayNameAndAssocMap(displayNameMap);
+		List<NameValueBean> reportNameList = new ArrayList<NameValueBean>();
 
-		cpDashboardForm.setDisplayNameAndAssocMap(displayNameMap);//Setting association id and display name map
-
-		return actionMapping.findForward("success");
+		if (isAdmin)
+		{
+			if (cpId != null)
+			{
+				reportNameList = ReportGenerator.getReportNames(cpId);
+			}
+			else
+			{
+				reportNameList = ReportGenerator.getSystemReportNames();
+			}
+		}
+		else
+		{
+			reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
+		}
+		request.setAttribute("cpId", cpId);
+		request.setAttribute("reportNameList", reportNameList);
 	}
 }
