@@ -26,13 +26,13 @@ public class InsertCSDashboardItem
 			try
 			{
 				cnt++;
-				Long cpId=null;
-				if(!nextLine[0].equals(""))
+				Long cpId = null;
+				if (!nextLine[0].equals(""))
 				{
-					cpId=Long.valueOf(nextLine[0]);
+					cpId = Long.valueOf(nextLine[0]);
 				}
-				associateCSWithDashboardItem(cpId, nextLine[1], nextLine[2],
-						nextLine[3], Integer.parseInt(nextLine[4]));
+				associateCSWithDashboardItem(cpId, nextLine[1], nextLine[2], nextLine[3], Integer
+						.parseInt(nextLine[4]));
 
 			}
 			catch (LabelSQLAppException e)
@@ -49,7 +49,7 @@ public class InsertCSDashboardItem
 	{
 		Long labelSQLId = null;
 
-		if ((label == null || "".equals(label)) && !(sql == null || "".equals(sql)))
+		if ((label == null || "".equals(label)) && !(sql == null || "".equals(sql)) && (order >= 0))
 		{
 			//this is the case to use a SQL directly, 
 			//add the SQL with NULL label and associate with CS
@@ -71,7 +71,7 @@ public class InsertCSDashboardItem
 			}
 		}
 		else if ((sql == null || "".equals(sql)) && !(label == null || "".equals(label))
-				&& !(displayName == null || "".equals(displayName)))
+				&& !(displayName == null || "".equals(displayName)) && (order >= 0))
 		{
 			//this is the case to use an existing label, 
 			//check if there exists a label with the same name, if not throw error if yes use it
@@ -103,7 +103,8 @@ public class InsertCSDashboardItem
 			}
 
 		}
-		else if (!(sql == null || "".equals(sql)) && !(label == null || "".equals(label)))
+		else if (!(sql == null || "".equals(sql)) && !(label == null || "".equals(label))
+				&& (order >= 0))
 		{
 			//this is the case to add a new label, 
 			//check if there exists a label with the same name, if yes throw error
@@ -139,39 +140,44 @@ public class InsertCSDashboardItem
 				e.printStackTrace();
 			}
 		}
-		else if ((sql == null || "".equals(sql)) && !(label == null || "".equals(label))
-				&& (displayName == null || "".equals(displayName)) && (order == -1))
+		else if ((sql == null || "".equals(sql))
+				&& !(displayName == null || "".equals(displayName)) && (order == -1))
 		{
 			//this is the case to delete the association of labelSQL and CS
 
 			try
 			{
-				labelSQLId = new LabelSQLBizlogic().getLabelSQLIdByLabelOrDisplayName(CSId, label);
+				labelSQLId = new LabelSQLBizlogic().getLabelSQLIdByLabelOrDisplayName(CSId,
+						displayName);
 			}
 			catch (Exception e)
 			{
-				Logger.out.error("Error retrieving association for label -> " + label);
+				Logger.out.error("Error retrieving association for CS: " + CSId
+						+ " with display name -> " + displayName);
 				e.printStackTrace();
 			}
 
 			if (labelSQLId == null)
 			{
-				throw new LabelSQLAppException("Label: " + label
+				throw new LabelSQLAppException("Display name: " + displayName
 						+ " is not associated with the CS: " + CSId);
 			}
+			else
+			{
 
-			try
-			{
-				new LabelSQLAssociationBizlogic().deleteLabelSQLAssociation(CSId, labelSQLId);
-			}
-			catch (Exception e)
-			{
-				Logger.out.error("Error deleting association");
-				e.printStackTrace();
+				try
+				{
+					new LabelSQLAssociationBizlogic().deleteLabelSQLAssociation(CSId, labelSQLId);
+				}
+				catch (Exception e)
+				{
+					Logger.out.error("Error deleting association " + CSId + " --> " + displayName);
+					e.printStackTrace();
+				}
 			}
 		}
 		else if ((sql == null || "".equals(sql)) && !(label == null || "".equals(label))
-				&& (displayName == null || "".equals(displayName)) && (order != -1))
+				&& (displayName == null || "".equals(displayName)) && (order >= 0))
 		{
 			//this is the case to add a new label heading, 
 			//check if there exists a label heading with the same name, if yes throw error
@@ -212,6 +218,10 @@ public class InsertCSDashboardItem
 				e.printStackTrace();
 			}
 
+		}
+		else
+		{
+			throw new LabelSQLAppException("Invalid CSV entries");
 		}
 
 	}
