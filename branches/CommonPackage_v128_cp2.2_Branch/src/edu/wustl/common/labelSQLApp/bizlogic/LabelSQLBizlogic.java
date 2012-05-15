@@ -133,13 +133,14 @@ public class LabelSQLBizlogic
 	{
 		List<Object> values = new ArrayList<Object>();
 		String hql="getSysLabelSQLIdByLabelOrDisplayName";
-		values.add(label);
-		values.add(label);
 		if(CPId!=null)
 		{
 			values.add(CPId);
 			hql="getLabelSQLIdByLabelOrDisplayName";
 		}
+		values.add(label);
+		values.add(label);
+		
 		List<?> result = CommonBizlogic.executeHQL(hql, values);
 
 		if (result.size() != 0)
