@@ -1,15 +1,22 @@
 
 package edu.wustl.common.labelSQLApp.bizlogic;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.sql.Clob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.sql.*;
-import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
 import edu.wustl.common.hibernate.HibernateUtil;
+import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
 import edu.wustl.common.util.logger.Logger;
 
 public class CommonBizlogic
@@ -96,14 +103,14 @@ public class CommonBizlogic
 	 * @return
 	 * @throws Exception
 	 */
-	public List<String> getQueryByLabelSQLAssocId(Long labelSQLId) throws Exception
+	public List<Clob> getQueryByLabelSQLAssocId(Long labelSQLId) throws Exception
 	{
 		List<Object> values = new ArrayList<Object>();
 		values.add(labelSQLId);
 
 		List<?> result = executeHQL("getQueryByLabelSQLAssocId", values);
 
-		return (List<String>) result;
+		return (List<Clob>) result;
 	}
 
 	/**
@@ -128,7 +135,8 @@ public class CommonBizlogic
 
 			/*insert label and query count in map*/
 			String label = getLabelByLabelSQLAssocId(labelAssocId);
-			int result = executeQuery((getQueryByLabelSQLAssocId(labelAssocId)).get(0), CPId);
+			int result = executeQuery(
+					clobToStringConversion((getQueryByLabelSQLAssocId(labelAssocId)).get(0)), CPId);
 
 			if (!"".equals(label) && label != null)
 			{
@@ -152,8 +160,9 @@ public class CommonBizlogic
 		LabelSQLAssociation labelSQLAssociation = new LabelSQLAssociationBizlogic()
 				.getLabelSQLAssocById(labelSQLAssocID);
 
-		int result = executeQuery((getQueryByLabelSQLAssocId(labelSQLAssociation.getId())).get(0),
-				labelSQLAssociation.getLabelSQLCollectionProtocol());//retrieve the query from labelSQLAssocID and execute it
+		int result = executeQuery(
+				clobToStringConversion((getQueryByLabelSQLAssocId(labelSQLAssociation.getId()))
+						.get(0)), labelSQLAssociation.getLabelSQLCollectionProtocol());//retrieve the query from labelSQLAssocID and execute it
 		String resultString = labelSQLAssocID.toString() + "," + result;
 		return resultString;
 	}
@@ -176,7 +185,7 @@ public class CommonBizlogic
 		ResultSet rs = null;
 		try
 		{
-			if(CPId !=null)
+			if (CPId != null)
 			{
 				stmt.setLong(1, CPId);
 			}
@@ -195,6 +204,22 @@ public class CommonBizlogic
 			session.close();
 
 		}
+	}
+
+	private static String clobToStringConversion(Clob clb) throws IOException, SQLException
+	{
+		if (clb == null)
+			return "";
+
+		StringBuffer str = new StringBuffer();
+		String strng;
+
+		BufferedReader bufferRead = new BufferedReader(clb.getCharacterStream());
+
+		while ((strng = bufferRead.readLine()) != null)
+			str.append(strng);
+
+		return str.toString();
 	}
 
 }
