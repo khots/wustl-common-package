@@ -7,6 +7,8 @@ public class SchedulerConstants
 	public static final String DAILY_INTERVAL = "daily";
 	public static final String WEEKLY_INTERVAL = "weekly";
 	public static final String MONTHLY_INTERVAL = "monthly";
+	public static final String QUARTERLY_INTERVAL = "quarterly";
+	public static final String YEARLY_INTERVAL = "yearly";
 	public static final String THREAD_POOL_SIZE = "scheduler.threadPool.size";
 	public static final String PROPERTIES_FILE_NAME = "Scheduler.properties";
 	public static final String TAG_FILE_NAME = "schedulerTag.txt";
