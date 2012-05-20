@@ -73,8 +73,11 @@ public class CustomReportGenerator extends ReportGenerator
 		cmmdList.add(ticketId.toString());
 		String[] cmmdArray = new String[cmmdList.size()];
 		cmmdList.toArray(cmmdArray);
-		Runtime.getRuntime().exec(cmmdArray, null,
+		Process process= Runtime.getRuntime().exec(cmmdArray, null,
 				new File(System.getProperty("app.customReportsDirPath")));
+		process.waitFor();
+		
+		process.exitValue();
 	}
 
 }

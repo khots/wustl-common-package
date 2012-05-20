@@ -98,7 +98,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 
 		if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.DAILY_INTERVAL))
 		{
-			literalInterval = (long) 24 * 60 * 60;/*literalInterval = (long) 30;*/
+			literalInterval = (long) 24 * 60 * 60;
 		}
 		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.WEEKLY_INTERVAL))
 		{
@@ -107,6 +107,14 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.MONTHLY_INTERVAL))
 		{
 			literalInterval = (long) 24 * 7 * 30 * 60 * 60;
+		}
+		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.QUARTERLY_INTERVAL))
+		{
+			literalInterval = (long) 24 * 7 * 30 * 60 * 60 * 3;
+		}
+		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.YEARLY_INTERVAL))
+		{
+			literalInterval = (long) 24 * 7 * 30 * 60 * 60 * 12;
 		}
 
 		return literalInterval;

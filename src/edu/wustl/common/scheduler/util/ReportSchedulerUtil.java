@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
+import edu.wustl.common.actionForm.ReportForm;
 import edu.wustl.common.beans.NameValueBean;
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.ReportGenerator;
 import edu.wustl.common.report.bean.FileDetails;
@@ -203,9 +208,9 @@ public class ReportSchedulerUtil
 	public static String getDownloadFilePath(String fileName) throws BizLogicException
 	{
 		ReportAuditDataBizLogic fileBiz = new ReportAuditDataBizLogic();
-		List list = fileBiz.executeQuery("select fileDetail.fileName from "
-				+ ReportAuditData.class.getName()
-				+ " fileDetail where fileDetail.fileName like'%" + fileName + "'", null);
+		List list = fileBiz.executeQuery(
+				"select fileDetail.fileName from " + ReportAuditData.class.getName()
+						+ " fileDetail where fileDetail.fileName like'%" + fileName + "'", null);
 		String filePath = null;
 		if (list == null || list.isEmpty())
 		{
@@ -284,9 +289,10 @@ public class ReportSchedulerUtil
 	{
 		ReportAuditDataBizLogic fileBiz = new ReportAuditDataBizLogic();
 		@SuppressWarnings("rawtypes")
-		List list = fileBiz.executeQuery("select fileDetail.fileName from "
-				+ ReportAuditData.class.getName() + " fileDetail where fileDetail.userId= "
-				+ userId + " and fileDetail.fileName like'" + "%" + fileName + "%'", null);
+		List list = fileBiz.executeQuery(
+				"select fileDetail.fileName from " + ReportAuditData.class.getName()
+						+ " fileDetail where fileDetail.userId= " + userId
+						+ " and fileDetail.fileName like'" + "%" + fileName + "%'", null);
 
 		if (list == null || list.isEmpty())
 		{
@@ -337,14 +343,14 @@ public class ReportSchedulerUtil
 		{
 			list = dao.executeQuery(
 					"select CS_ID from REPORT_DETAILS where IDENTIFIER = " + itemId, null);
-			
+
 		}
 		finally
 		{
 			dao.closeSession();
 		}
-		
-		return ((List)list.get(0)).get(0).equals("");
+
+		return ((List) list.get(0)).get(0).equals("");
 	}
 
 	/**
@@ -382,7 +388,7 @@ public class ReportSchedulerUtil
 	{
 
 		ReportAuditDataBizLogic fileBiz = new ReportAuditDataBizLogic();
-		
+
 		try
 		{
 			reportAuditData.setJobStatus("Running");
@@ -403,9 +409,9 @@ public class ReportSchedulerUtil
 					"_" + reportAuditData.getId() + ".csv"));
 			reportBean.setFileDetails(fileDetails);
 			ReportGenerator reportGenerator = ReportGenerator.getImplObj(reportName);
-	
+
 			reportGenerator.generateCSV(reportBean);
-			
+
 			String zipFile = fileDetails.getFilePath().replace(".csv",
 					SchedulerConstants.ZIP_EXTENSION);
 			ReportSchedulerUtil.createZipFile(zipFile,
@@ -418,7 +424,7 @@ public class ReportSchedulerUtil
 			reportAuditData.setErrorDescription(e.getMessage());
 			reportAuditData.setJobStatus("Error");
 			e.printStackTrace();
-			
+
 		}
 		finally
 		{
@@ -437,13 +443,62 @@ public class ReportSchedulerUtil
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public static String getEmail(Long userId) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, Exception
+	public static String getEmail(Long userId) throws InstantiationException,
+			IllegalAccessException, ClassNotFoundException, IOException, Exception
 	{
 		IHostAppUserDataRetriever iHostUserRet = (IHostAppUserDataRetriever) Class.forName(
 				(String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
 						"host.user.retrieval.implName")).newInstance();
 		String email = iHostUserRet.getUserEmail(userId);
 		return email;
+	}
+
+	/**
+	 * @param hsForm
+	 * @param sessionDataBean
+	 * @return
+	 * @throws ParseException
+	 * @throws DAOException
+	 * @throws SQLException
+	 * @throws BizLogicException
+	 */
+	public static ReportAuditData generateTicket(ReportForm hsForm, SessionDataBean sessionDataBean)
+			throws DAOException, SQLException, BizLogicException, ParseException
+	{
+		ReportAuditData customReportAudit = new ReportAuditData();
+		customReportAudit.setUserId(sessionDataBean.getUserId());
+		SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
+				.getDatePattern());
+		if (hsForm.getFromDate() != null)
+		{
+			customReportAudit.setReportDurationStart(formatter.parse(hsForm.getFromDate()));
+		}
+		if (hsForm.getToDate() != null)
+		{
+			customReportAudit.setReportDurationEnd(formatter.parse(hsForm.getToDate()));
+		}
+		JDBCDAO dao = DAOConfigFactory.getInstance()
+				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+		dao.openSession(null);
+		try
+		{
+			ReportBizLogic repoBiz = new ReportBizLogic();
+			ResultSet reportDetailRS = repoBiz.getReportDetailsResult(dao, hsForm.getReportName());
+			if (reportDetailRS != null && reportDetailRS.next()
+					&& reportDetailRS.getObject("CS_ID") != null)
+			{
+				//populate csid if its a study or cp report
+				customReportAudit.setCsId(Long
+						.valueOf(reportDetailRS.getObject("CS_ID").toString()));
+				System.out.println("");
+			}
+		}
+		finally
+		{
+			dao.closeSession();
+		}
+		ReportAuditDataBizLogic repoAuditBiz = new ReportAuditDataBizLogic();
+		repoAuditBiz.insert(customReportAudit);
+		return customReportAudit;
 	}
 }
