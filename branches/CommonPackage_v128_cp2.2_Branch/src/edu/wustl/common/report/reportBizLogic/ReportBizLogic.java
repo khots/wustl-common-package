@@ -127,10 +127,6 @@ public class ReportBizLogic extends DefaultBizLogic
 		ResultSet result = null;
 		String query = "SELECT REPORT_TYPE,REPORT_GENARATOR,CS_ID FROM REPORT_DETAILS WHERE REPORT_NAME = '"
 				+ reportName + "'";
-
-		dao = DAOConfigFactory.getInstance()
-				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
-		dao.openSession(null);
 		result = dao.getResultSet(query, null, 1);
 		return result;
 	}
