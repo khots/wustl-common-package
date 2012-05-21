@@ -27,12 +27,16 @@ public class InsertCSDashboardItem
 			{
 				cnt++;
 				Long cpId = null;
+				Integer order = new Integer(0);
 				if (!nextLine[0].equals(""))
 				{
 					cpId = Long.valueOf(nextLine[0]);
 				}
-				associateCSWithDashboardItem(cpId, nextLine[1], nextLine[2], nextLine[3], Integer
-						.parseInt(nextLine[4]));
+				if(!nextLine[4].equals("")){
+					order = Integer
+							.parseInt(nextLine[4]);
+				}
+				associateCSWithDashboardItem(cpId, nextLine[1], nextLine[2], nextLine[3],order);
 
 			}
 			catch (LabelSQLAppException e)
