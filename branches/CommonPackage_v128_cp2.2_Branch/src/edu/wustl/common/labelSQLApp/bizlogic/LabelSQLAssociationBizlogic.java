@@ -23,18 +23,24 @@ public class LabelSQLAssociationBizlogic
 	{
 		LabelSQLAssociation labelSQLAssociation = null;
 
+		System.out.println("create session getLabelSQLAssocById...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session getLabelSQLAssocById done...");
 		try
 		{
 
 			HibernateDatabaseOperations<LabelSQLAssociation> dbHandler = new HibernateDatabaseOperations<LabelSQLAssociation>(
 					session);
+			System.out.println("retrieveById getLabelSQLAssocById...");
 			labelSQLAssociation = dbHandler.retrieveById(LabelSQLAssociation.class.getName(),
 					labelSQLAssocId);
+			System.out.println("retrieveById getLabelSQLAssocById done...");
 		}
 		finally
 		{
+			System.out.println("close session getLabelSQLAssocById...");
 			session.close();
+			System.out.println("close session getLabelSQLAssocById done...");
 		}
 
 		return labelSQLAssociation;
@@ -80,16 +86,22 @@ public class LabelSQLAssociationBizlogic
 		labelSQLAssociation.setUserDefinedLabel(userDefinedLabel);
 		labelSQLAssociation.setSeqOrder(order);
 
+		System.out.println("create session insertLabelSQLAssociation...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session insertLabelSQLAssociation done...");
 		try
 		{
 			HibernateDatabaseOperations<LabelSQLAssociation> dbHandler = new HibernateDatabaseOperations<LabelSQLAssociation>(
 					session);
+			System.out.println("insert insertLabelSQLAssociation...");
 			dbHandler.insert(labelSQLAssociation);
+			System.out.println("insert insertLabelSQLAssociation done...");
 		}
 		finally
 		{
+			System.out.println("close session insertLabelSQLAssociation...");
 			session.close();
+			System.out.println("close session insertLabelSQLAssociation done...");
 		}
 
 	}
@@ -105,17 +117,22 @@ public class LabelSQLAssociationBizlogic
 		LabelSQLAssociation labelSQLAssociation = new LabelSQLAssociation();
 		labelSQLAssociation = getLabelSQLAssocByCPIdAndLabelSQLId(cpId, labelSQLId);//get the labelSQLAssociation from cpId and labelSQLId
 
+		System.out.println("create session deleteLabelSQLAssociation...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session deleteLabelSQLAssociation done...");
 		try
 		{
 			HibernateDatabaseOperations<LabelSQLAssociation> dbHandler = new HibernateDatabaseOperations<LabelSQLAssociation>(
 					session);
-
+			System.out.println("delete deleteLabelSQLAssociation...");
 			dbHandler.delete(labelSQLAssociation);
+			System.out.println("delete deleteLabelSQLAssociation done...");
 		}
 		finally
 		{
+			System.out.println("close session deleteLabelSQLAssociation...");
 			session.close();
+			System.out.println("close session deleteLabelSQLAssociation done...");
 		}
 
 	}

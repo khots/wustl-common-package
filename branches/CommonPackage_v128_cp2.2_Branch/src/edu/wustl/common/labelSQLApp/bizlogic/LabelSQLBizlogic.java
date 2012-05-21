@@ -26,17 +26,23 @@ public class LabelSQLBizlogic
 	{
 		LabelSQL labelSQL = null;
 
+		System.out.println("create session getLabelSQLById...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session getLabelSQLById done...");
 		try
 		{
 			Long id = labelSQLId;
 			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
 					session);
+			System.out.println("retrieveById getLabelSQLById...");
 			labelSQL = dbHandler.retrieveById(LabelSQL.class.getName(), id);
+			System.out.println("retrieveById getLabelSQLById done...");
 		}
 		finally
 		{
+			System.out.println("closing session getLabelSQLById...");
 			session.close();
+			System.out.println("closing session getLabelSQLById done...");
 		}
 
 		return labelSQL;
@@ -51,16 +57,22 @@ public class LabelSQLBizlogic
 	public List<LabelSQL> getLabelSQLByLabel(String label) throws Exception
 	{
 		List<LabelSQL> labelSQLList = null;
+		System.out.println("create session getLabelSQLByLabel...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session getLabelSQLByLabel done...");
 		try
 		{
 			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
 					session);
+			System.out.println("retrieve getLabelSQLByLabel...");
 			labelSQLList = dbHandler.retrieve(LabelSQL.class.getName(), "label", label);
+			System.out.println("retrieve getLabelSQLByLabel done...");
 		}
 		finally
 		{
+			System.out.println("closing session getLabelSQLByLabel...");
 			session.close();
+			System.out.println("closing session getLabelSQLByLabel done...");
 		}
 
 		return labelSQLList;
@@ -79,20 +91,24 @@ public class LabelSQLBizlogic
 		labelSQL.setLabel(label);
 		labelSQL.setQuery(sql);
 
+		System.out.println("create session insertLabelSQL...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session insertLabelSQL done...");
 		try
 		{
 			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
 					session);
-
+			System.out.println("insert insertLabelSQL...");
 			dbHandler.insert(labelSQL);
+			System.out.println("insert insertLabelSQL done...");
 
-			session.flush();
 			return labelSQL.getId();
 		}
 		finally
 		{
+			System.out.println("closing session insertLabelSQL...");
 			session.close();
+			System.out.println("closing session insertLabelSQL done...");
 		}
 
 	}
@@ -107,17 +123,23 @@ public class LabelSQLBizlogic
 	{
 		List<LabelSQL> labelSQLs = null;
 
+		System.out.println("create session getAllLabelSQL...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("create session getAllLabelSQL done...");
 		try
 		{
 
 			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
 					session);
+			System.out.println("retrieve getAllLabelSQL...");
 			labelSQLs = dbHandler.retrieve(LabelSQL.class.getName());
+			System.out.println("retrieve getAllLabelSQL done...");
 		}
 		finally
 		{
+			System.out.println("closing session getAllLabelSQL...");
 			session.close();
+			System.out.println("closing session getAllLabelSQL done...");
 		}
 
 		return labelSQLs;
