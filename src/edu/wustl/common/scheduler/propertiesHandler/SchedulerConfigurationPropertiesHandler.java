@@ -1,33 +1,35 @@
+
 package edu.wustl.common.scheduler.propertiesHandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import edu.wustl.common.scheduler.constants.SchedulerConstants;
-import edu.wustl.common.scheduler.tag.SchedulerTag;
-
+import java.util.HashMap;
+import java.util.Map;
+import edu.wustl.common.scheduler.util.ISchedulerPropertiesFetcher;
 
 public class SchedulerConfigurationPropertiesHandler
 {
-	private static SchedulerConfigurationPropertiesHandler schedulerProperties;
-	private static Properties globalProperties = new Properties();
 
-	
+	private static SchedulerConfigurationPropertiesHandler schedulerProperties;
+	private static Map<String, Object> globalProperties = new HashMap<String, Object>();
+
 	/**
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	private  SchedulerConfigurationPropertiesHandler() throws IOException
+	private SchedulerConfigurationPropertiesHandler() throws Exception
 	{
-		InputStream inStream = SchedulerTag.class.getClassLoader().getResourceAsStream(
-				SchedulerConstants.PROPERTIES_FILE_NAME);
-		globalProperties.load(inStream);
+		/*InputStream inStream = SchedulerTag.class.getClassLoader().getResourceAsStream(
+				SchedulerConstants.PROPERTIES_FILE_NAME);*/
+		ISchedulerPropertiesFetcher propertiesFetcher = (ISchedulerPropertiesFetcher) Class
+				.forName("edu.wustl.clinportal.scheduleImpls.SchedulerPropertiesFetcherImpl")
+				.newInstance();
+		globalProperties.putAll(propertiesFetcher.getSchedulerPropertiesMap());
 	}
-	
+
 	/**
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public static synchronized SchedulerConfigurationPropertiesHandler getInstance() throws IOException
+	public static synchronized SchedulerConfigurationPropertiesHandler getInstance()
+			throws Exception
 	{
 		if (schedulerProperties == null)
 		{
@@ -35,7 +37,7 @@ public class SchedulerConfigurationPropertiesHandler
 		}
 		return schedulerProperties;
 	}
-	
+
 	/**
 	 * @param key
 	 * @return
@@ -49,5 +51,5 @@ public class SchedulerConfigurationPropertiesHandler
 		}
 		return property;
 	}
-	
+
 }
