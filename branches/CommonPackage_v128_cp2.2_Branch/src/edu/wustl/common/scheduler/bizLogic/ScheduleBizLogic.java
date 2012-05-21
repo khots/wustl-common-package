@@ -123,11 +123,9 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	/**
 	 * @param startDate
 	 * @return
-	 * @throws IOException 
-	 * @throws NumberFormatException 
+	 * @throws Exception 
 	 */
-	public long getStartDelayFromStartTime(Date startDate) throws NumberFormatException,
-			IOException
+	public long getStartDelayFromStartTime(Date startDate) throws Exception
 	{
 
 		int hrs = Integer.parseInt(((String) SchedulerConfigurationPropertiesHandler.getInstance()
@@ -164,13 +162,9 @@ public class ScheduleBizLogic extends DefaultBizLogic
 
 	/**
 	 * @param schedule
-	 * @throws IOException
-	 * @throws BizLogicException
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException
+	 * @throws Exception 
 	 */
-	public void insertAndSchedule(Schedule schedule) throws IOException, BizLogicException,
-			AlreadyScheduledException, ScheduleHandlerNotFoundException
+	public void insertAndSchedule(Schedule schedule) throws Exception
 	{
 		if (schedule.getId() == null)
 		{
@@ -185,12 +179,9 @@ public class ScheduleBizLogic extends DefaultBizLogic
 
 	/**
 	 * @param processor
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	private void schedule(AbstractScheduleProcessor processor) throws AlreadyScheduledException,
-			ScheduleHandlerNotFoundException, IOException
+	private void schedule(AbstractScheduleProcessor processor) throws Exception
 	{
 		Scheduler scheduler = new Scheduler();
 		scheduler.schedule(processor, true);
@@ -257,13 +248,9 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * @throws IOException
-	 * @throws BizLogicException
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException
+	 * @throws Exception 
 	 */
-	public void scheduleOnStartUp() throws IOException, BizLogicException,
-			AlreadyScheduledException, ScheduleHandlerNotFoundException
+	public void scheduleOnStartUp() throws Exception
 	{
 		String[] scheduleTypes = ((String) SchedulerConfigurationPropertiesHandler.getInstance()
 				.getProperty(SchedulerConstants.SCHEDULE_TYPES)).split(",");
