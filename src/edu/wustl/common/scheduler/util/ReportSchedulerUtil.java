@@ -469,11 +469,11 @@ public class ReportSchedulerUtil
 		customReportAudit.setUserId(sessionDataBean.getUserId());
 		SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
 				.getDatePattern());
-		if (hsForm.getFromDate() != null)
+		if (hsForm.getFromDate() != null && hsForm.getFromDate() !="")
 		{
 			customReportAudit.setReportDurationStart(formatter.parse(hsForm.getFromDate()));
 		}
-		if (hsForm.getToDate() != null)
+		if (hsForm.getToDate() != null && hsForm.getToDate() !="")
 		{
 			customReportAudit.setReportDurationEnd(formatter.parse(hsForm.getToDate()));
 		}
