@@ -32,7 +32,9 @@ public class CommonBizlogic
 	public static List<?> executeHQL(String queryName, List<Object> values)
 			throws HibernateException
 	{
+		System.out.println("creating session executeHQL...");
 		Session session = HibernateUtil.newSession();
+		System.out.println("creating session executeHQL done...");
 
 		List<?> records = null;
 		try
@@ -61,7 +63,9 @@ public class CommonBizlogic
 					}
 				}
 			}
+			System.out.println("executing HQL...");
 			records = q.list();
+			System.out.println("executing HQL done...");
 		}
 		finally
 		{
