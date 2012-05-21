@@ -28,21 +28,19 @@ public class Scheduler
 	/**
 	 * @param scheduleId
 	 * @return
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public boolean isAlreadyScheduled(Long scheduleId) throws IOException
+	public boolean isAlreadyScheduled(Long scheduleId) throws Exception
 	{
 		return SchedulerFactory.getInstance().getScheduleHandlersMap().containsKey(scheduleId);
 	}
 
 	/**
 	 * @param scheduler
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException 
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
 	public void schedule(AbstractScheduleProcessor scheduleProcessor, boolean forceSchedule)
-			throws AlreadyScheduledException, ScheduleHandlerNotFoundException, IOException
+			throws Exception
 	{
 		Long scheduleId = ((Schedule) scheduleProcessor.getScheduleObject()).getId();
 		String scheduleName = ((Schedule) scheduleProcessor.getScheduleObject()).getName();
@@ -70,9 +68,10 @@ public class Scheduler
 
 	/**
 	 * @param scheduleProcessor
-	 * @throws IOException 
+	 * @throws Exception 
+	 * @throws NumberFormatException 
 	 */
-	private void schedule(AbstractScheduleProcessor scheduleProcessor) throws IOException
+	private void schedule(AbstractScheduleProcessor scheduleProcessor) throws NumberFormatException, Exception
 	{
 		String interval = ((Schedule) scheduleProcessor.getScheduleObject()).getInterval();
 		Date startDate = ((Schedule) scheduleProcessor.getScheduleObject()).getStartDate();
@@ -91,10 +90,9 @@ public class Scheduler
 
 	/**
 	 * @param scheduleId
-	 * @throws ScheduleHandlerNotFoundException 
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public void unSchedule(Long scheduleId) throws ScheduleHandlerNotFoundException, IOException
+	public void unSchedule(Long scheduleId) throws Exception
 	{
 		if (isAlreadyScheduled(scheduleId))
 		{

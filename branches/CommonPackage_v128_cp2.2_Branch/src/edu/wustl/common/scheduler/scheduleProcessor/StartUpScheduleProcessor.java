@@ -20,13 +20,9 @@ public class StartUpScheduleProcessor
 {
 
 	/**
-	 * @throws IOException
-	 * @throws BizLogicException
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException
+	 * @throws Exception 
 	 */
-	public void scheduleSavedSchedules() throws IOException, BizLogicException,
-			AlreadyScheduledException, ScheduleHandlerNotFoundException
+	public void scheduleSavedSchedules() throws Exception
 	{
 
 		List<Schedule> scheduleList = new ArrayList<Schedule>();
@@ -38,12 +34,10 @@ public class StartUpScheduleProcessor
 
 	/**
 	 * @param scheduleList
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
 	private void scheduleSchedulesList(List<Schedule> scheduleList)
-			throws AlreadyScheduledException, ScheduleHandlerNotFoundException, IOException
+			throws Exception
 	{
 		if (!scheduleList.isEmpty())
 		{
@@ -61,12 +55,9 @@ public class StartUpScheduleProcessor
 
 	/**
 	 * @param processor
-	 * @throws AlreadyScheduledException
-	 * @throws ScheduleHandlerNotFoundException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	private void schedule(AbstractScheduleProcessor processor) throws AlreadyScheduledException,
-			ScheduleHandlerNotFoundException, IOException
+	private void schedule(AbstractScheduleProcessor processor) throws Exception
 	{
 		Scheduler scheduler = new Scheduler();
 		scheduler.schedule(processor, true);
@@ -74,11 +65,10 @@ public class StartUpScheduleProcessor
 
 	/**
 	 * @param schedulesList
-	 * @throws IOException
-	 * @throws BizLogicException
+	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private void populateSchedules(List<Schedule> schedulesList) throws IOException, BizLogicException
+	private void populateSchedules(List<Schedule> schedulesList) throws Exception
 	{
 		List<String> scheduleTypes = Arrays
 				.asList(((String) SchedulerConfigurationPropertiesHandler.getInstance()

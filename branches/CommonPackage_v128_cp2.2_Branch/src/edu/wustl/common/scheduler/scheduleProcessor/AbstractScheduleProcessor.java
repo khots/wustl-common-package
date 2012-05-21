@@ -183,12 +183,9 @@ public abstract class AbstractScheduleProcessor implements Runnable
 	
 
 	/**
-	 * @throws IOException
-	 * @throws ScheduleHandlerNotFoundException
-	 * @throws ScheduleExpiredException
+	 * @throws Exception 
 	 */
-	protected void shutDownIfExpired() throws IOException, ScheduleHandlerNotFoundException,
-			ScheduleExpiredException
+	protected void shutDownIfExpired() throws Exception
 	{
 		if (scheduleObject.getEndDate() != null)
 		{

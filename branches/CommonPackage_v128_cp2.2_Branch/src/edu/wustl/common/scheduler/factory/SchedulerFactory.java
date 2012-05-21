@@ -22,10 +22,11 @@ public class SchedulerFactory
 	private static ScheduledExecutorService scheduler;
 
 	/**
-	 * @throws IOException 
+	 * @throws Exception 
+	 * @throws NumberFormatException 
 	 * 
 	 */
-	private SchedulerFactory() throws IOException
+	private SchedulerFactory() throws NumberFormatException, Exception
 	{
 		scheduler = Executors.newScheduledThreadPool((Integer
 				.parseInt((String) SchedulerConfigurationPropertiesHandler.getInstance()
@@ -35,9 +36,9 @@ public class SchedulerFactory
 
 	/**
 	 * @return
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public static synchronized SchedulerFactory getInstance() throws IOException
+	public static synchronized SchedulerFactory getInstance() throws Exception
 	{
 		if (schedulerFact == null)
 		{

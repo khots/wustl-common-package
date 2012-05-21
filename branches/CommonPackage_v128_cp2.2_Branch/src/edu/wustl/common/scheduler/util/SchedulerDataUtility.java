@@ -510,10 +510,10 @@ public class SchedulerDataUtility
 	 * @param subject
 	 * @param body
 	 * @throws MessagingException
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
 	public static void sendScheduleMail(String emailAddress, String subject, String body)
-			throws MessagingException, IOException
+			throws MessagingException, Exception
 	{
 		StringBuilder bodyValue = new StringBuilder();
 		bodyValue.append(body);

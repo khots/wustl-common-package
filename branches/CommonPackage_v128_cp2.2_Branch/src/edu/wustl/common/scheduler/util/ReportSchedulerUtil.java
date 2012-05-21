@@ -183,9 +183,9 @@ public class ReportSchedulerUtil
 	/**
 	 * @param fileName
 	 * @return
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public static String getFileDownloadLink(String fileName) throws IOException
+	public static String getFileDownloadLink(String fileName) throws Exception
 	{
 		String url = CommonServiceLocator.getInstance().getAppURL();
 		if (url == null)
