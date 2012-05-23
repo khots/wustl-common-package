@@ -106,13 +106,13 @@ public class CSVWriter extends BaseWriter {
 			if(!"".equals(label[i].trim()) && !"".equals(text[i].trim())){
 				java.util.List<String> arr = new java.util.ArrayList<String>();
 				arr.add(label[i]);
-				String[] textArr = text[i].split(",");
+				String[] textArr = text[i].split("\",\"");
 				for(int count = 0; count< textArr.length; count++){
 					arr.add(textArr[count]);
 				}
 				writer.append(dataAsString(arr.toArray(new String[arr.size()])));
 			}else if("".equals(label[i].trim()) && !"".equals(text[i].trim())){
-				String[] arr = text[i].split(",");//new String[1];
+				String[] arr = text[i].split("\",\"");//new String[1];
 				
 				//arr[0] = text[i];
 				writer.append(dataAsString(arr));
@@ -121,8 +121,6 @@ public class CSVWriter extends BaseWriter {
 				arr[0] = label[i];
 				writer.append(dataAsString(arr));
 			}
-			
-			
 		}
 		
 	}
