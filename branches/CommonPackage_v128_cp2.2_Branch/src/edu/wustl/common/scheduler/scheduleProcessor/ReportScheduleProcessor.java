@@ -123,7 +123,8 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		SchedulerDataUtility.sendScheduleMail(
 				email,
 				(String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
-						"scheduler.mail.subject"), body.toString());
+						"scheduler.mail.subject")
+						+ scheduleObject.getName(), body.toString());
 	}
 
 	/**
@@ -165,7 +166,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	{
 		body.append("Hello "
 				+ SchedulerDataUtility.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId)))
-				+ ",\n");
+						.get(0).replace(",", "") + ",\n");
 		body.append((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
 				"scheduler.mail.header"));
 	}
