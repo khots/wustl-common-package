@@ -401,9 +401,12 @@
 								var gridData=getRowValues(rowId);
 								document.getElementById('isEdit1').value="true";
 								document.getElementById('scheduleName1').value=gridData[0];
-								var dates = gridData[2].split(":");
-								document.getElementById('startDate1').value=dates[0];
-								document.getElementById('endDate1').value=dates[1];
+								if(gridData[2]!="")
+								{
+									var dates = gridData[2].split(":");
+									document.getElementById('startDate1').value=dates[0];
+									document.getElementById('endDate1').value=dates[1];
+								}
  								var intervalElement = document.scheduleForm.interval;							
 								for(var i = 0; i < intervalElement.length; i++)
 								{

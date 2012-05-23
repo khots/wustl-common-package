@@ -490,7 +490,7 @@ public class SchedulerDataUtility
 		List<ReportAuditData> filesList = fileBiz.getFileDetailsList();
 		for (ReportAuditData fileDetail : filesList)
 		{
-			if ((new Date().getTime() - fileDetail.getExecuteionEnd().getTime()) >= (ageThreshold * 86400000))
+			if ((fileDetail.getExecuteionEnd()==null)||(new Date().getTime() - fileDetail.getExecuteionEnd().getTime()) >= (ageThreshold * 86400000))
 			{
 				File file = new File(fileDetail.getFileName());
 				if (file.exists())
