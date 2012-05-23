@@ -75,10 +75,11 @@ public class SchedulerConstants
 	public static final String EXECUTION_TIME_MIN = "scheduler.execution.time.min";
 	public static final String ZIP_EXTENSION = ".zip";
 	public static final String HOST_USER_RETRIEVER = "host.user.retrieval.implName";
-	public static final ArrayList<String> SCHEDULER_PROPERTIES_LIST = new ArrayList<String>(Arrays.asList(
-			"scheduler.threadPool.size", "scheduler.execution.time.hrs",
-			"scheduler.execution.time.min", "schedule.types", "host.app.url",
-			"host.user.retrieval.implName", "host.mail.alias",
-			"scheduler.cleanUp.timeInterval.days"));
+	public static final ArrayList<String> SCHEDULER_PROPERTIES_LIST = new ArrayList<String>(
+			Arrays.asList("scheduler.threadPool.size", "scheduler.execution.time.hrs",
+					"scheduler.execution.time.min", "schedule.types", "host.app.url",
+					"host.user.retrieval.implName", "host.mail.alias",
+					"scheduler.cleanUp.timeInterval.days", "scheduler.mail.subject",
+					"scheduler.mail.header", "scheduler.mail.end"));
 
 }
