@@ -108,7 +108,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 			}
 			populateMailBodyEnding(body);
 			sendMail(email, body);
-			System.out.println("Mail: " + body.toString());
+			//System.out.println("Mail: " + body.toString());
 		}
 	}
 
