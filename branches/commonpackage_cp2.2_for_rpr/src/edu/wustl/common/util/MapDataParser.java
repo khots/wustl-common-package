@@ -276,7 +276,15 @@ public class MapDataParser // NOPMD
 		{
 			Map.Entry entry = (Map.Entry)it.next();
 	         String key = (String)entry.getKey();
-	         String value = (String)entry.getValue();
+	         String value=null;
+		        if(entry.getValue() instanceof String[])
+		        {
+		          value = ((String[])entry.getValue())[0];
+		        }
+		        else
+		        {
+		        	value = (String )entry.getValue();
+		        }
 			parstData(null, key, value, "KEY");
 		}
 		return dataList;
