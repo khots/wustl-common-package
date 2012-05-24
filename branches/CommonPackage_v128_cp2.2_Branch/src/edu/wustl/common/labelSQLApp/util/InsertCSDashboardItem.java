@@ -46,8 +46,7 @@ public class InsertCSDashboardItem
 			}
 			catch (LabelSQLAppException e)
 			{
-				Logger.out.error("Error inserting record " + cnt);
-				e.printStackTrace();
+				Logger.out.error("Error inserting record " + cnt + " "+e.getMessage());
 			}
 		}
 		System.out.println("Exiting main...");
