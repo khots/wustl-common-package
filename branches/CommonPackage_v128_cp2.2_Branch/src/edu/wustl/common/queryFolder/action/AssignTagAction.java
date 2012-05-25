@@ -1,3 +1,4 @@
+
 package edu.wustl.common.queryFolder.action;
 
 import java.util.ArrayList;
@@ -20,25 +21,28 @@ import edu.wustl.common.queryFolder.bizlogic.TagBizLogic;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.dao.exception.DAOException;
 
-public class AssignTagAction extends Action {
+public class AssignTagAction extends Action
+{
+
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		String queryChecks = request
-				.getParameter(Constants.QUERYCHECKBOX_STRING);
+			HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
+		String queryChecks = request.getParameter(Constants.QUERYCHECKBOX_STRING);
 		List<String> queryCheckList = getListFromString(queryChecks);
 		addTag(request, queryCheckList);
 		assignTag(request, queryCheckList);
 		return null;
 	}
 
-	private void assignTag(HttpServletRequest request,
-			List<String> queryCheckList) throws BizLogicException {
+	private void assignTag(HttpServletRequest request, List<String> queryCheckList)
+			throws BizLogicException
+	{
 		TagBizLogic tagBizLogic = new TagBizLogic();
 		String tagChecks = request.getParameter(Constants.TAGCHECKBOX_STRING);
 		List<String> tagCheckList = getListFromString(tagChecks);
 		Iterator<String> tagIterate = tagCheckList.iterator();
-		while (tagIterate.hasNext()) {
+		while (tagIterate.hasNext())
+		{
 			String tagString = (String) tagIterate.next();
 			int tagId = Integer.parseInt(tagString);
 			assignTag(queryCheckList, tagBizLogic, tagId);
@@ -46,13 +50,14 @@ public class AssignTagAction extends Action {
 	}
 
 	private void addTag(HttpServletRequest request, List<String> queryCheckList)
-			throws BizLogicException, DAOException {
+			throws BizLogicException, DAOException
+	{
 		String newTagName = request.getParameter(Constants.NEWTAGNAME_STRING);
-		SessionDataBean sessionDataBean = (SessionDataBean) request
-				.getSession().getAttribute(
-						edu.wustl.common.util.global.Constants.SESSION_DATA);
+		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
+				edu.wustl.common.util.global.Constants.SESSION_DATA);
 		TagBizLogic tagBizLogic = new TagBizLogic();
-		if (newTagName != null && !newTagName.isEmpty()) {
+		if (newTagName != null && !newTagName.isEmpty())
+		{
 			Tag tag = new Tag();
 			tag.setTagLabel(newTagName);
 			tag.setUserId(sessionDataBean.getUserId());
@@ -61,10 +66,12 @@ public class AssignTagAction extends Action {
 		}
 	}
 
-	private void assignTag(List<String> queryCheckList,
-			TagBizLogic tagBizLogic, long tagId) throws BizLogicException {
+	private void assignTag(List<String> queryCheckList, TagBizLogic tagBizLogic, long tagId)
+			throws BizLogicException
+	{
 		Iterator<String> queryIterate = queryCheckList.iterator();
-		while (queryIterate.hasNext()) {
+		while (queryIterate.hasNext())
+		{
 			String queryString = (String) queryIterate.next();
 			int objId = Integer.parseInt(queryString);
 
@@ -72,10 +79,12 @@ public class AssignTagAction extends Action {
 		}
 	}
 
-	private List<String> getListFromString(String idStr) {
+	private List<String> getListFromString(String idStr)
+	{
 		List<String> queryCheckList = new ArrayList<String>();
 		StringTokenizer querytokens = new StringTokenizer(idStr, ",");
-		while (querytokens.hasMoreTokens()) {
+		while (querytokens.hasMoreTokens())
+		{
 			queryCheckList.add((String) querytokens.nextToken());
 		}
 		return queryCheckList;

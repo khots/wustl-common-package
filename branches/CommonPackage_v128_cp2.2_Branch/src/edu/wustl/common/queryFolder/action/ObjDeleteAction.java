@@ -1,3 +1,4 @@
+
 package edu.wustl.common.queryFolder.action;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,13 +14,14 @@ import edu.wustl.common.queryFolder.beans.Tag;
 import edu.wustl.common.queryFolder.bizlogic.TagBizLogic;
 import edu.wustl.common.util.global.Constants;
 
-public class ObjDeleteAction extends Action {
+public class ObjDeleteAction extends Action
+{
+
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+			HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
 		TagBizLogic tagBizLogic = new TagBizLogic();
-		String assignIds = (String) request
-				.getParameter(Constants.ASSIGNID_STRING);
+		String assignIds = (String) request.getParameter(Constants.ASSIGNID_STRING);
 		String tagIds = (String) request.getParameter(Constants.TAGID_STRING);
 		long assignId = Long.parseLong(assignIds);
 		long tagId = Long.parseLong(tagIds);

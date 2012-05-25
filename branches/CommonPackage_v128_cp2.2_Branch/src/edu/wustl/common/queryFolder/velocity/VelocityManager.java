@@ -1,3 +1,4 @@
+
 package edu.wustl.common.queryFolder.velocity;
 
 import java.io.StringWriter;
@@ -11,7 +12,8 @@ import org.apache.velocity.app.VelocityEngine;
  * @author amol
  * 
  */
-public class VelocityManager {
+public class VelocityManager
+{
 
 	private static VelocityManager velocityManager;
 	private static VelocityEngine velocityEngine;
@@ -26,7 +28,8 @@ public class VelocityManager {
 	 * 
 	 * @throws Exception
 	 */
-	private VelocityManager() throws Exception {
+	private VelocityManager() throws Exception
+	{
 		initializeVelocityEngine();
 	}
 
@@ -38,8 +41,9 @@ public class VelocityManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public String evaluate(List<?> gridPopulateObjectList,
-			String templateFileName) throws Exception {
+	public String evaluate(List<?> gridPopulateObjectList, String templateFileName)
+			throws Exception
+	{
 		Template template = velocityEngine.getTemplate(templateFileName);
 		VelocityContext context = new VelocityContext();
 		context.put(GRID_POPULATE_OBJECT_LIST, gridPopulateObjectList);
@@ -48,18 +52,20 @@ public class VelocityManager {
 		return writer.toString();
 	}
 
-	public static VelocityManager getInstance() throws Exception {
-		if (velocityManager == null) {
+	public static VelocityManager getInstance() throws Exception
+	{
+		if (velocityManager == null)
+		{
 			velocityManager = new VelocityManager();
 		}
 		return velocityManager;
 	}
 
-	private void initializeVelocityEngine() throws Exception {
+	private void initializeVelocityEngine() throws Exception
+	{
 		velocityEngine = new VelocityEngine();
 		velocityEngine.setProperty(RESOURCE_LOADER, CLASS);
-		velocityEngine.setProperty(CLASS_RESOURCE_LOADER_CLASS,
-				VELOCITY_CLASSPATH_RESOURCE_LOADER);
+		velocityEngine.setProperty(CLASS_RESOURCE_LOADER_CLASS, VELOCITY_CLASSPATH_RESOURCE_LOADER);
 		velocityEngine.init();
 	}
 }
