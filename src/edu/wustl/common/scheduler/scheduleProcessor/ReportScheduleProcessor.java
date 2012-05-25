@@ -136,7 +136,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	private void populateErrorMessageInMail(ReportBizLogic repoBiz, StringBuilder body,
 			ReportAuditData reportAuditData) throws BizLogicException
 	{
-		body.append(repoBiz.getReportNameById(reportAuditData.getReportId()) + ": "
+		body.append("\n").append(repoBiz.getReportNameById(reportAuditData.getReportId()) + ": "
 				+ "Report could not be generated, please contact the administrator.");
 	}
 
@@ -150,11 +150,11 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	private void populateDownloadLinkInMail(ReportBizLogic repoBiz, StringBuilder body,
 			ReportAuditData reportAuditData) throws BizLogicException, Exception
 	{
-		body.append(
+		body.append("\n").append(
 				repoBiz.getReportNameById(reportAuditData.getReportId())
 						+ ": "
 						+ ReportSchedulerUtil.getFileDownloadLink(reportAuditData.getId()
-								.toString())).append("\n");
+								.toString()));
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	{
 		body.append("Hello "
 				+ SchedulerDataUtility.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId)))
-						.get(0).replace(",", "") + ",\n");
+						.get(0).replace(",", " ") + ",\n");
 		body.append((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
 				"scheduler.mail.header"));
 	}
@@ -246,7 +246,6 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 			{
 				//populate csid if its a study or cp report
 				reportAuditData.setCsId(Long.valueOf(reportDetailRS.getObject("CS_ID").toString()));
-				System.out.println("");
 			}
 		}
 		finally
