@@ -1,3 +1,4 @@
+
 package edu.wustl.common.queryFolder.bizlogic;
 
 import java.util.List;
@@ -14,7 +15,9 @@ import edu.wustl.dao.exception.DAOException;
 
 //import edu.wustl.common.util.querysuite.DAOUtil;
 
-public class TagBizLogic extends DefaultBizLogic {
+public class TagBizLogic extends DefaultBizLogic
+{
+
 	HibernateDAO hibernateDao = null;
 
 	/**
@@ -22,10 +25,11 @@ public class TagBizLogic extends DefaultBizLogic {
 	 * 
 	 * 
 	 */
-	public void assignTag(long tagId, long objId, String objType)
-			throws BizLogicException {
+	public void assignTag(long tagId, long objId, String objType) throws BizLogicException
+	{
 		DAO dao = null;
-		try {
+		try
+		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
 
@@ -38,10 +42,14 @@ public class TagBizLogic extends DefaultBizLogic {
 			dao.insert(assignTag);
 			dao.commit();
 
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			ErrorKey errorKey = ErrorKey.getErrorKey("db.operation.error");
 			throw new BizLogicException(errorKey, e, e.getMessage());
-		} finally {
+		}
+		finally
+		{
 			closeSession(dao);
 		}
 	}
@@ -52,17 +60,23 @@ public class TagBizLogic extends DefaultBizLogic {
 	 * 
 	 */
 
-	public List<Tag> listTag() throws BizLogicException {
+	public List<Tag> listTag() throws BizLogicException
+	{
 		List<Tag> tagList = null;
 		DAO dao = null;
-		try {
+		try
+		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
 
 			tagList = dao.executeQuery("from " + Tag.class.getName());
-		} catch (DAOException e) {
+		}
+		catch (DAOException e)
+		{
 			throw new BizLogicException(e);
-		} finally {
+		}
+		finally
+		{
 			closeSession(dao);
 		}
 		return tagList;
@@ -73,16 +87,22 @@ public class TagBizLogic extends DefaultBizLogic {
 	 * 
 	 * 
 	 */
-	public void deleteTag(Tag tag) throws BizLogicException {
+	public void deleteTag(Tag tag) throws BizLogicException
+	{
 		DAO dao = null;
-		try {
+		try
+		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.delete(tag);
 			dao.commit();
-		} catch (DAOException e) {
+		}
+		catch (DAOException e)
+		{
 			throw new BizLogicException(e);
-		} finally {
+		}
+		finally
+		{
 
 			closeSession(dao);
 		}
@@ -94,17 +114,22 @@ public class TagBizLogic extends DefaultBizLogic {
 	 * 
 	 * 
 	 */
-	public void deleteAssignObject(AssignTag assignTag)
-			throws BizLogicException {
+	public void deleteAssignObject(AssignTag assignTag) throws BizLogicException
+	{
 		DAO dao = null;
-		try {
+		try
+		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.delete(assignTag);
 			dao.commit();
-		} catch (DAOException e) {
+		}
+		catch (DAOException e)
+		{
 			throw new BizLogicException(e);
-		} finally {
+		}
+		finally
+		{
 			closeSession(dao);
 		}
 
@@ -115,16 +140,22 @@ public class TagBizLogic extends DefaultBizLogic {
 	 * 
 	 * 
 	 */
-	public long insertTag(Tag tag) throws BizLogicException {
+	public long insertTag(Tag tag) throws BizLogicException
+	{
 		DAO dao = null;
-		try {
+		try
+		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
 			insert(tag, dao);
 			dao.commit();
-		} catch (DAOException e) {
+		}
+		catch (DAOException e)
+		{
 			throw new BizLogicException(e);
-		} finally {
+		}
+		finally
+		{
 			closeSession(dao);
 		}
 		return tag.getTagId();
@@ -136,7 +167,8 @@ public class TagBizLogic extends DefaultBizLogic {
 	 * 
 	 */
 
-	public Tag getTagById(Long tagId) throws DAOException {
+	public Tag getTagById(Long tagId) throws DAOException
+	{
 		DAO dao = null;
 		SessionDataBean sessionDataBean = new SessionDataBean();
 		dao = getHibernateDao(getAppName(), sessionDataBean);

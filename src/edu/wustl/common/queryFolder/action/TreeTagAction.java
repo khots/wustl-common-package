@@ -1,3 +1,4 @@
+
 package edu.wustl.common.queryFolder.action;
 
 import java.util.List;
@@ -15,10 +16,12 @@ import edu.wustl.common.queryFolder.bizlogic.TagBizLogic;
 import edu.wustl.common.queryFolder.velocity.VelocityManager;
 import edu.wustl.common.util.global.Constants;
 
-public class TreeTagAction extends Action {
+public class TreeTagAction extends Action
+{
+
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+			HttpServletRequest request, HttpServletResponse response) throws Exception
+	{
 		TagBizLogic tagBizLogic = new TagBizLogic();
 		List<Tag> tagList = tagBizLogic.listTag();
 		request.setAttribute(Constants.TAGLIST_STRING, tagList);
