@@ -31,11 +31,11 @@ public class InsertCSDashboardItem
 				cnt++;
 				Long cpId = null;
 				Integer order = new Integer(0);
-				if (!nextLine[0].equals(""))
+				if (!nextLine[0].equals("") && nextLine[0] != null)
 				{
 					cpId = Long.valueOf(nextLine[0]);
 				}
-				if (!nextLine[4].equals(""))
+				if (!nextLine[4].equals("") && nextLine[4] != null)
 				{
 					order = Integer.parseInt(nextLine[4]);
 				}
@@ -46,7 +46,7 @@ public class InsertCSDashboardItem
 			}
 			catch (LabelSQLAppException e)
 			{
-				Logger.out.error("Error inserting record " + cnt + " "+e.getMessage());
+				Logger.out.error("Error inserting record " + cnt + " " + e.getMessage());
 			}
 		}
 		System.out.println("Exiting main...");
