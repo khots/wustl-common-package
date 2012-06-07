@@ -3,6 +3,7 @@ package edu.wustl.common.labelSQLApp.util;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import edu.wustl.common.util.logger.Logger;
 import au.com.bytecode.opencsv.CSVReader;
@@ -75,7 +76,9 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
 				System.out.println("Associating sql done...");
-			}
+			}catch (SQLException e){
+				Logger.out.error(e.getCause());
+			}			
 			catch (Exception e)
 			{
 				Logger.out.error("Error while inserting SQL -> " + sql);
@@ -112,6 +115,9 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
 				System.out.println("Associating label done...");
+			}
+			catch (SQLException e){
+				Logger.out.error(e.getCause());
 			}
 			catch (Exception e)
 			{
@@ -157,6 +163,9 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
 				System.out.println("associating labelsql done...");
+			}
+			catch (SQLException e){
+				Logger.out.error(e.getCause());
 			}
 			catch (Exception e)
 			{
@@ -247,6 +256,9 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId, null,
 						order);
 				System.out.println("associate heading done...");
+			}
+			catch (SQLException e){
+				Logger.out.error(e.getCause());
 			}
 			catch (Exception e)
 			{
