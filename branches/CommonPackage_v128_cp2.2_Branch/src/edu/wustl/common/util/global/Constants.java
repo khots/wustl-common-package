@@ -555,6 +555,8 @@ public final class Constants extends CommonConstants
    
    public static final String CSV_FILE_EXTENTION=".csv";
    
+   public static final String HELP_URL_KEY="helpURLKey";
+   
    
    public static final String TAGCHECKBOX_STRING = "chkBoxString";
 	public static final String QUERYCHECKBOX_STRING = "queryChkBoxString";
