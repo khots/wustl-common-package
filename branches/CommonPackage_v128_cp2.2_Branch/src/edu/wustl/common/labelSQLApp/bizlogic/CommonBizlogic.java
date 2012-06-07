@@ -180,7 +180,9 @@ public class CommonBizlogic
 	*/
 	public int executeQuery(String sql, Long CPId) throws Exception
 	{
+		int count = 0;
 		Session session = HibernateUtil.newSession();
+		sql = sql.trim();
 		if (sql.endsWith(";"))
 		{
 			sql = sql.substring(0, sql.length() - 1);
@@ -194,8 +196,12 @@ public class CommonBizlogic
 				stmt.setLong(1, CPId);
 			}
 			rs = stmt.executeQuery();
-			rs.next();
-			return rs.getInt(1);
+			if (rs.next())
+			{
+				count = rs.getInt(1);
+			}
+
+			return count;
 		}
 		catch (Exception e)
 		{
