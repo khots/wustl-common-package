@@ -147,8 +147,8 @@ public class OracleAutomateImpExp extends AbstractAutomateImpExp
 		StringBuffer cmd = new StringBuffer("sqlldr ").append(getDbUtility().getDbUserName())
 								.append('/').append(getDbUtility().getDbPassword())
 								.append('@').append(oracleTnsName)
-								.append(" control=").append(fileName);
-		//System.out.println("Command ::  "+cmd);
+								.append(" control='").append(fileName).append("'");
+		//System.out.println("Command ::  "+cmd.toString());
 		Runtime runtime = Runtime.getRuntime();
 		Process proc = runtime.exec(cmd.toString());
 		// any error message?
