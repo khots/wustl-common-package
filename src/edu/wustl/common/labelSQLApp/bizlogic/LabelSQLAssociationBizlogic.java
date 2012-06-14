@@ -55,16 +55,20 @@ public class LabelSQLAssociationBizlogic
 	public List<LabelSQLAssociation> getLabelSQLAssocCollection(Long CPId) throws Exception
 	{
 		List<?> result = null;
-		if (CPId == null)
+		List<Object> values = null;
+
+		String hql = "getSystemLabelSQLAssoc";
+
+		if (CPId != null)
 		{
-			result = CommonBizlogic.executeHQL("getSystemLabelSQLAssoc", null);
-		}
-		else
-		{
-			List<Object> values = new ArrayList<Object>();
+
+			values = new ArrayList<Object>();
 			values.add(Long.valueOf(CPId));
-			result = CommonBizlogic.executeHQL("getLabelSQLAssocByCPId", values);//runs the HQL
+			hql = "getLabelSQLAssocByCPId";
+
 		}
+
+		result = CommonBizlogic.executeHQL(hql, values);//runs the HQL
 
 		return (List<LabelSQLAssociation>) result;
 	}
@@ -156,12 +160,10 @@ public class LabelSQLAssociationBizlogic
 			String displayName = new CommonBizlogic().getLabelByLabelSQLAssocId(labelSQLAssociation
 					.getId());//retrieve label by association id
 
-			if (query != null && !"".equals(query))
+			if (query != null && !"".equals(query) && !"".equals(displayName)
+					&& displayName != null)
 			{ //Associating the displayname name and association id for dashboard items
-				if (!"".equals(displayName) && displayName != null)
-				{
-					displayNameAssocMap.put(displayName, labelSQLAssociation.getId());
-				}
+				displayNameAssocMap.put(displayName, labelSQLAssociation.getId());
 			}
 			else
 			{
@@ -184,12 +186,12 @@ public class LabelSQLAssociationBizlogic
 			throws Exception
 	{
 		List<Object> values = new ArrayList<Object>();
-		String hql="getSysLabelSQLAssocByCPIdAndLabelSQLId";
-		if(cpId!=null)
+		String hql = "getSysLabelSQLAssocByCPIdAndLabelSQLId";
+		if (cpId != null)
 		{
-			hql="getLabelSQLAssocByCPIdAndLabelSQLId";
+			hql = "getLabelSQLAssocByCPIdAndLabelSQLId";
 			values.add(cpId);
-		} 
+		}
 		values.add(labelSQLId);
 		List<?> result = CommonBizlogic.executeHQL(hql, values);
 		if (result.size() != 0)
