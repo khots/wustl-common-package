@@ -1,5 +1,5 @@
 
-package edu.wustl.common.labelSQLApp.test;
+package unit.edu.wustl.common.labelSQLApp.bizlogic;
 
 import static org.junit.Assert.assertEquals;
 
