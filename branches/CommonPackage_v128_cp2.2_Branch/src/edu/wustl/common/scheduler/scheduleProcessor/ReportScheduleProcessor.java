@@ -66,6 +66,14 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	protected void postScheduleExecution() throws Exception
 	{
 		mail();
+		try
+		{
+			ticketIdList.clear();
+		}
+		catch (UnsupportedOperationException e)
+		{
+			ticketIdList = new ArrayList<Long>();
+		}
 	}
 
 	/* (non-Javadoc)
