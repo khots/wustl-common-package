@@ -17,6 +17,7 @@
 	<property name="test.src.dir" value="${test.dir}/src" />
 	<property name="target.dir" value="${base.dir}/classes" />	
 	<property name="lib.dir" value="${base.dir}/lib" />
+	<property name="test.lib.dir" value="${base.dir}/test/lib" />
 	<property name="build.dir" value="${base.dir}/build" />
 	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
 	<property name="generateforce" value="true" />
@@ -87,6 +88,10 @@
 				<fileset dir="${lib.dir}">
 					<include name="*.jar" />
 				</fileset>
+				<fileset dir="${test.lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				
 			</classpath>
 		</javac>		
 		<copy todir="${target.dir}">
