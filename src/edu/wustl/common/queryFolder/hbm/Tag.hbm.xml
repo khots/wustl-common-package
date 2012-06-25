@@ -12,7 +12,7 @@
 		<property name="tagLabel" type="java.lang.String" column="TAG_LABEL" />
 		<property name="userId" type="java.lang.Long" column="USER_ID" />
 		<set name="AssignTag" table="assigntag" cascade="save-update,all-delete-orphan"
-			inverse="false" lazy="true" fetch="select">
+			inverse="false" lazy="false" fetch="select">
 			<key>
 				<column name="TAG_ID" not-null="true" />
 			</key>
