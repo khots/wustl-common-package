@@ -42,9 +42,9 @@
 		where
 		assoc.cpid=?
 		and
-		lbl.label=?
+		(lbl.label=?
 		or
-		assoc.user_defined_label=?
+		assoc.user_defined_label=?)
 	</sql-query>
 	
 	<sql-query name="getSysLabelSQLIdByLabelOrDisplayName">
@@ -53,9 +53,9 @@
 		where
 		assoc.cpid is null
 		and
-		lbl.label=?
+		(lbl.label=?
 		or
-		assoc.user_defined_label=?
+		assoc.user_defined_label=?)
 	</sql-query>
 	
 	<sql-query name="getLabelsByCPId">
