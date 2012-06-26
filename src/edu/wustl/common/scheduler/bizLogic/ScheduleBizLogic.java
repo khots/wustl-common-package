@@ -79,7 +79,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	public Object getSchedulesByTypeAndId(String scheduleType, long id) throws DAOException,
 			BizLogicException
 	{
-		return super.retrieve(scheduleType, id);
+		return retrieve(scheduleType, id);
 	}
 
 	public boolean isAuthorized(DAO dao, Object domainObject, SessionDataBean sessionDataBean)
@@ -145,8 +145,6 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		else
 		{
 			cal.setTimeInMillis(date.getTime() + 24 * 60 * 60 * 1000);
-			/*cal.set(Calendar.HOUR_OF_DAY, hrs);
-			cal.set(Calendar.MINUTE, min);*/
 			delay = (cal.getTimeInMillis() - date.getTime()) / 1000;
 		}
 
@@ -218,7 +216,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 					{
 						if (ReportSchedulerUtil.isSysReport(itemId))
 						{
-							isSysReport = true;
+							isSysReport = true;	
 						}
 					}
 					if (isSysReport)
