@@ -39,7 +39,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	/* (non-Javadoc)
 	 * @see main.java.scheduler.scheduleProcessors.AbstractScheduleProcessor#executeSchedule()
 	 */
-	protected void executeSchedule() throws Exception
+	public void executeSchedule() throws Exception
 	{
 		ReportGenerator reportGenerator = null;
 		ReportBizLogic repoBiz = new ReportBizLogic();
@@ -63,7 +63,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	}
 
 	@Override
-	protected void postScheduleExecution() throws Exception
+	public void postScheduleExecution() throws Exception
 	{
 		mail();
 		try
@@ -81,43 +81,53 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * Mails download link if report execution is successfull and error details if execution fails.
 	 */
 	@Override
-	protected void mail() throws Exception
+	public boolean mail() throws Exception
 	{
-		Collection<Long> userCollection = ((BaseSchedule) scheduleObject)
-				.getRecepientUserIdCollection();
-		if (((BaseSchedule) scheduleObject).getIncludeMe())
+		boolean success = true;
+		try
 		{
-			userCollection.add(((BaseSchedule) scheduleObject).getOwnerId());
-		}
-		ReportAuditDataBizLogic reportAuditBiz = new ReportAuditDataBizLogic();
-		for (Long userId : userCollection)
-		{
-			List<ReportAuditData> dataList = reportAuditBiz.getReportAuditDataListbyUser(userId,
-					getTicketIdList());
-			String email = ReportSchedulerUtil.getEmail(userId);
-			ReportBizLogic repoBiz = new ReportBizLogic();
-			StringBuilder body = new StringBuilder("");
-			populateMailHeader(userId, body);
-			for (ReportAuditData reportAuditData : dataList)
+			Collection<Long> userCollection = ((BaseSchedule) scheduleObject)
+					.getRecepientUserIdCollection();
+			if (((BaseSchedule) scheduleObject).getIncludeMe())
 			{
-				if (reportAuditData.getJobStatus() != null)
-				{
-					if (reportAuditData.getJobStatus().equalsIgnoreCase("Completed"))
-					{
-						populateDownloadLinkInMail(repoBiz, body, reportAuditData);
-					}
-					else if (reportAuditData.getJobStatus().equalsIgnoreCase("Error"))
-					{
-						populateErrorMessageInMail(repoBiz, body, reportAuditData);
-					}
-					reportAuditData.setIsEmailed(true);
-					reportAuditBiz.update(reportAuditData);
-				}
+				userCollection.add(((BaseSchedule) scheduleObject).getOwnerId());
 			}
-			populateMailBodyEnding(body);
-			sendMail(email, body);
-			//System.out.println("Mail: " + body.toString());
+			ReportAuditDataBizLogic reportAuditBiz = new ReportAuditDataBizLogic();
+			for (Long userId : userCollection)
+			{
+				List<ReportAuditData> dataList = reportAuditBiz.getReportAuditDataListbyUser(
+						userId, getTicketIdList());
+				String email = ReportSchedulerUtil.getEmail(userId);
+				ReportBizLogic repoBiz = new ReportBizLogic();
+				StringBuilder body = new StringBuilder("");
+				populateMailHeader(userId, body);
+				for (ReportAuditData reportAuditData : dataList)
+				{
+					if (reportAuditData.getJobStatus() != null)
+					{
+						if (reportAuditData.getJobStatus().equalsIgnoreCase("Completed"))
+						{
+							populateDownloadLinkInMail(repoBiz, body, reportAuditData);
+						}
+						else if (reportAuditData.getJobStatus().equalsIgnoreCase("Error"))
+						{
+							populateErrorMessageInMail(repoBiz, body, reportAuditData);
+						}
+						reportAuditData.setIsEmailed(true);
+						reportAuditBiz.update(reportAuditData);
+					}
+				}
+				populateMailBodyEnding(body);
+				sendMail(email, body);
+				//System.out.println("Mail: " + body.toString());
+			}
 		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/**
@@ -126,13 +136,23 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * @throws MessagingException
 	 * @throws Exception
 	 */
-	private void sendMail(String email, StringBuilder body) throws MessagingException, Exception
+	private boolean sendMail(String email, StringBuilder body) throws Exception
 	{
-		SchedulerDataUtility.sendScheduleMail(
-				email,
-				(String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
-						"scheduler.mail.subject")
-						+ scheduleObject.getName(), body.toString());
+		boolean success = true;
+		try
+		{
+			SchedulerDataUtility.sendScheduleMail(
+					email,
+					(String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
+							"scheduler.mail.subject")
+							+ scheduleObject.getName(), body.toString());
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/**
@@ -141,11 +161,22 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * @param reportAuditData
 	 * @throws BizLogicException
 	 */
-	private void populateErrorMessageInMail(ReportBizLogic repoBiz, StringBuilder body,
+	private boolean populateErrorMessageInMail(ReportBizLogic repoBiz, StringBuilder body,
 			ReportAuditData reportAuditData) throws BizLogicException
 	{
-		body.append("\n").append(repoBiz.getReportNameById(reportAuditData.getReportId()) + ": "
-				+ "Report could not be generated, please contact the administrator.");
+		boolean success = true;
+		try
+		{
+			body.append("\n").append(
+					repoBiz.getReportNameById(reportAuditData.getReportId()) + ": "
+							+ "Report could not be generated, please contact the administrator.");
+		}
+		catch (BizLogicException e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/**
@@ -155,28 +186,50 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * @throws BizLogicException
 	 * @throws Exception
 	 */
-	private void populateDownloadLinkInMail(ReportBizLogic repoBiz, StringBuilder body,
-			ReportAuditData reportAuditData) throws BizLogicException, Exception
+	private boolean populateDownloadLinkInMail(ReportBizLogic repoBiz, StringBuilder body,
+			ReportAuditData reportAuditData) throws Exception
 	{
-		body.append("\n").append(
-				repoBiz.getReportNameById(reportAuditData.getReportId())
-						+ ": "
-						+ ReportSchedulerUtil.getFileDownloadLink(reportAuditData.getId()
-								.toString()));
+		boolean success = true;
+		try
+		{
+			body.append("\n").append(
+					repoBiz.getReportNameById(reportAuditData.getReportId())
+							+ ": "
+							+ ReportSchedulerUtil.getFileDownloadLink(reportAuditData.getId()
+									.toString()));
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/**
 	 * @param userId
 	 * @param body
+	 * @return TODO
 	 * @throws Exception
 	 */
-	private void populateMailHeader(Long userId, StringBuilder body) throws Exception
+	public boolean populateMailHeader(Long userId, StringBuilder body) throws Exception
 	{
-		body.append("Hello "
-				+ SchedulerDataUtility.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId)))
-						.get(0).replace(",", " ") + ",\n");
-		body.append((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
-				"scheduler.mail.header"));
+		boolean success = true;
+		try
+		{
+			body.append("Hello "
+					+ SchedulerDataUtility
+							.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId))).get(0)
+							.replace(",", " ") + ",\n");
+			body.append((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
+					"scheduler.mail.header"));
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/**
@@ -184,19 +237,30 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * @throws NumberFormatException
 	 * @throws Exception
 	 */
-	private void populateMailBodyEnding(StringBuilder body) throws NumberFormatException, Exception
+	private boolean populateMailBodyEnding(StringBuilder body) throws Exception
 	{
-		Calendar deleteDay = Calendar.getInstance();
-		SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
-				.getDatePattern());
-		deleteDay.set(
-				Calendar.DATE,
-				deleteDay.get(Calendar.DATE)
-						+ Integer.valueOf((String) SchedulerConfigurationPropertiesHandler
-								.getInstance().getProperty("scheduler.cleanUp.timeInterval.days")));
-		body.append(((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
-				"scheduler.mail.end")).replace("?",
-				formatter.format(new Date(deleteDay.getTimeInMillis()))));
+		boolean success = true;
+		try
+		{
+			Calendar deleteDay = Calendar.getInstance();
+			SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
+					.getDatePattern());
+			deleteDay.set(
+					Calendar.DATE,
+					deleteDay.get(Calendar.DATE)
+							+ Integer.valueOf((String) SchedulerConfigurationPropertiesHandler
+									.getInstance().getProperty(
+											"scheduler.cleanUp.timeInterval.days")));
+			body.append(((String) SchedulerConfigurationPropertiesHandler.getInstance()
+					.getProperty("scheduler.mail.end")).replace("?",
+					formatter.format(new Date(deleteDay.getTimeInMillis()))));
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/* (non-Javadoc)
@@ -243,12 +307,12 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	private void populateAuditDataWithCsId(ReportAuditData reportAuditData, ReportBizLogic repoBiz,
 			String reportName) throws DAOException, SQLException, NumberFormatException
 	{
-		JDBCDAO dao = DAOConfigFactory.getInstance()
-				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+		JDBCDAO dao = SchedulerDataUtility.getJDBCDAO();
 		dao.openSession(null);
+		ResultSet reportDetailRS = null;
 		try
 		{
-			ResultSet reportDetailRS = repoBiz.getReportDetailsResult(dao, reportName);
+			reportDetailRS = repoBiz.getReportDetailsResult(dao, reportName);
 			if (reportDetailRS != null && reportDetailRS.next()
 					&& reportDetailRS.getObject("CS_ID") != null)
 			{
@@ -258,6 +322,10 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		}
 		finally
 		{
+			if (reportDetailRS != null)
+			{
+				reportDetailRS.close();
+			}
 			dao.closeSession();
 		}
 	}

@@ -30,7 +30,7 @@ public class FilesCleanupProcessor extends AbstractScheduleProcessor
 	/* (non-Javadoc)
 	 * @see main.java.scheduler.scheduleProcessors.AbstractScheduleProcessor#executeSchedule()
 	 */
-	protected void executeSchedule() throws Exception
+	public void executeSchedule() throws Exception
 	{
 		Long threshold = Long.valueOf((String) SchedulerConfigurationPropertiesHandler
 				.getInstance().getProperty(SchedulerConstants.CLEANUP_THRESHOLD));
@@ -46,8 +46,9 @@ public class FilesCleanupProcessor extends AbstractScheduleProcessor
 	}
 
 	@Override
-	protected void mail() throws Exception
+	public boolean mail() throws Exception
 	{
+		return false;
 		// TODO Auto-generated method stub
 		
 	}
