@@ -1,5 +1,5 @@
 
-package unit.edu.wustl.common.labelSQLApp.util;
+package edu.wustl.common.labelSQLApp.util;
 
 import java.io.FileReader;
 import java.sql.SQLException;
