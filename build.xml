@@ -20,6 +20,7 @@
 	<property name="test.lib.dir" value="${base.dir}/test/lib" />
 	<property name="build.dir" value="${base.dir}/build" />
 	<property name="extra_lib.dir" value="${base.dir}/extra_lib" />
+	<property name="test.unit.src.dir" value="${test.dir}/unit" />
 	<property name="generateforce" value="true" />
 	<property name="junit.dir" value="${base.dir}/junit" />
 	<property name="junit.report.dir" value="${junit.dir}/reports" />
@@ -107,24 +108,24 @@
 	</target>
 	
 	<!-- compile all test classes-->
-	<target name="compileTest">			
+	<target name="compileTest">
 			<javac destdir="${junit.classes.dir}" includes="**/*.*" debug="on" includeAntRuntime="false" target="1.5">
-				<src path="${test.src.dir}" />
+				<src path="${test.unit.src.dir}" />
 				<classpath>
+					<fileset dir="${test.lib.dir}">
+						<include name="*.jar" />
+					</fileset>
 					<fileset dir="${lib.dir}">
 						<include name="*.jar" />
 					</fileset>
 					<pathelement location="${target.dir}" />
 				</classpath>
-			</javac>			
+			</javac>
 			<copy todir="${junit.classes.dir}">
-				<fileset dir="${test.src.dir}">
-					<include name="**/*.properties" />
-					<include name="**/*.xml" />
-					<include name="**/*.hbm.xml" />
-					<include name="**/*.ser" />
+				<fileset dir="${test.unit.src.dir}">
+
 				</fileset>
-			</copy>			
+			</copy>
 		</target>
 	<!--Create zip file of common package source files.-->
 	<target name="build_code_zip" depends="compile">
@@ -187,26 +188,38 @@
 	</target>
 	<!-- run junit test cases-->
 	<taskdef classpathref="junit.classpath" resource="tasks.properties" /> 
-	<target name="runJunitTestCases" depends="build_jar,compileTest,copyJarsToJunitLib">
-		<antcall target="initJunit"/>		
-		<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
-			<formatter type="xml" />
-			<sysproperty key="net.sourceforge.cobertura.datafile" file="${base.dir}/cobertura.ser" />
-			<batchtest todir="${junit.report.dir}/Html_reports">
-      			<fileset dir="${test.src.dir}">
-					<include name="**/TestAll.java"/>
-			    </fileset>
-			</batchtest>
-			<classpath>
-				<pathelement location="${test.src.dir}" />
-				<pathelement location="${junit.classes.dir}" />
-				<fileset dir="${junit.dir}/lib">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</junit>
-		<antcall target="createJunitReport" />
-	</target>
+	<path id="test.classpath">
+		  <pathelement location="${junit.classes.dir}" />
+		  <pathelement location="${target.dir}" />
+		  <pathelement location="${test.lib.dir}" />
+			<pathelement location="${test.src.dir}" />
+			<fileset dir="${test.lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		
+		<target name="runJunitTestCases" depends="build_jar,compileTest,copyJarsToJunitLib">
+			<antcall target="initJunit" />
+			<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes" >
+						<formatter type="xml" />
+			    <classpath refid="test.classpath"/>
+				      <batchtest todir="${junit.report.dir}/Html_reports">
+				        <fileset dir="${junit.classes.dir}" includes="**/Test*.class" />
+				      </batchtest>
+				
+			  </junit>
+			<antcall target="createJunitReport" />
+			<antcall target="clean-compile-test" />
+		</target>
+	
+	<target name="clean-compile-test">
+			    <delete verbose="yes">
+			      <fileset dir="${junit.classes.dir}" includes="**/*.class" />
+			    </delete>
+		</target>
 	
 	<target name="junitForCobertura" depends="compileTest,copyJarsToJunitLib">
 			<antcall target="initJunit"/>		
