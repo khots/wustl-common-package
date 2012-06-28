@@ -169,7 +169,7 @@ public final class CDEManager // NOPMD
 			}
 		}
 		//Collections.sort(list);
-		list.add(0,new NameValueBean(Constants.SELECT_OPTION,"-1"));
+	//	list.add(0,new NameValueBean(Constants.SELECT_OPTION,"-1"));
 //		if(otherValue!=null)
 //			list.add(1,otherValue);
 		return list;
