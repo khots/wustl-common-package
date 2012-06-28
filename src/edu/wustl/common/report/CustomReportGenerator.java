@@ -62,7 +62,7 @@ public class CustomReportGenerator extends ReportGenerator
 	 * @see edu.wustl.common.report.ReportGenerator#generateReportData()
 	 */
 	@Override
-	public void generateReport(Long ticketId) throws Exception
+	public void generateReport(Long ticketId, String userName, String password) throws Exception
 	{
 		StringTokenizer strTokenizer = new StringTokenizer(reportCommand);
 		List<String> cmmdList = new ArrayList<String>();
@@ -71,8 +71,17 @@ public class CustomReportGenerator extends ReportGenerator
 			cmmdList.add(strTokenizer.nextToken());
 		}
 		cmmdList.add(ticketId.toString());
+		cmmdList.add(userName);
+		cmmdList.add(password);
 		String[] cmmdArray = new String[cmmdList.size()];
 		cmmdList.toArray(cmmdArray);
+		
+		for(String cm:cmmdList)
+		{
+			System.out.println("Command Details-------------------------------------"+cm);
+		}
+		
+		
 		Process process= Runtime.getRuntime().exec(cmmdArray, null,
 				new File(System.getProperty("app.customReportsDirPath")));
 		process.waitFor();
