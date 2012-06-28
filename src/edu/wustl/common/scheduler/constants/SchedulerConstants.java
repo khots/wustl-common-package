@@ -80,6 +80,6 @@ public class SchedulerConstants
 					"scheduler.execution.time.min", "schedule.types", "host.app.url",
 					"host.user.retrieval.implName", "host.mail.alias",
 					"scheduler.cleanUp.timeInterval.days", "scheduler.mail.subject",
-					"scheduler.mail.header", "scheduler.mail.end"));
+					"scheduler.mail.header", "scheduler.mail.end", "database.userName", "database.password"));
 
 }
