@@ -46,14 +46,20 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		ReportAuditDataBizLogic repoAuditBiz = new ReportAuditDataBizLogic();
 		for (Long ticketId : getTicketIdList())
 		{
-			ReportAuditData reportAuditData = (ReportAuditData) repoAuditBiz.retrieve(
+			ReportAuditData
+
+			reportAuditData = (ReportAuditData) repoAuditBiz.retrieve(
 					ReportAuditData.class.getName(), ticketId);
 			String reportName = repoBiz.getReportNameById(reportAuditData.getReportId());
 			reportGenerator = ReportGenerator.getImplObj(reportName);
 
 			if (reportGenerator instanceof CustomReportGenerator)
 			{
-				reportGenerator.generateReport(ticketId);
+				String userName = (String) SchedulerConfigurationPropertiesHandler.getInstance()
+						.getProperty("database.userName");
+				String password = (String) SchedulerConfigurationPropertiesHandler.getInstance()
+						.getProperty("database.password");
+				reportGenerator.generateReport(ticketId, userName, password);
 			}
 			else
 			{
