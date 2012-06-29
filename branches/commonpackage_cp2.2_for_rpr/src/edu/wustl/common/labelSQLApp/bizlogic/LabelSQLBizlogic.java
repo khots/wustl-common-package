@@ -161,18 +161,20 @@ public class LabelSQLBizlogic extends CommonBizlogic
 	 */
 	public Long getLabelSQLIdByLabelOrDisplayName(Long CPId, String label) throws Exception
 	{
-		List<Object> values = new ArrayList<Object>();
 		Map<String, NamedQueryParam> substParams = new HashMap<String, NamedQueryParam>();
 		String hql="getSysLabelSQLIdByLabelOrDisplayName";
 		if(CPId!=null)
 		{
-			values.add(CPId);
 			substParams.put("0", new NamedQueryParam(DBTypes.LONG, CPId));
+			substParams.put("1", new NamedQueryParam(DBTypes.STRING, label));
+			substParams.put("2", new NamedQueryParam(DBTypes.STRING, label));
 			hql="getLabelSQLIdByLabelOrDisplayName";
 		}
-		values.add(label);
-		values.add(label);
-		
+		else
+		{
+			substParams.put("1", new NamedQueryParam(DBTypes.STRING, label));
+			substParams.put("0", new NamedQueryParam(DBTypes.STRING, label));
+		}
 		List<?> result = executeHQL(hql, substParams);
 
 		if (result.size() != 0)

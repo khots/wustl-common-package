@@ -15,8 +15,10 @@ import org.hibernate.HibernateException;
 
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
@@ -180,6 +182,12 @@ public class CommonBizlogic extends DefaultBizLogic
 		{
 			hibernateDao.closeSession();
 		}
+	}
+	
+	public boolean isAuthorized(DAO dao, Object domainObject, SessionDataBean sessionDataBean)
+			throws BizLogicException
+	{
+		return true;
 	}
 
 	/**

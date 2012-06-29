@@ -160,7 +160,7 @@ public class LabelSQLAssociationBizlogic extends CommonBizlogic
 		for (LabelSQLAssociation labelSQLAssociation : labelSQLAssociations)
 		{
 			String query = labelSQLAssociation.getLabelSQL().getQuery();//retrieving query by LabelSQLAssociation
-			String displayName = new CommonBizlogic().getLabelByLabelSQLAssocId(labelSQLAssociation
+			String displayName = getLabelByLabelSQLAssocId(labelSQLAssociation
 					.getId());//retrieve label by association id
 
 			if (query != null && !"".equals(query) && !"".equals(displayName)
