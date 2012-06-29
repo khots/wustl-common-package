@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -168,9 +169,6 @@ public class SchedulerDataUtility
 		List<String> list = iHostUserRet.getUserNamesList(idList);
 		return list;
 	}
-
-	
-
 
 	/**
 	 * @param userIdList
@@ -512,6 +510,21 @@ public class SchedulerDataUtility
 	{
 		return DAOConfigFactory.getInstance()
 				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+	}
+
+	public static List<String> getCustomReportParamList() throws Exception
+	{
+		List<String> dbDetailsList = new LinkedList<String>();
+
+		SchedulerConfigurationPropertiesHandler configProp = SchedulerConfigurationPropertiesHandler
+				.getInstance();
+
+		for (String propName : SchedulerConstants.DB_DETAILS_LIST)
+		{
+			dbDetailsList.add((String) configProp.getProperty(propName));
+		}
+
+		return dbDetailsList;
 	}
 
 }

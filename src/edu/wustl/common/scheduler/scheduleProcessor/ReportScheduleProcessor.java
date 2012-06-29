@@ -55,11 +55,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 
 			if (reportGenerator instanceof CustomReportGenerator)
 			{
-				String userName = (String) SchedulerConfigurationPropertiesHandler.getInstance()
-						.getProperty("database.userName");
-				String password = (String) SchedulerConfigurationPropertiesHandler.getInstance()
-						.getProperty("database.password");
-				reportGenerator.generateReport(ticketId, userName, password);
+				reportGenerator.generateReport(ticketId, SchedulerDataUtility.getCustomReportParamList());
 			}
 			else
 			{
