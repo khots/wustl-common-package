@@ -80,6 +80,9 @@ public class SchedulerConstants
 					"scheduler.execution.time.min", "schedule.types", "host.app.url",
 					"host.user.retrieval.implName", "host.mail.alias",
 					"scheduler.cleanUp.timeInterval.days", "scheduler.mail.subject",
-					"scheduler.mail.header", "scheduler.mail.end", "database.userName", "database.password"));
+					"scheduler.mail.header", "scheduler.mail.end"));
+	public static final ArrayList<String> DB_DETAILS_LIST = new ArrayList<String>(Arrays.asList(
+			"database.type", "database.host", "database.port", "database.name",
+			"database.userName", "database.password"));
 
 }
