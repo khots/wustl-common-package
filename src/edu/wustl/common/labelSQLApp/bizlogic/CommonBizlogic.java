@@ -4,22 +4,28 @@ package edu.wustl.common.labelSQLApp.bizlogic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Clob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
-import edu.wustl.common.hibernate.HibernateUtil;
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.HibernateDAO;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.query.generator.ColumnValueBean;
+import edu.wustl.dao.query.generator.DBTypes;
+import edu.wustl.dao.util.NamedQueryParam;
 
-public class CommonBizlogic
+public class CommonBizlogic extends DefaultBizLogic
 {
 
 	/**
@@ -29,50 +35,23 @@ public class CommonBizlogic
 	 * @return
 	 * @throws HibernateException
 	 */
-	public static List<?> executeHQL(String queryName, List<Object> values)
-			throws HibernateException
+	public List<?> executeHQL(String queryName, Map<String, NamedQueryParam> substParams)
+			throws DAOException
 	{
-		System.out.println("creating session executeHQL...");
-		Session session = HibernateUtil.newSession();
-		System.out.println("creating session executeHQL done...");
-
-		List<?> records = null;
+		List objects = null;
+		HibernateDAO hibernateDao = null;
 		try
 		{
-			Query q = session.getNamedQuery(queryName);
-			if (values != null)
-			{
-				for (int counter = 0; counter < values.size(); counter++)
-				{
-					Object value = values.get(counter);
-					String objectType = value.getClass().getSimpleName();
-
-					if ("Long".equals(objectType))
-					{
-						//sets the value for parameter of Long type
-						q.setLong(counter, Long.parseLong(value.toString()));
-					}
-					else if ("String".equals(objectType))
-					{
-						//sets the value for parameter of String type
-						q.setString(counter, (String) value);
-					}
-					else
-					{
-						q.setEntity(counter, value);
-					}
-				}
-			}
-			System.out.println("executing HQL...");
-			records = q.list();
-			System.out.println("executing HQL done...");
+			hibernateDao = (HibernateDAO) getHibernateDao(getAppName(), null);
+			objects = hibernateDao.executeNamedQuery(queryName, substParams);
+		
 		}
 		finally
 		{
-			session.close();
+			hibernateDao.closeSession();
 		}
 
-		return records;
+		return objects;
 
 	}
 
@@ -84,12 +63,11 @@ public class CommonBizlogic
 	 */
 	public String getLabelByLabelSQLAssocId(Long labelSQLAssocId) throws Exception
 	{
+		Map<String, NamedQueryParam> substParams = new HashMap<String, NamedQueryParam>();
+		substParams.put("0", new NamedQueryParam(DBTypes.LONG, labelSQLAssocId));
+		substParams.put("1", new NamedQueryParam(DBTypes.LONG, labelSQLAssocId));
 
-		List<Object> values = new ArrayList<Object>();
-		values.add(labelSQLAssocId);
-		values.add(labelSQLAssocId);
-
-		List<?> result = executeHQL("getLabelByLabelSQLAssocId", values);
+		List<?> result = executeHQL("getLabelByLabelSQLAssocId", substParams);
 
 		if (result.size() != 0)
 		{
@@ -109,10 +87,10 @@ public class CommonBizlogic
 	 */
 	public List<Clob> getQueryByLabelSQLAssocId(Long labelSQLId) throws Exception
 	{
-		List<Object> values = new ArrayList<Object>();
-		values.add(labelSQLId);
+		Map<String, NamedQueryParam> substParams = new HashMap<String, NamedQueryParam>();
+		substParams.put("0", new NamedQueryParam(DBTypes.LONG, labelSQLId));
 
-		List<?> result = executeHQL("getQueryByLabelSQLAssocId", values);
+		List<?> result = executeHQL("getQueryByLabelSQLAssocId", substParams);
 
 		return (List<Clob>) result;
 	}
@@ -171,6 +149,39 @@ public class CommonBizlogic
 		return resultString;
 	}
 
+	public JDBCDAO getJDBCDAO(SessionDataBean sessionDataBean) throws DAOException
+	{
+		JDBCDAO jdbcDao = DAOConfigFactory.getInstance().getDAOFactory(getAppName()).getJDBCDAO();
+		jdbcDao.openSession(sessionDataBean);
+		return jdbcDao;
+	}
+
+	/**
+	 *
+	 * @param jdbcDao
+	 * @throws DAOException
+	 */
+	public static void closeJDBCDAO(JDBCDAO jdbcDao) throws DAOException
+	{
+		if (jdbcDao != null)
+		{
+			jdbcDao.closeSession();
+		}
+	}
+
+	/**
+	 *
+	 * @param hibernateDao
+	 * @throws DAOException
+	 */
+	public static void closeHibernateDAO(HibernateDAO hibernateDao) throws DAOException
+	{
+		if (hibernateDao != null)
+		{
+			hibernateDao.closeSession();
+		}
+	}
+
 	/**
 	* Executes the stored SQL to give the count
 	* @param sql
@@ -178,36 +189,38 @@ public class CommonBizlogic
 	* @return
 	* @throws Exception
 	*/
-	public int executeQuery(String sql, Long CPId) throws Exception
+	private int executeQuery(String sql, Long CPId) throws Exception
 	{
-		Session session = HibernateUtil.newSession();
+		int count = 0;
+		//		Session session = HibernateUtil.newSession();
+		sql = sql.trim();
 		if (sql.endsWith(";"))
 		{
 			sql = sql.substring(0, sql.length() - 1);
 		}
-		PreparedStatement stmt = session.connection().prepareStatement(sql);
-		ResultSet rs = null;
+
+		JDBCDAO jdbcDao = getJDBCDAO(null);
 		try
 		{
+			LinkedList<ColumnValueBean> columnValueBeanList = null;
 			if (CPId != null)
 			{
-				stmt.setLong(1, CPId);
+				columnValueBeanList = new LinkedList<ColumnValueBean>();
+				columnValueBeanList.add(new ColumnValueBean(CPId, DBTypes.LONG));
 			}
-			rs = stmt.executeQuery();
-			rs.next();
-			return rs.getInt(1);
+			List resultList = jdbcDao.executeQuery(sql, columnValueBeanList);
+			count = Integer.valueOf(((List) resultList.get(0)).get(0).toString());
 		}
 		catch (Exception e)
 		{
 			Logger.out.error("Error executing query -> " + sql);
 			e.printStackTrace();
-			return -1;
 		}
 		finally
 		{
-			session.close();
-
+			jdbcDao.closeSession();
 		}
+		return count;
 	}
 
 	private static String clobToStringConversion(Clob clb) throws IOException, SQLException
