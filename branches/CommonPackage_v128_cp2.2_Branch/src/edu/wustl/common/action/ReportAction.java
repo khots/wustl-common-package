@@ -20,9 +20,9 @@ import edu.wustl.common.scheduler.bizLogic.ReportAuditDataBizLogic;
 import edu.wustl.common.scheduler.domain.ReportAuditData;
 import edu.wustl.common.scheduler.propertiesHandler.SchedulerConfigurationPropertiesHandler;
 import edu.wustl.common.scheduler.util.ReportSchedulerUtil;
+import edu.wustl.common.scheduler.util.SchedulerDataUtility;
 import edu.wustl.common.util.SendFile;
 import edu.wustl.common.util.Utility;
-
 
 public class ReportAction extends SecureAction
 {
@@ -45,11 +45,8 @@ public class ReportAction extends SecureAction
 			{
 				ReportAuditData customReportAudit = ReportSchedulerUtil.generateTicket(hsForm,
 						sessionDataBean);
-				String userName = (String) SchedulerConfigurationPropertiesHandler.getInstance()
-						.getProperty("database.userName");
-				String password = (String) SchedulerConfigurationPropertiesHandler.getInstance()
-						.getProperty("database.password");
-				reportGenerator.generateReport(customReportAudit.getId(), userName, password);
+				reportGenerator.generateReport(customReportAudit.getId(),
+						SchedulerDataUtility.getCustomReportParamList());
 				customReportAudit = (ReportAuditData) new ReportAuditDataBizLogic().retrieve(
 						ReportAuditData.class.getName(), customReportAudit.getId());
 				if (customReportAudit.getJobStatus() != null

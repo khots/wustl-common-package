@@ -202,6 +202,6 @@ public abstract class ReportGenerator
 	 * @param password TODO
 	 * @throws Exception
 	 */
-	public abstract void generateReport(Long ticketId, String userName, String password) throws Exception;
+	public abstract void generateReport(Long ticketId, List<String> dbDetails) throws Exception;
 
 }
