@@ -62,13 +62,13 @@
 
 
 
-	<path id="junit.classpath">		
+<!--	<path id="junit.classpath">		
 		<pathelement location="${cobertura.home}/cobertura.jar" />
 		<pathelement location="${cobertura.lib}/jakarta-oro-2.0.8.jar" />
 		<pathelement location="${cobertura.lib}/asm-2.2.1.jar" />
 		<pathelement location="${lib.dir}/log4j.jar" />
 	</path>
-
+-->
 	<!-- sub tasks -->
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
@@ -179,15 +179,15 @@
 	</target>
 	<!-- Create junit report-->
 	<target name="createJunitReport" >
-		<junitreport todir="${junit.report.dir}/Html_reports">
-			<fileset dir="${junit.report.dir}/Html_reports">
+		<junitreport todir="${reports.xml.dir}">
+			<fileset dir="${reports.xml.dir}">
 				<include name="TEST-*.xml" />
 			</fileset>
-			<report todir="${junit.report.dir}/Html_reports" />
+			<report todir="${reports.html.dir}" />
 		</junitreport>
 	</target>
 	<!-- run junit test cases-->
-	<taskdef classpathref="junit.classpath" resource="tasks.properties" /> 
+<!--	<taskdef classpathref="junit.classpath" resource="tasks.properties" /> -->
 	<path id="test.classpath">
 		  <pathelement location="${junit.classes.dir}" />
 		  <pathelement location="${target.dir}" />
@@ -200,7 +200,7 @@
 				<include name="*.jar" />
 			</fileset>
 		</path>
-		
+<!--		
 		<target name="runJunitTestCases" depends="build_jar,compileTest,copyJarsToJunitLib">
 			<antcall target="initJunit" />
 			<junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes" >
@@ -214,7 +214,29 @@
 			<antcall target="createJunitReport" />
 			<antcall target="clean-compile-test" />
 		</target>
-	
+-->
+		 <target name="runJunitTestCases" depends="build_jar,compileTest,copyJarsToJunitLib">
+                        <antcall target="initJunit" />
+                        <junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes" >
+			<!--Added For cobertura -->
+                        <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/basic_coverage.ser" />
+                                <classpath location="${instrumented.dir}" />
+                                <classpath location="${target.dir}" />
+
+                            <classpath refid="test.classpath"/>
+			<!--Defibe covertura classpath-->	
+                                <classpath refid="cobertura_classpath" />
+                                                <formatter type="xml" />
+                                 <test name="${testcase}" todir="${reports.xml.dir}" if="testcase" />
+
+                                      <batchtest todir="${reports.xml.dir}">
+                                        <fileset dir="${junit.classes.dir}" includes="**/Test*.class" />
+                                      </batchtest>
+                                
+                          </junit>
+                        <antcall target="createJunitReport" />
+                        <antcall target="clean-compile-test" />
+                </target>	
 	<target name="clean-compile-test">
 			    <delete verbose="yes">
 			      <fileset dir="${junit.classes.dir}" includes="**/*.class" />
@@ -401,5 +423,49 @@
 				</classpath>
 			</sql>
 		</target>
+
+
+
+	<!--
+	     code coverage using cobertura
+	-->
+	<property file="cobertura.properties"/>
+
+	<path id="cobertura_classpath">
+                <fileset dir="${cobertura.dir}">
+                        <include name="cobertura.jar" />
+                        <include name="lib/**/*.jar" />
+                </fileset>
+        </path>
+         <taskdef classpathref="cobertura_classpath" resource="tasks.properties"/>
+		
+	<target name="cobertura-init">
+                <mkdir dir="${instrumented.dir}" />
+                <mkdir dir="${reports.dir}" />
+                <mkdir dir="${reports.xml.dir}" />
+                <mkdir dir="${reports.html.dir}" />
+                <mkdir dir="${coverage.xml.dir}" />
+                <mkdir dir="${coverage.html.dir}" />
+        </target>
+
+	<target name="make-cobertura-instrument">
+		 <delete file="${reports.dir}/basic_coverage.ser"/> 
+                 <delete dir="${instrumented.dir}" />
+
+                <cobertura-instrument datafile="${reports.dir}/basic_coverage.ser" todir="${instrumented.dir}">
+                        <ignore regex="org.apache.log4j.*" />
+                        <fileset dir="${target.dir}">
+                                <include name="**/*.class" />
+                                <exclude name="**/*Test.class" />
+                        </fileset>
+                </cobertura-instrument>
+	</target>	
+	
+	<target name="cobertura-coverage-report">
+                <cobertura-report datafile="${reports.dir}/basic_coverage.ser" srcdir="${src.dir}" destdir="${coverage.xml.dir}" format="xml" />
+                <cobertura-report datafile="${reports.dir}/basic_coverage.ser" srcdir="${src.dir}" destdir="${coverage.html.dir}" />
+        </target>
+
+	<target name="cobertura-coverage" depends="cobertura-init, compile, make-cobertura-instrument, runJunitTestCases, cobertura-coverage-report" />	
 	
 </project>
