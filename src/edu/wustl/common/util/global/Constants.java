@@ -570,4 +570,7 @@ public final class Constants extends CommonConstants
 	public static final String ID = "id";
 	public static final String ENTITY_TAG = "entityTag";
 	public static final String ENTITY_TAGITEM = "entityTagItem";
+	public static final String ASSIGNID_STRING = "assignId";
+	public static final String OBJ_TYPE_QUERY = "Query";
+	public static final String QUERYCHECKBOX_STRING = "queryChkBoxString";
 }
