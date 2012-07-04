@@ -40,7 +40,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			dao.insert(entityName, tag);
+			//dao.insert(entityName, tag);
 			dao.commit();
 		}
 		catch (DAOException e)
@@ -65,7 +65,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			dao.delete(entityName, tag);
+		//	dao.delete(entityName, tag);
 			dao.commit();
 		}
 		catch (DAOException e)
@@ -89,7 +89,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			dao.insert(entityName, tagItem);
+		//	dao.insert(entityName, tagItem);
 			dao.commit();
 		}
 		catch (DAOException e)
@@ -114,7 +114,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			dao.delete(entityName, tagItem);
+		//	dao.delete(entityName, tagItem);
 			dao.commit();
 		}
 		catch (DAOException e)
@@ -151,7 +151,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			tag = (Tag) dao.retrieveByIdAndEntityName(entityName, tagId);
+		//	tag = (Tag) dao.retrieveByIdAndEntityName(entityName, tagId);
 		}
 		catch (DAOException e)
 		{
@@ -177,8 +177,8 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			Tag tag = (Tag) dao.retrieveByIdAndEntityName(entityName, tagId);
-			tagItem = tag.getTagItem();
+		//	Tag tag = (Tag) dao.retrieveByIdAndEntityName(entityName, tagId);
+		//	tagItem = tag.getTagItem();
 		}
 		catch (DAOException e)
 		{
@@ -204,8 +204,8 @@ public class TagDAO<T> extends DefaultBizLogic
 		try
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
-			tagItem = (TagItem) dao.retrieveByIdAndEntityName(entityName, itemId);
+		    dao = getHibernateDao(getAppName(), sessionDataBean);
+		//	tagItem = (TagItem) dao.retrieveByIdAndEntityName(entityName, itemId);
 		}
 		catch (DAOException e)
 		{
