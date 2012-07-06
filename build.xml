@@ -135,8 +135,7 @@
 		</delete>
 		<zip destfile="${build.dir}/commonpackage-${cp.jar.version}-src.zip">
 			<fileset dir="${src.dir}" includes="**/*" />
-			<fileset dir="${base.dir}/jss" includes="**/*"/>
-			<fileset dir="${base.dir}/css" includes="**/*"/>
+			 
 		</zip>
 	</target>
 
