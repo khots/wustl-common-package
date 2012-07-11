@@ -12,17 +12,7 @@ import java.util.Set;
 import org.json.JSONObject;
 
 public interface ITagBizlogic
-{
-	/**
-	 * Assign the TagItems to existing folder or new folder.
-	 * @param entityName from hbm file.
-	 * @param label for new Tag.
-	 * @param userId.
-	 * @param objId.
-	 * @throws DAOException,BizLogicException.
-	 */
-	public void assignTag(String entityName, String newTagName, long objId, long userId)
-			throws DAOException, BizLogicException;
+{ 
 
 	/**
 	 * Assign the TagItems to existing folder.
