@@ -14,6 +14,8 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import org.apache.commons.lang.WordUtils;
+
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.CustomReportGenerator;
 import edu.wustl.common.report.ReportGenerator;
@@ -55,7 +57,8 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 
 			if (reportGenerator instanceof CustomReportGenerator)
 			{
-				reportGenerator.generateReport(ticketId, SchedulerDataUtility.getCustomReportParamList());
+				reportGenerator.generateReport(ticketId,
+						SchedulerDataUtility.getCustomReportParamList());
 			}
 			else
 			{
@@ -219,10 +222,11 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		boolean success = true;
 		try
 		{
-			body.append("Hello "
-					+ SchedulerDataUtility
-							.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId))).get(0)
-							.replace(",", " ") + ",\n");
+			String[] nameString = SchedulerDataUtility
+					.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId))).get(0).split(",");
+
+			body.append("Hello " + WordUtils.capitalize(nameString[1]) + " "
+					+ WordUtils.capitalize(nameString[0]) + ",\n");
 			body.append((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
 					"scheduler.mail.header"));
 		}
