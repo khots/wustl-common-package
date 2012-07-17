@@ -88,11 +88,14 @@ public class CommonScheduleAction extends DispatchAction
 			schedBizLogic.insertAndSchedule(SchedulerDataUtility.getScheduleFromJsonMap(
 					jsonFormData, sessionDataBean.getUserId()));
 			responseJson.append(SchedulerConstants.TYPE, SchedulerConstants.SUCCESS);
-			responseJson.append(
-					SchedulerConstants.MESSAGE,
-					jsonFormData.getString(SchedulerConstants.SCHEDULE_TYPE).replace(
-							"edu.wustl.common.scheduler.domain.", "")
-							+ SchedulerConstants.DATA_SAVED);
+			if (jsonFormData.getString(SchedulerConstants.SCHEDULE_TYPE).equalsIgnoreCase(
+					SchedulerConstants.REPORT_SCHEDULE))
+			{
+				responseJson.append(
+						SchedulerConstants.MESSAGE,
+						"Report Schedule"
+								+ SchedulerConstants.DATA_SAVED);
+			}
 		}
 		catch (Exception e)
 		{
