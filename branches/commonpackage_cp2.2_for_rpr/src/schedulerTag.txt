@@ -149,13 +149,13 @@
 		<td>
 				<table >
 					<tr>
-					<td width="180px" valign="top" style="padding-left: 2%">
+					<td width="170px" valign="top">
 					<span class="black_ar_new">Recipients:</span>
-			</td>
+					</td>
 						<td valign="top"  align="left">
 							<input type='text' name ="userList" id="userList1"/>
 						</td>
-						<td valign="top" align="middle" align="left"><a href="javascript:addRecipientUser()"><img height="18" border="0" align="absmiddle" alt="Add" src="images/b_add_inact.gif"></a><DIV style="height:7px;"></DIV><a href="javascript:removeRecipientUser()"><img height="18" border="0" align="absmiddle" alt="Remove" src="images/b_remove_inact.gif"></a></td>
+						<td valign="top" align="left"><a href="javascript:addRecipientUser()"><img height="18" border="0" align="absmiddle" alt="Add" src="images/b_add_inact.gif"></a><DIV style="height:7px;"></DIV><a href="javascript:removeRecipientUser()"><img height="18" border="0" align="absmiddle" alt="Remove" src="images/b_remove_inact.gif"></a></td>
 						<td class="black_ar_new" align="left">
 							<select name="recipientList" id="recipientList1" size="6" multiple="multiple" style="width:150px;font-family: verdana;font-size: 12px;font-weight: normal;">
 							    
@@ -185,9 +185,10 @@
 		<tr>
 			<td>
 				<center>
-					<div style="width:95%; height:200; overflow:hidden" id="scheduleGrid">
+						<div style="width:99%; height:200px; overflow:hidden" id="scheduleGrid">
 					
-					</div>
+						</div>
+						<br>
 					
 					
 					<script>
@@ -211,7 +212,7 @@
 								scheduleGrid.setSkin("dhx_skyblue");
 								scheduleGrid.setHeader("No.,Schedule Name,$captionToken$ Name,Start Date : End Date,Interval,Scheduled By,Recipients,Delete,,,,,,,,");
 								scheduleGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
-								scheduleGrid.setInitWidths("40,110,150,150,80,170,200,60,0,0,0,0,0,0,0,0,0");
+								scheduleGrid.setInitWidths("40,200,140,140,80,150,150,60,0,0,0,0,0,0,0,0,0");
 								scheduleGrid.setColAlign("left,left,left,left,left,left,left,left,,,,,left,left,,,")
 								scheduleGrid.init();
 								scheduleGrid.load('CommonScheduleAction.do?type=populateScheduleGrid&scheduleType='+document.getElementById('scheduleType1').value+'&id='+currentCsId+'&isSysDashboard='+isSysDashboard,'json');
@@ -401,9 +402,12 @@
 								var gridData=getRowValues(rowId);
 								document.getElementById('isEdit1').value="true";
 								document.getElementById('scheduleName1').value=gridData[0];
-								var dates = gridData[2].split(":");
-								document.getElementById('startDate1').value=dates[0];
-								document.getElementById('endDate1').value=dates[1];
+								if(gridData[2]!="")
+								{
+									var dates = gridData[2].split(":");
+									document.getElementById('startDate1').value=dates[0];
+									document.getElementById('endDate1').value=dates[1];
+								}
  								var intervalElement = document.scheduleForm.interval;							
 								for(var i = 0; i < intervalElement.length; i++)
 								{
@@ -618,7 +622,11 @@
 									displayMessage("error","Select $captionToken$.");
 								}
 								 								
-								
+								if((new Date(document.getElementById('startDate1').value))>(new Date(document.getElementById('endDate1').value)))
+								{
+									isValid=false;
+									displayMessage("error","End date cannot be earlier than start date.");
+								}
 								return isValid;
 							}
 							
