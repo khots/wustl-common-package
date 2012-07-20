@@ -50,7 +50,7 @@ public interface IBizLogic
 	 * insert(Object obj, SessionDataBean sessionDataBean)
 	 * throws BizLogicException, UserNotAuthorizedException;
 	 */
-	void insert(Object obj, SessionDataBean sessionDataBean, int daoType) throws BizLogicException;
+	//	void insert(Object obj, SessionDataBean sessionDataBean, int daoType) throws BizLogicException;
 	/**
 	 * Inserts an object from database.
 	 * @param obj The object to be Inserted.
@@ -85,8 +85,8 @@ public interface IBizLogic
 	 * update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean)throws BizLogicException,
 	 * UserNotAuthorizedException;
 	 */
-	void update(Object currentObj, Object oldObj, int daoType,
-			SessionDataBean sessionDataBean) throws BizLogicException;
+	//	void update(Object currentObj, Object oldObj, int daoType,
+	//			SessionDataBean sessionDataBean) throws BizLogicException;
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
