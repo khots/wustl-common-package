@@ -340,15 +340,16 @@ public class SchedulerDataUtility
 		ReportBizLogic repoBiz = new ReportBizLogic();
 		List<Object> reportNameIdList = new ArrayList<Object>();
 
-		if (isAdmin)
+		/*if (isAdmin)
 		{
 			reportNameIdList = repoBiz.getReportNames(csId);
 		}
 		else
 		{
-			reportNameIdList = repoBiz.getReportNamesByUserId(userId, csId);
-		}
-
+			//reportNameIdList = repoBiz.getReportNamesByUserId(userId, csId);
+			
+		}*/
+		reportNameIdList = repoBiz.getReportNames(csId);
 		for (Object reportObj : reportNameIdList)
 		{
 			@SuppressWarnings("rawtypes")

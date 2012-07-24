@@ -83,7 +83,8 @@ public class CPDashboardAction extends Action
 		}
 		else
 		{
-			reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
+			//reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
+			reportNameList = ReportGenerator.getReportNames(cpId);
 		}
 		request.setAttribute("cpId", cpId);
 		request.setAttribute("reportNameList", reportNameList);
