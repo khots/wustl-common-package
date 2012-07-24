@@ -210,7 +210,7 @@ public abstract class NewDefaultBizLogic implements IBizLogic
 						.getName());
 				dataValidator.validate(obj, Constants.ADD);
 				preInsert(obj, sessionDataBean);
-				insert(obj, sessionDataBean);
+				insert(obj, sessionDataBean, 0);
 				postInsert(obj, sessionDataBean);
 			}
 		}
@@ -250,7 +250,7 @@ public abstract class NewDefaultBizLogic implements IBizLogic
 				IDataValidator dataValidator = dataValidatorFactory.getDataValidator(className);
 				dataValidator.validate(currentObj, Constants.EDIT);
 				preUpdate(currentObj, oldObj, sessionDataBean);
-				update(currentObj, oldObj, sessionDataBean);
+				update(currentObj, oldObj, 0, sessionDataBean);
 				postUpdate(currentObj, oldObj, sessionDataBean);
 			}
 		}
@@ -336,8 +336,7 @@ public abstract class NewDefaultBizLogic implements IBizLogic
 		{
 			//dao = getHibernateDao(CommonServiceLocator.getInstance().getAppName(),null);
 			//Object object = dao.retrieveById(className, identifier);
-			Object object = null;
-			//getObject(identifier);
+			Object object = getObject(identifier);
 			abstractDomain = populateFormBean(uiForm, object);
 		}
 		catch (Exception daoExp)
@@ -363,16 +362,16 @@ public abstract class NewDefaultBizLogic implements IBizLogic
 			throws AssignDataException
 	{
 		AbstractDomainObject abstractDomain = null;
-		//if (object != null)
+		if (object != null)
 		{
 			/*
 			  If the record searched is present in the database,
 			  populate the formbean with the information retrieved.
 			 */
-			//	abstractDomain = (AbstractDomainObject) object;
-			//	if (abstractDomain != null)
+			abstractDomain = (AbstractDomainObject) object;
+			if (abstractDomain != null)
 			{
-				abstractDomain = TransformerUtil.transform(uiForm, abstractDomain);
+				TransformerUtil.transform(uiForm, abstractDomain);
 			}
 		}
 		return abstractDomain;
