@@ -1,5 +1,5 @@
 
-package edu.wustl.common.queryFolder.velocity;
+package edu.wustl.common.velocity;
 
 import java.io.StringWriter;
 import java.util.List;

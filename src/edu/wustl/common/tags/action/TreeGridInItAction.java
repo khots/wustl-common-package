@@ -1,5 +1,5 @@
 
-package edu.wustl.common.queryFolder.action;
+package edu.wustl.common.tags.action;
 
 import java.util.List;
 
@@ -11,20 +11,22 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.queryFolder.beans.Tag;
-import edu.wustl.common.queryFolder.bizlogic.TagBizLogic;
-import edu.wustl.common.queryFolder.velocity.VelocityManager;
-import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.tags.domain.Tag;
+import edu.wustl.common.tags.factory.TagBizlogicFactory;
 
-public class TreeTagAction extends Action
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.velocity.VelocityManager;
+
+public class TreeGridInItAction extends Action
 {
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		TagBizLogic tagBizLogic = new TagBizLogic();
-		List<Tag> tagList = tagBizLogic.listTag();
-		request.setAttribute(Constants.TAGLIST_STRING, tagList);
+		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
+		List<Tag> tagList = TagBizlogicFactory.getBizLogicInstance(entityTag).getTagList(
+				entityTag); 
+		 
 		String responseString = VelocityManager.getInstance().evaluate(tagList,
 				"privilegeTreeTemplate.vm");
 		response.getWriter().write(responseString);
