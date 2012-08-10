@@ -6,7 +6,7 @@
 
 <class
         name="edu.wustl.common.scheduler.domain.ReportAuditData"
-        table="REPORT_GENERATED_FILES"
+        table="REPORT_JOB_DETAILS"
 		lazy="false"
     >
      <id

@@ -50,6 +50,7 @@ import edu.wustl.common.util.global.SendEmail;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.DAOUtility;
 
 public class ReportSchedulerUtil
 {
@@ -151,25 +152,6 @@ public class ReportSchedulerUtil
 		}
 	};
 
-	public static boolean mailReportLinkToUser(String emailAddress, String reportFileNameLink)
-			throws MessagingException
-	{
-		//Does not include admin in cc
-		StringBuilder bodyValue = new StringBuilder();
-		bodyValue.append(reportFileNameLink);
-
-		String sendFromEmailId = XMLPropertyHandler.getValue("email.sendEmailFrom.emailAddress");
-		String mailServer = XMLPropertyHandler.getValue("email.mailServer");
-		SendEmail email = new SendEmail(mailServer, sendFromEmailId);
-
-		EmailDetails emailDetails = new EmailDetails();
-		emailDetails.addToAddress(emailAddress);
-		emailDetails.setSubject("Subject");
-		emailDetails.setBody(bodyValue.toString());
-
-		return email.sendMail(emailDetails);
-	}
-
 	/**
 	 * @param input
 	 * @param replacement
@@ -181,11 +163,11 @@ public class ReportSchedulerUtil
 	}
 
 	/**
-	 * @param fileName
+	 * @param ticketId
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String getFileDownloadLink(String fileName) throws Exception
+	public static String getFileDownloadLink(String ticketId) throws Exception
 	{
 		String url = CommonServiceLocator.getInstance().getAppURL();
 		if (url == null)
@@ -196,7 +178,7 @@ public class ReportSchedulerUtil
 		StringBuilder downloadURL = new StringBuilder(url);
 
 		downloadURL.append("/").append("RedirectHome.do?pageOf=pageOfDownload&file=")
-				.append(fileName);
+				.append(ticketId);
 
 		return downloadURL.toString();
 	}
@@ -227,8 +209,10 @@ public class ReportSchedulerUtil
 	 * @param filePathList
 	 * @throws IOException 
 	 */
-	public static void createZipFile(String zipName, List<String> filePathList) throws IOException
+	public static boolean createZipFile(String zipName, List<String> filePathList)
+			throws IOException
 	{
+		boolean success = true;
 		byte[] buffer = new byte[1024];
 		ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipName));
 		zipOut.setLevel(Deflater.DEFAULT_COMPRESSION);
@@ -255,6 +239,11 @@ public class ReportSchedulerUtil
 				}
 			}
 		}
+		catch (IOException e)
+		{
+			success = false;
+			throw e;
+		}
 		finally
 		{
 			zipOut.close();
@@ -265,13 +254,15 @@ public class ReportSchedulerUtil
 			}
 		}
 
+		return success;
+
 	}
 
 	/**
 	 * @param path
 	 * @return
 	 */
-	private static String getFileNameFromPath(String path)
+	public static String getFileNameFromPath(String path)
 	{
 		File file = new File(path);
 		return file.getName();
@@ -335,8 +326,7 @@ public class ReportSchedulerUtil
 	 */
 	public static Boolean isSysReport(Long itemId) throws DAOException
 	{
-		JDBCDAO dao = DAOConfigFactory.getInstance()
-				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+		JDBCDAO dao = SchedulerDataUtility.getJDBCDAO();
 		dao.openSession(null);
 		List<Object> list = null;
 		try
@@ -361,8 +351,7 @@ public class ReportSchedulerUtil
 	 */
 	public static Boolean isStudyBasedSchedule(Long csId, Long reportId) throws DAOException
 	{
-		JDBCDAO dao = DAOConfigFactory.getInstance()
-				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+		JDBCDAO dao = SchedulerDataUtility.getJDBCDAO();
 		dao.openSession(null);
 		List<Object> list = null;
 		try
@@ -384,11 +373,11 @@ public class ReportSchedulerUtil
 	 * @param ticketId
 	 * @throws BizLogicException
 	 */
-	public static void generateReport(ReportAuditData reportAuditData) throws BizLogicException
+	public static boolean generateReport(ReportAuditData reportAuditData) throws BizLogicException
 	{
 
 		ReportAuditDataBizLogic fileBiz = new ReportAuditDataBizLogic();
-
+		boolean success = true;
 		try
 		{
 			reportAuditData.setJobStatus("Running");
@@ -424,6 +413,7 @@ public class ReportSchedulerUtil
 			reportAuditData.setErrorDescription(e.getMessage());
 			reportAuditData.setJobStatus("Error");
 			e.printStackTrace();
+			success = false;
 
 		}
 		finally
@@ -432,6 +422,7 @@ public class ReportSchedulerUtil
 			fileBiz.update(reportAuditData);
 		}
 
+		return success;
 	}
 
 	/**
@@ -465,36 +456,39 @@ public class ReportSchedulerUtil
 	public static ReportAuditData generateTicket(ReportForm hsForm, SessionDataBean sessionDataBean)
 			throws DAOException, SQLException, BizLogicException, ParseException
 	{
-		ReportAuditData customReportAudit = new ReportAuditData();
+	ReportAuditData customReportAudit = new ReportAuditData();
 		customReportAudit.setUserId(sessionDataBean.getUserId());
 		SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
 				.getDatePattern());
-		if (hsForm.getFromDate() != null && hsForm.getFromDate() !="")
+		if (hsForm.getFromDate() != null && hsForm.getFromDate() != "")
 		{
 			customReportAudit.setReportDurationStart(formatter.parse(hsForm.getFromDate()));
 		}
-		if (hsForm.getToDate() != null && hsForm.getToDate() !="")
+		if (hsForm.getToDate() != null && hsForm.getToDate() != "")
 		{
 			customReportAudit.setReportDurationEnd(formatter.parse(hsForm.getToDate()));
 		}
-		JDBCDAO dao = DAOConfigFactory.getInstance()
-				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+		JDBCDAO dao = SchedulerDataUtility.getJDBCDAO();
 		dao.openSession(null);
+		ResultSet reportDetailRS = null;
 		try
 		{
 			ReportBizLogic repoBiz = new ReportBizLogic();
-			ResultSet reportDetailRS = repoBiz.getReportDetailsResult(dao, hsForm.getReportName());
+			reportDetailRS = repoBiz.getReportDetailsResult(dao, hsForm.getReportName());
 			if (reportDetailRS != null && reportDetailRS.next()
 					&& reportDetailRS.getObject("CS_ID") != null)
 			{
 				//populate csid if its a study or cp report
 				customReportAudit.setCsId(Long
 						.valueOf(reportDetailRS.getObject("CS_ID").toString()));
-				System.out.println("");
 			}
 		}
 		finally
 		{
+			if (reportDetailRS != null)
+			{
+				dao.closeStatement(reportDetailRS);
+			}
 			dao.closeSession();
 		}
 		ReportAuditDataBizLogic repoAuditBiz = new ReportAuditDataBizLogic();

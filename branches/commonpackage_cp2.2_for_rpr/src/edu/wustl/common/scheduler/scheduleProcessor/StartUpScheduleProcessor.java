@@ -1,17 +1,13 @@
 
 package edu.wustl.common.scheduler.scheduleProcessor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.scheduler.bizLogic.ScheduleBizLogic;
 import edu.wustl.common.scheduler.constants.SchedulerConstants;
 import edu.wustl.common.scheduler.domain.ReportSchedule;
 import edu.wustl.common.scheduler.domain.Schedule;
-import edu.wustl.common.scheduler.exception.AlreadyScheduledException;
-import edu.wustl.common.scheduler.exception.ScheduleHandlerNotFoundException;
 import edu.wustl.common.scheduler.processorScheduler.Scheduler;
 import edu.wustl.common.scheduler.propertiesHandler.SchedulerConfigurationPropertiesHandler;
 
@@ -36,7 +32,7 @@ public class StartUpScheduleProcessor
 	 * @param scheduleList
 	 * @throws Exception 
 	 */
-	private void scheduleSchedulesList(List<Schedule> scheduleList)
+	public void scheduleSchedulesList(List<Schedule> scheduleList)
 			throws Exception
 	{
 		if (!scheduleList.isEmpty())
@@ -57,18 +53,18 @@ public class StartUpScheduleProcessor
 	 * @param processor
 	 * @throws Exception 
 	 */
-	private void schedule(AbstractScheduleProcessor processor) throws Exception
+	public void schedule(AbstractScheduleProcessor processor) throws Exception
 	{
 		Scheduler scheduler = new Scheduler();
 		scheduler.schedule(processor, true);
 	}
 
+	
 	/**
 	 * @param schedulesList
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	private void populateSchedules(List<Schedule> schedulesList) throws Exception
+	public void populateSchedules(List<Schedule> schedulesList) throws Exception
 	{
 		List<String> scheduleTypes = Arrays
 				.asList(((String) SchedulerConfigurationPropertiesHandler.getInstance()

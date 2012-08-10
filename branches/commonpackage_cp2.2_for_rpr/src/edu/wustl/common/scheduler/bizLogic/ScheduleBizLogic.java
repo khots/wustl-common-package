@@ -25,6 +25,7 @@ import edu.wustl.common.scheduler.util.ReportSchedulerUtil;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.DAOUtility;
 
 public class ScheduleBizLogic extends DefaultBizLogic
 {
@@ -79,7 +80,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	public Object getSchedulesByTypeAndId(String scheduleType, long id) throws DAOException,
 			BizLogicException
 	{
-		return super.retrieve(scheduleType, id);
+		return retrieve(scheduleType, id);
 	}
 
 	public boolean isAuthorized(DAO dao, Object domainObject, SessionDataBean sessionDataBean)
@@ -102,19 +103,19 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		}
 		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.WEEKLY_INTERVAL))
 		{
-			literalInterval = (long) 24 * 7 * 60 * 60;
+			literalInterval = (long) 24 * 60 * 60 * 7;
 		}
 		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.MONTHLY_INTERVAL))
 		{
-			literalInterval = (long) 24 * 7 * 30 * 60 * 60;
+			literalInterval = (long) 24 * 60 * 60 * 30;
 		}
 		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.QUARTERLY_INTERVAL))
 		{
-			literalInterval = (long) 24 * 7 * 30 * 60 * 60 * 3;
+			literalInterval = (long) 24 * 60 * 60 * 90;
 		}
 		else if (scheduleDomainInterval.equalsIgnoreCase(SchedulerConstants.YEARLY_INTERVAL))
 		{
-			literalInterval = (long) 24 * 7 * 30 * 60 * 60 * 12;
+			literalInterval = (long) 24 * 60 * 60 * 365;
 		}
 
 		return literalInterval;
@@ -145,8 +146,6 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		else
 		{
 			cal.setTimeInMillis(date.getTime() + 24 * 60 * 60 * 1000);
-			/*cal.set(Calendar.HOUR_OF_DAY, hrs);
-			cal.set(Calendar.MINUTE, min);*/
 			delay = (cal.getTimeInMillis() - date.getTime()) / 1000;
 		}
 
@@ -166,6 +165,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	 */
 	public void insertAndSchedule(Schedule schedule) throws Exception
 	{
+		
 		if (schedule.getId() == null)
 		{
 			insert(schedule);
@@ -181,7 +181,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	 * @param processor
 	 * @throws Exception 
 	 */
-	private void schedule(AbstractScheduleProcessor processor) throws Exception
+	public void schedule(AbstractScheduleProcessor processor) throws Exception
 	{
 		Scheduler scheduler = new Scheduler();
 		scheduler.schedule(processor, true);
@@ -196,6 +196,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		Schedule schedule = (Schedule) retrieve(Schedule.class.getName(), id);
 		schedule.setActivityStatus("Deleted");
 		update(schedule);
+		
 	}
 
 	/**
@@ -218,7 +219,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 					{
 						if (ReportSchedulerUtil.isSysReport(itemId))
 						{
-							isSysReport = true;
+							isSysReport = true;	
 						}
 					}
 					if (isSysReport)
