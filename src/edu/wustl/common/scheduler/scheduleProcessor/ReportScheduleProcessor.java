@@ -2,24 +2,37 @@
 package edu.wustl.common.scheduler.scheduleProcessor;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+
+import org.apache.commons.lang.WordUtils;
+
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.CustomReportGenerator;
 import edu.wustl.common.report.ReportGenerator;
 import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
 import edu.wustl.common.scheduler.bizLogic.ReportAuditDataBizLogic;
+import edu.wustl.common.scheduler.constants.SchedulerConstants;
 import edu.wustl.common.scheduler.domain.BaseSchedule;
 import edu.wustl.common.scheduler.domain.ReportAuditData;
+import edu.wustl.common.scheduler.propertiesHandler.SchedulerConfigurationPropertiesHandler;
 import edu.wustl.common.scheduler.util.ReportSchedulerUtil;
 import edu.wustl.common.scheduler.util.SchedulerDataUtility;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
-
+import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.DAOUtility;
 
 public class ReportScheduleProcessor extends AbstractScheduleProcessor
 {
@@ -29,34 +42,44 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	/* (non-Javadoc)
 	 * @see main.java.scheduler.scheduleProcessors.AbstractScheduleProcessor#executeSchedule()
 	 */
-	protected void executeSchedule() throws Exception
+	public void executeSchedule() throws Exception
 	{
 		ReportGenerator reportGenerator = null;
 		ReportBizLogic repoBiz = new ReportBizLogic();
 		ReportAuditDataBizLogic repoAuditBiz = new ReportAuditDataBizLogic();
 		for (Long ticketId : getTicketIdList())
 		{
-			ReportAuditData reportAuditData = (ReportAuditData) repoAuditBiz.retrieve(
+			ReportAuditData
+
+			reportAuditData = (ReportAuditData) repoAuditBiz.retrieve(
 					ReportAuditData.class.getName(), ticketId);
 			String reportName = repoBiz.getReportNameById(reportAuditData.getReportId());
 			reportGenerator = ReportGenerator.getImplObj(reportName);
 
 			if (reportGenerator instanceof CustomReportGenerator)
 			{
-				reportGenerator.generateReport(ticketId);
+				reportGenerator.generateReport(ticketId,
+						SchedulerDataUtility.getCustomReportParamList());
 			}
 			else
 			{
 				ReportSchedulerUtil.generateReport(reportAuditData);
 			}
 		}
-
 	}
 
 	@Override
-	protected void postScheduleExecution() throws Exception
+	public void postScheduleExecution() throws Exception
 	{
 		mail();
+		try
+		{
+			ticketIdList.clear();
+		}
+		catch (UnsupportedOperationException e)
+		{
+			ticketIdList = new ArrayList<Long>();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -64,45 +87,187 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * Mails download link if report execution is successfull and error details if execution fails.
 	 */
 	@Override
-	protected void mail() throws Exception
+	public boolean mail() throws Exception
 	{
-		Collection<Long> userCollection = ((BaseSchedule) scheduleObject)
-				.getRecepientUserIdCollection();
-		if (((BaseSchedule) scheduleObject).getIncludeMe())
+		boolean success = true;
+		try
 		{
-			userCollection.add(((BaseSchedule) scheduleObject).getOwnerId());
-		}
-		ReportAuditDataBizLogic reportAuditBiz = new ReportAuditDataBizLogic();
-		for (Long userId : userCollection)
-		{
-			List<ReportAuditData> dataList = reportAuditBiz.getReportAuditDataListbyUser(userId,
-					getTicketIdList());
-			String email = ReportSchedulerUtil.getEmail(userId);
-			ReportBizLogic repoBiz = new ReportBizLogic();
-			StringBuilder body = new StringBuilder("");
-			for (ReportAuditData reportAuditData : dataList)
+			Collection<Long> userCollection = ((BaseSchedule) scheduleObject)
+					.getRecepientUserIdCollection();
+			if (((BaseSchedule) scheduleObject).getIncludeMe())
 			{
-				if(reportAuditData.getJobStatus()!=null)
-				{
-					if (reportAuditData.getJobStatus().equalsIgnoreCase("Completed"))
-					{
-						body.append(
-								ReportSchedulerUtil.getFileDownloadLink(reportAuditData.getId()
-										.toString())).append("\n");
-					}
-					else if (reportAuditData.getJobStatus().equalsIgnoreCase("Error"))
-					{
-						body.append("Error generating report "
-								+ repoBiz.getReportNameById(reportAuditData.getReportId()));
-						body.append(" Cause: " + reportAuditData.getErrorDescription());
-					}
-					reportAuditData.setIsEmailed(true);
-					reportAuditBiz.update(reportAuditData);
-				}
+				userCollection.add(((BaseSchedule) scheduleObject).getOwnerId());
 			}
-			SchedulerDataUtility.sendScheduleMail(email, "Subject", body.toString());
-			System.out.println("Mail: "+body.toString());
+			ReportAuditDataBizLogic reportAuditBiz = new ReportAuditDataBizLogic();
+			for (Long userId : userCollection)
+			{
+				List<ReportAuditData> dataList = reportAuditBiz.getReportAuditDataListbyUser(
+						userId, getTicketIdList());
+				String email = ReportSchedulerUtil.getEmail(userId);
+				ReportBizLogic repoBiz = new ReportBizLogic();
+				StringBuilder body = new StringBuilder("");
+				populateMailHeader(userId, body);
+				for (ReportAuditData reportAuditData : dataList)
+				{
+					if (reportAuditData.getJobStatus() != null)
+					{
+						if (reportAuditData.getJobStatus().equalsIgnoreCase("Completed"))
+						{
+							populateDownloadLinkInMail(repoBiz, body, reportAuditData);
+						}
+						else if (reportAuditData.getJobStatus().equalsIgnoreCase("Error"))
+						{
+							populateErrorMessageInMail(repoBiz, body, reportAuditData);
+						}
+						reportAuditData.setIsEmailed(true);
+						reportAuditBiz.update(reportAuditData);
+					}
+				}
+				populateMailBodyEnding(body);
+				sendMail(email, body);
+				//System.out.println("Mail: " + body.toString());
+			}
 		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
+	}
+
+	/**
+	 * @param email
+	 * @param body
+	 * @throws MessagingException
+	 * @throws Exception
+	 */
+	private boolean sendMail(String email, StringBuilder body) throws Exception
+	{
+		boolean success = true;
+		try
+		{
+			SchedulerDataUtility.sendScheduleMail(
+					email,
+					(String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
+							"scheduler.mail.subject")
+							+ scheduleObject.getName(), body.toString());
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
+	}
+
+	/**
+	 * @param repoBiz
+	 * @param body
+	 * @param reportAuditData
+	 * @throws BizLogicException
+	 */
+	private boolean populateErrorMessageInMail(ReportBizLogic repoBiz, StringBuilder body,
+			ReportAuditData reportAuditData) throws BizLogicException
+	{
+		boolean success = true;
+		try
+		{
+			body.append("\n").append(
+					repoBiz.getReportNameById(reportAuditData.getReportId()) + ": "
+							+ "Report could not be generated, please contact the administrator.");
+		}
+		catch (BizLogicException e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
+	}
+
+	/**
+	 * @param repoBiz
+	 * @param body
+	 * @param reportAuditData
+	 * @throws BizLogicException
+	 * @throws Exception
+	 */
+	private boolean populateDownloadLinkInMail(ReportBizLogic repoBiz, StringBuilder body,
+			ReportAuditData reportAuditData) throws Exception
+	{
+		boolean success = true;
+		try
+		{
+			body.append("\n").append(
+					repoBiz.getReportNameById(reportAuditData.getReportId())
+							+ ": "
+							+ ReportSchedulerUtil.getFileDownloadLink(reportAuditData.getId()
+									.toString()));
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
+	}
+
+	/**
+	 * @param userId
+	 * @param body
+	 * @return TODO
+	 * @throws Exception
+	 */
+	public boolean populateMailHeader(Long userId, StringBuilder body) throws Exception
+	{
+		boolean success = true;
+		try
+		{
+			String[] nameString = SchedulerDataUtility
+					.getUserNamesList(new ArrayList<Long>(Arrays.asList(userId))).get(0).split(",");
+
+			body.append("Hello " + WordUtils.capitalize(nameString[1]) + " "
+					+ WordUtils.capitalize(nameString[0]) + ",\n");
+			body.append((String) SchedulerConfigurationPropertiesHandler.getInstance().getProperty(
+					"scheduler.mail.header"));
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
+	}
+
+	/**
+	 * @param body
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	private boolean populateMailBodyEnding(StringBuilder body) throws Exception
+	{
+		boolean success = true;
+		try
+		{
+			Calendar deleteDay = Calendar.getInstance();
+			SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
+					.getDatePattern());
+			deleteDay.set(
+					Calendar.DATE,
+					deleteDay.get(Calendar.DATE)
+							+ Integer.valueOf((String) SchedulerConfigurationPropertiesHandler
+									.getInstance().getProperty(
+											"scheduler.cleanUp.timeInterval.days")));
+			body.append(((String) SchedulerConfigurationPropertiesHandler.getInstance()
+					.getProperty("scheduler.mail.end")).replace("?",
+					formatter.format(new Date(deleteDay.getTimeInMillis()))));
+		}
+		catch (Exception e)
+		{
+			success = false;
+			throw e;
+		}
+		return success;
 	}
 
 	/* (non-Javadoc)
@@ -112,42 +277,15 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	protected void generateTicket() throws Exception
 	{
 		ReportAuditData reportAuditData = new ReportAuditData();
-		//populate schedule id
-		reportAuditData.setScheduleId(scheduleObject.getId());
-		//populate is emailed
-		reportAuditData.setIsEmailed(false);
-		////populate report generation start and end date
-		Map<String, Date> reportDurationMap = ReportSchedulerUtil.durationMap.get((scheduleObject
-				.getInterval()));
-		reportAuditData.setReportDurationStart(reportDurationMap.get("startDate"));
-		reportAuditData.setReportDurationEnd(reportDurationMap.get("endDate"));
-		
+		populateInitialAuditData(reportAuditData);
 		ReportAuditDataBizLogic reportAuditBiz = new ReportAuditDataBizLogic();
 		ReportBizLogic repoBiz = new ReportBizLogic();
-	
 		//one schedule can have multiple reports so we will have multiple tickets.
 		for (Long reportId : ((BaseSchedule) scheduleObject).getScheduleItemIdCollection())
 		{
 			reportAuditData.setReportId(reportId);
 			String reportName = repoBiz.getReportNameById(reportId);
-			JDBCDAO dao = DAOConfigFactory.getInstance()
-					.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
-			dao.openSession(null);
-			try
-			{
-				ResultSet reportDetailRS = repoBiz.getReportDetailsResult(dao, reportName);
-				if (reportDetailRS != null && reportDetailRS.next()
-						&& reportDetailRS.getObject("CS_ID") != null)
-				{
-					//populate csid if its a study or cp report
-					reportAuditData.setCsId(Long.valueOf(reportDetailRS.getObject("CS_ID").toString()));
-					System.out.println("");
-				}
-			}
-			finally
-			{
-				dao.closeSession();
-			}
+			populateAuditDataWithCsId(reportAuditData, repoBiz, reportName);
 			Collection<Long> recepientCollection = ((BaseSchedule) scheduleObject)
 					.getRecepientUserIdCollection();
 			if (((BaseSchedule) scheduleObject).getIncludeMe())
@@ -163,6 +301,56 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 				addTicketId(reportAuditData.getId());
 			}
 		}
+	}
+
+	/**
+	 * @param reportAuditData
+	 * @param repoBiz
+	 * @param reportName
+	 * @throws DAOException
+	 * @throws SQLException
+	 * @throws NumberFormatException
+	 */
+	private void populateAuditDataWithCsId(ReportAuditData reportAuditData, ReportBizLogic repoBiz,
+			String reportName) throws DAOException, SQLException, NumberFormatException
+	{
+		JDBCDAO dao = SchedulerDataUtility.getJDBCDAO();
+		dao.openSession(null);
+		ResultSet reportDetailRS = null;
+		try
+		{
+			reportDetailRS = repoBiz.getReportDetailsResult(dao, reportName);
+			if (reportDetailRS != null && reportDetailRS.next()
+					&& reportDetailRS.getObject("CS_ID") != null)
+			{
+				//populate csid if its a study or cp report
+				reportAuditData.setCsId(Long.valueOf(reportDetailRS.getObject("CS_ID").toString()));
+			}
+		}
+		finally
+		{
+			if (reportDetailRS != null)
+			{
+				dao.closeStatement(reportDetailRS);
+			}
+			dao.closeSession();
+		}
+	}
+
+	/**
+	 * @param reportAuditData
+	 */
+	private void populateInitialAuditData(ReportAuditData reportAuditData)
+	{
+		//populate schedule id
+		reportAuditData.setScheduleId(scheduleObject.getId());
+		//populate is emailed
+		reportAuditData.setIsEmailed(false);
+		////populate report generation start and end date
+		Map<String, Date> reportDurationMap = ReportSchedulerUtil.durationMap.get((scheduleObject
+				.getInterval()));
+		reportAuditData.setReportDurationStart(reportDurationMap.get("startDate"));
+		reportAuditData.setReportDurationEnd(reportDurationMap.get("endDate"));
 	}
 
 }

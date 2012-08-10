@@ -125,7 +125,7 @@ public class ReportBizLogic extends DefaultBizLogic
 	public ResultSet getReportDetailsResult(JDBCDAO dao, String reportName) throws DAOException
 	{
 		ResultSet result = null;
-		String query = "SELECT REPORT_TYPE,REPORT_GENARATOR,CS_ID FROM REPORT_DETAILS WHERE REPORT_NAME = '"
+		String query = "SELECT REPORT_TYPE,REPORT_GENERATOR,CS_ID FROM REPORT_DETAILS WHERE REPORT_NAME = '"
 				+ reportName + "'";
 		result = dao.getResultSet(query, null, 1);
 		return result;
@@ -199,7 +199,7 @@ public class ReportBizLogic extends DefaultBizLogic
 
 	public List<Object> getReportDetails(String reportName) throws BizLogicException
 	{
-		String query = "SELECT REPORT_TYPE,REPORT_GENARATOR,CS_ID FROM REPORT_DETAILS WHERE REPORT_NAME = '"
+		String query = "SELECT REPORT_TYPE,REPORT_GENERATOR,CS_ID FROM REPORT_DETAILS WHERE REPORT_NAME = '"
 				+ reportName + "'";
 		List<Object> data = new ArrayList<Object>();
 		try

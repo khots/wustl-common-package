@@ -93,7 +93,7 @@ public abstract class AbstractScheduleProcessor implements Runnable
 	 * @throws Exception
 	 * Override this method in the derived class to perform actual execution
 	 */
-	protected abstract void executeSchedule() throws Exception;
+	public abstract void executeSchedule() throws Exception;
 
 	/**
 	 * @throws Exception
@@ -179,7 +179,7 @@ public abstract class AbstractScheduleProcessor implements Runnable
 		return emailAddressCollection;
 	}
 
-	protected abstract void mail() throws Exception;
+	public abstract boolean mail() throws Exception;
 	
 
 	/**

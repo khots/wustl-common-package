@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,6 +39,9 @@ import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.EmailDetails;
 import edu.wustl.common.util.global.SendEmail;
+import edu.wustl.dao.DAO;
+import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
 
 public class SchedulerDataUtility
@@ -167,39 +171,6 @@ public class SchedulerDataUtility
 	}
 
 	/**
-	 * @param userClassName
-	 * @param emailAttribName
-	 * @param userIdAttribName
-	 * @param userIdList
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private static String getEmailAddressRetrievalQuery(String userClassName,
-			String emailAttribName, String userIdAttribName, Collection<Long> userIdList)
-
-	{
-		return "select user." + emailAttribName + ", user." + userIdAttribName + " from "
-				+ userClassName + " user where user." + userIdAttribName + " in "
-				+ getQueryInClauseStringFromIdList(userIdList);
-	}
-
-	/**
-	 * @param userClassName
-	 * @param fNameAttribName
-	 * @param lNameAttribName
-	 * @param userIdAttribName
-	 * @param userIdList
-	 * @return
-	 */
-	private static String getUserNameRetrievalQuery(String userClassName, String fNameAttribName,
-			String lNameAttribName, String userIdAttribName, Collection<Long> userIdList)
-	{
-		return "select user." + fNameAttribName + " ||','|| user." + lNameAttribName + " from "
-				+ userClassName + " user where user." + userIdAttribName + " in "
-				+ getQueryInClauseStringFromIdList(userIdList);
-	}
-
-	/**
 	 * @param userIdList
 	 * @return
 	 */
@@ -316,7 +287,7 @@ public class SchedulerDataUtility
 	 * @return
 	 * @throws Exception 
 	 */
-	private static String getRecipientNamesStringFromIds(Collection<Long> ids) throws Exception
+	public static String getRecipientNamesStringFromIds(Collection<Long> ids) throws Exception
 	{
 		StringBuilder userNamesList = new StringBuilder("");
 		IHostAppUserDataRetriever iHostUserRet = (IHostAppUserDataRetriever) Class.forName(
@@ -361,7 +332,7 @@ public class SchedulerDataUtility
 	 * @throws IOException
 	 * @throws BizLogicException
 	 */
-	private static List<NameValueBean> getReportNameAndIdBeans(Long csId, Long userId,
+	public static List<NameValueBean> getReportNameAndIdBeans(Long csId, Long userId,
 			Boolean isAdmin) throws DAOException, IOException, BizLogicException
 	{
 		List<NameValueBean> beans = new ArrayList<NameValueBean>();
@@ -369,15 +340,16 @@ public class SchedulerDataUtility
 		ReportBizLogic repoBiz = new ReportBizLogic();
 		List<Object> reportNameIdList = new ArrayList<Object>();
 
-		if (isAdmin)
+		/*if (isAdmin)
 		{
 			reportNameIdList = repoBiz.getReportNames(csId);
 		}
 		else
 		{
-			reportNameIdList = repoBiz.getReportNamesByUserId(userId, csId);
-		}
-
+			//reportNameIdList = repoBiz.getReportNamesByUserId(userId, csId);
+			
+		}*/
+		reportNameIdList = repoBiz.getReportNames(csId);
 		for (Object reportObj : reportNameIdList)
 		{
 			@SuppressWarnings("rawtypes")
@@ -399,7 +371,6 @@ public class SchedulerDataUtility
 		String scheduleType = request.getParameter(SchedulerConstants.SCHEDULE_TYPE);
 		String idString = request.getParameter(SchedulerConstants.ID);
 		Long id = 0l;
-		System.out.println("");
 
 		if (idString != null && !idString.equalsIgnoreCase("undefined"))
 		{
@@ -490,7 +461,8 @@ public class SchedulerDataUtility
 		List<ReportAuditData> filesList = fileBiz.getFileDetailsList();
 		for (ReportAuditData fileDetail : filesList)
 		{
-			if ((new Date().getTime() - fileDetail.getExecuteionEnd().getTime()) >= (ageThreshold * 86400000))
+			if ((fileDetail.getExecuteionEnd() == null)
+					|| (new Date().getTime() - fileDetail.getExecuteionEnd().getTime()) >= (ageThreshold * 86400000))
 			{
 				File file = new File(fileDetail.getFileName());
 				if (file.exists())
@@ -529,6 +501,31 @@ public class SchedulerDataUtility
 		emailDetails.setBody(bodyValue.toString());
 
 		email.sendMail(emailDetails);
+	}
+
+	/**
+	 * @return
+	 * @throws DAOException
+	 */
+	public static JDBCDAO getJDBCDAO() throws DAOException
+	{
+		return DAOConfigFactory.getInstance()
+				.getDAOFactory(CommonServiceLocator.getInstance().getAppName()).getJDBCDAO();
+	}
+
+	public static List<String> getCustomReportParamList() throws Exception
+	{
+		List<String> dbDetailsList = new LinkedList<String>();
+
+		SchedulerConfigurationPropertiesHandler configProp = SchedulerConfigurationPropertiesHandler
+				.getInstance();
+
+		for (String propName : SchedulerConstants.DB_DETAILS_LIST)
+		{
+			dbDetailsList.add((String) configProp.getProperty(propName));
+		}
+
+		return dbDetailsList;
 	}
 
 }
