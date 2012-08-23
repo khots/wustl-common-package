@@ -49,7 +49,7 @@ public final class XMLPropertyHandler
 	 */
 	public static boolean isDocumentNull()
 	{
-		return null==document;
+		return null == document;
 	}
 
 	/**
@@ -59,17 +59,29 @@ public final class XMLPropertyHandler
 	 */
 	public static void init(String path) throws ParseException
 	{
+		document = getDocument(path);
+	}
+	
+	/**
+	 * @param path String path for LOGGER information.
+	 * @throws ParseException throws this exception if
+	 * specified xml file not found or not able to parse the file.
+	 */
+	public static Document getDocument(String path)
+	throws ParseException
+	{
 		LOGGER.info("path" + path);
 		try
 		{
-			document=XMLParserUtility.getDocument(path);
+			return XMLParserUtility.getDocument(path);
 		}
 		catch (Exception ioe)
 		{
-			LOGGER.error(ioe.getMessage(), ioe);
+			LOGGER.error("Error parsing input file: " + path, ioe);
 			throw new ParseException(ioe);
 		}
 	}
+	
 	/**
 	 * <p>
 	 * Description:This method takes the property name as String argument and
@@ -81,8 +93,13 @@ public final class XMLPropertyHandler
 	 */
 	public static String getValue(String propertyName)
 	{
+		return getValue(document, propertyName);
+	}
+	
+	public static String getValue(Document inpDoc, String propertyName) 
+	{
 		String value="";
-		Element docEle = document.getDocumentElement();
+		Element docEle = inpDoc.getDocumentElement();
 		NodeList propNodeList= docEle.getElementsByTagName("property");
 		for (int i = 0; i < propNodeList.getLength(); i++)
 		{
@@ -96,6 +113,7 @@ public final class XMLPropertyHandler
 		}
 		return value;
 	}
+	
 
 	/**
 	 * This class return the value of Element.
