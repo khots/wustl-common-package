@@ -76,12 +76,6 @@ public class CustomReportGenerator extends ReportGenerator
 		String[] cmmdArray = new String[cmmdList.size()];
 		cmmdList.toArray(cmmdArray);
 		
-		for(String cm:cmmdList)
-		{
-			System.out.println("Command Details-------------------------------------"+cm);
-		}
-		
-		
 		Process process= Runtime.getRuntime().exec(cmmdArray, null,
 				new File(System.getProperty("app.customReportsDirPath")));
 		process.waitFor();
