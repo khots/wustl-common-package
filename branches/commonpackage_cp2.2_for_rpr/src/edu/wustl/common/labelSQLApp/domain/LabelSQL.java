@@ -2,7 +2,7 @@ package edu.wustl.common.labelSQLApp.domain;
 
 import java.util.Collection;
 
-public class LabelSQL
+public class LabelSQL implements java.io.Serializable
 {
 	private long id;
 	private String label;
