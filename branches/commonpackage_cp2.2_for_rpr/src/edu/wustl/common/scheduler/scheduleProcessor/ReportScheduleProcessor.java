@@ -115,7 +115,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 						{
 							populateDownloadLinkInMail(repoBiz, body, reportAuditData);
 						}
-						else if (reportAuditData.getJobStatus().equalsIgnoreCase("Error"))
+						else 
 						{
 							populateErrorMessageInMail(repoBiz, body, reportAuditData);
 						}
