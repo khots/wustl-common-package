@@ -21,7 +21,6 @@ import edu.wustl.common.report.CustomReportGenerator;
 import edu.wustl.common.report.ReportGenerator;
 import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
 import edu.wustl.common.scheduler.bizLogic.ReportAuditDataBizLogic;
-import edu.wustl.common.scheduler.constants.SchedulerConstants;
 import edu.wustl.common.scheduler.domain.BaseSchedule;
 import edu.wustl.common.scheduler.domain.ReportAuditData;
 import edu.wustl.common.scheduler.propertiesHandler.SchedulerConfigurationPropertiesHandler;
@@ -30,9 +29,7 @@ import edu.wustl.common.scheduler.util.SchedulerDataUtility;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
-import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
-import edu.wustl.dao.util.DAOUtility;
 
 public class ReportScheduleProcessor extends AbstractScheduleProcessor
 {
@@ -42,7 +39,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	/* (non-Javadoc)
 	 * @see main.java.scheduler.scheduleProcessors.AbstractScheduleProcessor#executeSchedule()
 	 */
-	public void executeSchedule() throws Exception
+	synchronized public void  executeSchedule() throws Exception
 	{
 		ReportGenerator reportGenerator = null;
 		ReportBizLogic repoBiz = new ReportBizLogic();
@@ -69,7 +66,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	}
 
 	@Override
-	public void postScheduleExecution() throws Exception
+	synchronized public void postScheduleExecution() throws Exception
 	{
 		mail();
 		try
@@ -125,7 +122,6 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 				}
 				populateMailBodyEnding(body);
 				sendMail(email, body);
-				//System.out.println("Mail: " + body.toString());
 			}
 		}
 		catch (Exception e)
