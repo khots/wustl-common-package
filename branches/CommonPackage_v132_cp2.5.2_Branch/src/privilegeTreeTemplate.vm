@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<rows>
+	#foreach( $gridData in $gridPopulateObjectList )
+		<row id="$gridData.identifier">
+<cell><![CDATA[<input name='tagCheckbox' value='$gridData.identifier' type='checkbox'/>]]></cell>	
+<cell image="blank.gif"><![CDATA[$gridData.label]]></cell>
+ 
+
+<cell><![CDATA[<img src='images/advQuery/delete.gif' name='deleteTag' id='$gridData.identifier' width='12' height='12' onclick='ajaxDeleteCall($gridData.identifier)'/>]]></cell>
+	 
+ 		</row>
+
+	#end
+</rows>
