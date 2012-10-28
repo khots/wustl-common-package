@@ -54,7 +54,7 @@ public abstract class ReportGenerator
 		ReportBizLogic repLogic = new ReportBizLogic();
 
 		List<Object> reportDetails = repLogic.getReportDetails(reportName);
-		if (reportDetails.get(0).toString().equals("custom"))
+		if (reportDetails.get(0).toString().equals("custom") || reportDetails.get(0).toString().equals("participant"))
 		{
 			return new CustomReportGenerator(reportDetails.get(1).toString());
 		}
@@ -154,6 +154,28 @@ public abstract class ReportGenerator
 		 csId = Long.valueOf(csID);
 		}
 		List<Object> reportNames = repoLogic.getReportNames(csId);
+		return getReportNamesBeans(reportNames);
+
+	}
+	
+
+	public static List<NameValueBean> getReportNames(String csID, String participantId) throws BizLogicException
+	{
+		ReportBizLogic repoLogic = new ReportBizLogic();
+		Long csId = 0l;
+		if(csID!=null || csID!="")
+		{
+			csId = Long.valueOf(csID);
+		}
+		List<Object> reportNames;
+		if(participantId != null)
+		{
+			reportNames = repoLogic.getReportNames(csId, Long.valueOf(participantId));
+		}
+		else
+		{
+			reportNames = repoLogic.getReportNames(csId, null);
+		}
 		return getReportNamesBeans(reportNames);
 
 	}
