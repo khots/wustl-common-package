@@ -17,6 +17,8 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
@@ -368,6 +370,11 @@ public abstract class AbstractActionForm extends ActionForm implements IValueObj
 	public void setObjectId(String objectId)
 	{
 		this.objectId = objectId;
+	}
+	
+	public void setAllValues(AbstractDomainObject abstractDomain,SessionDataBean sessionDataBean)
+	{
+		setAllValues(abstractDomain);
 	}
 
 }

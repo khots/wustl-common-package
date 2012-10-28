@@ -293,7 +293,7 @@ public interface IBizLogic
 	 * @return populated or not.
 	 * @throws BizLogicException BizLogic Exception
 	 */
-	boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
+	boolean populateUIBean(String className, Long identifier, IValueObject uiForm,SessionDataBean sessionDataBean)
 			throws BizLogicException;
 	/**
 	 * populates Domain Object.

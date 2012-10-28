@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.actionForm.IValueObject;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.domain.AbstractDomainObject;
@@ -24,6 +25,8 @@ import edu.wustl.common.exception.ErrorKey;
 import edu.wustl.common.exceptionformatter.DefaultExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatter;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
+import edu.wustl.common.factory.AbstractFactoryConfig;
+import edu.wustl.common.factory.IFactory;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
@@ -568,7 +571,7 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 	 * @throws BizLogicException BizLogic Exception
 	 * @return isSuccess
 	 */
-	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
+	public boolean populateUIBean(String className, Long identifier, IValueObject uiForm , SessionDataBean sessionDataBean)
 			throws BizLogicException
 	{
 		//long startTime = System.currentTimeMillis();
@@ -576,11 +579,25 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 		DAO dao = null;
 		try
 		{
-			dao = getHibernateDao(getAppName(),null);
-			Object object = dao.retrieveById(className, identifier);
-
-			if (object != null)
+			IBizLogic bizLogic = getBizLogicForEdit((AbstractActionForm)uiForm);
+			boolean hasPrivilege = true;
+			if (isReadDeniedTobeChecked() && sessionDataBean != null)
 			{
+				hasPrivilege = bizLogic.hasPrivilegeToView(className, identifier, sessionDataBean);
+							
+			}
+			if (!hasPrivilege)
+			{
+				throw new ApplicationException(ErrorKey.getErrorKey("access.view.denied"), null,
+						 "User does not have privilege to view this information.");
+			}
+			else
+			{
+			 dao = getHibernateDao(getAppName(),null);
+			 Object object = dao.retrieveById(className, identifier);
+
+			 if (object != null)
+			 {
 				/*
 				  If the record searched is present in the database,
 				  populate the formbean with the information retrieved.
@@ -588,10 +605,12 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 				AbstractDomainObject abstractDomain = (AbstractDomainObject) object;
 
 				prePopulateUIBean(abstractDomain, uiForm);
-				uiForm.setAllValues(abstractDomain);
+				((AbstractActionForm)uiForm).setAllValues(abstractDomain, sessionDataBean);
 				postPopulateUIBean(abstractDomain, uiForm);
 				isSuccess = true;
+			 }
 			}
+			 
 		}
 		catch (ApplicationException daoExp)
 		{
@@ -883,4 +902,25 @@ public abstract class AbstractBizLogic implements IBizLogic // NOPMD
 		}
     	return (Exception)rootException;
     }
+    
+    /**
+	 * get BizLogic For Edit.
+	 * @param abstractForm AbstractActionForm
+	 * @return IBizLogic
+	 * @throws ApplicationException Application Exception
+	 */
+	private IBizLogic getBizLogicForEdit(AbstractActionForm abstractForm)
+			throws ApplicationException
+	{
+		try
+		{
+			IFactory factory = AbstractFactoryConfig.getInstance().getBizLogicFactory();
+			return factory.getBizLogic(abstractForm.getFormId());
+		}
+		catch (BizLogicException excp)
+		{
+			LOGGER.error(excp.getMessage(), excp);
+			throw new ApplicationException(excp.getErrorKey(), excp,excp.getMsgValues());
+		}
+	}
 }
