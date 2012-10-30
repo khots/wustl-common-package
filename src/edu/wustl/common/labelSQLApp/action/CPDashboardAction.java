@@ -106,10 +106,19 @@ public class CPDashboardAction extends Action
 		else
 		{
 			//reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
-			if(participantId != null)
+			if(participantId != null && !participantId.equals(""))
 			{
-				//get Participant report
 				reportNameList = ReportGenerator.getReportNames(cpId, participantId);
+				QueryWhereClause queryWhereClause = new QueryWhereClause("edu.wustl.clinportal.domain.Participant");
+				queryWhereClause.addCondition(new EqualClause("id", '?'));
+				Object[] valueObjects = {Long.valueOf(participantId)};
+				List<ColumnValueBean> columnValueBeans = new ArrayList<ColumnValueBean>();
+				for (Object valueObject : valueObjects)
+				{
+					columnValueBeans.add(new ColumnValueBean(valueObject));
+				}
+				request.setAttribute("participantObject", new DefaultBizLogic().retrieve("edu.wustl.clinportal.domain.Participant", null, queryWhereClause,
+						columnValueBeans).get(0));
 			}
 			else
 			{
