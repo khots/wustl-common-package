@@ -18,6 +18,11 @@ import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
 import edu.wustl.common.labelSQLApp.form.CPDashboardForm;
 import edu.wustl.common.report.ReportGenerator;
+import edu.wustl.common.bizlogic.DefaultBizLogic;
+
+import edu.wustl.dao.QueryWhereClause;
+import edu.wustl.dao.condition.EqualClause;
+import edu.wustl.dao.query.generator.ColumnValueBean;
 
 /** 
  * @author Ashraf
@@ -60,6 +65,7 @@ public class CPDashboardAction extends Action
 	{
 		CPDashboardForm cpDashboardForm = (CPDashboardForm) actionForm;
 		String cpId = request.getParameter("cpSearchCpId");
+		String participantId = request.getParameter("participantId");
 		Long cp = null;
 		if (cpId != null)
 		{
@@ -74,7 +80,24 @@ public class CPDashboardAction extends Action
 		{
 			if (cpId != null)
 			{
-				reportNameList = ReportGenerator.getReportNames(cpId);
+				if(participantId != null && !participantId.equals(""))
+				{
+					reportNameList = ReportGenerator.getReportNames(cpId, participantId);
+					QueryWhereClause queryWhereClause = new QueryWhereClause("edu.wustl.clinportal.domain.Participant");
+					queryWhereClause.addCondition(new EqualClause("id", '?'));
+					Object[] valueObjects = {Long.valueOf(participantId)};
+					List<ColumnValueBean> columnValueBeans = new ArrayList<ColumnValueBean>();
+					for (Object valueObject : valueObjects)
+					{
+						columnValueBeans.add(new ColumnValueBean(valueObject));
+					}
+					request.setAttribute("participantObject", new DefaultBizLogic().retrieve("edu.wustl.clinportal.domain.Participant", null, queryWhereClause,
+							columnValueBeans).get(0));
+				}
+				else
+				{
+					reportNameList = ReportGenerator.getReportNames(cpId, null);
+				}
 			}
 			else
 			{
@@ -83,9 +106,28 @@ public class CPDashboardAction extends Action
 		}
 		else
 		{
-			reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
+			//reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
+			if(participantId != null && !participantId.equals(""))
+			{
+				reportNameList = ReportGenerator.getReportNames(cpId, participantId);
+				QueryWhereClause queryWhereClause = new QueryWhereClause("edu.wustl.clinportal.domain.Participant");
+				queryWhereClause.addCondition(new EqualClause("id", '?'));
+				Object[] valueObjects = {Long.valueOf(participantId)};
+				List<ColumnValueBean> columnValueBeans = new ArrayList<ColumnValueBean>();
+				for (Object valueObject : valueObjects)
+				{
+					columnValueBeans.add(new ColumnValueBean(valueObject));
+				}
+				request.setAttribute("participantObject", new DefaultBizLogic().retrieve("edu.wustl.clinportal.domain.Participant", null, queryWhereClause,
+						columnValueBeans).get(0));
+			}
+			else
+			{
+				reportNameList = ReportGenerator.getReportNames(cpId, null);
+			}
 		}
 		request.setAttribute("cpId", cpId);
+		request.setAttribute("participantId", participantId);
 		request.setAttribute("reportNameList", reportNameList);
 	}
 }

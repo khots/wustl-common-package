@@ -2,6 +2,7 @@
 package edu.wustl.common.action;
 
 import java.io.File;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,8 +46,14 @@ public class ReportAction extends SecureAction
 			{
 				ReportAuditData customReportAudit = ReportSchedulerUtil.generateTicket(hsForm,
 						sessionDataBean);
+
+				List<String> customParams = SchedulerDataUtility.getCustomReportParamList();
+				if(request.getParameter("participantId")!=null && !"".equalsIgnoreCase(request.getParameter("participantId")))
+				{
+					customParams.add(request.getParameter("participantId"));
+				}
 				reportGenerator.generateReport(customReportAudit.getId(),
-						SchedulerDataUtility.getCustomReportParamList());
+						customParams);
 				customReportAudit = (ReportAuditData) new ReportAuditDataBizLogic().retrieve(
 						ReportAuditData.class.getName(), customReportAudit.getId());
 				if (customReportAudit.getJobStatus() != null
