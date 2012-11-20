@@ -153,7 +153,7 @@ public class ReportBizLogic extends DefaultBizLogic
 	public List<Object> getReportNamesByUserId(long userId, long csId) throws BizLogicException
 	{
 		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE USER_ID ="
-				+ userId + "AND CS_ID=" + csId;
+			+ userId + "AND lower(REPORT_TYPE) != 'participant' and CS_ID=" + csId;
 		return getReportNamesFromQuery(query);
 	}
 
@@ -174,7 +174,7 @@ public class ReportBizLogic extends DefaultBizLogic
 	 */
 	private List<Object> getReportNamesByCsId(long csId) throws BizLogicException
 	{
-		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE CS_ID =" + csId;
+		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE lower(REPORT_TYPE) != 'participant' and CS_ID =" + csId;
 		return getReportNamesFromQuery(query);
 	}
 
@@ -227,5 +227,38 @@ public class ReportBizLogic extends DefaultBizLogic
 		}
 		return (String) ((List) data.get(0)).get(0);
 	}
+	
+	public List<Object> getReportNames(long csId, Long participantId) throws BizLogicException
+	{
+		List<Object> list = new ArrayList<Object>();
+		if (csId != 0l)
+		{
+			if(participantId != null)
+			{				
+				list = getParticipantReportNamesByCsId(csId);
+			}
+			else
+			{
+				list = getReportNamesByCsId(csId);
+			}
+		}
+		else
+		{
+			list = getSystemReportNames();
+		}
+		return list;
+	}
+	
+	/**
+	 * @param csId
+	 * @return
+	 * @throws BizLogicException
+	 */
+	private List<Object> getParticipantReportNamesByCsId(long csId) throws BizLogicException
+	{
+		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE lower(REPORT_TYPE) = 'participant' and CS_ID =" + csId;
+		return getReportNamesFromQuery(query);
+	}
+
 
 }

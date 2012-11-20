@@ -358,7 +358,7 @@ public class ReportSchedulerUtil
 		{
 			list = dao.executeQuery("select IDENTIFIER from REPORT_DETAILS where IDENTIFIER = "
 					+ reportId
-					+ " and  IDENTIFIER in ( select IDENTIFIER from REPORT_DETAILS where CS_ID ="
+					+ " and  IDENTIFIER in ( select IDENTIFIER from REPORT_DETAILS where lower(REPORT_TYPE) != 'participant' and CS_ID ="
 					+ csId + ") ", null);
 		}
 		finally
