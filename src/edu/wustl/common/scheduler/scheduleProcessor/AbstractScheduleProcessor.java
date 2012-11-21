@@ -75,10 +75,19 @@ public abstract class AbstractScheduleProcessor implements Runnable
 	{
 		try
 		{
+			System.out.println("------------------------------------------------------------Begin Report");
+			System.out.println("------------------------------------------------------------Schedule "+scheduleObject.getId());
+
 			shutDownIfExpired();
 			generateTicket();
+			for(Long ticket:ticketIdList)
+			{
+				System.out.println("------------------------------------------------------------Ticket"+ticket);
+			}
 			executeSchedule();
 			postScheduleExecution();
+			System.out.println("------------------------------------------------------------End Report");
+
 
 		}
 		catch (Exception e)
@@ -93,7 +102,7 @@ public abstract class AbstractScheduleProcessor implements Runnable
 	 * @throws Exception
 	 * Override this method in the derived class to perform actual execution
 	 */
-	public abstract void executeSchedule() throws Exception;
+	 public abstract void executeSchedule() throws Exception;
 
 	/**
 	 * @throws Exception

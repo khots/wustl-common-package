@@ -69,6 +69,11 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	synchronized public void postScheduleExecution() throws Exception
 	{
 		mail();
+		System.out.println("---------------------------------------------------------------Cleaning Begin Schedule id "+scheduleObject.getId());
+		for(Long ticket:ticketIdList)
+		{
+			System.out.println("------------------------------------------------------------Ticket"+ticket);
+		}
 		try
 		{
 			ticketIdList.clear();
@@ -77,6 +82,8 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		{
 			ticketIdList = new ArrayList<Long>();
 		}
+		System.out.println("---------------------------------------------------------------Cleaning End Schedule id "+scheduleObject.getId());
+
 	}
 
 	/* (non-Javadoc)
@@ -86,6 +93,9 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	@Override
 	public boolean mail() throws Exception
 	{
+		System.out.println("---------------------------------------------------------------Within mail Begin Schedule id "+scheduleObject.getId());
+
+		
 		boolean success = true;
 		try
 		{
@@ -106,6 +116,8 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 				populateMailHeader(userId, body);
 				for (ReportAuditData reportAuditData : dataList)
 				{
+					System.out.println("---------------------------------------------------------------Report Audit Data "+reportAuditData.getId());
+
 					if (reportAuditData.getJobStatus() != null)
 					{
 						if (reportAuditData.getJobStatus().equalsIgnoreCase("Completed"))
@@ -129,6 +141,8 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 			success = false;
 			throw e;
 		}
+		System.out.println("---------------------------------------------------------------Mail End Schedule id "+scheduleObject.getId());
+
 		return success;
 	}
 
