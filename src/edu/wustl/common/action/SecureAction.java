@@ -59,7 +59,9 @@ public abstract class SecureAction extends BaseAction
 		if (!(sessionData != null && accessObj != null) && getSessionData(request) == null)
 		{
 				//Forward to the Login
-				throw new UserNotAuthenticatedException();
+			System.out.println("checkForActiveSession   checkForActiveSession");
+//			return mapping.findForward("checkForActiveSession");
+//				throw new UserNotAuthenticatedException();
 		}
 		setAttributeFromParameter(request, Constants.OPERATION);
 		setAttributeFromParameter(request, Constants.MENU_SELECTED);
