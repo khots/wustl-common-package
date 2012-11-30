@@ -8,7 +8,7 @@ public class TagItem<T> implements Serializable
 
 	private static final long serialVersionUID = 1L;
 	private long identifier;
-	private T obj;
+	private long objId;
 	private long tagId;
 	private Tag<T> tag;
 
@@ -23,14 +23,12 @@ public class TagItem<T> implements Serializable
 		this.identifier = identifier;
 	}
 
-	public T getObj()
-	{
-		return obj;
+	public long getObjId() {
+		return objId;
 	}
 
-	public void setObj(T obj)
-	{
-		this.obj = obj;
+	public void setObjId(long objId) {
+		this.objId = objId;
 	}
 
 	public long getTagId()
