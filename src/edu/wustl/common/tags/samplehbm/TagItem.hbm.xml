@@ -13,9 +13,7 @@
 			<column name="TAG_ID" not-null="true" />
 		</many-to-one>
 
-		<many-to-one name="obj" class="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery" fetch="select">
-		 <column name="OBJ_ID" not-null="true" />
-		 </many-to-one>
+		<property name="objId" type="java.lang.Long" column="OBJ_ID"/>
 	</class>
 </hibernate-mapping>
 <!-- ParameterizedQuery is class for query. -->
