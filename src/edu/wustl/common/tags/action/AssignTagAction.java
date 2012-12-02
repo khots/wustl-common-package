@@ -88,7 +88,10 @@ public class AssignTagAction extends Action
 		String[] str = idStr.split("\\,");
 		for (String str1 : str)
 		{
-			objCheckList.add(Long.parseLong(str1));
+			if(!"".equals(str1.trim()))
+			{
+				objCheckList.add(Long.parseLong(str1));
+			}
 		}
 
 		return objCheckList;
