@@ -41,7 +41,7 @@ public interface ITagBizlogic
 	 * @param obj Object to be inserted in database
 	 * @throws DAOException,BizLogicException.
 	 */
-	public List<Tag> getTagList(String entityName) throws DAOException, BizLogicException;
+	public List<Tag> getTagList(String entityName, long userId) throws DAOException, BizLogicException;
 	/**
 	 * Get the Set of TagItems.
 	 * @param entityName from hbm file.

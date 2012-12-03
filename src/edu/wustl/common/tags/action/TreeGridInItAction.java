@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.tags.domain.Tag;
 import edu.wustl.common.tags.factory.TagBizlogicFactory;
 
@@ -24,8 +26,10 @@ public class TreeGridInItAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
+		SessionDataBean sessionBean = (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
+		Long userId = sessionBean.getUserId();
 		List<Tag> tagList = TagBizlogicFactory.getBizLogicInstance(entityTag).getTagList(
-				entityTag); 
+				entityTag,userId); 
 		 
 		String responseString = VelocityManager.getInstance().evaluate(tagList,
 				"privilegeTreeTemplate.vm");
