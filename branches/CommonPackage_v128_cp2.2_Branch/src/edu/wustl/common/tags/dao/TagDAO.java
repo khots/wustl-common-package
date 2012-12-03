@@ -19,14 +19,16 @@ public class TagDAO<T> extends DefaultBizLogic
 
 	public Session session = null;
 	public String entityName;
+	public Long userId;
 
 	public TagDAO()
 	{
 	}
 
-	public TagDAO(String entityName)
+	public TagDAO(String entityName,long userId)
 	{
 		this.entityName = entityName;
+		this.userId = userId;
 	}
 	/**
 	 * Insert the Tag Object to the database.
@@ -232,7 +234,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			SessionDataBean sessionDataBean = new SessionDataBean();
 			dao = getHibernateDao(getAppName(), sessionDataBean);
-			tagList = dao.executeQuery("from  " + entityName);
+			tagList = dao.executeQuery("from  " + entityName +" where userId = "+userId);
 		}
 		catch (DAOException e)
 		{

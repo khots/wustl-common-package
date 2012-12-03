@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -31,9 +32,19 @@ public class AssignTagAction extends Action
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
 		String entityTagItem = (String) request.getParameter(Constants.ENTITY_TAGITEM);
 		String objChecks = request.getParameter(Constants.OBJCHECKBOX_STRING);
+		final String isCheckAllAcrossAllChecked = request
+		.getParameter("isCheckAllAcrossAllChecked");
+		HttpSession session = request.getSession();
+		if (isCheckAllAcrossAllChecked != null && "true".equals(isCheckAllAcrossAllChecked) &&
+				session.getAttribute("specIds") != null)
+		{
+			
+			objChecks = session.getAttribute("specIds").toString();
+		}
 		List<Long> objCheckList = getIdList(objChecks);
 		addTag(request, objCheckList, entityTag, entityTagItem);
 		assignTag(request, objCheckList, entityTagItem);
+		session.removeAttribute("specIds");
 		return null;
 	}
 
