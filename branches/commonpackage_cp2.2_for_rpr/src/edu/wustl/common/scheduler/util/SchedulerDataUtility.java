@@ -95,6 +95,10 @@ public class SchedulerDataUtility
 				if (!recipientUsersIds[i].equals(""))
 					recipientUserIdsCollection.add(Long.valueOf(recipientUsersIds[i]));
 			}
+			if(recipientUserIdsCollection.isEmpty())
+			{
+				recipientUserIdsCollection = null;
+			}
 			base.setRecepientUserIdCollection(recipientUserIdsCollection);
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat(SchedulerConstants.DATE_FORMAT);
