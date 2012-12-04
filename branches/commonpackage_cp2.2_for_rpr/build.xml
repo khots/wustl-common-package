@@ -150,7 +150,6 @@
 				<exclude name="**/ApplicationResources.properties" />
 			</fileset>
 			<fileset dir="${base.dir}" includes="**/ExceptionFormatter.properties" />
-			<fileset dir="${base.dir}/CAS" includes="cas.war" />
 			<manifest>
 				<section name="${cp.jar.details}">
 				    <attribute name="Version" value="${cp.jar.version}"/>
