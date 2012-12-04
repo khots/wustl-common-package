@@ -33,6 +33,7 @@ public class TreeGridInItAction extends Action
 		 
 		String responseString = VelocityManager.getInstance().evaluate(tagList,
 				"privilegeTreeTemplate.vm");
+		response.setBufferSize(responseString.length());
 		response.getWriter().write(responseString);
 		response.setContentType("text/xml");
 		return null;
