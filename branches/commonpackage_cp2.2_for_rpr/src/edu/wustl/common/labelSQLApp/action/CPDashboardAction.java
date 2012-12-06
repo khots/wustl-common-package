@@ -20,6 +20,7 @@ import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
 import edu.wustl.common.labelSQLApp.form.CPDashboardForm;
 import edu.wustl.common.report.ReportGenerator;
 import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
+import edu.wustl.common.util.global.ReportConstants;
 import edu.wustl.dao.exception.DAOException;
 
 /** 
@@ -29,26 +30,22 @@ import edu.wustl.dao.exception.DAOException;
 public class CPDashboardAction extends Action
 {
 
-	private static final String PARTICIPANT_OBJECT = "participantObject";
-	private static final String CP_ID = "cpId";
-	private static final String PARTICIPANT_ID = "participantId";
-
 	public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 
 		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 				"sessionData");
-		String isSystemDashBoard = request.getParameter("isSystemDashboard");
-		String forward = "success";
-		if (isSystemDashBoard != null && isSystemDashBoard.equals("true"))
+		String isSystemDashBoard = request.getParameter(ReportConstants.IS_SYSTEM_DASHBOARD);
+		String forward = ReportConstants.SUCCESS;
+		if (isSystemDashBoard != null && isSystemDashBoard.equals(ReportConstants.TRUE))
 		{
 			if (!sessionDataBean.isAdmin())
 			{
-				forward = "redirect";
+				forward = ReportConstants.REDIRECT;
 			}
 		}
-		if (forward.equals("success"))
+		if (forward.equals(ReportConstants.SUCCESS))
 		{
 			loadDashboard(actionForm, request, sessionDataBean.isAdmin(),
 					sessionDataBean.getUserId());
@@ -66,8 +63,8 @@ public class CPDashboardAction extends Action
 			Long userId) throws Exception
 	{
 		CPDashboardForm cpDashboardForm = (CPDashboardForm) actionForm;
-		String cpId = request.getParameter("cpSearchCpId");
-		String participantId = request.getParameter(PARTICIPANT_ID);
+		String cpId = request.getParameter(ReportConstants.CP_SEARCH_CP_ID);
+		String participantId = request.getParameter(ReportConstants.PARTICIPANT_ID);
 		Long cp = null;
 		if (cpId != null)
 		{
@@ -93,9 +90,9 @@ public class CPDashboardAction extends Action
 		{
 			reportNameList = processReports(request, cpId, participantId);
 		}
-		request.setAttribute(CP_ID, cpId);
-		request.setAttribute(PARTICIPANT_ID, participantId);
-		request.setAttribute("reportNameList", reportNameList);
+		request.setAttribute(ReportConstants.CP_ID, cpId);
+		request.setAttribute(ReportConstants.PARTICIPANT_ID, participantId);
+		request.setAttribute(ReportConstants.REPORT_NAME_LIST, reportNameList);
 	}
 
 	/**
@@ -110,11 +107,11 @@ public class CPDashboardAction extends Action
 			String participantId) throws BizLogicException, DAOException
 	{
 		List<NameValueBean> reportNameList;
-		if(participantId != null && !participantId.equals(""))
+		if(participantId != null && !participantId.equals(ReportConstants.DOUBLE_QUOTE))
 		{
 			reportNameList = ReportGenerator.getReportNames(cpId, participantId);
 			Object participantObj = new ReportBizLogic().getParticipant(participantId);
-			request.setAttribute(PARTICIPANT_OBJECT, participantObj);
+			request.setAttribute(ReportConstants.PARTICIPANT_OBJECT, participantObj);
 		}
 		else
 		{
