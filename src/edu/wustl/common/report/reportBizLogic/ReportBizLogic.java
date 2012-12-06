@@ -10,9 +10,9 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.bean.ReportBean;
 import edu.wustl.common.report.bean.ReportConditions;
 import edu.wustl.common.util.global.CommonServiceLocator;
-import edu.wustl.dao.DAO;
-import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.QueryWhereClause;
+import edu.wustl.dao.condition.EqualClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.query.generator.ColumnValueBean;
@@ -20,6 +20,8 @@ import edu.wustl.dao.query.generator.ColumnValueBean;
 public class ReportBizLogic extends DefaultBizLogic
 {
 
+	private static final String ID = "id";
+	private static final String PARTICIPANT = "edu.wustl.clinportal.domain.Participant";
 	protected static ReportBean repBean;
 
 	public ReportBizLogic()
@@ -260,5 +262,25 @@ public class ReportBizLogic extends DefaultBizLogic
 		return getReportNamesFromQuery(query);
 	}
 
-
+	/**
+	 * This method retrieves 
+	 * @param participantId
+	 * @return
+	 * @throws DAOException
+	 * @throws BizLogicException
+	 */
+	public Object getParticipant(String participantId) throws DAOException, BizLogicException
+	{
+		QueryWhereClause queryWhereClause = new QueryWhereClause(PARTICIPANT);
+		queryWhereClause.addCondition(new EqualClause(ID, '?'));
+		Object[] valueObjects = {Long.valueOf(participantId)};
+		List<ColumnValueBean> columnValueBeans = new ArrayList<ColumnValueBean>();
+		for (Object valueObject : valueObjects)
+		{
+			columnValueBeans.add(new ColumnValueBean(valueObject));
+		}
+		Object participantObj = new DefaultBizLogic().retrieve(PARTICIPANT, null, queryWhereClause,
+				columnValueBeans).get(0);
+		return participantObj;
+	}
 }
