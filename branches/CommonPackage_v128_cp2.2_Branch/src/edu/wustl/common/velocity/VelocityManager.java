@@ -3,6 +3,8 @@ package edu.wustl.common.velocity;
 
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -47,6 +49,21 @@ public class VelocityManager
 		Template template = velocityEngine.getTemplate(templateFileName);
 		VelocityContext context = new VelocityContext();
 		context.put(GRID_POPULATE_OBJECT_LIST, gridPopulateObjectList);
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+		return writer.toString();
+	}
+
+	public String evaluate(Map<String, Object> gridObjs, String templateFileName)
+	throws Exception {
+		Template template = velocityEngine.getTemplate(templateFileName);
+		VelocityContext context = new VelocityContext();
+		if (gridObjs != null) {
+			for (Map.Entry<String, Object> gridObj : gridObjs.entrySet()) {
+                		context.put(gridObj.getKey(), gridObj.getValue());
+			}
+		}
+
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
 		return writer.toString();
