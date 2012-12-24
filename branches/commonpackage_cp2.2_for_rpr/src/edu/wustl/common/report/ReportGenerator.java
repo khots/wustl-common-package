@@ -199,7 +199,7 @@ public abstract class ReportGenerator
 	{
 		ReportBizLogic repoLogic = new ReportBizLogic();
 		Long csId = 0l;
-		if(csID!=null || csID!="")
+		if((csID!=null && !"".equals(csID) && !"null".equals(csID)))
 		{
 			csId = Long.valueOf(csID);
 		}
