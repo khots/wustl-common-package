@@ -107,7 +107,7 @@ public class CPDashboardAction extends Action
 			String participantId) throws BizLogicException, DAOException
 	{
 		List<NameValueBean> reportNameList;
-		if(participantId != null && !participantId.equals(ReportConstants.DOUBLE_QUOTE))
+		if(participantId != null && !participantId.equals(ReportConstants.DOUBLE_QUOTE) && !participantId.equals("null"))
 		{
 			reportNameList = ReportGenerator.getReportNames(cpId, participantId);
 			Object participantObj = new ReportBizLogic().getParticipant(participantId);
