@@ -50,6 +50,7 @@ import edu.wustl.common.util.global.SendEmail;
 import edu.wustl.dao.JDBCDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.util.DAOUtility;
 
 public class ReportSchedulerUtil
 {
@@ -357,7 +358,7 @@ public class ReportSchedulerUtil
 		{
 			list = dao.executeQuery("select IDENTIFIER from REPORT_DETAILS where IDENTIFIER = "
 					+ reportId
-					+ " and  IDENTIFIER in ( select IDENTIFIER from REPORT_DETAILS where CS_ID ="
+					+ " and  IDENTIFIER in ( select IDENTIFIER from REPORT_DETAILS where lower(REPORT_TYPE) != 'participant' and CS_ID ="
 					+ csId + ") ", null);
 		}
 		finally
@@ -455,7 +456,7 @@ public class ReportSchedulerUtil
 	public static ReportAuditData generateTicket(ReportForm hsForm, SessionDataBean sessionDataBean)
 			throws DAOException, SQLException, BizLogicException, ParseException
 	{
-		ReportAuditData customReportAudit = new ReportAuditData();
+	ReportAuditData customReportAudit = new ReportAuditData();
 		customReportAudit.setUserId(sessionDataBean.getUserId());
 		SimpleDateFormat formatter = new SimpleDateFormat(CommonServiceLocator.getInstance()
 				.getDatePattern());
@@ -486,7 +487,7 @@ public class ReportSchedulerUtil
 		{
 			if (reportDetailRS != null)
 			{
-				reportDetailRS.close();
+				dao.closeStatement(reportDetailRS);
 			}
 			dao.closeSession();
 		}

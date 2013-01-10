@@ -54,7 +54,7 @@ public abstract class ReportGenerator
 		ReportBizLogic repLogic = new ReportBizLogic();
 
 		List<Object> reportDetails = repLogic.getReportDetails(reportName);
-		if (reportDetails.get(0).toString().equals("custom"))
+		if (reportDetails.get(0).toString().equals("custom") || reportDetails.get(0).toString().equals("participant"))
 		{
 			return new CustomReportGenerator(reportDetails.get(1).toString());
 		}
