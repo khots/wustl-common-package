@@ -179,7 +179,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	 * @param processor
 	 * @throws Exception 
 	 */
-	private void schedule(AbstractScheduleProcessor processor) throws Exception
+	public void schedule(AbstractScheduleProcessor processor) throws Exception
 	{
 		Scheduler scheduler = new Scheduler();
 		scheduler.schedule(processor, true);

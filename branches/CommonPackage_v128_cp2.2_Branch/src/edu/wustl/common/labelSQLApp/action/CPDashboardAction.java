@@ -88,5 +88,6 @@ public class CPDashboardAction extends Action
 		}
 		request.setAttribute("cpId", cpId);
 		request.setAttribute("reportNameList", reportNameList);
+		request.setAttribute("labelQueryResultList",displayNameMap);
 	}
 }

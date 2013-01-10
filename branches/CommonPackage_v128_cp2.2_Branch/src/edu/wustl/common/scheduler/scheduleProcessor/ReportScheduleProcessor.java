@@ -21,7 +21,6 @@ import edu.wustl.common.report.CustomReportGenerator;
 import edu.wustl.common.report.ReportGenerator;
 import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
 import edu.wustl.common.scheduler.bizLogic.ReportAuditDataBizLogic;
-import edu.wustl.common.scheduler.constants.SchedulerConstants;
 import edu.wustl.common.scheduler.domain.BaseSchedule;
 import edu.wustl.common.scheduler.domain.ReportAuditData;
 import edu.wustl.common.scheduler.propertiesHandler.SchedulerConfigurationPropertiesHandler;
@@ -30,7 +29,6 @@ import edu.wustl.common.scheduler.util.SchedulerDataUtility;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.JDBCDAO;
-import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
 
 public class ReportScheduleProcessor extends AbstractScheduleProcessor
@@ -41,7 +39,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	/* (non-Javadoc)
 	 * @see main.java.scheduler.scheduleProcessors.AbstractScheduleProcessor#executeSchedule()
 	 */
-	public void executeSchedule() throws Exception
+	synchronized public void executeSchedule() throws Exception
 	{
 		ReportGenerator reportGenerator = null;
 		ReportBizLogic repoBiz = new ReportBizLogic();
@@ -68,9 +66,10 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	}
 
 	@Override
-	public void postScheduleExecution() throws Exception
+	synchronized public void postScheduleExecution() throws Exception
 	{
 		mail();
+		
 		try
 		{
 			ticketIdList.clear();
@@ -79,6 +78,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		{
 			ticketIdList = new ArrayList<Long>();
 		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -88,6 +88,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	@Override
 	public boolean mail() throws Exception
 	{
+		
 		boolean success = true;
 		try
 		{
@@ -100,31 +101,30 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 			ReportAuditDataBizLogic reportAuditBiz = new ReportAuditDataBizLogic();
 			for (Long userId : userCollection)
 			{
-				List<ReportAuditData> dataList = reportAuditBiz.getReportAuditDataListbyUser(
-						userId, getTicketIdList());
+				List<List> dataList = reportAuditBiz.getReportAuditDataListbyUser(userId,
+						getTicketIdList());
 				String email = ReportSchedulerUtil.getEmail(userId);
 				ReportBizLogic repoBiz = new ReportBizLogic();
 				StringBuilder body = new StringBuilder("");
 				populateMailHeader(userId, body);
-				for (ReportAuditData reportAuditData : dataList)
+				for (List reportAuditData : dataList)
 				{
-					if (reportAuditData.getJobStatus() != null)
+					if (reportAuditData.get(1) != null)
 					{
-						if (reportAuditData.getJobStatus().equalsIgnoreCase("Completed"))
+						if (((String) reportAuditData.get(1)).equalsIgnoreCase("Completed"))
 						{
 							populateDownloadLinkInMail(repoBiz, body, reportAuditData);
 						}
-						else if (reportAuditData.getJobStatus().equalsIgnoreCase("Error"))
+						else
 						{
 							populateErrorMessageInMail(repoBiz, body, reportAuditData);
 						}
-						reportAuditData.setIsEmailed(true);
-						reportAuditBiz.update(reportAuditData);
+						reportAuditBiz.setIsEmailed(Long.valueOf((String)reportAuditData.get(0)));
+						//reportAuditBiz.update(reportAuditData);
 					}
 				}
 				populateMailBodyEnding(body);
 				sendMail(email, body);
-				//System.out.println("Mail: " + body.toString());
 			}
 		}
 		catch (Exception e)
@@ -167,13 +167,13 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * @throws BizLogicException
 	 */
 	private boolean populateErrorMessageInMail(ReportBizLogic repoBiz, StringBuilder body,
-			ReportAuditData reportAuditData) throws BizLogicException
+			List reportAuditData) throws BizLogicException
 	{
 		boolean success = true;
 		try
 		{
 			body.append("\n").append(
-					repoBiz.getReportNameById(reportAuditData.getReportId()) + ": "
+					repoBiz.getReportNameById(Long.valueOf((String)reportAuditData.get(2))) + ": "
 							+ "Report could not be generated, please contact the administrator.");
 		}
 		catch (BizLogicException e)
@@ -192,16 +192,15 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 	 * @throws Exception
 	 */
 	private boolean populateDownloadLinkInMail(ReportBizLogic repoBiz, StringBuilder body,
-			ReportAuditData reportAuditData) throws Exception
+			List reportAuditData) throws Exception
 	{
 		boolean success = true;
 		try
 		{
-			body.append("\n").append(
-					repoBiz.getReportNameById(reportAuditData.getReportId())
+			body.append("\n")
+					.append(repoBiz.getReportNameById(Long.valueOf((String) reportAuditData.get(2)))
 							+ ": "
-							+ ReportSchedulerUtil.getFileDownloadLink(reportAuditData.getId()
-									.toString()));
+							+ ReportSchedulerUtil.getFileDownloadLink((String) reportAuditData.get(0)));
 		}
 		catch (Exception e)
 		{
@@ -330,7 +329,7 @@ public class ReportScheduleProcessor extends AbstractScheduleProcessor
 		{
 			if (reportDetailRS != null)
 			{
-				reportDetailRS.close();
+				dao.closeStatement(reportDetailRS);
 			}
 			dao.closeSession();
 		}
