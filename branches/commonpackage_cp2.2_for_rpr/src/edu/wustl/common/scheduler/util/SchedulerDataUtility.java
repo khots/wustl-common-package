@@ -118,6 +118,10 @@ public class SchedulerDataUtility
 		{
 			base.setIncludeMe(jsonDataMap.getBoolean(SchedulerConstants.INCLUDE_ME));
 		}
+		else
+		{
+			base.setIncludeMe(false);
+		}
 
 		if (jsonDataMap.has("Duration"))
 		{
