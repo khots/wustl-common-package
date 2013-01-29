@@ -4,6 +4,8 @@ package edu.wustl.common.scheduler.constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import edu.wustl.common.util.global.CommonServiceLocator;
+
 public class SchedulerConstants
 {
 
@@ -21,7 +23,7 @@ public class SchedulerConstants
 	public static final String DROPDOWN_TOKEN = "$dropDownToken$";
 	public static final String USER_DROPDOWN_TOKEN = "$userDropDownToken$";
 	public static final String OWNER_ID_TOKEN = "$ownerIdToken$";
-	public static final String DATE_FORMAT = "MM/dd/yyyy";
+	public static final String DATE_FORMAT = CommonServiceLocator.getInstance().getDatePattern();
 	public static final String SCHEDULE_ID = "Id";
 	public static final String SCHEDULE_NAME = "Name";
 	public static final String INTERVAL = "Interval";

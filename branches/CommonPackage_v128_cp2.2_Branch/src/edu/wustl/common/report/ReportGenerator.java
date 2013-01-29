@@ -16,6 +16,7 @@ import edu.wustl.common.datahandler.HandlerTypeEnum;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.bean.ReportBean;
 import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.dao.exception.DAOException;
 
 /**
@@ -100,7 +101,7 @@ public abstract class ReportGenerator
 
 		paramList.clear();
 		paramList.add("Exported On:");
-		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		DateFormat dateFormat = new SimpleDateFormat(CommonServiceLocator.getInstance().getDatePattern());
 		Calendar cal = Calendar.getInstance();
 		paramList.add(dateFormat.format(cal.getTime()));
 		handler.appendData(paramList);
