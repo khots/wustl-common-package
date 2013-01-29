@@ -37,6 +37,7 @@ public class ReportBizLogic extends DefaultBizLogic
 		String condition = repBean.getCondition();
 		ReportConditions valueOf = ReportConditions.BETWEEN;
 		String replacedQuery = "";
+		String DatePattern = CommonServiceLocator.getInstance().getDatePattern();
 		switch (valueOf)
 		{
 			case BETWEEN :
@@ -44,25 +45,25 @@ public class ReportBizLogic extends DefaultBizLogic
 				if (repBean.getToDate() != null && repBean.getToDate() != ""
 						&& (repBean.getFromDate() == null || repBean.getFromDate() == ""))
 				{
-					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'MM-DD-YYYY'),'MM-DD-YYYY')) <= to_date('"
-							+ repBean.getToDate() + "','MM-DD-YYYY')";
+					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'"+DatePattern+"'),'"+DatePattern+"')) <= to_date('"
+							+ repBean.getToDate() + "','"+DatePattern+"')";
 					replacedQuery = query.replaceAll("@@dateCondition@@", wherePart);
 
 				}
 				else if (repBean.getFromDate() != null && repBean.getFromDate() != ""
 						&& (repBean.getToDate() == null || repBean.getToDate() == ""))
 				{
-					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'MM-DD-YYYY'),'MM-DD-YYYY')) >= to_date('"
-							+ repBean.getFromDate() + "','MM-DD-YYYY')";
+					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'"+DatePattern+"'),'"+DatePattern+"')) >= to_date('"
+							+ repBean.getFromDate() + "','"+DatePattern+"')";
 					replacedQuery = query.replaceAll("@@dateCondition@@", wherePart);
 				}
 				else if (repBean.getFromDate() != null && repBean.getFromDate() != ""
 						&& (repBean.getToDate() != null || repBean.getToDate() != ""))
 				{
-					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'MM-DD-YYYY'),'MM-DD-YYYY')) between to_date('"
+					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'"+DatePattern+"'),'"+DatePattern+"')) between to_date('"
 							+ repBean.getFromDate()
-							+ "','MM-DD-YYYY') and to_date('"
-							+ repBean.getToDate() + "','MM-DD-YYYY')";
+							+ "','"+DatePattern+"') and to_date('"
+							+ repBean.getToDate() + "','"+DatePattern+"')";
 					replacedQuery = query.replaceAll("@@dateCondition@@", wherePart);
 				}
 				else if (repBean.getFromDate() == null || repBean.getFromDate() == ""
