@@ -1,6 +1,7 @@
 
 package edu.wustl.common.tags.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -12,11 +13,15 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.tags.domain.Tag;
 import edu.wustl.common.tags.domain.TagItem;
 import edu.wustl.dao.DAO;
+import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.exception.DAOException;
+import edu.wustl.dao.query.generator.ColumnValueBean;
 
 public class TagDAO<T> extends DefaultBizLogic
 {
 
+	public static final String GET_TAGS = "FROM %s tag LEFT JOIN  tag.sharedUserIds sharedIds "
+					    				+ "WHERE tag.userId =:userId OR sharedIds =:shareUserId";
 	public Session session = null;
 	public String entityName;
 	public Long userId;
@@ -53,7 +58,6 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			closeSession(dao);
 		}
-
 	}
 	/**
 	 * Delete the Tag Object from the database.
@@ -104,6 +108,7 @@ public class TagDAO<T> extends DefaultBizLogic
 		}
 
 	}
+	 
 	/**
 	 * Delete the TagItem Object from the database.
 	 * @param obj TagItem Object to be deleted in database.
@@ -232,9 +237,14 @@ public class TagDAO<T> extends DefaultBizLogic
 		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
-			tagList = dao.executeQuery("from  " + entityName +" where userId = "+userId);
+			SessionDataBean sessionDataBean = new SessionDataBean(); 
+			dao = getHibernateDao(getAppName(), sessionDataBean);	
+			String query = String.format(GET_TAGS,entityName);
+			List<ColumnValueBean> parameters = new ArrayList<ColumnValueBean>();
+			parameters.add(new ColumnValueBean("userId",userId));
+			parameters.add(new ColumnValueBean("shareUserId",userId));
+			tagList = ((HibernateDAO)dao).executeParamHQL(query, parameters); 
+			dao.commit();
 		}
 		catch (DAOException e)
 		{
@@ -246,5 +256,31 @@ public class TagDAO<T> extends DefaultBizLogic
 		}
 		return tagList;
 	}
-
+	
+	/**
+	 * Update the Tag Object to the database.
+	 * @param obj Tag Object to be updated in database
+	 * @throws DAOException,BizLogicException.
+	 * @throws BizLogicException 
+	 * 
+	 */
+	public void updateTag(Tag<T> tag) throws DAOException, BizLogicException
+	{
+		DAO dao = null;
+		try
+		{
+			SessionDataBean sessionDataBean = new SessionDataBean();
+			dao = getHibernateDao(getAppName(), sessionDataBean);
+			dao.update(entityName, tag);
+			dao.commit();
+		}
+		catch (DAOException e)
+		{
+			throw new BizLogicException(e);
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+	}
 }

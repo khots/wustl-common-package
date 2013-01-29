@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class Tag<T> implements Serializable
 {
 
@@ -12,6 +13,7 @@ public class Tag<T> implements Serializable
 	private long identifier;
 	private String label;
 	private Set<TagItem<T>> tagItem;
+	private Set<Long> sharedUserIds = new HashSet<Long>();
 	private long userId;
 
 	public long getIdentifier()
@@ -54,4 +56,11 @@ public class Tag<T> implements Serializable
 		this.userId = userId;
 	}
 
+	public Set<Long> getSharedUserIds() {
+		return sharedUserIds;
+	}
+
+	public void setSharedUserIds(Set<Long> sharedUserIds) {
+		this.sharedUserIds = sharedUserIds;
+	}
 }

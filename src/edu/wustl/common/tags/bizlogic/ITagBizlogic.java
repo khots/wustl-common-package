@@ -23,6 +23,17 @@ public interface ITagBizlogic
 	 */
 	public void assignTag(String entityName, long tagId, long objId) throws DAOException,
 			BizLogicException;
+	
+	
+	/**
+	 * share existing folder to users List.
+	 * @param entityName from hbm file.
+	 * @param tagIdList.
+	 * @param selectedUserList.
+	 * @throws DAOException,BizLogicException.
+	 */
+	public void shareTags(String entityName, Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
+			BizLogicException;
 
 	/**
 	 * Insert New Tag to the database.
@@ -33,6 +44,16 @@ public interface ITagBizlogic
 	 * @throws DAOException,BizLogicException.
 	 */
 	public long createNewTag(String entityName, String newTagName, long userId)
+			throws DAOException, BizLogicException;
+	
+	/**
+	 * create and share new folder to users List.
+	 * @param entityName from hbm file.
+	 * @param newTagName.
+	 * @param userId.
+	 * @throws DAOException,BizLogicException.
+	 */
+	public void createNewTag(String entityName, String newTagName, long userId, Set<Long> selectedUsers) 
 			throws DAOException, BizLogicException;
 
 	/**
