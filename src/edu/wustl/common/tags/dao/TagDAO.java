@@ -230,7 +230,7 @@ public class TagDAO<T> extends DefaultBizLogic
 	 * @param obj Object to be inserted in database
 	 * @throws DAOException,BizLogicException.
 	 */
-	public List<Tag<T>> getTags() throws BizLogicException
+	/*public List<Tag<T>> getTags() throws BizLogicException
 	{
 
 		List<Tag<T>> tagList = null;
@@ -255,8 +255,30 @@ public class TagDAO<T> extends DefaultBizLogic
 			closeSession(dao);
 		}
 		return tagList;
-	}
+	}*/
 	
+	public List<Tag<T>> getTags() throws BizLogicException
+	{
+
+		List<Tag<T>> tagList = null;
+		DAO dao = null;
+		try
+		{
+			SessionDataBean sessionDataBean = new SessionDataBean();
+			dao = getHibernateDao(getAppName(), sessionDataBean);
+			tagList = dao.executeQuery("from  " + entityName +" where userId = "+userId);
+			dao.commit();
+		}
+		catch (DAOException e)
+		{
+			throw new BizLogicException(e);
+		}
+		finally
+		{
+			closeSession(dao);
+		}
+		return tagList;
+	}
 	/**
 	 * Update the Tag Object to the database.
 	 * @param obj Tag Object to be updated in database
