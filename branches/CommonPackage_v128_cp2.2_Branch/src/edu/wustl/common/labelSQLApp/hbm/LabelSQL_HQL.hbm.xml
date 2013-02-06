@@ -101,4 +101,11 @@
 		and assoc.cpid=?
 	</sql-query>
 	
+	<sql-query name="getLabelSqlIdByLabel">
+		select lbl.identifier from labelsql lbl where lbl.label=?
+	</sql-query>
+	<sql-query name="getQueryById">
+	 select lbl.query from labelsql lbl where lbl.identifier=?
+	</sql-query>
+		
 </hibernate-mapping>
