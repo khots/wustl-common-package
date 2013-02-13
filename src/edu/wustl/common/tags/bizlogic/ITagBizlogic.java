@@ -47,16 +47,6 @@ public interface ITagBizlogic
 			throws DAOException, BizLogicException;
 	
 	/**
-	 * create and share new folder to users List.
-	 * @param entityName from hbm file.
-	 * @param newTagName.
-	 * @param userId.
-	 * @throws DAOException,BizLogicException.
-	 */
-	public void createNewTag(String entityName, String newTagName, long userId, Set<Long> selectedUsers) 
-			throws DAOException, BizLogicException;
-
-	/**
 	 * Get list of Tags from the database.
 	 * @param entityName from hbm file.
 	 * @param obj Object to be inserted in database

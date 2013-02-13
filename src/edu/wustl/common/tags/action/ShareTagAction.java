@@ -11,7 +11,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.tags.factory.TagBizlogicFactory;
@@ -25,7 +24,6 @@ public class ShareTagAction extends Action {
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
 		String selectedUsers = request.getParameter("userString");        
 		Set<Long> selectedUserSet= getIdList(selectedUsers);
-		shareNewTag(request, selectedUserSet, entityTag);
 		shareExistingTags(request, selectedUserSet, entityTag);
 		return null;
 	}
@@ -42,20 +40,6 @@ public class ShareTagAction extends Action {
 		}
 	}
  
-	private void shareNewTag(HttpServletRequest request, Set<Long> selectedUserSet, String entityTag)
-			throws DAOException, BizLogicException, ApplicationException 
-	{
-		String newTagName = request.getParameter(Constants.NEWTAGNAME_STRING);
-		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
-				edu.wustl.common.util.global.Constants.SESSION_DATA);
-
-		if (newTagName != null && !newTagName.isEmpty())
-		{
-			TagBizlogicFactory.getBizLogicInstance(entityTag).createNewTag(entityTag,
-					newTagName, sessionDataBean.getUserId(), selectedUserSet);
-		}
-	}
-
 	private Set<Long> getIdList(String idStr)
 	{
 		Set<Long> selectedUsersList = new LinkedHashSet<Long>();
