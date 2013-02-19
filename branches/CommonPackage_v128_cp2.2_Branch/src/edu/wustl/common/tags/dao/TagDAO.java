@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Session;
-
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.bizlogic.DefaultBizLogic;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.tags.domain.Tag;
 import edu.wustl.common.tags.domain.TagItem;
+import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
 import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.exception.DAOException;
@@ -19,21 +18,39 @@ import edu.wustl.dao.query.generator.ColumnValueBean;
 
 public class TagDAO<T> extends DefaultBizLogic
 {
+	private static final Logger LOGGER = Logger.getCommonLogger(TagDAO.class);
 
-	public static final String GET_TAGS = "FROM %s tag LEFT JOIN  tag.sharedUserIds sharedIds "
-					    				+ "WHERE tag.userId =:userId OR sharedIds =:shareUserId";
-	public Session session = null;
-	public String entityName;
-	public Long userId;
-
+	private static final String GET_TAGS = "FROM %s tag LEFT JOIN  tag.sharedUserIds sharedIds "
+					    				 + "WHERE tag.userId =:userId OR sharedIds =:shareUserId";
+	
+	private String entityName;
+	private DAO dao = null;
+	
 	public TagDAO()
 	{
 	}
 
-	public TagDAO(String entityName,long userId)
+	public TagDAO(String entityName) throws BizLogicException
 	{
-		this.entityName = entityName;
-		this.userId = userId;
+		try 
+		{
+			this.entityName = entityName;
+			SessionDataBean sessionDataBean = new SessionDataBean();
+			dao = getHibernateDao(getAppName(), sessionDataBean);
+		} 
+		catch (DAOException e) {
+			LOGGER.error("Error while creating TagDAO",e);
+			throw new BizLogicException(e);
+		}
+	}
+	
+	public void commit() throws DAOException
+	{
+		dao.commit();
+	}
+	
+	public void closeSession() throws BizLogicException{
+		closeSession(dao);
 	}
 	/**
 	 * Insert the Tag Object to the database.
@@ -42,21 +59,13 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public void insertTag(Tag<T> tag) throws DAOException, BizLogicException
 	{
-		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.insert(entityName, tag);
-			dao.commit();
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
-		}
-		finally
-		{
-			closeSession(dao);
 		}
 	}
 	/**
@@ -66,21 +75,13 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public void deleteTag(Tag<T> tag) throws BizLogicException
 	{
-		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.delete(entityName, tag);
-			dao.commit();
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
-		}
-		finally
-		{
-			closeSession(dao);
 		}
 	}
 	/**
@@ -90,23 +91,14 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public void insertTagItem(TagItem<T> tagItem) throws DAOException, BizLogicException
 	{
-		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.insert(entityName, tagItem);
-			dao.commit();
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
 		}
-		finally
-		{
-			closeSession(dao);
-		}
-
 	}
 	 
 	/**
@@ -116,24 +108,16 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public void deleteTagItem(TagItem<T> tagItem) throws BizLogicException
 	{
-		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.delete(entityName, tagItem);
-			dao.commit();
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
 		}
-		finally
-		{
-			closeSession(dao);
-		}
-
 	}
+	
 	public Tag<T> getTagByLabel(String label)
 	{
 		return null;
@@ -152,21 +136,14 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public Tag<T> getTagById(long tagId) throws DAOException, BizLogicException
 	{
-		DAO dao = null;
 		Tag tag = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			tag = (Tag) dao.retrieveByIdAndEntityName(entityName, tagId);
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
-		}
-		finally
-		{
-			closeSession(dao);
 		}
 		return tag;
 	}
@@ -179,11 +156,8 @@ public class TagDAO<T> extends DefaultBizLogic
 	public Set<TagItem> getTagItemBytagId(long tagId) throws BizLogicException
 	{
 		Set<TagItem> tagItem = null;
-		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			Tag tag = (Tag) dao.retrieveByIdAndEntityName(entityName, tagId);
 			tagItem = tag.getTagItem();
 		}
@@ -191,12 +165,9 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			throw new BizLogicException(e);
 		}
-		finally
-		{
-			closeSession(dao);
-		}
 		return tagItem;
 	}
+	
 	/**
 	 * Get TagItem object.
 	 * @param entityName from hbm file.
@@ -206,21 +177,14 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public TagItem getTagItemById(long itemId) throws DAOException, BizLogicException
 	{
-		DAO dao = null;
 		TagItem tagItem = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-		    dao = getHibernateDao(getAppName(), sessionDataBean);
 			tagItem = (TagItem) dao.retrieveByIdAndEntityName(entityName, itemId);
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
-		}
-		finally
-		{
-			closeSession(dao);
 		}
 		return tagItem;
 	}
@@ -230,29 +194,20 @@ public class TagDAO<T> extends DefaultBizLogic
 	 * @param obj Object to be inserted in database
 	 * @throws DAOException,BizLogicException. 
 	 */
-	public List<Tag<T>> getTags() throws BizLogicException
+	public List<Tag<T>> getTags(Long userId) throws DAOException, BizLogicException
 	{
-
-		List<Tag<T>> tagList = null;
-		DAO dao = null;
+		List<Tag<T>> tagList = null;  
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean(); 
-			dao = getHibernateDao(getAppName(), sessionDataBean);	
 			String query = String.format(GET_TAGS,entityName);
 			List<ColumnValueBean> parameters = new ArrayList<ColumnValueBean>();
 			parameters.add(new ColumnValueBean("userId",userId));
 			parameters.add(new ColumnValueBean("shareUserId",userId));
 			tagList = ((HibernateDAO)dao).executeParamHQL(query, parameters); 
-			dao.commit();
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
-		}
-		finally
-		{
-			closeSession(dao);
 		}
 		return tagList;
 	}
@@ -266,21 +221,13 @@ public class TagDAO<T> extends DefaultBizLogic
 	 */
 	public void updateTag(Tag<T> tag) throws DAOException, BizLogicException
 	{
-		DAO dao = null;
 		try
 		{
-			SessionDataBean sessionDataBean = new SessionDataBean();
-			dao = getHibernateDao(getAppName(), sessionDataBean);
 			dao.update(entityName, tag);
-			dao.commit();
 		}
 		catch (DAOException e)
 		{
 			throw new BizLogicException(e);
-		}
-		finally
-		{
-			closeSession(dao);
 		}
 	}
 }

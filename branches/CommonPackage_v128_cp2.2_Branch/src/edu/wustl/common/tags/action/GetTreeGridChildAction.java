@@ -23,10 +23,10 @@ public class GetTreeGridChildAction extends Action
 	{
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
 		String tagIdentifier = (String) request.getParameter(Constants.TAGID_STRING);
-		long tagId = Long.parseLong(tagIdentifier);
+		Long tagId = Long.parseLong(tagIdentifier);
 
 		JSONObject arrayObj = new JSONObject();
-		arrayObj=TagBizlogicFactory.getBizLogicInstance(entityTag).getJSONObj(entityTag, tagId);
+		arrayObj=TagBizlogicFactory.getBizLogicInstance(entityTag).getJSONObj(tagId);
 		response.flushBuffer();
 		PrintWriter out = response.getWriter();
 		out.write(arrayObj.toString());

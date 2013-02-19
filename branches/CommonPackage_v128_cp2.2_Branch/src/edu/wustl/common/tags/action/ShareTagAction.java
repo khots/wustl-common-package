@@ -35,7 +35,7 @@ public class ShareTagAction extends Action {
 		Set<Long> tagIdSet = getIdList(tagChecks);
 		if(tagIdSet != null || ! tagIdSet.isEmpty())
 		{
-			TagBizlogicFactory.getBizLogicInstance(entityTag).shareTags(entityTag, tagIdSet,
+			TagBizlogicFactory.getBizLogicInstance(entityTag).shareTags(tagIdSet,
 					selectedUserSet);
 		}
 	}
