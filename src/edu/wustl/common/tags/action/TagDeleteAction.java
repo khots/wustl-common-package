@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.tags.factory.TagBizlogicFactory;
 import edu.wustl.common.util.global.Constants;
 
@@ -20,8 +21,10 @@ public class TagDeleteAction extends Action
 	{
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
 		String tagIdentifier = (String) request.getParameter(Constants.TAGID_STRING);
-		long tagId = Long.parseLong(tagIdentifier);
-		TagBizlogicFactory.getBizLogicInstance(entityTag).deleteTag(entityTag, tagId);
+		SessionDataBean sessionBean = (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
+		Long userId = sessionBean.getUserId();
+		Long tagId = Long.parseLong(tagIdentifier);
+		TagBizlogicFactory.getBizLogicInstance(entityTag).deleteTag(tagId, userId);
 
 		return null;
 	}

@@ -21,7 +21,7 @@ public interface ITagBizlogic
 	 * @param objId.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void assignTag(String entityName, long tagId, long objId) throws DAOException,
+	public void assignTag(Long tagId, Long objId) throws DAOException,
 			BizLogicException;
 	
 	
@@ -32,7 +32,7 @@ public interface ITagBizlogic
 	 * @param selectedUserList.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void shareTags(String entityName, Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
+	public void shareTags(Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
 			BizLogicException;
 
 	/**
@@ -43,7 +43,7 @@ public interface ITagBizlogic
 	 * @return tag identifier.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public long createNewTag(String entityName, String newTagName, long userId)
+	public long createNewTag(String newTagName, Long userId)
 			throws DAOException, BizLogicException;
 	
 	/**
@@ -52,7 +52,7 @@ public interface ITagBizlogic
 	 * @param obj Object to be inserted in database
 	 * @throws DAOException,BizLogicException.
 	 */
-	public List<Tag> getTagList(String entityName, long userId) throws DAOException, BizLogicException;
+	public List<Tag> getTagList(Long userId) throws DAOException, BizLogicException;
 	/**
 	 * Get the Set of TagItems.
 	 * @param entityName from hbm file.
@@ -60,7 +60,7 @@ public interface ITagBizlogic
 	 * @return Set<TagItem>.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public Set<TagItem> getTagItemByTagId(String entityName, long tagId) throws BizLogicException;
+	public Set<TagItem> getTagItemByTagId(Long tagId) throws BizLogicException;
 	/**
 	 * Get Tag object.
 	 * @param entityName from hbm file.
@@ -68,7 +68,7 @@ public interface ITagBizlogic
 	 * @return Tag Object.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public Tag getTagById(String entityName, long tagId) throws DAOException, BizLogicException;
+	public Tag getTagById(Long tagId) throws DAOException, BizLogicException;
 
 	/**
 	 * Delete the Tag  from database.
@@ -76,7 +76,7 @@ public interface ITagBizlogic
 	 * @param tagId to retrieve TagItem Object and delete it from database.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void deleteTag(String entityName, long tagId) throws DAOException, BizLogicException;
+	public void deleteTag(Long tagId, Long userId) throws DAOException, BizLogicException;
 
 	/**
 	 * Delete the Tag Item from database.
@@ -84,7 +84,7 @@ public interface ITagBizlogic
 	 * @param objId to retrieve TagItem Object and delete it from database.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void deleteTagItem(String entityName, long tagItemId) throws DAOException,
+	public void deleteTagItem(Long tagItemId, Long userId) throws DAOException,
 			BizLogicException;
 	/**
 	 * Get the Tag Item from database for Tree Grid.
@@ -93,5 +93,5 @@ public interface ITagBizlogic
 	 * @return Json Object.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public JSONObject getJSONObj(String entityTag,long tagId)throws DAOException, BizLogicException;
+	public JSONObject getJSONObj(Long tagId)throws DAOException, BizLogicException;
 }
