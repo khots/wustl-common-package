@@ -86,6 +86,14 @@ public interface ITagBizlogic
 	 */
 	public void deleteTagItem(Long tagItemId, Long userId) throws DAOException,
 			BizLogicException;
+	
+	/**
+	 * Delete the Tag Items from database.
+	 * @param  objIds to retrieve TagItem Object and delete it from database.
+	 * @throws DAOException,BizLogicException.
+	 */
+	public void deleteTagItemsFromObjIds(List<Long> objIds, Long tagId, Long userId) throws DAOException,
+			BizLogicException;
 	/**
 	 * Get the Tag Item from database for Tree Grid.
 	 * @param entityName from hbm file.
