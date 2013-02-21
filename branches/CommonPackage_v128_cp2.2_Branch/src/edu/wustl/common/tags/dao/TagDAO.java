@@ -23,6 +23,11 @@ public class TagDAO<T> extends DefaultBizLogic
 	private static final String GET_TAGS = "FROM %s tag LEFT JOIN  tag.sharedUserIds sharedIds "
 					    				 + "WHERE tag.userId =:userId OR sharedIds =:shareUserId";
 	
+	private static final String DELETE_TAGITEMS = "DELETE FROM %s tagItem "
+			 									+ "WHERE tagItem.tag.identifier = :tagId AND " 
+			 									+ "tagItem.objId IN (:objIds)";
+			 									 
+	
 	private String entityName;
 	private DAO dao = null;
 	
@@ -210,6 +215,28 @@ public class TagDAO<T> extends DefaultBizLogic
 			throw new BizLogicException(e);
 		}
 		return tagList;
+	}
+	
+	
+	/**
+	 * delete tagItems from the database.
+	 * @param  List<Long> tagItemIds
+	 * @throws DAOException,BizLogicException. 
+	 */
+	public void deleteTagItemsFromObjIds(List<Long> objIds, Long tagId) throws DAOException, BizLogicException
+	{
+		try 
+		{
+			String query = String.format(DELETE_TAGITEMS, entityName); 
+			List<ColumnValueBean> parameters = new ArrayList<ColumnValueBean>(); 
+			parameters.add(new ColumnValueBean("tagId", tagId)); 
+			parameters.add(new ColumnValueBean("objIds", objIds));
+			((HibernateDAO)dao).executeUpdateHQL(query, parameters);
+		}
+		catch (DAOException e)
+		{
+			throw new BizLogicException(e);
+		}
 	}
 	
 	/**
