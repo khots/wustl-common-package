@@ -32,7 +32,7 @@ public interface ITagBizlogic
 	 * @param selectedUserList.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void shareTags(Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
+	public void shareTags(Long userId, Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
 			BizLogicException;
 
 	/**
