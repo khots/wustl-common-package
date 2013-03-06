@@ -7,29 +7,23 @@ import java.util.Set;
 
 import edu.wustl.common.tags.domain.Tag;
 import edu.wustl.common.util.EmailClient;
-import edu.wustl.security.manager.ISecurityManager;
-import edu.wustl.security.manager.SecurityManagerFactory;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 public class TagUtil 
 {
-	public static void sendSharedTagEmailNotification(Long userId, List<Tag> tags, 
-			Set<Long> selectedUserSet, String tmplKey) throws Exception 
-	{
-		ISecurityManager securityManager = SecurityManagerFactory.getSecurityManager();
-		User currentUser = securityManager.getUserById(userId.toString());
-		
+	public static void sendSharedTagEmailNotification(User currentUser, List<Tag> tags, 
+			Set<User> selectedUsers, String tmplKey) throws Exception 
+	{	
 		Map<String,Object> contextMap = new HashMap<String,Object>();
 		contextMap.put("user", currentUser);
 		contextMap.put("sharedTags", tags);
 		 
-		for (Long sUserId : selectedUserSet)
+		for (User selectedUser : selectedUsers)
 		{
-			User sharedUser =  securityManager.getUserById(sUserId.toString());
-			contextMap.put("sharedUser", sharedUser);
+			contextMap.put("sharedUser", selectedUser);
 			EmailClient.getInstance().sendEmail(
 					 tmplKey, 
-					 new String[]{ sharedUser.getEmailId() }, 
+					 new String[]{ selectedUser.getEmailId() }, 
 					 contextMap);
 		}
 	}
