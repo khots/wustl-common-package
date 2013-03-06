@@ -223,9 +223,10 @@
 								startDate = new dhtmlXCalendarObject("startDate1");
 								endDate= new dhtmlXCalendarObject("endDate1");
 								startDate.setSkin("dhx_skyblue");
-								startDate.setDateFormat("%m/%d/%Y");
+								var datePattern = 
+								startDate.setDateFormat("%m-%d-%Y");
 								endDate.setSkin("dhx_skyblue");
-								endDate.setDateFormat("%m/%d/%Y");
+								endDate.setDateFormat("%m-%d-%Y");
 								
 								
 								
