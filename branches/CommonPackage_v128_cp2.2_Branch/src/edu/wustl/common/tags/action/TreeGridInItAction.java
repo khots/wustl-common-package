@@ -1,7 +1,9 @@
 
 package edu.wustl.common.tags.action;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,8 +29,11 @@ public class TreeGridInItAction extends Action
 		SessionDataBean sessionBean = (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
 		Long userId = sessionBean.getUserId();
 		List<Tag> tagList = TagBizlogicFactory.getBizLogicInstance(entityTag).getTagList(userId); 
-		 
-		String responseString = VelocityManager.getInstance().evaluate(tagList,
+		Map<String,Object> gridData = new HashMap<String,Object>();
+		gridData.put("tagList",tagList);
+		gridData.put("entityName", entityTag);
+		gridData.put("userId",userId);
+		String responseString = VelocityManager.getInstance().evaluate(gridData,
 				"privilegeTreeTemplate.vm");
 		response.setBufferSize(responseString.length());
 		response.getWriter().write(responseString);
