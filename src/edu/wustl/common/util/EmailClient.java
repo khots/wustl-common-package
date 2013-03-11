@@ -136,9 +136,9 @@ public class EmailClient {
     	fromPassword = emailServerProps.getFromPassword();
     }
     
-	private void initSubjectPrefix() {
-		if (subjectProperties.getProperty("subject.property") != null){
-			subjectPrefix = subjectProperties.getProperty("subject.property");
-		}
-	}
+    private void initSubjectPrefix() {
+    	if (subjectProperties.getProperty("subject.property") != null){
+    		subjectPrefix = subjectProperties.getProperty("subject.property");
+    	}
+    }
 }

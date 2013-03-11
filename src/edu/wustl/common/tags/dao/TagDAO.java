@@ -20,8 +20,9 @@ public class TagDAO<T> extends DefaultBizLogic
 {
 	private static final Logger LOGGER = Logger.getCommonLogger(TagDAO.class);
 
-	private static final String GET_TAGS = "FROM %s tag LEFT JOIN  tag.sharedUserIds sharedIds "
-					    				 + "WHERE tag.userId =:userId OR sharedIds =:shareUserId";
+	private static final String GET_TAGS = "SELECT DISTINCT tag "
+										+ "FROM %s tag LEFT JOIN  tag.sharedUserIds sharedIds "
+										+ "WHERE tag.userId =:userId OR sharedIds =:shareUserId";
 	
 	private static final String DELETE_TAGITEMS = "DELETE FROM %s tagItem "
 			 									+ "WHERE tagItem.tag.identifier = :tagId AND " 
