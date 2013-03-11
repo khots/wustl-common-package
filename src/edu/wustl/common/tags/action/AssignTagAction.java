@@ -60,9 +60,7 @@ public class AssignTagAction extends Action
 		{
 			Long tagId = (Long) tagIterate.next();
 			Tag tag = TagBizlogicFactory.getBizLogicInstance(entityTag).getTagById(tagId);
-			if (tag.getUserId() == userId){
-				assignTag(objCheckList, tagId, entityTagItem);
-			}
+			assignTag(objCheckList, tagId, entityTagItem);
 		}
 	}
 
