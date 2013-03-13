@@ -36,7 +36,7 @@ public class DateDataType implements IDBDataType
 		boolean isConError = false;
 		if (!(validator.checkDate(enteredValue)))
 		{
-			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("simpleQuery.date.format"));
+			errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.date.format"));
 			isConError = true;
 		}
 		return isConError;

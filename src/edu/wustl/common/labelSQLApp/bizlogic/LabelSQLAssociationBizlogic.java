@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
+import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.Constants;
+
 import org.hibernate.Session;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
@@ -31,10 +34,8 @@ public class LabelSQLAssociationBizlogic
 
 			HibernateDatabaseOperations<LabelSQLAssociation> dbHandler = new HibernateDatabaseOperations<LabelSQLAssociation>(
 					session);
-			System.out.println("retrieveById getLabelSQLAssocById...");
 			labelSQLAssociation = dbHandler.retrieveById(LabelSQLAssociation.class.getName(),
 					labelSQLAssocId);
-			System.out.println("retrieveById getLabelSQLAssocById done...");
 		}
 		finally
 		{
@@ -150,27 +151,33 @@ public class LabelSQLAssociationBizlogic
 	public LinkedHashMap<String, Long> getAssocAndDisplayNameMapByCPId(Long CPId) throws Exception
 	{
 		LinkedHashMap<String, Long> displayNameAssocMap = new LinkedHashMap<String, Long>();
-
 		//Retrieving LabelSQLAssociation list by CPId.  
 		List<LabelSQLAssociation> labelSQLAssociations = getLabelSQLAssocCollection(CPId);
 
+		if(!labelSQLAssociations.isEmpty())
+		{
 		for (LabelSQLAssociation labelSQLAssociation : labelSQLAssociations)
 		{
 			String query = labelSQLAssociation.getLabelSQL().getQuery();//retrieving query by LabelSQLAssociation
 			String displayName = new CommonBizlogic().getLabelByLabelSQLAssocId(labelSQLAssociation
-					.getId());//retrieve label by association id
-
+						.getId());//retrieve label by labelsql id
+	
 			if (query != null && !"".equals(query) && !"".equals(displayName)
 					&& displayName != null)
-			{ //Associating the displayname name and association id for dashboard items
-				displayNameAssocMap.put(displayName, labelSQLAssociation.getId());
+				{ //Associating the displayname name and labelsql id for dashboard items
+					displayNameAssocMap.put(displayName, labelSQLAssociation.getLabelSQL().getId());
 			}
 			else
 			{
 				//For group heading map with display name and dummy association
 				displayNameAssocMap.put(displayName, new Long(0));
 			}
-
+	
+		}
+		}
+		else //Set default dashboard items
+		{
+			displayNameAssocMap = new LabelSQLBizlogic().loadDasboard(Constants.DEFAULT_DASHBOARD);
 		}
 		return displayNameAssocMap;
 	}

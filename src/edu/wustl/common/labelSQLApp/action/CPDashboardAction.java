@@ -16,8 +16,11 @@ import org.apache.struts.action.ActionMapping;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
+import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLBizlogic;
 import edu.wustl.common.labelSQLApp.form.CPDashboardForm;
 import edu.wustl.common.report.ReportGenerator;
+import edu.wustl.common.util.Utility;
+import edu.wustl.common.util.global.Constants;
 
 /** 
  * @author Ashraf
@@ -65,8 +68,16 @@ public class CPDashboardAction extends Action
 		{
 			cp = Long.valueOf(cpId);
 		}
-		LinkedHashMap<String, Long> displayNameMap = new LabelSQLAssociationBizlogic()
+		LinkedHashMap<String, Long> displayNameMap;
+		 if(cp == null) //If cp is null then load system level dashboard
+		 {		 
+			 displayNameMap = new LabelSQLBizlogic().loadDasboard(Constants.SYSTEM_DASHBOARD);
+		 }
+		 else //load cp specific dashboard
+		 {
+	    	displayNameMap = new LabelSQLAssociationBizlogic()
 				.getAssocAndDisplayNameMapByCPId(cp);
+		 }
 		cpDashboardForm.setDisplayNameAndAssocMap(displayNameMap);
 		List<NameValueBean> reportNameList = new ArrayList<NameValueBean>();
 

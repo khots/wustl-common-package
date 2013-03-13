@@ -7,6 +7,9 @@
 
 package edu.wustl.common.util.global;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This classes is specific to common files. And contains all variables used by classes from
  * common package.
@@ -573,4 +576,9 @@ public final class Constants extends CommonConstants
 	public static final String ASSIGNID_STRING = "assignId";
 	public static final String OBJ_TYPE_QUERY = "Query";
 	public static final String QUERYCHECKBOX_STRING = "queryChkBoxString";
+	public static List<String[]> DEFAULT_DASHBOARD_ITEMS = new ArrayList<String[]>();
+	public static List<String[]> SYSTEM_DASHBOARD_ITEMS = new ArrayList<String[]>();
+	public static final String DEFAULT_DASHBOARD = "default";
+	public static final String SYSTEM_DASHBOARD = "system";
+	public static final String LABEL_SQL_HEADER = "header" ;
 }
