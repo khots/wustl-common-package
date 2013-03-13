@@ -152,22 +152,22 @@ public class CommonBizlogic
 		return labelQueryResultMap;
 	}
 
-	/**
-	 * Returns String with labelSQLAsociation and query result
-	 * @param labelSQLAssocID
-	 * @return
+	
+	/** This method gets the label sql query results and returns the string with labelsqlid and result.
+	 * @param labelSqlId
+	 * @param cpId
+	 * @return resultsting
 	 * @throws Exception
 	 */
-	public String getQueryResultByLabelSQLAssocId(Long labelSQLAssocID) throws Exception
+	public String getQueryResults(Long labelSqlId,Long cpId) throws Exception
 	{
-		/*Retrieve all the LabelSQL association associated with the CP/CS*/
-		LabelSQLAssociation labelSQLAssociation = new LabelSQLAssociationBizlogic()
-				.getLabelSQLAssocById(labelSQLAssocID);
-
+		
+		LabelSQLBizlogic bizlogic = new LabelSQLBizlogic();
+		String labelsqlquery =  clobToStringConversion( bizlogic.getLabelSqlQueryById(labelSqlId));
+		
 		int result = executeQuery(
-				clobToStringConversion((getQueryByLabelSQLAssocId(labelSQLAssociation.getId()))
-						.get(0)), labelSQLAssociation.getLabelSQLCollectionProtocol());//retrieve the query from labelSQLAssocID and execute it
-		String resultString = labelSQLAssocID.toString() + "," + result;
+				labelsqlquery, cpId);
+		String resultString = labelSqlId.toString() + "," + result;
 		return resultString;
 	}
 
