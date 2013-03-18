@@ -22,9 +22,8 @@ public class TagDeleteAction extends Action
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
 		String tagIdentifier = (String) request.getParameter(Constants.TAGID_STRING);
 		SessionDataBean sessionBean = (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
-		Long userId = sessionBean.getUserId();
 		Long tagId = Long.parseLong(tagIdentifier);
-		TagBizlogicFactory.getBizLogicInstance(entityTag).deleteTag(tagId, userId);
+		TagBizlogicFactory.getBizLogicInstance(entityTag).deleteTag(sessionBean, tagId);
 
 		return null;
 	}

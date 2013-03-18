@@ -1,6 +1,7 @@
 
 package edu.wustl.common.tags.bizlogic;
 
+import edu.wustl.common.beans.SessionDataBean;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.tags.domain.Tag;
 import edu.wustl.common.tags.domain.TagItem;
@@ -32,7 +33,7 @@ public interface ITagBizlogic
 	 * @param selectedUserList.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void shareTags(Long userId, Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
+	public void shareTags(SessionDataBean sessionBean, Set<Long> tagIdSet, Set<Long> selectedUsers) throws DAOException,
 			BizLogicException;
 
 	/**
@@ -52,7 +53,7 @@ public interface ITagBizlogic
 	 * @param obj Object to be inserted in database
 	 * @throws DAOException,BizLogicException.
 	 */
-	public List<Tag> getTagList(Long userId) throws DAOException, BizLogicException;
+	public List<Tag> getTagList(SessionDataBean sessionBean) throws DAOException, BizLogicException;
 	/**
 	 * Get the Set of TagItems.
 	 * @param entityName from hbm file.
@@ -76,7 +77,7 @@ public interface ITagBizlogic
 	 * @param tagId to retrieve TagItem Object and delete it from database.
 	 * @throws DAOException,BizLogicException.
 	 */
-	public void deleteTag(Long tagId, Long userId) throws DAOException, BizLogicException;
+	public void deleteTag(SessionDataBean sessionBean, Long tagId) throws DAOException, BizLogicException;
 
 	/**
 	 * Delete the Tag Item from database.

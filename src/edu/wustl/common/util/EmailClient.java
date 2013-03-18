@@ -24,9 +24,8 @@ public class EmailClient {
     
     private static Properties emailTemplates = null;
     private static Properties subjectProperties = null;
-    private static String footerTemplate = null;
+    private static String footerTemplate = null; 
     private static String subjectPrefix = "";
-	
     private static String mailServer = null;
     private static String mailServerPort = null;
     private static String isSMTPAuthEnabled = null;
@@ -72,7 +71,6 @@ public class EmailClient {
     	if(footerTemplate == null){
     		initFooter();
     	}
-    	
     	ctxt.put("footer", footerTemplate);
     	final EmailDetails emailDetails= new EmailDetails();
     	SendEmail email;
@@ -85,15 +83,18 @@ public class EmailClient {
     			emailDetails.setSubject(subjectPrefix+""+String.format(subjectProperties.getProperty(tmplKey),subStr));
     		}
 			
-    		if(emailTemplates.containsKey(tmplKey+".html")){
-    			String emailHtmlBody = VelocityManager.getInstance().evaluate(ctxt, emailTemplates.getProperty(tmplKey+".html"));
-    			emailDetails.setBody(emailHtmlBody);
-    		} else {
-    			String emailTxtBody = VelocityManager.getInstance().evaluate(ctxt, emailTemplates.getProperty(tmplKey+".txt"));	
-    			emailDetails.setBody(emailTxtBody);
+    		String emailTemplate = emailTemplates.getProperty(tmplKey);
+    		if (emailTemplate == null) {
+    			LOGGER.error("could not find e-mail template"+ tmplKey);
+    			return emailStatus;
     		}
+    	
+    		String emailBody = VelocityManager.getInstance().evaluate(ctxt, emailTemplate);
+    		
+    		emailDetails.setHtmlBody(true);
+    		emailDetails.setBody(emailBody);
+    		
     		emailDetails.setToAddress(to);
-			
     		if(cc != null){
     			emailDetails.setCcAddress(cc);
     		}

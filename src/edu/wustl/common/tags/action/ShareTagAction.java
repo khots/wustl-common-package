@@ -26,19 +26,18 @@ public class ShareTagAction extends Action {
 		Set<Long> selectedUserSet= getIdList(selectedUsers);
 		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 				edu.wustl.common.util.global.Constants.SESSION_DATA);
-		Long userId = sessionDataBean.getUserId();
-		shareExistingTags(userId, request, selectedUserSet, entityTag);
+		shareExistingTags(sessionDataBean, request, selectedUserSet, entityTag);
 		return null;
 	}
  
-	private void shareExistingTags(Long userId, HttpServletRequest request, Set<Long> selectedUserSet, String entityTag) 
+	private void shareExistingTags(SessionDataBean sessionDataBean, HttpServletRequest request, Set<Long> selectedUserSet, String entityTag) 
 			throws Exception, DAOException, BizLogicException
 	{
 		String tagChecks = request.getParameter(Constants.TAGCHECKBOX_STRING); 
 		Set<Long> tagIdSet = getIdList(tagChecks);
 		if(tagIdSet != null || ! tagIdSet.isEmpty())
 		{
-			TagBizlogicFactory.getBizLogicInstance(entityTag).shareTags(userId, tagIdSet,
+			TagBizlogicFactory.getBizLogicInstance(entityTag).shareTags(sessionDataBean, tagIdSet,
 					selectedUserSet);
 		}
 	}

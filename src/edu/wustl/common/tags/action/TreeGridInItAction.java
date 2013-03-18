@@ -27,12 +27,11 @@ public class TreeGridInItAction extends Action
 	{
 		String entityTag = (String) request.getParameter(Constants.ENTITY_TAG);
 		SessionDataBean sessionBean = (SessionDataBean)request.getSession().getAttribute(Constants.SESSION_DATA);
-		Long userId = sessionBean.getUserId();
-		List<Tag> tagList = TagBizlogicFactory.getBizLogicInstance(entityTag).getTagList(userId); 
+		List<Tag> tagList = TagBizlogicFactory.getBizLogicInstance(entityTag).getTagList(sessionBean); 
 		Map<String,Object> gridData = new HashMap<String,Object>();
 		gridData.put("tagList",tagList);
 		gridData.put("entityName", entityTag);
-		gridData.put("userId",userId);
+		gridData.put("userId",sessionBean.getUserId());
 		String responseString = VelocityManager.getInstance().evaluate(gridData,
 				"privilegeTreeTemplate.vm");
 		response.setBufferSize(responseString.length());
