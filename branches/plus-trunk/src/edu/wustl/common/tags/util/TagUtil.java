@@ -7,6 +7,7 @@ import java.util.Set;
 
 import edu.wustl.common.tags.domain.Tag;
 import edu.wustl.common.util.EmailClient;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 public class TagUtil 
@@ -17,7 +18,7 @@ public class TagUtil
 		Map<String,Object> contextMap = new HashMap<String,Object>();
 		contextMap.put("user", currentUser);
 		contextMap.put("sharedTags", tags);
-		 
+		contextMap.put("appUrl", CommonServiceLocator.getInstance().getAppURL());  
 		for (User selectedUser : selectedUsers)
 		{
 			contextMap.put("sharedUser", selectedUser);

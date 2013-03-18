@@ -200,15 +200,15 @@ public class TagDAO<T> extends DefaultBizLogic
 	 * @param obj Object to be inserted in database
 	 * @throws DAOException,BizLogicException. 
 	 */
-	public List<Tag<T>> getTags(Long userId) throws DAOException, BizLogicException
+	public List<Tag<T>> getTags(SessionDataBean sessionBean) throws DAOException, BizLogicException
 	{
 		List<Tag<T>> tagList = null;  
 		try
 		{
 			String query = String.format(GET_TAGS,entityName);
 			List<ColumnValueBean> parameters = new ArrayList<ColumnValueBean>();
-			parameters.add(new ColumnValueBean("userId",userId));
-			parameters.add(new ColumnValueBean("shareUserId",userId));
+			parameters.add(new ColumnValueBean("userId", sessionBean.getUserId()));
+			parameters.add(new ColumnValueBean("shareUserId", Long.parseLong(sessionBean.getCsmUserId())));
 			tagList = ((HibernateDAO)dao).executeParamHQL(query, parameters); 
 		}
 		catch (DAOException e)
