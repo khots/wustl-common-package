@@ -29,6 +29,10 @@ public class TagDAO<T> extends DefaultBizLogic
 			 									+ "tagItem.objId IN (:objIds)";
 			 									 
 	
+	private static final String IS_TAG_ITEM_ASSIGNED = "SELECT tagItem.objId FROM %s tagItem "
+											    + "WHERE tagItem.tag.identifier = :tagId AND " 
+											    + "tagItem.objId = :objId";
+	
 	private String entityName;
 	private DAO dao = null;
 	
@@ -257,5 +261,33 @@ public class TagDAO<T> extends DefaultBizLogic
 		{
 			throw new BizLogicException(e);
 		}
+	}
+	
+	/**
+	 * .
+	 * @param tagId.
+	 * @return Set<TagItem>.
+	 * @throws DAOException,BizLogicException.
+	 */
+	public boolean isTagItemAlreadyAssigned(Long tagId, Long objId) throws BizLogicException
+	{
+		boolean isObjPresent = false;
+		List resultList = null;  
+		try
+		{
+			String query = String.format(IS_TAG_ITEM_ASSIGNED, entityName); 
+			List<ColumnValueBean> parameters = new ArrayList<ColumnValueBean>(); 
+			parameters.add(new ColumnValueBean("tagId", tagId)); 
+			parameters.add(new ColumnValueBean("objId", objId));
+			resultList = ((HibernateDAO)dao).executeParamHQL(query, parameters); 
+			if(! resultList.isEmpty()){
+				isObjPresent = true;
+			}
 		}
+		catch (DAOException e)
+		{
+			throw new BizLogicException(e);
+		}
+		return isObjPresent;
+	}
 }
