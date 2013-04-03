@@ -75,7 +75,6 @@ public class CustomReportGenerator extends ReportGenerator
 		
 		String[] cmmdArray = new String[cmmdList.size()];
 		cmmdList.toArray(cmmdArray);
-		
 		Process process= Runtime.getRuntime().exec(cmmdArray, null,
 				new File(System.getProperty("app.customReportsDirPath")));
 		process.waitFor();

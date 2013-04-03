@@ -73,11 +73,11 @@ public class ReportAuditDataBizLogic extends DefaultBizLogic
 			jdbcDAO = daoFactory.getJDBCDAO();
 			jdbcDAO.openSession(null);
 			DAOUtility daoUtil = DAOUtility.getInstance();
-			//daoUtil.beginTransaction();
+			daoUtil.beginTransaction();
 			jdbcDAO.executeUpdate("update REPORT_JOB_DETAILS set IS_EMAILED = 1 where IDENTIFIER = "
 					+ reportId);
 			jdbcDAO.commit();
-			//daoUtil.commitTransaction();
+			daoUtil.commitTransaction();
 		}
 		finally
 		{

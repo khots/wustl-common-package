@@ -42,9 +42,9 @@
 		where
 		assoc.cpid=?
 		and
-		(lbl.label=?
+		lbl.label=?
 		or
-		assoc.user_defined_label=?)
+		assoc.user_defined_label=?
 	</sql-query>
 	
 	<sql-query name="getSysLabelSQLIdByLabelOrDisplayName">
@@ -53,9 +53,9 @@
 		where
 		assoc.cpid is null
 		and
-		(lbl.label=?
+		lbl.label=?
 		or
-		assoc.user_defined_label=?)
+		assoc.user_defined_label=?
 	</sql-query>
 	
 	<sql-query name="getLabelsByCPId">
@@ -101,11 +101,4 @@
 		and assoc.cpid=?
 	</sql-query>
 	
-	<sql-query name="getLabelSqlIdByLabel">
-		select lbl.identifier from labelsql lbl where lbl.label=?
-	</sql-query>
-	<sql-query name="getQueryById">
-	 select lbl.query from labelsql lbl where lbl.identifier=?
-	</sql-query>
-		
 </hibernate-mapping>

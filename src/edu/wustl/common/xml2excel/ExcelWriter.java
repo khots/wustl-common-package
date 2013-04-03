@@ -74,7 +74,7 @@ public class ExcelWriter extends BaseWriter {
 
 	private void outputExcel(HttpServletResponse resp) throws IOException, WriteException {
 		resp.setContentType("application/vnd.ms-excel");
-		resp.setCharacterEncoding("UTF-8");
+//		resp.setCharacterEncoding("UTF-8");
 		resp.setHeader("Content-Disposition", "attachment;filename=grid.xls");
 		resp.setHeader("Cache-Control", "max-age=0");
 		wb.write();

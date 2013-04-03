@@ -16,7 +16,6 @@ import edu.wustl.common.datahandler.HandlerTypeEnum;
 import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.bean.ReportBean;
 import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
-import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.dao.exception.DAOException;
 
 /**
@@ -101,7 +100,7 @@ public abstract class ReportGenerator
 
 		paramList.clear();
 		paramList.add("Exported On:");
-		DateFormat dateFormat = new SimpleDateFormat(CommonServiceLocator.getInstance().getDatePattern());
+		DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 		Calendar cal = Calendar.getInstance();
 		paramList.add(dateFormat.format(cal.getTime()));
 		handler.appendData(paramList);
@@ -194,6 +193,27 @@ public abstract class ReportGenerator
 
 		}
 		return nameList;
+	}
+	
+	public static List<NameValueBean> getReportNames(String csID, String participantId) throws BizLogicException
+	{
+		ReportBizLogic repoLogic = new ReportBizLogic();
+		Long csId = 0l;
+		if((csID!=null && !"".equals(csID) && !"null".equals(csID)))
+		{
+			csId = Long.valueOf(csID);
+		}
+		List<Object> reportNames;
+		if(participantId != null)
+		{
+			reportNames = repoLogic.getReportNames(csId, Long.valueOf(participantId));
+		}
+		else
+		{
+			reportNames = repoLogic.getReportNames(csId, null);
+		}
+		return getReportNamesBeans(reportNames);
+
 	}
 	
 	

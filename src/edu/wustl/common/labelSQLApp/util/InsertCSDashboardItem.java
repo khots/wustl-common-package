@@ -3,7 +3,6 @@ package edu.wustl.common.labelSQLApp.util;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import edu.wustl.common.util.logger.Logger;
 import au.com.bytecode.opencsv.CSVReader;
@@ -32,11 +31,11 @@ public class InsertCSDashboardItem
 				cnt++;
 				Long cpId = null;
 				Integer order = new Integer(0);
-				if (!nextLine[0].equals("") && nextLine[0] != null)
+				if (!nextLine[0].equals(""))
 				{
 					cpId = Long.valueOf(nextLine[0]);
 				}
-				if (!nextLine[4].equals("") && nextLine[4] != null)
+				if (!nextLine[4].equals(""))
 				{
 					order = Integer.parseInt(nextLine[4]);
 				}
@@ -47,7 +46,8 @@ public class InsertCSDashboardItem
 			}
 			catch (LabelSQLAppException e)
 			{
-				Logger.out.error("Error inserting record " + cnt + " " + e.getMessage());
+				Logger.out.error("Error inserting record " + cnt);
+				e.printStackTrace();
 			}
 		}
 		System.out.println("Exiting main...");
@@ -76,9 +76,7 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
 				System.out.println("Associating sql done...");
-			}catch (SQLException e){
-				Logger.out.error(e.getCause());
-			}			
+			}
 			catch (Exception e)
 			{
 				Logger.out.error("Error while inserting SQL -> " + sql);
@@ -115,9 +113,6 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
 				System.out.println("Associating label done...");
-			}
-			catch (SQLException e){
-				Logger.out.error(e.getCause());
 			}
 			catch (Exception e)
 			{
@@ -163,9 +158,6 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
 				System.out.println("associating labelsql done...");
-			}
-			catch (SQLException e){
-				Logger.out.error(e.getCause());
 			}
 			catch (Exception e)
 			{
@@ -256,9 +248,6 @@ public class InsertCSDashboardItem
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId, null,
 						order);
 				System.out.println("associate heading done...");
-			}
-			catch (SQLException e){
-				Logger.out.error(e.getCause());
 			}
 			catch (Exception e)
 			{

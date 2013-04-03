@@ -7,9 +7,6 @@
 
 package edu.wustl.common.util.global;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This classes is specific to common files. And contains all variables used by classes from
  * common package.
@@ -555,30 +552,21 @@ public final class Constants extends CommonConstants
    public static final String LABEL_TOKEN_PROP_FILE_NAME = "LabelTokens.Properties";
 
    public static final String TOKEN_DELIMITER = "%";
-   
    public static final String CSV_FILE_EXTENTION=".csv";
    
    public static final String HELP_URL_KEY="helpURLKey";
    
-   public static final String TAG_FOLDER_PROP_FILE_NAME = "TagFolders.Properties";
-   	public static final String TAGCHECKBOX_STRING = "tagChkBoxString";
-	public static final String OBJCHECKBOX_STRING = "objChkBoxString";
+   
+   public static final String TAGCHECKBOX_STRING = "chkBoxString";
+	public static final String QUERYCHECKBOX_STRING = "queryChkBoxString";
 	public static final String NEWTAGNAME_STRING = "tagName";
+	public static final String OBJ_TYPE_QUERY ="Query" ;
 	public static final String TAGID_STRING ="tagId";
-	public static final String TAGITEMID_STRING ="tagItemId";
+	public static final String ASSIGNID_STRING ="assignId";
 	public static final String TAGLIST_STRING ="tagList";
 	public static final String CHILDCOUNT="childCount";
 	public static final String NAME = "name";
 	public static final String TREE_DATA = "treeData";
+	public static final int QUERY_INTERFACE_BIZLOGIC_ID = 67;
 	public static final String ID = "id";
-	public static final String ENTITY_TAG = "entityTag";
-	public static final String ENTITY_TAGITEM = "entityTagItem";
-	public static final String ASSIGNID_STRING = "assignId";
-	public static final String OBJ_TYPE_QUERY = "Query";
-	public static final String QUERYCHECKBOX_STRING = "queryChkBoxString";
-	public static List<String[]> DEFAULT_DASHBOARD_ITEMS = new ArrayList<String[]>();
-	public static List<String[]> SYSTEM_DASHBOARD_ITEMS = new ArrayList<String[]>();
-	public static final String DEFAULT_DASHBOARD = "default";
-	public static final String SYSTEM_DASHBOARD = "system";
-	public static final String LABEL_SQL_HEADER = "header" ;
 }

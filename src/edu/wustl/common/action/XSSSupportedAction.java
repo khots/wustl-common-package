@@ -14,7 +14,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
@@ -52,31 +51,7 @@ public  abstract class XSSSupportedAction extends Action
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		LOGGER.info("Inside execute method of XSSSupportedAction ");
-		ActionForward actionForward=null;
-		LOGGER.info("Inside execute method of BaseAction ");
-		//long startTime = System.currentTimeMillis();
-		
-		String referer=request.getHeader("referer");
-		LOGGER.info(" Referer Value : "+referer);
-		if(request.getRequestURL()!=null)
-		{
-			CommonServiceLocator.getInstance().setAppURL(request.getRequestURL().toString());
-		}
-		LOGGER.info("Request URL Value : "+CommonServiceLocator.getInstance().getAppURL());
-		if(referer!=null && !referer.startsWith(CommonServiceLocator.getInstance().getAppURL()))
-		{
-			String loadBalancerURL=XMLPropertyHandler.getValue("load.balancer.url");
-			if(loadBalancerURL!=null)
-			{
-				LOGGER.info("Load Balancer Value : "+loadBalancerURL);
-				if(loadBalancerURL!=null && !"".equals(loadBalancerURL) && !referer.startsWith(loadBalancerURL))
-				{
-						response.sendRedirect(XMLPropertyHandler.getValue("logout.mapping")+"?invalidRequest=true");
-						return actionForward;
-				}
-			}
-		}
-		 actionForward = checkForXSSViolation(mapping,form,
+		ActionForward actionForward = checkForXSSViolation(mapping,form,
 				request, response);
 		return actionForward;
 	}
@@ -111,67 +86,48 @@ public  abstract class XSSSupportedAction extends Action
 		ActionForward actionForward = null;
 		LOGGER.info("Checking for XSS validations");
 		boolean isRedirected = false;
-		final String ajaxRequest = request
+
+        isRedirected = getIsRedirected(request);
+        final boolean isToRedirect = isToExecuteXSSSafeAction(request);
+
+        final String ajaxRequest = request
                 .getParameter(Constants.IS_AJAX_REQEUST);
-		boolean isAjaxRequest = false;
-	    boolean isToExecuteAction = true;
-	    
-	    isRedirected = getIsRedirected(request);
-	    isAjaxRequest = getIsAjaxRequest(ajaxRequest);
-	    final boolean isToRedirect = isToExecuteXSSSafeAction(request);
-	    if(isToRedirect)
-	    {
-	    	 if (isAjaxRequest)
-	         {
-	             isToExecuteAction = processAjaxRequestViolations(request,
-	                     response);
-	         }
-	    	 else
-	    	 {
-	    		 if(null!=request.getParameter(Constants.PAGEOF))
-	         	{
-	    			 response.sendRedirect(CommonServiceLocator
-	                         .getInstance().getXSSFailurePath()+"?"+Constants.PAGEOF+"="+(String)request.getParameter(Constants.PAGEOF));
-	         	}
-	    		else
-	    		 {
-	    		 response.sendRedirect(CommonServiceLocator
-	                     .getInstance().getXSSFailurePath());
-	    		 }
-	    		 return actionForward;
-	    	 }
-	    }       
-		    if (isToRedirect)
-		    {
-		        if (isAjaxRequest)
-		        {
-		            isToExecuteAction = processAjaxRequestViolations(request,
-		                    response);
-		            addXSSValidationError(request);
-		        }
-		        else
-		        {
-		        	if (!isRedirected)
-		            {
-		        		 isToExecuteAction = false;
-		                 request.setAttribute(Constants.PAGE_REDIRECTED,
-		                         Constants.BOOLEAN_YES);
-		                 if (mapping.getValidate())
-		                 {
-		                     actionForward = mapping.getInputForward();
-		                 }
-		                 else
-		                 {
-		                     response.sendRedirect(CommonServiceLocator
-		                             .getInstance().getXSSFailurePath());
-		                 }
-		            }
-	        }
-    	}
-    	if (isToExecuteAction)
-	    {
-	    	actionForward = executeXSS(mapping, form, request, response);
-	    }
+
+        boolean isToExecuteAction = true;
+        boolean isAjaxRequest = false;
+
+        isAjaxRequest = getIsAjaxRequest(ajaxRequest);
+        if (isToRedirect)
+        {
+            if (isAjaxRequest)
+            {
+                isToExecuteAction = processAjaxRequestViolations(request,
+                        response);
+                addXSSValidationError(request);
+            }
+            else
+            {
+            	if (!isRedirected)
+                {
+            		 isToExecuteAction = false;
+                     request.setAttribute(Constants.PAGE_REDIRECTED,
+                             Constants.BOOLEAN_YES);
+                     if (mapping.getValidate())
+                     {
+                         actionForward = mapping.getInputForward();
+                     }
+                     else
+                     {
+                         response.sendRedirect(CommonServiceLocator
+                                 .getInstance().getXSSFailurePath());
+                     }
+                }
+            }
+        }
+        if (isToExecuteAction)
+        {
+        	actionForward = executeXSS(mapping, form, request, response);
+        }
 		return actionForward;
 	}
 

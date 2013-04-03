@@ -14,9 +14,8 @@ public class CSVWriter extends BaseWriter {
 	public void generate(String xml,String fileName, HttpServletResponse resp) throws IOException {
 		CSVxml data = new CSVxml(xml);
 		
-		resp.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/download");
-		resp.setCharacterEncoding("UTF-8");
+//		resp.setCharacterEncoding("UTF-8");
 		if(fileName==null || fileName.trim().equals("")){
 			fileName = "fileName";
 		}
@@ -61,9 +60,9 @@ public class CSVWriter extends BaseWriter {
 	public void generate(String xml, HttpServletResponse resp) throws IOException {
 		CSVxml data = new CSVxml(xml);
 		
-		resp.setCharacterEncoding("UTF-8");
+//		resp.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/vnd.ms-excel");
-		resp.setCharacterEncoding("UTF-8");
+//		resp.setCharacterEncoding("UTF-8");
 		resp.setHeader("Content-Disposition", "attachment;filename=grid.csv");
 		resp.setHeader("Cache-Control", "max-age=0");
 	
@@ -106,13 +105,13 @@ public class CSVWriter extends BaseWriter {
 			if(!"".equals(label[i].trim()) && !"".equals(text[i].trim())){
 				java.util.List<String> arr = new java.util.ArrayList<String>();
 				arr.add(label[i]);
-				String[] textArr = text[i].split("\",\"");
+				String[] textArr = text[i].split(",");
 				for(int count = 0; count< textArr.length; count++){
 					arr.add(textArr[count]);
 				}
 				writer.append(dataAsString(arr.toArray(new String[arr.size()])));
 			}else if("".equals(label[i].trim()) && !"".equals(text[i].trim())){
-				String[] arr = text[i].split("\",\"");//new String[1];
+				String[] arr = text[i].split(",");//new String[1];
 				
 				//arr[0] = text[i];
 				writer.append(dataAsString(arr));
@@ -121,6 +120,8 @@ public class CSVWriter extends BaseWriter {
 				arr[0] = label[i];
 				writer.append(dataAsString(arr));
 			}
+			
+			
 		}
 		
 	}

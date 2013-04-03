@@ -10,9 +10,9 @@ import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.report.bean.ReportBean;
 import edu.wustl.common.report.bean.ReportConditions;
 import edu.wustl.common.util.global.CommonServiceLocator;
-import edu.wustl.dao.DAO;
-import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.JDBCDAO;
+import edu.wustl.dao.QueryWhereClause;
+import edu.wustl.dao.condition.EqualClause;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
 import edu.wustl.dao.exception.DAOException;
 import edu.wustl.dao.query.generator.ColumnValueBean;
@@ -20,6 +20,8 @@ import edu.wustl.dao.query.generator.ColumnValueBean;
 public class ReportBizLogic extends DefaultBizLogic
 {
 
+	private static final String ID = "id";
+	private static final String PARTICIPANT = "edu.wustl.clinportal.domain.Participant";
 	protected static ReportBean repBean;
 
 	public ReportBizLogic()
@@ -37,7 +39,6 @@ public class ReportBizLogic extends DefaultBizLogic
 		String condition = repBean.getCondition();
 		ReportConditions valueOf = ReportConditions.BETWEEN;
 		String replacedQuery = "";
-		String DatePattern = CommonServiceLocator.getInstance().getDatePattern();
 		switch (valueOf)
 		{
 			case BETWEEN :
@@ -45,25 +46,25 @@ public class ReportBizLogic extends DefaultBizLogic
 				if (repBean.getToDate() != null && repBean.getToDate() != ""
 						&& (repBean.getFromDate() == null || repBean.getFromDate() == ""))
 				{
-					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'"+DatePattern+"'),'"+DatePattern+"')) <= to_date('"
-							+ repBean.getToDate() + "','"+DatePattern+"')";
+					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'MM-DD-YYYY'),'MM-DD-YYYY')) <= to_date('"
+							+ repBean.getToDate() + "','MM-DD-YYYY')";
 					replacedQuery = query.replaceAll("@@dateCondition@@", wherePart);
 
 				}
 				else if (repBean.getFromDate() != null && repBean.getFromDate() != ""
 						&& (repBean.getToDate() == null || repBean.getToDate() == ""))
 				{
-					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'"+DatePattern+"'),'"+DatePattern+"')) >= to_date('"
-							+ repBean.getFromDate() + "','"+DatePattern+"')";
+					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'MM-DD-YYYY'),'MM-DD-YYYY')) >= to_date('"
+							+ repBean.getFromDate() + "','MM-DD-YYYY')";
 					replacedQuery = query.replaceAll("@@dateCondition@@", wherePart);
 				}
 				else if (repBean.getFromDate() != null && repBean.getFromDate() != ""
 						&& (repBean.getToDate() != null || repBean.getToDate() != ""))
 				{
-					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'"+DatePattern+"'),'"+DatePattern+"')) between to_date('"
+					String wherePart = "and trunc(to_date(to_char(record.event_time_stamp,'MM-DD-YYYY'),'MM-DD-YYYY')) between to_date('"
 							+ repBean.getFromDate()
-							+ "','"+DatePattern+"') and to_date('"
-							+ repBean.getToDate() + "','"+DatePattern+"')";
+							+ "','MM-DD-YYYY') and to_date('"
+							+ repBean.getToDate() + "','MM-DD-YYYY')";
 					replacedQuery = query.replaceAll("@@dateCondition@@", wherePart);
 				}
 				else if (repBean.getFromDate() == null || repBean.getFromDate() == ""
@@ -261,5 +262,25 @@ public class ReportBizLogic extends DefaultBizLogic
 		return getReportNamesFromQuery(query);
 	}
 
-
+	/**
+	 * This method retrieves 
+	 * @param participantId
+	 * @return
+	 * @throws DAOException
+	 * @throws BizLogicException
+	 */
+	public Object getParticipant(String participantId) throws DAOException, BizLogicException
+	{
+		QueryWhereClause queryWhereClause = new QueryWhereClause(PARTICIPANT);
+		queryWhereClause.addCondition(new EqualClause(ID, '?'));
+		Object[] valueObjects = {Long.valueOf(participantId)};
+		List<ColumnValueBean> columnValueBeans = new ArrayList<ColumnValueBean>();
+		for (Object valueObject : valueObjects)
+		{
+			columnValueBeans.add(new ColumnValueBean(valueObject));
+		}
+		Object participantObj = new DefaultBizLogic().retrieve(PARTICIPANT, null, queryWhereClause,
+				columnValueBeans).get(0);
+		return participantObj;
+	}
 }

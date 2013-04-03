@@ -15,12 +15,13 @@ import org.apache.struts.action.ActionMapping;
 
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.exception.BizLogicException;
 import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLAssociationBizlogic;
-import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLBizlogic;
 import edu.wustl.common.labelSQLApp.form.CPDashboardForm;
 import edu.wustl.common.report.ReportGenerator;
-import edu.wustl.common.util.Utility;
-import edu.wustl.common.util.global.Constants;
+import edu.wustl.common.report.reportBizLogic.ReportBizLogic;
+import edu.wustl.common.util.global.ReportConstants;
+import edu.wustl.dao.exception.DAOException;
 
 /** 
  * @author Ashraf
@@ -35,16 +36,16 @@ public class CPDashboardAction extends Action
 
 		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 				"sessionData");
-		String isSystemDashBoard = request.getParameter("isSystemDashboard");
-		String forward = "success";
-		if (isSystemDashBoard != null && isSystemDashBoard.equals("true"))
+		String isSystemDashBoard = request.getParameter(ReportConstants.IS_SYSTEM_DASHBOARD);
+		String forward = ReportConstants.SUCCESS;
+		if (isSystemDashBoard != null && isSystemDashBoard.equals(ReportConstants.TRUE))
 		{
 			if (!sessionDataBean.isAdmin())
 			{
-				forward = "redirect";
+				forward = ReportConstants.REDIRECT;
 			}
 		}
-		if (forward.equals("success"))
+		if (forward.equals(ReportConstants.SUCCESS))
 		{
 			loadDashboard(actionForm, request, sessionDataBean.isAdmin(),
 					sessionDataBean.getUserId());
@@ -62,22 +63,15 @@ public class CPDashboardAction extends Action
 			Long userId) throws Exception
 	{
 		CPDashboardForm cpDashboardForm = (CPDashboardForm) actionForm;
-		String cpId = request.getParameter("cpSearchCpId");
+		String cpId = request.getParameter(ReportConstants.CP_SEARCH_CP_ID);
+		String participantId = request.getParameter(ReportConstants.PARTICIPANT_ID);
 		Long cp = null;
 		if (cpId != null)
 		{
 			cp = Long.valueOf(cpId);
 		}
-		LinkedHashMap<String, Long> displayNameMap;
-		 if(cp == null) //If cp is null then load system level dashboard
-		 {		 
-			 displayNameMap = new LabelSQLBizlogic().loadDasboard(Constants.SYSTEM_DASHBOARD);
-		 }
-		 else //load cp specific dashboard
-		 {
-	    	displayNameMap = new LabelSQLAssociationBizlogic()
+		LinkedHashMap<String, Long> displayNameMap = new LabelSQLAssociationBizlogic()
 				.getAssocAndDisplayNameMapByCPId(cp);
-		 }
 		cpDashboardForm.setDisplayNameAndAssocMap(displayNameMap);
 		List<NameValueBean> reportNameList = new ArrayList<NameValueBean>();
 
@@ -85,7 +79,7 @@ public class CPDashboardAction extends Action
 		{
 			if (cpId != null)
 			{
-				reportNameList = ReportGenerator.getReportNames(cpId);
+				reportNameList = processReports(request, cpId, participantId);
 			}
 			else
 			{
@@ -94,11 +88,36 @@ public class CPDashboardAction extends Action
 		}
 		else
 		{
-			//reportNameList = ReportGenerator.getReportNamesForUSer(Long.valueOf(cpId), userId);
-			reportNameList = ReportGenerator.getReportNames(cpId);
+			reportNameList = processReports(request, cpId, participantId);
 		}
-		request.setAttribute("cpId", cpId);
-		request.setAttribute("reportNameList", reportNameList);
-		request.setAttribute("labelQueryResultList",displayNameMap);
+		request.setAttribute(ReportConstants.CP_ID, cpId);
+		request.setAttribute(ReportConstants.PARTICIPANT_ID, participantId);
+		request.setAttribute(ReportConstants.REPORT_NAME_LIST, reportNameList);
 	}
+
+	/**
+	 * @param request
+	 * @param cpId
+	 * @param participantId
+	 * @return
+	 * @throws BizLogicException
+	 * @throws DAOException
+	 */
+	private List<NameValueBean> processReports(HttpServletRequest request, String cpId,
+			String participantId) throws BizLogicException, DAOException
+	{
+		List<NameValueBean> reportNameList;
+		if(participantId != null && !participantId.equals(ReportConstants.DOUBLE_QUOTE) && !participantId.equals("null"))
+		{
+			reportNameList = ReportGenerator.getReportNames(cpId, participantId);
+			Object participantObj = new ReportBizLogic().getParticipant(participantId);
+			request.setAttribute(ReportConstants.PARTICIPANT_OBJECT, participantObj);
+		}
+		else
+		{
+			reportNameList = ReportGenerator.getReportNames(cpId, null);
+		}
+		return reportNameList;
+	}
+
 }

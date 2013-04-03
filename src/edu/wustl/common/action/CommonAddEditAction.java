@@ -23,12 +23,13 @@ import edu.wustl.common.actionForm.AbstractActionForm;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.logger.Logger;
+import edu.wustl.dao.newdao.ActionStatus;
 
 /**
  * This Class is used to Add/Edit data in the database.
  * @author gautam_shetty
  */
-public class CommonAddEditAction extends SecureAction
+public class CommonAddEditAction extends XSSSupportedAction
 {
 
 	/**
@@ -46,7 +47,7 @@ public class CommonAddEditAction extends SecureAction
 	 * @return ActionForward
 	 * @throws Exception Exception
 	 * */
-	public ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
+	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 
@@ -56,32 +57,20 @@ public class CommonAddEditAction extends SecureAction
 		ActionForward actionfwd;
 		try
 		{
-			if ( !isTokenValid(request) ) 
+			if (abstractForm.isAddOperation())
 			{
-				actionfwd = mapping.findForward(Constants.FAILURE);
-				ActionErrors actionErrors = new ActionErrors();
-				ActionError actionError = new ActionError("errors.item","Invalid request for add/edit operation");
-				actionErrors.add(ActionErrors.GLOBAL_ERROR, actionError);
-				saveErrors(request, actionErrors);
+				addEditAction = new CommonAddAction();
 			}
 			else
 			{
-				resetToken(request);
-				if (abstractForm.isAddOperation())
-				{
-					addEditAction = new CommonAddAction();
-				}
-				else
-				{
-					addEditAction = new CommonEdtAction();
-				}
-				actionfwd = addEditAction.executeXSS(mapping, abstractForm, request, response);
+				addEditAction = new CommonEdtAction();
 			}
+			actionfwd = addEditAction.executeXSS(mapping, abstractForm, request, response);
 		}
 		catch (ApplicationException applicationException)
 		{
-			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg());
-
+			LOGGER.error("Common Add/Edit failed.." + applicationException.getCustomizedMsg(),applicationException);
+			request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.FAIL);
 			ActionErrors actionErrors = new ActionErrors();
 			ActionError actionError = new ActionError("errors.item",
 					applicationException.getCustomizedMsg());

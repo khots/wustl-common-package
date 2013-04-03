@@ -1,9 +1,7 @@
 
 package edu.wustl.common.labelSQLApp.domain;
 
-import java.io.Serializable;
-
-public class LabelSQLAssociation implements Serializable
+public class LabelSQLAssociation implements java.io.Serializable
 {
 
 	private long id;

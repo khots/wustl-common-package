@@ -16,7 +16,7 @@ import edu.wustl.common.scheduler.exception.ScheduleHandlerNotFoundException;
 import edu.wustl.common.scheduler.processorScheduler.Scheduler;
 import edu.wustl.common.scheduler.util.SchedulerDataUtility;
 import edu.wustl.common.util.logger.Logger;
-
+import edu.wustl.dao.util.DAOUtility;
 
 /**
  * @author root
@@ -75,16 +75,27 @@ public abstract class AbstractScheduleProcessor implements Runnable
 	{
 		try
 		{
+			System.out.println("------------------------------------------------------------Begin Report");
+			System.out.println("------------------------------------------------------------Schedule "+scheduleObject.getId());
+
 			shutDownIfExpired();
 			generateTicket();
+			for(Long ticket:ticketIdList)
+			{
+				System.out.println("------------------------------------------------------------Ticket"+ticket);
+			}
 			executeSchedule();
 			postScheduleExecution();
+			System.out.println("------------------------------------------------------------End Report");
+
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 
+		} finally {
+			DAOUtility.getInstance().cleanupTxnState();
 		}
 
 	}
@@ -93,7 +104,7 @@ public abstract class AbstractScheduleProcessor implements Runnable
 	 * @throws Exception
 	 * Override this method in the derived class to perform actual execution
 	 */
-	public abstract void executeSchedule() throws Exception;
+	 public abstract void executeSchedule() throws Exception;
 
 	/**
 	 * @throws Exception

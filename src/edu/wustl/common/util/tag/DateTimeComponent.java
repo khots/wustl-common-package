@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionErrors;
 
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
 
 /**
@@ -104,7 +103,7 @@ public class DateTimeComponent extends TagSupport
 	/**
 	 * Date pattern to be used in displaying date.
 	 */
-	private transient String pattern = CommonServiceLocator.getInstance().getDatePattern();
+	private transient String pattern = "MM-dd-yyyy";;
 
 	/**
 	 * Name of the html form which will contain the date component.

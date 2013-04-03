@@ -49,7 +49,7 @@ public abstract class BaseAction extends XSSSupportedAction
 	 * @return ActionForward
 	 * @exception Exception Generic exception
 	 */
-	public ActionForward executeXSS(ActionMapping mapping, ActionForm form,
+	public final ActionForward executeXSS(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
 		LOGGER.info("Inside execute method of BaseAction ");

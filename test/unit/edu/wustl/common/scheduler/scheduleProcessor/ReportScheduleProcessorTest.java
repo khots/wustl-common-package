@@ -176,7 +176,7 @@ public class ReportScheduleProcessorTest
 		PowerMock.expectLastCall().anyTimes();
 
 		CustomReportGenerator custRepoGen = PowerMock.createMock(CustomReportGenerator.class);
-		custRepoGen.generateReport((Long) EasyMock.anyObject(), (List<String>) EasyMock.anyObject());
+		custRepoGen.generateReport((Long) EasyMock.anyObject());
 		EasyMock.expectLastCall().anyTimes();
 
 		ReportBizLogic repoBiz = PowerMock.createMock(ReportBizLogic.class);

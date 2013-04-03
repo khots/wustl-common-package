@@ -117,13 +117,14 @@ public class CommonSearchAction extends XSSSupportedAction
 		IDomainObjectFactory iDomainObjFact = AbstractFactoryConfig.getInstance()
 		.getDomainObjectFactory();
 		String objName = iDomainObjFact.getDomainObjectName(abstractForm.getFormId());
-        SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
+		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
 				Constants.SESSION_DATA);
 		IBizLogic bizLogic = getBizLogicForEdit(abstractForm);
 
 		try
 		{
-			 boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm,sessionDataBean);
+			hasPrivilege(identifier, objName, sessionDataBean, bizLogic);
+			boolean isSuccess = bizLogic.populateUIBean(objName, identifier, abstractForm);
 			if (isSuccess)
 			{
 				target = getTarget(request, abstractForm);
@@ -158,7 +159,6 @@ public class CommonSearchAction extends XSSSupportedAction
 		if (bizLogic.isReadDeniedTobeChecked() && sessionDataBean != null)
 		{
 			hasPrivilege = bizLogic.hasPrivilegeToView(objName, identifier, sessionDataBean);
-						
 		}
 		if (!hasPrivilege)
 		{

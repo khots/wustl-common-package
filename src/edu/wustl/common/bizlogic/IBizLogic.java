@@ -85,8 +85,8 @@ public interface IBizLogic
 	 * update(Object currentObj, Object oldObj,SessionDataBean sessionDataBean)throws BizLogicException,
 	 * UserNotAuthorizedException;
 	 */
-	void update(Object currentObj, Object oldObj, int daoType,
-			SessionDataBean sessionDataBean) throws BizLogicException;
+	void update(Object currentObj, Object oldObj, int daoType, SessionDataBean sessionDataBean)
+			throws BizLogicException;
 	/**
 	 * Updates an object.
 	 * @param currentObj current Object.
@@ -293,7 +293,7 @@ public interface IBizLogic
 	 * @return populated or not.
 	 * @throws BizLogicException BizLogic Exception
 	 */
-	boolean populateUIBean(String className, Long identifier, IValueObject uiForm,SessionDataBean sessionDataBean)
+	boolean populateUIBean(String className, Long identifier, IValueObject uiForm)
 			throws BizLogicException;
 	/**
 	 * populates Domain Object.

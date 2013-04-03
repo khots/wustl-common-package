@@ -14,9 +14,9 @@ public class HTMLWriter extends BaseWriter{
 	public void generate(String xml, HttpServletResponse resp) throws IOException {
 		CSVxml data = new CSVxml(xml);
 		
-		resp.setCharacterEncoding("UTF-8");
+//		resp.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/vnd.ms-excel");
-		resp.setCharacterEncoding("UTF-8");
+//		resp.setCharacterEncoding("UTF-8");
 		resp.setHeader("Content-Disposition", "attachment;filename=grid.xls");
 		resp.setHeader("Cache-Control", "max-age=0");
 	

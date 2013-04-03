@@ -20,16 +20,9 @@ public class QueryResultAjaxAction extends Action
 	public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		Long labelSQLId = Long.valueOf(request.getParameter("labelSQLId"));//Association Id
-		Long cpId = null;
-		String cpIdParam = request.getParameter("cpId");
-		if(cpIdParam!=null && !cpIdParam.isEmpty())
-		{
-		 cpId = Long.valueOf(cpIdParam);
-		}		
-		
-		String result = new CommonBizlogic().getQueryResults(labelSQLId, cpId);//Retrieving query result and association id
-		
+		Long labelSQLAssocID = Long.valueOf(request.getParameter("labelSQLAssocID"));//Association Id
+
+		String result = new CommonBizlogic().getQueryResultByLabelSQLAssocId(labelSQLAssocID);//Retrieving query result and association id 
 
 		response.setContentType("text/html");
 		response.getWriter().write(result);

@@ -20,6 +20,7 @@ import edu.wustl.common.scheduler.constants.SchedulerConstants;
 import edu.wustl.common.scheduler.exception.ScheduleValidationException;
 import edu.wustl.common.scheduler.util.ReportSchedulerUtil;
 import edu.wustl.common.scheduler.util.SchedulerDataUtility;
+import edu.wustl.dao.newdao.ActionStatus;
 
 public class CommonScheduleAction extends DispatchAction
 {
@@ -64,6 +65,7 @@ public class CommonScheduleAction extends DispatchAction
 	{
 		Long id = Long.valueOf(request.getParameter(SchedulerConstants.ID));
 		new ScheduleBizLogic().markDeleted(id);
+		request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.SUCCESSFUL);
 		return null;
 	}
 
@@ -96,7 +98,6 @@ public class CommonScheduleAction extends DispatchAction
 						"Report Schedule"
 								+ SchedulerConstants.DATA_SAVED);
 			}
-			
 		}
 		catch (Exception e)
 		{

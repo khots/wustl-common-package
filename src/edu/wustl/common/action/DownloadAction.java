@@ -28,7 +28,7 @@ public class DownloadAction extends SecureAction
 
 	@Override
 	protected ActionForward executeSecureAction(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+			HttpServletRequest request, HttpServletResponse response) throws BizLogicException
 	{
 		Long fileId = Long.valueOf(request.getParameter("file"));
 		SessionDataBean sessionDataBean = (SessionDataBean) request.getSession().getAttribute(
@@ -37,6 +37,7 @@ public class DownloadAction extends SecureAction
 		ReportAuditData fileDetail = null;
 		String fileName = "";
 		String message = "";
+		Boolean isAuthorized = true;
 		String isMessage = request.getParameter("message");
 		try
 		{
@@ -45,19 +46,17 @@ public class DownloadAction extends SecureAction
 			fileName = fileDetail.getFileName();
 			ReportSchedulerUtil.validateFile(fileName, sessionDataBean.getUserId());
 		}
-		catch (BizLogicException e)
-		{
-			log.error(e.getMessage());
-		}
 		catch (NotAuthorizedToDownloadException e)
 		{
 			message = "You are not authorized to download this file.";
 			log.error(e.getMessage());
+			isAuthorized = false;
 		}
 		catch (FileCleanedException e)
 		{
 			message = "The file has already been deleted.";
 			log.error(e.getMessage());
+			isAuthorized = false;
 		}
 		finally
 		{
@@ -74,23 +73,26 @@ public class DownloadAction extends SecureAction
 			}
 		}
 
-		try
+		if(isAuthorized)
 		{
-			Utility.sendFile(response, fileName);
-
-			if (isMessage == null || !isMessage.equals("true"))
+			try
 			{
-				if (fileDetail.getDownloadCount() == null)
+				Utility.sendFile(response, fileName);
+
+				if (isMessage == null || !isMessage.equals("true"))
 				{
-					fileDetail.setDownloadCount((long) 0);
+					if (fileDetail.getDownloadCount() == null)
+					{
+						fileDetail.setDownloadCount((long) 0);
+					}
+					fileDetail.setDownloadCount(fileDetail.getDownloadCount() + 1);
+					fileBiz.update(fileDetail);
 				}
-				fileDetail.setDownloadCount(fileDetail.getDownloadCount() + 1);
-				fileBiz.update(fileDetail);
 			}
-		}
-		catch (Exception e)
-		{
-			log.error(e.getMessage());
+			catch (Exception e)
+			{
+				log.error(e.getMessage());
+			}
 		}
 
 		return null;

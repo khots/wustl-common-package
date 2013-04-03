@@ -1,7 +1,6 @@
 
 package edu.wustl.common.scheduler.bizLogic;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,8 +13,6 @@ import edu.wustl.common.scheduler.constants.SchedulerConstants;
 import edu.wustl.common.scheduler.domain.BaseSchedule;
 import edu.wustl.common.scheduler.domain.ReportSchedule;
 import edu.wustl.common.scheduler.domain.Schedule;
-import edu.wustl.common.scheduler.exception.AlreadyScheduledException;
-import edu.wustl.common.scheduler.exception.ScheduleHandlerNotFoundException;
 import edu.wustl.common.scheduler.processorScheduler.Scheduler;
 import edu.wustl.common.scheduler.propertiesHandler.SchedulerConfigurationPropertiesHandler;
 import edu.wustl.common.scheduler.scheduleProcessor.AbstractScheduleProcessor;
@@ -39,7 +36,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 
 	/**
 	 * @param scheduleType
-	 * @param ownerId 
+	 * @param ownerId
 	 * @param isSysDashboard TODO
 	 * @param id TODO
 	 * @return
@@ -123,7 +120,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	/**
 	 * @param startDate
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public long getStartDelayFromStartTime(Date startDate) throws Exception
 	{
@@ -144,10 +141,10 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		}
 		else
 		{
-			cal.setTimeInMillis(date.getTime() + 24 * 60 * 60 * 1000);
+			cal.add(Calendar.DAY_OF_MONTH,1);
+			//cal.setTimeInMillis(date.getTime() + 24 * 60 * 60 * 1000);
 			delay = (cal.getTimeInMillis() - date.getTime()) / 1000;
 		}
-
 		if (startDate != null)
 		{
 			if (!(startDate.getTime() < (new Date().getTime())))
@@ -160,10 +157,11 @@ public class ScheduleBizLogic extends DefaultBizLogic
 
 	/**
 	 * @param schedule
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void insertAndSchedule(Schedule schedule) throws Exception
 	{
+
 		if (schedule.getId() == null)
 		{
 			insert(schedule);
@@ -177,7 +175,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 
 	/**
 	 * @param processor
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void schedule(AbstractScheduleProcessor processor) throws Exception
 	{
@@ -194,12 +192,13 @@ public class ScheduleBizLogic extends DefaultBizLogic
 		Schedule schedule = (Schedule) retrieve(Schedule.class.getName(), id);
 		schedule.setActivityStatus("Deleted");
 		update(schedule);
+
 	}
 
 	/**
 	 * @param scheduleList
 	 * @return
-	 * @throws DAOException 
+	 * @throws DAOException
 	 */
 	public List<Schedule> filterSchedules(List<Schedule> scheduleList, Boolean isSystemDashboard,
 			Long csId) throws DAOException
@@ -216,7 +215,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 					{
 						if (ReportSchedulerUtil.isSysReport(itemId))
 						{
-							isSysReport = true;	
+							isSysReport = true;
 						}
 					}
 					if (isSysReport)
@@ -246,7 +245,7 @@ public class ScheduleBizLogic extends DefaultBizLogic
 	}
 
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void scheduleOnStartUp() throws Exception
 	{

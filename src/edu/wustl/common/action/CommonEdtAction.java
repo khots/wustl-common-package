@@ -18,12 +18,15 @@ import edu.wustl.common.bizlogic.IBizLogic;
 import edu.wustl.common.domain.AbstractDomainObject;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exception.ErrorKey;
+import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
 import edu.wustl.common.util.global.TextConstants;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.HibernateDAO;
 import edu.wustl.dao.daofactory.DAOConfigFactory;
+import edu.wustl.dao.newdao.ActionStatus;
+import edu.wustl.dao.newdao.CleanDAO;
 
 /**
  * This Class is used to Edit data in the database.
@@ -101,6 +104,7 @@ public class CommonEdtAction extends BaseAddEditAction
 		String[] displayNameParams = addMessage(abstractDomain, objectName);
 		messages.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("object.edit.successOnly",
 				displayNameParams));
+		request.setAttribute(ActionStatus.ACTIONSTAUS, ActionStatus.SUCCESSFUL);
 		saveMessages(request, messages);
 	}
 	/**
@@ -151,31 +155,37 @@ public class CommonEdtAction extends BaseAddEditAction
 	private void persistUsingBizLogic(HttpServletRequest request, AbstractActionForm abstractForm,
 			AbstractDomainObject abstractDomain, String objectName) throws ApplicationException
 	{
-		HibernateDAO hibernateDao = null;
+		//HibernateDAO hibernateDao = null;
+		CleanDAO cleanDao = null;
 		try
 		{
-			//String appName = CommonServiceLocator.getInstance().getAppName();
+			String appName = CommonServiceLocator.getInstance().getAppName();
 			IBizLogic bizLogic = getIBizLogic(abstractForm);
-			String appName =((DefaultBizLogic)bizLogic).getAppName();
-			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
-					.getDAO();
-			hibernateDao.openSession(null);
-
+			//String appName =((DefaultBizLogic)bizLogic).getAppName();
+//			hibernateDao = (HibernateDAO) DAOConfigFactory.getInstance().getDAOFactory(appName)
+//					.getDAO();
+//			hibernateDao.openSession(null);
+			cleanDao = CleanDAO.getInstance(appName);
 			AbstractDomainObject abstractDomainOld;
-			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
-					abstractForm.getId());
+			abstractDomainOld =  (AbstractDomainObject) cleanDao.retrieveById(objectName,abstractForm.getId());
+//			abstractDomainOld = (AbstractDomainObject) hibernateDao.retrieveById(objectName,
+//					abstractForm.getId());
+			//hibernateDao.retrieveOldObject(abstractDomain);
+		
 			bizLogic.update(abstractDomain, abstractDomainOld, getSessionData(request));
 		}
 		finally
 		{
-			try
-			{
-				hibernateDao.closeSession();
-			}
-			catch (ApplicationException e)
-			{
-				throw new ApplicationException(e.getErrorKey(), e,e.getMsgValues());
-			}
+			cleanDao.closeSession();
+//			try
+//			{
+//				cleanDao.closeSession();
+//				//hibernateDao.closeSession();
+//			}
+//			catch (ApplicationException e)
+//			{
+//				throw new ApplicationException(e.getErrorKey(), e,e.getMsgValues());
+//			}
 		}
 	}
 	/**

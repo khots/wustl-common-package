@@ -3,9 +3,7 @@ package edu.wustl.common.scheduler.propertiesHandler;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-import edu.wustl.common.scheduler.util.SchedulerPropertiesFetcher;
+import edu.wustl.common.scheduler.util.ISchedulerPropertiesFetcher;
 
 public class SchedulerConfigurationPropertiesHandler
 {
@@ -18,8 +16,11 @@ public class SchedulerConfigurationPropertiesHandler
 	 */
 	private SchedulerConfigurationPropertiesHandler() throws Exception
 	{
-		SchedulerPropertiesFetcher propertiesFetcher = new SchedulerPropertiesFetcher();
-				
+		/*InputStream inStream = SchedulerTag.class.getClassLoader().getResourceAsStream(
+				SchedulerConstants.PROPERTIES_FILE_NAME);*/
+		ISchedulerPropertiesFetcher propertiesFetcher = (ISchedulerPropertiesFetcher) Class
+				.forName("edu.wustl.clinportal.scheduleImpls.SchedulerPropertiesFetcherImpl")
+				.newInstance();
 		globalProperties.putAll(propertiesFetcher.getSchedulerPropertiesMap());
 	}
 

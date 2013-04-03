@@ -2,20 +2,18 @@
 package edu.wustl.common.labelSQLApp.bizlogic;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.wustl.common.labelSQLApp.domain.LabelSQL;
-import edu.wustl.common.util.global.Constants;
+import edu.wustl.dao.QueryWhereClause;
+import edu.wustl.dao.condition.EqualClause;
+import edu.wustl.dao.query.generator.ColumnValueBean;
+import edu.wustl.dao.query.generator.DBTypes;
+import edu.wustl.dao.util.NamedQueryParam;
 
-import org.hibernate.Session;
-
-import edu.wustl.common.hibernate.HibernateDatabaseOperations;
-import edu.wustl.common.hibernate.HibernateUtil;
-
-import java.sql.Clob;
-
-public class LabelSQLBizlogic
+public class LabelSQLBizlogic extends CommonBizlogic
 {
 
 	/**
@@ -29,21 +27,22 @@ public class LabelSQLBizlogic
 		LabelSQL labelSQL = null;
 
 		System.out.println("create session getLabelSQLById...");
-		Session session = HibernateUtil.newSession();
+	//	Session session = HibernateUtil.newSession();
 		System.out.println("create session getLabelSQLById done...");
 		try
 		{
 			Long id = labelSQLId;
-			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
-					session);
+//			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
+//					session);
 			System.out.println("retrieveById getLabelSQLById...");
-			labelSQL = dbHandler.retrieveById(LabelSQL.class.getName(), id);
+			labelSQL =(LabelSQL) retrieve(LabelSQL.class.getName(), id);
+			//labelSQL = dbHandler.retrieveById(LabelSQL.class.getName(), id);
 			System.out.println("retrieveById getLabelSQLById done...");
 		}
 		finally
 		{
 			System.out.println("closing session getLabelSQLById...");
-			session.close();
+		//	session.close();
 			System.out.println("closing session getLabelSQLById done...");
 		}
 
@@ -58,20 +57,31 @@ public class LabelSQLBizlogic
 	 */
 	public List<LabelSQL> getLabelSQLByLabel(String label) throws Exception
 	{
-		List<LabelSQL> labelSQLList = null;
-		Session session = HibernateUtil.newSession();
+		List labelSQLList = null;
+		System.out.println("create session getLabelSQLByLabel...");
+	//	Session session = HibernateUtil.newSession();
+		System.out.println("create session getLabelSQLByLabel done...");
 		try
 		{
-			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
-					session);
-			labelSQLList = dbHandler.retrieve(LabelSQL.class.getName(), "label", label);
+//			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
+//					session);
+			System.out.println("retrieve getLabelSQLByLabel...");
+			 QueryWhereClause queryWhereClause = new QueryWhereClause(LabelSQL.class.getName());
+	            queryWhereClause.addCondition(new EqualClause("label", '?'));
+	            List<ColumnValueBean> columnValueBeans = new ArrayList<ColumnValueBean>();
+	    			columnValueBeans.add(new ColumnValueBean(label));
+			labelSQLList = retrieve(LabelSQL.class.getName(), null, queryWhereClause, columnValueBeans);
+		//	(LabelSQL.class.getName(), "label", label);
+			System.out.println("retrieve getLabelSQLByLabel done...");
 		}
 		finally
 		{
-			session.close();
+			System.out.println("closing session getLabelSQLByLabel...");
+//			session.close();
+			System.out.println("closing session getLabelSQLByLabel done...");
 		}
 
-		return labelSQLList;
+		return (List<LabelSQL>)labelSQLList;
 	}
 
 	/**
@@ -88,14 +98,15 @@ public class LabelSQLBizlogic
 		labelSQL.setQuery(sql);
 
 		System.out.println("create session insertLabelSQL...");
-		Session session = HibernateUtil.newSession();
+//		Session session = HibernateUtil.newSession();
 		System.out.println("create session insertLabelSQL done...");
 		try
 		{
-			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
-					session);
+//			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
+//					session);
 			System.out.println("insert insertLabelSQL...");
-			dbHandler.insert(labelSQL);
+		//	dbHandler.insert(labelSQL);
+			insert(labelSQL);
 			System.out.println("insert insertLabelSQL done...");
 
 			return labelSQL.getId();
@@ -103,7 +114,7 @@ public class LabelSQLBizlogic
 		finally
 		{
 			System.out.println("closing session insertLabelSQL...");
-			session.close();
+	//		session.close();
 			System.out.println("closing session insertLabelSQL done...");
 		}
 
@@ -120,21 +131,22 @@ public class LabelSQLBizlogic
 		List<LabelSQL> labelSQLs = null;
 
 		System.out.println("create session getAllLabelSQL...");
-		Session session = HibernateUtil.newSession();
+	//	Session session = HibernateUtil.newSession();
 		System.out.println("create session getAllLabelSQL done...");
 		try
 		{
-
-			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
-					session);
+//
+//			HibernateDatabaseOperations<LabelSQL> dbHandler = new HibernateDatabaseOperations<LabelSQL>(
+//					session);
 			System.out.println("retrieve getAllLabelSQL...");
-			labelSQLs = dbHandler.retrieve(LabelSQL.class.getName());
+//			labelSQLs = dbHandler.retrieve(LabelSQL.class.getName());
+			labelSQLs = retrieve(LabelSQL.class.getName());
 			System.out.println("retrieve getAllLabelSQL done...");
 		}
 		finally
 		{
 			System.out.println("closing session getAllLabelSQL...");
-			session.close();
+	//		session.close();
 			System.out.println("closing session getAllLabelSQL done...");
 		}
 
@@ -149,17 +161,21 @@ public class LabelSQLBizlogic
 	 */
 	public Long getLabelSQLIdByLabelOrDisplayName(Long CPId, String label) throws Exception
 	{
-		List<Object> values = new ArrayList<Object>();
+		Map<String, NamedQueryParam> substParams = new HashMap<String, NamedQueryParam>();
 		String hql="getSysLabelSQLIdByLabelOrDisplayName";
 		if(CPId!=null)
 		{
-			values.add(CPId);
+			substParams.put("0", new NamedQueryParam(DBTypes.LONG, CPId));
+			substParams.put("1", new NamedQueryParam(DBTypes.STRING, label));
+			substParams.put("2", new NamedQueryParam(DBTypes.STRING, label));
 			hql="getLabelSQLIdByLabelOrDisplayName";
 		}
-		values.add(label);
-		values.add(label);
-		
-		List<?> result = CommonBizlogic.executeHQL(hql, values);
+		else
+		{
+			substParams.put("1", new NamedQueryParam(DBTypes.STRING, label));
+			substParams.put("0", new NamedQueryParam(DBTypes.STRING, label));
+		}
+		List<?> result = executeHQL(hql, substParams);
 
 		if (result.size() != 0)
 		{
@@ -171,78 +187,5 @@ public class LabelSQLBizlogic
 		}
 
 	}
-	
-	/** This method returns the labelsql identifier using labelsql displaylabel.
-	 * @param label
-	 * @return
-	 */
-	public Long getLabelSqlIdByLabel(String label)
-	{
-		List<Object> values = new ArrayList<Object>();
-		Long labelsqlid = null;
-		String hql = "getLabelSqlIdByLabel";
-		values.add(label);
-		List<?> result = CommonBizlogic.executeHQL(hql, values);
 
-		if (result.size() != 0)
-		{
-			labelsqlid = Long.parseLong(result.get(0).toString());
-		}
-		return labelsqlid;
-	}
-	
-	/** This method returns the sql query for given ladelsql id.
-	 * @param id
-	 * @return
-	 */
-	public Clob getLabelSqlQueryById(Long id)
-	{
-	  
-		List<Object> values = new ArrayList<Object>();
-		Clob query = null;
-		String hql = "getQueryById";
-		values.add(id);
-		List<Clob> result = (List<Clob>)CommonBizlogic.executeHQL(hql, values);
-
-		if (result.size() != 0)
-		{
-			query = result.get(0);
-		}
-		return query;
-	}
-	/**This method generates the displaynameAndLabelSqlIdmap to display the system/default dashboard.
-	 * @param dashboardType
-	 * @return
-	 */
-	public LinkedHashMap<String, Long> loadDasboard(String dashboardType)
-	{
-		List<String[]> dashbrdItems = new ArrayList<String[]>();
-		if (dashboardType.equalsIgnoreCase(Constants.DEFAULT_DASHBOARD)) {
-			dashbrdItems = edu.wustl.common.util.global.Constants.DEFAULT_DASHBOARD_ITEMS;
-		} else if (dashboardType.equalsIgnoreCase(Constants.SYSTEM_DASHBOARD)) {
-			dashbrdItems = edu.wustl.common.util.global.Constants.SYSTEM_DASHBOARD_ITEMS;
-		}
-
-		LinkedHashMap<String, Long> displayNameAssocMap = new LinkedHashMap<String, Long>();
-
-		LabelSQLBizlogic bizlogic = new LabelSQLBizlogic();
-		for (String[] dashbrdItem : dashbrdItems) {
-			String queryLabel = dashbrdItem[0];
-			String userdefinedLabel = dashbrdItem[1];
-			Long labelSqlId = 0l;
-			if (!queryLabel.isEmpty() && queryLabel != null) {
-				if (!queryLabel.equalsIgnoreCase(Constants.LABEL_SQL_HEADER)) 
-				{
-					labelSqlId = bizlogic.getLabelSqlIdByLabel(queryLabel);
-				}
-			if(labelSqlId!=null)
-			{
-				displayNameAssocMap.put(userdefinedLabel, labelSqlId);
-			}
-			}
-		}
-
-		return displayNameAssocMap;
-	}
-	
 }
