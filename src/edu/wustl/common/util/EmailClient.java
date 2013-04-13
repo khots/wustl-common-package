@@ -1,7 +1,9 @@
 package edu.wustl.common.util;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -65,9 +67,8 @@ public class EmailClient {
     public boolean sendEmail(String tmplKey, String[] to, Map<String, Object> ctxt) {
     	return sendEmail(tmplKey, to, null, null, ctxt, null);
     }
-
-    public boolean sendEmail(String tmplKey, String[] to, String[] cc, String[] bcc, Map<String, Object> ctxt, String... subStr) 
-    { 
+    
+    public boolean sendEmailWithAttachment(String tmplKey, String[] to, String[] cc, String[] bcc, List<File> attachments,Map<String, Object> ctxt, String... subStr){
     	if(footerTemplate == null){
     		initFooter();
     	}
@@ -102,6 +103,9 @@ public class EmailClient {
     		if(bcc != null){
     			emailDetails.setBccAddress(bcc);
     		}
+    		if(attachments!=null && !attachments.isEmpty()){
+    			emailDetails.setAttachments(attachments);
+    		}
 		
     		email = new SendEmail(mailServer,fromAddress,fromPassword,mailServerPort,isSMTPAuthEnabled,isStartTLSEnabled);
     		emailStatus = email.sendMail(emailDetails);
@@ -113,6 +117,11 @@ public class EmailClient {
     	}
     	
     	return emailStatus;
+    }
+
+    public boolean sendEmail(String tmplKey, String[] to, String[] cc, String[] bcc, Map<String, Object> ctxt, String... subStr) 
+    { 
+    	return sendEmailWithAttachment(tmplKey, to, cc, bcc, null, ctxt, subStr);
     }
 	
     private void initFooter()
