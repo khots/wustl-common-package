@@ -51,11 +51,13 @@
 							<td class="black_ar_new" align="left"><input type="text" style="width:340px" name="scheduleName" id="scheduleName1"></td>
 						</tr>
 						<tr>
-						<td width="1%"></td>
+							<td width="1%"></td>
 							<td class="black_ar_new">Start Date:</td>
-							<td class="black_ar_new" align="left"><input type="text" style="width:100px" name="startDate" id="startDate1"><img width="24" vspace="0" hspace="0" height="22" alt="Calendar" src="images/calendar.gif">
+							<td class="black_ar_new" align="left">
+							<input type="text" style="width:100px" name="startDate" id="startDate1">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Date:&nbsp;&nbsp;
-							<input type="text" style="width:100px" name="endDate" id="endDate1"><img width="24" vspace="0" hspace="0" height="22" alt="Calendar" src="images/calendar.gif"></td>
+							<input type="text" style="width:100px" name="endDate" id="endDate1">
+							</td>
 						</tr>
 						
 						<tr>
@@ -220,13 +222,22 @@
 								scheduleGrid.attachHeader(",#text_filter,#text_filter,,#select_filter,#text_filter,#text_filter,,,,,,,#text_filter,,,");
 								scheduleGrid.enableMultiselect(false);
 								
-								startDate = new dhtmlXCalendarObject("startDate1");
-								endDate= new dhtmlXCalendarObject("endDate1");
+								startDate = new dhtmlxCalendarObject("startDate1",true,{
+											isMonthEditable : true,
+											isYearEditable : true
+											});
+								
+								endDate= new dhtmlxCalendarObject("endDate1",true,{
+											isMonthEditable : true,
+											isYearEditable : true
+											});
+											
+								startDate.setYearsRange(1901, 2500);
+								endDate.setYearsRange(1901, 2500);
 								startDate.setSkin("dhx_skyblue");
-								var datePattern = 
-								startDate.setDateFormat("%m-%d-%Y");
+								startDate.setDateFormat("%m/%d/%Y");
 								endDate.setSkin("dhx_skyblue");
-								endDate.setDateFormat("%m-%d-%Y");
+								endDate.setDateFormat("%m/%d/%Y");
 								
 								
 								
