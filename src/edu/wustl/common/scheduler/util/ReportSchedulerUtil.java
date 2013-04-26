@@ -291,7 +291,8 @@ public class ReportSchedulerUtil
 		}
 		else
 		{
-			File file = new File((String) list.get(0));
+			String filePath = ReportSchedulerUtil.getReportDirPath()+(String) list.get(0);
+			File file = new File(filePath);
 			if (!file.exists())
 			{
 				throw new FileCleanedException("The file has been cleaned up");
@@ -299,6 +300,7 @@ public class ReportSchedulerUtil
 		}
 
 	}
+	
 
 	/**
 	 * @param request
@@ -494,5 +496,14 @@ public class ReportSchedulerUtil
 		ReportAuditDataBizLogic repoAuditBiz = new ReportAuditDataBizLogic();
 		repoAuditBiz.insert(customReportAudit);
 		return customReportAudit;
+	}
+	
+	public static String getReportDirPath() {
+		String reportsDir = System.getProperty("app.customGeneratedReportDir");
+		if(!reportsDir.endsWith("/"))
+		{
+			reportsDir = reportsDir+"/";
+		}
+		return reportsDir;
 	}
 }

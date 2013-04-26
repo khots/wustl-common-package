@@ -17,16 +17,13 @@ public class InsertCSDashboardItem
 
 	public static void main(String args[]) throws IOException
 	{
-		System.out.println("Entered in main...");
 		CSVReader reader = new CSVReader(new FileReader(args[0]));
 		String[] nextLine;
-		System.out.println("Reading from CSV...");
 		reader.readNext();
 		int cnt = 0;
 
 		while ((nextLine = reader.readNext()) != null)
 		{
-			System.out.println("Iterating CSV row...");
 			try
 			{
 				cnt++;
@@ -40,9 +37,7 @@ public class InsertCSDashboardItem
 				{
 					order = Integer.parseInt(nextLine[4]);
 				}
-				System.out.println("Associating CSV entry...");
 				associateCSWithDashboardItem(cpId, nextLine[1], nextLine[2], nextLine[3], order);
-				System.out.println("Associating CSV entry done...");
 
 			}
 			catch (LabelSQLAppException e)
@@ -50,7 +45,6 @@ public class InsertCSDashboardItem
 				Logger.out.error("Error inserting record " + cnt + " " + e.getMessage());
 			}
 		}
-		System.out.println("Exiting main...");
 	}
 
 	private static void associateCSWithDashboardItem(Long CSId, String label, String sql,
@@ -62,20 +56,15 @@ public class InsertCSDashboardItem
 		{
 			//this is the case to use a SQL directly, 
 			//add the SQL with NULL label and associate with CS
-			System.out.println("case to use a SQL directly...");
 			if (displayName == null || "".equals(displayName))
 			{
 				throw new LabelSQLAppException("Display name is mandatory");
 			}
 			try
 			{
-				System.out.println("Insert sql...");
 				labelSQLId = new LabelSQLBizlogic().insertLabelSQL(null, sql);
-				System.out.println("Insert sql done...");
-				System.out.println("Associating sql...");
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
-				System.out.println("Associating sql done...");
 			}catch (SQLException e){
 				Logger.out.error(e.getCause());
 			}			
@@ -90,13 +79,10 @@ public class InsertCSDashboardItem
 		{
 			//this is the case to use an existing label, 
 			//check if there exists a label with the same name, if not throw error if yes use it
-			System.out.println("case to use an existing label...");
 			List<LabelSQL> result = null;
 			try
 			{
-				System.out.println("getLabelSQLByLabel...");
 				result = new LabelSQLBizlogic().getLabelSQLByLabel(label);
-				System.out.println("getLabelSQLByLabel done...");
 			}
 			catch (Exception e)
 			{
@@ -111,10 +97,8 @@ public class InsertCSDashboardItem
 
 			try
 			{
-				System.out.println("Associating label...");
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
-				System.out.println("Associating label done...");
 			}
 			catch (SQLException e){
 				Logger.out.error(e.getCause());
@@ -131,7 +115,6 @@ public class InsertCSDashboardItem
 		{
 			//this is the case to add a new label, 
 			//check if there exists a label with the same name, if yes throw error
-			System.out.println("case to add a new label...");
 			if (displayName == null || "".equals(displayName))
 			{
 				throw new LabelSQLAppException("Display name is mandatory");
@@ -140,9 +123,7 @@ public class InsertCSDashboardItem
 			List<LabelSQL> result = null;
 			try
 			{
-				System.out.println("getLabelSQLByLabel...");
 				result = new LabelSQLBizlogic().getLabelSQLByLabel(label);
-				System.out.println("getLabelSQLByLabel done...");
 			}
 			catch (Exception e)
 			{
@@ -155,14 +136,10 @@ public class InsertCSDashboardItem
 			}
 			try
 			{
-				System.out.println("insert labelsql...");
 				labelSQLId = new LabelSQLBizlogic().insertLabelSQL(label, sql);
-				System.out.println("insert labelsql done...");
 
-				System.out.println("associating labelsql...");
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId,
 						displayName, order);
-				System.out.println("associating labelsql done...");
 			}
 			catch (SQLException e){
 				Logger.out.error(e.getCause());
@@ -178,13 +155,10 @@ public class InsertCSDashboardItem
 		{
 			//this is the case to delete the association of labelSQL and CS
 
-			System.out.println("case to delete the association of labelSQL and CS...");
 			try
 			{
-				System.out.println("getLabelSQLIdByLabelOrDisplayName...");
 				labelSQLId = new LabelSQLBizlogic().getLabelSQLIdByLabelOrDisplayName(CSId,
 						displayName);
-				System.out.println("getLabelSQLIdByLabelOrDisplayName done...");
 			}
 			catch (Exception e)
 			{
@@ -203,9 +177,7 @@ public class InsertCSDashboardItem
 
 				try
 				{
-					System.out.println("delete association...");
 					new LabelSQLAssociationBizlogic().deleteLabelSQLAssociation(CSId, labelSQLId);
-					System.out.println("delete association done...");
 				}
 				catch (Exception e)
 				{
@@ -219,13 +191,10 @@ public class InsertCSDashboardItem
 		{
 			//this is the case to add a new label heading, 
 			//check if there exists a label heading with the same name, if yes throw error
-			System.out.println("case to add a new label heading...");
 			List<LabelSQL> result = null;
 			try
 			{
-				System.out.println("getLabelSQLByLabel...");
 				result = new LabelSQLBizlogic().getLabelSQLByLabel(label);
-				System.out.println("getLabelSQLByLabel done...");
 			}
 			catch (Exception e)
 			{
@@ -236,9 +205,7 @@ public class InsertCSDashboardItem
 			{
 				try
 				{
-					System.out.println("insert heading...");
 					labelSQLId = new LabelSQLBizlogic().insertLabelSQL(label, null);
-					System.out.println("insert heading done...");
 				}
 				catch (Exception e)
 				{
@@ -252,10 +219,8 @@ public class InsertCSDashboardItem
 			}
 			try
 			{
-				System.out.println("associate heading...");
 				new LabelSQLAssociationBizlogic().insertLabelSQLAssociation(CSId, labelSQLId, null,
 						order);
-				System.out.println("associate heading done...");
 			}
 			catch (SQLException e){
 				Logger.out.error(e.getCause());
