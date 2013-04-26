@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import edu.wustl.common.scheduler.util.ReportSchedulerUtil;
+
 public class CustomReportGenerator extends ReportGenerator
 {
 
@@ -72,17 +74,16 @@ public class CustomReportGenerator extends ReportGenerator
 		}
 		cmmdList.add(ticketId.toString());
 		cmmdList.addAll(dbDetails);
+		cmmdList.add(ReportSchedulerUtil.getReportDirPath());
 		
 		String[] cmmdArray = new String[cmmdList.size()];
 		cmmdList.toArray(cmmdArray);
 		
 		Process process= Runtime.getRuntime().exec(cmmdArray, null,
-				new File(System.getProperty("app.customReportsDirPath")));
+				new File(System.getProperty("app.customReportScriptDir")));
 		process.waitFor();
 		
 		process.exitValue();
 	}
-
-	
 
 }

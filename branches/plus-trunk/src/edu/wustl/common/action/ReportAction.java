@@ -36,6 +36,7 @@ public class ReportAction extends SecureAction
 				"sessionData");
 
 		String reportName = hsForm.getReportName();
+		System.out.println("");
 		if (reportName != null)
 		{
 			ReportGenerator reportGenerator = ReportGenerator.getImplObj(reportName);
@@ -56,7 +57,8 @@ public class ReportAction extends SecureAction
 					{
 						File file = new File(customReportAudit.getFileName());
 						fileName = file.getName();
-						filePath = file.getPath();
+						String reportsDir = ReportSchedulerUtil.getReportDirPath();
+						filePath = reportsDir+fileName;
 					}
 				}
 			}
@@ -75,6 +77,7 @@ public class ReportAction extends SecureAction
 				reportGenerator.generateCSV(reportBean);
 				fileName = fileDetails.getFileName();
 				filePath = fileDetails.getFilePath();
+				
 			}
 			SendFile.sendFileToClient(response, filePath, fileName, "application/download");
 		}

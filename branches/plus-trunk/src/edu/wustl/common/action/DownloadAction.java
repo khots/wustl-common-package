@@ -42,7 +42,7 @@ public class DownloadAction extends SecureAction
 		{
 			fileDetail = ((ReportAuditData) fileBiz.retrieve(ReportAuditData.class.getName(),
 					fileId));
-			fileName = fileDetail.getFileName();
+			fileName =fileDetail.getFileName();
 			ReportSchedulerUtil.validateFile(fileName, sessionDataBean.getUserId());
 		}
 		catch (BizLogicException e)
@@ -76,6 +76,7 @@ public class DownloadAction extends SecureAction
 
 		try
 		{
+			fileName = ReportSchedulerUtil.getReportDirPath()+fileDetail.getFileName();
 			Utility.sendFile(response, fileName);
 
 			if (isMessage == null || !isMessage.equals("true"))
