@@ -235,9 +235,9 @@
 								startDate.setYearsRange(1901, 2500);
 								endDate.setYearsRange(1901, 2500);
 								startDate.setSkin("dhx_skyblue");
-								startDate.setDateFormat("%m/%d/%Y");
+								startDate.setDateFormat("%m-%d-%Y");
 								endDate.setSkin("dhx_skyblue");
-								endDate.setDateFormat("%m/%d/%Y");
+								endDate.setDateFormat("%m-%d-%Y");
 								
 								
 								
