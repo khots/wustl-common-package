@@ -14,6 +14,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import edu.wustl.common.exception.UserNotAuthenticatedException;
 import edu.wustl.common.util.XMLPropertyHandler;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.Constants;
@@ -51,7 +52,7 @@ public  abstract class XSSSupportedAction extends Action
 	public final ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) throws Exception
 	{
-		LOGGER.info("Inside execute method of XSSSupportedAction ");
+		LOGGER.info("Inside execute method of XSSSupportedAction "); 
 		ActionForward actionForward=null;
 		LOGGER.info("Inside execute method of BaseAction ");
 		//long startTime = System.currentTimeMillis();
@@ -76,8 +77,31 @@ public  abstract class XSSSupportedAction extends Action
 				}
 			}
 		}
-		 actionForward = checkForXSSViolation(mapping,form,
-				request, response);
+		
+		try 
+		{
+			actionForward = checkForXSSViolation(mapping, form, request, response);
+		}
+		catch (UserNotAuthenticatedException e) 
+		{
+			StringBuilder redirectUri = new StringBuilder("RedirectHome.do");
+			int actionIdx = request.getRequestURI().lastIndexOf("/");
+			if (actionIdx != -1 && actionIdx != 0) {
+				StringBuilder params = new StringBuilder("");
+				
+				if (request.getQueryString() != null) {
+					params.append("?").append(request.getQueryString());
+				}
+
+				redirectUri.append("?redirectTo=")
+					.append(request.getRequestURI().substring(actionIdx + 1))
+					.append(params);
+			}
+						
+			ActionForward forward = new ActionForward(redirectUri.toString());
+			forward.setRedirect(true);
+			return forward;
+		}
 		return actionForward;
 	}
 
@@ -169,7 +193,7 @@ public  abstract class XSSSupportedAction extends Action
 	        }
     	}
     	if (isToExecuteAction)
-	    {
+	    {   
 	    	actionForward = executeXSS(mapping, form, request, response);
 	    }
 		return actionForward;
