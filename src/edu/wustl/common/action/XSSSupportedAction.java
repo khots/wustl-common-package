@@ -88,20 +88,25 @@ public  abstract class XSSSupportedAction extends Action
 			int actionIdx = request.getRequestURI().lastIndexOf("/");
 			if (actionIdx != -1 && actionIdx != 0) {
 				StringBuilder params = new StringBuilder("");
+				String subRedirectUri = request.getRequestURI().substring(actionIdx + 1);
 				
-				if (request.getQueryString() != null) {
-					params.append("?").append(request.getQueryString());
-				}
+				if(! subRedirectUri.equals("Home.do")){
+					if (request.getQueryString() != null) {
+						params.append("?").append(request.getQueryString());
+					}
 
-				redirectUri.append("?redirectTo=")
-					.append(request.getRequestURI().substring(actionIdx + 1))
-					.append(params);
+					redirectUri.append("?redirectTo=")
+						.append(subRedirectUri)
+						.append(params);
+					
+					ActionForward forward = new ActionForward(redirectUri.toString());
+					forward.setRedirect(true);
+					return forward;
+			 	} else {
+					throw e;
+				}			 
 			}
-						
-			ActionForward forward = new ActionForward(redirectUri.toString());
-			forward.setRedirect(true);
-			return forward;
-		}
+		}	
 		return actionForward;
 	}
 
