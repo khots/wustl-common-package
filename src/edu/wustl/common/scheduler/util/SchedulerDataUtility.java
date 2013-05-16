@@ -491,19 +491,25 @@ public class SchedulerDataUtility
 	public static void sendScheduleMail(String emailAddress, String subject, String body)
 			throws MessagingException, Exception
 	{
+		
 		StringBuilder bodyValue = new StringBuilder();
 		bodyValue.append(body);
-		String sendFromEmailId = XMLPropertyHandler.getValue("email.sendEmailFrom.emailAddress");
-		String mailServer = XMLPropertyHandler.getValue("email.mailServer");
-		SendEmail email = new SendEmail(mailServer, sendFromEmailId);
-
+		String from = XMLPropertyHandler.getValue("email.sendEmailFrom.emailAddress");
+		String host = XMLPropertyHandler.getValue("email.mailServer");
+		String emailPassword = XMLPropertyHandler.getValue("email.sendEmailFrom.emailPassword");
+		String isAuthEnabled = XMLPropertyHandler.getValue("email.smtp.auth.enabled");
+		String port = XMLPropertyHandler.getValue("email.mailServer.port");
+		String isStartTLSEnabled = XMLPropertyHandler.getValue("email.smtp.starttls.enabled");
+		SendEmail email = new SendEmail(host, from, emailPassword, port, isAuthEnabled, isStartTLSEnabled);
 		EmailDetails emailDetails = new EmailDetails();
-		emailDetails.setCcAddress(new String[]{(String) SchedulerConfigurationPropertiesHandler
+		if(SchedulerConfigurationPropertiesHandler.getInstance().getProperty("host.mail.alias") != null)
+		{
+			emailDetails.setCcAddress(new String[]{(String) SchedulerConfigurationPropertiesHandler
 				.getInstance().getProperty("host.mail.alias")});
+		}
 		emailDetails.addToAddress(emailAddress);
 		emailDetails.setSubject(subject);
 		emailDetails.setBody(bodyValue.toString());
-
 		email.sendMail(emailDetails);
 	}
 
