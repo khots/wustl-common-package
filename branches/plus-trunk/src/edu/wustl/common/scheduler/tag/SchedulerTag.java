@@ -8,6 +8,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import edu.wustl.common.scheduler.constants.SchedulerConstants;
+import edu.wustl.common.util.global.ApplicationProperties;
 
 
 public class SchedulerTag extends TagSupport
@@ -95,6 +96,8 @@ public class SchedulerTag extends TagSupport
 		tagString = tagString.replace(SchedulerConstants.DROPDOWN_CAPTION_TOKEN, captionName);
 		tagString = tagString.replace(SchedulerConstants.DROPDOWN_TOKEN, dropDownURL);
 		tagString = tagString.replace(SchedulerConstants.USER_DROPDOWN_TOKEN, userDropDownURL);
+		tagString = tagString.replace(SchedulerConstants.DATE_PATTERN_TOKEN, ApplicationProperties.getValue("ui.date.pattern"));
+		
 		return tagString;
 	}
 
