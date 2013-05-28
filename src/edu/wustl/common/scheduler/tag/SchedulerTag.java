@@ -97,6 +97,8 @@ public class SchedulerTag extends TagSupport
 		tagString = tagString.replace(SchedulerConstants.DROPDOWN_TOKEN, dropDownURL);
 		tagString = tagString.replace(SchedulerConstants.USER_DROPDOWN_TOKEN, userDropDownURL);
 		tagString = tagString.replace(SchedulerConstants.DATE_PATTERN_TOKEN, ApplicationProperties.getValue("ui.date.pattern"));
+		tagString = tagString.replace(SchedulerConstants.MIN_END_YEAR_TOKEN, ApplicationProperties.getValue("min.year"));
+		tagString = tagString.replace(SchedulerConstants.MAX_END_YEAR_TOKEN, ApplicationProperties.getValue("max.year"));
 		
 		return tagString;
 	}

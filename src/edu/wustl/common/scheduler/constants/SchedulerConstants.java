@@ -23,6 +23,8 @@ public class SchedulerConstants
 	public static final String DROPDOWN_TOKEN = "$dropDownToken$";
 	public static final String USER_DROPDOWN_TOKEN = "$userDropDownToken$";
 	public static final String DATE_PATTERN_TOKEN="$datePattern$";
+	public static final String MIN_END_YEAR_TOKEN="$minYear$";
+	public static final String MAX_END_YEAR_TOKEN="$maxYear$";
 	public static final String OWNER_ID_TOKEN = "$ownerIdToken$";
 	public static final String DATE_FORMAT = CommonServiceLocator.getInstance().getDatePattern();
 	public static final String SCHEDULE_ID = "Id";
