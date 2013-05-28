@@ -232,8 +232,8 @@
 											isYearEditable : true
 											});
 											
-								startDate.setYearsRange(1901, 2500);
-								endDate.setYearsRange(1901, 2500);
+								startDate.setYearsRange($minYear$, $maxYear$);
+								endDate.setYearsRange($minYear$, $maxYear$);
 								startDate.setSkin("dhx_skyblue");
 								startDate.setDateFormat("$datePattern$");
 								endDate.setSkin("dhx_skyblue");
