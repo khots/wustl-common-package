@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<rows>
+	#foreach( $tag in $tagList )
+		<row id="$tag.identifier">
+		#if($entityName != "SpecimenListTag" && $userId != $tag.userId)
+<cell><![CDATA[<input name='tagCheckbox' value='$tag.identifier' type='checkbox' DISABLED/>]]></cell>	
+		#{else}
+<cell><![CDATA[<input name='tagCheckbox' value='$tag.identifier' type='checkbox'/>]]></cell>	
+        #end 
+<cell image="blank.gif"><![CDATA[$tag.label]]></cell>
+<cell><![CDATA[<img src='images/advQuery/delete.gif' name='deleteTag' title='Delete' id='$tag.identifier' width='12' height='12' onclick='ajaxTagDeleteCall($tag.identifier)'/>]]></cell>
+ 		</row>
+
+	#end
+</rows>
