@@ -1,3 +1,10 @@
+/*L
+ * Copyright Washington University in St. Louis, SemanticBits, Persistent Systems, Krishagni.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/wustl-common-package/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: SimpleSearchAction Class>
  * <p>Description:	SimpleSearchAction takes the conditions from the user, prepares, 

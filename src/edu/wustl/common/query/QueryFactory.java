@@ -1,3 +1,10 @@
+/*L
+ * Copyright Washington University in St. Louis, SemanticBits, Persistent Systems, Krishagni.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/wustl-common-package/LICENSE.txt for details.
+ */
+
 /**
  *<p>Title: QueryFactory</p>
  *<p>Description:  This is the Factory class for generating query objects</p>

@@ -1,3 +1,10 @@
+/*L
+ * Copyright Washington University in St. Louis, SemanticBits, Persistent Systems, Krishagni.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/wustl-common-package/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: QueryDataCache Class>
  * <p>Description:  This Class is used to cache all the data (table names, table display names,
