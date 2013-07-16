@@ -1,13 +1,7 @@
-/*L
- * Copyright Washington University in St. Louis, SemanticBits, Persistent Systems, Krishagni.
- *
- * Distributed under the OSI-approved BSD 3-Clause License.
- * See http://ncip.github.com/wustl-common-package/LICENSE.txt for details.
- */
-
 package edu.wustl.common.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +12,6 @@ import javax.mail.MessagingException;
 
 import org.apache.log4j.Logger;
 
-import edu.wustl.common.beans.EmailServerProperties;
 import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.EmailDetails;
@@ -41,44 +34,28 @@ public class EmailClient {
     private static String isStartTLSEnabled = null;
     private static String fromAddress = null;
     private static String fromPassword = null;
+    private static boolean localMailSend;
 	
-	    
-    public static void initialize(EmailServerProperties emailServerProps, String subPropsFile, String templPropsFile) {
-    	instance = new EmailClient(emailServerProps, subPropsFile, templPropsFile);
+    private EmailClient() {
+    	initEmailclient();
     }
-
-    private EmailClient (EmailServerProperties emailServerProps, String subPropsFile, String tmplPropsFile) {
-    	try 
-    	{
-    		InputStream subInputStream = EmailClient.class.getResourceAsStream(subPropsFile);
-    		subjectProperties = new Properties();
-    		subjectProperties.load(subInputStream);
-    		subInputStream.close();
-    		
-    		InputStream tmplInputStream = EmailClient.class.getResourceAsStream(tmplPropsFile);
-    		emailTemplates = new Properties();
-    		emailTemplates.load(tmplInputStream);
-    		tmplInputStream.close();
-    		
-    		setServerProperties(emailServerProps);
-    		initSubjectPrefix();
-    	} catch (Exception e) {
-    		new RuntimeException("Error while initializing Email Client", e);
+    
+    public static EmailClient getInstance(){
+    	if(instance == null) {
+    		instance = new EmailClient();
     	}
-    }
-
-	public static EmailClient getInstance(){
-		return instance;
+    	return instance;
     }
     
     public boolean sendEmail(String tmplKey, String[] to, Map<String, Object> ctxt) {
     	return sendEmail(tmplKey, to, null, null, ctxt, null);
     }
     
-    public boolean sendEmailWithAttachment(String tmplKey, String[] to, String[] cc, String[] bcc, List<File> attachments,Map<String, Object> ctxt, String... subStr){
+    public boolean sendEmailWithAttachment(String tmplKey, String[] to, String[] cc, String[] bcc, List<File> attachments, Map<String, Object> ctxt, String... subStr){
     	if(footerTemplate == null){
     		initFooter();
     	}
+  
     	ctxt.put("footer", footerTemplate);
     	final EmailDetails emailDetails= new EmailDetails();
     	SendEmail email;
@@ -113,8 +90,12 @@ public class EmailClient {
     		if(attachments!=null && !attachments.isEmpty()){
     			emailDetails.setAttachments(attachments);
     		}
-		
-    		email = new SendEmail(mailServer,fromAddress,fromPassword,mailServerPort,isSMTPAuthEnabled,isStartTLSEnabled);
+    		
+    		if (!localMailSend){
+    			email = new SendEmail(mailServer,fromAddress,fromPassword,mailServerPort,isSMTPAuthEnabled,isStartTLSEnabled);
+    		} else {
+    			email = new SendEmail(mailServer,fromAddress);
+    		}  		
     		emailStatus = email.sendMail(emailDetails);
     	} catch (final MessagingException messExcp){
     		emailStatus=false;
@@ -143,19 +124,45 @@ public class EmailClient {
     		LOGGER.error("Error while getting footer", e);
     	}		
     }
-    
-    private void setServerProperties(EmailServerProperties emailServerProps) {
-    	mailServer = emailServerProps.getServerHost();
-    	mailServerPort = emailServerProps.getServerPort();
-    	isSMTPAuthEnabled = emailServerProps.getIsSMTPAuthEnabled();
-    	isStartTLSEnabled = emailServerProps.getIsStartTLSEnabled();
-    	fromAddress = emailServerProps.getFromAddr();
-    	fromPassword = emailServerProps.getFromPassword();
-    }
-    
-    private void initSubjectPrefix() {
-    	if (subjectProperties.getProperty("subject.property") != null){
-    		subjectPrefix = subjectProperties.getProperty("subject.property");
+   
+    private static void initEmailclient() {
+    	fromAddress = XMLPropertyHandler.getValue("email.sendEmailFrom.emailAddress");
+    	fromPassword = XMLPropertyHandler.getValue("email.sendEmailFrom.emailPassword");
+    	isSMTPAuthEnabled = XMLPropertyHandler.getValue("email.smtp.auth.enabled");
+    	mailServer = XMLPropertyHandler.getValue("email.mailServer");
+    	mailServerPort = XMLPropertyHandler.getValue("email.mailServer.port");
+    	isStartTLSEnabled = XMLPropertyHandler.getValue("email.smtp.starttls.enabled");
+    	
+    	String propPath = CommonServiceLocator.getInstance().getPropDirPath();
+    	String subPropFile = propPath+"/email-templates/emailSubjects.properties";
+    	String tmplPropFile = propPath+"/email-templates/emailTemplates.properties";
+		
+    	try {
+    		InputStream subInputStream = new FileInputStream(new File(subPropFile));
+    		subjectProperties = new Properties();
+    		subjectProperties.load(subInputStream);
+    		subInputStream.close();
+    		
+    		InputStream tmplInputStream = new FileInputStream(new File(tmplPropFile));
+    		emailTemplates = new Properties();
+    		emailTemplates.load(tmplInputStream);
+    		tmplInputStream.close();
+    		
+    		if (subjectProperties.getProperty("subject.property") != null){
+    			subjectPrefix = subjectProperties.getProperty("subject.property");
+    		}
+    		
+    		if (isSMTPAuthEnabled != null && isSMTPAuthEnabled.equals("true") &&
+    			isStartTLSEnabled != null && isStartTLSEnabled.equals("true") &&
+    			fromPassword != null && ! fromPassword.isEmpty()) 
+    		{
+    			localMailSend = false;
+    		} else {
+    			localMailSend = true;
+    		}
+    		
+    	} catch (Exception e) {
+    		new RuntimeException("Error while initializing Email Client", e);
     	}
     }
 }
