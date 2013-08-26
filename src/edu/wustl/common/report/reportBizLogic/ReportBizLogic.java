@@ -1,9 +1,3 @@
-/*L
- * Copyright Washington University in St. Louis, SemanticBits, Persistent Systems, Krishagni.
- *
- * Distributed under the OSI-approved BSD 3-Clause License.
- * See http://ncip.github.com/wustl-common-package/LICENSE.txt for details.
- */
 
 package edu.wustl.common.report.reportBizLogic;
 
@@ -160,7 +154,7 @@ public class ReportBizLogic extends DefaultBizLogic
 	public List<Object> getReportNamesByUserId(long userId, long csId) throws BizLogicException
 	{
 		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE USER_ID ="
-			+ userId + "AND lower(REPORT_TYPE) != 'participant' and CS_ID=" + csId;
+			+ userId + "AND lower(REPORT_TYPE) != 'participant' and (CS_ID=" + csId +" or CS_ID = -1)";
 		return getReportNamesFromQuery(query);
 	}
 
@@ -181,7 +175,7 @@ public class ReportBizLogic extends DefaultBizLogic
 	 */
 	private List<Object> getReportNamesByCsId(long csId) throws BizLogicException
 	{
-		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE lower(REPORT_TYPE) != 'participant' and CS_ID =" + csId;
+		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE lower(REPORT_TYPE) != 'participant' and (CS_ID =" + csId +" or CS_ID = -1)";
 		return getReportNamesFromQuery(query);
 	}
 
@@ -263,7 +257,7 @@ public class ReportBizLogic extends DefaultBizLogic
 	 */
 	private List<Object> getParticipantReportNamesByCsId(long csId) throws BizLogicException
 	{
-		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE lower(REPORT_TYPE) = 'participant' and CS_ID =" + csId;
+		String query = "SELECT REPORT_NAME, IDENTIFIER FROM REPORT_DETAILS WHERE lower(REPORT_TYPE) = 'participant' and (CS_ID =" + csId +"or CS_ID = -1)";
 		return getReportNamesFromQuery(query);
 	}
 
