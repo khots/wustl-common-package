@@ -18,6 +18,7 @@ import edu.wustl.common.util.global.EmailDetails;
 import edu.wustl.common.util.global.SendEmail;
 import edu.wustl.common.util.logger.LoggerConfig;
 import edu.wustl.common.velocity.VelocityManager;
+import edu.wustl.common.util.XMLPropertyHandler;
 
 public class EmailClient {
 
@@ -118,7 +119,7 @@ public class EmailClient {
     	{
     		Map<String, Object> contextMap = new HashMap<String, Object>();
     		contextMap.put("appUrl", CommonServiceLocator.getInstance().getAppURL());
-    		contextMap.put("helpDeskPhone", ApplicationProperties.getValue("login.contactnumber"));
+    		contextMap.put("helpDeskPhone", XMLPropertyHandler.getValue("contact.number"));
     		footerTemplate = VelocityManager.getInstance().evaluate(contextMap, emailTemplates.getProperty("footerTemplate"));
     	} catch (Exception e) {
     		LOGGER.error("Error while getting footer", e);
