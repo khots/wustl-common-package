@@ -48,7 +48,7 @@ public final class SendFile
 	 * @param contentType Content type of attachment.
 	 */
 	public static void sendFileToClient(HttpServletResponse response, String filePath,
-			String fileName, String contentType)
+			String fileName, String contentType, boolean deleteFile)
 	{
 		if (filePath != null && (filePath.length()!=0))
 		{
@@ -60,12 +60,33 @@ public final class SendFile
 						+ fileName+ "\";");
 				response.setContentLength((int) file.length());
 				writeToStream(response, file);
+				if (deleteFile)
+				{
+					boolean isDeleted = file.delete();
+					if (!isDeleted)
+					{
+						LOGGER.info ("Not able to delete file "+ file.getName());
+					}					
+				}
 			}
 			else
 			{
-				LOGGER.error("Sorry Cannot Download as fileName is null");
+				LOGGER.error ("Sorry Cannot Download as fileName is null");
 			}
 		}
+	}
+	
+	/**
+	 *
+	 * @param response HttpServletResponse object.
+	 * @param filePath Path of file.
+	 * @param fileName name of file.
+	 * @param contentType Content type of attachment.
+	 */
+	public static void sendFileToClient(HttpServletResponse response, String filePath,
+			String fileName, String contentType)
+	{
+		sendFileToClient(response, filePath, fileName, contentType, true);
 	}
 
 	/**
@@ -90,11 +111,6 @@ public final class SendFile
 			}
 			opstream.flush();
 			bis.close();
-			boolean isDeleted = file.delete();
-			if(!isDeleted)
-			{
-				LOGGER.info("Not able to delete file "+file.getName());
-			}
 		}
 		catch (FileNotFoundException ex)
 		{
