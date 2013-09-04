@@ -12,7 +12,6 @@ import javax.mail.MessagingException;
 
 import org.apache.log4j.Logger;
 
-import edu.wustl.common.util.global.ApplicationProperties;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.global.EmailDetails;
 import edu.wustl.common.util.global.SendEmail;
@@ -134,9 +133,9 @@ public class EmailClient {
     	mailServerPort = XMLPropertyHandler.getValue("email.mailServer.port");
     	isStartTLSEnabled = XMLPropertyHandler.getValue("email.smtp.starttls.enabled");
     	
-    	String propPath = CommonServiceLocator.getInstance().getPropDirPath();
-    	String subPropFile = propPath+"/email-templates/emailSubjects.properties";
-    	String tmplPropFile = propPath+"/email-templates/emailTemplates.properties";
+    	String appHomePath = CommonServiceLocator.getInstance().getAppHome();
+    	String subPropFile = appHomePath+ "/WEB-INF/classes/email-templates/emailSubjects.properties";
+    	String tmplPropFile = appHomePath+ "/WEB-INF/classes/email-templates/emailTemplates.properties";
 		
     	try {
     		InputStream subInputStream = new FileInputStream(new File(subPropFile));
