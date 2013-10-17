@@ -28,6 +28,7 @@ import edu.wustl.common.util.logger.Logger;
 public class CommonBizlogic
 {
 
+	private static final Logger LOGGER = Logger.getCommonLogger(CommonBizlogic.class);
 	/**
 	 * This method executes the HQL in LabelSQL_HQL.hbm.xml
 	 * @param queryName
@@ -38,10 +39,7 @@ public class CommonBizlogic
 	public static List<?> executeHQL(String queryName, List<Object> values)
 			throws HibernateException
 	{
-		System.out.println("creating session executeHQL...");
 		Session session = HibernateUtil.newSession();
-		System.out.println("creating session executeHQL done...");
-
 		List<?> records = null;
 		try
 		{
@@ -69,9 +67,7 @@ public class CommonBizlogic
 					}
 				}
 			}
-			System.out.println("executing HQL...");
 			records = q.list();
-			System.out.println("executing HQL done...");
 		}
 		finally
 		{
@@ -211,8 +207,8 @@ public class CommonBizlogic
 		}
 		catch (Exception e)
 		{
-			Logger.out.error("Error executing query -> " + sql);
-			e.printStackTrace();
+			LOGGER.error("Error executing query -> " + sql);
+			LOGGER.error(e);
 			return -1;
 		}
 		finally
