@@ -40,6 +40,8 @@ public class QuerySessionData
 	 * specify total Number Of Records.
 	 */
 	private int totalNumberOfRecords;
+	
+	private Long queryId = 0l;
 
 	/**
 	 * @return the hasConditionOnIdentifiedField
@@ -135,5 +137,19 @@ public class QuerySessionData
 	public void setTotalNumberOfRecords(int totalNumberOfRecords)
 	{
 		this.totalNumberOfRecords = totalNumberOfRecords;
+	}
+
+	/**
+	 * @return queryId
+	 */
+	public Long getQueryId() {
+		return queryId;
+	}
+
+	/**
+	 * @param queryId
+	 */
+	public void setQueryId(Long queryId) {
+		this.queryId = queryId;
 	}
 }

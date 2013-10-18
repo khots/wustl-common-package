@@ -49,7 +49,11 @@ public class QueryParams
 	/**
 	 * noOfRecords.
 	 */
-	private int noOfRecords;
+	private int noOfRecords;	
+	/**
+	 * queryId.
+	 */
+	private Long queryId = null;
 
 	/**
 	 * @param query :
@@ -165,6 +169,18 @@ public class QueryParams
 	{
 		this.noOfRecords = noOfRecords;
 	}
+	
+	/**
+	 * @return queryId
+	 */
+	public Long getQueryId() {
+		return queryId;
+	}
 
-
+	/**
+	 * @param queryId
+	 */
+	public void setQueryId(Long queryId) {
+		this.queryId = queryId;
+	}
 }
