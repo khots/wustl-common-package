@@ -50,6 +50,7 @@ import org.apache.commons.io.FileUtils;
 import edu.wustl.common.beans.NameValueBean;
 import edu.wustl.common.exception.ApplicationException;
 import edu.wustl.common.exceptionformatter.ExceptionFormatterFactory;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.labelSQLApp.bizlogic.LabelSQLBizlogic;
 import edu.wustl.common.report.bean.FileDetails;
 import edu.wustl.common.tree.TreeNodeImpl;
@@ -395,18 +396,18 @@ public final class Utility extends CommonUtilities
         {
             HibernateException hibernateException = (HibernateException) exep;
             StringBuffer message = new StringBuffer(messageToReturn);
-            String[] str = hibernateException.getMessages();
+            String str = hibernateException.getMessage();
             if (str == null)
             {
             	messageToReturn = "Unknown Error";
             }
             else
             {
-            	  for (int i = 0; i < str.length; i++)
-                  {
-                  	message.append(str[i]).append(' ');
-                  }
-                  messageToReturn =  message.toString();
+//            	  for (int i = 0; i < str.length; i++)
+//                  {
+//                  	message.append(str[i]).append(' ');
+//                  }
+                  messageToReturn =  str;
             }
 
         }
@@ -582,7 +583,7 @@ public final class Utility extends CommonUtilities
 		byte[] fileContent = new byte[(int) file.length()];
 		inputStream.read(fileContent);
 
-		Blob reportContent = Hibernate.createBlob(fileContent);
+		Blob reportContent = Hibernate.getLobCreator(HibernateUtil.getSessionFactory().getCurrentSession()).createBlob(fileContent);
 		String[] tmpFile = fileName.split("/");
 		sendFileToClient(reportContent, tmpFile[tmpFile.length - 1], response);
 	}

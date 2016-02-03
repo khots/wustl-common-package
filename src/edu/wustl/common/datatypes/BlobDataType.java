@@ -20,6 +20,8 @@ import java.text.ParseException;
 import org.apache.struts.action.ActionErrors;
 import org.hibernate.Hibernate;
 
+import gov.nih.nci.common.util.HibernateUtil;
+
 
 /**
  * @author prashant_bandal
@@ -60,7 +62,7 @@ public class BlobDataType implements IDBDataType
 		byte[] buff = new byte[(int) file.length()];
 		dis.readFully(buff);
 		dis.close();
-		return Hibernate.createBlob(buff);
+		return Hibernate.getLobCreator(HibernateUtil.currentSession()).createBlob(buff);//Hibernate.createBlob(buff);
 	}
 
 }

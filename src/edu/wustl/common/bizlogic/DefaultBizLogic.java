@@ -36,6 +36,7 @@ import edu.wustl.common.domain.AuditDataEventLog;
 import edu.wustl.common.domain.AuditEvent;
 import edu.wustl.common.domain.AuditEventDetails;
 import edu.wustl.common.exception.BizLogicException;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.util.Utility;
 import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Status;
@@ -879,7 +880,7 @@ public class DefaultBizLogic extends AbstractBizLogic
 		Collection auditEventDetailsCollection = new HashSet();
 		AuditEventDetails auditEventDetails = new AuditEventDetails();
 		auditEventDetails.setElementName(Status.ACTIVITY_STATUS.toString());
-		auditEventDetails.setCurrentValue(Hibernate.createClob(
+		auditEventDetails.setCurrentValue(Hibernate.getLobCreator(HibernateUtil.getSessionFactory().getCurrentSession()).createClob(
 				Status.ACTIVITY_STATUS_DISABLED.getStatus()));
 
 		auditEventDetailsCollection.add(auditEventDetails);

@@ -15,6 +15,7 @@ import java.io.IOException;
 import org.hibernate.Hibernate;
 
 import edu.wustl.common.audit.AuditManager;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.util.global.CommonServiceLocator;
 import edu.wustl.common.util.logger.Logger;
 import edu.wustl.dao.DAO;
@@ -119,7 +120,7 @@ public class DefaultJobStatusListner implements JobStatusListener
 			{
 				fin = new FileInputStream((File) fileObj);
 
-				jobDetails.setLogFile(Hibernate.createBlob(fin));
+				jobDetails.setLogFile(Hibernate.getLobCreator(HibernateUtil.getSessionFactory().getCurrentSession()).createBlob(fin, 1));
 			}
 			final IDAOFactory daofactory = DAOConfigFactory.getInstance().getDAOFactory(
 					CommonServiceLocator.getInstance().getAppName());

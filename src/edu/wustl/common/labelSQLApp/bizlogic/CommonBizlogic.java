@@ -10,6 +10,7 @@ package edu.wustl.common.labelSQLApp.bizlogic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.jdbc.ReturningWork;
 
 import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.labelSQLApp.domain.LabelSQLAssociation;
@@ -189,7 +191,13 @@ public class CommonBizlogic
 		{
 			sql = sql.substring(0, sql.length() - 1);
 		}
-		PreparedStatement stmt = session.connection().prepareStatement(sql);
+		PreparedStatement stmt = session.doReturningWork(new ReturningWork<Connection>() 
+		{
+		    @Override
+		    public Connection execute(Connection conn) throws SQLException {
+		    return conn;
+		    }
+		}).prepareStatement(sql);
 		ResultSet rs = null;
 		try
 		{
