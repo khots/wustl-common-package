@@ -44,11 +44,11 @@ L-->
 
          <property
             name="keySequenceId"
-            type="string"
+            type="long"
             update="true"
             insert="true"
             column="KEY_SEQUENCE_ID"
-            length="50"
+            length="30"
         />
 
          <property

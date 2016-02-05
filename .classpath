@@ -23,7 +23,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-validator.jar"/>
 	<classpathentry kind="lib" path="lib/csmapi.jar"/>
-	<classpathentry kind="lib" path="lib/DAO-1.1.9.6.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jaas.jar"/>
@@ -59,7 +58,9 @@
 	<classpathentry kind="lib" path="lib/xerces.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/xsdlib.jar"/>
-	<classpathentry kind="lib" path="/OPS_TS/WEB-INF/lib/ehcache-core-2.4.3.jar"/>
-	<classpathentry kind="lib" path="/OPS_TS/WEB-INF/lib/hibernate-core-4.3.10.Final.jar"/>
+	<classpathentry kind="lib" path="lib/DAO-1.1.9.10.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-core-2.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-core-4.3.11.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-ehcache-4.3.11.Final.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

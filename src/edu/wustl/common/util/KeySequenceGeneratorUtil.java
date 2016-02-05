@@ -31,7 +31,7 @@ public final class KeySequenceGeneratorUtil
 	private static final Logger LOGGER = Logger.getCommonLogger(KeySequenceGeneratorUtil.class);
 
 	private static KeySequenceGeneratorUtil keySeqGenerator;
-
+	
 	/**
 	 * Private constructor used for making this class singleton
 	 */
@@ -58,10 +58,10 @@ public final class KeySequenceGeneratorUtil
 	 * @throws Exception any exception occurred
 	 */
 	@SuppressWarnings("unchecked")
-	public static synchronized String getNextUniqeId(final String key, final String type)
+	public static synchronized Long getNextUniqeId(final String key, final String type)
 			throws DAOException
 	{
-		String nextAvailableId = null;
+		Long nextAvailableId = null;
 		DAO dao = null;
 		try
 		{
@@ -78,8 +78,8 @@ public final class KeySequenceGeneratorUtil
 					columnValueBeans);
 			if (list.isEmpty())
 			{
-				nextAvailableId = "1";
-				keySeqObject.setKeySequenceId("2");
+				nextAvailableId = Long.valueOf(1L);;
+				keySeqObject.setKeySequenceId(2l);
 				keySeqObject.setKeyValue(key);
 				keySeqObject.setKeyType(type);
 				dao.insert(keySeqObject);
@@ -89,7 +89,7 @@ public final class KeySequenceGeneratorUtil
 				keySeqObject = list.get(0);
 				nextAvailableId = keySeqObject.getKeySequenceId();
 				Long nextKeySequenceId = Long.valueOf(nextAvailableId) + 1;
-				keySeqObject.setKeySequenceId(nextKeySequenceId.toString());
+				keySeqObject.setKeySequenceId(nextKeySequenceId);
 				dao.update(keySeqObject);
 			}
 			dao.commit();

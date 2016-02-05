@@ -54,6 +54,17 @@ public class QueryParams
 	 * queryId.
 	 */
 	private Long queryId = null;
+	
+	private Long auditEventId = null;
+	
+
+	public Long getAuditEventId() {
+	    return this.auditEventId;
+	}
+	  
+	public void setAuditEventId(Long auditEventId) {
+	    this.auditEventId = auditEventId;
+	}
 
 	/**
 	 * @param query :

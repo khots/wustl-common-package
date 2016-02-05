@@ -42,6 +42,17 @@ public class QuerySessionData
 	private int totalNumberOfRecords;
 	
 	private Long queryId = 0l;
+	
+	private Long auditEventId = Long.valueOf(0L);
+	
+	
+	public Long getAuditEventId() {
+	    return this.auditEventId;
+	  }
+	
+	public void setAuditEventId(Long auditEventId) {
+	    this.auditEventId = auditEventId;
+	}
 
 	/**
 	 * @return the hasConditionOnIdentifiedField

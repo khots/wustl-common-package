@@ -32,7 +32,7 @@ public class KeySequenceGenerator
 	/**
 	 * Sequence identifier to be generated on basis of Key.
 	 */
-	protected String keySequenceId;
+	protected Long keySequenceId;
 
 	/**
 	 * @return the id
@@ -63,7 +63,7 @@ public class KeySequenceGenerator
 	/**
 	 * @return the keySequenceId
 	 */
-	public String getKeySequenceId()
+	public Long getKeySequenceId()
 	{
 		return keySequenceId;
 	}
@@ -97,7 +97,7 @@ public class KeySequenceGenerator
 	/**
 	 * @param keySequenceId the keySequenceId to set
 	 */
-	public void setKeySequenceId(String keySequenceId)
+	public void setKeySequenceId(Long keySequenceId)
 	{
 		this.keySequenceId = keySequenceId;
 	}
