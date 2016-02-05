@@ -50,7 +50,7 @@ public class DefaultUniqueIdGenerator implements ILabelTokens
 		{
 			final Class klass = object.getClass();
 			final Object idValue = invokeGetterMethod(klass, "Id", object);
-			final Long uniqueId = KeySequenceGeneratorUtil.getNextUniqeId(idValue.toString(),
+			final String uniqueId = KeySequenceGeneratorUtil.getNextUniqeId(idValue.toString(),
 					className);
 			if (uniqueId != null)
 			{

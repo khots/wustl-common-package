@@ -58,7 +58,7 @@ public final class KeySequenceGeneratorUtil
 	 * @throws Exception any exception occurred
 	 */
 	@SuppressWarnings("unchecked")
-	public static synchronized Long getNextUniqeId(final String key, final String type)
+	public static synchronized String getNextUniqeId(final String key, final String type)
 			throws DAOException
 	{
 		Long nextAvailableId = null;
@@ -103,7 +103,7 @@ public final class KeySequenceGeneratorUtil
 		{
 			dao.closeSession();
 		}
-		return nextAvailableId;
+		return nextAvailableId.toString();
 	}
 
 }
