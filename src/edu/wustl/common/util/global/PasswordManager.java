@@ -573,6 +573,7 @@ public final class PasswordManager
 	 */
 	public static void main(String[] args) throws PasswordEncryptionException, IOException
 	{
+	  System.out.println(decrypt("wbhamzt59ThQl5H9esAqkhdE3UN48L0UJGnp1T2I2iflj+fLqWCv5CTroCXPM+WRs4KVdZAGdYQDeBYwq+nBu3UkGTezRCnu"));
 		if (args.length > 1)
 		{
 			String filename = args[0];

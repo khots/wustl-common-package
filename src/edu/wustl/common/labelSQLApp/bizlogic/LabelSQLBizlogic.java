@@ -7,19 +7,19 @@
 
 package edu.wustl.common.labelSQLApp.bizlogic;
 
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import edu.wustl.common.labelSQLApp.domain.LabelSQL;
-import edu.wustl.common.util.global.Constants;
-
 import org.hibernate.Session;
+import org.hibernate.engine.jdbc.NonContextualLobCreator;
 
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
-
-import java.sql.Clob;
+import edu.wustl.common.labelSQLApp.domain.LabelSQL;
+import edu.wustl.common.util.global.Constants;
+import edu.wustl.dao.daofactory.DAOConfigFactory;
 
 public class LabelSQLBizlogic
 {
@@ -208,12 +208,22 @@ public class LabelSQLBizlogic
 		Clob query = null;
 		String hql = "getQueryById";
 		values.add(id);
-		List<Clob> result = (List<Clob>)CommonBizlogic.executeHQL(hql, values);
-
-		if (result.size() != 0)
+		if("POSTGRESQL".equalsIgnoreCase(DAOConfigFactory.getInstance().getDAOFactory().getDataBaseType()))
 		{
-			query = result.get(0);
+		  List<String> result = (List<String>)CommonBizlogic.executeHQL(hql, values);
+		  if (result.size() != 0)
+          {
+            query  = NonContextualLobCreator.INSTANCE.wrap(NonContextualLobCreator.INSTANCE.createClob(result.get(0))); 
+          }
 		}
+		else
+		{
+		  List<Clob> result = (List<Clob>)CommonBizlogic.executeHQL(hql, values);
+		  if (result.size() != 0)
+	      {
+	        query = result.get(0);
+	      }
+		}		
 		return query;
 	}
 	/**This method generates the displaynameAndLabelSqlIdmap to display the system/default dashboard.

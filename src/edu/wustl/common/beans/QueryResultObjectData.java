@@ -14,6 +14,7 @@
 
 package edu.wustl.common.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,14 @@ import java.util.List;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class QueryResultObjectData
+public class QueryResultObjectData implements Serializable
 {
 
 	/**
+   * 
+   */
+  private static final long serialVersionUID = -1724278830307222489L;
+  /**
 	 * Specify aliasName.
 	 */
 	private String aliasName;

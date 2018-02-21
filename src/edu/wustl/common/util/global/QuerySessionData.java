@@ -7,16 +7,21 @@
 
 package edu.wustl.common.util.global;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * @author prafull_kadam
  * This class will hold the information that will be saved in the session for the Pagenation of the query results.
  */
-public class QuerySessionData
+public class QuerySessionData implements Serializable
 {
 
 	/**
+   * Generated serial id
+   */
+  private static final long serialVersionUID = 8418248296885892369L;
+  /**
 	 *  The SQL for the query for which user is navigating results.
 	 */
 	private String sql;
